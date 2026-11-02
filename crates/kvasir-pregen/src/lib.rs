@@ -16,5 +16,5 @@ pub use job::{Job, JobError, SCHEMA};
 pub use progress::Progress;
 pub use shape::{ChunkPos, MAX_RADIUS, Shape, ShapeError};
 pub use spiral::{Cursor, Spiral, ring_cell, ring_len};
-pub use throttle::Throttle;
+pub use throttle::{Throttle, tick_percentile_ms};
 pub use window::InFlight;

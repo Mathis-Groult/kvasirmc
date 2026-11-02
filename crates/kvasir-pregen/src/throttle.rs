@@ -44,6 +44,22 @@ impl Throttle {
     }
 }
 
+/// A percentile of recent tick durations, in milliseconds.
+///
+/// `ring` holds the engine's last 100 tick durations in nanoseconds; only the first `filled` slots
+/// hold real measurements (the ring fills from the start). `percent` is 0 to 100. With no
+/// measurements the answer is 0: a server that has not ticked yet is not slow.
+#[must_use]
+pub fn tick_percentile_ms(ring: &[i64], filled: usize, percent: usize) -> f64 {
+    let mut samples: Vec<i64> = ring.iter().take(filled).copied().collect();
+    if samples.is_empty() {
+        return 0.0;
+    }
+    samples.sort_unstable();
+    let index = (samples.len().saturating_mul(percent) / 100).min(samples.len() - 1);
+    samples[index] as f64 / 1_000_000.0
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -101,5 +117,31 @@ mod tests {
         assert_eq!(throttle.window(), 1);
         let mut throttle = Throttle::new(8, 2);
         assert_eq!(throttle.observe(1.0, BUDGET), 8, "max is raised to min");
+    }
+
+    #[test]
+    fn the_percentile_is_taken_over_the_measured_slots_only() {
+        // 10 measured ticks of 1..=10 ms; the rest of the ring is unwritten zeros
+        let mut ring = [0i64; 100];
+        for (slot, ms) in ring.iter_mut().zip(1..=10) {
+            *slot = ms * 1_000_000;
+        }
+        assert!((tick_percentile_ms(&ring, 10, 95) - 10.0).abs() < 1e-9);
+        assert!((tick_percentile_ms(&ring, 10, 50) - 6.0).abs() < 1e-9);
+        assert!((tick_percentile_ms(&ring, 10, 0) - 1.0).abs() < 1e-9);
+    }
+
+    #[test]
+    fn a_server_that_has_not_ticked_is_not_slow() {
+        assert!(tick_percentile_ms(&[0; 100], 0, 95).abs() < f64::EPSILON);
+        assert!(tick_percentile_ms(&[], 5, 95).abs() < f64::EPSILON);
+    }
+
+    #[test]
+    fn one_slow_tick_among_many_shows_at_the_top_percentile_only() {
+        let mut ring = [2_000_000i64; 100];
+        ring[17] = 400_000_000;
+        assert!((tick_percentile_ms(&ring, 100, 95) - 2.0).abs() < 1e-9);
+        assert!((tick_percentile_ms(&ring, 100, 100) - 400.0).abs() < 1e-9);
     }
 }

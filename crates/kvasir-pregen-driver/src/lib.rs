@@ -13,9 +13,11 @@
 #![cfg_attr(test, allow(clippy::unwrap_used, clippy::expect_used))]
 
 mod driver;
+mod file_store;
 mod ports;
 mod report;
 
 pub use driver::{Control, Driver, Handle, Options, Outcome};
+pub use file_store::{FileStore, LoadError};
 pub use ports::{Generator, JobStore, TickMeter};
 pub use report::{Report, State};

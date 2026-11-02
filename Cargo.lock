@@ -2149,6 +2149,8 @@ version = "0.2.1+26.3-26.60"
 dependencies = [
  "futures",
  "kvasir-pregen",
+ "tempfile",
+ "thiserror 2.0.21",
  "tokio",
  "tracing",
 ]

@@ -10,9 +10,11 @@ license.workspace = true
 kvasir-pregen = { path = "../kvasir-pregen" }
 futures = { workspace = true, features = ["alloc"] }
 tokio = { workspace = true, features = ["sync", "time", "macros"] }
+thiserror = { workspace = true, features = ["std"] }
 tracing.workspace = true
 
 [dev-dependencies]
+tempfile.workspace = true
 tokio = { workspace = true, features = ["sync", "time", "macros", "rt", "test-util"] }
 
 [lints]

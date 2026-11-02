@@ -2144,6 +2144,16 @@ dependencies = [
 ]
 
 [[package]]
+name = "kvasir-pregen-driver"
+version = "0.2.1+26.3-26.60"
+dependencies = [
+ "futures",
+ "kvasir-pregen",
+ "tokio",
+ "tracing",
+]
+
+[[package]]
 name = "lazy_static"
 version = "1.5.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"

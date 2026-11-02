@@ -1,0 +1,19 @@
+[package]
+name = "kvasir-pregen-driver"
+description = "Runs a kvasir-pregen job against any chunk generator: keeps a throttled window of chunks in flight, saves the resume point, obeys pause/resume/cancel."
+version.workspace = true
+edition.workspace = true
+rust-version.workspace = true
+license.workspace = true
+
+[dependencies]
+kvasir-pregen = { path = "../kvasir-pregen" }
+futures = { workspace = true, features = ["alloc"] }
+tokio = { workspace = true, features = ["sync", "time", "macros"] }
+tracing.workspace = true
+
+[dev-dependencies]
+tokio = { workspace = true, features = ["sync", "time", "macros", "rt", "test-util"] }
+
+[lints]
+workspace = true

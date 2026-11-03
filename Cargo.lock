@@ -2170,6 +2170,14 @@ name = "kvasir-tickprof"
 version = "0.2.1+26.3-26.60"
 
 [[package]]
+name = "kvasir-worldlock"
+version = "0.2.1+26.3-26.60"
+dependencies = [
+ "tempfile",
+ "thiserror 2.0.21",
+]
+
+[[package]]
 name = "lazy_static"
 version = "1.5.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -2969,6 +2977,7 @@ name = "pumpkin"
 version = "0.2.1+26.3-26.60"
 dependencies = [
  "console-subscriber",
+ "kvasir-worldlock",
  "pumpkin-config",
  "pumpkin-core",
  "pumpkin-data",

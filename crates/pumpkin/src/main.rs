@@ -76,6 +76,17 @@ async fn main() {
 
     pumpkin_core::init_logger(&config.advanced);
 
+    // `KvasirMC`: one engine per world. Held until the process ends (the kernel drops it then,
+    // however the process ends).
+    let _world_lock =
+        match kvasir_worldlock::WorldLock::acquire(&exec_dir.join(config.basic.get_world_path())) {
+            Ok(lock) => lock,
+            Err(error) => {
+                tracing::error!("{error}");
+                exit(1);
+            }
+        };
+
     if let Some(target_arg) = parse_convert_world_arg(std::env::args().skip(1)) {
         let anvil_default = match &config.advanced.world.chunk {
             pumpkin_config::chunk::ChunkConfig::Anvil(cfg) => cfg.clone(),

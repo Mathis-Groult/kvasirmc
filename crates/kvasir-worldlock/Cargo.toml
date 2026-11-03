@@ -1,0 +1,16 @@
+[package]
+name = "kvasir-worldlock"
+description = "One engine per world: an exclusive lock on a file inside the world folder, held for the life of the process and released by the operating system when it ends, however it ends."
+version.workspace = true
+edition.workspace = true
+rust-version.workspace = true
+license.workspace = true
+
+[lints]
+workspace = true
+
+[dependencies]
+thiserror = { workspace = true, features = ["std"] }
+
+[dev-dependencies]
+tempfile = { workspace = true }

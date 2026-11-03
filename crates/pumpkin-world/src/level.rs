@@ -1,6 +1,7 @@
 use crate::chunk_system::{ChunkListener, ChunkLoading, GenerationSchedule, LevelChannel};
 use crate::generation::generator::WorldGenerator;
 use crate::lighting::DynamicLightEngine;
+use crate::random_tick_sampling::sample_chunk;
 use crate::{
     chunk::{
         ChunkData, ChunkEntityData, ChunkReadingError,
@@ -8,7 +9,6 @@ use crate::{
             Dirtiable, FileIO, LoadedData,
             file_manager::{ChunkFileManager, LevelFileIO},
         },
-        palette::has_random_ticking_fluid,
     },
     generation::get_world_gen_with_all_settings,
     tick::{OrderedTick, ScheduledTick, TickPriority, order},
@@ -20,7 +20,7 @@ use dashmap::{DashMap, Entry};
 use pumpkin_config::{chunk::ChunkConfig, lighting::LightingEngineConfig, world::LevelConfig};
 use pumpkin_data::biome::Biome;
 use pumpkin_data::dimension::Dimension;
-use pumpkin_data::{Block, BlockStateId, block_properties::has_random_ticks, fluid::Fluid};
+use pumpkin_data::{Block, BlockStateId, fluid::Fluid};
 use pumpkin_util::math::{position::BlockPos, vector2::Vector2};
 use pumpkin_util::world_seed::Seed;
 use rustc_hash::FxHashSet;
@@ -547,62 +547,29 @@ impl Level {
         active_chunks: &FxHashSet<Vector2<i32>>,
         random_tick_speed: i64,
     ) -> TickData {
-        let samples_per_section = random_tick_speed.max(0);
+        let samples_per_section = u32::try_from(random_tick_speed.max(0)).unwrap_or(u32::MAX);
+
+        // 1. Random ticks of the active chunks, one thread and one random number generator.
+        // (Spreading this over the Rayon pool was measured: on a busy host a descheduled worker
+        // held the whole tick up for 30-60 ms, which costs more than the 1-3 ms it saves.)
+        let mut rng = rand::rng();
+        let mut random_ticks = Vec::with_capacity(active_chunks.len() * 3);
+        for pos in active_chunks {
+            if let Some(chunk) = self.loaded_chunks.get(pos) {
+                sample_chunk(
+                    chunk.value(),
+                    samples_per_section,
+                    &mut rng,
+                    &mut random_ticks,
+                );
+            }
+        }
 
         let mut ticks = TickData {
             block_ticks: Vec::new(),
             fluid_ticks: Vec::new(),
-            random_ticks: Vec::with_capacity(active_chunks.len() * 3),
+            random_ticks,
         };
-
-        // 1. Process active chunks (random ticks, block entities)
-        for pos in active_chunks {
-            if let Some(chunk) = self.loaded_chunks.get(pos) {
-                let chunk = chunk.value();
-                let chunk_x_base = chunk.x * 16;
-                let chunk_z_base = chunk.z * 16;
-                let section_count = chunk.section.count;
-
-                // Use the bitmask to skip sections
-                let mask = chunk.section.randomly_ticking_mask.load(Ordering::Relaxed);
-                if mask != 0 {
-                    let sections = chunk
-                        .section
-                        .block_sections
-                        .read()
-                        .unwrap_or_else(std::sync::PoisonError::into_inner);
-                    let min_y = chunk.section.min_y;
-
-                    for i in 0..section_count {
-                        if (mask & (1 << i)) == 0 {
-                            continue;
-                        }
-                        let y_base = min_y + (i as i32 * 16);
-                        for _ in 0..samples_per_section {
-                            let r = rand::random::<u32>();
-                            let x_offset = (r & 0xF) as usize;
-                            let z_offset = (r >> 8 & 0xF) as usize;
-                            let y_in_section = ((r >> 4) & 0xF) as usize;
-
-                            let block_state_id = sections[i].get(x_offset, y_in_section, z_offset);
-                            let tick_block = has_random_ticks(block_state_id);
-                            let tick_fluid = has_random_ticking_fluid(block_state_id);
-                            if tick_block || tick_fluid {
-                                ticks.random_ticks.push(RandomTickSample {
-                                    position: BlockPos::new(
-                                        chunk_x_base + x_offset as i32,
-                                        y_base + y_in_section as i32,
-                                        chunk_z_base + z_offset as i32,
-                                    ),
-                                    tick_block,
-                                    tick_fluid,
-                                });
-                            }
-                        }
-                    }
-                }
-            }
-        }
 
         // 2. Process chunks with scheduled ticks
         // We collect keys first to avoid holding DashSet shard lock while accessing loaded_chunks (deadlock risk)
@@ -1126,5 +1093,168 @@ mod tests {
 
         let end_level = Level::from_root_folder(&config, root.clone(), 0, Dimension::THE_END);
         assert_eq!(end_level.level_folder.dim_folder, root.join("DIM1"));
+    }
+    /// The sampling `get_tick_data` did before: a fresh thread-local random number per draw. Kept so
+    /// the new code is timed against it in the same process, interleaved.
+    fn random_ticks_one_thread(
+        level: &Level,
+        active: &FxHashSet<Vector2<i32>>,
+        per_section: i64,
+    ) -> Vec<RandomTickSample> {
+        let mut found = Vec::new();
+        for pos in active {
+            let Some(chunk) = level.loaded_chunks.get(pos) else {
+                continue;
+            };
+            let chunk = chunk.value();
+            let mask = chunk
+                .section
+                .randomly_ticking_mask
+                .load(std::sync::atomic::Ordering::Relaxed);
+            if mask == 0 {
+                continue;
+            }
+            let sections = chunk.section.block_sections.read().unwrap();
+            for i in 0..chunk.section.count {
+                if mask & (1 << i) == 0 {
+                    continue;
+                }
+                for _ in 0..per_section {
+                    let r = rand::random::<u32>();
+                    let (x, z, y) = (
+                        (r & 0xF) as usize,
+                        (r >> 8 & 0xF) as usize,
+                        ((r >> 4) & 0xF) as usize,
+                    );
+                    let id = sections[i].get(x, y, z);
+                    let (b, f) = (
+                        pumpkin_data::block_properties::has_random_ticks(id),
+                        crate::chunk::palette::has_random_ticking_fluid(id),
+                    );
+                    if b || f {
+                        found.push(RandomTickSample {
+                            position: BlockPos::new(
+                                chunk.x * 16 + x as i32,
+                                chunk.section.min_y + i as i32 * 16 + y as i32,
+                                chunk.z * 16 + z as i32,
+                            ),
+                            tick_block: b,
+                            tick_fluid: f,
+                        });
+                    }
+                }
+            }
+        }
+        found
+    }
+
+    /// A level holding a `(2r+1)^2` square of chunks that each have a grass surface at y 62 and
+    /// leaves at y 70, so two sections per chunk can random tick, like ordinary terrain.
+    fn level_with_terrain(radius: i32) -> (Arc<Level>, FxHashSet<Vector2<i32>>, TempDir) {
+        let temp_dir = TempDir::new().unwrap();
+        let level = Level::from_root_folder(
+            &LevelConfig::default(),
+            temp_dir.path().to_path_buf(),
+            0,
+            Dimension::OVERWORLD,
+        );
+        let mut active = FxHashSet::default();
+        for x in -radius..=radius {
+            for z in -radius..=radius {
+                let chunk = ChunkData::empty(x, z);
+                for bx in 0..16 {
+                    for bz in 0..16 {
+                        chunk.section.set_block_absolute_y(
+                            bx,
+                            62,
+                            bz,
+                            Block::GRASS_BLOCK.default_state.id,
+                        );
+                        chunk.section.set_block_absolute_y(
+                            bx,
+                            63,
+                            bz,
+                            Block::STONE.default_state.id,
+                        );
+                        if (bx + bz) % 4 == 0 {
+                            chunk.section.set_block_absolute_y(
+                                bx,
+                                70,
+                                bz,
+                                Block::OAK_LEAVES.default_state.id,
+                            );
+                        }
+                    }
+                }
+                level
+                    .loaded_chunks
+                    .insert(Vector2::new(x, z), Arc::new(chunk));
+                active.insert(Vector2::new(x, z));
+            }
+        }
+        (level, active, temp_dir)
+    }
+
+    #[tokio::test]
+    async fn random_ticks_match_the_one_thread_version() {
+        let (level, active, _dir) = level_with_terrain(12);
+        // About 160 positions per call, so add up 60 calls: the two counts then differ by chance
+        // by roughly 1.6% of their size, and 6% is nearly four times that.
+        let mut new = Vec::new();
+        let mut old = Vec::new();
+        for _ in 0..60 {
+            new.extend(level.get_tick_data(&active, 3).random_ticks);
+            old.extend(random_ticks_one_thread(&level, &active, 3));
+        }
+        let (n, o) = (new.len() as f64, old.len() as f64);
+        assert!(n > 0.0 && o > 0.0);
+        assert!(((n - o) / o).abs() < 0.06, "new {n}, old {o}");
+        for s in &new {
+            assert!(s.tick_block || s.tick_fluid);
+            assert!(
+                (s.position.0.y == 62) || (s.position.0.y == 70),
+                "y {}",
+                s.position.0.y
+            );
+        }
+        assert!(new.iter().any(|s| s.position.0.y == 62));
+        assert!(new.iter().any(|s| s.position.0.y == 70));
+    }
+
+    #[tokio::test]
+    async fn a_zero_random_tick_speed_gives_no_random_ticks() {
+        let (level, active, _dir) = level_with_terrain(3);
+        assert!(level.get_tick_data(&active, 0).random_ticks.is_empty());
+        assert!(level.get_tick_data(&active, -5).random_ticks.is_empty());
+    }
+
+    #[tokio::test]
+    #[allow(clippy::print_stdout)] // the point of this test is the printed table
+    #[ignore = "timing: cargo test --profile kvasir-fast -p pumpkin-world get_tick_data_cost -- --ignored --nocapture"]
+    async fn get_tick_data_cost() {
+        let (level, active, _dir) = level_with_terrain(24); // 2401 chunks, about 10 players' worth
+        let time = |f: &dyn Fn() -> usize| {
+            let mut samples = Vec::new();
+            for _ in 0..60 {
+                let start = std::time::Instant::now();
+                std::hint::black_box(f());
+                samples.push(start.elapsed().as_secs_f64() * 1000.0);
+            }
+            samples.sort_by(f64::total_cmp);
+            (
+                samples[samples.len() / 2],
+                samples[0],
+                samples[samples.len() - 1],
+            )
+        };
+        // interleaved, so any drift of the machine hits both
+        for _ in 0..4 {
+            let old = time(&|| random_ticks_one_thread(&level, &active, 3).len());
+            let new = time(&|| level.get_tick_data(&active, 3).random_ticks.len());
+            println!(
+                "rand::random per draw: {:.3} ms (min {:.3}, max {:.3}) | one rng: {:.3} ms (min {:.3}, max {:.3})",
+                old.0, old.1, old.2, new.0, new.1, new.2
+            );
+        }
     }
 }

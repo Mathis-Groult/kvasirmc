@@ -15,6 +15,7 @@ pub mod generation;
 pub mod level;
 pub mod lighting;
 pub mod poi;
+pub mod random_tick_sampling;
 pub mod test_instance;
 pub mod tick;
 pub mod world;

@@ -27,6 +27,7 @@ members = [
     "crates/kvasir-pregen",
     "crates/kvasir-pregen-driver",
     "crates/kvasir-pump-codec",
+    "crates/kvasir-tickprof",
     "tools/pumpkin-codegen",
     "tools/pumpkin-fuzzer",
     "tools/pumpkin-tester",
@@ -153,6 +154,15 @@ codegen-units = 16
 
 [profile.release.package.pumpkin-wasm-host-v0_2]
 codegen-units = 16
+
+# KvasirMC: for A/B measurements. Same optimisation level as release, but no LTO and parallel code
+# generation, so a one-line change rebuilds in minutes instead of 35-45. Compare only builds made
+# with the same profile; confirm a result once with the release profile.
+[profile.kvasir-fast]
+inherits = "release"
+lto = false
+codegen-units = 16
+incremental = true
 
 [profile.bench]
 debug = true

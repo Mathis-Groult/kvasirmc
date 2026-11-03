@@ -56,8 +56,8 @@ pub mod builtin_game_tests;
 mod connection_cache;
 pub(crate) mod debug_profiler;
 pub mod enchantment;
-pub mod pregen;
 mod key_store;
+pub mod pregen;
 pub mod recipe;
 pub mod scheduler;
 pub mod seasonal_events;
@@ -152,6 +152,8 @@ pub struct Server {
     tasks: TaskTracker,
     /// `KvasirMC`: running world pre-generation jobs.
     pub pregen: pregen::PregenService,
+    /// `KvasirMC`: how long each phase of a tick takes (`/tickprofile`).
+    pub tickprof: kvasir_tickprof::TickProfile,
     pub runtime: tokio::runtime::Handle,
     /// Dedicated Rayon thread pool for synchronous world and entity simulation (ticks).
     pub simulation_pool: Arc<rayon::ThreadPool>,
@@ -348,6 +350,7 @@ impl Server {
             debug_profiler: debug_profiler::DebugProfiler::new(),
             tasks: TaskTracker::new(),
             pregen: pregen::PregenService::default(),
+            tickprof: kvasir_tickprof::TickProfile::new(),
             stop_token: crate::STOP_INTERRUPT.child_token(),
             admission_closed: std::sync::RwLock::new(false),
             runtime: tokio::runtime::Handle::current(),

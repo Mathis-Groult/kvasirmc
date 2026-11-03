@@ -1557,8 +1557,9 @@ impl World {
             *guard = raids;
         };
 
+        let prelude_elapsed = start.elapsed();
         let t_chunks = std::time::Instant::now();
-        self.tick_chunks();
+        self.tick_chunks(&server.tickprof);
         let chunk_elapsed = t_chunks.elapsed();
 
         let players = self.players.load();
@@ -1611,6 +1612,10 @@ impl World {
             })
             .collect();
 
+        server
+            .tickprof
+            .record(kvasir_tickprof::Phase::EntityFilter, t_entities.elapsed());
+        let t_planning = std::time::Instant::now();
         // Entities that can affect each other tick in list order; separate islands run in
         // parallel.
         let islands_config = &server.advanced_config.world.entity_islands;
@@ -1674,6 +1679,10 @@ impl World {
             None
         };
         let first_order = self.level.reserve_entity_tick_orders(tickable.len());
+        server
+            .tickprof
+            .record(kvasir_tickprof::Phase::EntityPlanning, t_planning.elapsed());
+        let t_ticking = std::time::Instant::now();
 
         let server_ref = server.as_ref();
         let tick_entity = |index: usize| {
@@ -1722,10 +1731,15 @@ impl World {
             }
             order::set_entity_order(None);
         }
+        server
+            .tickprof
+            .record(kvasir_tickprof::Phase::EntityTicking, t_ticking.elapsed());
         self.order_tick_spawns();
         let entity_elapsed = t_entities.elapsed();
 
+        let t_tracking = std::time::Instant::now();
         self.entity_tracker.update_all(self);
+        let tracking_elapsed = t_tracking.elapsed();
 
         let mut block_entities: Vec<Arc<dyn BlockEntity>> = Vec::new();
         if self.block_entities.len() < active_chunks.len() {
@@ -1753,17 +1767,31 @@ impl World {
         self.flush_comparator_updates(&block_entities);
         let block_entity_elapsed = t_be.elapsed();
 
+        let t_tickets = std::time::Instant::now();
         self.level
             .chunk_loading
             .lock()
             .unwrap_or_else(std::sync::PoisonError::into_inner)
             .send_change();
+        let tickets_elapsed = t_tickets.elapsed();
 
         if let Some(ref fight_mutex) = self.dragon_fight {
             dragon_fight::DragonFight::tick(fight_mutex, self);
         }
 
         let total_elapsed = start.elapsed();
+        {
+            use kvasir_tickprof::Phase;
+            let profile = &server.tickprof;
+            profile.record(Phase::World, total_elapsed);
+            profile.record(Phase::Prelude, prelude_elapsed);
+            profile.record(Phase::Chunks, chunk_elapsed);
+            profile.record(Phase::Players, player_elapsed);
+            profile.record(Phase::Entities, entity_elapsed);
+            profile.record(Phase::EntityTracking, tracking_elapsed);
+            profile.record(Phase::BlockEntities, block_entity_elapsed);
+            profile.record(Phase::ChunkTickets, tickets_elapsed);
+        }
         if total_elapsed.as_millis() > 50 {
             debug!(
                 "Slow Tick [{}ms]: Chunks: {:?} | Players({}): {:?} | Entities({}): {:?} | Block Entities({}): {:?}",
@@ -2074,17 +2102,21 @@ impl World {
     }
 
     #[expect(clippy::too_many_lines)]
-    pub fn tick_chunks(self: &Arc<Self>) {
+    pub fn tick_chunks(self: &Arc<Self>, profile: &kvasir_tickprof::TickProfile) {
+        use kvasir_tickprof::Phase;
         const BATCH_SIZE: usize = 32;
         const INHABITED_TIME_BATCH_SIZE: usize = 1024;
         let random_tick_speed = self.level_info.load().game_rules.random_tick_speed;
 
+        let mut stage = std::time::Instant::now();
         let active_chunks = self
             .active_chunks
             .read()
             .unwrap_or_else(std::sync::PoisonError::into_inner)
             .clone();
         let tick_data = self.level.get_tick_data(&active_chunks, random_tick_speed);
+        profile.record(Phase::ChunkTickData, stage.elapsed());
+        stage = std::time::Instant::now();
 
         // 1. Parallel Block Ticks via Rayon
         let world = self.clone();
@@ -2121,6 +2153,9 @@ impl World {
                     }
                 }
             });
+
+        profile.record(Phase::ChunkScheduled, stage.elapsed());
+        stage = std::time::Instant::now();
 
         // 3. Parallel Random Ticks via Rayon
         let world = self.clone();
@@ -2161,6 +2196,9 @@ impl World {
                     }
                 }
             });
+
+        profile.record(Phase::ChunkRandom, stage.elapsed());
+        stage = std::time::Instant::now();
 
         // 4. Calculate Spawn List (Sequential setup)
         let spawn_state = self.spawn_state.load();
@@ -2205,6 +2243,9 @@ impl World {
             });
         }
 
+        profile.record(Phase::ChunkSpawning, stage.elapsed());
+        stage = std::time::Instant::now();
+
         // Batch these cheap lookups and atomic increments to avoid waking Rayon
         // workers for tiny tasks every tick, while retaining parallelism for large sets.
         let loaded_chunks = self.level.loaded_chunks.clone();
@@ -2217,6 +2258,7 @@ impl World {
                     chunk.inhabited_time.fetch_add(1, Relaxed);
                 }
             });
+        profile.record(Phase::ChunkInhabited, stage.elapsed());
     }
 
     pub fn contains_any_liquid(&self, bounding_box: BoundingBox) -> bool {

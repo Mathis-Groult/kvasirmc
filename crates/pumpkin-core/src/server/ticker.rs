@@ -126,6 +126,10 @@ impl Ticker {
             }
 
             server.update_tick_times(tick_duration_nanos);
+            server.tickprof.record(
+                kvasir_tickprof::Phase::Server,
+                std::time::Duration::from_nanos(u64::try_from(tick_duration_nanos).unwrap_or(0)),
+            );
 
             if server.stop_token.is_cancelled() {
                 break 'ticker;

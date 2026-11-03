@@ -2166,6 +2166,10 @@ dependencies = [
 ]
 
 [[package]]
+name = "kvasir-tickprof"
+version = "0.2.1+26.3-26.60"
+
+[[package]]
 name = "lazy_static"
 version = "1.5.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -3084,6 +3088,7 @@ dependencies = [
  "indexmap",
  "kvasir-pregen",
  "kvasir-pregen-driver",
+ "kvasir-tickprof",
  "libc",
  "libloading",
  "notify",

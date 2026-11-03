@@ -880,7 +880,9 @@ enum RawBlockEntityModifier {
 fn resolve_output_state(raw: &RawOutputState) -> Option<&'static BlockState> {
     let name = raw.name.strip_prefix("minecraft:").unwrap_or(&raw.name);
     let block = Block::from_name(name).or_else(|| Block::from_registry_key(name))?;
-    if raw.properties.is_empty() {
+    // A block with a single state has no properties to set; asking it to apply some panics inside
+    // the generated tables, and a datapack must not be able to stop the server.
+    if raw.properties.is_empty() || block.states.len() == 1 {
         Some(block.default_state)
     } else {
         let props_vec: Vec<Property> = raw
@@ -1397,6 +1399,33 @@ pub fn load_processor_list(name: &str) -> Arc<[StructureProcessor]> {
 #[cfg(test)]
 mod tests {
     use super::*;
+
+    fn output(name: &str, properties: &[(&str, &str)]) -> RawOutputState {
+        RawOutputState {
+            name: name.to_owned(),
+            properties: properties
+                .iter()
+                .map(|(k, v)| ((*k).to_owned(), (*v).to_owned()))
+                .collect(),
+        }
+    }
+
+    #[test]
+    fn properties_on_a_block_that_has_none_are_ignored_instead_of_panicking() {
+        let state = resolve_output_state(&output("minecraft:stone", &[("facing", "north")]));
+        assert_eq!(state.map(|s| s.id), Some(Block::STONE.default_state.id));
+    }
+
+    #[test]
+    fn properties_on_a_block_that_has_them_are_applied() {
+        let state = resolve_output_state(&output("minecraft:oak_log", &[("axis", "x")])).unwrap();
+        assert_ne!(state.id, Block::OAK_LOG.default_state.id);
+    }
+
+    #[test]
+    fn an_unknown_block_resolves_to_nothing() {
+        assert!(resolve_output_state(&output("kvasirmc:nonexistent", &[])).is_none());
+    }
 
     #[test]
     fn parses_ancient_city_processor_lists() {

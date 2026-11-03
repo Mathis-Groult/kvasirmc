@@ -206,7 +206,16 @@ impl DatapackManager {
 
         scan_datapacks_dir(
             &datapacks_dir,
-            enabled_packs,
+            Some(enabled_packs),
+            &mut acc,
+            &mut loaded_packs_vec,
+        );
+
+        // KvasirMC: the data of installed mods (written by the mod loader) is always on; it is
+        // not the player's choice, a mod without its data is broken.
+        scan_datapacks_dir(
+            Path::new(MOD_DATA_DIR),
+            None,
             &mut acc,
             &mut loaded_packs_vec,
         );
@@ -1642,9 +1651,14 @@ fn load_bundled_datapacks(
     }
 }
 
+/// `KvasirMC`: where the mod loader puts each Fabric mod's `data/` as a pack folder, next to the
+/// server's working directory.
+const MOD_DATA_DIR: &str = "mods-data";
+
 fn scan_datapacks_dir(
     datapacks_dir: &Path,
-    enabled_packs: &[String],
+    // `None`: every pack in the folder is enabled.
+    enabled_packs: Option<&[String]>,
     acc: &mut PackContentAccumulators<'_>,
     loaded_packs_vec: &mut Vec<LoadedDatapack>,
 ) {
@@ -1672,8 +1686,7 @@ fn scan_datapacks_dir(
 
         let pack_id = format!("file/{file_name}");
         let is_enabled = enabled_packs
-            .iter()
-            .any(|p| p == &pack_id || p == &file_name);
+            .is_none_or(|enabled| enabled.iter().any(|p| p == &pack_id || p == &file_name));
         if !is_enabled {
             continue;
         }

@@ -2156,6 +2156,16 @@ dependencies = [
 ]
 
 [[package]]
+name = "kvasir-pump-codec"
+version = "0.2.1+26.3-26.60"
+dependencies = [
+ "ruzstd",
+ "thiserror 2.0.21",
+ "xxhash-rust",
+ "zstd",
+]
+
+[[package]]
 name = "lazy_static"
 version = "1.5.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -3417,6 +3427,7 @@ dependencies = [
  "dashmap",
  "flate2",
  "futures",
+ "kvasir-pump-codec",
  "lz4-java-wrc",
  "md5",
  "pumpkin-config",

@@ -40,6 +40,7 @@ dashmap.workspace = true
 flate2.workspace = true
 lz4-java-wrc.workspace = true
 ruzstd.workspace = true
+kvasir-pump-codec = { path = "../kvasir-pump-codec" }
 xxhash-rust.workspace = true
 
 rayon.workspace = true

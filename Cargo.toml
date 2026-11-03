@@ -26,6 +26,7 @@ members = [
     "crates/pumpkin-world",
     "crates/kvasir-pregen",
     "crates/kvasir-pregen-driver",
+    "crates/kvasir-pump-codec",
     "tools/pumpkin-codegen",
     "tools/pumpkin-fuzzer",
     "tools/pumpkin-tester",

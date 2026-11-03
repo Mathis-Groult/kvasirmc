@@ -1,19 +1,14 @@
 use std::{
     fs::{File, OpenOptions},
-    io::Read,
     path::{Path, PathBuf},
     time::Duration,
 };
 
 use bytes::{Buf, BufMut, Bytes};
+use kvasir_pump_codec::CodecError;
 use pumpkin_util::math::vector2::Vector2;
 use rustc_hash::FxHashMap;
-use ruzstd::{
-    decoding::StreamingDecoder,
-    encoding::{CompressionLevel, compress_to_vec},
-};
 use tracing::warn;
-use xxhash_rust::xxh64::xxh64;
 
 use crate::chunk::{
     ChunkReadingError, ChunkSerializingError, ChunkWritingError,
@@ -21,17 +16,21 @@ use crate::chunk::{
     io::{RegionFile, read_exact_at, write_all_at},
 };
 
+/// The frame codec's error as the I/O error the region file code reports.
+fn codec_error(error: &CodecError) -> std::io::Error {
+    let kind = match error {
+        CodecError::ChunkTooLarge(_) => std::io::ErrorKind::InvalidInput,
+        CodecError::Truncated(_) => std::io::ErrorKind::UnexpectedEof,
+        _ => std::io::ErrorKind::InvalidData,
+    };
+    std::io::Error::new(kind, error.to_string())
+}
+
 /// Magic signature and format version (`"PUMP"` + version 1).
 const SIGNATURE: [u8; 8] = *b"PUMP\x00\x00\x00\x01";
 
 /// Magic prefix for a native `.pump` binary chunk payload.
 pub const PUMP_CHUNK_MAGIC: [u8; 4] = *b"PCHK";
-
-/// Per-chunk frame header: `u32` uncompressed byte length + `u64` `XXH64` checksum.
-const CHUNK_FRAME_HEADER_BYTES: usize = 12;
-
-/// Upper bound on a single decompressed chunk payload (64 MiB) to guard against corrupt headers.
-const MAX_DECOMPRESSED_CHUNK_BYTES: usize = 64 * 1024 * 1024;
 
 /// Sector alignment in bytes. 256-byte sectors keep 32-bit sector offsets able to address up to
 /// 1 TiB per region file while wasting 16x less tail padding than Anvil's 4 KiB sectors.
@@ -301,50 +300,15 @@ impl RegionFile for PumpFile {
     }
 
     fn decode_chunk(raw: Bytes) -> Result<Bytes, ChunkReadingError> {
-        if raw.len() < CHUNK_FRAME_HEADER_BYTES {
-            return Err(ChunkReadingError::IoError(std::io::Error::from(
-                std::io::ErrorKind::UnexpectedEof,
-            )));
-        }
-        let mut header = &raw[..CHUNK_FRAME_HEADER_BYTES];
-        let uncompressed_len = header.get_u32() as usize;
-        let expected_checksum = header.get_u64();
-        if uncompressed_len > MAX_DECOMPRESSED_CHUNK_BYTES {
-            return Err(ChunkReadingError::IoError(std::io::Error::new(
-                std::io::ErrorKind::InvalidData,
-                format!("pump chunk uncompressed length {uncompressed_len} exceeds limit"),
-            )));
-        }
-
-        let mut decoder = StreamingDecoder::new(&raw[CHUNK_FRAME_HEADER_BYTES..])
-            .map_err(|e| ChunkReadingError::IoError(std::io::Error::other(e.to_string())))?;
-        let mut decompressed = Vec::with_capacity(uncompressed_len);
-        decoder
-            .read_to_end(&mut decompressed)
-            .map_err(ChunkReadingError::IoError)?;
-        if decompressed.len() != uncompressed_len || xxh64(&decompressed, 0) != expected_checksum {
-            return Err(ChunkReadingError::IoError(std::io::Error::new(
-                std::io::ErrorKind::InvalidData,
-                "pump chunk checksum or length mismatch",
-            )));
-        }
-        Ok(decompressed.into())
+        kvasir_pump_codec::decode(&raw)
+            .map(Bytes::from)
+            .map_err(|error| ChunkReadingError::IoError(codec_error(&error)))
     }
 
     fn encode_chunk(nbt: Bytes, _config: &()) -> Result<Bytes, ChunkWritingError> {
-        let uncompressed_len = u32::try_from(nbt.len()).map_err(|_| {
-            ChunkWritingError::IoError(std::io::Error::new(
-                std::io::ErrorKind::InvalidInput,
-                "chunk payload too large",
-            ))
-        })?;
-        let checksum = xxh64(&nbt, 0);
-        let compressed = compress_to_vec(&nbt[..], CompressionLevel::Fastest);
-        let mut out = Vec::with_capacity(CHUNK_FRAME_HEADER_BYTES + compressed.len());
-        out.put_u32(uncompressed_len);
-        out.put_u64(checksum);
-        out.extend_from_slice(&compressed);
-        Ok(out.into())
+        kvasir_pump_codec::encode(&nbt)
+            .map(Bytes::from)
+            .map_err(|error| ChunkWritingError::IoError(codec_error(&error)))
     }
 
     fn serialize_chunk<D: SingleChunkDataSerializer>(

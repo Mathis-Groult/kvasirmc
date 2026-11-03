@@ -1,0 +1,18 @@
+[package]
+name = "kvasir-pump-codec"
+description = "The .pump chunk frame: length, XXH64 checksum, zstd. Pure functions, one reused compression context per thread."
+version.workspace = true
+edition.workspace = true
+rust-version.workspace = true
+license.workspace = true
+
+[dependencies]
+thiserror = { workspace = true, features = ["std"] }
+xxhash-rust.workspace = true
+zstd = { version = "0.13", default-features = false }
+
+[dev-dependencies]
+ruzstd.workspace = true
+
+[lints]
+workspace = true

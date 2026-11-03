@@ -20,4 +20,4 @@ mod report;
 pub use driver::{Control, Driver, Handle, Options, Outcome};
 pub use file_store::{FileStore, LoadError};
 pub use ports::{Generator, JobStore, TickMeter};
-pub use report::{Report, State};
+pub use report::{Report, Stall, State};

@@ -31,6 +31,7 @@ mod fetchprofile;
 mod fill;
 mod fillbiome;
 mod forceload;
+mod pregen;
 mod function;
 mod gamemode;
 mod gamerule;
@@ -117,6 +118,7 @@ pub fn default_dispatcher(
     execute::register(&mut dispatcher, registry);
     fillbiome::register(&mut dispatcher, registry);
     forceload::register(&mut dispatcher, registry);
+    pregen::register(&mut dispatcher, registry);
     ride::register(&mut dispatcher, registry);
     recipe::register(&mut dispatcher, registry);
     reload::register(&mut dispatcher, registry);

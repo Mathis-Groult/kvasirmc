@@ -56,6 +56,7 @@ pub mod builtin_game_tests;
 mod connection_cache;
 pub(crate) mod debug_profiler;
 pub mod enchantment;
+pub mod pregen;
 mod key_store;
 pub mod recipe;
 pub mod scheduler;
@@ -149,6 +150,8 @@ pub struct Server {
     /// Manages scheduled datapack functions (`/schedule`)
     pub scheduled_functions: Arc<crate::server::scheduler::ScheduledFunctionQueue>,
     tasks: TaskTracker,
+    /// `KvasirMC`: running world pre-generation jobs.
+    pub pregen: pregen::PregenService,
     pub runtime: tokio::runtime::Handle,
     /// Dedicated Rayon thread pool for synchronous world and entity simulation (ticks).
     pub simulation_pool: Arc<rayon::ThreadPool>,
@@ -344,6 +347,7 @@ impl Server {
             tick_count: AtomicI32::new(0),
             debug_profiler: debug_profiler::DebugProfiler::new(),
             tasks: TaskTracker::new(),
+            pregen: pregen::PregenService::default(),
             stop_token: crate::STOP_INTERRUPT.child_token(),
             admission_closed: std::sync::RwLock::new(false),
             runtime: tokio::runtime::Handle::current(),
@@ -469,6 +473,8 @@ impl Server {
         let _ = server
             .datapack_manager
             .execute_function(&server, &source, "#minecraft:load");
+
+        server.pregen.resume_saved(&server);
 
         Ok(server)
     }
@@ -836,6 +842,8 @@ impl Server {
     pub async fn shutdown(&self) {
         self.management_hub.broadcast_server_stopping();
 
+        // Pre-generation jobs end first: they are awaited with the other tasks.
+        self.pregen.stop_all();
         self.tasks.close();
         debug!("Awaiting tasks for server");
         self.tasks.wait().await;

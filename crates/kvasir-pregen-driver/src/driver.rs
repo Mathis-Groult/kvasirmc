@@ -7,12 +7,12 @@ use kvasir_pregen::{ChunkPos, InFlight, Job, Progress, Spiral, Throttle};
 use tokio::{
     select,
     sync::{mpsc, watch},
-    time::{Instant, MissedTickBehavior, interval},
+    time::{Instant, MissedTickBehavior, interval, sleep_until},
 };
 
 use crate::{
     Generator, JobStore, TickMeter,
-    report::{Report, State},
+    report::{Report, Stall, State},
 };
 
 /// A command from the job's owner.
@@ -39,6 +39,11 @@ pub struct Options {
     pub tick_budget_ms: f64,
     /// How often the resume point is saved, the report published and the window adjusted.
     pub checkpoint_every: Duration,
+    /// A chunk in flight for longer than this is reported as stalled, and logged.
+    pub stall_after: Duration,
+    /// After a stop or cancel, how long to wait for the chunks in flight before giving up on
+    /// them. A chunk the generator never answers must not hold up a server shutdown.
+    pub drain_grace: Duration,
 }
 
 impl Default for Options {
@@ -49,6 +54,8 @@ impl Default for Options {
             // A Minecraft tick is 50 ms; leave room for the players' own work.
             tick_budget_ms: 40.0,
             checkpoint_every: Duration::from_secs(1),
+            stall_after: Duration::from_secs(30),
+            drain_grace: Duration::from_secs(10),
         }
     }
 }
@@ -120,6 +127,7 @@ impl<G: Generator, M: TickMeter, S: JobStore> Driver<G, M, S> {
             },
             progress,
             window: options.min_window.max(1),
+            stalled: None,
         };
         let (report, report_rx) = watch::channel(first);
         let handle = Handle {
@@ -140,8 +148,10 @@ impl<G: Generator, M: TickMeter, S: JobStore> Driver<G, M, S> {
         )
     }
 
-    /// Runs the job to its end. Chunk futures are never dropped half way: on [`Control::Stop`] and
-    /// [`Control::Cancel`] those in flight are awaited first, at most one window of them.
+    /// Runs the job to its end. On [`Control::Stop`] and [`Control::Cancel`] the chunks in flight
+    /// are awaited, for at most [`Options::drain_grace`]; those still unanswered then are given up
+    /// on (their tickets stay with the generator) and a stop saves a resume point that includes
+    /// them.
     pub async fn run(self) -> Outcome {
         let Self {
             job,
@@ -153,7 +163,8 @@ impl<G: Generator, M: TickMeter, S: JobStore> Driver<G, M, S> {
             report,
         } = self;
         let started = Instant::now();
-        let mut core = Core::new(job, &options, report);
+        let mut core = Core::new(job, &options, report, started);
+        let mut drain_deadline: Option<Instant> = None;
         let mut running: FuturesUnordered<Pending> = FuturesUnordered::new();
         let mut ticker = interval(options.checkpoint_every);
         ticker.set_missed_tick_behavior(MissedTickBehavior::Delay);
@@ -173,16 +184,23 @@ impl<G: Generator, M: TickMeter, S: JobStore> Driver<G, M, S> {
                 command = control.recv(), if control_open => {
                     if let Some(command) = command {
                         core.apply(command);
-                        core.checkpoint(&store, started, &meter);
+                        if core.stop.is_some() && drain_deadline.is_none() {
+                            drain_deadline = Some(Instant::now() + options.drain_grace);
+                        }
+                        core.checkpoint(&store, &meter);
                     } else {
                         // The owner dropped its handle: the job carries on unattended.
                         control_open = false;
                     }
                 }
-                _ = ticker.tick() => core.checkpoint(&store, started, &meter),
+                _ = ticker.tick() => core.checkpoint(&store, &meter),
+                () = sleep_until(drain_deadline.unwrap_or_else(Instant::now)), if drain_deadline.is_some() => {
+                    Core::abandon(running.len());
+                    break;
+                }
             }
         }
-        core.end(&store, started)
+        core.end(&store)
     }
 }
 
@@ -198,11 +216,15 @@ struct Core {
     stop: Option<Control>,
     exhausted: bool,
     save_failing: bool,
+    stall_after_ms: u64,
+    /// The chunk and multiple of `stall_after` last logged, so a stall is not logged every second.
+    stall_logged: Option<(ChunkPos, u64)>,
+    started: Instant,
     report: watch::Sender<Report>,
 }
 
 impl Core {
-    fn new(job: Job, options: &Options, report: watch::Sender<Report>) -> Self {
+    fn new(job: Job, options: &Options, report: watch::Sender<Report>, started: Instant) -> Self {
         let mut progress = Progress::new(job.total());
         progress.record(0, job.done);
         Self {
@@ -215,9 +237,16 @@ impl Core {
             stop: None,
             exhausted: false,
             save_failing: false,
+            stall_after_ms: u64::try_from(options.stall_after.as_millis()).unwrap_or(u64::MAX),
+            stall_logged: None,
+            started,
             report,
             job,
         }
+    }
+
+    fn now_ms(&self) -> u64 {
+        u64::try_from(self.started.elapsed().as_millis()).unwrap_or(u64::MAX)
     }
 
     const fn may_hand_out(&self) -> bool {
@@ -232,7 +261,9 @@ impl Core {
                 self.exhausted = true;
                 return;
             };
-            self.flight.hand_out(pos, before, self.spiral.cursor());
+            let now_ms = self.now_ms();
+            self.flight
+                .hand_out(pos, before, self.spiral.cursor(), now_ms);
             let generator = Arc::clone(generator);
             running.push(Box::pin(async move {
                 generator.generate(pos).await;
@@ -254,8 +285,8 @@ impl Core {
     }
 
     /// Saves the resume point, adjusts the window to the server's tick times, publishes a report.
-    fn checkpoint<S: JobStore, M: TickMeter>(&mut self, store: &S, started: Instant, meter: &M) {
-        let now_ms = u64::try_from(started.elapsed().as_millis()).unwrap_or(u64::MAX);
+    fn checkpoint<S: JobStore, M: TickMeter>(&mut self, store: &S, meter: &M) {
+        let now_ms = self.now_ms();
         self.progress.record(now_ms, self.flight.finished_total());
         self.throttle.observe(meter.tick_ms(), self.tick_budget_ms);
         self.save(store);
@@ -286,17 +317,52 @@ impl Core {
         }
     }
 
-    fn publish(&self, state: State) {
+    /// The oldest chunk in flight, if it has waited past the stall threshold. Logs a warning the
+    /// first time and again at each further multiple of the threshold.
+    fn stall(&mut self) -> Option<Stall> {
+        let (pos, at_ms) = self.flight.oldest_unfinished()?;
+        let waited_ms = self.now_ms().saturating_sub(at_ms);
+        if waited_ms < self.stall_after_ms {
+            self.stall_logged = None;
+            return None;
+        }
+        let multiple = waited_ms / self.stall_after_ms.max(1);
+        if self.stall_logged != Some((pos, multiple)) {
+            tracing::warn!(
+                "pre-generation: chunk [{}, {}] has been in flight for {}s with {} others",
+                pos.x,
+                pos.z,
+                waited_ms / 1000,
+                self.flight.unfinished().saturating_sub(1)
+            );
+            self.stall_logged = Some((pos, multiple));
+        }
+        Some(Stall {
+            pos,
+            waiting: Duration::from_millis(waited_ms),
+        })
+    }
+
+    fn publish(&mut self, state: State) {
+        let stalled = self.stall();
         self.report.send_replace(Report {
             state,
             progress: self.progress.clone(),
             window: self.throttle.window(),
+            stalled,
         });
     }
 
+    /// Gives up on the chunks still in flight after the drain grace.
+    fn abandon(count: usize) {
+        tracing::warn!(
+            "pre-generation: giving up on {count} chunk(s) the generator did not answer in time"
+        );
+    }
+
     /// The loop is over: everything in flight is finished.
-    fn end<S: JobStore>(&mut self, store: &S, started: Instant) -> Outcome {
-        let now_ms = u64::try_from(started.elapsed().as_millis()).unwrap_or(u64::MAX);
+    fn end<S: JobStore>(&mut self, store: &S) -> Outcome {
+        let now_ms = self.now_ms();
         self.progress.record(now_ms, self.flight.finished_total());
         let (outcome, state) = match self.stop {
             Some(Control::Cancel) => (Outcome::Cancelled, State::Cancelled),

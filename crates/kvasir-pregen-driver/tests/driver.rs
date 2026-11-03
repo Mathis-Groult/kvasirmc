@@ -23,6 +23,8 @@ const ORIGIN: ChunkPos = ChunkPos { x: 0, z: 0 };
 #[derive(Default)]
 struct FakeWorld {
     delay: Duration,
+    /// A chunk the world never answers.
+    hang: Option<ChunkPos>,
     generated: Mutex<Vec<ChunkPos>>,
     running: AtomicUsize,
     peak: AtomicUsize,
@@ -32,6 +34,14 @@ impl FakeWorld {
     fn with_delay(delay: Duration) -> Arc<Self> {
         Arc::new(Self {
             delay,
+            ..Self::default()
+        })
+    }
+
+    fn hanging_at(delay: Duration, hang: ChunkPos) -> Arc<Self> {
+        Arc::new(Self {
+            delay,
+            hang: Some(hang),
             ..Self::default()
         })
     }
@@ -49,6 +59,9 @@ impl Generator for FakeWorld {
     async fn generate(&self, pos: ChunkPos) {
         let now = self.running.fetch_add(1, Ordering::SeqCst) + 1;
         self.peak.fetch_max(now, Ordering::SeqCst);
+        if self.hang == Some(pos) {
+            std::future::pending::<()>().await;
+        }
         sleep(self.delay).await;
         self.running.fetch_sub(1, Ordering::SeqCst);
         self.generated.lock().unwrap().push(pos);
@@ -106,6 +119,8 @@ const fn options(min: u32, max: u32) -> Options {
         max_window: max,
         tick_budget_ms: 40.0,
         checkpoint_every: Duration::from_secs(1),
+        stall_after: Duration::from_secs(5),
+        drain_grace: Duration::from_secs(2),
     }
 }
 
@@ -371,4 +386,103 @@ async fn an_already_finished_job_ends_at_once() {
     let (_handle, task) = start(finished, &world, &meter, &store, options(2, 4));
     assert_eq!(task.await.unwrap(), Outcome::Finished);
     assert!(world.done().is_empty());
+}
+
+#[tokio::test(start_paused = true)]
+async fn a_chunk_that_is_never_answered_is_reported_with_its_position_and_wait() {
+    let stuck = ChunkPos { x: 1, z: 0 };
+    let world = FakeWorld::hanging_at(Duration::from_millis(300), stuck);
+    let (store, meter) = (Mem::default(), Meter::at(5));
+    let (handle, task) = start(job(8), &world, &meter, &store, options(2, 4));
+    sleep(Duration::from_secs(3)).await;
+    assert_eq!(handle.report().stalled, None, "not yet past the threshold");
+    sleep(Duration::from_secs(5)).await;
+    let report = handle.report();
+    let stall = report.stalled.expect("stalled after eight seconds");
+    assert_eq!(stall.pos, stuck);
+    assert!(
+        stall.waiting >= Duration::from_secs(5),
+        "{:?}",
+        stall.waiting
+    );
+    assert!(
+        report.to_string().contains("waiting on chunk [1, 0]"),
+        "{report}"
+    );
+    assert!(handle.send(Control::Cancel));
+    let _ = task.await;
+}
+
+#[tokio::test(start_paused = true)]
+async fn healthy_jobs_never_report_a_stall() {
+    let world = FakeWorld::with_delay(Duration::from_millis(900));
+    let (store, meter) = (Mem::default(), Meter::at(5));
+    let (handle, task) = start(job(30), &world, &meter, &store, options(4, 4));
+    for _ in 0..20 {
+        sleep(Duration::from_secs(1)).await;
+        assert_eq!(handle.report().stalled, None);
+    }
+    assert!(handle.send(Control::Cancel));
+    let _ = task.await;
+}
+
+#[tokio::test(start_paused = true)]
+async fn a_stuck_chunk_cannot_hold_up_a_stop_beyond_the_grace_and_is_not_forgotten() {
+    let stuck = ChunkPos { x: 0, z: 1 };
+    let world = FakeWorld::hanging_at(Duration::from_millis(300), stuck);
+    let (store, meter) = (Mem::default(), Meter::at(5));
+    let job0 = job(8);
+    let all = every_chunk(&job0);
+    let (handle, task) = start(job0, &world, &meter, &store, options(2, 4));
+    sleep(Duration::from_secs(4)).await;
+
+    let asked = tokio::time::Instant::now();
+    assert!(handle.send(Control::Stop));
+    assert_eq!(task.await.unwrap(), Outcome::Stopped);
+    let waited = asked.elapsed();
+    assert!(
+        waited >= Duration::from_secs(2) && waited < Duration::from_secs(3),
+        "waited {waited:?}: the grace is 2 s"
+    );
+
+    // the file resumes at the stuck chunk, so the next start tries it again
+    let saved = store.saved().expect("a stopped job stays on disk");
+    assert_eq!(saved.spiral().find(|c| *c == stuck), Some(stuck));
+    let second = FakeWorld::with_delay(Duration::from_millis(300));
+    let (_h, task) = start(saved, &second, &meter, &store, options(2, 4));
+    assert_eq!(task.await.unwrap(), Outcome::Finished);
+    let mut both = world.done();
+    both.extend(second.done());
+    assert_eq!(
+        distinct(&both),
+        all,
+        "nothing lost, the stuck chunk included"
+    );
+}
+
+#[tokio::test(start_paused = true)]
+async fn a_cancel_is_not_held_up_by_a_stuck_chunk_either() {
+    let world = FakeWorld::hanging_at(Duration::from_millis(300), ChunkPos { x: 0, z: 0 });
+    let (store, meter) = (Mem::default(), Meter::at(5));
+    let (handle, task) = start(job(8), &world, &meter, &store, options(2, 4));
+    sleep(Duration::from_secs(1)).await;
+    assert!(handle.send(Control::Cancel));
+    assert_eq!(task.await.unwrap(), Outcome::Cancelled);
+    assert!(store.saved().is_none());
+}
+
+#[tokio::test(start_paused = true)]
+async fn a_healthy_stop_does_not_wait_out_the_grace() {
+    let world = FakeWorld::with_delay(Duration::from_millis(200));
+    let (store, meter) = (Mem::default(), Meter::at(5));
+    let (handle, task) = start(job(20), &world, &meter, &store, options(2, 4));
+    sleep(Duration::from_secs(3)).await;
+    let asked = tokio::time::Instant::now();
+    assert!(handle.send(Control::Stop));
+    assert_eq!(task.await.unwrap(), Outcome::Stopped);
+    assert!(
+        asked.elapsed() < Duration::from_secs(1),
+        "took {:?}",
+        asked.elapsed()
+    );
 }

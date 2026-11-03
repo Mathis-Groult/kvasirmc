@@ -3072,6 +3072,8 @@ dependencies = [
  "hex",
  "hmac 0.13.0",
  "indexmap",
+ "kvasir-pregen",
+ "kvasir-pregen-driver",
  "libc",
  "libloading",
  "notify",

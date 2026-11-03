@@ -13,6 +13,8 @@ struct Entry {
     pos: ChunkPos,
     /// The spiral's cursor just before this chunk was handed out.
     before: Cursor,
+    /// When it was handed out (the caller's clock, in milliseconds).
+    at_ms: u64,
     finished: bool,
 }
 
@@ -35,11 +37,13 @@ impl InFlight {
         }
     }
 
-    /// A chunk was handed to the generator; `before` and `after` are the spiral's cursor around it.
-    pub fn hand_out(&mut self, pos: ChunkPos, before: Cursor, after: Cursor) {
+    /// A chunk was handed to the generator at `at_ms`; `before` and `after` are the spiral's
+    /// cursor around it.
+    pub fn hand_out(&mut self, pos: ChunkPos, before: Cursor, after: Cursor, at_ms: u64) {
         self.entries.push_back(Entry {
             pos,
             before,
+            at_ms,
             finished: false,
         });
         self.handed_out = after;
@@ -76,6 +80,15 @@ impl InFlight {
         self.entries.len()
     }
 
+    /// The chunk that has waited longest without finishing, and when it was handed out.
+    #[must_use]
+    pub fn oldest_unfinished(&self) -> Option<(ChunkPos, u64)> {
+        self.entries
+            .iter()
+            .find(|entry| !entry.finished)
+            .map(|entry| (entry.pos, entry.at_ms))
+    }
+
     /// Chunks finished over the whole job, including before a resume.
     #[must_use]
     pub const fn finished_total(&self) -> u64 {
@@ -107,7 +120,7 @@ mod tests {
             .map(|_| {
                 let before = spiral.cursor();
                 let pos = spiral.next().expect("chunks left");
-                flight.hand_out(pos, before, spiral.cursor());
+                flight.hand_out(pos, before, spiral.cursor(), 0);
                 pos
             })
             .collect()
@@ -192,6 +205,28 @@ mod tests {
         assert_eq!(flight.tracked(), 0);
         assert_eq!(flight.finished_total(), 20_000);
         assert!(peak <= 4, "peak {peak}");
+    }
+
+    #[test]
+    fn the_oldest_unfinished_chunk_is_named_with_its_hand_out_time() {
+        let mut spiral = Spiral::new(SHAPE, ORIGIN);
+        let mut flight = InFlight::new(spiral.cursor(), 0);
+        assert_eq!(flight.oldest_unfinished(), None);
+        let mut chunks = Vec::new();
+        for at_ms in [100, 250, 400] {
+            let before = spiral.cursor();
+            let pos = spiral.next().unwrap();
+            flight.hand_out(pos, before, spiral.cursor(), at_ms);
+            chunks.push(pos);
+        }
+        assert_eq!(flight.oldest_unfinished(), Some((chunks[0], 100)));
+        // a younger chunk finishing first changes nothing; the oldest finishing moves it on
+        flight.finish(chunks[1]);
+        assert_eq!(flight.oldest_unfinished(), Some((chunks[0], 100)));
+        flight.finish(chunks[0]);
+        assert_eq!(flight.oldest_unfinished(), Some((chunks[2], 400)));
+        flight.finish(chunks[2]);
+        assert_eq!(flight.oldest_unfinished(), None);
     }
 
     #[test]

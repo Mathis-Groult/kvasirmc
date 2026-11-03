@@ -21,6 +21,8 @@ pumpkin-config.workspace = true
 pumpkin-command.workspace = true
 pumpkin-inventory.workspace = true
 pumpkin-world.workspace = true
+kvasir-pregen = { path = "../kvasir-pregen" }
+kvasir-pregen-driver = { path = "../kvasir-pregen-driver" }
 pumpkin-data = { workspace = true, features = ["default"] }
 pumpkin-protocol = { workspace = true, features = ["default"] }
 pumpkin-macros.workspace = true

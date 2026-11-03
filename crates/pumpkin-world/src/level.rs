@@ -701,9 +701,22 @@ impl Level {
             lock.send_change();
         };
 
-        let chunk = recv
-            .await
-            .unwrap_or_else(|_| ChunkData::empty_sync(pos.x, pos.y));
+        // The caller looked at `loaded_chunks` before the listener existed. A chunk published in
+        // between sent no notification (and one that is still published when its ticket returns
+        // sends none either), so without this look the wait below would never end. With the
+        // listener in place, a chunk is either already in the map now or will notify it.
+        let published = self
+            .loaded_chunks
+            .get(&pos)
+            .map(|entry| entry.value().clone());
+        let chunk = if let Some(chunk) = published {
+            drop(recv);
+            self.chunk_listener.forget_abandoned();
+            chunk
+        } else {
+            recv.await
+                .unwrap_or_else(|_| ChunkData::empty_sync(pos.x, pos.y))
+        };
 
         {
             let mut lock = self

@@ -80,6 +80,16 @@ impl InFlight {
         self.entries.len()
     }
 
+    /// Every chunk handed out and not finished, oldest first.
+    #[must_use]
+    pub fn unfinished_positions(&self) -> Vec<ChunkPos> {
+        self.entries
+            .iter()
+            .filter(|entry| !entry.finished)
+            .map(|entry| entry.pos)
+            .collect()
+    }
+
     /// The chunk that has waited longest without finishing, and when it was handed out.
     #[must_use]
     pub fn oldest_unfinished(&self) -> Option<(ChunkPos, u64)> {
@@ -220,10 +230,12 @@ mod tests {
             chunks.push(pos);
         }
         assert_eq!(flight.oldest_unfinished(), Some((chunks[0], 100)));
+        assert_eq!(flight.unfinished_positions(), chunks);
         // a younger chunk finishing first changes nothing; the oldest finishing moves it on
         flight.finish(chunks[1]);
         assert_eq!(flight.oldest_unfinished(), Some((chunks[0], 100)));
         flight.finish(chunks[0]);
+        assert_eq!(flight.unfinished_positions(), [chunks[2]]);
         assert_eq!(flight.oldest_unfinished(), Some((chunks[2], 400)));
         flight.finish(chunks[2]);
         assert_eq!(flight.oldest_unfinished(), None);

@@ -195,7 +195,7 @@ impl<G: Generator, M: TickMeter, S: JobStore> Driver<G, M, S> {
                 }
                 _ = ticker.tick() => core.checkpoint(&store, &meter),
                 () = sleep_until(drain_deadline.unwrap_or_else(Instant::now)), if drain_deadline.is_some() => {
-                    Core::abandon(running.len());
+                    core.abandon();
                     break;
                 }
             }
@@ -354,9 +354,17 @@ impl Core {
     }
 
     /// Gives up on the chunks still in flight after the drain grace.
-    fn abandon(count: usize) {
+    fn abandon(&self) {
+        let unanswered = self.flight.unfinished_positions();
+        let named: Vec<String> = unanswered
+            .iter()
+            .take(8)
+            .map(|pos| format!("[{}, {}]", pos.x, pos.z))
+            .collect();
         tracing::warn!(
-            "pre-generation: giving up on {count} chunk(s) the generator did not answer in time"
+            "pre-generation: giving up on {} chunk(s) the generator did not answer in time: {}",
+            unanswered.len(),
+            named.join(" ")
         );
     }
 

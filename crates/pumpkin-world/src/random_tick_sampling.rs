@@ -8,28 +8,16 @@
 use pumpkin_util::math::position::BlockPos;
 use rand::RngExt;
 
-use pumpkin_data::BlockStateId;
-use pumpkin_data::block_properties::has_random_ticks;
-
-use crate::{
-    chunk::{ChunkData, palette::has_random_ticking_fluid},
-    level::RandomTickSample,
-};
-
-/// A position inside a section: `x`, `y` and `z` each 0..16, packed into the low 12 bits of one
-/// random number (4 bits each).
-const fn unpack(random: u32) -> (usize, usize, usize) {
-    (
-        (random & 0xF) as usize,
-        ((random >> 4) & 0xF) as usize,
-        ((random >> 8) & 0xF) as usize,
-    )
-}
+use crate::{chunk::ChunkData, chunk::ticking_index::POSITIONS, level::RandomTickSample};
 
 /// Appends to `out` the random-tick positions drawn in `chunk` this tick.
 ///
-/// Nothing is drawn for sections whose bit in the chunk's mask is clear: they hold no block that
-/// could react, so a draw there could never be kept.
+/// Each section whose bit in the chunk's mask is set gets `samples_per_section` draws. A draw is
+/// "a uniformly random position of the section, kept if it holds a block or fluid that reacts".
+/// The section keeps a list of the positions that do (see
+/// [`TickingIndex`](crate::chunk::ticking_index::TickingIndex)), so the draw is made as a number
+/// below 4096 and is a hit exactly when it is below the list's length: the same distribution, and
+/// a miss, which is nearly every draw, reads no block data.
 pub fn sample_chunk(
     chunk: &ChunkData,
     samples_per_section: u32,
@@ -43,34 +31,36 @@ pub fn sample_chunk(
     if mask == 0 || samples_per_section == 0 {
         return;
     }
-    let sections = chunk
+    let caches = chunk
         .section
-        .block_sections
+        .random_tick_sections
         .read()
         .unwrap_or_else(std::sync::PoisonError::into_inner);
+    let Some(caches) = caches.as_ref() else {
+        return;
+    };
     let chunk_x = chunk.x * 16;
     let chunk_z = chunk.z * 16;
-    for index in 0..chunk.section.count {
+    for (index, cache) in caches.iter().enumerate().take(chunk.section.count) {
         if mask & (1 << index) == 0 {
             continue;
         }
         let section_y = chunk.section.min_y + index as i32 * 16;
         for _ in 0..samples_per_section {
-            let (x, y, z) = unpack(rng.random::<u32>());
-            let state: BlockStateId = sections[index].get(x, y, z);
-            let tick_block = has_random_ticks(state);
-            let tick_fluid = has_random_ticking_fluid(state);
-            if tick_block || tick_fluid {
-                out.push(RandomTickSample {
-                    position: BlockPos::new(
-                        chunk_x + x as i32,
-                        section_y + y as i32,
-                        chunk_z + z as i32,
-                    ),
-                    tick_block,
-                    tick_fluid,
-                });
-            }
+            let draw = rng.random::<u32>() & (POSITIONS - 1);
+            let Some(hit) = cache.ticking.hit(draw) else {
+                continue;
+            };
+            let position = i32::from(hit.position);
+            out.push(RandomTickSample {
+                position: BlockPos::new(
+                    chunk_x + (position & 15),
+                    section_y + (position >> 8),
+                    chunk_z + ((position >> 4) & 15),
+                ),
+                tick_block: hit.block,
+                tick_fluid: hit.fluid,
+            });
         }
     }
 }
@@ -207,9 +197,61 @@ mod tests {
     }
 
     #[test]
-    fn unpacking_uses_four_bits_per_axis_and_ignores_the_rest() {
-        assert_eq!(unpack(0x0000_0000), (0, 0, 0));
-        assert_eq!(unpack(0x0000_0FED), (0xD, 0xE, 0xF));
-        assert_eq!(unpack(0xFFFF_F123), (3, 2, 1));
+    fn the_hits_of_a_section_are_spread_evenly_over_its_ticking_positions() {
+        // three ticking blocks: each should get about a third of the hits
+        let chunk = ChunkData::empty(0, 0);
+        let spots = [(1, 20, 2), (7, 25, 9), (14, 30, 4)];
+        for (x, y, z) in spots {
+            chunk
+                .section
+                .set_block_absolute_y(x, y, z, Block::GRASS_BLOCK.default_state.id);
+        }
+        let samples = sample(&chunk, 1_228_800, 3); // 3 ticking of 4096: about 900 hits
+        let mut per_spot = [0usize; 3];
+        for s in &samples {
+            let at = (s.position.0.x, s.position.0.y, s.position.0.z);
+            let n = spots
+                .iter()
+                .position(|&(x, y, z): &(usize, i32, usize)| (x as i32, y, z as i32) == at)
+                .expect("a hit is always on a ticking block");
+            per_spot[n] += 1;
+        }
+        assert!(
+            (700..1100).contains(&samples.len()),
+            "{} hits, expected about 900",
+            samples.len()
+        );
+        for count in per_spot {
+            let share = count as f64 / samples.len() as f64;
+            assert!((0.25..0.42).contains(&share), "shares {per_spot:?}");
+        }
+    }
+
+    #[test]
+    fn the_hit_rate_is_the_share_of_ticking_positions() {
+        // 256 of 4096 positions (a layer of grass) is 6.25 % of the draws
+        let chunk = ChunkData::empty(0, 0);
+        for x in 0..16 {
+            for z in 0..16 {
+                chunk
+                    .section
+                    .set_block_absolute_y(x, 40, z, Block::GRASS_BLOCK.default_state.id);
+            }
+        }
+        let samples = sample(&chunk, 160_000, 21);
+        let rate = samples.len() as f64 / 160_000.0;
+        assert!((0.058..0.067).contains(&rate), "rate {rate}");
+        assert!(samples.iter().all(|s| s.position.0.y == 40));
+    }
+
+    #[test]
+    fn a_fluid_that_reacts_is_reported_as_one() {
+        let chunk = ChunkData::empty(0, 0);
+        chunk
+            .section
+            .set_block_absolute_y(2, 10, 3, Block::LAVA.default_state.id);
+        let samples = sample(&chunk, 819_200, 17);
+        assert!(!samples.is_empty());
+        assert!(samples.iter().all(|s| s.tick_fluid));
     }
 }

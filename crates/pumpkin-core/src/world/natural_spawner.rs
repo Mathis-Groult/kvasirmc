@@ -2,10 +2,10 @@ use crate::block::PathComputationType;
 use crate::entity::EntityBase;
 use crate::entity::mob::spawn::finalize_spawn;
 use crate::entity::r#type::{check_spawn_rules, from_type};
+use crate::world::FxDashMap;
 use crate::world::World;
 use arc_swap::ArcSwap;
 use crossbeam::atomic::AtomicCell;
-use dashmap::DashMap;
 use pumpkin_data::biome::Spawner;
 use pumpkin_data::chunk::Biome;
 use pumpkin_data::dimension::Dimension;
@@ -75,17 +75,17 @@ impl MobCounts {
 }
 
 pub struct LocalMobCapCalculator {
-    player_mob_counts: DashMap<i32, MobCounts>,
-    players_near_chunk: DashMap<Vector2<i32>, Arc<[i32]>>,
+    player_mob_counts: FxDashMap<i32, MobCounts>,
+    players_near_chunk: FxDashMap<Vector2<i32>, Arc<[i32]>>,
 }
 
 impl Clone for LocalMobCapCalculator {
     fn clone(&self) -> Self {
-        let player_mob_counts = DashMap::new();
+        let player_mob_counts = FxDashMap::default();
         for r in &self.player_mob_counts {
             player_mob_counts.insert(*r.key(), r.value().clone());
         }
-        let players_near_chunk = DashMap::new();
+        let players_near_chunk = FxDashMap::default();
         for r in &self.players_near_chunk {
             players_near_chunk.insert(*r.key(), r.value().clone());
         }
@@ -99,8 +99,8 @@ impl Clone for LocalMobCapCalculator {
 impl Default for LocalMobCapCalculator {
     fn default() -> Self {
         Self {
-            player_mob_counts: DashMap::new(),
-            players_near_chunk: DashMap::new(),
+            player_mob_counts: FxDashMap::default(),
+            players_near_chunk: FxDashMap::default(),
         }
     }
 }

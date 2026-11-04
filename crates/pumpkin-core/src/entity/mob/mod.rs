@@ -1014,7 +1014,7 @@ static LEAST_SLIPPERINESS: LazyLock<f32> = LazyLock::new(|| {
         .fold(f32::MAX, f32::min)
 });
 
-fn has_game_event_listener(mob: &dyn Mob) -> bool {
+pub(crate) fn has_game_event_listener(mob: &dyn Mob) -> bool {
     let mut listens = false;
     mob.for_each_game_event_listener(&mut |_| listens = true);
     listens
@@ -1051,8 +1051,8 @@ pub(crate) fn game_event_listener_links(
     links.extend(
         world
             .entity_index
-            .query(world.entities.load_full(), area)
-            .filter(|other| other.get_mob().is_some_and(has_game_event_listener))
+            .listeners_in(&world.entities.load_full(), area)
+            .into_iter()
             .map(|other| other.get_entity().entity_id),
     );
 }

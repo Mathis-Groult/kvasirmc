@@ -4,9 +4,9 @@ use std::sync::atomic::{
 };
 use std::sync::{Arc, RwLock};
 
+use crate::world::FxDashMap;
 use bytes::BufMut;
 use crossbeam::atomic::AtomicCell;
-use dashmap::DashMap;
 use pumpkin_data::entity::EntityType;
 use pumpkin_data::packet::CURRENT_MC_VERSION;
 use pumpkin_protocol::bedrock::client::CSetActorMotion;
@@ -820,7 +820,7 @@ impl TrackedEntity {
 }
 
 pub struct EntityTracker {
-    pub entity_map: DashMap<i32, Arc<TrackedEntity>>,
+    pub entity_map: FxDashMap<i32, Arc<TrackedEntity>>,
 }
 
 impl Default for EntityTracker {
@@ -833,7 +833,7 @@ impl EntityTracker {
     #[must_use]
     pub fn new() -> Self {
         Self {
-            entity_map: DashMap::new(),
+            entity_map: FxDashMap::default(),
         }
     }
 

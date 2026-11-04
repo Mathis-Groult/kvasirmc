@@ -1,5 +1,11 @@
 use crate::block::entities::{BlockEntity, block_entity_from_nbt};
 use dashmap::DashMap;
+
+/// `KvasirMC`: a concurrent map for integer and position keys, with a fast hash.
+///
+/// It uses the multiply-and-rotate hash instead of `SipHash`. These maps are read hundreds of times per tick; see
+/// `pumpkin_world::level::ChunkMap` for the measurement.
+pub type FxDashMap<K, V> = DashMap<K, V, rustc_hash::FxBuildHasher>;
 use pumpkin_data::chunk::Biome;
 use pumpkin_data::item::{BedrockItem, BedrockItemVersion};
 use pumpkin_data::packet::CURRENT_MC_VERSION;
@@ -272,7 +278,7 @@ pub struct World {
     pub forced_chunks: std::sync::Mutex<FxHashSet<Vector2<i32>>>,
     /// Block entities indexed by chunk, so ticking only visits the currently
     /// active chunks instead of scanning every loaded block entity each tick.
-    pub block_entities: DashMap<Vector2<i32>, FxHashMap<BlockPos, Arc<dyn BlockEntity>>>,
+    pub block_entities: FxDashMap<Vector2<i32>, FxHashMap<BlockPos, Arc<dyn BlockEntity>>>,
     pending_block_entity_migrations: crossbeam::queue::SegQueue<Vector2<i32>>,
     /// Persistent custom data for the world (matching Bukkit's `PersistentDataHolder`)
     pub custom_data: std::sync::Mutex<NbtCompound>,
@@ -427,7 +433,7 @@ impl World {
             active_chunk_tracker: std::sync::Mutex::new(ActiveChunkTracker::default()),
             forced_chunks: std::sync::Mutex::new(FxHashSet::default()),
             server,
-            block_entities: DashMap::new(),
+            block_entities: FxDashMap::default(),
             pending_block_entity_migrations: crossbeam::queue::SegQueue::new(),
             custom_data: std::sync::Mutex::new(custom_data),
             custom_block_entity_data: DashMap::new(),
@@ -1619,7 +1625,12 @@ impl World {
         // Entities that can affect each other tick in list order; separate islands run in
         // parallel.
         let islands_config = &server.advanced_config.world.entity_islands;
-        let plan_islands = !entity_islands::plugins_observe_entity_ticks(server)
+        // Islands exist so that separate groups of entities can tick on different threads. On a
+        // one-thread pool (the default tick mode, see `kvasir-tickmode`) that cannot happen, so
+        // the planning pass would be pure cost: entities then tick in list order, as the plan
+        // would have made them.
+        let plan_islands = rayon::current_num_threads() > 1
+            && !entity_islands::plugins_observe_entity_ticks(server)
             && self
                 .island_schedule
                 .lock()

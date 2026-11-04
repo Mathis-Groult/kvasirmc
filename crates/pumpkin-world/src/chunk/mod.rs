@@ -9,6 +9,7 @@ use pumpkin_data::{Block, BlockState, BlockStateId};
 use pumpkin_nbt::compound::NbtCompound;
 use pumpkin_util::math::position::BlockPos;
 use rustc_hash::{FxHashMap, FxHashSet};
+use ticking_index::{TickingIndex, section_position};
 
 use std::sync::RwLock;
 use std::sync::atomic::AtomicBool;
@@ -18,6 +19,7 @@ use thiserror::Error;
 pub mod format;
 pub mod io;
 pub mod palette;
+pub mod ticking_index;
 
 // TODO
 pub const CHUNK_WIDTH: usize = BlockPalette::SIZE;
@@ -112,16 +114,35 @@ pub struct ChunkSections {
     pub min_y: i32,
 }
 
-#[derive(Default, Clone, Copy)]
+#[derive(Default, Clone)]
 pub struct RandomTickSectionCache {
     pub random_ticking_block_count: u16,
     pub random_ticking_fluid_count: u16,
+    /// Where the blocks and fluids that react to random ticks are (see [`TickingIndex`]).
+    pub ticking: TickingIndex,
 }
 
 impl RandomTickSectionCache {
     #[must_use]
     pub const fn is_randomly_ticking(&self) -> bool {
         self.random_ticking_block_count > 0 || self.random_ticking_fluid_count > 0
+    }
+
+    /// Notes that the state at `position` (`y << 8 | z << 4 | x`) changed from `old` to `new`.
+    pub fn replace(&mut self, position: u16, old: BlockStateId, new: BlockStateId) {
+        if has_random_ticks(old) {
+            self.random_ticking_block_count = self.random_ticking_block_count.saturating_sub(1);
+        }
+        if has_random_ticking_fluid(old) {
+            self.random_ticking_fluid_count = self.random_ticking_fluid_count.saturating_sub(1);
+        }
+        if has_random_ticks(new) {
+            self.random_ticking_block_count = self.random_ticking_block_count.saturating_add(1);
+        }
+        if has_random_ticking_fluid(new) {
+            self.random_ticking_fluid_count = self.random_ticking_fluid_count.saturating_add(1);
+        }
+        self.ticking.set(position, new);
     }
 }
 
@@ -321,9 +342,15 @@ impl ChunkSections {
                     mask |= 1 << i;
                     has_ticks = true;
                 }
+                let ticking = if random_ticking_block_count > 0 || random_ticking_fluid_count > 0 {
+                    TickingIndex::from_states(section.iter())
+                } else {
+                    TickingIndex::default()
+                };
                 RandomTickSectionCache {
                     random_ticking_block_count,
                     random_ticking_fluid_count,
+                    ticking,
                 }
             })
             .collect::<Vec<_>>()
@@ -530,27 +557,11 @@ impl ChunkSections {
 
             if let Some(random_tick_sections) = random_tick_sections_guard.as_mut() {
                 let random_tick_cache = &mut random_tick_sections[section_index];
-                if has_random_ticks(replaced_block_state_id) {
-                    random_tick_cache.random_ticking_block_count = random_tick_cache
-                        .random_ticking_block_count
-                        .saturating_sub(1);
-                }
-                if has_random_ticking_fluid(replaced_block_state_id) {
-                    random_tick_cache.random_ticking_fluid_count = random_tick_cache
-                        .random_ticking_fluid_count
-                        .saturating_sub(1);
-                }
-
-                if has_random_ticks(block_state_id) {
-                    random_tick_cache.random_ticking_block_count = random_tick_cache
-                        .random_ticking_block_count
-                        .saturating_add(1);
-                }
-                if has_random_ticking_fluid(block_state_id) {
-                    random_tick_cache.random_ticking_fluid_count = random_tick_cache
-                        .random_ticking_fluid_count
-                        .saturating_add(1);
-                }
+                random_tick_cache.replace(
+                    section_position(relative_x, relative_y, relative_z),
+                    replaced_block_state_id,
+                    block_state_id,
+                );
 
                 // Update the bitmask
                 let mut mask = self
@@ -747,26 +758,11 @@ impl ChunkData {
 
                     if let Some(random_tick_sections) = random_tick_sections_guard.as_mut() {
                         let random_tick_cache = &mut random_tick_sections[section_index];
-                        if has_random_ticks(replaced_id) {
-                            random_tick_cache.random_ticking_block_count = random_tick_cache
-                                .random_ticking_block_count
-                                .saturating_sub(1);
-                        }
-                        if has_random_ticking_fluid(replaced_id) {
-                            random_tick_cache.random_ticking_fluid_count = random_tick_cache
-                                .random_ticking_fluid_count
-                                .saturating_sub(1);
-                        }
-                        if has_random_ticks(new_state_id) {
-                            random_tick_cache.random_ticking_block_count = random_tick_cache
-                                .random_ticking_block_count
-                                .saturating_add(1);
-                        }
-                        if has_random_ticking_fluid(new_state_id) {
-                            random_tick_cache.random_ticking_fluid_count = random_tick_cache
-                                .random_ticking_fluid_count
-                                .saturating_add(1);
-                        }
+                        random_tick_cache.replace(
+                            section_position(rel_x, sub_y, rel_z),
+                            replaced_id,
+                            new_state_id,
+                        );
 
                         let mut mask = self
                             .section
@@ -1043,6 +1039,84 @@ mod tests {
             assert!(cache[0].random_ticking_fluid_count > 0);
             assert!(cache[0].is_randomly_ticking());
         }
+    }
+
+    use crate::chunk::{
+        ChunkData, RandomTickSectionCache, palette::has_random_ticking_fluid,
+        ticking_index::section_position,
+    };
+
+    /// Every position of section 0 whose state reacts to random ticks, by looking at all 4096.
+    fn brute_force_ticking(sections: &ChunkSections) -> Vec<u16> {
+        let blocks = sections.block_sections.read().unwrap();
+        let mut found = Vec::new();
+        for y in 0..16 {
+            for z in 0..16 {
+                for x in 0..16 {
+                    let state = blocks[0].get(x, y, z);
+                    if has_random_ticks(state) || has_random_ticking_fluid(state) {
+                        found.push(section_position(x, y, z));
+                    }
+                }
+            }
+        }
+        found.sort_unstable();
+        found
+    }
+
+    fn indexed_ticking(cache: &RandomTickSectionCache) -> Vec<u16> {
+        let mut found: Vec<u16> = (0..cache.ticking.len())
+            .map(|n| cache.ticking.get(n).unwrap().position)
+            .collect();
+        found.sort_unstable();
+        found
+    }
+
+    #[test]
+    fn the_ticking_index_lists_the_same_positions_as_a_scan_of_the_section() {
+        let min_y = -64;
+        let sections = ChunkSections::new(1, min_y);
+        let wheat = Block::WHEAT.default_state.id;
+        let lava = Block::LAVA.default_state.id;
+        let stone = Block::STONE.default_state.id;
+        // scattered writes, an overwrite and a removal
+        for (x, y, z, state) in [
+            (3, 5, 7, wheat),
+            (0, 0, 0, wheat),
+            (15, 15, 15, lava),
+            (8, 1, 9, wheat),
+            (3, 5, 7, stone),
+            (4, 5, 7, wheat),
+        ] {
+            sections.set_block_absolute_y(x, min_y + y, z, state);
+        }
+        let expected = brute_force_ticking(&sections);
+        assert_eq!(expected.len(), 4);
+        {
+            let cache = sections.random_tick_sections.read().unwrap();
+            assert_eq!(indexed_ticking(&cache.as_ref().unwrap()[0]), expected);
+        };
+        // the index built from the blocks alone, as on loading a chunk, is the same
+        let blocks = sections.block_sections.read().unwrap();
+        let (rebuilt, mask) = ChunkSections::build_random_tick_sections_cache(&blocks);
+        assert_eq!(mask, 1);
+        assert_eq!(indexed_ticking(&rebuilt.unwrap()[0]), expected);
+    }
+
+    #[test]
+    fn the_index_follows_batched_writes_too() {
+        let min_y = -64;
+        let chunk = ChunkData::empty(0, 0);
+        let wheat = Block::WHEAT.default_state.id;
+        chunk.set_blocks_batch([
+            (1, min_y, 1, wheat),
+            (2, min_y + 3, 2, wheat),
+            (1, min_y, 1, Block::STONE.default_state.id),
+        ]);
+        let expected = brute_force_ticking(&chunk.section);
+        assert_eq!(expected, vec![section_position(2, 3, 2)]);
+        let cache = chunk.section.random_tick_sections.read().unwrap();
+        assert_eq!(indexed_ticking(&cache.as_ref().unwrap()[0]), expected);
     }
 
     #[test]

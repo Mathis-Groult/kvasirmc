@@ -5,6 +5,7 @@ use rustc_hash::FxHashMap;
 use uuid::Uuid;
 
 use crate::entity::EntityBase;
+use crate::entity::mob::has_game_event_listener;
 use crossbeam::atomic::AtomicCell;
 
 type Registry = Vec<Arc<dyn EntityBase>>;
@@ -66,6 +67,8 @@ struct Index {
     ranges: Vec<Option<CellRange>>,
     cells: FxHashMap<Cell, Vec<usize>>,
     oversized: Vec<usize>,
+    /// Slots of the mobs that listen to game events, in registry order.
+    listeners: Vec<usize>,
 }
 
 impl Index {
@@ -79,7 +82,11 @@ impl Index {
         self.ranges.clear();
         self.cells.clear();
         self.oversized.clear();
+        self.listeners.clear();
         for (slot, entity) in registry.iter().enumerate() {
+            if entity.get_mob().is_some_and(has_game_event_listener) {
+                self.listeners.push(slot);
+            }
             let entity = entity.get_entity();
             self.slots.insert(entity.entity_id, slot);
             // The first in list order wins, like a linear search.
@@ -193,6 +200,29 @@ impl EntityIndex {
             let entity = &registry[slot];
             area.intersects(&entity.get_entity().bounding_box.load())
                 .then(|| entity.clone())
+        })
+    }
+
+    /// The mobs that listen to game events and whose bounds meet `area`, in registry order.
+    ///
+    /// Same answer as filtering [`query`](Self::query) for listeners, without visiting every
+    /// entity near the area: a game event is posted for every step of every mob, over an area of
+    /// dozens of blocks, and almost no world has a listener in it. Whether a mob listens depends
+    /// on its kind only, so the list made when the index is built stays right until the entity
+    /// list is replaced, which rebuilds it.
+    pub fn listeners_in(
+        &self,
+        registry: &Arc<Registry>,
+        area: BoundingBox,
+    ) -> Vec<Arc<dyn EntityBase>> {
+        self.with_index(registry, |index| {
+            index
+                .listeners
+                .iter()
+                .map(|&slot| &registry[slot])
+                .filter(|entity| area.intersects(&entity.get_entity().bounding_box.load()))
+                .cloned()
+                .collect()
         })
     }
 
@@ -391,6 +421,56 @@ mod tests {
         );
         source.level.shutdown().await;
         destination.level.shutdown().await;
+        Ok(())
+    }
+
+    #[tokio::test]
+    async fn listeners_are_the_listening_mobs_in_the_area_in_registry_order()
+    -> Result<(), Box<dyn std::error::Error>> {
+        use crate::entity::passive::allay::AllayEntity;
+        let folder = tempfile::tempdir()?;
+        let world = world(&folder);
+        let at = |x: f64| Vector3::new(x, 64.0, 0.0);
+        let far_allay = AllayEntity::new(Entity::new(world.clone(), at(500.0), &EntityType::ALLAY));
+        let cow = CowEntity::new(Entity::new(world.clone(), at(1.0), &EntityType::COW));
+        let near_allay = AllayEntity::new(Entity::new(world.clone(), at(2.0), &EntityType::ALLAY));
+        let second_allay =
+            AllayEntity::new(Entity::new(world.clone(), at(3.0), &EntityType::ALLAY));
+        world.entities.store(Arc::new(vec![
+            far_allay.clone(),
+            cow.clone(),
+            near_allay.clone(),
+            second_allay.clone(),
+        ]));
+        let area = BoundingBox::new(
+            Vector3::new(-16.0, 40.0, -16.0),
+            Vector3::new(16.0, 90.0, 16.0),
+        );
+        let registry = world.entities.load_full();
+        let found: Vec<i32> = world
+            .entity_index
+            .listeners_in(&registry, area)
+            .iter()
+            .map(|e| e.get_entity().entity_id)
+            .collect();
+        assert_eq!(
+            found,
+            [
+                near_allay.get_entity().entity_id,
+                second_allay.get_entity().entity_id
+            ],
+            "the cow does not listen and the far allay is out of the area"
+        );
+        // a world without a listener has an empty list, and the answer follows a new registry
+        world.entities.store(Arc::new(vec![cow.clone()]));
+        let registry = world.entities.load_full();
+        assert!(world.entity_index.listeners_in(&registry, area).is_empty());
+        world
+            .entities
+            .store(Arc::new(vec![cow, near_allay.clone()]));
+        let registry = world.entities.load_full();
+        assert_eq!(world.entity_index.listeners_in(&registry, area).len(), 1);
+        world.level.shutdown().await;
         Ok(())
     }
 }

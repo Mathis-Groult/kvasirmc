@@ -18,6 +18,9 @@ pub struct LevelConfig {
     /// Margins for ticking entities in parallel islands.
     #[serde(default)]
     pub entity_islands: EntityIslandsConfig,
+    /// How often mobs far from players, unseen or crowded make their full AI decisions.
+    #[serde(default)]
+    pub mob_lod: kvasir_moblod::Config,
     // TODO: More options
 }
 
@@ -81,6 +84,7 @@ impl Default for LevelConfig {
             lighting: LightingEngineConfig::default(),
             autosave_ticks: default_autosave_ticks(),
             entity_islands: EntityIslandsConfig::default(),
+            mob_lod: kvasir_moblod::Config::default(),
         }
     }
 }

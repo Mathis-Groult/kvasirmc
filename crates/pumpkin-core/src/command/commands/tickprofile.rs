@@ -35,6 +35,24 @@ impl CommandExecutor for ReportExecutor {
         for tick in profile.worst_ticks() {
             say(format!("worst {tick}"));
         }
+        for motion in kvasir_tickprof::motion::report() {
+            let tier = kvasir_moblod::Tier::ALL
+                .get(motion.tier)
+                .map_or("other", |tier| tier.name());
+            say(format!(
+                "motion {tier} ticks={} blocks_per_tick={:.5} moving={:.4} vertical={:.5} buckets={}",
+                motion.ticks,
+                motion.blocks_per_tick,
+                motion.moving,
+                motion.vertical_per_tick,
+                motion
+                    .buckets
+                    .iter()
+                    .map(|share| format!("{share:.3}"))
+                    .collect::<Vec<_>>()
+                    .join("/")
+            ));
+        }
         for (part, row) in kvasir_tickprof::parts::report() {
             say(format!(
                 "part {} ticks={} mean_us={:.1} total_ms={:.0}",

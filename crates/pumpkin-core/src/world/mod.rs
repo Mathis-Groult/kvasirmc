@@ -31,6 +31,7 @@ pub mod brightness;
 pub mod chunker;
 mod entity_index;
 mod fluid_states;
+mod mob_attention;
 pub(crate) use entity_index::EntityIndex;
 pub mod entity_islands;
 pub mod explosion;
@@ -1715,10 +1716,23 @@ impl World {
         let t_ticking = std::time::Instant::now();
 
         let server_ref = server.as_ref();
+        let lod = server.advanced_config.world.mob_lod.sanitised();
+        let motion_counted = kvasir_tickprof::motion::is_enabled();
+        // With the feature off the ranks are only needed to tell which tier a mob would be in.
+        let crowd_ranks = if lod.enabled || motion_counted {
+            let ticking: Vec<_> = tickable.iter().map(|(e, c)| (*e, *c)).collect();
+            mob_attention::crowd_ranks(&lod, &ticking)
+        } else {
+            vec![0; tickable.len()]
+        };
+        let player_positions: Vec<Vector3<f64>> = players_cache.iter().map(|p| p.1).collect();
         let tick_entity = |index: usize| {
             let (entity, entity_chunk) = &tickable[index];
             order::set_entity_order(Some(first_order + index as u64 * order::ORDERS_PER_ENTITY));
 
+            let tier =
+                self.attend_to_mob(&lod, entity.as_ref(), crowd_ranks[index], &player_positions);
+            let before = (motion_counted && tier.is_some()).then(|| entity.get_entity().pos.load());
             entity.get_entity().tick_count.fetch_add(1, Relaxed);
             let t_kind = server_ref
                 .tickprof
@@ -1735,6 +1749,10 @@ impl World {
 
             let entity_inner = entity.get_entity();
             let entity_pos = entity_inner.pos.load();
+            if let (Some(before), Some(tier)) = (before, tier) {
+                let moved = entity_pos - before;
+                kvasir_tickprof::motion::record(tier.index(), moved.length(), moved.y);
+            }
             let entity_bb = entity_inner.bounding_box.load();
 
             for (player, player_pos, player_bb, player_chunk) in &players_cache {

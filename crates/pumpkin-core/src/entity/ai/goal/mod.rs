@@ -60,9 +60,52 @@ pub mod water_avoiding_random_flying;
 pub mod work_at_job_site;
 pub mod zombie_attack;
 
+thread_local! {
+    /// Server ticks between two full evaluations of the goals of the mob being ticked on this
+    /// thread. Vanilla's is 2; a mob with less AI attention (see `kvasir-moblod`) evaluates
+    /// less often, and everything a goal counts in evaluations has to follow.
+    static EVALUATION_RATE: std::cell::Cell<u8> =
+        const { std::cell::Cell::new(kvasir_moblod::VANILLA_RATE) };
+}
+
+/// Makes goals count time in the evaluations of a mob with this rate until dropped.
+pub(super) struct EvaluationScope {
+    previous: u8,
+}
+
+impl EvaluationScope {
+    pub(super) fn enter(rate: u8) -> Self {
+        let rate = rate.max(kvasir_moblod::VANILLA_RATE);
+        Self {
+            previous: EVALUATION_RATE.replace(rate),
+        }
+    }
+}
+
+impl Drop for EvaluationScope {
+    fn drop(&mut self) {
+        EVALUATION_RATE.set(self.previous);
+    }
+}
+
+/// Vanilla `reducedTickDelay`: server ticks as evaluations of the goals, rounded up.
+///
+/// Goals evaluate every second tick in vanilla, so this halves; for a mob evaluated less often
+/// it divides by that rate, so an interval of a given number of server ticks stays that long.
 #[must_use]
-pub const fn to_goal_ticks(server_ticks: i32) -> i32 {
-    -(-server_ticks).div_euclid(2)
+pub fn to_goal_ticks(server_ticks: i32) -> i32 {
+    -(-server_ticks).div_euclid(i32::from(EVALUATION_RATE.get()))
+}
+
+/// The chance of success at one evaluation of a mob evaluated less often than vanilla.
+///
+/// A goal that succeeds with probability `p` at each vanilla evaluation (every second tick) would
+/// have had the evaluations that were skipped too: this is the chance of at least one success
+/// in them.
+#[must_use]
+pub fn goal_chance(p: f32) -> f32 {
+    let evaluations = f32::from(EVALUATION_RATE.get()) / f32::from(kvasir_moblod::VANILLA_RATE);
+    1.0 - (1.0 - p).powf(evaluations)
 }
 
 pub trait Goal: Send + Sync {
@@ -346,3 +389,60 @@ impl<P> Default for ParentHandle<P> {
 unsafe impl<P> Sync for ParentHandle<P> {}
 // SAFETY: ParentHandle stores a raw pointer `*const P` to parent goal structures managed within the same AI engine instance.
 unsafe impl<P> Send for ParentHandle<P> {}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn at_vanillas_rate_goal_ticks_are_vanillas_reduced_tick_delay() {
+        for ticks in -5..300 {
+            assert_eq!(
+                to_goal_ticks(ticks),
+                -(-ticks).div_euclid(2),
+                "{ticks} ticks"
+            );
+        }
+        assert_eq!(to_goal_ticks(1), 1);
+        assert_eq!(to_goal_ticks(7), 4);
+    }
+
+    #[test]
+    fn a_slower_evaluation_rate_keeps_an_interval_as_long_in_server_ticks() {
+        let _slow = EvaluationScope::enter(8);
+        assert_eq!(to_goal_ticks(120), 15);
+        assert_eq!(to_goal_ticks(121), 16, "rounded up, as vanilla does");
+        assert_eq!(to_goal_ticks(1), 1);
+    }
+
+    #[test]
+    fn leaving_a_scope_restores_the_rate_before_it() {
+        let outer = EvaluationScope::enter(4);
+        {
+            let _inner = EvaluationScope::enter(8);
+            assert_eq!(to_goal_ticks(80), 10);
+        };
+        assert_eq!(to_goal_ticks(80), 20);
+        drop(outer);
+        assert_eq!(to_goal_ticks(80), 40);
+    }
+
+    #[test]
+    fn a_rate_below_vanillas_counts_as_vanillas() {
+        let _scope = EvaluationScope::enter(0);
+        assert_eq!(to_goal_ticks(10), 5);
+    }
+
+    #[test]
+    fn a_chance_per_evaluation_becomes_the_chance_of_one_success_in_the_skipped_ones_too() {
+        assert!(
+            (goal_chance(0.02) - 0.02).abs() < 1e-6,
+            "vanilla rate leaves it alone"
+        );
+        let _slow = EvaluationScope::enter(8);
+        let four_evaluations = 1.0 - 0.98f32.powi(4);
+        assert!((goal_chance(0.02) - four_evaluations).abs() < 1e-6);
+        assert!((goal_chance(0.0)).abs() < 1e-9);
+        assert!((goal_chance(1.0) - 1.0).abs() < 1e-9);
+    }
+}

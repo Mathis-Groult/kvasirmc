@@ -110,7 +110,7 @@ impl ActiveTargetGoal {
         Self {
             track_target_goal,
             target: None,
-            reciprocal_chance: to_goal_ticks(reciprocal_chance),
+            reciprocal_chance,
             target_type: target_type.into(),
             target_predicate,
             condition: TargetCondition::Always,
@@ -145,7 +145,7 @@ impl ActiveTargetGoal {
     /// Search roughly once per `chance` ticks, 0 every tick.
     #[must_use]
     pub fn every(mut self: Box<Self>, chance: i32) -> Box<Self> {
-        self.reciprocal_chance = to_goal_ticks(chance);
+        self.reciprocal_chance = chance;
         self
     }
 
@@ -190,7 +190,7 @@ impl ActiveTargetGoal {
         Box::new(Self {
             track_target_goal,
             target: None,
-            reciprocal_chance: to_goal_ticks(DEFAULT_RECIPROCAL_CHANCE),
+            reciprocal_chance: DEFAULT_RECIPROCAL_CHANCE,
             target_type: target_type.into(),
             target_predicate,
             condition: TargetCondition::Always,
@@ -255,7 +255,10 @@ impl Goal for ActiveTargetGoal {
             return false;
         }
         if self.reciprocal_chance > 0
-            && mob.get_random().random_range(0..self.reciprocal_chance) != 0
+            && mob
+                .get_random()
+                .random_range(0..to_goal_ticks(self.reciprocal_chance))
+                != 0
         {
             return false;
         }

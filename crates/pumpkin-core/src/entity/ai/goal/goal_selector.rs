@@ -335,6 +335,7 @@ impl GoalSelector {
 
     /// Runs one selector pass. Scheduler entry points must not be called from callbacks.
     pub(in crate::entity) fn tick(selector: &Self, mob: &dyn Mob) {
+        let _rate = super::EvaluationScope::enter(mob.get_mob_entity().ai_rate());
         let disabled = Self::lock(selector).disabled_controls.clone();
         let _execution = selector
             .execution
@@ -398,6 +399,7 @@ impl GoalSelector {
     }
 
     pub(in crate::entity) fn tick_goals(selector: &Self, mob: &dyn Mob, tick_all: bool) {
+        let _rate = super::EvaluationScope::enter(mob.get_mob_entity().ai_rate());
         let _execution = selector
             .execution
             .lock()
@@ -500,6 +502,47 @@ mod tests {
         drop(entry.borrow(BorrowKind::Callback).expect("a borrow"));
         drop(entry.borrow(BorrowKind::Reach).expect("a second borrow"));
         assert_eq!(entry.goal.lock().unwrap().waiting, 0);
+    }
+
+    /// Records what a goal sees as 100 server ticks while the selector evaluates it.
+    struct UnitProbe(Arc<AtomicUsize>);
+
+    impl Goal for UnitProbe {
+        fn can_start(&mut self, _mob: &dyn Mob) -> bool {
+            self.0
+                .store(super::super::to_goal_ticks(100) as usize, Ordering::Relaxed);
+            false
+        }
+    }
+
+    #[tokio::test]
+    async fn goals_count_time_in_the_evaluations_of_the_mob_they_run_for()
+    -> Result<(), Box<dyn std::error::Error>> {
+        let folder = tempfile::tempdir()?;
+        let (world, mob) = probe(&folder);
+        let seen = Arc::new(AtomicUsize::new(0));
+        mob.0.add_goal(1, UnitProbe(seen.clone()));
+
+        GoalSelector::tick(&mob.0.goals_selector, &mob);
+        assert_eq!(seen.load(Ordering::Relaxed), 50, "vanilla's rate halves");
+
+        mob.0.set_ai_level(
+            kvasir_moblod::Tier::Dormant,
+            kvasir_moblod::Config::default().dormant_rate,
+        );
+        GoalSelector::tick(&mob.0.goals_selector, &mob);
+        assert_eq!(
+            seen.load(Ordering::Relaxed),
+            13,
+            "every eighth tick: 100 / 8, rounded up"
+        );
+        assert_eq!(
+            super::super::to_goal_ticks(100),
+            50,
+            "the rate does not outlive the pass"
+        );
+        world.level.shutdown().await;
+        Ok(())
     }
 
     #[derive(Default)]

@@ -2135,6 +2135,14 @@ dependencies = [
 ]
 
 [[package]]
+name = "kvasir-moblod"
+version = "0.2.1+26.3-26.60"
+dependencies = [
+ "serde",
+ "serde_json",
+]
+
+[[package]]
 name = "kvasir-pregen"
 version = "0.2.1+26.3-26.60"
 dependencies = [
@@ -3071,6 +3079,7 @@ dependencies = [
 name = "pumpkin-config"
 version = "0.2.1+26.3-26.60"
 dependencies = [
+ "kvasir-moblod",
  "pumpkin-util",
  "rand 0.10.3",
  "serde",
@@ -3099,6 +3108,7 @@ dependencies = [
  "hex",
  "hmac 0.13.0",
  "indexmap",
+ "kvasir-moblod",
  "kvasir-pregen",
  "kvasir-pregen-driver",
  "kvasir-tickmode",

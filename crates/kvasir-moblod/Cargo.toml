@@ -1,0 +1,16 @@
+[package]
+name = "kvasir-moblod"
+description = "How often a mob needs its full AI decision, from how far it is from players, whether any client sees it, and how crowded its chunk is."
+version.workspace = true
+edition.workspace = true
+rust-version.workspace = true
+license.workspace = true
+
+[dependencies]
+serde.workspace = true
+
+[lints]
+workspace = true
+
+[dev-dependencies]
+serde_json.workspace = true

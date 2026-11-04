@@ -146,6 +146,11 @@ pub struct MobEntity {
     pub breeding_cooldown: AtomicI32,
     pub breeder: AtomicCell<Option<Uuid>>,
     pub persistence_required: AtomicBool,
+    /// Ticks between this mob's full AI decisions, set by the world each tick from how far the
+    /// mob is from players, whether any client sees it and how crowded its chunk is (see
+    /// `kvasir-moblod`). Vanilla's rate until the world has looked at the mob.
+    ai_rate: AtomicU8,
+    ai_tier: AtomicU8,
     pub death_loot_table: std::sync::Mutex<Option<String>>,
     pub death_loot_table_seed: AtomicI64,
     pub ambient_sound_time: AtomicI32,
@@ -276,6 +281,8 @@ impl MobEntity {
             breeding_cooldown: AtomicI32::new(0),
             breeder: AtomicCell::new(None),
             persistence_required: AtomicBool::new(false),
+            ai_rate: AtomicU8::new(kvasir_moblod::VANILLA_RATE),
+            ai_tier: AtomicU8::new(0),
             death_loot_table: std::sync::Mutex::new(None),
             death_loot_table_seed: AtomicI64::new(0),
             ambient_sound_time: AtomicI32::new(0),
@@ -376,6 +383,42 @@ impl MobEntity {
     }
 
     /// Vanilla `Mob.serverAiStep`: sensing, goals, navigation and controls.
+    /// Sets how much attention this mob gets from now on (see `kvasir-moblod`).
+    pub fn set_ai_level(&self, tier: kvasir_moblod::Tier, rate: u8) {
+        self.ai_tier.store(tier as u8, Relaxed);
+        self.ai_rate.store(rate, Relaxed);
+    }
+
+    /// Ticks between this mob's full AI decisions.
+    #[must_use]
+    pub fn ai_rate(&self) -> u8 {
+        self.ai_rate.load(Relaxed)
+    }
+
+    /// Whether this mob is in the dormant tier: far from every player and seen by none.
+    #[must_use]
+    pub fn is_dormant(&self) -> bool {
+        self.ai_tier.load(Relaxed) == kvasir_moblod::Tier::Dormant as u8
+    }
+
+    /// Whether this mob's AI runs slower than vanilla's.
+    #[must_use]
+    pub fn is_throttled(&self) -> bool {
+        self.ai_rate() > kvasir_moblod::VANILLA_RATE
+    }
+
+    /// Whether this mob runs a step that is only needed at its AI rate on this tick: always at
+    /// vanilla's rate, otherwise once per rate ticks.
+    #[must_use]
+    pub fn is_decision_tick(&self) -> bool {
+        let entity = &self.living_entity.entity;
+        kvasir_moblod::is_decision_tick(
+            self.ai_rate(),
+            entity.tick_count.load(Relaxed),
+            entity.entity_id,
+        )
+    }
+
     pub fn server_ai_step(&self, mob: &dyn Mob, caller: &dyn EntityBase) {
         self.living_entity.no_action_time.fetch_add(1, Relaxed);
         let tick_count = self.living_entity.entity.tick_count.load(Relaxed);
@@ -390,12 +433,12 @@ impl MobEntity {
                 .tick();
         });
 
-        if (tick_count + entity_id) % 2 != 0 && tick_count > 1 {
-            Part::AiTargets.time(|| GoalSelector::tick_goals(&self.target_selector, mob, false));
-            Part::AiGoals.time(|| GoalSelector::tick_goals(&self.goals_selector, mob, false));
-        } else {
+        if kvasir_moblod::is_decision_tick(self.ai_rate(), tick_count, entity_id) {
             Part::AiTargets.time(|| GoalSelector::tick(&self.target_selector, mob));
             Part::AiGoals.time(|| GoalSelector::tick(&self.goals_selector, mob));
+        } else {
+            Part::AiTargets.time(|| GoalSelector::tick_goals(&self.target_selector, mob, false));
+            Part::AiGoals.time(|| GoalSelector::tick_goals(&self.goals_selector, mob, false));
         }
 
         let navigation_target = Part::AiNavigation.time(|| {

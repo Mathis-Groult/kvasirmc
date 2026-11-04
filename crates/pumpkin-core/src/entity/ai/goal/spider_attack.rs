@@ -26,7 +26,9 @@ impl Goal for SpiderAttackGoal {
 
     fn should_continue(&mut self, mob: &dyn Mob) -> bool {
         // Roll first: the daylight lookup only runs on the rare hit.
-        if mob.get_random().random_range(0..100) == 0 && mob.get_mob_entity().is_in_daylight() {
+        if mob.get_random().random_range(0..super::to_goal_ticks(200)) == 0
+            && mob.get_mob_entity().is_in_daylight()
+        {
             mob.set_mob_target(None, TargetReason::ForgotTarget);
             return false;
         }

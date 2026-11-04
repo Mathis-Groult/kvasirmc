@@ -369,6 +369,7 @@ impl Server {
                 if std::env::var_os("KVASIR_TICK_KINDS").is_some() {
                     profile.kinds.enable();
                     kvasir_tickprof::parts::enable();
+                    kvasir_tickprof::motion::enable();
                 }
                 // KVASIR_TICK_TRACE=<file>: one line per tick, for finding what makes ticks slow.
                 if let Some(path) = std::env::var_os("KVASIR_TICK_TRACE")

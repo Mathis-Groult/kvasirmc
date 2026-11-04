@@ -93,7 +93,7 @@ impl Goal for LookAtEntityGoal {
     }
 
     fn can_start(&mut self, mob: &dyn Mob) -> bool {
-        if mob.get_random().random::<f32>() >= self.chance {
+        if mob.get_random().random::<f32>() >= super::goal_chance(self.chance) {
             return false;
         }
 

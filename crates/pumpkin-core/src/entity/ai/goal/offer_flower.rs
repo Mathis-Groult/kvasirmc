@@ -43,7 +43,11 @@ impl Goal for OfferFlowerGoal {
             return false;
         }
 
-        if mob.get_random().random_range(0..8000) != 0 {
+        if mob
+            .get_random()
+            .random_range(0..super::to_goal_ticks(16000))
+            != 0
+        {
             return false;
         }
 

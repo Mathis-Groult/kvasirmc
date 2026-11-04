@@ -18,6 +18,7 @@ use std::{
 };
 
 pub mod kinds;
+pub mod motion;
 pub mod parts;
 pub mod trace;
 
@@ -481,6 +482,7 @@ impl TickProfile {
     pub fn reset(&self) {
         self.kinds.reset();
         parts::reset();
+        motion::reset();
         for counters in &self.phases {
             counters.calls.store(0, Ordering::Relaxed);
             counters.total_ns.store(0, Ordering::Relaxed);

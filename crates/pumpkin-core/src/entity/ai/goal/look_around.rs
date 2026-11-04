@@ -28,7 +28,7 @@ impl Goal for RandomLookAroundGoal {
     }
 
     fn can_start(&mut self, mob: &dyn Mob) -> bool {
-        mob.get_random().random::<f32>() < 0.02
+        mob.get_random().random::<f32>() < super::goal_chance(0.02)
     }
 
     fn should_continue(&mut self, _mob: &dyn Mob) -> bool {

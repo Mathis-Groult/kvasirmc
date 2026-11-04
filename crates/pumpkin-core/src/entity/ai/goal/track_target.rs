@@ -93,7 +93,7 @@ impl TrackTargetGoal {
         false
     }
 
-    const fn remembers_visible_target(&mut self, has_line_of_sight: bool) -> bool {
+    fn remembers_visible_target(&mut self, has_line_of_sight: bool) -> bool {
         if has_line_of_sight {
             self.time_without_visibility = 0;
             true

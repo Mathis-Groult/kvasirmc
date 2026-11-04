@@ -19,7 +19,7 @@ impl WaterAvoidingRandomFlyingGoal {
             goal_control: Controls::MOVE,
             speed,
             target: None,
-            chance: to_goal_ticks(120),
+            chance: 120,
         }
     }
 
@@ -57,7 +57,7 @@ impl Goal for WaterAvoidingRandomFlyingGoal {
             return false;
         }
 
-        if mob.get_random().random_range(0..self.chance) != 0 {
+        if mob.get_random().random_range(0..to_goal_ticks(self.chance)) != 0 {
             return false;
         }
 

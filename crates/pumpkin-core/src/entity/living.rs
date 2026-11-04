@@ -1667,7 +1667,14 @@ impl LivingEntity {
             caller.damage(caller, 1.0, DamageType::IN_WALL);
         }
 
-        Part::PushEntities.time(|| self.push_entities(caller));
+        // Pushing apart is only skipped between ticks of a dormant mob: nobody sees it.
+        let dormant_off_tick = caller.get_mob().is_some_and(|mob| {
+            let mob = mob.get_mob_entity();
+            mob.is_dormant() && !mob.is_decision_tick()
+        });
+        if !dormant_off_tick {
+            Part::PushEntities.time(|| self.push_entities(caller));
+        }
 
         Part::MobAiStepEnd.time(|| {
             if let Some(ageable) = caller.get_mob().and_then(|mob| mob.as_ageable())
@@ -1691,17 +1698,26 @@ impl LivingEntity {
     fn push_entities(&self, dyn_self: &dyn EntityBase) {
         let world = self.entity.world.load();
         let entity_bb = self.entity.bounding_box.load();
-        let own_team = dyn_self.get_team();
 
-        let pushable: Vec<Arc<dyn EntityBase>> = world
+        // Almost always nothing overlaps, so the team rules (a scoreboard lock for each entity)
+        // are looked at only for what does.
+        let overlapping: Vec<Arc<dyn EntityBase>> = world
             .get_all_at_box(&entity_bb)
             .into_iter()
             .filter(|entity| {
-                let entity_ref = entity.get_entity();
-                entity_ref.entity_id != self.entity.entity_id
+                entity.get_entity().entity_id != self.entity.entity_id
                     && !entity.is_spectator()
                     && entity.is_pushable()
-                    && is_allowed_by_team_rules(own_team.as_ref(), entity.get_team().as_ref())
+            })
+            .collect();
+        if overlapping.is_empty() {
+            return;
+        }
+        let own_team = dyn_self.get_team();
+        let pushable: Vec<Arc<dyn EntityBase>> = overlapping
+            .into_iter()
+            .filter(|entity| {
+                is_allowed_by_team_rules(own_team.as_ref(), entity.get_team().as_ref())
             })
             .collect();
 

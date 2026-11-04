@@ -2317,6 +2317,20 @@ impl Entity {
     // updateWaterState() in yarn
 
     fn update_fluid_state(&self, caller: &dyn EntityBase) {
+        // A mob whose AI runs slowly (far from players, unseen, or one of a crowd) looks for
+        // fluid at that rate too, but only while it was dry: a mob in fluid is pushed by it
+        // every tick, as in vanilla.
+        if let Some(mob) = caller
+            .get_mob()
+            .map(super::entity::mob::Mob::get_mob_entity)
+            && mob.is_throttled()
+            && !mob.is_decision_tick()
+            && !self.first_tick.load(Ordering::Relaxed)
+            && !self.touching_water.load(Ordering::SeqCst)
+            && !self.touching_lava.load(Ordering::SeqCst)
+        {
+            return;
+        }
         let world = self.world.load();
         for fluid in self.update_fluid_interaction(caller) {
             world

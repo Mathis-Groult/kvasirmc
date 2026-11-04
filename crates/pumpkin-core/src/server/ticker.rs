@@ -51,6 +51,7 @@ impl Ticker {
         let base = Instant::now();
         let mut schedule = TickSchedule::new();
         let mut game_test_runner = GameTestRunner::new();
+        let mut tick_mode = TickMode::from_environment();
 
         let park_thread = std::thread::current();
         let stop = server.stop_token.clone();
@@ -118,6 +119,11 @@ impl Ticker {
             let tick_duration_nanos = elapsed_nanos(base) - tick_start_nanos;
 
             let tick_number = server.tick_count.load(Ordering::Relaxed);
+            decide_tick_mode(
+                server,
+                &mut tick_mode,
+                std::time::Duration::from_nanos(u64::try_from(tick_duration_nanos).unwrap_or(0)),
+            );
             if server.plugin_manager.has_handlers::<ServerTickEndEvent>() {
                 server.plugin_manager.fire_blocking(
                     server,
@@ -144,6 +150,47 @@ impl Ticker {
 
         debug!("Ticker stopped");
     }
+}
+
+/// `KvasirMC`: what decides whether a tick runs on one thread or on the pool.
+enum TickMode {
+    /// `KVASIR_TICK_MODE=sequential` or `parallel`: fixed, for comparing.
+    Forced(bool),
+    /// The default: `kvasir-tickmode` follows the recent tick lengths.
+    Auto(kvasir_tickmode::Controller),
+}
+
+impl TickMode {
+    fn from_environment() -> Self {
+        match std::env::var("KVASIR_TICK_MODE").as_deref() {
+            Ok("sequential") => Self::Forced(false),
+            Ok("parallel") => Self::Forced(true),
+            _ => Self::Auto(kvasir_tickmode::Controller::new(
+                kvasir_tickmode::Policy::default(),
+            )),
+        }
+    }
+}
+
+fn decide_tick_mode(server: &Server, mode: &mut TickMode, tick: std::time::Duration) {
+    let parallel = match mode {
+        TickMode::Forced(parallel) => *parallel,
+        TickMode::Auto(controller) => {
+            let parallel = controller.observe(tick) == kvasir_tickmode::Mode::Parallel;
+            if parallel != server.tick_parallel.load(Ordering::Relaxed) {
+                tracing::info!(
+                    "tick mode: {}",
+                    if parallel {
+                        "parallel (the median tick is over budget on one thread)"
+                    } else {
+                        "sequential (the median tick is short)"
+                    }
+                );
+            }
+            parallel
+        }
+    };
+    server.tick_parallel.store(parallel, Ordering::Relaxed);
 }
 
 /// Vanilla `MinecraftServer.runServer` overload skip. Returns the updated schedule and,

@@ -16,12 +16,24 @@ struct ReportExecutor;
 
 impl CommandExecutor for ReportExecutor {
     fn execute(&self, context: &CommandContext) -> CommandExecutorResult {
-        let readings = context.source.server().tickprof.snapshot();
+        let profile = &context.source.server().tickprof;
+        let say = |text: String| {
+            context
+                .source
+                .send_feedback(TextComponent::text(format!("tickprofile: {text}")), false);
+        };
+        let readings = profile.snapshot();
         for reading in &readings {
-            context.source.send_feedback(
-                TextComponent::text(format!("tickprofile: {reading}")),
-                false,
-            );
+            say(reading.to_string());
+        }
+        say(format!("dist {}", profile.distribution()));
+        for phase in profile.slow_phases() {
+            if !phase.mean_over_budget.is_zero() {
+                say(format!("slowphase {phase}"));
+            }
+        }
+        for tick in profile.worst_ticks() {
+            say(format!("worst {tick}"));
         }
         Ok(i32::try_from(readings.len()).unwrap_or(i32::MAX))
     }

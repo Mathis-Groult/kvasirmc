@@ -1,0 +1,10 @@
+[package]
+name = "kvasir-tickmode"
+description = "Whether a server tick runs on one thread or on the worker pool: sequential while the tick is comfortably short, parallel only when the sequential tick is persistently over budget."
+version.workspace = true
+edition.workspace = true
+rust-version.workspace = true
+license.workspace = true
+
+[lints]
+workspace = true

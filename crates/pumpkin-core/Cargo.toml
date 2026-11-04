@@ -23,6 +23,7 @@ pumpkin-inventory.workspace = true
 pumpkin-world.workspace = true
 kvasir-pregen = { path = "../kvasir-pregen" }
 kvasir-tickprof = { path = "../kvasir-tickprof" }
+kvasir-tickmode = { path = "../kvasir-tickmode" }
 kvasir-pregen-driver = { path = "../kvasir-pregen-driver" }
 pumpkin-data = { workspace = true, features = ["default"] }
 pumpkin-protocol = { workspace = true, features = ["default"] }

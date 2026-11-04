@@ -28,6 +28,7 @@ members = [
     "crates/kvasir-pregen-driver",
     "crates/kvasir-pump-codec",
     "crates/kvasir-tickprof",
+    "crates/kvasir-tickmode",
     "crates/kvasir-worldlock",
     "tools/pumpkin-codegen",
     "tools/pumpkin-fuzzer",

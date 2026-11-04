@@ -157,6 +157,12 @@ pub struct Server {
     pub runtime: tokio::runtime::Handle,
     /// Dedicated Rayon thread pool for synchronous world and entity simulation (ticks).
     pub simulation_pool: Arc<rayon::ThreadPool>,
+    /// `KvasirMC`: a pool of one thread. A tick installed on it runs without cross-thread
+    /// hand-offs (see `kvasir-tickmode`).
+    sequential_pool: Arc<rayon::ThreadPool>,
+    /// `KvasirMC`: whether the next tick runs on `simulation_pool` (true) or `sequential_pool`.
+    /// Written by the ticker, which owns the decision.
+    pub tick_parallel: std::sync::atomic::AtomicBool,
     /// Dedicated Rayon thread pool for background CPU computation (RSA, Bedrock crypto, compression).
     pub compute_pool: Arc<rayon::ThreadPool>,
     pub management_hub: Arc<crate::net::management::hub::ManagementHub>,
@@ -302,6 +308,13 @@ impl Server {
                 .build()
                 .map_err(|e| WorldInfoError::IoError(std::io::Error::other(e)))?,
         );
+        let sequential_pool = Arc::new(
+            rayon::ThreadPoolBuilder::new()
+                .num_threads(1)
+                .thread_name(|_| "Simulation-seq".to_owned())
+                .build()
+                .map_err(|e| WorldInfoError::IoError(std::io::Error::other(e)))?,
+        );
         let compute_threads = (cpus / 2).clamp(2, 8);
         let compute_pool = Arc::new(
             rayon::ThreadPoolBuilder::new()
@@ -355,6 +368,8 @@ impl Server {
             admission_closed: std::sync::RwLock::new(false),
             runtime: tokio::runtime::Handle::current(),
             simulation_pool,
+            sequential_pool,
+            tick_parallel: std::sync::atomic::AtomicBool::new(false),
             compute_pool,
             scheduled_functions: Arc::new(crate::server::scheduler::ScheduledFunctionQueue::new()),
             server_guid: rand::random(),
@@ -1224,7 +1239,13 @@ impl Server {
     /// Main server tick method. This now handles both player/network ticking (which always runs)
     /// and world/game logic ticking (which is affected by freeze state).
     pub fn tick(self: &Arc<Self>) {
-        self.simulation_pool.install(|| {
+        let pool = if self.tick_parallel.load(Ordering::Relaxed) {
+            &self.simulation_pool
+        } else {
+            &self.sequential_pool
+        };
+        pool.install(|| {
+            let books_before = kvasir_tickprof::SchedStat::of_this_thread();
             // Do not flush mid-tick; `Flush` is `flushChannel`.
             let suspended = self.suspend_player_flushes();
             if self.tick_rate_manager.runs_normally() || self.tick_rate_manager.is_sprinting() {
@@ -1236,6 +1257,17 @@ impl Server {
             }
             self.flush_pending_block_updates();
             Self::resume_player_flushes(&suspended);
+            if let (Some(before), Some(after)) =
+                (books_before, kvasir_tickprof::SchedStat::of_this_thread())
+            {
+                let spent = after.since(before);
+                self.tickprof
+                    .record(kvasir_tickprof::Phase::TickThreadCpu, spent.on_cpu);
+                self.tickprof.record(
+                    kvasir_tickprof::Phase::TickThreadRunQueue,
+                    spent.waiting_for_cpu,
+                );
+            }
         });
     }
 

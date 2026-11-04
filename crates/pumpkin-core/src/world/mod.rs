@@ -1843,6 +1843,9 @@ impl World {
             use kvasir_tickprof::Phase;
             let profile = &server.tickprof;
             profile.record(Phase::World, total_elapsed);
+            if player_count == 0 {
+                profile.record(Phase::EmptyWorld, total_elapsed);
+            }
             profile.record(Phase::Prelude, prelude_elapsed);
             profile.record(Phase::Chunks, chunk_elapsed);
             profile.record(Phase::Players, player_elapsed);

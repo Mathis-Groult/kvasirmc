@@ -87,6 +87,8 @@ pub enum Phase {
     ServerBlockFlush,
     /// Inside `Server`, after the worlds: letting players' packets go out again.
     ServerResume,
+    /// Inside `Server`: the tick of worlds (dimensions) that have no player in them.
+    EmptyWorld,
     /// Inside `Server`, before the worlds: datapack tick functions, plugin loaders, scheduled functions.
     ServerFunctions,
     /// Inside `Server`, after the worlds: the player data store's per-tick work (saving).
@@ -101,7 +103,7 @@ pub enum Phase {
 }
 
 impl Phase {
-    pub const ALL: [Self; 29] = [
+    pub const ALL: [Self; 30] = [
         Self::Server,
         Self::World,
         Self::Prelude,
@@ -127,6 +129,7 @@ impl Phase {
         Self::PlayerChunks,
         Self::ServerBlockFlush,
         Self::ServerResume,
+        Self::EmptyWorld,
         Self::ServerFunctions,
         Self::ServerPlayerData,
         Self::TickThreadCpu,
@@ -155,6 +158,7 @@ impl Phase {
             Self::EntityPlanning => "entity_planning",
             Self::EntityTicking => "entity_ticking",
             Self::TickThreadCpu => "tick_thread_cpu",
+            Self::EmptyWorld => "empty_world",
             Self::ServerFunctions => "server_functions",
             Self::ServerPlayerData => "server_player_data",
             Self::TickThreadRunQueue => "tick_thread_runqueue",

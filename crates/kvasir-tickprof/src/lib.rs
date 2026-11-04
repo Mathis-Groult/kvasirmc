@@ -17,6 +17,10 @@ use std::{
     time::Duration,
 };
 
+pub mod kinds;
+pub mod parts;
+pub mod trace;
+
 /// A server tick longer than this makes players feel a stall (20 ticks per second).
 pub const TICK_BUDGET: Duration = Duration::from_millis(50);
 
@@ -66,6 +70,26 @@ pub enum Phase {
     EntityPlanning,
     /// Inside `Entities`: the entities' own ticks.
     EntityTicking,
+    /// Inside `Prelude`: sending the block updates and block events that piled up.
+    PreludeBlocks,
+    /// Inside `Prelude`: working out which chunks are close enough to a player to tick.
+    PreludeActiveChunks,
+    /// Inside `Prelude`: time of day, weather, sleeping.
+    PreludeEnvironment,
+    /// Inside `Prelude`: raids.
+    PreludeRaids,
+    /// Inside `Players`: handling the packets the player sent since the last tick (summed over players).
+    PlayerInbound,
+    /// Inside `Players`: choosing, encoding and queueing the chunks a player has to be sent (summed over players).
+    PlayerChunks,
+    /// Inside `Server`, after the worlds: sending pending block updates.
+    ServerBlockFlush,
+    /// Inside `Server`, after the worlds: letting players' packets go out again.
+    ServerResume,
+    /// Inside `Server`, before the worlds: datapack tick functions, plugin loaders, scheduled functions.
+    ServerFunctions,
+    /// Inside `Server`, after the worlds: the player data store's per-tick work (saving).
+    ServerPlayerData,
     /// Not work of the server: CPU time the thread that runs the tick used during the tick (from
     /// the scheduler's books). Close to the tick's length means the tick really computed; far
     /// below it, the thread was starved or blocked.
@@ -76,7 +100,7 @@ pub enum Phase {
 }
 
 impl Phase {
-    pub const ALL: [Self; 19] = [
+    pub const ALL: [Self; 29] = [
         Self::Server,
         Self::World,
         Self::Prelude,
@@ -94,6 +118,16 @@ impl Phase {
         Self::EntityFilter,
         Self::EntityPlanning,
         Self::EntityTicking,
+        Self::PreludeBlocks,
+        Self::PreludeActiveChunks,
+        Self::PreludeEnvironment,
+        Self::PreludeRaids,
+        Self::PlayerInbound,
+        Self::PlayerChunks,
+        Self::ServerBlockFlush,
+        Self::ServerResume,
+        Self::ServerFunctions,
+        Self::ServerPlayerData,
         Self::TickThreadCpu,
         Self::TickThreadRunQueue,
     ];
@@ -120,7 +154,17 @@ impl Phase {
             Self::EntityPlanning => "entity_planning",
             Self::EntityTicking => "entity_ticking",
             Self::TickThreadCpu => "tick_thread_cpu",
+            Self::ServerFunctions => "server_functions",
+            Self::ServerPlayerData => "server_player_data",
             Self::TickThreadRunQueue => "tick_thread_runqueue",
+            Self::PreludeBlocks => "prelude_blocks",
+            Self::PreludeActiveChunks => "prelude_active_chunks",
+            Self::PreludeEnvironment => "prelude_environment",
+            Self::PreludeRaids => "prelude_raids",
+            Self::PlayerInbound => "player_inbound",
+            Self::PlayerChunks => "player_chunks",
+            Self::ServerBlockFlush => "server_block_flush",
+            Self::ServerResume => "server_resume",
         }
     }
 
@@ -152,6 +196,10 @@ pub struct TickProfile {
     ticks_over_budget: AtomicU64,
     histogram: [AtomicU64; HISTOGRAM_BUCKETS],
     worst: Mutex<Vec<SlowTick>>,
+    /// When set, every closed tick is also written to a file (see [`trace`]).
+    trace: Mutex<Option<trace::Sink>>,
+    /// Per entity kind tick times, when asked for (see [`kinds`]).
+    pub kinds: kinds::KindTimes,
 }
 
 impl Default for TickProfile {
@@ -165,6 +213,8 @@ impl Default for TickProfile {
             ticks_over_budget: AtomicU64::new(0),
             histogram: std::array::from_fn(|_| AtomicU64::new(0)),
             worst: Mutex::new(Vec::new()),
+            trace: Mutex::new(None),
+            kinds: kinds::KindTimes::new(),
         }
     }
 }
@@ -324,6 +374,24 @@ impl TickProfile {
         if tick_nanos > budget {
             self.remember_worst(tick_nanos, &phases);
         }
+        if let Some(sink) = self
+            .trace
+            .lock()
+            .unwrap_or_else(PoisonError::into_inner)
+            .as_mut()
+        {
+            sink.tick(&phases);
+        }
+    }
+
+    /// From now on, writes one line per tick to `path` (see [`trace`]).
+    ///
+    /// # Errors
+    /// The file cannot be created.
+    pub fn start_trace(&self, path: &std::path::Path) -> std::io::Result<()> {
+        let sink = trace::Sink::create(path)?;
+        *self.trace.lock().unwrap_or_else(PoisonError::into_inner) = Some(sink);
+        Ok(())
     }
 
     fn remember_worst(&self, tick_nanos: u64, phases: &[u64; Phase::ALL.len()]) {
@@ -411,6 +479,8 @@ impl TickProfile {
 
     /// Starts counting from zero again.
     pub fn reset(&self) {
+        self.kinds.reset();
+        parts::reset();
         for counters in &self.phases {
             counters.calls.store(0, Ordering::Relaxed);
             counters.total_ns.store(0, Ordering::Relaxed);

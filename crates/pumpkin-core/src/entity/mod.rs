@@ -5259,7 +5259,7 @@ impl EntityBase for Entity {
 
         self.update_last_pos();
         self.tick_portal(caller);
-        self.update_fluid_state(caller);
+        kvasir_tickprof::parts::Part::FluidState.time(|| self.update_fluid_state(caller));
         self.check_out_of_world(caller);
         let fire_ticks = self.fire_ticks.load(Ordering::Relaxed);
 

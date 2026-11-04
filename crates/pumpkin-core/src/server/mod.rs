@@ -363,7 +363,21 @@ impl Server {
             debug_profiler: debug_profiler::DebugProfiler::new(),
             tasks: TaskTracker::new(),
             pregen: pregen::PregenService::default(),
-            tickprof: kvasir_tickprof::TickProfile::new(),
+            tickprof: {
+                let profile = kvasir_tickprof::TickProfile::new();
+                // KVASIR_TICK_KINDS=1: time every entity's tick, per kind (see /tickprofile).
+                if std::env::var_os("KVASIR_TICK_KINDS").is_some() {
+                    profile.kinds.enable();
+                    kvasir_tickprof::parts::enable();
+                }
+                // KVASIR_TICK_TRACE=<file>: one line per tick, for finding what makes ticks slow.
+                if let Some(path) = std::env::var_os("KVASIR_TICK_TRACE")
+                    && let Err(error) = profile.start_trace(std::path::Path::new(&path))
+                {
+                    tracing::warn!("cannot write the tick trace: {error}");
+                }
+                profile
+            },
             stop_token: crate::STOP_INTERRUPT.child_token(),
             admission_closed: std::sync::RwLock::new(false),
             runtime: tokio::runtime::Handle::current(),
@@ -1255,8 +1269,14 @@ impl Server {
                 self.sync_game_time();
                 self.tick_players_and_network();
             }
+            let t_flush = std::time::Instant::now();
             self.flush_pending_block_updates();
+            self.tickprof
+                .record(kvasir_tickprof::Phase::ServerBlockFlush, t_flush.elapsed());
+            let t_resume = std::time::Instant::now();
             Self::resume_player_flushes(&suspended);
+            self.tickprof
+                .record(kvasir_tickprof::Phase::ServerResume, t_resume.elapsed());
             if let (Some(before), Some(after)) =
                 (books_before, kvasir_tickprof::SchedStat::of_this_thread())
             {
@@ -1295,6 +1315,7 @@ impl Server {
 
     /// Ticks the game logic for all worlds. This is the part that is affected by `/tick freeze`.
     pub fn tick_worlds(self: &Arc<Self>) {
+        let t_functions = std::time::Instant::now();
         let source = crate::command::CommandSender::Console
             .into_source(self)
             .with_silent();
@@ -1308,6 +1329,10 @@ impl Server {
             self.tick_count.load(std::sync::atomic::Ordering::Relaxed) as u64,
         );
 
+        self.tickprof.record(
+            kvasir_tickprof::Phase::ServerFunctions,
+            t_functions.elapsed(),
+        );
         self.sync_game_time();
 
         let worlds = self.worlds.load();
@@ -1316,7 +1341,10 @@ impl Server {
         });
 
         // Global tasks
+        let t_data = std::time::Instant::now();
         self.player_data_storage.tick(self);
+        self.tickprof
+            .record(kvasir_tickprof::Phase::ServerPlayerData, t_data.elapsed());
     }
 
     /// Vanilla `tickChildren` "timeSync": every 20 ticks, also while frozen.

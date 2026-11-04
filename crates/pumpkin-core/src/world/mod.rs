@@ -30,6 +30,7 @@ mod active_chunks;
 pub mod brightness;
 pub mod chunker;
 mod entity_index;
+mod fluid_states;
 pub(crate) use entity_index::EntityIndex;
 pub mod entity_islands;
 pub mod explosion;
@@ -1539,10 +1540,25 @@ impl World {
     pub fn tick(self: &Arc<Self>, server: &Arc<Server>) {
         let start = std::time::Instant::now();
 
+        let t_prelude = std::time::Instant::now();
         self.flush_block_updates();
         self.flush_synced_block_events();
+        server
+            .tickprof
+            .record(kvasir_tickprof::Phase::PreludeBlocks, t_prelude.elapsed());
+        let t_prelude = std::time::Instant::now();
         self.update_active_chunks();
+        server.tickprof.record(
+            kvasir_tickprof::Phase::PreludeActiveChunks,
+            t_prelude.elapsed(),
+        );
+        let t_prelude = std::time::Instant::now();
         self.tick_environment();
+        server.tickprof.record(
+            kvasir_tickprof::Phase::PreludeEnvironment,
+            t_prelude.elapsed(),
+        );
+        let t_prelude = std::time::Instant::now();
         let mut raids = {
             let mut guard = self
                 .raids
@@ -1562,6 +1578,9 @@ impl World {
             raids.next_id = raids.next_id.max(guard.next_id);
             *guard = raids;
         };
+        server
+            .tickprof
+            .record(kvasir_tickprof::Phase::PreludeRaids, t_prelude.elapsed());
 
         let prelude_elapsed = start.elapsed();
         let t_chunks = std::time::Instant::now();
@@ -1701,7 +1720,18 @@ impl World {
             order::set_entity_order(Some(first_order + index as u64 * order::ORDERS_PER_ENTITY));
 
             entity.get_entity().tick_count.fetch_add(1, Relaxed);
+            let t_kind = server_ref
+                .tickprof
+                .kinds
+                .is_enabled()
+                .then(std::time::Instant::now);
             entity.tick(entity.as_ref(), server_ref);
+            if let Some(t_kind) = t_kind {
+                server_ref.tickprof.kinds.record(
+                    usize::from(entity.get_entity().entity_type.id),
+                    t_kind.elapsed(),
+                );
+            }
 
             let entity_inner = entity.get_entity();
             let entity_pos = entity_inner.pos.load();
@@ -1802,7 +1832,7 @@ impl World {
             profile.record(Phase::EntityTracking, tracking_elapsed);
             profile.record(Phase::BlockEntities, block_entity_elapsed);
             profile.record(Phase::ChunkTickets, tickets_elapsed);
-        }
+        };
         if total_elapsed.as_millis() > 50 {
             debug!(
                 "Slow Tick [{}ms]: Chunks: {:?} | Players({}): {:?} | Entities({}): {:?} | Block Entities({}): {:?}",
@@ -6119,6 +6149,15 @@ impl World {
     }
 
     pub(crate) fn get_fluid_from_state_id(id: BlockStateId) -> &'static pumpkin_data::fluid::Fluid {
+        if !fluid_states::holds_fluid(id) {
+            return &Fluid::EMPTY;
+        }
+        Self::fluid_of_state(id)
+    }
+
+    /// The fluid a block state holds, worked out from the state (see `fluid_states` for the
+    /// table that answers the common "none" at once).
+    fn fluid_of_state(id: BlockStateId) -> &'static pumpkin_data::fluid::Fluid {
         if let Some(fluid) = Fluid::from_state_id(id) {
             return fluid.to_flowing();
         }
@@ -6140,6 +6179,14 @@ impl World {
 
     fn fluid_state_from_block_state(id: BlockStateId) -> (&'static Fluid, FluidState) {
         let fluid = Self::get_fluid_from_state_id(id);
+        if fluid.id == Fluid::EMPTY.id {
+            // Not a fluid block (almost every block): nothing of the below applies.
+            let empty = &Fluid::EMPTY;
+            return (
+                fluid,
+                empty.states[empty.default_state_index as usize].clone(),
+            );
+        }
         let source = if fluid.matches_type(&Fluid::WATER) {
             &Fluid::WATER
         } else if fluid.matches_type(&Fluid::LAVA) {

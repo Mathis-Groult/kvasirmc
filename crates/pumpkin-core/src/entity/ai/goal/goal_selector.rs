@@ -14,6 +14,10 @@ enum BorrowKind {
 struct GoalSlot {
     value: Option<PrioritizedGoal>,
     borrowed: Option<BorrowKind>,
+    /// Threads blocked in `available.wait` for the borrow to end. Waking a condition variable
+    /// costs a system call even when nobody waits, and every goal call ends in one, so the
+    /// wake is skipped while this is zero.
+    waiting: usize,
 }
 
 struct RegisteredGoal {
@@ -40,7 +44,9 @@ impl Drop for BorrowedGoal<'_> {
             .unwrap_or_else(std::sync::PoisonError::into_inner);
         slot.value = self.value.take();
         slot.borrowed = None;
-        self.entry.available.notify_all();
+        if slot.waiting > 0 {
+            self.entry.available.notify_all();
+        }
     }
 }
 
@@ -65,10 +71,12 @@ impl RegisteredGoal {
             if kind == BorrowKind::Reach {
                 return None;
             }
+            slot.waiting += 1;
             slot = self
                 .available
                 .wait(slot)
                 .unwrap_or_else(std::sync::PoisonError::into_inner);
+            slot.waiting -= 1;
         }
         if !self.registered.load(Relaxed) {
             return None;
@@ -92,10 +100,12 @@ impl RegisteredGoal {
                 Some(BorrowKind::Callback) => return,
                 // Reporting must not invoke gameplay callbacks, including stop.
                 Some(BorrowKind::Reach) => {
+                    slot.waiting += 1;
                     slot = self
                         .available
                         .wait(slot)
                         .unwrap_or_else(std::sync::PoisonError::into_inner);
+                    slot.waiting -= 1;
                 }
                 None => break,
             }
@@ -148,6 +158,7 @@ impl GoalSelector {
             goal: Mutex::new(GoalSlot {
                 value: Some(goal),
                 borrowed: None,
+                waiting: 0,
             }),
             available: Condvar::new(),
         }));
@@ -449,6 +460,46 @@ mod tests {
             &EntityType::ZOMBIE,
         )));
         (world, mob)
+    }
+
+    #[test]
+    fn a_borrow_waits_for_the_one_before_and_is_woken_when_that_ends() {
+        let selector = GoalSelector::default();
+        selector.add_goal(1, Box::new(count_goal(Arc::default())));
+        let entry = GoalSelector::snapshot(&selector)[0].clone();
+        let first = entry
+            .borrow(BorrowKind::Callback)
+            .expect("the first borrow");
+        let (sent, received) = std::sync::mpsc::channel();
+        let waiter = {
+            let entry = entry.clone();
+            std::thread::spawn(move || {
+                let second = entry.borrow(BorrowKind::Callback);
+                sent.send(second.is_some()).unwrap();
+            })
+        };
+        while entry.goal.lock().unwrap().waiting == 0 {
+            std::thread::yield_now();
+        }
+        assert!(received.try_recv().is_err(), "the second borrow must wait");
+        drop(first);
+        assert_eq!(
+            received.recv_timeout(std::time::Duration::from_secs(10)),
+            Ok(true),
+            "ending the first borrow must wake the waiting one"
+        );
+        waiter.join().unwrap();
+        assert_eq!(entry.goal.lock().unwrap().waiting, 0);
+    }
+
+    #[test]
+    fn borrowing_with_nobody_waiting_leaves_no_waiter_counted() {
+        let selector = GoalSelector::default();
+        selector.add_goal(1, Box::new(count_goal(Arc::default())));
+        let entry = GoalSelector::snapshot(&selector)[0].clone();
+        drop(entry.borrow(BorrowKind::Callback).expect("a borrow"));
+        drop(entry.borrow(BorrowKind::Reach).expect("a second borrow"));
+        assert_eq!(entry.goal.lock().unwrap().waiting, 0);
     }
 
     #[derive(Default)]

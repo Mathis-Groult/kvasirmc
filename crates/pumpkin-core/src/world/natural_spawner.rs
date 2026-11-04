@@ -74,6 +74,7 @@ impl MobCounts {
     }
 }
 
+#[derive(Default)]
 pub struct LocalMobCapCalculator {
     player_mob_counts: FxDashMap<i32, MobCounts>,
     players_near_chunk: FxDashMap<Vector2<i32>, Arc<[i32]>>,
@@ -92,15 +93,6 @@ impl Clone for LocalMobCapCalculator {
         Self {
             player_mob_counts,
             players_near_chunk,
-        }
-    }
-}
-
-impl Default for LocalMobCapCalculator {
-    fn default() -> Self {
-        Self {
-            player_mob_counts: FxDashMap::default(),
-            players_near_chunk: FxDashMap::default(),
         }
     }
 }

@@ -35,6 +35,27 @@ impl CommandExecutor for ReportExecutor {
         for tick in profile.worst_ticks() {
             say(format!("worst {tick}"));
         }
+        for (part, row) in kvasir_tickprof::parts::report() {
+            say(format!(
+                "part {} ticks={} mean_us={:.1} total_ms={:.0}",
+                part.name(),
+                row.ticks,
+                row.mean_us(),
+                row.total_ns as f64 / 1e6
+            ));
+        }
+        for row in profile.kinds.top(12) {
+            let name = u16::try_from(row.kind)
+                .ok()
+                .and_then(pumpkin_data::entity::EntityType::from_raw)
+                .map_or("other", |kind| kind.resource_name);
+            say(format!(
+                "kind {name} ticks={} mean_us={:.1} total_ms={:.0}",
+                row.ticks,
+                row.mean_us(),
+                row.total_ns as f64 / 1e6
+            ));
+        }
         Ok(i32::try_from(readings.len()).unwrap_or(i32::MAX))
     }
 }

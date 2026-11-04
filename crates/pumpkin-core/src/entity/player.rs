@@ -2871,7 +2871,11 @@ impl Player {
 
     #[expect(clippy::too_many_lines)]
     pub fn tick<'a>(&'a self, server: &'a Server) {
+        let t_inbound = std::time::Instant::now();
         self.process_inbound_packets();
+        server
+            .tickprof
+            .record(kvasir_tickprof::Phase::PlayerInbound, t_inbound.elapsed());
 
         if self.is_spectator() {
             self.living_entity
@@ -2951,6 +2955,7 @@ impl Player {
             .lock()
             .unwrap_or_else(std::sync::PoisonError::into_inner)
             .tick();
+        let t_chunks = std::time::Instant::now();
         if let Ok(listener) = self.chunk_listener.try_lock()
             && let Ok(mut sender) = self.chunk_sender.try_lock()
         {
@@ -3034,6 +3039,9 @@ impl Player {
             },
         );
 
+        server
+            .tickprof
+            .record(kvasir_tickprof::Phase::PlayerChunks, t_chunks.elapsed());
         if let ClientPlatform::Bedrock(bedrock_client) = self.client.as_ref()
             && !self.bedrock_spawned.load(Ordering::Relaxed)
             && total_sent_chunks > 4

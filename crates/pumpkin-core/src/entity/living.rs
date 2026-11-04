@@ -1,3 +1,4 @@
+use kvasir_tickprof::parts::Part;
 use pumpkin_data::particle::Particle;
 use pumpkin_data::potion::Effect;
 use pumpkin_data::tag::{self, Taggable};
@@ -1594,7 +1595,7 @@ impl LivingEntity {
             && !mob.get_mob_entity().is_no_ai()
         {
             // Prepare old motion before controllers produce this tick's inputs.
-            mob.get_mob_entity().server_ai_step(mob, caller);
+            Part::AiStep.time(|| mob.get_mob_entity().server_ai_step(mob, caller));
         }
 
         if self.jumping.load(SeqCst) && should_swim_in_fluids {
@@ -1646,41 +1647,45 @@ impl LivingEntity {
 
         // Strider is the only entity that has canWalkOnFluid = false
 
-        if !effective_ai || caller.get_mob().is_some_and(|mob| mob.travel(caller)) {
-        } else if (touching_water || self.entity.touching_lava.load(SeqCst))
-            && should_swim_in_fluids
-            && self.entity.entity_type != &EntityType::STRIDER
-        {
-            self.travel_in_fluid(caller, touching_water);
-        } else {
-            // TODO: Gliding
+        Part::Travel.time(|| {
+            if !effective_ai || caller.get_mob().is_some_and(|mob| mob.travel(caller)) {
+            } else if (touching_water || self.entity.touching_lava.load(SeqCst))
+                && should_swim_in_fluids
+                && self.entity.entity_type != &EntityType::STRIDER
+            {
+                self.travel_in_fluid(caller, touching_water);
+            } else {
+                // TODO: Gliding
 
-            self.travel_in_air(caller);
-        }
+                self.travel_in_air(caller);
+            }
+        });
 
-        let suffocating = self.entity.tick_block_collisions(caller);
+        let suffocating = Part::BlockCollisions.time(|| self.entity.tick_block_collisions(caller));
 
         if suffocating {
             caller.damage(caller, 1.0, DamageType::IN_WALL);
         }
 
-        self.push_entities(caller);
+        Part::PushEntities.time(|| self.push_entities(caller));
 
-        if let Some(ageable) = caller.get_mob().and_then(|mob| mob.as_ageable())
-            && self.entity.is_alive()
-            && !self.is_dead_or_dying()
-        {
-            ageable.ageable_ai_step();
-        }
+        Part::MobAiStepEnd.time(|| {
+            if let Some(ageable) = caller.get_mob().and_then(|mob| mob.as_ageable())
+                && self.entity.is_alive()
+                && !self.is_dead_or_dying()
+            {
+                ageable.ageable_ai_step();
+            }
 
-        if let Some(mob) = caller.get_mob() {
-            mob.mob_ai_step();
-            mob.get_mob_entity()
-                .body_rotation_control
-                .lock()
-                .unwrap_or_else(std::sync::PoisonError::into_inner)
-                .client_tick(mob);
-        }
+            if let Some(mob) = caller.get_mob() {
+                mob.mob_ai_step();
+                mob.get_mob_entity()
+                    .body_rotation_control
+                    .lock()
+                    .unwrap_or_else(std::sync::PoisonError::into_inner)
+                    .client_tick(mob);
+            }
+        });
     }
 
     fn push_entities(&self, dyn_self: &dyn EntityBase) {
@@ -3805,12 +3810,14 @@ impl EntityBase for LivingEntity {
     /// death-animation completion.
     #[allow(clippy::too_many_lines)]
     fn tick(&self, caller: &dyn EntityBase, server: &Server) {
-        self.entity.tick(caller, server);
+        Part::BaseTick.time(|| self.entity.tick(caller, server));
         self.tick_last_hurt_by_mob();
-        if let Some(mob) = caller.get_mob() {
-            mob.tick_ambient_sound();
-            mob.base_tick();
-        }
+        Part::MobBaseTick.time(|| {
+            if let Some(mob) = caller.get_mob() {
+                mob.tick_ambient_sound();
+                mob.base_tick();
+            }
+        });
 
         // Only tick movement if the entity is alive. This prevents a dead "corpse"
         // from continuing to be simulated (accumulating fall_distance/velocity).
@@ -3819,9 +3826,9 @@ impl EntityBase for LivingEntity {
         let in_death_animation = self.health.load() <= 0.0 && self.death_time.load(Relaxed) < 20;
         let is_player = self.entity.entity_type == &EntityType::PLAYER;
         if (is_alive || in_death_animation) && !is_player {
-            self.tick_movement(caller);
+            Part::Movement.time(|| self.tick_movement(caller));
             // Vanilla-like order: freeze logic runs after movement/collisions.
-            self.entity.tick_frozen(caller);
+            Part::Frozen.time(|| self.entity.tick_frozen(caller));
         } else if is_alive {
             // Client-authoritative players skip `travel`, so decay pushed velocity like
             // vanilla to prevent it accumulating and launching the player.
@@ -3888,7 +3895,7 @@ impl EntityBase for LivingEntity {
             self.on_changed_block(caller, current_block_pos);
         }
 
-        self.tick_effects();
+        Part::Effects.time(|| self.tick_effects());
 
         if let Some(player) = caller.get_player() {
             let remaining_use_ticks = self.item_use_time.load(Ordering::Relaxed);

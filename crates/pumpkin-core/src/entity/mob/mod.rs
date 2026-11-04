@@ -22,6 +22,7 @@ use crate::world::brightness::DAYLIGHT_BRIGHTNESS;
 use crate::world::entity_islands::{self, AuditedReach};
 use crate::world::game_event::notified_area;
 use crossbeam::atomic::AtomicCell;
+use kvasir_tickprof::parts::Part;
 use pumpkin_data::attributes::Attributes;
 use pumpkin_data::damage::DamageType;
 use pumpkin_data::data_component_impl::EquipmentSlot;
@@ -380,29 +381,31 @@ impl MobEntity {
         let tick_count = self.living_entity.entity.tick_count.load(Relaxed);
         let entity_id = self.living_entity.entity.entity_id;
 
-        self.process_navigation_updates();
+        Part::AiNavigation.time(|| self.process_navigation_updates());
 
-        self.sensing
-            .lock()
-            .unwrap_or_else(std::sync::PoisonError::into_inner)
-            .tick();
+        Part::AiSensing.time(|| {
+            self.sensing
+                .lock()
+                .unwrap_or_else(std::sync::PoisonError::into_inner)
+                .tick();
+        });
 
         if (tick_count + entity_id) % 2 != 0 && tick_count > 1 {
-            GoalSelector::tick_goals(&self.target_selector, mob, false);
-            GoalSelector::tick_goals(&self.goals_selector, mob, false);
+            Part::AiTargets.time(|| GoalSelector::tick_goals(&self.target_selector, mob, false));
+            Part::AiGoals.time(|| GoalSelector::tick_goals(&self.goals_selector, mob, false));
         } else {
-            GoalSelector::tick(&self.target_selector, mob);
-            GoalSelector::tick(&self.goals_selector, mob);
+            Part::AiTargets.time(|| GoalSelector::tick(&self.target_selector, mob));
+            Part::AiGoals.time(|| GoalSelector::tick(&self.goals_selector, mob));
         }
 
-        let navigation_target = {
+        let navigation_target = Part::AiNavigation.time(|| {
             let mut navigator = self
                 .navigator
                 .lock()
                 .unwrap_or_else(std::sync::PoisonError::into_inner);
             self.apply_navigation_updates(&mut navigator);
             navigator.tick(&self.living_entity)
-        };
+        });
 
         // Vanilla PathNavigation.tick hands its waypoint to `mob.getMoveControl()`.
         if let Some(target) = navigation_target {
@@ -414,28 +417,30 @@ impl MobEntity {
             );
         }
 
-        mob.custom_server_ai_step(caller);
+        Part::AiCustom.time(|| mob.custom_server_ai_step(caller));
 
-        {
-            let mut move_control = self
-                .move_control
+        Part::AiControls.time(|| {
+            {
+                let mut move_control = self
+                    .move_control
+                    .lock()
+                    .unwrap_or_else(std::sync::PoisonError::into_inner);
+                move_control.tick(mob);
+            };
+
+            {
+                let mut look_control = self
+                    .look_control
+                    .lock()
+                    .unwrap_or_else(std::sync::PoisonError::into_inner);
+                look_control.tick(mob);
+            };
+
+            self.jump_control
                 .lock()
-                .unwrap_or_else(std::sync::PoisonError::into_inner);
-            move_control.tick(mob);
-        };
-
-        {
-            let mut look_control = self
-                .look_control
-                .lock()
-                .unwrap_or_else(std::sync::PoisonError::into_inner);
-            look_control.tick(mob);
-        };
-
-        self.jump_control
-            .lock()
-            .unwrap_or_else(std::sync::PoisonError::into_inner)
-            .tick(mob);
+                .unwrap_or_else(std::sync::PoisonError::into_inner)
+                .tick(mob);
+        });
     }
 
     fn update_control_flags(&self, mob: &dyn Mob) {

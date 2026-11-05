@@ -9,7 +9,7 @@ use super::{
     LevelChannel,
 };
 use crate::chunk::io::Dirtiable;
-use crate::level::{ChunkMap, Level, LoadedChunkChange, SyncChunk};
+use crate::level::{Level, SyncChunk};
 use pumpkin_config::lighting::LightingEngineConfig;
 use slotmap::Key;
 use std::cmp::{Ordering, max};
@@ -61,8 +61,7 @@ pub struct GenerationSchedule {
     last_high_priority: Vec<ChunkPos>,
     send_level: Arc<LevelChannel>,
 
-    public_chunk_map: Arc<ChunkMap<SyncChunk>>,
-    loaded_chunk_changes: Arc<crossbeam::queue::SegQueue<LoadedChunkChange>>,
+    public_chunks: crate::chunk_cache::PublicChunks,
     chunk_map: HashMap<ChunkPos, ChunkHolder>,
     unload_chunks: HashSetType<ChunkPos>,
 
@@ -87,21 +86,11 @@ pub struct GenerationSchedule {
 
 impl GenerationSchedule {
     fn publish_chunk(&self, pos: ChunkPos, chunk: SyncChunk) -> Option<SyncChunk> {
-        let previous = self.public_chunk_map.insert(pos, chunk);
-        if previous.is_none() {
-            self.loaded_chunk_changes
-                .push(LoadedChunkChange::Loaded(pos));
-        }
-        previous
+        self.public_chunks.publish(pos, chunk)
     }
 
     fn unpublish_chunk(&self, pos: ChunkPos) -> Option<SyncChunk> {
-        let removed = self.public_chunk_map.remove(&pos).map(|(_, chunk)| chunk);
-        if removed.is_some() {
-            self.loaded_chunk_changes
-                .push(LoadedChunkChange::Unloaded(pos));
-        }
-        removed
+        self.public_chunks.unpublish(pos)
     }
 
     pub fn create(
@@ -160,8 +149,7 @@ impl GenerationSchedule {
                     last_level: ChunkLevel::default(),
                     last_high_priority: Vec::new(),
                     send_level: level_channel,
-                    public_chunk_map: level_sched.loaded_chunks.clone(),
-                    loaded_chunk_changes: level_sched.loaded_chunk_changes.clone(),
+                    public_chunks: level_sched.public_chunks(),
                     unload_chunks: HashSetType::default(),
                     waiting_for_chunks: HashSetType::default(),
                     io_lock,
@@ -1192,7 +1180,7 @@ impl GenerationSchedule {
                                             "public_chunk_map.insert returned existing chunk for {new_pos:?}"
                                         );
                                     }
-                                    if let Some(pc) = self.public_chunk_map.get(&new_pos) {
+                                    if let Some(pc) = self.public_chunks.get(&new_pos) {
                                         trace!(
                                             "Notifying players: new chunk at {:?} (generation complete)",
                                             new_pos

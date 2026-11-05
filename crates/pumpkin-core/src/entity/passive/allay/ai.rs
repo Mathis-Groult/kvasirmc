@@ -289,7 +289,7 @@ mod tests {
             })
         };
         assert_eq!(deposit(), Some(pos.up()));
-        world.level.loaded_chunks.remove(&chunk_pos);
+        world.level.public_chunks().unpublish(chunk_pos);
         assert!(deposit().is_none());
         assert!(allay.mob_entity.with_brain(allay.as_ref(), |brain| {
             brain.has_memory_value(types::LIKED_NOTEBLOCK_POSITION.id())

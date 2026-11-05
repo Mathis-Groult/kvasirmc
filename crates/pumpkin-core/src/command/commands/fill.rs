@@ -50,7 +50,6 @@ enum FilterMode {
     KeepAir,
 }
 
-#[expect(clippy::too_many_lines)]
 /// The positions where the new block lets light through, or gives it off, differently from the
 /// old one. `fill` writes blocks straight into the chunks, so the light engine, which
 /// `World::set_block_state` tells about each change, has to be told about these separately.
@@ -69,6 +68,7 @@ fn positions_needing_light_update(
         .collect()
 }
 
+#[expect(clippy::too_many_lines)]
 fn fill_blocks(
     source: &CommandSource,
     from: BlockPos,

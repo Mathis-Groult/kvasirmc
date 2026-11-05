@@ -86,6 +86,9 @@ pub struct Level {
     // Chunks that are paired with chunk watchers. When a chunk is no longer watched, it is removed
     // from the loaded chunks map and sent to the underlying ChunkIO
     pub loaded_chunks: Arc<ChunkMap<SyncChunk>>,
+    /// Raised whenever a loaded chunk leaves or is replaced, so the per-thread memory of the last
+    /// chunk read is dropped; see [`chunk_cache`](crate::chunk_cache).
+    pub(crate) chunk_version: Arc<crate::chunk_cache::Version>,
     pub(crate) loaded_chunk_changes: Arc<SegQueue<LoadedChunkChange>>,
     loaded_entity_chunks: Arc<ChunkMap<SyncEntityChunk>>,
     pub chunks_with_scheduled_ticks: Arc<dashmap::DashSet<Vector2<i32>>>,
@@ -310,6 +313,7 @@ impl Level {
             entity_saver,
             schedule_tick_counts: AtomicU64::new(0),
             loaded_chunks: Arc::new(ChunkMap::default()),
+            chunk_version: Arc::new(crate::chunk_cache::Version::new()),
             loaded_chunk_changes: Arc::new(SegQueue::new()),
             loaded_entity_chunks: Arc::new(ChunkMap::default()),
             chunks_with_scheduled_ticks: Arc::new(dashmap::DashSet::new()),
@@ -652,11 +656,18 @@ impl Level {
             return res;
         }
         let chunk = self.fetch_chunk(pos).await;
-        if self.loaded_chunks.insert(pos, chunk.clone()).is_none() {
-            self.loaded_chunk_changes
-                .push(LoadedChunkChange::Loaded(pos));
-        }
+        self.public_chunks().publish(pos, chunk.clone());
         f(&chunk)
+    }
+
+    /// The loaded chunks with the rules for changing them: use this, not the bare map, to add or
+    /// remove one.
+    pub fn public_chunks(&self) -> crate::chunk_cache::PublicChunks {
+        crate::chunk_cache::PublicChunks::new(
+            self.loaded_chunks.clone(),
+            self.chunk_version.clone(),
+            self.loaded_chunk_changes.clone(),
+        )
     }
 
     pub fn loaded_chunk_changes(&self) -> impl Iterator<Item = LoadedChunkChange> + '_ {
@@ -902,7 +913,16 @@ impl Level {
         coordinates: &Vector2<i32>,
         f: F,
     ) -> Option<R> {
-        self.loaded_chunks.get(coordinates).map(|x| f(x.value()))
+        crate::chunk_cache::read_through(
+            &self.chunk_version,
+            coordinates,
+            || {
+                self.loaded_chunks
+                    .get(coordinates)
+                    .map(|x| x.value().clone())
+            },
+            f,
+        )
     }
 
     pub fn read_entity_chunk_sync<R, F: Fn(&SyncEntityChunk) -> R>(

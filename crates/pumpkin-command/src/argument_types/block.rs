@@ -7,7 +7,7 @@ use crate::{
     string_reader::StringReader,
     suggestion::suggestions::{Suggestions, SuggestionsBuilder},
 };
-use std::collections::HashMap;
+use std::{collections::HashMap, hash::BuildHasher};
 
 use pumpkin_data::{Block, BlockStateId, translation};
 use pumpkin_util::text::TextComponent;
@@ -105,10 +105,10 @@ type StateProperties = (BlockStateId, Vec<(String, String)>);
 ///
 /// # Errors
 /// A requested property or value that no state of the block has.
-fn choose_state(
+fn choose_state<S: BuildHasher>(
     states: &[StateProperties],
     default: BlockStateId,
-    requested: &HashMap<String, String>,
+    requested: &HashMap<String, String, S>,
 ) -> Result<BlockStateId, StateError> {
     let default_properties = states
         .iter()
@@ -183,9 +183,9 @@ fn states_of(block: &'static Block) -> Vec<StateProperties> {
 ///
 /// # Errors
 /// See [`choose_state`].
-pub fn state_with(
+pub fn state_with<S: BuildHasher>(
     block: &'static Block,
-    requested: &HashMap<String, String>,
+    requested: &HashMap<String, String, S>,
 ) -> Result<BlockStateId, StateError> {
     if requested.is_empty() {
         return Ok(block.default_state.id);

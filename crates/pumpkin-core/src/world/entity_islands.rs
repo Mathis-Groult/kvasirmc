@@ -1793,7 +1793,7 @@ mod tests {
         .ok_or("unexpected pruning budget exhaustion")?;
         assert!(reaches[0].block_writes.is_some());
 
-        world.level.loaded_chunks.remove(&Vector2::new(0, 0));
+        world.level.public_chunks().unpublish(Vector2::new(0, 0));
         let mut reaches = original;
         prune_block_writes(
             &world,

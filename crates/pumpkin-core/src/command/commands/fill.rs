@@ -68,6 +68,19 @@ fn positions_needing_light_update(
         .collect()
 }
 
+/// The blocks whose state changed, each with the state it now has: they tell their neighbours, as
+/// vanilla's `blockUpdated` does after a fill. `fill` writes blocks straight into the chunks, so
+/// without this a lamp next to a redstone block placed by `fill` is never told about it.
+fn positions_needing_neighbour_update(
+    changed: &[(BlockPos, BlockStateId, BlockStateId)],
+) -> Vec<(BlockPos, BlockStateId)> {
+    changed
+        .iter()
+        .filter(|(_, old, new)| old != new)
+        .map(|(position, _, new)| (*position, *new))
+        .collect()
+}
+
 #[expect(clippy::too_many_lines)]
 fn fill_blocks(
     source: &CommandSource,
@@ -258,6 +271,8 @@ fn fill_blocks(
             .update_lighting_at(&world.level, position);
     }
 
+    let to_tell = positions_needing_neighbour_update(&changed_positions);
+
     // Vanilla runs onPlace for every placed block unless strict sets UPDATE_SKIP_ON_PLACE.
     if !strict {
         for (pos, old_id, new_id) in changed_positions {
@@ -266,6 +281,10 @@ fn fill_blocks(
                 world.on_block_placed(&pos, new_block, new_id, old_id, false);
             }
         }
+    }
+    // Then every changed block tells its neighbours (vanilla `blockUpdated`), strict or not.
+    for (position, state_id) in to_tell {
+        world.update_neighbors_at(&position, Block::from_state_id(state_id), None);
     }
     world.flush_block_updates();
 
@@ -409,5 +428,30 @@ mod tests {
             [0, 2, 4],
             "stone to andesite and stone to stone change no light"
         );
+    }
+
+    #[test]
+    fn every_block_whose_state_changed_tells_its_neighbours_and_no_other_does() {
+        let changed = [
+            change(0, &Block::AIR, &Block::REDSTONE_BLOCK),
+            change(1, &Block::STONE, &Block::STONE),
+            change(2, &Block::REDSTONE_BLOCK, &Block::AIR),
+            change(3, &Block::STONE, &Block::ANDESITE),
+        ];
+        let told = positions_needing_neighbour_update(&changed);
+        let summary: Vec<(i32, BlockStateId)> = told
+            .iter()
+            .map(|(position, new)| (position.0.x, *new))
+            .collect();
+        assert_eq!(
+            summary,
+            [
+                (0, Block::REDSTONE_BLOCK.default_state.id),
+                (2, Block::AIR.default_state.id),
+                (3, Block::ANDESITE.default_state.id),
+            ],
+            "in the order they were placed, with the state they now have"
+        );
+        assert!(positions_needing_neighbour_update(&[]).is_empty());
     }
 }

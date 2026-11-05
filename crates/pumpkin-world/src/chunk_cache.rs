@@ -356,17 +356,17 @@ mod tests {
             }
         }
         let version = Version::new();
-        let reads = 20_000_000_u32;
+        let reads = 20_000_000u32;
         // 9 reads in a chunk, then one elsewhere; deterministic
         let position = |n: u32| {
             let chunk = (n / 10) % 25;
             Vector2::new((chunk % 5) as i32, (chunk / 5) as i32)
         };
-        let mut sum = 0_i64;
+        let mut sum = 0i64;
         let started = Instant::now();
         for n in 0..reads {
             let at = position(n);
-            sum += i64::from(map.get(&at).map(|found| found.value().x).unwrap_or(-1));
+            sum += i64::from(map.get(&at).map_or(-1, |found| found.value().x));
         }
         let plain = started.elapsed();
         let started = Instant::now();
@@ -383,10 +383,16 @@ mod tests {
             );
         }
         let remembered = started.elapsed();
-        println!(
-            "map only: {:.1} ns per read; with the memory: {:.1} ns per read (checksum {sum})",
-            plain.as_nanos() as f64 / f64::from(reads),
-            remembered.as_nanos() as f64 / f64::from(reads)
-        );
+        #[expect(
+            clippy::print_stdout,
+            reason = "a measurement run by hand prints its result"
+        )]
+        {
+            println!(
+                "map only: {:.1} ns per read; with the memory: {:.1} ns per read (checksum {sum})",
+                plain.as_nanos() as f64 / f64::from(reads),
+                remembered.as_nanos() as f64 / f64::from(reads)
+            );
+        }
     }
 }

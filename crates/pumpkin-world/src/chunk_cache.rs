@@ -337,4 +337,56 @@ mod tests {
             "after the refresh the chunk is remembered again"
         );
     }
+
+    /// Cost of a read with and without the memory, over 25 loaded chunks where 9 of 10 reads hit
+    /// the chunk read before it (a neighbour update cascade). Run with
+    /// `cargo test --profile kvasir-fast -p pumpkin-world --lib chunk_cache::tests::cost -- --ignored --nocapture`.
+    #[test]
+    #[ignore = "a measurement, not a check"]
+    fn cost_of_a_read_with_and_without_the_memory() {
+        use std::time::Instant;
+
+        let map = ChunkMap::<SyncChunk>::default();
+        for x in 0..5 {
+            for z in 0..5 {
+                map.insert(
+                    Vector2::new(x, z),
+                    std::sync::Arc::new(crate::chunk::ChunkData::empty(x, z)),
+                );
+            }
+        }
+        let version = Version::new();
+        let reads = 20_000_000_u32;
+        // 9 reads in a chunk, then one elsewhere; deterministic
+        let position = |n: u32| {
+            let chunk = (n / 10) % 25;
+            Vector2::new((chunk % 5) as i32, (chunk / 5) as i32)
+        };
+        let mut sum = 0_i64;
+        let started = Instant::now();
+        for n in 0..reads {
+            let at = position(n);
+            sum += i64::from(map.get(&at).map(|found| found.value().x).unwrap_or(-1));
+        }
+        let plain = started.elapsed();
+        let started = Instant::now();
+        for n in 0..reads {
+            let at = position(n);
+            sum += i64::from(
+                read_through(
+                    &version,
+                    &at,
+                    || map.get(&at).map(|found| found.value().clone()),
+                    |found| found.x,
+                )
+                .unwrap_or(-1),
+            );
+        }
+        let remembered = started.elapsed();
+        println!(
+            "map only: {:.1} ns per read; with the memory: {:.1} ns per read (checksum {sum})",
+            plain.as_nanos() as f64 / f64::from(reads),
+            remembered.as_nanos() as f64 / f64::from(reads)
+        );
+    }
 }

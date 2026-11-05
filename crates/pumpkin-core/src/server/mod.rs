@@ -301,9 +301,14 @@ impl Server {
         ));
 
         let cpus = std::thread::available_parallelism().map_or(1, std::num::NonZero::get);
+        // Two cores stay free for the rest of the machine; see `kvasir-tickmode`.
+        let tick_threads = kvasir_tickmode::pool_threads(
+            cpus,
+            kvasir_tickmode::reserved_cores(std::env::var("KVASIR_RESERVED_CORES").ok().as_deref()),
+        );
         let simulation_pool = Arc::new(
             rayon::ThreadPoolBuilder::new()
-                .num_threads(cpus)
+                .num_threads(tick_threads)
                 .thread_name(|i| format!("Simulation-{i}"))
                 .build()
                 .map_err(|e| WorldInfoError::IoError(std::io::Error::other(e)))?,

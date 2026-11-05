@@ -1,4 +1,4 @@
-//! One thread or many for the server tick.
+//! One thread or many for the server tick, and how many threads "many" is.
 //!
 //! Measured on this engine (10 and 30 bots on a 6-core virtual machine): a tick that runs on one
 //! thread has the same median as one that runs on six and a clearly shorter tail, because every
@@ -20,26 +20,51 @@ pub enum Mode {
     Parallel,
 }
 
+/// Cores kept free for the rest of the machine (other programs, the network and disk threads).
+pub const DEFAULT_RESERVED_CORES: usize = 2;
+
+/// The number of cores to leave to others: the value of `KVASIR_RESERVED_CORES` when it is a
+/// number, else [`DEFAULT_RESERVED_CORES`].
+#[must_use]
+pub fn reserved_cores(setting: Option<&str>) -> usize {
+    setting
+        .and_then(|text| text.trim().parse().ok())
+        .unwrap_or(DEFAULT_RESERVED_CORES)
+}
+
+/// How many threads the tick pool gets on a machine with `cpus` cores of which `reserved` are left
+/// to others. Never fewer than one.
+#[must_use]
+pub const fn pool_threads(cpus: usize, reserved: usize) -> usize {
+    let free = cpus.saturating_sub(reserved);
+    if free == 0 { 1 } else { free }
+}
+
 /// The thresholds. All durations are tick lengths.
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub struct Policy {
-    /// Go parallel when the median of the recent ticks, run sequentially, is above this: more
-    /// than half of the ticks do not fit the budget, so the overload is not a hiccup.
-    pub overloaded_median: Duration,
-    /// Try sequential again when the median of the recent ticks, run in parallel, is below this:
-    /// one thread has a wide margin.
-    pub calm_median: Duration,
-    /// How many recent ticks the median is taken over, and the fewest ticks in a mode before it
-    /// may change again.
-    pub window: usize,
+    /// Go parallel when the median of the last `attack_window` ticks, run sequentially, is above
+    /// this: most of them do not fit the budget, so a burst (an explosion, a redstone clock
+    /// starting) is handled within about a second, while a hiccup of a few ticks is not.
+    pub attack_median: Duration,
+    /// How many recent ticks the attack looks at, and the fewest ticks in sequential mode before
+    /// it may react.
+    pub attack_window: usize,
+    /// Try sequential again when the median of the last `release_window` ticks, run in parallel,
+    /// is below this: one thread has a wide margin.
+    pub release_median: Duration,
+    /// How many recent ticks the release looks at, and the fewest ticks in parallel mode before it
+    /// may change back. Long, so that a burst is not followed by a quick return to one thread.
+    pub release_window: usize,
 }
 
 impl Default for Policy {
     fn default() -> Self {
         Self {
-            overloaded_median: Duration::from_millis(45),
-            calm_median: Duration::from_millis(18),
-            window: 200,
+            attack_median: Duration::from_millis(40),
+            attack_window: 20,
+            release_median: Duration::from_millis(18),
+            release_window: 200,
         }
     }
 }
@@ -49,7 +74,7 @@ impl Default for Policy {
 pub struct Controller {
     policy: Policy,
     mode: Mode,
-    /// Tick lengths since the mode last changed, newest last, at most `policy.window`.
+    /// Tick lengths since the mode last changed, newest last, at most the longer window.
     recent: VecDeque<Duration>,
 }
 
@@ -59,7 +84,7 @@ impl Controller {
         Self {
             policy,
             mode: Mode::Sequential,
-            recent: VecDeque::with_capacity(policy.window),
+            recent: VecDeque::with_capacity(policy.attack_window.max(policy.release_window).max(1)),
         }
     }
 
@@ -71,20 +96,30 @@ impl Controller {
 
     /// Notes that a tick in the current mode took `tick`, and returns the mode for the next one.
     pub fn observe(&mut self, tick: Duration) -> Mode {
-        if self.recent.len() == self.policy.window.max(1) {
+        let keep = self
+            .policy
+            .attack_window
+            .max(self.policy.release_window)
+            .max(1);
+        if self.recent.len() == keep {
             self.recent.pop_front();
         }
         self.recent.push_back(tick);
         // Judge only a full window of ticks of one mode: after a change the old mode's ticks are
         // forgotten, so a change is never undone by the very ticks that caused it.
-        if self.recent.len() < self.policy.window.max(1) {
+        let window = match self.mode {
+            Mode::Sequential => self.policy.attack_window,
+            Mode::Parallel => self.policy.release_window,
+        }
+        .max(1);
+        if self.recent.len() < window {
             return self.mode;
         }
-        let median = median(&self.recent);
+        let median = median_of_last(&self.recent, window);
         let next = match self.mode {
-            Mode::Sequential if median > self.policy.overloaded_median => Mode::Parallel,
-            Mode::Parallel if median < self.policy.calm_median => Mode::Sequential,
-            keep => keep,
+            Mode::Sequential if median > self.policy.attack_median => Mode::Parallel,
+            Mode::Parallel if median < self.policy.release_median => Mode::Sequential,
+            stay => stay,
         };
         if next != self.mode {
             self.mode = next;
@@ -94,8 +129,8 @@ impl Controller {
     }
 }
 
-fn median(ticks: &VecDeque<Duration>) -> Duration {
-    let mut sorted: Vec<Duration> = ticks.iter().copied().collect();
+fn median_of_last(ticks: &VecDeque<Duration>, count: usize) -> Duration {
+    let mut sorted: Vec<Duration> = ticks.iter().rev().take(count).copied().collect();
     sorted.sort_unstable();
     sorted[sorted.len() / 2]
 }
@@ -106,9 +141,10 @@ mod tests {
 
     fn policy() -> Policy {
         Policy {
-            overloaded_median: Duration::from_millis(45),
-            calm_median: Duration::from_millis(18),
-            window: 10,
+            attack_median: Duration::from_millis(40),
+            attack_window: 10,
+            release_median: Duration::from_millis(18),
+            release_window: 20,
         }
     }
 
@@ -128,14 +164,15 @@ mod tests {
     }
 
     #[test]
-    fn a_tick_over_budget_most_of_the_time_goes_parallel() {
+    fn a_burst_of_long_ticks_goes_parallel_when_half_the_attack_window_is_long() {
         let mut c = Controller::new(policy());
+        feed(&mut c, 10, 100);
         assert_eq!(
-            feed(&mut c, 60, 9),
+            feed(&mut c, 120, 4),
             Mode::Sequential,
-            "a window is not full yet"
+            "4 of 10 is not the median"
         );
-        assert_eq!(feed(&mut c, 60, 1), Mode::Parallel);
+        assert_eq!(feed(&mut c, 120, 1), Mode::Parallel, "5 of 10 is");
     }
 
     #[test]
@@ -149,11 +186,38 @@ mod tests {
     }
 
     #[test]
-    fn a_median_between_the_thresholds_changes_nothing_in_either_mode() {
+    fn two_bad_ticks_in_a_row_are_not_a_burst() {
         let mut c = Controller::new(policy());
-        assert_eq!(feed(&mut c, 44, 100), Mode::Sequential);
-        feed(&mut c, 60, 10);
+        feed(&mut c, 10, 50);
+        feed(&mut c, 500, 2);
+        assert_eq!(feed(&mut c, 10, 50), Mode::Sequential);
+    }
+
+    #[test]
+    fn a_median_at_the_attack_line_changes_nothing() {
+        let mut c = Controller::new(policy());
+        assert_eq!(
+            feed(&mut c, 40, 100),
+            Mode::Sequential,
+            "40 ms is within the line"
+        );
+    }
+
+    #[test]
+    fn parallel_is_kept_for_a_whole_release_window_after_the_burst() {
+        let mut c = Controller::new(policy());
+        feed(&mut c, 10, 10);
+        feed(&mut c, 120, 5);
         assert_eq!(c.mode(), Mode::Parallel);
+        assert_eq!(feed(&mut c, 10, 19), Mode::Parallel, "19 of 20 calm ticks");
+        assert_eq!(feed(&mut c, 10, 1), Mode::Sequential);
+    }
+
+    #[test]
+    fn a_median_between_the_lines_keeps_parallel() {
+        let mut c = Controller::new(policy());
+        feed(&mut c, 10, 10);
+        feed(&mut c, 120, 5);
         assert_eq!(
             feed(&mut c, 30, 100),
             Mode::Parallel,
@@ -162,29 +226,28 @@ mod tests {
     }
 
     #[test]
-    fn calm_ticks_bring_it_back_to_sequential() {
-        let mut c = Controller::new(policy());
-        feed(&mut c, 60, 10);
-        assert_eq!(c.mode(), Mode::Parallel);
-        assert_eq!(feed(&mut c, 10, 9), Mode::Parallel);
-        assert_eq!(feed(&mut c, 10, 1), Mode::Sequential);
-    }
-
-    #[test]
     fn the_ticks_of_the_old_mode_are_forgotten_at_a_change() {
         let mut c = Controller::new(policy());
-        feed(&mut c, 60, 10);
-        // calm ticks in parallel: the 60 ms ticks of before must not delay or hasten the change
+        feed(&mut c, 10, 10);
+        feed(&mut c, 120, 5);
+        assert_eq!(c.mode(), Mode::Parallel);
         assert_eq!(
-            feed(&mut c, 10, 5),
+            feed(&mut c, 10, 10),
             Mode::Parallel,
-            "half a window is not enough"
+            "half a release window"
         );
-        assert_eq!(feed(&mut c, 10, 5), Mode::Sequential);
+        assert_eq!(feed(&mut c, 10, 10), Mode::Sequential);
+        // back in sequential, the calm ticks of parallel must not hasten another change
+        assert_eq!(
+            feed(&mut c, 120, 9),
+            Mode::Sequential,
+            "a window is not full yet"
+        );
+        assert_eq!(feed(&mut c, 120, 1), Mode::Parallel);
     }
 
     #[test]
-    fn a_mode_lasts_at_least_one_window() {
+    fn a_mode_lasts_at_least_its_window() {
         let mut c = Controller::new(policy());
         let mut changes = 0;
         let mut last = c.mode();
@@ -197,17 +260,15 @@ mod tests {
                 last = now;
             }
         }
-        assert!(
-            changes <= 200 / 10,
-            "{changes} changes in 200 ticks with a window of 10"
-        );
+        assert!(changes <= 200 / 10, "{changes} changes in 200 ticks");
         assert!(changes >= 2, "it does react");
     }
 
     #[test]
     fn a_window_of_zero_behaves_like_one() {
         let mut c = Controller::new(Policy {
-            window: 0,
+            attack_window: 0,
+            release_window: 0,
             ..policy()
         });
         assert_eq!(c.observe(Duration::from_millis(100)), Mode::Parallel);
@@ -215,13 +276,35 @@ mod tests {
     }
 
     #[test]
-    fn the_default_policy_is_in_the_documented_range() {
+    fn the_default_policy_acts_before_the_budget_is_gone_and_releases_slowly() {
         let p = Policy::default();
-        assert!(p.calm_median < p.overloaded_median);
-        assert!(
-            p.overloaded_median < Duration::from_millis(50),
-            "must act before the budget is gone"
-        );
-        assert_eq!(p.window, 200);
+        assert!(p.release_median < p.attack_median);
+        assert!(p.attack_median < Duration::from_millis(50));
+        assert!(p.attack_window < p.release_window);
+    }
+
+    #[test]
+    fn the_pool_leaves_two_cores_to_others_and_scales_with_the_machine() {
+        assert_eq!(pool_threads(6, DEFAULT_RESERVED_CORES), 4);
+        assert_eq!(pool_threads(16, DEFAULT_RESERVED_CORES), 14);
+        assert_eq!(pool_threads(8, 0), 8);
+    }
+
+    #[test]
+    fn the_setting_overrides_the_default_only_when_it_is_a_number() {
+        assert_eq!(reserved_cores(None), 2);
+        assert_eq!(reserved_cores(Some("0")), 0);
+        assert_eq!(reserved_cores(Some(" 3 ")), 3);
+        assert_eq!(reserved_cores(Some("many")), 2);
+        assert_eq!(reserved_cores(Some("-1")), 2);
+        assert_eq!(reserved_cores(Some("")), 2);
+    }
+
+    #[test]
+    fn a_small_machine_still_gets_one_thread() {
+        assert_eq!(pool_threads(2, 2), 1);
+        assert_eq!(pool_threads(1, 2), 1);
+        assert_eq!(pool_threads(0, 2), 1);
+        assert_eq!(pool_threads(3, 2), 1);
     }
 }

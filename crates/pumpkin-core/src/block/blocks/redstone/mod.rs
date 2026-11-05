@@ -27,6 +27,8 @@ pub mod sculk_sensor;
 pub mod target_block;
 pub mod tripwire;
 pub mod tripwire_hook;
+mod wire_network;
+mod wire_power;
 
 // abstract
 pub mod abstract_redstone_gate;

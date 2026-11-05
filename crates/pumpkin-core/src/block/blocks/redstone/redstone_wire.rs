@@ -20,7 +20,8 @@ use crate::block::{
 };
 use crate::world::World;
 
-use super::get_redstone_power_no_dust;
+use super::wire_network;
+use super::wire_power::calculate_target_strength;
 
 type RedstoneWireProperties = RedstoneWireLikeProperties;
 
@@ -285,6 +286,16 @@ pub fn update_power_strength(world: &Arc<World>, pos: &BlockPos) {
     let target_strength = calculate_target_strength(world, pos);
 
     if wire.power != target_strength {
+        // This dust is out of step with what is around it: settle its whole network at once, or,
+        // with `alternate_current` off (or if that failed), let the change ripple dust by dust.
+        if world.settles_dust_networks() {
+            match wire_network::settle_from(world, pos) {
+                Ok(()) => return,
+                Err(error) => {
+                    tracing::error!("dust network not settled, updating dust by dust: {error}");
+                }
+            }
+        }
         wire.power = target_strength;
         let new_state_id = wire.to_state_id(&Block::REDSTONE_WIRE);
 
@@ -300,67 +311,6 @@ pub fn update_power_strength(world: &Arc<World>, pos: &BlockPos) {
             update_neighbors_at(world, &block_pos, &Block::REDSTONE_WIRE);
         }
     }
-}
-
-fn calculate_target_strength(world: &World, pos: &BlockPos) -> u8 {
-    let block_signal = get_block_signal(world, pos);
-    if block_signal == 15 {
-        return 15;
-    }
-    let wire_signal = get_incoming_wire_signal(world, pos);
-    block_signal.max(wire_signal)
-}
-
-fn get_block_signal(world: &World, pos: &BlockPos) -> u8 {
-    let mut max_signal = 0;
-    for side in BlockDirection::all() {
-        let neighbor_pos = pos.offset(side.to_offset());
-        let (neighbor_block, neighbor_state) = world.get_block_and_state(&neighbor_pos);
-        let signal =
-            get_redstone_power_no_dust(neighbor_block, neighbor_state, world, neighbor_pos, side);
-        if signal == 15 {
-            return 15;
-        }
-        max_signal = max_signal.max(signal);
-    }
-    max_signal
-}
-
-fn get_incoming_wire_signal(world: &World, pos: &BlockPos) -> u8 {
-    let mut max_wire_signal = 0;
-    let up_pos = pos.up();
-    let is_up_conductor = world.get_block_state(&up_pos).is_solid_block();
-
-    for direction in BlockDirection::horizontal() {
-        let neighbor_pos = pos.offset(direction.to_offset());
-        let (neighbor_block, neighbor_state) = world.get_block_and_state(&neighbor_pos);
-
-        // Same level
-        if neighbor_block == &Block::REDSTONE_WIRE {
-            let wire = RedstoneWireProperties::from_state_id(neighbor_state.id);
-            max_wire_signal = max_wire_signal.max(wire.power);
-        }
-
-        // Wire UP: if pos.up() is not a solid conductor, and neighbor is a solid conductor
-        if !is_up_conductor && neighbor_state.is_solid_block() {
-            let neighbor_up_pos = neighbor_pos.up();
-            let (up_block, up_state) = world.get_block_and_state(&neighbor_up_pos);
-            if up_block == &Block::REDSTONE_WIRE {
-                let wire = RedstoneWireProperties::from_state_id(up_state.id);
-                max_wire_signal = max_wire_signal.max(wire.power);
-            }
-        } else if !neighbor_state.is_solid_block() {
-            // Wire DOWN: if neighbor is not a solid conductor
-            let neighbor_down_pos = neighbor_pos.down();
-            let (down_block, down_state) = world.get_block_and_state(&neighbor_down_pos);
-            if down_block == &Block::REDSTONE_WIRE {
-                let wire = RedstoneWireProperties::from_state_id(down_state.id);
-                max_wire_signal = max_wire_signal.max(wire.power);
-            }
-        }
-    }
-
-    max_wire_signal.saturating_sub(1)
 }
 
 pub fn update_neighbors_at(world: &Arc<World>, pos: &BlockPos, source_block: &Block) {

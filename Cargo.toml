@@ -30,6 +30,7 @@ members = [
     "crates/kvasir-tickprof",
     "crates/kvasir-tickmode",
     "crates/kvasir-moblod",
+    "crates/kvasir-wirenet",
     "crates/kvasir-worldlock",
     "tools/pumpkin-codegen",
     "tools/pumpkin-fuzzer",

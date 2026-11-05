@@ -21,6 +21,9 @@ pub struct LevelConfig {
     /// How often mobs far from players, unseen or crowded make their full AI decisions.
     #[serde(default)]
     pub mob_lod: kvasir_moblod::Config,
+    /// How redstone dust is updated.
+    #[serde(default)]
+    pub redstone: kvasir_wirenet::Config,
     // TODO: More options
 }
 
@@ -85,6 +88,7 @@ impl Default for LevelConfig {
             autosave_ticks: default_autosave_ticks(),
             entity_islands: EntityIslandsConfig::default(),
             mob_lod: kvasir_moblod::Config::default(),
+            redstone: kvasir_wirenet::Config::default(),
         }
     }
 }

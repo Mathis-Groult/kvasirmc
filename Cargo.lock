@@ -2182,6 +2182,14 @@ name = "kvasir-tickprof"
 version = "0.2.1+26.3-26.60"
 
 [[package]]
+name = "kvasir-wirenet"
+version = "0.2.1+26.3-26.60"
+dependencies = [
+ "serde",
+ "serde_json",
+]
+
+[[package]]
 name = "kvasir-worldlock"
 version = "0.2.1+26.3-26.60"
 dependencies = [
@@ -3080,6 +3088,7 @@ name = "pumpkin-config"
 version = "0.2.1+26.3-26.60"
 dependencies = [
  "kvasir-moblod",
+ "kvasir-wirenet",
  "pumpkin-util",
  "rand 0.10.3",
  "serde",
@@ -3113,6 +3122,7 @@ dependencies = [
  "kvasir-pregen-driver",
  "kvasir-tickmode",
  "kvasir-tickprof",
+ "kvasir-wirenet",
  "libc",
  "libloading",
  "notify",

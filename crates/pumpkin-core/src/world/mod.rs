@@ -6324,6 +6324,14 @@ impl World {
         self.update_neighbors_at(block_pos, source_block, except);
     }
 
+    /// Whether a dust network is settled in one pass (`[world.redstone] alternate_current`).
+    pub(crate) fn settles_dust_networks(&self) -> bool {
+        self.server.upgrade().map_or_else(
+            || kvasir_wirenet::Config::default().alternate_current,
+            |server| server.advanced_config.world.redstone.alternate_current,
+        )
+    }
+
     pub fn update_neighbor(self: &Arc<Self>, neighbor_block_pos: &BlockPos, source_block: &Block) {
         neighbor_updater::update_neighbor(self, neighbor_block_pos, source_block);
     }

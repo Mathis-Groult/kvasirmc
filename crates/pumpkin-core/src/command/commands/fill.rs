@@ -51,6 +51,24 @@ enum FilterMode {
 }
 
 #[expect(clippy::too_many_lines)]
+/// The positions where the new block lets light through, or gives it off, differently from the
+/// old one. `fill` writes blocks straight into the chunks, so the light engine, which
+/// `World::set_block_state` tells about each change, has to be told about these separately.
+fn positions_needing_light_update(
+    changed: &[(BlockPos, BlockStateId, BlockStateId)],
+) -> Vec<BlockPos> {
+    changed
+        .iter()
+        .filter(|(_, old, new)| {
+            pumpkin_world::lighting::LightEngine::has_different_light_properties(
+                old.to_state(),
+                new.to_state(),
+            )
+        })
+        .map(|(position, _, _)| *position)
+        .collect()
+}
+
 fn fill_blocks(
     source: &CommandSource,
     from: BlockPos,
@@ -233,6 +251,12 @@ fn fill_blocks(
         .map(|&(pos, _, new_id)| (pos, new_id))
         .collect::<Vec<_>>();
     world.queue_block_updates(&client_updates);
+    for position in positions_needing_light_update(&changed_positions) {
+        world
+            .level
+            .light_engine
+            .update_lighting_at(&world.level, position);
+    }
 
     // Vanilla runs onPlace for every placed block unless strict sets UPDATE_SKIP_ON_PLACE.
     if !strict {
@@ -355,4 +379,35 @@ pub fn register(dispatcher: &mut CommandDispatcher, registry: &PermissionRegistr
                 .then(argument("to", BlockPosArgumentType).then(block_arg)),
         ),
     );
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    fn change(x: i32, old: &Block, new: &Block) -> (BlockPos, BlockStateId, BlockStateId) {
+        (
+            BlockPos::new(x, 64, 0),
+            old.default_state.id,
+            new.default_state.id,
+        )
+    }
+
+    #[test]
+    fn only_blocks_that_change_light_are_passed_to_the_light_engine() {
+        let changed = [
+            change(0, &Block::AIR, &Block::STONE),
+            change(1, &Block::STONE, &Block::ANDESITE),
+            change(2, &Block::AIR, &Block::SEA_LANTERN),
+            change(3, &Block::STONE, &Block::STONE),
+            change(4, &Block::STONE, &Block::AIR),
+        ];
+        let positions = positions_needing_light_update(&changed);
+        let xs: Vec<i32> = positions.iter().map(|p| p.0.x).collect();
+        assert_eq!(
+            xs,
+            [0, 2, 4],
+            "stone to andesite and stone to stone change no light"
+        );
+    }
 }

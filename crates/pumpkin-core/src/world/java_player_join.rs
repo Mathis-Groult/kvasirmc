@@ -39,6 +39,7 @@ use pumpkin_protocol::{
 use pumpkin_protocol::{
     codec::item_stack_seralizer::ItemStackSerializer, java::client::play::CSetEquipment,
 };
+use pumpkin_util::GameMode;
 use pumpkin_util::math::vector2::Vector2;
 use pumpkin_util::math::{position::BlockPos, vector3::Vector3};
 use pumpkin_util::resource_location::ResourceLocation;
@@ -49,20 +50,21 @@ use std::sync::Arc;
 use std::{collections::HashMap, sync::atomic::Ordering};
 use tracing::{debug, info};
 
+/// Where and how a joining player appears.
+#[derive(Clone, Copy)]
+struct JoinPose {
+    position: Vector3<f64>,
+    yaw: f32,
+    pitch: f32,
+}
+
 impl World {
-    #[expect(clippy::too_many_lines)]
     pub async fn spawn_java_player(
         &self,
         base_config: &BasicConfiguration,
         player: &Arc<Player>,
         server: &Arc<Server>,
     ) {
-        let dimensions: Vec<ResourceLocation> = server
-            .dimensions
-            .iter()
-            .map(|d| ResourceLocation::from(d.minecraft_name))
-            .collect();
-
         // This code follows the vanilla packet order
         let entity_id = player.entity_id();
         let gamemode = player.gamemode.load();
@@ -74,6 +76,53 @@ impl World {
         let Some(client) = player.client.java() else {
             return;
         };
+        self.send_login_packet(base_config, player, server, client, entity_id, gamemode)
+            .await;
+
+        self.pair_new_player_with_tracked_entities(player);
+
+        self.send_server_state_to_joiner(player, server, client)
+            .await;
+
+        let pose = self.join_pose(player).await;
+
+        if !self.place_and_send_spawn_chunk(player, client, &pose).await {
+            return;
+        }
+
+        let velocity = player.living_entity.entity.velocity.load();
+
+        debug!("Sending player teleport to {}", player.gameprofile.name);
+        player.request_teleport(pose.position, pose.yaw, pose.pitch);
+
+        self.announce_in_tab_list(player, entity_id, gamemode);
+        self.send_tab_list_of_others(base_config, player, client)
+            .await;
+        self.spawn_for_others(player, entity_id, &pose, velocity);
+        self.spawn_others_for(player, client).await;
+        self.send_initial_state(player, client).await;
+        self.send_weather(client).await;
+        Self::send_bossbars(player, server);
+        self.send_player_state(player, server).await;
+        self.announce_join(player, server).await;
+    }
+
+    /// Sends the login packet that opens the play session of a Java player.
+    async fn send_login_packet(
+        &self,
+        base_config: &BasicConfiguration,
+        player: &Arc<Player>,
+        server: &Arc<Server>,
+        client: &crate::net::java::JavaClient,
+        entity_id: i32,
+        gamemode: GameMode,
+    ) {
+        let dimensions: Vec<ResourceLocation> = server
+            .dimensions
+            .iter()
+            .map(|d| ResourceLocation::from(d.minecraft_name))
+            .collect();
+
         // Send the login packet for our new player
         client
             .send_packet(&CLogin::new(
@@ -124,9 +173,15 @@ impl World {
                 true,
             ))
             .await;
+    }
 
-        self.pair_new_player_with_tracked_entities(player);
-
+    /// Sends the server state a joining player needs before its position: ticking, permissions, difficulty, commands and tags.
+    async fn send_server_state_to_joiner(
+        &self,
+        player: &Arc<Player>,
+        server: &Arc<Server>,
+        client: &crate::net::java::JavaClient,
+    ) {
         // Send the current ticking state to the new player so they are in sync.
         server.tick_rate_manager.update_joining_player(player).await;
 
@@ -155,7 +210,10 @@ impl World {
             let packet = pumpkin_protocol::java::client::play::CUpdateTagsPlay::new(&tags);
             client.send_packet(&packet).await;
         }
+    }
 
+    /// Where a joining player appears: its last position, or the world spawn for a first join.
+    async fn join_pose(&self, player: &Arc<Player>) -> JoinPose {
         let (position, yaw, pitch) = if player.has_played_before.load(Ordering::Relaxed) {
             let position = player.position();
             let yaw = player.get_entity().yaw.load(); //info.spawn_angle;
@@ -181,7 +239,25 @@ impl World {
             );
             (position, info.spawn_yaw, info.spawn_pitch)
         };
+        JoinPose {
+            position,
+            yaw,
+            pitch,
+        }
+    }
 
+    /// Puts the joining player at its pose, then loads and sends the chunk under it. Returns `false` when a plugin cancelled the chunk.
+    async fn place_and_send_spawn_chunk(
+        &self,
+        player: &Arc<Player>,
+        client: &crate::net::java::JavaClient,
+        pose: &JoinPose,
+    ) -> bool {
+        let JoinPose {
+            position,
+            yaw,
+            pitch,
+        } = *pose;
         // Load chunks around the real spawn position before teleporting the client there.
         player.living_entity.entity.set_pos(position);
         player.living_entity.entity.set_rotation(yaw, pitch);
@@ -198,7 +274,7 @@ impl World {
                 crate::plugin::world::chunk_send::ChunkSend::new(player.world(), chunk.clone());
             server.plugin_manager.fire(&server, &mut event).await;
             if event.cancelled {
-                return;
+                return false;
             }
         }
         client.send_chunks(&[chunk]).await;
@@ -207,12 +283,11 @@ impl World {
             .lock()
             .unwrap_or_else(std::sync::PoisonError::into_inner)
             .mark_sent_out_of_band(center_chunk);
+        true
+    }
 
-        let velocity = player.living_entity.entity.velocity.load();
-
-        debug!("Sending player teleport to {}", player.gameprofile.name);
-        player.request_teleport(position, yaw, pitch);
-
+    /// Announces the joining player in the tab list of everyone, with its custom name when it has one.
+    fn announce_in_tab_list(&self, player: &Arc<Player>, entity_id: i32, gamemode: GameMode) {
         let gameprofile = &player.gameprofile;
         let bedrock_player_list = CPlayerList {
             action: CPlayerList::ACTION_ADD,
@@ -262,7 +337,15 @@ impl World {
                 &java_player,
             ));
         }
+    }
 
+    /// Sends the joining player the tab list entries of the players already in the world.
+    async fn send_tab_list_of_others(
+        &self,
+        base_config: &BasicConfiguration,
+        player: &Arc<Player>,
+        client: &crate::net::java::JavaClient,
+    ) {
         // Here, we send all the infos of players who already joined.
         let mut players_tab_list_names = Vec::new();
         {
@@ -347,24 +430,45 @@ impl World {
                 .enqueue_client_packet(&CPlayerInfoUpdate::new(action_flags.bits(), &entries))
                 .await;
 
-            // Send tab_list_names for existing players with custom names
-            for (player_id, tab_list_name) in &players_tab_list_names {
-                if let Some(name) = tab_list_name {
-                    let actions = [PlayerAction::UpdateDisplayName(Some(name))];
-                    let java_player = [pumpkin_protocol::java::client::play::Player {
-                        uuid: *player_id,
-                        actions: &actions,
-                    }];
-                    client
-                        .enqueue_client_packet(&CPlayerInfoUpdate::new(
-                            PlayerInfoFlags::UPDATE_DISPLAY_NAME.bits(),
-                            &java_player,
-                        ))
-                        .await;
-                }
-            }
+            Self::send_custom_tab_names(client, &players_tab_list_names).await;
         };
+    }
 
+    /// Sends the custom tab list names of the players already in the world.
+    async fn send_custom_tab_names(
+        client: &crate::net::java::JavaClient,
+        names: &[(uuid::Uuid, Option<TextComponent>)],
+    ) {
+        for (player_id, tab_list_name) in names {
+            if let Some(name) = tab_list_name {
+                let actions = [PlayerAction::UpdateDisplayName(Some(name))];
+                let java_player = [pumpkin_protocol::java::client::play::Player {
+                    uuid: *player_id,
+                    actions: &actions,
+                }];
+                client
+                    .enqueue_client_packet(&CPlayerInfoUpdate::new(
+                        PlayerInfoFlags::UPDATE_DISPLAY_NAME.bits(),
+                        &java_player,
+                    ))
+                    .await;
+            }
+        }
+    }
+
+    /// Spawns the joining player for every other Java client and sends its skin parts.
+    fn spawn_for_others(
+        &self,
+        player: &Arc<Player>,
+        entity_id: i32,
+        pose: &JoinPose,
+        velocity: Vector3<f64>,
+    ) {
+        let JoinPose {
+            position,
+            yaw,
+            pitch,
+        } = *pose;
         let gameprofile = &player.gameprofile;
 
         // Spawn the player for every Java client
@@ -400,7 +504,10 @@ impl World {
                 tick: VarULong(0),
             },
         );
+    }
 
+    /// Spawns the players already in the world for the joining player, with their metadata and equipment.
+    async fn spawn_others_for(&self, player: &Arc<Player>, client: &crate::net::java::JavaClient) {
         // Spawn players for our client.
         let id = player.gameprofile.id;
         for existing_player in self
@@ -477,6 +584,14 @@ impl World {
                     .await;
             }
         }
+    }
+
+    /// Sends client information, abilities, held slot, world border, time, scoreboard and the spawn position.
+    async fn send_initial_state(
+        &self,
+        player: &Arc<Player>,
+        client: &crate::net::java::JavaClient,
+    ) {
         player.send_client_information();
 
         player.send_abilities_update();
@@ -526,7 +641,10 @@ impl World {
                 self.dimension.minecraft_name.to_owned(),
             ))
             .await;
+    }
 
+    /// Sends the weather the joining player starts in.
+    async fn send_weather(&self, client: &crate::net::java::JavaClient) {
         // Send initial weather state
         let (is_raining, rain_level, thunder_level) = {
             let weather = self
@@ -554,7 +672,10 @@ impl World {
                 ))
                 .await;
         }
+    }
 
+    /// Sends the boss bars the joining player already sees.
+    fn send_bossbars(player: &Arc<Player>, server: &Arc<Server>) {
         let player_bossbars = server
             .bossbars
             .lock()
@@ -566,7 +687,10 @@ impl World {
                 player.send_bossbar(bossbar);
             }
         }
+    }
 
+    /// Marks the player as having played, opens its screen handler and sends effects, air, equipment and recipes.
+    async fn send_player_state(&self, player: &Arc<Player>, server: &Arc<Server>) {
         player.has_played_before.store(true, Ordering::Relaxed);
         player.on_screen_handler_opened(&player.player_screen_handler);
 
@@ -591,6 +715,10 @@ impl World {
                 java_client.send_packet_now(data).await;
             }
         }
+    }
+
+    /// Fires the join event and announces the player when no plugin cancelled it.
+    async fn announce_join(&self, player: &Arc<Player>, server: &Arc<Server>) {
         let msg_comp = TextComponent::translate_cross(
             translation::java::MULTIPLAYER_PLAYER_JOINED,
             translation::bedrock::MULTIPLAYER_PLAYER_JOINED,

@@ -4,10 +4,21 @@ use pumpkin_data::{
         BeeNestLikeProperties, DispenserLikeProperties, Facing, RespawnAnchorLikeProperties,
     },
 };
-use pumpkin_gametest::{GameTestHelper, GameTestResult};
+use pumpkin_gametest::{GameTestHelper, GameTestResult, register_function_test};
 use pumpkin_util::math::position::BlockPos;
 
 use super::build_stone_floor;
+
+/// Registers the built-in game tests of this module.
+pub(super) fn register() {
+    register_function_test(
+        "pumpkin:dispenser_honeycomb_beehive_and_shulker",
+        "pumpkin:empty_5x4x6",
+        30,
+        0,
+        test_dispenser_honeycomb_beehive_and_shulker,
+    );
+}
 
 pub(super) async fn test_dispenser_honeycomb_beehive_and_shulker(
     helper: GameTestHelper,

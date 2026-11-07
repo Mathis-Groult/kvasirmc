@@ -2,10 +2,21 @@ use pumpkin_data::{
     Block,
     block_properties::{Facing, StickyPistonLikeProperties},
 };
-use pumpkin_gametest::{GameTestHelper, GameTestResult};
+use pumpkin_gametest::{GameTestHelper, GameTestResult, register_function_test};
 use pumpkin_util::math::position::BlockPos;
 
 use super::build_stone_floor;
+
+/// Registers the built-in game tests of this module.
+pub(super) fn register() {
+    register_function_test(
+        "pumpkin:piston_and_sticky_piston",
+        "pumpkin:empty_6x4x6",
+        40,
+        0,
+        test_piston_and_sticky_piston,
+    );
+}
 
 pub(super) async fn test_piston_and_sticky_piston(helper: GameTestHelper) -> GameTestResult<()> {
     build_stone_floor(&helper, 6, 6).await?;

@@ -2,11 +2,43 @@ use pumpkin_data::{
     Block,
     block_properties::{CommandBlockLikeProperties, Facing, FacingHopper, HopperLikeProperties},
 };
-use pumpkin_gametest::{GameTestHelper, GameTestResult};
+use pumpkin_gametest::{GameTestHelper, GameTestResult, register_function_test};
 use pumpkin_nbt::NbtCompound;
 use pumpkin_util::math::position::BlockPos;
 
 use super::build_stone_floor;
+
+/// Registers the built-in game tests of this module.
+pub(super) fn register() {
+    register_function_test(
+        "pumpkin:falling_sand_lands",
+        "pumpkin:empty_3x6x3",
+        60,
+        0,
+        test_falling_sand_lands,
+    );
+    register_function_test(
+        "pumpkin:command_block_chain_execution",
+        "pumpkin:empty_6x4x4",
+        20,
+        0,
+        test_command_block_chain_execution,
+    );
+    register_function_test(
+        "pumpkin:hopper_transfers_to_chest",
+        "pumpkin:empty_3x5x3",
+        60,
+        0,
+        test_hopper_transfers_to_chest,
+    );
+    register_function_test(
+        "pumpkin:tnt_redstone_ignites",
+        "pumpkin:empty_5x4x5",
+        20,
+        0,
+        test_tnt_redstone_ignites,
+    );
+}
 
 pub(super) async fn test_falling_sand_lands(helper: GameTestHelper) -> GameTestResult<()> {
     build_stone_floor(&helper, 3, 3).await?;

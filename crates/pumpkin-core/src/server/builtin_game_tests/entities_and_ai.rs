@@ -1,8 +1,30 @@
 use pumpkin_data::Block;
-use pumpkin_gametest::{GameTestHelper, GameTestResult};
+use pumpkin_gametest::{
+    GameTestHelper, GameTestResult, register_flaky_function_test, register_function_test,
+};
 use pumpkin_util::math::{position::BlockPos, vector3::Vector3};
 
 use super::build_stone_floor;
+
+/// Registers the built-in game tests of this module.
+pub(super) fn register() {
+    register_function_test(
+        "pumpkin:item_entities_merge",
+        "pumpkin:empty_4x4x4",
+        80,
+        0,
+        test_item_entities_merge,
+    );
+    register_flaky_function_test(
+        "pumpkin:zombie_pathfinds_to_villager",
+        "pumpkin:empty_5x4x8",
+        160,
+        0,
+        3,
+        1,
+        test_zombie_pathfinds_to_villager,
+    );
+}
 
 pub(super) async fn test_item_entities_merge(helper: GameTestHelper) -> GameTestResult<()> {
     build_stone_floor(&helper, 4, 4).await?;

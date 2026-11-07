@@ -5,10 +5,21 @@ use pumpkin_data::{
         ModeComparator, NorthRedstone, RedstoneWireLikeProperties, SouthRedstone, WestRedstone,
     },
 };
-use pumpkin_gametest::{GameTestHelper, GameTestResult};
+use pumpkin_gametest::{GameTestHelper, GameTestResult, register_function_test};
 use pumpkin_util::math::position::BlockPos;
 
 use super::build_stone_floor;
+
+/// Registers the built-in game tests of this module.
+pub(super) fn register() {
+    register_function_test(
+        "pumpkin:composter_and_cauldron_comparators",
+        "pumpkin:empty_5x4x5",
+        20,
+        0,
+        test_composter_and_cauldron_comparators,
+    );
+}
 
 pub(super) async fn test_composter_and_cauldron_comparators(
     helper: GameTestHelper,

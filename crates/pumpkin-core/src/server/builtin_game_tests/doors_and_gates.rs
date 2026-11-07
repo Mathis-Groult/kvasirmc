@@ -4,10 +4,21 @@ use pumpkin_data::{
         OakDoorLikeProperties, OakFenceGateLikeProperties, OakTrapdoorLikeProperties,
     },
 };
-use pumpkin_gametest::{GameTestHelper, GameTestResult};
+use pumpkin_gametest::{GameTestHelper, GameTestResult, register_function_test};
 use pumpkin_util::math::position::BlockPos;
 
 use super::build_stone_floor;
+
+/// Registers the built-in game tests of this module.
+pub(super) fn register() {
+    register_function_test(
+        "pumpkin:doors_trapdoors_fence_gates_redstone",
+        "pumpkin:empty_7x4x4",
+        30,
+        0,
+        test_doors_trapdoors_fence_gates_redstone,
+    );
+}
 
 pub(super) async fn test_doors_trapdoors_fence_gates_redstone(
     helper: GameTestHelper,

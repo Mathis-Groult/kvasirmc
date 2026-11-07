@@ -2,10 +2,98 @@ use pumpkin_data::{
     Block, BlockStateId,
     block_properties::{PoweredRailLikeProperties, RailShapeStraight},
 };
-use pumpkin_gametest::{GameTestHelper, GameTestResult};
+use pumpkin_gametest::{GameTestHelper, GameTestResult, register_function_test};
 use pumpkin_util::math::{position::BlockPos, vector3::Vector3};
 
 use super::build_stone_floor;
+
+/// Registers the built-in game tests of this module.
+pub(super) fn register() {
+    register_function_test(
+        "pumpkin:powered_rail_deenergizes_beyond_8_blocks",
+        "pumpkin:empty_3x4x12",
+        20,
+        0,
+        test_powered_rail_deenergizes_beyond_8_blocks,
+    );
+    register_function_test(
+        "pumpkin:activator_rail_deenergizes_beyond_8_blocks",
+        "pumpkin:empty_3x4x12",
+        20,
+        0,
+        test_activator_rail_deenergizes_beyond_8_blocks,
+    );
+    register_function_test(
+        "pumpkin:powered_rail_bidirectional_boost_from_center",
+        "pumpkin:empty_3x4x11",
+        20,
+        0,
+        test_powered_rail_bidirectional_boost_from_center,
+    );
+    register_function_test(
+        "pumpkin:detector_rail_powers_adjacent_powered_rail",
+        "pumpkin:empty_5x4x6",
+        20,
+        0,
+        test_detector_rail_powers_adjacent_powered_rail,
+    );
+    register_function_test(
+        "pumpkin:detector_rail_activates_on_chest_minecart",
+        "pumpkin:empty_5x4x5",
+        20,
+        0,
+        test_detector_rail_comparator_reads_chest_minecart,
+    );
+    register_function_test(
+        "pumpkin:rail_breaks_when_supporting_block_removed",
+        "pumpkin:empty_5x4x5",
+        20,
+        0,
+        test_rail_breaks_when_support_block_removed,
+    );
+    register_function_test(
+        "pumpkin:water_flows_horizontally_to_neighbors",
+        "pumpkin:empty_6x4x6",
+        20,
+        0,
+        test_water_flows_horizontally_and_decreases_level,
+    );
+    register_function_test(
+        "pumpkin:water_flows_downward_into_hole",
+        "pumpkin:empty_5x4x5",
+        20,
+        0,
+        test_water_falls_downward_into_basin,
+    );
+    register_function_test(
+        "pumpkin:lava_source_turned_to_obsidian_by_water",
+        "pumpkin:empty_6x4x5",
+        20,
+        0,
+        test_lava_meets_flowing_water_forms_cobblestone,
+    );
+    register_function_test(
+        "pumpkin:water_flow_breaks_redstone_torch",
+        "pumpkin:empty_5x4x5",
+        20,
+        0,
+        test_water_breaks_torch_and_carpet_in_path,
+    );
+    register_function_test(
+        "pumpkin:sponge_absorbs_multi_block_water_pool",
+        "pumpkin:empty_5x4x5",
+        20,
+        0,
+        test_water_meets_lava_source_forms_obsidian,
+    );
+    register_function_test(
+        "pumpkin:sponge_does_not_absorb_lava",
+        "pumpkin:empty_5x4x5",
+        20,
+        0,
+        test_sponge_ignores_lava_and_stays_dry,
+    );
+}
 
 fn ns_rail_state(block: &Block) -> BlockStateId {
     let mut props = PoweredRailLikeProperties::default(block);

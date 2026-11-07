@@ -2,10 +2,21 @@ use pumpkin_data::{
     Block,
     block_properties::{HorizontalFacing, TripwireHookLikeProperties, TripwireLikeProperties},
 };
-use pumpkin_gametest::{GameTestHelper, GameTestResult};
+use pumpkin_gametest::{GameTestHelper, GameTestResult, register_function_test};
 use pumpkin_util::math::{position::BlockPos, vector3::Vector3};
 
 use super::build_stone_floor;
+
+/// Registers the built-in game tests of this module.
+pub(super) fn register() {
+    register_function_test(
+        "pumpkin:tripwire_entity_collision",
+        "pumpkin:empty_5x4x5",
+        30,
+        0,
+        test_tripwire_entity_collision,
+    );
+}
 
 pub(super) async fn test_tripwire_entity_collision(helper: GameTestHelper) -> GameTestResult<()> {
     build_stone_floor(&helper, 5, 5).await?;

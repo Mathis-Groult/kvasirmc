@@ -5,10 +5,98 @@ use pumpkin_data::{
         WallTorchLikeProperties,
     },
 };
-use pumpkin_gametest::{GameTestHelper, GameTestResult};
+use pumpkin_gametest::{GameTestHelper, GameTestResult, register_function_test};
 use pumpkin_util::math::position::BlockPos;
 
 use super::build_stone_floor;
+
+/// Registers the built-in game tests of this module.
+pub(super) fn register() {
+    register_function_test(
+        "pumpkin:cactus_breaks_when_solid_block_placed_adjacent",
+        "pumpkin:empty_5x4x5",
+        20,
+        0,
+        test_cactus_breaks_when_solid_block_placed_adjacent,
+    );
+    register_function_test(
+        "pumpkin:cactus_breaks_when_sand_below_removed",
+        "pumpkin:empty_5x5x5",
+        20,
+        0,
+        test_cactus_breaks_when_sand_support_removed,
+    );
+    register_function_test(
+        "pumpkin:sugar_cane_breaks_when_water_removed",
+        "pumpkin:empty_5x4x5",
+        20,
+        0,
+        test_sugar_cane_breaks_when_water_removed,
+    );
+    register_function_test(
+        "pumpkin:sugar_cane_tall_column_cascades_break",
+        "pumpkin:empty_5x5x5",
+        20,
+        0,
+        test_sugar_cane_column_cascades_break,
+    );
+    register_function_test(
+        "pumpkin:torch_and_soul_torch_break_without_support",
+        "pumpkin:empty_5x4x5",
+        20,
+        0,
+        test_torch_and_soul_torch_break_without_support,
+    );
+    register_function_test(
+        "pumpkin:wall_torch_breaks_when_wall_removed",
+        "pumpkin:empty_5x4x5",
+        20,
+        0,
+        test_wall_torch_breaks_when_wall_removed,
+    );
+    register_function_test(
+        "pumpkin:standing_lantern_breaks_when_floor_removed",
+        "pumpkin:empty_5x4x5",
+        20,
+        0,
+        test_lantern_standing_breaks_when_floor_removed,
+    );
+    register_function_test(
+        "pumpkin:hanging_lantern_breaks_when_ceiling_removed",
+        "pumpkin:empty_5x5x5",
+        20,
+        0,
+        test_lantern_hanging_breaks_when_ceiling_removed,
+    );
+    register_function_test(
+        "pumpkin:lantern_on_fence_gate_breaks_when_gate_opens",
+        "pumpkin:empty_5x5x5",
+        20,
+        0,
+        test_lantern_on_fence_gate_breaks_when_gate_opens,
+    );
+    register_function_test(
+        "pumpkin:cake_and_candle_cake_break_without_support",
+        "pumpkin:empty_5x4x5",
+        20,
+        0,
+        test_cake_and_candle_cake_break_when_floor_removed,
+    );
+    register_function_test(
+        "pumpkin:carpet_and_moss_carpet_break_without_support",
+        "pumpkin:empty_5x4x5",
+        20,
+        0,
+        test_carpet_and_moss_carpet_break_when_floor_removed,
+    );
+    register_function_test(
+        "pumpkin:pressure_plate_and_redstone_wire_break_without_support",
+        "pumpkin:empty_5x4x5",
+        20,
+        0,
+        test_pressure_plate_breaks_when_floor_removed,
+    );
+}
 
 pub(super) async fn test_cactus_breaks_when_solid_block_placed_adjacent(
     helper: GameTestHelper,

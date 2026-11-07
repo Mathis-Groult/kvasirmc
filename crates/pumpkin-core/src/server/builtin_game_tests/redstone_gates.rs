@@ -6,10 +6,35 @@ use pumpkin_data::{
         RepeaterLikeProperties, SouthRedstone, WaterCauldronLikeProperties, WestRedstone,
     },
 };
-use pumpkin_gametest::{GameTestHelper, GameTestResult};
+use pumpkin_gametest::{GameTestHelper, GameTestResult, register_function_test};
 use pumpkin_util::math::position::BlockPos;
 
 use super::build_stone_floor;
+
+/// Registers the built-in game tests of this module.
+pub(super) fn register() {
+    register_function_test(
+        "pumpkin:redstone_torch_inverter",
+        "pumpkin:empty_5x5x5",
+        40,
+        0,
+        test_redstone_torch_inverter,
+    );
+    register_function_test(
+        "pumpkin:redstone_repeater_delay",
+        "pumpkin:empty_5x4x5",
+        30,
+        0,
+        test_redstone_repeater_delay,
+    );
+    register_function_test(
+        "pumpkin:redstone_comparator_modes",
+        "pumpkin:empty_5x4x5",
+        30,
+        0,
+        test_redstone_comparator_modes,
+    );
+}
 
 pub(super) async fn test_redstone_torch_inverter(helper: GameTestHelper) -> GameTestResult<()> {
     build_stone_floor(&helper, 5, 5).await?;

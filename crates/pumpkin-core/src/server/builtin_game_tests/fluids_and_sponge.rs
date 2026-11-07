@@ -1,8 +1,26 @@
 use pumpkin_data::{Block, fluid::FluidProperties};
-use pumpkin_gametest::{GameTestHelper, GameTestResult};
+use pumpkin_gametest::{GameTestHelper, GameTestResult, register_function_test};
 use pumpkin_util::math::position::BlockPos;
 
 use super::build_stone_floor;
+
+/// Registers the built-in game tests of this module.
+pub(super) fn register() {
+    register_function_test(
+        "pumpkin:water_lava_interactions",
+        "pumpkin:empty_7x4x5",
+        20,
+        0,
+        test_water_lava_interactions,
+    );
+    register_function_test(
+        "pumpkin:sponge_absorbs_water",
+        "pumpkin:empty_5x4x5",
+        20,
+        0,
+        test_sponge_absorbs_water,
+    );
+}
 
 pub(super) async fn test_water_lava_interactions(helper: GameTestHelper) -> GameTestResult<()> {
     build_stone_floor(&helper, 7, 5).await?;

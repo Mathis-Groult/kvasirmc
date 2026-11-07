@@ -1,8 +1,33 @@
 use pumpkin_data::Block;
-use pumpkin_gametest::{GameTestHelper, GameTestResult};
+use pumpkin_gametest::{GameTestHelper, GameTestResult, register_function_test};
 use pumpkin_util::math::position::BlockPos;
 
 use super::build_stone_floor;
+
+/// Registers the built-in game tests of this module.
+pub(super) fn register() {
+    register_function_test(
+        "pumpkin:snow_golem_pattern_spawns",
+        "pumpkin:empty_5x5x5",
+        20,
+        0,
+        test_snow_golem_pattern_spawns,
+    );
+    register_function_test(
+        "pumpkin:iron_golem_pattern_spawns",
+        "pumpkin:empty_5x5x5",
+        20,
+        0,
+        test_iron_golem_pattern_spawns,
+    );
+    register_function_test(
+        "pumpkin:wither_pattern_spawns",
+        "pumpkin:empty_5x5x5",
+        20,
+        0,
+        test_wither_pattern_spawns,
+    );
+}
 
 pub(super) async fn test_snow_golem_pattern_spawns(helper: GameTestHelper) -> GameTestResult<()> {
     build_stone_floor(&helper, 5, 5).await?;

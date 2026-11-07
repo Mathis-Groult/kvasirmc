@@ -5,10 +5,21 @@ use pumpkin_data::{
         SouthRedstone, TargetProperties, WestRedstone,
     },
 };
-use pumpkin_gametest::{GameTestHelper, GameTestResult};
+use pumpkin_gametest::{GameTestHelper, GameTestResult, register_function_test};
 use pumpkin_util::math::position::BlockPos;
 
 use super::build_stone_floor;
+
+/// Registers the built-in game tests of this module.
+pub(super) fn register() {
+    register_function_test(
+        "pumpkin:target_block_projectile_hit",
+        "pumpkin:empty_5x4x5",
+        30,
+        0,
+        test_target_block_projectile_hit,
+    );
+}
 
 pub(super) async fn test_target_block_projectile_hit(helper: GameTestHelper) -> GameTestResult<()> {
     build_stone_floor(&helper, 5, 5).await?;

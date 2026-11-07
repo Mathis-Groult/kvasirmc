@@ -5,10 +5,98 @@ use pumpkin_data::{
         NoteblockInstrument, ObserverLikeProperties, RedstoneOreLikeProperties, TargetProperties,
     },
 };
-use pumpkin_gametest::{GameTestHelper, GameTestResult};
+use pumpkin_gametest::{GameTestHelper, GameTestResult, register_function_test};
 use pumpkin_util::math::position::BlockPos;
 
 use super::build_stone_floor;
+
+/// Registers the built-in game tests of this module.
+pub(super) fn register() {
+    register_function_test(
+        "pumpkin:copper_bulb_variants_toggle_and_remember_lit",
+        "pumpkin:empty_8x4x5",
+        30,
+        0,
+        test_copper_bulb_oxidation_variants_toggle,
+    );
+    register_function_test(
+        "pumpkin:waxed_copper_bulb_variants_toggle_and_remember_lit",
+        "pumpkin:empty_8x4x5",
+        30,
+        0,
+        test_waxed_copper_bulb_variants_toggle,
+    );
+    register_function_test(
+        "pumpkin:redstone_lamp_stays_lit_while_powered",
+        "pumpkin:empty_5x4x5",
+        30,
+        0,
+        test_redstone_lamp_stays_lit_while_powered,
+    );
+    register_function_test(
+        "pumpkin:note_block_instruments_rock_sand_glass_wood",
+        "pumpkin:empty_8x4x5",
+        20,
+        0,
+        test_note_block_instruments_basedrum_snare_hat_bass,
+    );
+    register_function_test(
+        "pumpkin:note_block_instruments_clay_gold_wool_ice",
+        "pumpkin:empty_8x4x5",
+        20,
+        0,
+        test_note_block_instruments_flute_bell_guitar_chime,
+    );
+    register_function_test(
+        "pumpkin:note_block_instruments_bone_iron_soul_pumpkin",
+        "pumpkin:empty_8x4x5",
+        20,
+        0,
+        test_note_block_instruments_xylophone_iron_cowbell_didgeridoo,
+    );
+    register_function_test(
+        "pumpkin:note_block_instruments_emerald_hay_glowstone_default",
+        "pumpkin:empty_8x4x5",
+        20,
+        0,
+        test_note_block_instruments_bit_banjo_pling_harp,
+    );
+    register_function_test(
+        "pumpkin:note_block_mob_head_above_sets_instrument",
+        "pumpkin:empty_8x4x5",
+        20,
+        0,
+        test_note_block_top_mob_head_instruments,
+    );
+    register_function_test(
+        "pumpkin:daylight_detector_normal_and_inverted_signal",
+        "pumpkin:empty_6x4x5",
+        20,
+        0,
+        test_daylight_detector_signal_calculation,
+    );
+    register_function_test(
+        "pumpkin:observer_detects_redstone_lamp_state_change",
+        "pumpkin:empty_6x4x5",
+        30,
+        0,
+        test_observer_detects_repeater_and_lamp_changes,
+    );
+    register_function_test(
+        "pumpkin:observer_chain_propagates_pulse",
+        "pumpkin:empty_7x4x5",
+        30,
+        0,
+        test_observer_chain_propagates_pulse,
+    );
+    register_function_test(
+        "pumpkin:target_block_egg_hit_emits_pulse_and_clears",
+        "pumpkin:empty_5x4x5",
+        40,
+        0,
+        test_target_block_arrow_hit_20_tick_pulse,
+    );
+}
 
 pub(super) async fn test_copper_bulb_oxidation_variants_toggle(
     helper: GameTestHelper,

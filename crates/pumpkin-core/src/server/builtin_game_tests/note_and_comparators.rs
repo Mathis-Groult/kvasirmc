@@ -6,10 +6,28 @@ use pumpkin_data::{
         RedstoneWireLikeProperties, RespawnAnchorLikeProperties, SouthRedstone, WestRedstone,
     },
 };
-use pumpkin_gametest::{GameTestHelper, GameTestResult};
+use pumpkin_gametest::{GameTestHelper, GameTestResult, register_function_test};
 use pumpkin_util::math::position::BlockPos;
 
 use super::build_stone_floor;
+
+/// Registers the built-in game tests of this module.
+pub(super) fn register() {
+    register_function_test(
+        "pumpkin:end_portal_frame_and_respawn_anchor_comparators",
+        "pumpkin:empty_5x4x5",
+        20,
+        0,
+        test_end_portal_frame_and_respawn_anchor_comparators,
+    );
+    register_function_test(
+        "pumpkin:note_block_instrument_and_power",
+        "pumpkin:empty_5x4x5",
+        20,
+        0,
+        test_note_block_instrument_and_power,
+    );
+}
 
 pub(super) async fn test_note_block_instrument_and_power(
     helper: GameTestHelper,

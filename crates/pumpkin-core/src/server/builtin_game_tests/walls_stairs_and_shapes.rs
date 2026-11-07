@@ -6,10 +6,98 @@ use pumpkin_data::{
         WhiteWoolStairsLikeProperties,
     },
 };
-use pumpkin_gametest::{GameTestHelper, GameTestResult};
+use pumpkin_gametest::{GameTestHelper, GameTestResult, register_function_test};
 use pumpkin_util::math::position::BlockPos;
 
 use super::build_stone_floor;
+
+/// Registers the built-in game tests of this module.
+pub(super) fn register() {
+    register_function_test(
+        "pumpkin:wall_straight_line_has_no_center_post",
+        "pumpkin:empty_5x4x5",
+        20,
+        0,
+        test_cobblestone_wall_connects_north_south_straight,
+    );
+    register_function_test(
+        "pumpkin:wall_corner_raises_center_post",
+        "pumpkin:empty_5x4x5",
+        20,
+        0,
+        test_cobblestone_wall_corner_raises_center_post,
+    );
+    register_function_test(
+        "pumpkin:wall_under_full_block_turns_tall",
+        "pumpkin:empty_5x4x5",
+        20,
+        0,
+        test_cobblestone_wall_tall_side_under_full_block,
+    );
+    register_function_test(
+        "pumpkin:wall_connects_to_iron_bars_and_glass_pane",
+        "pumpkin:empty_6x4x5",
+        20,
+        0,
+        test_wall_connects_to_iron_bars_and_glass_pane,
+    );
+    register_function_test(
+        "pumpkin:wall_connects_to_fence_gate",
+        "pumpkin:empty_5x4x5",
+        20,
+        0,
+        test_wall_connects_to_fence_gate,
+    );
+    register_function_test(
+        "pumpkin:stairs_inner_left_and_inner_right_shapes",
+        "pumpkin:empty_6x4x5",
+        20,
+        0,
+        test_stairs_inner_left_and_right_corner_shapes,
+    );
+    register_function_test(
+        "pumpkin:stairs_outer_left_and_outer_right_shapes",
+        "pumpkin:empty_6x4x5",
+        20,
+        0,
+        test_stairs_outer_left_and_right_corner_shapes,
+    );
+    register_function_test(
+        "pumpkin:stairs_revert_to_straight_when_neighbor_removed",
+        "pumpkin:empty_5x4x5",
+        20,
+        0,
+        test_stairs_revert_to_straight_when_neighbor_removed,
+    );
+    register_function_test(
+        "pumpkin:dirt_path_turns_to_dirt_under_solid_block",
+        "pumpkin:empty_4x4x4",
+        20,
+        0,
+        test_dirt_path_turns_to_dirt_under_solid_block,
+    );
+    register_function_test(
+        "pumpkin:farmland_turns_to_dirt_under_solid_block",
+        "pumpkin:empty_4x4x4",
+        20,
+        0,
+        test_farmland_turns_to_dirt_under_solid_block,
+    );
+    register_function_test(
+        "pumpkin:campfire_signal_fire_over_hay_block",
+        "pumpkin:empty_5x4x5",
+        20,
+        0,
+        test_campfire_signal_fire_over_hay_block,
+    );
+    register_function_test(
+        "pumpkin:campfire_waterlogged_extinguishes_lit",
+        "pumpkin:empty_4x4x4",
+        20,
+        0,
+        test_campfire_waterlogged_extinguishes_lit,
+    );
+}
 
 pub(super) async fn test_cobblestone_wall_connects_north_south_straight(
     helper: GameTestHelper,

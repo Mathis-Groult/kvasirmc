@@ -2,10 +2,28 @@ use pumpkin_data::{
     Block,
     block_properties::{CrafterLikeProperties, DispenserLikeProperties, Facing, Orientation},
 };
-use pumpkin_gametest::{GameTestHelper, GameTestResult};
+use pumpkin_gametest::{GameTestHelper, GameTestResult, register_function_test};
 use pumpkin_util::math::position::BlockPos;
 
 use super::build_stone_floor;
+
+/// Registers the built-in game tests of this module.
+pub(super) fn register() {
+    register_function_test(
+        "pumpkin:dispenser_and_dropper",
+        "pumpkin:empty_6x4x6",
+        40,
+        0,
+        test_dispenser_and_dropper,
+    );
+    register_function_test(
+        "pumpkin:crafter_crafts_into_chest",
+        "pumpkin:empty_5x4x5",
+        30,
+        0,
+        test_crafter_crafts_into_chest,
+    );
+}
 
 pub(super) async fn test_dispenser_and_dropper(helper: GameTestHelper) -> GameTestResult<()> {
     build_stone_floor(&helper, 6, 6).await?;

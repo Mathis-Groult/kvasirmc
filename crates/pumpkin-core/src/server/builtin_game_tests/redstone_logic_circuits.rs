@@ -6,10 +6,98 @@ use pumpkin_data::{
         RepeaterLikeProperties, SouthRedstone, WestRedstone,
     },
 };
-use pumpkin_gametest::{GameTestHelper, GameTestResult};
+use pumpkin_gametest::{GameTestHelper, GameTestResult, register_function_test};
 use pumpkin_util::math::position::BlockPos;
 
 use super::build_stone_floor;
+
+/// Registers the built-in game tests of this module.
+pub(super) fn register() {
+    register_function_test(
+        "pumpkin:redstone_double_inverter_buffer",
+        "pumpkin:empty_5x5x8",
+        30,
+        0,
+        test_redstone_double_inverter_buffer,
+    );
+    register_function_test(
+        "pumpkin:redstone_wall_torch_inverter",
+        "pumpkin:empty_5x4x5",
+        30,
+        0,
+        test_redstone_wall_torch_inverter,
+    );
+    register_function_test(
+        "pumpkin:redstone_or_gate",
+        "pumpkin:empty_5x4x5",
+        20,
+        0,
+        test_redstone_or_gate_two_inputs,
+    );
+    register_function_test(
+        "pumpkin:redstone_nor_gate",
+        "pumpkin:empty_5x5x5",
+        30,
+        0,
+        test_redstone_nor_gate_two_inputs,
+    );
+    register_function_test(
+        "pumpkin:redstone_and_gate_three_torches",
+        "pumpkin:empty_5x5x5",
+        30,
+        0,
+        test_redstone_and_gate_three_torches,
+    );
+    register_function_test(
+        "pumpkin:redstone_nand_gate_two_torches",
+        "pumpkin:empty_5x5x5",
+        30,
+        0,
+        test_redstone_nand_gate_two_torches,
+    );
+    register_function_test(
+        "pumpkin:redstone_rs_nor_latch",
+        "pumpkin:empty_6x4x5",
+        30,
+        0,
+        test_redstone_rs_nor_latch_memory,
+    );
+    register_function_test(
+        "pumpkin:redstone_repeater_delay_2_ticks",
+        "pumpkin:empty_5x4x5",
+        30,
+        0,
+        test_redstone_repeater_delay_2_ticks,
+    );
+    register_function_test(
+        "pumpkin:redstone_repeater_delay_3_ticks",
+        "pumpkin:empty_5x4x5",
+        30,
+        0,
+        test_redstone_repeater_delay_3_ticks,
+    );
+    register_function_test(
+        "pumpkin:redstone_repeater_delay_4_ticks",
+        "pumpkin:empty_5x4x5",
+        30,
+        0,
+        test_redstone_repeater_delay_4_ticks,
+    );
+    register_function_test(
+        "pumpkin:redstone_repeater_locking_holds_off",
+        "pumpkin:empty_5x4x5",
+        30,
+        0,
+        test_redstone_repeater_locking_holds_off,
+    );
+    register_function_test(
+        "pumpkin:redstone_repeater_locking_holds_on",
+        "pumpkin:empty_5x4x5",
+        30,
+        0,
+        test_redstone_repeater_locking_holds_on,
+    );
+}
 
 fn ns_wire() -> BlockStateId {
     let mut props = RedstoneWireLikeProperties::default(&Block::REDSTONE_WIRE);

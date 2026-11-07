@@ -5,10 +5,98 @@ use pumpkin_data::{
         HopperLikeProperties,
     },
 };
-use pumpkin_gametest::{GameTestHelper, GameTestResult};
+use pumpkin_gametest::{GameTestHelper, GameTestResult, register_function_test};
 use pumpkin_util::math::position::BlockPos;
 
 use super::build_stone_floor;
+
+/// Registers the built-in game tests of this module.
+pub(super) fn register() {
+    register_function_test(
+        "pumpkin:dispenser_lava_bucket_places_and_picks_up",
+        "pumpkin:empty_5x4x5",
+        30,
+        0,
+        test_dispenser_lava_bucket_place_and_pickup,
+    );
+    register_function_test(
+        "pumpkin:dispenser_powder_snow_bucket_places_and_picks_up",
+        "pumpkin:empty_5x4x5",
+        30,
+        0,
+        test_dispenser_powder_snow_bucket_place_and_pickup,
+    );
+    register_function_test(
+        "pumpkin:dispenser_shears_harvest_full_beehive",
+        "pumpkin:empty_5x4x5",
+        20,
+        0,
+        test_dispenser_shears_full_beehive_drops_honeycomb,
+    );
+    register_function_test(
+        "pumpkin:dispenser_glass_bottle_fills_from_water",
+        "pumpkin:empty_5x4x5",
+        20,
+        0,
+        test_dispenser_glass_bottle_fills_water_from_source,
+    );
+    register_function_test(
+        "pumpkin:dispenser_flint_and_steel_primes_tnt",
+        "pumpkin:empty_5x4x5",
+        20,
+        0,
+        test_dispenser_flint_and_steel_primes_tnt,
+    );
+    register_function_test(
+        "pumpkin:dispenser_flint_and_steel_lights_campfire",
+        "pumpkin:empty_5x4x5",
+        20,
+        0,
+        test_dispenser_flint_and_steel_lights_campfire,
+    );
+    register_function_test(
+        "pumpkin:dispenser_armor_stand_spawns_entity",
+        "pumpkin:empty_5x4x5",
+        20,
+        0,
+        test_dispenser_armor_stand_spawns_entity,
+    );
+    register_function_test(
+        "pumpkin:dispenser_tnt_spawns_primed_tnt",
+        "pumpkin:empty_5x4x5",
+        20,
+        0,
+        test_dispenser_tnt_spawns_primed_tnt,
+    );
+    register_function_test(
+        "pumpkin:dispenser_minecart_places_on_rail",
+        "pumpkin:empty_5x4x5",
+        20,
+        0,
+        test_dispenser_minecart_places_on_rail,
+    );
+    register_function_test(
+        "pumpkin:dispenser_boat_places_on_water",
+        "pumpkin:empty_6x4x5",
+        20,
+        0,
+        test_dispenser_boat_places_on_water,
+    );
+    register_function_test(
+        "pumpkin:dropper_drops_bucket_as_item_entity",
+        "pumpkin:empty_5x4x5",
+        20,
+        0,
+        test_dropper_drops_item_entity_into_air,
+    );
+    register_function_test(
+        "pumpkin:dropper_transfers_into_hopper_and_barrel",
+        "pumpkin:empty_6x4x5",
+        30,
+        0,
+        test_dropper_transfers_into_hopper_and_barrel,
+    );
+}
 
 fn east_dispenser_id(block: &Block) -> BlockStateId {
     let mut props = DispenserLikeProperties::default(block);

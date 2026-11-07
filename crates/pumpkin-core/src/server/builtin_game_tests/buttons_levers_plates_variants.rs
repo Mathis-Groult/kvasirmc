@@ -6,10 +6,98 @@ use pumpkin_data::{
         SouthRedstone, StonePressurePlateLikeProperties, WestRedstone,
     },
 };
-use pumpkin_gametest::{GameTestHelper, GameTestResult};
+use pumpkin_gametest::{GameTestHelper, GameTestResult, register_function_test};
 use pumpkin_util::math::{position::BlockPos, vector3::Vector3};
 
 use super::build_stone_floor;
+
+/// Registers the built-in game tests of this module.
+pub(super) fn register() {
+    register_function_test(
+        "pumpkin:oak_button_30_tick_pulse",
+        "pumpkin:empty_5x4x5",
+        45,
+        0,
+        test_oak_button_30_tick_pulse,
+    );
+    register_function_test(
+        "pumpkin:polished_blackstone_button_20_tick_pulse",
+        "pumpkin:empty_5x4x5",
+        35,
+        0,
+        test_polished_blackstone_button_20_tick_pulse,
+    );
+    register_function_test(
+        "pumpkin:button_floor_and_ceiling_power",
+        "pumpkin:empty_6x5x5",
+        30,
+        0,
+        test_stone_button_floor_mount_strong_power,
+    );
+    register_function_test(
+        "pumpkin:button_wall_strong_powers_behind_block",
+        "pumpkin:empty_5x4x5",
+        30,
+        0,
+        test_stone_button_wall_mount_strong_power,
+    );
+    register_function_test(
+        "pumpkin:button_breaks_when_support_removed",
+        "pumpkin:empty_5x4x5",
+        20,
+        0,
+        test_button_breaks_when_support_removed,
+    );
+    register_function_test(
+        "pumpkin:lever_wall_and_ceiling_orientations",
+        "pumpkin:empty_6x5x5",
+        20,
+        0,
+        test_lever_ceiling_mount_strong_power,
+    );
+    register_function_test(
+        "pumpkin:lever_strong_powers_supporting_block",
+        "pumpkin:empty_5x4x5",
+        20,
+        0,
+        test_lever_wall_mount_strong_power,
+    );
+    register_function_test(
+        "pumpkin:lever_breaks_when_support_removed",
+        "pumpkin:empty_5x4x5",
+        20,
+        0,
+        test_lever_breaks_when_support_removed,
+    );
+    register_function_test(
+        "pumpkin:stone_pressure_plate_ignores_items_activates_on_mob",
+        "pumpkin:empty_6x5x5",
+        30,
+        0,
+        test_stone_button_ceiling_mount_strong_power,
+    );
+    register_function_test(
+        "pumpkin:wooden_pressure_plate_activates_on_item_and_clears",
+        "pumpkin:empty_5x4x5",
+        40,
+        0,
+        test_wooden_pressure_plate_item_activation,
+    );
+    register_function_test(
+        "pumpkin:light_weighted_pressure_plate_counts_entities",
+        "pumpkin:empty_5x4x5",
+        30,
+        0,
+        test_weighted_pressure_plate_light_scaling,
+    );
+    register_function_test(
+        "pumpkin:heavy_weighted_pressure_plate_signal_1",
+        "pumpkin:empty_5x4x5",
+        30,
+        0,
+        test_weighted_pressure_plate_heavy_scaling,
+    );
+}
 
 fn ns_wire() -> BlockStateId {
     let mut props = RedstoneWireLikeProperties::default(&Block::REDSTONE_WIRE);

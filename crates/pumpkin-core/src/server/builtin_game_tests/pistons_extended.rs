@@ -2,10 +2,98 @@ use pumpkin_data::{
     Block, BlockStateId,
     block_properties::{Facing, RedstoneOreLikeProperties, StickyPistonLikeProperties},
 };
-use pumpkin_gametest::{GameTestHelper, GameTestResult};
+use pumpkin_gametest::{GameTestHelper, GameTestResult, register_function_test};
 use pumpkin_util::math::position::BlockPos;
 
 use super::build_stone_floor;
+
+/// Registers the built-in game tests of this module.
+pub(super) fn register() {
+    register_function_test(
+        "pumpkin:piston_pushes_upward_and_retracts",
+        "pumpkin:empty_5x6x5",
+        30,
+        0,
+        test_piston_pushes_upward_and_retracts,
+    );
+    register_function_test(
+        "pumpkin:piston_pushes_downward_and_retracts",
+        "pumpkin:empty_5x6x5",
+        30,
+        0,
+        test_piston_pushes_downward_and_retracts,
+    );
+    register_function_test(
+        "pumpkin:piston_pushes_north_and_south",
+        "pumpkin:empty_6x4x6",
+        30,
+        0,
+        test_piston_pushes_north_and_south,
+    );
+    register_function_test(
+        "pumpkin:piston_pushes_west_and_east",
+        "pumpkin:empty_6x4x6",
+        30,
+        0,
+        test_piston_pushes_west_and_east,
+    );
+    register_function_test(
+        "pumpkin:sticky_piston_pulls_upward_and_downward",
+        "pumpkin:empty_5x6x5",
+        30,
+        0,
+        test_sticky_piston_pulls_upward_and_downward,
+    );
+    register_function_test(
+        "pumpkin:piston_pushes_multi_block_row",
+        "pumpkin:empty_8x4x5",
+        30,
+        0,
+        test_piston_pushes_multi_block_row,
+    );
+    register_function_test(
+        "pumpkin:piston_blocked_by_obsidian",
+        "pumpkin:empty_5x4x5",
+        20,
+        0,
+        test_piston_blocked_by_obsidian,
+    );
+    register_function_test(
+        "pumpkin:piston_blocked_by_bedrock",
+        "pumpkin:empty_5x4x5",
+        20,
+        0,
+        test_piston_blocked_by_bedrock,
+    );
+    register_function_test(
+        "pumpkin:piston_destroys_torch_and_moss_carpet",
+        "pumpkin:empty_6x4x5",
+        20,
+        0,
+        test_piston_destroys_fragile_torch_and_moss,
+    );
+    register_function_test(
+        "pumpkin:sticky_piston_leaves_obsidian_behind",
+        "pumpkin:empty_6x4x5",
+        30,
+        0,
+        test_sticky_piston_leaves_obsidian_unmoved,
+    );
+    register_function_test(
+        "pumpkin:sticky_piston_redstone_block_powers_lamp",
+        "pumpkin:empty_6x4x5",
+        30,
+        0,
+        test_piston_pushes_redstone_block_powers_lamp,
+    );
+    register_function_test(
+        "pumpkin:piston_one_stone_leaves_pushed_block",
+        "pumpkin:empty_6x4x5",
+        30,
+        0,
+        test_sticky_piston_pulls_redstone_block_cuts_power,
+    );
+}
 
 fn piston_state(block: &Block, facing: Facing) -> BlockStateId {
     let mut props = StickyPistonLikeProperties::default(block);

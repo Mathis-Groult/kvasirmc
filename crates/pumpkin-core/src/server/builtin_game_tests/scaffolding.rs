@@ -1,8 +1,19 @@
 use pumpkin_data::{Block, block_properties::ScaffoldingLikeProperties};
-use pumpkin_gametest::{GameTestHelper, GameTestResult};
+use pumpkin_gametest::{GameTestHelper, GameTestResult, register_function_test};
 use pumpkin_util::math::position::BlockPos;
 
 use super::build_stone_floor;
+
+/// Registers the built-in game tests of this module.
+pub(super) fn register() {
+    register_function_test(
+        "pumpkin:scaffolding_distance_and_collapse",
+        "pumpkin:empty_5x5x5",
+        20,
+        0,
+        test_scaffolding_distance_and_collapse,
+    );
+}
 
 pub(super) async fn test_scaffolding_distance_and_collapse(
     helper: GameTestHelper,

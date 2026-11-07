@@ -5,10 +5,35 @@ use pumpkin_data::{
         RedstoneWireLikeProperties,
     },
 };
-use pumpkin_gametest::{GameTestHelper, GameTestResult};
+use pumpkin_gametest::{GameTestHelper, GameTestResult, register_function_test};
 use pumpkin_util::math::{position::BlockPos, vector3::Vector3};
 
 use super::build_stone_floor;
+
+/// Registers the built-in game tests of this module.
+pub(super) fn register() {
+    register_function_test(
+        "pumpkin:powered_rail_propagation",
+        "pumpkin:empty_3x4x10",
+        20,
+        0,
+        test_powered_rail_propagation,
+    );
+    register_function_test(
+        "pumpkin:activator_rail_propagation",
+        "pumpkin:empty_3x4x10",
+        20,
+        0,
+        test_activator_rail_propagation,
+    );
+    register_function_test(
+        "pumpkin:detector_rail_minecart",
+        "pumpkin:empty_5x4x5",
+        30,
+        0,
+        test_detector_rail_minecart,
+    );
+}
 
 pub(super) async fn test_powered_rail_propagation(helper: GameTestHelper) -> GameTestResult<()> {
     build_stone_floor(&helper, 3, 10).await?;

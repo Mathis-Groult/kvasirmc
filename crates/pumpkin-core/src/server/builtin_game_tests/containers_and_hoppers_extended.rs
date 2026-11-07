@@ -5,10 +5,98 @@ use pumpkin_data::{
         Orientation,
     },
 };
-use pumpkin_gametest::{GameTestHelper, GameTestResult};
+use pumpkin_gametest::{GameTestHelper, GameTestResult, register_function_test};
 use pumpkin_util::math::{position::BlockPos, vector3::Vector3};
 
 use super::build_stone_floor;
+
+/// Registers the built-in game tests of this module.
+pub(super) fn register() {
+    register_function_test(
+        "pumpkin:hopper_pulls_item_entity_from_above",
+        "pumpkin:empty_5x5x5",
+        30,
+        0,
+        test_hopper_pulls_item_entity_from_above,
+    );
+    register_function_test(
+        "pumpkin:hopper_pulls_from_chest_above",
+        "pumpkin:empty_5x5x5",
+        30,
+        0,
+        test_hopper_pulls_from_chest_above,
+    );
+    register_function_test(
+        "pumpkin:hopper_pushes_sideways_into_barrel",
+        "pumpkin:empty_5x4x5",
+        30,
+        0,
+        test_hopper_pushes_sideways_into_barrel,
+    );
+    register_function_test(
+        "pumpkin:hopper_chain_three_hoppers_to_chest",
+        "pumpkin:empty_6x4x5",
+        60,
+        0,
+        test_hopper_chain_three_hoppers_to_chest,
+    );
+    register_function_test(
+        "pumpkin:hopper_locked_by_redstone_stops_transfer",
+        "pumpkin:empty_5x5x5",
+        30,
+        0,
+        test_hopper_locked_by_redstone_stops_transfer,
+    );
+    register_function_test(
+        "pumpkin:hopper_unlocks_when_redstone_removed",
+        "pumpkin:empty_5x5x5",
+        40,
+        0,
+        test_hopper_unlocked_resumes_transfer,
+    );
+    register_function_test(
+        "pumpkin:hopper_feeds_furnace_top_and_side",
+        "pumpkin:empty_5x5x5",
+        40,
+        0,
+        test_hopper_feeds_furnace_top_and_side,
+    );
+    register_function_test(
+        "pumpkin:blast_furnace_smelts_raw_iron",
+        "pumpkin:empty_4x4x4",
+        30,
+        0,
+        test_blast_furnace_smelts_raw_iron,
+    );
+    register_function_test(
+        "pumpkin:smoker_cooks_raw_beef",
+        "pumpkin:empty_4x4x4",
+        30,
+        0,
+        test_smoker_cooks_raw_beef,
+    );
+    register_function_test(
+        "pumpkin:crafter_crafts_iron_ingot_from_nuggets",
+        "pumpkin:empty_5x4x5",
+        30,
+        0,
+        test_crafter_crafts_iron_ingot_from_nuggets,
+    );
+    register_function_test(
+        "pumpkin:crafter_crafts_sticks_from_two_planks",
+        "pumpkin:empty_5x4x5",
+        30,
+        0,
+        test_crafter_disabled_slots_skip_items,
+    );
+    register_function_test(
+        "pumpkin:barrel_and_trapped_chest_store_items",
+        "pumpkin:empty_5x4x5",
+        20,
+        0,
+        test_barrel_and_trapped_chest_inventories,
+    );
+}
 
 fn hopper_state(facing: FacingHopper, enabled: bool) -> BlockStateId {
     let mut props = HopperLikeProperties::default(&Block::HOPPER);

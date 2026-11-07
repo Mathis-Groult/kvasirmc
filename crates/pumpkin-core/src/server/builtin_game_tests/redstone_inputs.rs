@@ -6,10 +6,42 @@ use pumpkin_data::{
         RedstoneOreLikeProperties, RedstoneWireLikeProperties, StonePressurePlateLikeProperties,
     },
 };
-use pumpkin_gametest::{GameTestHelper, GameTestResult};
+use pumpkin_gametest::{GameTestHelper, GameTestResult, register_function_test};
 use pumpkin_util::math::{position::BlockPos, vector3::Vector3};
 
 use super::build_stone_floor;
+
+/// Registers the built-in game tests of this module.
+pub(super) fn register() {
+    register_function_test(
+        "pumpkin:redstone_observer_pulse",
+        "pumpkin:empty_5x4x5",
+        30,
+        0,
+        test_redstone_observer_pulse,
+    );
+    register_function_test(
+        "pumpkin:stone_button_pulse",
+        "pumpkin:empty_5x4x5",
+        40,
+        0,
+        test_stone_button_pulse,
+    );
+    register_function_test(
+        "pumpkin:lever_toggles_power",
+        "pumpkin:empty_5x4x5",
+        20,
+        0,
+        test_lever_toggles_power,
+    );
+    register_function_test(
+        "pumpkin:pressure_plate_entity_activation",
+        "pumpkin:empty_5x4x4",
+        40,
+        0,
+        test_pressure_plate_entity_activation,
+    );
+}
 
 pub(super) async fn test_redstone_observer_pulse(helper: GameTestHelper) -> GameTestResult<()> {
     build_stone_floor(&helper, 5, 5).await?;

@@ -2,11 +2,92 @@ use pumpkin_data::{
     Block,
     block_properties::{CommandBlockLikeProperties, Facing},
 };
-use pumpkin_gametest::{GameTestHelper, GameTestResult};
+use pumpkin_gametest::{GameTestHelper, GameTestResult, register_function_test};
 use pumpkin_nbt::NbtCompound;
 use pumpkin_util::math::{position::BlockPos, vector3::Vector3};
 
 use super::build_stone_floor;
+
+/// Registers the built-in game tests of this module.
+pub(super) fn register() {
+    register_function_test(
+        "pumpkin:impulse_command_block_setblock_on_power",
+        "pumpkin:empty_5x4x5",
+        20,
+        0,
+        test_command_block_impulse_setblock,
+    );
+    register_function_test(
+        "pumpkin:chain_command_block_three_stage_pipeline",
+        "pumpkin:empty_7x4x5",
+        20,
+        0,
+        test_command_block_chain_three_stages,
+    );
+    register_function_test(
+        "pumpkin:conditional_chain_command_block_skips_on_failure",
+        "pumpkin:empty_6x4x5",
+        20,
+        0,
+        test_command_block_unconditional_vs_conditional,
+    );
+    register_function_test(
+        "pumpkin:auto_command_block_executes_without_redstone",
+        "pumpkin:empty_5x4x5",
+        20,
+        0,
+        test_command_block_auto_executes_on_placement,
+    );
+    register_function_test(
+        "pumpkin:falling_gravel_and_red_sand_land",
+        "pumpkin:empty_5x6x5",
+        60,
+        0,
+        test_falling_gravel_and_red_sand_land,
+    );
+    register_function_test(
+        "pumpkin:falling_concrete_powder_and_anvil_land",
+        "pumpkin:empty_5x6x5",
+        60,
+        0,
+        test_falling_concrete_powder_solidifies_in_water,
+    );
+    register_function_test(
+        "pumpkin:tnt_primed_by_redstone_torch",
+        "pumpkin:empty_5x4x5",
+        20,
+        0,
+        test_tnt_primed_by_redstone_torch_and_wire,
+    );
+    register_function_test(
+        "pumpkin:snow_golem_horizontal_pattern_spawns",
+        "pumpkin:empty_6x4x5",
+        20,
+        0,
+        test_snow_golem_horizontal_pattern_spawns,
+    );
+    register_function_test(
+        "pumpkin:iron_golem_pattern_clears_all_four_blocks",
+        "pumpkin:empty_5x5x5",
+        20,
+        0,
+        test_iron_golem_clears_all_four_pattern_blocks,
+    );
+    register_function_test(
+        "pumpkin:different_item_entities_do_not_merge",
+        "pumpkin:empty_4x4x4",
+        40,
+        0,
+        test_item_entities_different_types_do_not_merge,
+    );
+    register_function_test(
+        "pumpkin:item_entities_stack_up_to_combined_count",
+        "pumpkin:empty_5x6x5",
+        60,
+        0,
+        test_falling_anvil_lands_and_preserves_block,
+    );
+}
 
 fn command_nbt(id: &str, command: &str, auto: bool) -> NbtCompound {
     let mut nbt = NbtCompound::new();

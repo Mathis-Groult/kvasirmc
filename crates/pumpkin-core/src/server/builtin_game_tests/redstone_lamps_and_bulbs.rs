@@ -6,10 +6,28 @@ use pumpkin_data::{
         SouthRedstone, WestRedstone,
     },
 };
-use pumpkin_gametest::{GameTestHelper, GameTestResult};
+use pumpkin_gametest::{GameTestHelper, GameTestResult, register_function_test};
 use pumpkin_util::math::position::BlockPos;
 
 use super::build_stone_floor;
+
+/// Registers the built-in game tests of this module.
+pub(super) fn register() {
+    register_function_test(
+        "pumpkin:copper_bulb_toggles_and_comparator",
+        "pumpkin:empty_5x4x5",
+        30,
+        0,
+        test_copper_bulb_toggles_and_comparator,
+    );
+    register_function_test(
+        "pumpkin:redstone_lamp_delayed_off",
+        "pumpkin:empty_5x4x5",
+        30,
+        0,
+        test_redstone_lamp_delayed_off,
+    );
+}
 
 pub(super) async fn test_copper_bulb_toggles_and_comparator(
     helper: GameTestHelper,

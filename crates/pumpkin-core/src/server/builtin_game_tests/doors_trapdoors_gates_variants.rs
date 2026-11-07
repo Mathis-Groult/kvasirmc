@@ -5,10 +5,98 @@ use pumpkin_data::{
         OakTrapdoorLikeProperties,
     },
 };
-use pumpkin_gametest::{GameTestHelper, GameTestResult};
+use pumpkin_gametest::{GameTestHelper, GameTestResult, register_function_test};
 use pumpkin_util::math::position::BlockPos;
 
 use super::build_stone_floor;
+
+/// Registers the built-in game tests of this module.
+pub(super) fn register() {
+    register_function_test(
+        "pumpkin:oak_and_spruce_doors_redstone",
+        "pumpkin:empty_6x4x4",
+        20,
+        0,
+        test_oak_and_spruce_doors_redstone,
+    );
+    register_function_test(
+        "pumpkin:birch_and_jungle_doors_redstone",
+        "pumpkin:empty_6x4x4",
+        20,
+        0,
+        test_birch_and_jungle_doors_redstone,
+    );
+    register_function_test(
+        "pumpkin:acacia_dark_oak_mangrove_cherry_doors_redstone",
+        "pumpkin:empty_8x4x4",
+        20,
+        0,
+        test_acacia_dark_oak_mangrove_cherry_doors,
+    );
+    register_function_test(
+        "pumpkin:bamboo_crimson_warped_doors_redstone",
+        "pumpkin:empty_7x4x4",
+        20,
+        0,
+        test_bamboo_crimson_warped_doors,
+    );
+    register_function_test(
+        "pumpkin:copper_doors_oxidation_variants_redstone",
+        "pumpkin:empty_8x4x4",
+        20,
+        0,
+        test_copper_doors_oxidation_variants,
+    );
+    register_function_test(
+        "pumpkin:door_breaking_lower_removes_upper",
+        "pumpkin:empty_5x4x4",
+        20,
+        0,
+        test_door_breaks_when_lower_half_removed,
+    );
+    register_function_test(
+        "pumpkin:trapdoor_wooden_variants_redstone",
+        "pumpkin:empty_8x4x4",
+        20,
+        0,
+        test_wooden_trapdoors_variants_redstone,
+    );
+    register_function_test(
+        "pumpkin:copper_trapdoors_oxidation_variants_redstone",
+        "pumpkin:empty_8x4x4",
+        20,
+        0,
+        test_copper_trapdoors_oxidation_variants,
+    );
+    register_function_test(
+        "pumpkin:fence_gate_wooden_variants_redstone",
+        "pumpkin:empty_8x4x4",
+        20,
+        0,
+        test_fence_gates_wood_variants_redstone,
+    );
+    register_function_test(
+        "pumpkin:fence_gate_in_wall_neighbor_update",
+        "pumpkin:empty_5x4x5",
+        20,
+        0,
+        test_fence_gate_in_wall_neighbor_update,
+    );
+    register_function_test(
+        "pumpkin:fence_horizontal_connections",
+        "pumpkin:empty_5x4x5",
+        20,
+        0,
+        test_fence_horizontal_connections_update,
+    );
+    register_function_test(
+        "pumpkin:iron_bars_and_glass_pane_connections",
+        "pumpkin:empty_6x4x5",
+        20,
+        0,
+        test_iron_bars_and_glass_pane_connections,
+    );
+}
 
 async fn place_door(
     helper: &GameTestHelper,

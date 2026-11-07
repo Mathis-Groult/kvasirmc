@@ -8,10 +8,112 @@ use pumpkin_data::{
         WaterCauldronLikeProperties, WestRedstone,
     },
 };
-use pumpkin_gametest::{GameTestHelper, GameTestResult};
+use pumpkin_gametest::{GameTestHelper, GameTestResult, register_function_test};
 use pumpkin_util::math::position::BlockPos;
 
 use super::build_stone_floor;
+
+/// Registers the built-in game tests of this module.
+pub(super) fn register() {
+    register_function_test(
+        "pumpkin:comparator_composter_levels_1_to_4",
+        "pumpkin:empty_8x4x5",
+        20,
+        0,
+        test_comparator_composter_levels_1_to_4,
+    );
+    register_function_test(
+        "pumpkin:comparator_composter_levels_5_to_8",
+        "pumpkin:empty_8x4x5",
+        20,
+        0,
+        test_comparator_composter_levels_5_to_8,
+    );
+    register_function_test(
+        "pumpkin:comparator_water_cauldron_levels_1_to_3",
+        "pumpkin:empty_8x4x5",
+        20,
+        0,
+        test_comparator_water_cauldron_levels_1_2_3,
+    );
+    register_function_test(
+        "pumpkin:comparator_powder_snow_cauldron_levels_1_to_3",
+        "pumpkin:empty_8x4x5",
+        20,
+        0,
+        test_comparator_powder_snow_cauldron_levels_1_2_3,
+    );
+    register_function_test(
+        "pumpkin:comparator_respawn_anchor_charges_0_to_4",
+        "pumpkin:empty_8x4x5",
+        20,
+        0,
+        test_comparator_respawn_anchor_charges_0_1_3_4,
+    );
+    register_function_test(
+        "pumpkin:comparator_cake_bites_0_2_4_6",
+        "pumpkin:empty_8x4x5",
+        20,
+        0,
+        test_comparator_cake_bites_0_2_4_6,
+    );
+    register_function_test(
+        "pumpkin:comparator_candle_cake_and_lit_candle_cake",
+        "pumpkin:empty_8x4x5",
+        20,
+        0,
+        test_comparator_candle_cake_full_signal,
+    );
+    register_function_test(
+        "pumpkin:comparator_chest_single_item_signal_1",
+        "pumpkin:empty_8x4x5",
+        20,
+        0,
+        test_comparator_chest_single_item_signal_1,
+    );
+    register_function_test(
+        "pumpkin:comparator_chest_nonstackable_items_signal",
+        "pumpkin:empty_8x4x5",
+        20,
+        0,
+        test_comparator_chest_nine_swords_signal_5,
+    );
+    register_function_test(
+        "pumpkin:comparator_hopper_partial_and_full",
+        "pumpkin:empty_8x4x5",
+        20,
+        0,
+        test_comparator_hopper_fill_levels_1_and_5,
+    );
+    register_function_test(
+        "pumpkin:comparator_dispenser_and_dropper_signal",
+        "pumpkin:empty_8x4x5",
+        20,
+        0,
+        test_comparator_dispenser_and_dropper_three_swords,
+    );
+    register_function_test(
+        "pumpkin:comparator_furnace_slots_signal",
+        "pumpkin:empty_8x4x5",
+        20,
+        0,
+        test_comparator_furnace_slot_signal,
+    );
+    register_function_test(
+        "pumpkin:comparator_copper_bulb_oxidized_variants",
+        "pumpkin:empty_8x4x5",
+        20,
+        0,
+        test_comparator_copper_bulbs_oxidation_variants,
+    );
+    register_function_test(
+        "pumpkin:comparator_subtract_clamps_to_zero",
+        "pumpkin:empty_5x4x5",
+        20,
+        0,
+        test_comparator_subtract_mode_clamps_to_zero,
+    );
+}
 
 async fn setup_four_comparators(helper: &GameTestHelper) -> GameTestResult<[BlockPos; 4]> {
     build_stone_floor(helper, 8, 5).await?;

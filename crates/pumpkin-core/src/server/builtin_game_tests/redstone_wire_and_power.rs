@@ -5,10 +5,112 @@ use pumpkin_data::{
         RepeaterLikeProperties, SouthRedstone, WestRedstone,
     },
 };
-use pumpkin_gametest::{GameTestHelper, GameTestResult};
+use pumpkin_gametest::{GameTestHelper, GameTestResult, register_function_test};
 use pumpkin_util::math::position::BlockPos;
 
 use super::build_stone_floor;
+
+/// Registers the built-in game tests of this module.
+pub(super) fn register() {
+    register_function_test(
+        "pumpkin:redstone_wire_attenuation_1_to_4",
+        "pumpkin:empty_6x4x4",
+        20,
+        0,
+        test_redstone_wire_attenuation_1_to_4,
+    );
+    register_function_test(
+        "pumpkin:redstone_wire_attenuation_5_to_8",
+        "pumpkin:empty_10x4x4",
+        20,
+        0,
+        test_redstone_wire_attenuation_5_to_8,
+    );
+    register_function_test(
+        "pumpkin:redstone_wire_attenuation_9_to_12",
+        "pumpkin:empty_8x4x8",
+        20,
+        0,
+        test_redstone_wire_attenuation_9_to_12,
+    );
+    register_function_test(
+        "pumpkin:redstone_wire_attenuation_13_to_15",
+        "pumpkin:empty_8x4x8",
+        20,
+        0,
+        test_redstone_wire_attenuation_13_to_15,
+    );
+    register_function_test(
+        "pumpkin:redstone_wire_corner_ne_and_sw",
+        "pumpkin:empty_6x4x6",
+        20,
+        0,
+        test_redstone_wire_corner_north_east,
+    );
+    register_function_test(
+        "pumpkin:redstone_wire_t_junction",
+        "pumpkin:empty_5x4x5",
+        20,
+        0,
+        test_redstone_wire_t_junction_split,
+    );
+    register_function_test(
+        "pumpkin:redstone_wire_cross_4_way",
+        "pumpkin:empty_5x4x5",
+        20,
+        0,
+        test_redstone_wire_cross_junction_four_way,
+    );
+    register_function_test(
+        "pumpkin:redstone_wire_step_up_climb",
+        "pumpkin:empty_6x5x4",
+        20,
+        0,
+        test_redstone_wire_step_up_climb,
+    );
+    register_function_test(
+        "pumpkin:redstone_wire_step_down_drop",
+        "pumpkin:empty_6x5x4",
+        20,
+        0,
+        test_redstone_wire_step_down_drop,
+    );
+    register_function_test(
+        "pumpkin:redstone_wire_dual_sources_max",
+        "pumpkin:empty_7x4x4",
+        20,
+        0,
+        test_redstone_wire_dual_sources_max_power,
+    );
+    register_function_test(
+        "pumpkin:redstone_wire_source_removal_deenergizes",
+        "pumpkin:empty_6x4x4",
+        20,
+        0,
+        test_redstone_wire_source_removal_deenergizes,
+    );
+    register_function_test(
+        "pumpkin:redstone_wire_repeater_reboosts_to_15",
+        "pumpkin:empty_5x4x8",
+        20,
+        0,
+        test_redstone_wire_repeater_reboosts_signal,
+    );
+    register_function_test(
+        "pumpkin:redstone_wire_strong_power_through_stone",
+        "pumpkin:empty_5x4x6",
+        20,
+        0,
+        test_redstone_wire_strong_power_through_stone,
+    );
+    register_function_test(
+        "pumpkin:redstone_block_powers_all_horizontal_wires",
+        "pumpkin:empty_6x4x6",
+        20,
+        0,
+        test_redstone_wire_corner_south_west,
+    );
+}
 
 fn ew_wire_state() -> BlockStateId {
     let mut props = RedstoneWireLikeProperties::default(&Block::REDSTONE_WIRE);

@@ -1,8 +1,19 @@
 use pumpkin_data::{Block, block_properties::FurnaceLikeProperties};
-use pumpkin_gametest::{GameTestHelper, GameTestResult};
+use pumpkin_gametest::{GameTestHelper, GameTestResult, register_function_test};
 use pumpkin_util::math::position::BlockPos;
 
 use super::build_stone_floor;
+
+/// Registers the built-in game tests of this module.
+pub(super) fn register() {
+    register_function_test(
+        "pumpkin:furnace_ignites_and_smelts",
+        "pumpkin:empty_3x4x3",
+        30,
+        0,
+        test_furnace_ignites_and_smelts,
+    );
+}
 
 pub(super) async fn test_furnace_ignites_and_smelts(helper: GameTestHelper) -> GameTestResult<()> {
     build_stone_floor(&helper, 3, 3).await?;

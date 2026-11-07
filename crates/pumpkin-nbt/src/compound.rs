@@ -120,8 +120,13 @@ impl NbtCompound {
     }
 
     /// Serializes the compound's entries followed by an end tag.
+    ///
+    /// Entries are written in name order: a `HashMap` iterates in a different order for every
+    /// instance, and equal compounds must give equal bytes (saved chunks are compared byte for byte).
     pub fn serialize_content<W: NbtWriteHelper>(self, w: &mut W) -> Result<(), Error> {
-        for (name, tag) in self.child_tags {
+        let mut entries: Vec<_> = self.child_tags.into_iter().collect();
+        entries.sort_unstable_by(|(a, _), (b, _)| a.cmp(b));
+        for (name, tag) in entries {
             w.write_u8(tag.get_type_id())?;
             w.write_string(&name)?;
             tag.serialize_data(w)?;
@@ -471,5 +476,46 @@ mod tests {
         let mut short = NbtCompound::new();
         short.put("UUID", crate::tag::NbtTag::IntArray(vec![1, 2, 3]));
         assert_eq!(short.get_uuid("UUID"), None);
+    }
+
+    /// Writes `compound` the way chunks and files store it.
+    fn bytes_of(compound: NbtCompound) -> Vec<u8> {
+        let mut bytes = Vec::new();
+        let mut writer = crate::serializer::NbtWriteHelperJava::new(&mut bytes);
+        compound
+            .serialize_content(&mut writer)
+            .expect("writing to a Vec cannot fail");
+        bytes
+    }
+
+    #[test]
+    fn equal_compounds_serialize_to_equal_bytes_whatever_their_insertion_order() {
+        // Every compound has its own random hash seed, so unsorted output differs between them.
+        let names = ["LootTable", "LootTableSeed", "id", "x", "y", "z", "keepPacked", "Items"];
+        let build = |rotation: usize| {
+            let mut compound = NbtCompound::new();
+            for step in 0..names.len() {
+                let name = names[(step + rotation) % names.len()];
+                compound.put_int(name, i32::try_from(name.len()).expect("short name"));
+            }
+            compound
+        };
+        let first = bytes_of(build(0));
+        for rotation in 0..32 {
+            assert_eq!(bytes_of(build(rotation)), first, "rotation {rotation}");
+        }
+    }
+
+    #[test]
+    fn serialized_entries_are_in_name_order() {
+        let names: Vec<String> = ('a'..='p').rev().map(String::from).collect();
+        let mut compound = NbtCompound::new();
+        for name in &names {
+            compound.put_byte(name, 1);
+        }
+        // Per entry: tag id 1 (byte), name length (u16), the name, the value; then the end tag.
+        let mut expected: Vec<u8> = ('a'..='p').flat_map(|name| [1, 0, 1, name as u8, 1]).collect();
+        expected.push(0);
+        assert_eq!(bytes_of(compound), expected);
     }
 }

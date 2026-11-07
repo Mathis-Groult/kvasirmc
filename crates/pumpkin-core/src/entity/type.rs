@@ -789,3 +789,184 @@ pub fn check_spawn_rules(
 
     true
 }
+
+/// The classification the spawn rules had as an `if` chain, written out so that its answer for
+/// every entity type is on record (`tests/golden/spawn_rule.txt`) before the chain is replaced.
+#[cfg(test)]
+mod spawn_rule_golden {
+    use pumpkin_data::entity::EntityType;
+
+    fn old_rule(entity_type: &'static EntityType) -> &'static str {
+        let id = entity_type.id;
+        if id == EntityType::BOGGED.id
+            || id == EntityType::CAVE_SPIDER.id
+            || id == EntityType::CREEPER.id
+            || id == EntityType::ENDERMAN.id
+            || id == EntityType::GIANT.id
+            || id == EntityType::RAVAGER.id
+            || id == EntityType::SKELETON.id
+            || id == EntityType::SPIDER.id
+            || id == EntityType::WITCH.id
+            || id == EntityType::WITHER.id
+            || id == EntityType::WITHER_SKELETON.id
+            || id == EntityType::ZOMBIE.id
+            || id == EntityType::ZOMBIE_HORSE.id
+            || id == EntityType::ZOMBIE_VILLAGER.id
+            || id == EntityType::CREAKING.id
+            || id == EntityType::EVOKER.id
+            || id == EntityType::ILLUSIONER.id
+            || id == EntityType::VEX.id
+            || id == EntityType::VINDICATOR.id
+            || id == EntityType::WARDEN.id
+        {
+            return "Monster";
+        }
+        if id == EntityType::BLAZE.id || id == EntityType::BREEZE.id || id == EntityType::ZOGLIN.id
+        {
+            return "AnyLightMonster";
+        }
+        if id == EntityType::HUSK.id
+            || id == EntityType::PARCHED.id
+            || id == EntityType::CAMEL_HUSK.id
+        {
+            return "SurfaceMonster";
+        }
+        if id == EntityType::STRAY.id {
+            return "Stray";
+        }
+        if id == EntityType::PILLAGER.id {
+            return "Pillager";
+        }
+        if id == EntityType::ENDERMITE.id || id == EntityType::SILVERFISH.id {
+            return "SilverfishLike";
+        }
+        if id == EntityType::GHAST.id {
+            return "Ghast";
+        }
+        if id == EntityType::MAGMA_CUBE.id {
+            return "MagmaCube";
+        }
+        if id == EntityType::SULFUR_CUBE.id {
+            return "Always";
+        }
+        if id == EntityType::SLIME.id {
+            return "Slime";
+        }
+        if id == EntityType::HOGLIN.id || id == EntityType::PIGLIN.id {
+            return "HoglinOrPiglin";
+        }
+        if id == EntityType::ZOMBIFIED_PIGLIN.id {
+            return "ZombifiedPiglin";
+        }
+        if id == EntityType::STRIDER.id {
+            return "Strider";
+        }
+        if id == EntityType::BAT.id {
+            return "Bat";
+        }
+        if id == EntityType::CHICKEN.id
+            || id == EntityType::COW.id
+            || id == EntityType::DONKEY.id
+            || id == EntityType::HAPPY_GHAST.id
+            || id == EntityType::HORSE.id
+            || id == EntityType::LLAMA.id
+            || id == EntityType::MULE.id
+            || id == EntityType::PIG.id
+            || id == EntityType::SHEEP.id
+            || id == EntityType::CAT.id
+            || id == EntityType::PANDA.id
+            || id == EntityType::TRADER_LLAMA.id
+        {
+            return "Animal";
+        }
+        if id == EntityType::ARMADILLO.id {
+            return "Armadillo";
+        }
+        if id == EntityType::CAMEL.id {
+            return "Camel";
+        }
+        if id == EntityType::FROG.id {
+            return "Frog";
+        }
+        if id == EntityType::GOAT.id {
+            return "Goat";
+        }
+        if id == EntityType::MOOSHROOM.id {
+            return "Mooshroom";
+        }
+        if id == EntityType::PARROT.id {
+            return "Parrot";
+        }
+        if id == EntityType::RABBIT.id {
+            return "Rabbit";
+        }
+        if id == EntityType::WOLF.id {
+            return "Wolf";
+        }
+        if id == EntityType::FOX.id {
+            return "Fox";
+        }
+        if id == EntityType::OCELOT.id {
+            return "Ocelot";
+        }
+        if id == EntityType::POLAR_BEAR.id {
+            return "PolarBear";
+        }
+        if id == EntityType::TURTLE.id {
+            return "Turtle";
+        }
+        if id == EntityType::SKELETON_HORSE.id {
+            return "Animal";
+        }
+        if id == EntityType::COD.id
+            || id == EntityType::PUFFERFISH.id
+            || id == EntityType::SALMON.id
+        {
+            return "SurfaceWaterAnimal";
+        }
+        if id == EntityType::DOLPHIN.id || id == EntityType::SQUID.id {
+            return "SurfaceAgeableWaterCreature";
+        }
+        if id == EntityType::TROPICAL_FISH.id {
+            return "TropicalFish";
+        }
+        if id == EntityType::AXOLOTL.id {
+            return "Axolotl";
+        }
+        if id == EntityType::GLOW_SQUID.id {
+            return "GlowSquid";
+        }
+        if id == EntityType::NAUTILUS.id {
+            return "Nautilus";
+        }
+        if id == EntityType::DROWNED.id {
+            return "Drowned";
+        }
+        if id == EntityType::GUARDIAN.id || id == EntityType::ELDER_GUARDIAN.id {
+            return "Guardian";
+        }
+        if entity_type.mob {
+            return "GenericMob";
+        }
+        "Always"
+    }
+
+    fn all_entity_types() -> impl Iterator<Item = &'static EntityType> {
+        (0..2000_u16).filter_map(EntityType::from_raw)
+    }
+
+    #[test]
+    fn every_entity_type_keeps_its_spawn_rule() -> Result<(), Box<dyn std::error::Error>> {
+        let now: String = all_entity_types()
+            .map(|entity_type| format!("{} {}\n", entity_type.resource_name, old_rule(entity_type)))
+            .collect();
+        let path =
+            std::path::Path::new(env!("CARGO_MANIFEST_DIR")).join("tests/golden/spawn_rule.txt");
+        if std::env::var_os("KVASIR_BLESS").is_some() {
+            std::fs::write(&path, &now)?;
+            return Ok(());
+        }
+        assert_eq!(std::fs::read_to_string(&path)?, now);
+        Ok(())
+    }
+}

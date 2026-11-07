@@ -1,7 +1,7 @@
 use crate::block::PathComputationType;
 use crate::entity::EntityBase;
 use crate::entity::mob::spawn::finalize_spawn;
-use crate::entity::r#type::{check_spawn_rules, from_type};
+use crate::entity::r#type::{from_type, spawn_rules::check_spawn_rules};
 use crate::world::FxDashMap;
 use crate::world::World;
 use arc_swap::ArcSwap;

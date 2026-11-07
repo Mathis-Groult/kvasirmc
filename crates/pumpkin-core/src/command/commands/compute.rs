@@ -31,6 +31,9 @@ use crate::command::suggestion::suggestions::SuggestionsBuilder;
 use crate::data::datapack::DatapackManager;
 use crate::entity::EntityBase;
 
+mod float_ops;
+use float_ops::evaluate_compound_float;
+
 const DESCRIPTION: &str = "Evaluates number providers.";
 const PERMISSION: &str = "minecraft:command.compute";
 
@@ -604,355 +607,6 @@ fn evaluate_tag_float(tag: &NbtTag, ctx: &ComputeContext) -> Result<f64, Command
     }
 }
 
-#[allow(clippy::too_many_lines, clippy::match_same_arms)]
-fn evaluate_compound_float(
-    compound: &NbtCompound,
-    ctx: &ComputeContext,
-) -> Result<f64, CommandSyntaxError> {
-    let op_type = compound
-        .get_string("type")
-        .map(|s| s.strip_prefix("minecraft:").unwrap_or(s));
-
-    match op_type {
-        Some("constant") => compound.get("value").map_or_else(
-            || Err(ERROR_EVALUATION_FAILED.create_without_context()),
-            |val_tag| evaluate_tag_float(val_tag, ctx),
-        ),
-        Some("add" | "sum") => {
-            if let Some(NbtTag::List(inputs)) = compound.get("inputs") {
-                let mut sum = 0.0;
-                for tag in inputs {
-                    sum += evaluate_tag_float(tag, ctx)?;
-                }
-                Ok(sum)
-            } else {
-                let left = evaluate_tag_float(
-                    compound
-                        .get("left")
-                        .ok_or_else(|| ERROR_EVALUATION_FAILED.create_without_context())?,
-                    ctx,
-                )?;
-                let right = evaluate_tag_float(
-                    compound
-                        .get("right")
-                        .ok_or_else(|| ERROR_EVALUATION_FAILED.create_without_context())?,
-                    ctx,
-                )?;
-                Ok(left + right)
-            }
-        }
-        Some("sub") => {
-            let left = evaluate_tag_float(
-                compound
-                    .get("left")
-                    .ok_or_else(|| ERROR_EVALUATION_FAILED.create_without_context())?,
-                ctx,
-            )?;
-            let right = evaluate_tag_float(
-                compound
-                    .get("right")
-                    .ok_or_else(|| ERROR_EVALUATION_FAILED.create_without_context())?,
-                ctx,
-            )?;
-            Ok(left - right)
-        }
-        Some("mul" | "product") => {
-            if let Some(NbtTag::List(inputs)) = compound.get("inputs") {
-                let mut prod = 1.0;
-                for tag in inputs {
-                    prod *= evaluate_tag_float(tag, ctx)?;
-                }
-                Ok(prod)
-            } else {
-                let left = evaluate_tag_float(
-                    compound
-                        .get("left")
-                        .ok_or_else(|| ERROR_EVALUATION_FAILED.create_without_context())?,
-                    ctx,
-                )?;
-                let right = evaluate_tag_float(
-                    compound
-                        .get("right")
-                        .ok_or_else(|| ERROR_EVALUATION_FAILED.create_without_context())?,
-                    ctx,
-                )?;
-                Ok(left * right)
-            }
-        }
-        Some("div") => {
-            let left = evaluate_tag_float(
-                compound
-                    .get("left")
-                    .ok_or_else(|| ERROR_EVALUATION_FAILED.create_without_context())?,
-                ctx,
-            )?;
-            let right = evaluate_tag_float(
-                compound
-                    .get("right")
-                    .ok_or_else(|| ERROR_EVALUATION_FAILED.create_without_context())?,
-                ctx,
-            )?;
-            if right == 0.0 {
-                return Err(ERROR_DIV_BY_ZERO.create_without_context());
-            }
-            Ok(left / right)
-        }
-        Some("floor_div") => {
-            let left = evaluate_tag_float(
-                compound
-                    .get("left")
-                    .ok_or_else(|| ERROR_EVALUATION_FAILED.create_without_context())?,
-                ctx,
-            )?;
-            let right = evaluate_tag_float(
-                compound
-                    .get("right")
-                    .ok_or_else(|| ERROR_EVALUATION_FAILED.create_without_context())?,
-                ctx,
-            )?;
-            if right == 0.0 {
-                return Err(ERROR_DIV_BY_ZERO.create_without_context());
-            }
-            Ok((left / right).floor())
-        }
-        Some("floor_mod") => {
-            let left = evaluate_tag_float(
-                compound
-                    .get("left")
-                    .ok_or_else(|| ERROR_EVALUATION_FAILED.create_without_context())?,
-                ctx,
-            )?;
-            let right = evaluate_tag_float(
-                compound
-                    .get("right")
-                    .ok_or_else(|| ERROR_EVALUATION_FAILED.create_without_context())?,
-                ctx,
-            )?;
-            if right == 0.0 {
-                return Err(ERROR_DIV_BY_ZERO.create_without_context());
-            }
-            Ok(((left % right) + right) % right)
-        }
-        Some("mod") => {
-            let left = evaluate_tag_float(
-                compound
-                    .get("left")
-                    .ok_or_else(|| ERROR_EVALUATION_FAILED.create_without_context())?,
-                ctx,
-            )?;
-            let right = evaluate_tag_float(
-                compound
-                    .get("right")
-                    .ok_or_else(|| ERROR_EVALUATION_FAILED.create_without_context())?,
-                ctx,
-            )?;
-            if right == 0.0 {
-                return Err(ERROR_DIV_BY_ZERO.create_without_context());
-            }
-            Ok(left % right)
-        }
-        Some("pow") => {
-            let base = evaluate_tag_float(
-                compound
-                    .get("base")
-                    .ok_or_else(|| ERROR_EVALUATION_FAILED.create_without_context())?,
-                ctx,
-            )?;
-            let exponent = evaluate_tag_float(
-                compound
-                    .get("exponent")
-                    .ok_or_else(|| ERROR_EVALUATION_FAILED.create_without_context())?,
-                ctx,
-            )?;
-            if base == 0.0 && exponent == 0.0 {
-                return Err(ERROR_POW_ZERO_ZERO.create_without_context());
-            }
-            Ok(base.powf(exponent))
-        }
-        Some("abs") => {
-            let input = evaluate_tag_float(
-                compound
-                    .get("input")
-                    .ok_or_else(|| ERROR_EVALUATION_FAILED.create_without_context())?,
-                ctx,
-            )?;
-            Ok(input.abs())
-        }
-        Some("negate") => {
-            let input = evaluate_tag_float(
-                compound
-                    .get("input")
-                    .ok_or_else(|| ERROR_EVALUATION_FAILED.create_without_context())?,
-                ctx,
-            )?;
-            Ok(-input)
-        }
-        Some("min") => {
-            if let Some(NbtTag::List(inputs)) = compound.get("inputs") {
-                if inputs.is_empty() {
-                    return Err(ERROR_EVALUATION_FAILED.create_without_context());
-                }
-                let mut min_val = f64::INFINITY;
-                for tag in inputs {
-                    min_val = min_val.min(evaluate_tag_float(tag, ctx)?);
-                }
-                Ok(min_val)
-            } else {
-                let left = evaluate_tag_float(
-                    compound
-                        .get("left")
-                        .ok_or_else(|| ERROR_EVALUATION_FAILED.create_without_context())?,
-                    ctx,
-                )?;
-                let right = evaluate_tag_float(
-                    compound
-                        .get("right")
-                        .ok_or_else(|| ERROR_EVALUATION_FAILED.create_without_context())?,
-                    ctx,
-                )?;
-                Ok(left.min(right))
-            }
-        }
-        Some("max") => {
-            if let Some(NbtTag::List(inputs)) = compound.get("inputs") {
-                if inputs.is_empty() {
-                    return Err(ERROR_EVALUATION_FAILED.create_without_context());
-                }
-                let mut max_val = f64::NEG_INFINITY;
-                for tag in inputs {
-                    max_val = max_val.max(evaluate_tag_float(tag, ctx)?);
-                }
-                Ok(max_val)
-            } else {
-                let left = evaluate_tag_float(
-                    compound
-                        .get("left")
-                        .ok_or_else(|| ERROR_EVALUATION_FAILED.create_without_context())?,
-                    ctx,
-                )?;
-                let right = evaluate_tag_float(
-                    compound
-                        .get("right")
-                        .ok_or_else(|| ERROR_EVALUATION_FAILED.create_without_context())?,
-                    ctx,
-                )?;
-                Ok(left.max(right))
-            }
-        }
-        Some("avg" | "average") => {
-            if let Some(NbtTag::List(inputs)) = compound.get("inputs") {
-                if inputs.is_empty() {
-                    return Err(ERROR_EVALUATION_FAILED.create_without_context());
-                }
-                let mut sum = 0.0;
-                for tag in inputs {
-                    sum += evaluate_tag_float(tag, ctx)?;
-                }
-                #[allow(clippy::cast_precision_loss)]
-                Ok(sum / (inputs.len() as f64))
-            } else {
-                Err(ERROR_EVALUATION_FAILED.create_without_context())
-            }
-        }
-        Some("uniform") => {
-            let min = evaluate_tag_float(
-                compound
-                    .get("min")
-                    .ok_or_else(|| ERROR_EVALUATION_FAILED.create_without_context())?,
-                ctx,
-            )?;
-            let max = evaluate_tag_float(
-                compound
-                    .get("max")
-                    .ok_or_else(|| ERROR_EVALUATION_FAILED.create_without_context())?,
-                ctx,
-            )?;
-            if min > max {
-                return Err(ERROR_EVALUATION_FAILED.create_without_context());
-            }
-            Ok(rand::rng().random_range(min..=max))
-        }
-        Some("sqrt") => {
-            let input = evaluate_tag_float(
-                compound
-                    .get("input")
-                    .ok_or_else(|| ERROR_EVALUATION_FAILED.create_without_context())?,
-                ctx,
-            )?;
-            if input < 0.0 {
-                return Err(ERROR_EVALUATION_FAILED.create_without_context());
-            }
-            Ok(input.sqrt())
-        }
-        Some("sin") => {
-            let input = evaluate_tag_float(
-                compound
-                    .get("input")
-                    .ok_or_else(|| ERROR_EVALUATION_FAILED.create_without_context())?,
-                ctx,
-            )?;
-            Ok(input.sin())
-        }
-        Some("cos") => {
-            let input = evaluate_tag_float(
-                compound
-                    .get("input")
-                    .ok_or_else(|| ERROR_EVALUATION_FAILED.create_without_context())?,
-                ctx,
-            )?;
-            Ok(input.cos())
-        }
-        Some("ceil") => {
-            let input = evaluate_tag_float(
-                compound
-                    .get("input")
-                    .ok_or_else(|| ERROR_EVALUATION_FAILED.create_without_context())?,
-                ctx,
-            )?;
-            Ok(input.ceil())
-        }
-        Some("floor") => {
-            let input = evaluate_tag_float(
-                compound
-                    .get("input")
-                    .ok_or_else(|| ERROR_EVALUATION_FAILED.create_without_context())?,
-                ctx,
-            )?;
-            Ok(input.floor())
-        }
-        Some("round") => {
-            let input = evaluate_tag_float(
-                compound
-                    .get("input")
-                    .ok_or_else(|| ERROR_EVALUATION_FAILED.create_without_context())?,
-                ctx,
-            )?;
-            Ok(input.round())
-        }
-        Some("truncate") => {
-            let input = evaluate_tag_float(
-                compound
-                    .get("input")
-                    .ok_or_else(|| ERROR_EVALUATION_FAILED.create_without_context())?,
-                ctx,
-            )?;
-            Ok(input.trunc())
-        }
-        Some("from_int") => {
-            let input = compound
-                .get("input")
-                .ok_or_else(|| ERROR_EVALUATION_FAILED.create_without_context())?;
-            #[allow(clippy::cast_precision_loss)]
-            Ok(evaluate_tag_int(input, ctx)? as f64)
-        }
-        Some("score") => evaluate_score_provider_float(compound, ctx),
-        _ => compound.get("value").map_or_else(
-            || Err(ERROR_EVALUATION_FAILED.create_without_context()),
-            |val_tag| evaluate_tag_float(val_tag, ctx),
-        ),
-    }
-}
-
 fn evaluate_int(
     provider: &ProviderArg,
     ctx: &ComputeContext,
@@ -1464,9 +1118,13 @@ mod float_golden {
     use std::fmt::Write;
 
     fn expressions() -> Vec<String> {
-        let numbers = [
-            "7", "-7", "2", "-2", "0", "1.5d", "2.5d", "\"3\"", "\"abc\"", "1e308d", "-0.0d",
-        ];
+        let mut all = binary_expressions();
+        all.extend(list_and_power_expressions());
+        all.extend(unary_and_other_expressions());
+        all
+    }
+
+    fn binary_expressions() -> Vec<String> {
         let mut all = Vec::new();
         for op in [
             "add",
@@ -1500,6 +1158,11 @@ mod float_golden {
             all.push(format!("{{type:\"minecraft:{op}\",left:9,right:4}}"));
             all.push(format!("{{type:\"{op}\",left:{{type:\"constant\",value:6}},right:{{type:\"mul\",left:2,right:3}}}}"));
         }
+        all
+    }
+
+    fn list_and_power_expressions() -> Vec<String> {
+        let mut all = Vec::new();
         for op in [
             "add", "sum", "mul", "product", "min", "max", "avg", "average",
         ] {
@@ -1531,6 +1194,14 @@ mod float_golden {
             all.push(format!("{{type:\"{op}\",base:2}}"));
             all.push(format!("{{type:\"{op}\",exponent:2}}"));
         }
+        all
+    }
+
+    fn unary_and_other_expressions() -> Vec<String> {
+        let numbers = [
+            "7", "-7", "2", "-2", "0", "1.5d", "2.5d", "\"3\"", "\"abc\"", "1e308d", "-0.0d",
+        ];
+        let mut all = Vec::new();
         for op in [
             "abs", "negate", "sqrt", "sin", "cos", "ceil", "floor", "round", "truncate",
         ] {

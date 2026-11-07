@@ -1,7 +1,13 @@
+mod combat_triggers;
+mod creature_triggers;
+mod entity_event_triggers;
+mod inventory_triggers;
+mod item_use_triggers;
+mod travel_triggers;
+mod world_triggers;
 use crate::entity::player::Player;
 use crate::entity::player::advancement::PlayerAdvancement;
-use crate::entity::player::advancement::predicate::{self, CriterionConditions};
-use pumpkin_util::math::position::BlockPos;
+use crate::entity::player::advancement::predicate::CriterionConditions;
 
 #[derive(Debug, Clone)]
 pub enum AdvancementTrigger {
@@ -218,249 +224,56 @@ impl Player {
     )]
     pub fn trigger_advancement(&self, trigger: AdvancementTrigger) {
         match trigger {
-            AdvancementTrigger::InventoryChanged => {
-                let mut inventory_items: Vec<predicate::InventoryItemSnapshot<'_>> = Vec::new();
-                let mut slots_full = 0;
-                let mut slots_empty = 0;
-                let mut slots_occupied = 0;
+            AdvancementTrigger::InventoryChanged => self.inventory_changed(),
 
-                if let Ok(main_inv) = self.inventory.main_inventory.try_read() {
-                    for stack in main_inv.iter() {
-                        if stack.is_empty() {
-                            slots_empty += 1;
-                        } else {
-                            slots_occupied += 1;
-                            if stack.item_count >= 64 {
-                                slots_full += 1;
-                            }
-                            inventory_items.push((
-                                stack.item.registry_key,
-                                u32::from(stack.item_count),
-                                &[],
-                            ));
-                        }
-                    }
-                }
-                if let Ok(equipment) = self.inventory.entity_equipment.try_lock() {
-                    for stack in equipment.equipment.values() {
-                        if !stack.is_empty() {
-                            inventory_items.push((
-                                stack.item.registry_key,
-                                u32::from(stack.item_count),
-                                &[],
-                            ));
-                        }
-                    }
-                }
-
-                self.trigger_criterion_event("minecraft:inventory_changed", |cond| match cond {
-                    CriterionConditions::InventoryChanged(pred) => {
-                        pred.matches(&inventory_items, slots_full, slots_empty, slots_occupied)
-                    }
-                    CriterionConditions::Custom { .. } => true,
-                    _ => false,
-                });
-            }
-
-            AdvancementTrigger::Location => {
-                let pos = self.position();
-                let block_pos = BlockPos::new(
-                    pos.x.floor() as i32,
-                    pos.y.floor() as i32,
-                    pos.z.floor() as i32,
-                );
-                let world = self.world();
-                let biome = world.get_biome(&block_pos).registry_id;
-                let dimension = world.dimension.minecraft_name;
-                let step_pos = BlockPos::new(block_pos.0.x, block_pos.0.y - 1, block_pos.0.z);
-                let step_block = Some(
-                    pumpkin_data::Block::from_state_id(world.get_block_state(&step_pos).id).name,
-                );
-                let current_block =
-                    pumpkin_data::Block::from_state_id(world.get_block_state(&block_pos).id).name;
-                let stepping_block = if current_block == "powder_snow" {
-                    Some("powder_snow")
-                } else {
-                    step_block
-                };
-                let feet_item = self
-                    .living_entity
-                    .entity_equipment
-                    .try_lock()
-                    .ok()
-                    .and_then(|guard| {
-                        guard
-                            .equipment
-                            .get(&pumpkin_data::data_component_impl::EquipmentSlot::FEET)
-                            .filter(|stack| !stack.is_empty())
-                            .map(|stack| stack.item.registry_key.to_string())
-                    });
-
-                self.trigger_criterion_event("minecraft:location", |cond| match cond {
-                    CriterionConditions::Location(pred) => pred.matches(
-                        (pos.x, pos.y, pos.z),
-                        Some(biome),
-                        Some(dimension),
-                        step_block,
-                        None,
-                        None,
-                        stepping_block,
-                        feet_item.as_deref(),
-                    ),
-                    CriterionConditions::Custom { .. } => true,
-                    _ => false,
-                });
-            }
+            AdvancementTrigger::Location => self.location(),
 
             AdvancementTrigger::PlayerKilledEntity {
                 entity_type_resource,
-            } => {
-                self.trigger_criterion_event("minecraft:player_killed_entity", |cond| match cond {
-                    CriterionConditions::PlayerKilledEntity(pred) => {
-                        pred.matches(&entity_type_resource, None, None)
-                    }
-                    CriterionConditions::Custom { .. } => true,
-                    _ => false,
-                });
-            }
+            } => self.player_killed_entity(&entity_type_resource),
 
-            AdvancementTrigger::SniperDuel => {
-                self.trigger_criterion_event("minecraft:player_killed_entity", |cond| match cond {
-                    CriterionConditions::PlayerKilledEntity(pred) => {
-                        pred.matches("minecraft:skeleton", Some(50.0), None)
-                    }
-                    CriterionConditions::Custom { .. } => true,
-                    _ => false,
-                });
-            }
+            AdvancementTrigger::SniperDuel => self.sniper_duel(),
 
             AdvancementTrigger::TwoBirdsOneArrow | AdvancementTrigger::Arbalistic => {
-                self.trigger_criterion_event("minecraft:killed_by_arrow", |_cond| true);
+                self.two_birds_one_arrow_or_arbalistic();
             }
 
-            AdvancementTrigger::EnterDimension { dimension } => {
-                self.trigger_criterion_event("minecraft:changed_dimension", |cond| match cond {
-                    CriterionConditions::ChangedDimension(pred) => pred.matches(None, &dimension),
-                    CriterionConditions::Custom { .. } => true,
-                    _ => false,
-                });
-            }
+            AdvancementTrigger::EnterDimension { dimension } => self.enter_dimension(&dimension),
 
-            AdvancementTrigger::SleptInBed => {
-                self.trigger_criterion_event("minecraft:slept_in_bed", |_cond| true);
-            }
+            AdvancementTrigger::SleptInBed => self.slept_in_bed(),
 
-            AdvancementTrigger::ConsumeItem { item_id } => {
-                self.trigger_criterion_event("minecraft:consume_item", |cond| match cond {
-                    CriterionConditions::ConsumeItem(pred) => pred.matches(&item_id, 1, &[]),
-                    CriterionConditions::Custom { .. } => true,
-                    _ => false,
-                });
-            }
+            AdvancementTrigger::ConsumeItem { item_id } => self.consume_item(&item_id),
 
-            AdvancementTrigger::PlacedBlock { block_id } => {
-                self.trigger_criterion_event("minecraft:placed_block", |cond| match cond {
-                    CriterionConditions::PlacedBlock(pred) => pred.matches(&block_id, None),
-                    CriterionConditions::Custom { .. } => true,
-                    _ => false,
-                });
-            }
+            AdvancementTrigger::PlacedBlock { block_id } => self.placed_block(&block_id),
 
-            AdvancementTrigger::EnterBlock { block_id } => {
-                self.trigger_criterion_event("minecraft:enter_block", |cond| match cond {
-                    CriterionConditions::EnterBlock(pred) => {
-                        pred.matches(pumpkin_data::tag::RegistryKey::Block, &block_id)
-                    }
-                    CriterionConditions::Custom { .. } => true,
-                    _ => false,
-                });
-            }
+            AdvancementTrigger::EnterBlock { block_id } => self.enter_block(&block_id),
 
-            AdvancementTrigger::FishedItem { item_id } => {
-                self.trigger_criterion_event("minecraft:fishing_rod_hooked", |cond| match cond {
-                    CriterionConditions::FishingRodHooked(pred) => pred.matches(&item_id, 1, &[]),
-                    CriterionConditions::Custom { .. } => true,
-                    _ => false,
-                });
-            }
+            AdvancementTrigger::FishedItem { item_id } => self.fished_item(&item_id),
 
-            AdvancementTrigger::DeflectedDamage => {
-                self.trigger_criterion_event("minecraft:entity_hurt_player", |cond| match cond {
-                    CriterionConditions::EntityHurtPlayer(pred) => pred.matches(true, true, None),
-                    CriterionConditions::Custom { .. } => true,
-                    _ => false,
-                });
-            }
+            AdvancementTrigger::DeflectedDamage => self.deflected_damage(),
 
-            AdvancementTrigger::PlayerKilled => {
-                self.trigger_criterion_event("minecraft:entity_killed_player", |_cond| true);
-            }
+            AdvancementTrigger::PlayerKilled => self.player_killed(),
 
-            AdvancementTrigger::BredAnimal { parent_type } => {
-                self.trigger_criterion_event("minecraft:bred_animals", |cond| match cond {
-                    CriterionConditions::BredAnimals(pred) => pred.matches(&parent_type),
-                    CriterionConditions::Custom { .. } => true,
-                    _ => false,
-                });
-            }
+            AdvancementTrigger::BredAnimal { parent_type } => self.bred_animal(&parent_type),
 
-            AdvancementTrigger::LaunchedEyeOfEnder => {
-                self.trigger_criterion_event("minecraft:used_ender_eye", |_cond| true);
-            }
+            AdvancementTrigger::LaunchedEyeOfEnder => self.launched_eye_of_ender(),
 
-            AdvancementTrigger::GlowedSign => {
-                self.trigger_criterion_event("minecraft:item_used_on_block", |_cond| true);
-            }
+            AdvancementTrigger::GlowedSign => self.glowed_sign(),
 
-            AdvancementTrigger::DealtOverkillDamage => {
-                self.trigger_criterion_event("minecraft:player_hurt_entity", |cond| match cond {
-                    CriterionConditions::PlayerHurtEntity(pred) => {
-                        pred.matches(false, false, Some(100.0))
-                    }
-                    CriterionConditions::Custom { .. } => true,
-                    _ => false,
-                });
-            }
+            AdvancementTrigger::DealtOverkillDamage => self.dealt_overkill_damage(),
 
-            AdvancementTrigger::Bullseye => {
-                self.trigger_criterion_event("minecraft:target_hit", |cond| match cond {
-                    CriterionConditions::TargetHit(pred) => pred.matches(15, Some(30.0)),
-                    CriterionConditions::Custom { .. } => true,
-                    _ => false,
-                });
-            }
+            AdvancementTrigger::Bullseye => self.bullseye(),
 
-            AdvancementTrigger::CuredZombieVillager => {
-                self.trigger_criterion_event("minecraft:cured_zombie_villager", |_cond| true);
-            }
+            AdvancementTrigger::CuredZombieVillager => self.cured_zombie_villager(),
 
-            AdvancementTrigger::TradedWithVillager => {
-                self.trigger_criterion_event("minecraft:villager_trade", |_cond| true);
-            }
+            AdvancementTrigger::TradedWithVillager => self.traded_with_villager(),
 
             AdvancementTrigger::AllayDropItemOnBlock { block_id, item_id } => {
-                self.trigger_criterion_event(
-                    "minecraft:allay_drop_item_on_block",
-                    |cond| match cond {
-                        CriterionConditions::AllayDropItemOnBlock(pred) => {
-                            pred.matches(&block_id, &item_id, None, None, None)
-                        }
-                        CriterionConditions::Custom { .. } => true,
-                        _ => false,
-                    },
-                );
+                self.allay_drop_item_on_block(&block_id, &item_id);
             }
 
             AdvancementTrigger::ThrownItemPickedUpByPlayer { thrower_type } => {
-                self.trigger_criterion_event("minecraft:thrown_item_picked_up_by_player", |cond| {
-                    match cond {
-                        CriterionConditions::ThrownItemPickedUpByPlayer(pred) => {
-                            pred.matches(&thrower_type, None, None)
-                        }
-                        CriterionConditions::Custom { .. } => true,
-                        _ => false,
-                    }
-                });
+                self.thrown_item_picked_up_by_player(&thrower_type);
             }
 
             AdvancementTrigger::ItemUsedOnBlock {
@@ -469,519 +282,138 @@ impl Player {
                 state,
                 smokey,
                 biome,
-            } => {
-                self.trigger_criterion_event("minecraft:item_used_on_block", |cond| match cond {
-                    CriterionConditions::ItemUsedOnBlock(pred) => pred.matches(
-                        &block_id,
-                        &item_id,
-                        state.as_ref().map(|(k, v)| (k.as_str(), v.as_str())),
-                        smokey,
-                        biome.as_deref(),
-                    ),
-                    CriterionConditions::Custom { .. } => true,
-                    _ => false,
-                });
-            }
+            } => self.item_used_on_block(
+                &block_id,
+                &item_id,
+                state.as_ref(),
+                smokey,
+                biome.as_deref(),
+            ),
 
-            AdvancementTrigger::TameAnimal { entity_type } => {
-                self.trigger_criterion_event("minecraft:tame_animal", |cond| match cond {
-                    CriterionConditions::TameAnimal(pred) => pred.matches(&entity_type, None, None),
-                    CriterionConditions::Custom { .. } => true,
-                    _ => false,
-                });
-            }
+            AdvancementTrigger::TameAnimal { entity_type } => self.tame_animal(&entity_type),
 
-            AdvancementTrigger::FilledBucket { item_id } => {
-                self.trigger_criterion_event("minecraft:filled_bucket", |cond| match cond {
-                    CriterionConditions::FilledBucket(pred) => pred.matches(&item_id, 1, &[]),
-                    CriterionConditions::Custom { .. } => true,
-                    _ => false,
-                });
-            }
+            AdvancementTrigger::FilledBucket { item_id } => self.filled_bucket(&item_id),
 
             AdvancementTrigger::UsingItem {
                 item_id,
                 looking_at,
-            } => {
-                self.trigger_criterion_event("minecraft:using_item", |cond| match cond {
-                    CriterionConditions::UsingItem {
-                        item,
-                        looking_at: exp_look,
-                    } => {
-                        if !item.matches(&item_id, 1, &[]) {
-                            return false;
-                        }
-                        if let Some(expected) = exp_look {
-                            let Some(actual) = looking_at.as_deref() else {
-                                return false;
-                            };
-                            if !expected.matches(pumpkin_data::tag::RegistryKey::EntityType, actual)
-                            {
-                                return false;
-                            }
-                        }
-                        true
-                    }
-                    CriterionConditions::Custom { .. } => true,
-                    _ => false,
-                });
-            }
+            } => self.using_item(&item_id, looking_at.as_deref()),
 
-            AdvancementTrigger::ConstructBeacon { level } => {
-                self.trigger_criterion_event("minecraft:construct_beacon", |cond| match cond {
-                    CriterionConditions::ConstructBeacon(pred) => pred.matches(level),
-                    CriterionConditions::Custom { .. } => true,
-                    _ => false,
-                });
-            }
+            AdvancementTrigger::ConstructBeacon { level } => self.construct_beacon(level),
 
-            AdvancementTrigger::SlideDownBlock { block_id } => {
-                self.trigger_criterion_event("minecraft:slide_down_block", |cond| match cond {
-                    CriterionConditions::SlideDownBlock(pred) => {
-                        pred.matches(pumpkin_data::tag::RegistryKey::Block, &block_id)
-                    }
-                    CriterionConditions::Custom { .. } => true,
-                    _ => false,
-                });
-            }
+            AdvancementTrigger::SlideDownBlock { block_id } => self.slide_down_block(&block_id),
 
-            AdvancementTrigger::RecipeCrafted { recipe_id } => {
-                self.trigger_criterion_event("minecraft:recipe_crafted", |cond| match cond {
-                    CriterionConditions::RecipeCrafted(pred) => pred.matches(&recipe_id),
-                    CriterionConditions::Custom { .. } => true,
-                    _ => false,
-                });
-            }
+            AdvancementTrigger::RecipeCrafted { recipe_id } => self.recipe_crafted(&recipe_id),
 
-            AdvancementTrigger::RecipeUnlocked { recipe_id } => {
-                self.trigger_criterion_event("minecraft:recipe_unlocked", |cond| match cond {
-                    CriterionConditions::RecipeUnlocked(pred) => pred.matches(&recipe_id),
-                    CriterionConditions::Custom { .. } => true,
-                    _ => false,
-                });
-            }
+            AdvancementTrigger::RecipeUnlocked { recipe_id } => self.recipe_unlocked(&recipe_id),
 
             AdvancementTrigger::PlayerGeneratesContainerLoot { loot_table_id } => {
-                self.trigger_criterion_event("minecraft:player_generates_container_loot", |cond| {
-                    match cond {
-                        CriterionConditions::PlayerGeneratesContainerLoot(lt) => {
-                            predicate::matches_id(lt, &loot_table_id)
-                        }
-                        CriterionConditions::Custom { .. } => true,
-                        _ => false,
-                    }
-                });
+                self.player_generates_container_loot(&loot_table_id);
             }
 
-            AdvancementTrigger::EnchantedItem { .. } => {
-                self.trigger_criterion_event("minecraft:enchanted_item", |_cond| true);
-            }
+            AdvancementTrigger::EnchantedItem { .. } => self.enchanted_item(),
 
-            AdvancementTrigger::BrewedPotion => {
-                self.trigger_criterion_event("minecraft:brewed_potion", |_cond| true);
-            }
+            AdvancementTrigger::BrewedPotion => self.brewed_potion(),
 
             AdvancementTrigger::ItemDurabilityChanged {
                 item_id,
                 vehicle_type,
-            } => {
-                self.trigger_criterion_event(
-                    "minecraft:item_durability_changed",
-                    |cond| match cond {
-                        CriterionConditions::ItemDurabilityChanged {
-                            item,
-                            vehicle_type: exp_vt,
-                        } => {
-                            if !item.matches(&item_id, 1, &[]) {
-                                return false;
-                            }
-                            if let Some(expected) = exp_vt {
-                                let Some(actual) = vehicle_type.as_deref() else {
-                                    return false;
-                                };
-                                if !expected
-                                    .matches(pumpkin_data::tag::RegistryKey::EntityType, actual)
-                                {
-                                    return false;
-                                }
-                            }
-                            true
-                        }
-                        CriterionConditions::Custom { .. } => true,
-                        _ => false,
-                    },
-                );
-            }
+            } => self.item_durability_changed(&item_id, vehicle_type.as_deref()),
 
-            AdvancementTrigger::Levitation { distance_y } => {
-                self.trigger_criterion_event("minecraft:levitation", |cond| match cond {
-                    CriterionConditions::Levitation {
-                        distance_y: Some(bounds),
-                    } => bounds.matches(distance_y),
-                    CriterionConditions::Levitation { distance_y: None }
-                    | CriterionConditions::Custom { .. } => true,
-                    _ => false,
-                });
-            }
+            AdvancementTrigger::Levitation { distance_y } => self.levitation(distance_y),
 
             AdvancementTrigger::FallFromHeight {
                 distance_y,
                 from_y,
                 to_y,
-            } => {
-                self.trigger_criterion_event("minecraft:fall_from_height", |cond| match cond {
-                    CriterionConditions::FallFromHeight {
-                        distance_y: Some(bounds),
-                    } => bounds.matches(distance_y) && from_y >= 319.0 && to_y <= -59.0,
-                    CriterionConditions::FallFromHeight { distance_y: None } => {
-                        from_y >= 319.0 && to_y <= -59.0
-                    }
-                    CriterionConditions::Custom { .. } => true,
-                    _ => false,
-                });
-            }
+            } => self.fall_from_height(distance_y, from_y, to_y),
 
             AdvancementTrigger::FallAfterExplosion { distance_y, cause } => {
-                self.trigger_criterion_event("minecraft:fall_after_explosion", |cond| match cond {
-                    CriterionConditions::FallAfterExplosion {
-                        distance_y: Some(bounds),
-                        cause_entity,
-                    } => {
-                        bounds.matches(distance_y)
-                            && cause_entity
-                                .as_ref()
-                                .is_none_or(|c| predicate::matches_id(c, &cause))
-                    }
-                    CriterionConditions::FallAfterExplosion {
-                        distance_y: None,
-                        cause_entity,
-                    } => cause_entity
-                        .as_ref()
-                        .is_none_or(|c| predicate::matches_id(c, &cause)),
-                    CriterionConditions::Custom { .. } => true,
-                    _ => false,
-                });
+                self.fall_after_explosion(distance_y, &cause);
             }
 
             AdvancementTrigger::NetherTravel {
                 distance_horizontal,
-            } => {
-                self.trigger_criterion_event("minecraft:nether_travel", |cond| match cond {
-                    CriterionConditions::NetherTravel {
-                        distance_horizontal: Some(bounds),
-                    } => bounds.matches(distance_horizontal),
-                    CriterionConditions::NetherTravel {
-                        distance_horizontal: None,
-                    }
-                    | CriterionConditions::Custom { .. } => true,
-                    _ => false,
-                });
-            }
+            } => self.nether_travel(distance_horizontal),
 
             AdvancementTrigger::RideEntityInLava {
                 distance_horizontal,
                 dimension,
                 vehicle_type,
-            } => {
-                self.trigger_criterion_event("minecraft:ride_entity_in_lava", |cond| match cond {
-                    CriterionConditions::RideEntityInLava {
-                        distance_horizontal: exp_d,
-                        dimension: exp_dim,
-                        vehicle_type: exp_vt,
-                    } => {
-                        if let Some(d) = exp_d
-                            && !d.matches(distance_horizontal)
-                        {
-                            return false;
-                        }
-                        if let Some(dim) = exp_dim
-                            && !predicate::matches_id(dim, &dimension)
-                        {
-                            return false;
-                        }
-                        if let Some(vt) = exp_vt {
-                            let Some(actual) = vehicle_type.as_deref() else {
-                                return false;
-                            };
-                            if !vt.matches(pumpkin_data::tag::RegistryKey::EntityType, actual) {
-                                return false;
-                            }
-                        }
-                        true
-                    }
-                    CriterionConditions::Custom { .. } => true,
-                    _ => false,
-                });
-            }
+            } => self.ride_entity_in_lava(distance_horizontal, &dimension, vehicle_type.as_deref()),
 
-            AdvancementTrigger::ShotCrossbow { item_id } => {
-                self.trigger_criterion_event("minecraft:shot_crossbow", |cond| match cond {
-                    CriterionConditions::ShotCrossbow(pred) => pred.matches(&item_id, 1, &[]),
-                    CriterionConditions::Custom { .. } => true,
-                    _ => false,
-                });
-            }
+            AdvancementTrigger::ShotCrossbow { item_id } => self.shot_crossbow(&item_id),
 
-            AdvancementTrigger::AvoidVibration => {
-                self.trigger_criterion_event("minecraft:avoid_vibration", |_cond| true);
-            }
+            AdvancementTrigger::AvoidVibration => self.avoid_vibration(),
 
             AdvancementTrigger::BeeNestDestroyed {
                 block_id,
                 num_bees_inside,
-            } => {
-                self.trigger_criterion_event("minecraft:bee_nest_destroyed", |cond| match cond {
-                    CriterionConditions::BeeNestDestroyed {
-                        block,
-                        num_bees_inside: req_bees,
-                    } => {
-                        block
-                            .as_ref()
-                            .is_none_or(|b| predicate::matches_id(b, &block_id))
-                            && req_bees.is_none_or(|r| num_bees_inside >= r)
-                    }
-                    CriterionConditions::Custom { .. } => true,
-                    _ => false,
-                });
-            }
+            } => self.bee_nest_destroyed(&block_id, num_bees_inside),
 
             AdvancementTrigger::ChanneledLightning { victim_type } => {
-                self.trigger_criterion_event("minecraft:channeled_lightning", |cond| match cond {
-                    CriterionConditions::ChanneledLightning { victim_type: req } => req
-                        .as_ref()
-                        .is_none_or(|r| predicate::matches_id(r, &victim_type)),
-                    CriterionConditions::Custom { .. } => true,
-                    _ => false,
-                });
+                self.channeled_lightning(&victim_type);
             }
 
             AdvancementTrigger::LightningStrike {
                 bystander_type,
                 blocks_set_on_fire,
                 distance,
-            } => {
-                self.trigger_criterion_event("minecraft:lightning_strike", |cond| match cond {
-                    CriterionConditions::LightningStrike {
-                        bystander_type: req_b,
-                        blocks_set_on_fire: req_fire,
-                        distance_max,
-                    } => {
-                        if let Some(r) = req_b {
-                            let Some(b) = bystander_type.as_deref() else {
-                                return false;
-                            };
-                            if !predicate::matches_id(r, b) {
-                                return false;
-                            }
-                        }
-                        if let Some(f) = req_fire
-                            && blocks_set_on_fire != *f
-                        {
-                            return false;
-                        }
-                        if let Some(max_d) = distance_max
-                            && distance > *max_d
-                        {
-                            return false;
-                        }
-                        true
-                    }
-                    CriterionConditions::Custom { .. } => true,
-                    _ => false,
-                });
-            }
+            } => self.lightning_strike(bystander_type.as_deref(), blocks_set_on_fire, distance),
 
-            AdvancementTrigger::KillMobNearSculkCatalyst => {
-                self.trigger_criterion_event("minecraft:kill_mob_near_sculk_catalyst", |_cond| {
-                    let pos = self.position().to_block_pos();
-                    let world = self.world();
-                    for dx in -8..=8 {
-                        for dy in -8..=8 {
-                            for dz in -8..=8 {
-                                let check = BlockPos::new(pos.0.x + dx, pos.0.y + dy, pos.0.z + dz);
-                                if world.get_block(&check) == &pumpkin_data::Block::SCULK_CATALYST {
-                                    return true;
-                                }
-                            }
-                        }
-                    }
-                    false
-                });
-            }
+            AdvancementTrigger::KillMobNearSculkCatalyst => self.kill_mob_near_sculk_catalyst(),
 
-            AdvancementTrigger::HeroOfTheVillage => {
-                self.trigger_criterion_event("minecraft:hero_of_the_village", |_cond| true);
-            }
+            AdvancementTrigger::HeroOfTheVillage => self.hero_of_the_village(),
 
             AdvancementTrigger::PlayerInteractedWithEntity {
                 entity_type,
                 item_id,
                 is_baby,
                 player_wearing_safe_armor,
-            } => {
-                self.trigger_criterion_event("minecraft:player_interacted_with_entity", |cond| {
-                    match cond {
-                        CriterionConditions::PlayerInteractedWithEntity {
-                            entity,
-                            item,
-                            player,
-                        } => {
-                            if let Some(e) = entity
-                                && !e.matches(&entity_type, None, Some(is_baby))
-                            {
-                                return false;
-                            }
-                            if let Some(i) = item
-                                && !i.matches(&item_id, 1, &[])
-                            {
-                                return false;
-                            }
-                            if let Some(p) = player
-                                && p.safe_armor_disallowed == Some(true)
-                                && player_wearing_safe_armor
-                            {
-                                return false;
-                            }
-                            true
-                        }
-                        CriterionConditions::Custom { .. } => true,
-                        _ => false,
-                    }
-                });
-            }
+            } => self.player_interacted_with_entity(
+                &entity_type,
+                &item_id,
+                is_baby,
+                player_wearing_safe_armor,
+            ),
 
             AdvancementTrigger::ThrownItemPickedUpByEntity {
                 entity_type,
                 item_id,
                 is_baby,
                 player_wearing_safe_armor,
-            } => {
-                self.trigger_criterion_event("minecraft:thrown_item_picked_up_by_entity", |cond| {
-                    match cond {
-                        CriterionConditions::ThrownItemPickedUpByEntity {
-                            entity,
-                            item,
-                            player,
-                        } => {
-                            if let Some(e) = entity
-                                && !e.matches(&entity_type, None, Some(is_baby))
-                            {
-                                return false;
-                            }
-                            if let Some(i) = item
-                                && !i.matches(&item_id, 1, &[])
-                            {
-                                return false;
-                            }
-                            if let Some(p) = player
-                                && p.safe_armor_disallowed == Some(true)
-                                && player_wearing_safe_armor
-                            {
-                                return false;
-                            }
-                            true
-                        }
-                        CriterionConditions::Custom { .. } => true,
-                        _ => false,
-                    }
-                });
-            }
+            } => self.thrown_item_picked_up_by_entity(
+                &entity_type,
+                &item_id,
+                is_baby,
+                player_wearing_safe_armor,
+            ),
 
             AdvancementTrigger::PlayerShearedEquipment {
                 entity_type,
                 item_id,
-            } => {
-                self.trigger_criterion_event(
-                    "minecraft:player_sheared_equipment",
-                    |cond| match cond {
-                        CriterionConditions::PlayerShearedEquipment { entity, item } => {
-                            entity
-                                .as_ref()
-                                .is_none_or(|e| e.matches(&entity_type, None, None))
-                                && item.as_ref().is_none_or(|i| i.matches(&item_id, 1, &[]))
-                        }
-                        CriterionConditions::Custom { .. } => true,
-                        _ => false,
-                    },
-                );
-            }
+            } => self.player_sheared_equipment(&entity_type, &item_id),
 
             AdvancementTrigger::StartedRiding {
                 vehicle_type,
                 passenger_type,
-            } => {
-                self.trigger_criterion_event("minecraft:started_riding", |cond| match cond {
-                    CriterionConditions::StartedRiding(Some(pred)) => {
-                        if let Some(vt) = &pred.vehicle_type {
-                            let Some(actual_v) = vehicle_type.as_deref() else {
-                                return false;
-                            };
-                            if !vt.matches(pumpkin_data::tag::RegistryKey::EntityType, actual_v) {
-                                return false;
-                            }
-                        }
-                        if let Some(pt) = &pred.passenger_type {
-                            let Some(actual_p) = passenger_type.as_deref() else {
-                                return false;
-                            };
-                            if !pt.matches(pumpkin_data::tag::RegistryKey::EntityType, actual_p) {
-                                return false;
-                            }
-                        }
-                        true
-                    }
-                    CriterionConditions::StartedRiding(None)
-                    | CriterionConditions::Custom { .. } => true,
-                    _ => false,
-                });
-            }
+            } => self.started_riding(vehicle_type.as_deref(), passenger_type.as_deref()),
 
             AdvancementTrigger::SummonedEntity { entity_type } => {
-                self.trigger_criterion_event("minecraft:summoned_entity", |cond| match cond {
-                    CriterionConditions::SummonedEntity(pred) => {
-                        pred.matches(&entity_type, None, None)
-                    }
-                    CriterionConditions::Custom { .. } => true,
-                    _ => false,
-                });
+                self.summoned_entity(&entity_type);
             }
 
             AdvancementTrigger::CrafterRecipeCrafted { recipe_id } => {
-                self.trigger_criterion_event(
-                    "minecraft:crafter_recipe_crafted",
-                    |cond| match cond {
-                        CriterionConditions::CrafterRecipeCrafted(r) => {
-                            predicate::matches_id(r, &recipe_id)
-                        }
-                        CriterionConditions::Custom { .. } => true,
-                        _ => false,
-                    },
-                );
+                self.crafter_recipe_crafted(&recipe_id);
             }
 
-            AdvancementTrigger::EffectsChanged => {
-                self.trigger_criterion_event("minecraft:effects_changed", |_cond| true);
-            }
+            AdvancementTrigger::EffectsChanged => self.effects_changed(),
 
-            AdvancementTrigger::SpearMobs { count } => {
-                self.trigger_criterion_event("minecraft:spear_mobs", |cond| match cond {
-                    CriterionConditions::SpearMobs { count: req } => req.is_none_or(|r| count >= r),
-                    CriterionConditions::Custom { .. } => true,
-                    _ => false,
-                });
-            }
+            AdvancementTrigger::SpearMobs { count } => self.spear_mobs(count),
 
-            AdvancementTrigger::UsedTotem { item_id } => {
-                self.trigger_criterion_event("minecraft:used_totem", |cond| match cond {
-                    CriterionConditions::UsedTotem(pred) => pred.matches(&item_id, 1, &[]),
-                    CriterionConditions::Custom { .. } => true,
-                    _ => false,
-                });
-            }
+            AdvancementTrigger::UsedTotem { item_id } => self.used_totem(&item_id),
 
-            AdvancementTrigger::Tick => {
-                self.trigger_criterion_event("minecraft:tick", |_cond| true);
-            }
+            AdvancementTrigger::Tick => self.tick_trigger(),
         }
     }
 }

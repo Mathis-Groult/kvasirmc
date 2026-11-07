@@ -55,8 +55,7 @@ fn profile(named: bool) -> pumpkin_util::text::ProfileNbt {
     pumpkin_util::text::ProfileNbt(compound)
 }
 
-fn contents() -> Vec<(&'static str, TextContent)> {
-    let with = || vec![text("first"), styled("second", bold())];
+fn text_contents() -> Vec<(&'static str, TextContent)> {
     vec![
         (
             "text",
@@ -70,6 +69,12 @@ fn contents() -> Vec<(&'static str, TextContent)> {
                 text: Cow::Borrowed(""),
             },
         ),
+    ]
+}
+
+fn translation_contents() -> Vec<(&'static str, TextContent)> {
+    let with = || vec![text("first"), styled("second", bold())];
+    vec![
         (
             "translate",
             TextContent::Translate {
@@ -106,6 +111,12 @@ fn contents() -> Vec<(&'static str, TextContent)> {
                 keybind: Cow::Borrowed("key.jump"),
             },
         ),
+    ]
+}
+
+fn custom_contents() -> Vec<(&'static str, TextContent)> {
+    let with = || vec![text("first"), styled("second", bold())];
+    vec![
         (
             "custom",
             TextContent::Custom {
@@ -122,6 +133,11 @@ fn contents() -> Vec<(&'static str, TextContent)> {
                 with: vec![],
             },
         ),
+    ]
+}
+
+fn sprite_contents() -> Vec<(&'static str, TextContent)> {
+    vec![
         (
             "sprite",
             TextContent::PlayerSprite {
@@ -149,6 +165,14 @@ fn contents() -> Vec<(&'static str, TextContent)> {
     ]
 }
 
+fn contents() -> Vec<(&'static str, TextContent)> {
+    let mut all = text_contents();
+    all.extend(translation_contents());
+    all.extend(custom_contents());
+    all.extend(sprite_contents());
+    all
+}
+
 fn bold() -> Style {
     Style {
         bold: Some(true),
@@ -170,10 +194,7 @@ fn with_click(click: ClickEvent) -> Style {
     }
 }
 
-fn styles() -> Vec<(&'static str, Style)> {
-    let components: ItemComponents =
-        serde_json::from_str(r#"{"minecraft:enchantments":{"minecraft:sharpness":5}}"#)
-            .expect("components");
+fn color_styles() -> Vec<(&'static str, Style)> {
     vec![
         ("default", Style::default()),
         (
@@ -201,6 +222,11 @@ fn styles() -> Vec<(&'static str, Style)> {
                 ..Style::default()
             },
         ),
+    ]
+}
+
+fn flag_styles() -> Vec<(&'static str, Style)> {
+    vec![
         ("bold", bold()),
         (
             "italic_false",
@@ -256,6 +282,39 @@ fn styles() -> Vec<(&'static str, Style)> {
                 ..Style::default()
             },
         ),
+    ]
+}
+
+fn combined_styles() -> Vec<(&'static str, Style)> {
+    vec![(
+        "all_flags",
+        Style {
+            color: Some(Color::Named(NamedColor::Gold)),
+            bold: Some(true),
+            italic: Some(true),
+            underlined: Some(false),
+            strikethrough: Some(true),
+            obfuscated: Some(true),
+            insertion: Some("i".to_owned()),
+            font: Some("f".to_owned()),
+            shadow_color: Some(ARGBColor {
+                alpha: 255,
+                red: 9,
+                green: 8,
+                blue: 7,
+            }),
+            click_event: Some(ClickEvent::RunCommand {
+                command: Cow::Borrowed("/c"),
+            }),
+            hover_event: Some(HoverEvent::ShowText {
+                value: vec![text("h")],
+            }),
+        },
+    )]
+}
+
+fn click_styles() -> Vec<(&'static str, Style)> {
+    vec![
         (
             "click_url",
             with_click(ClickEvent::OpenUrl {
@@ -287,6 +346,13 @@ fn styles() -> Vec<(&'static str, Style)> {
                 value: Cow::Borrowed("v"),
             }),
         ),
+    ]
+}
+
+fn hover_styles() -> Result<Vec<(&'static str, Style)>, serde_json::Error> {
+    let components: ItemComponents =
+        serde_json::from_str(r#"{"minecraft:enchantments":{"minecraft:sharpness":5}}"#)?;
+    Ok(vec![
         (
             "hover_text_1",
             with_hover(HoverEvent::ShowText {
@@ -339,40 +405,24 @@ fn styles() -> Vec<(&'static str, Style)> {
                 name: Some(vec![text("Bes"), text("sie")]),
             }),
         ),
-        (
-            "all_flags",
-            Style {
-                color: Some(Color::Named(NamedColor::Gold)),
-                bold: Some(true),
-                italic: Some(true),
-                underlined: Some(false),
-                strikethrough: Some(true),
-                obfuscated: Some(true),
-                insertion: Some("i".to_owned()),
-                font: Some("f".to_owned()),
-                shadow_color: Some(ARGBColor {
-                    alpha: 255,
-                    red: 9,
-                    green: 8,
-                    blue: 7,
-                }),
-                click_event: Some(ClickEvent::RunCommand {
-                    command: Cow::Borrowed("/c"),
-                }),
-                hover_event: Some(HoverEvent::ShowText {
-                    value: vec![text("h")],
-                }),
-            },
-        ),
-    ]
+    ])
+}
+
+fn styles() -> Result<Vec<(&'static str, Style)>, serde_json::Error> {
+    let mut all = color_styles();
+    all.extend(flag_styles());
+    all.extend(click_styles());
+    all.extend(hover_styles()?);
+    all.extend(combined_styles());
+    Ok(all)
 }
 
 /// Every case: a label and a component.
-fn cases() -> Vec<(String, TextComponentBase)> {
+fn cases() -> Result<Vec<(String, TextComponentBase)>, serde_json::Error> {
     let mut all = Vec::new();
     let keep = ["default", "color_named", "all_flags"];
     for (content_name, content) in contents() {
-        for (style_name, style) in styles() {
+        for (style_name, style) in styles()? {
             if !keep.contains(&style_name) {
                 continue;
             }
@@ -386,7 +436,7 @@ fn cases() -> Vec<(String, TextComponentBase)> {
             ));
         }
     }
-    for (style_name, style) in styles() {
+    for (style_name, style) in styles()? {
         for (content_name, content) in contents() {
             if content_name != "text" && content_name != "translate" {
                 continue;
@@ -430,7 +480,7 @@ fn cases() -> Vec<(String, TextComponentBase)> {
             },
         ));
     }
-    all
+    Ok(all)
 }
 
 fn fnv(bytes: &[u8]) -> u64 {
@@ -449,9 +499,9 @@ fn nbt_bytes(component: &TextComponentBase, version: V) -> Vec<u8> {
     Nbt::new(String::new(), root).write_unnamed().to_vec()
 }
 
-fn lines() -> Vec<String> {
+fn lines() -> Result<Vec<String>, serde_json::Error> {
     let mut out = Vec::new();
-    for (label, component) in cases() {
+    for (label, component) in cases()? {
         for version in VERSIONS {
             let json = component.to_json_value_for_version(&version).to_string();
             let wrapped = TextComponent(component.clone());
@@ -471,19 +521,20 @@ fn lines() -> Vec<String> {
             ));
         }
     }
-    out
+    Ok(out)
 }
 
 #[test]
-fn text_components_serialise_as_before_for_every_version() {
-    let now = lines().join("\n") + "\n";
+fn text_components_serialise_as_before_for_every_version() -> Result<(), Box<dyn std::error::Error>>
+{
+    let now = lines()?.join("\n") + "\n";
     let path =
         std::path::Path::new(env!("CARGO_MANIFEST_DIR")).join("tests/golden/text_components.txt");
     if std::env::var_os("KVASIR_BLESS").is_some() {
-        std::fs::write(&path, &now).expect("write golden");
-        return;
+        std::fs::write(&path, &now)?;
+        return Ok(());
     }
-    let golden = std::fs::read_to_string(&path).expect("golden file (bless it first)");
+    let golden = std::fs::read_to_string(&path)?;
     let differing: Vec<(&str, &str)> = golden
         .lines()
         .zip(now.lines())
@@ -500,4 +551,5 @@ fn text_components_serialise_as_before_for_every_version() {
         differing.len(),
         differing.first()
     );
+    Ok(())
 }

@@ -867,3 +867,26 @@ impl StructurePieceBase for DesertPyramidPiece {
         self.add_cellar(chunk, bb, &mut level_random);
     }
 }
+
+#[cfg(test)]
+mod place_golden {
+    use super::*;
+    use crate::generation::proto_chunk_test::piece_golden;
+
+    #[test]
+    fn desert_pyramid_places_the_same_blocks() -> Result<(), Box<dyn std::error::Error>> {
+        piece_golden::check("desert_pyramid_place", |facing| {
+            let mut piece = StructurePiece::new(
+                StructurePieceType::DesertTemple,
+                BlockBox::create_box(8, 64, 8, facing.get_axis(), WIDTH, HEIGHT, DEPTH),
+                0,
+            );
+            piece.set_facing(Some(facing));
+            Box::new(DesertPyramidPiece {
+                piece,
+                height_adjusted: false,
+                has_placed_chest: [false; 4],
+            })
+        })
+    }
+}

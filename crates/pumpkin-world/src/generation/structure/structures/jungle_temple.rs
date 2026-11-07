@@ -865,3 +865,29 @@ impl MossStoneSelector {
         }
     }
 }
+
+#[cfg(test)]
+mod place_golden {
+    use super::*;
+    use crate::generation::proto_chunk_test::piece_golden;
+
+    #[test]
+    fn jungle_temple_places_the_same_blocks() -> Result<(), Box<dyn std::error::Error>> {
+        piece_golden::check("jungle_temple_place", |facing| {
+            let mut piece = StructurePiece::new(
+                StructurePieceType::JungleTemple,
+                BlockBox::create_box(8, 64, 8, facing.get_axis(), WIDTH, 10, DEPTH),
+                0,
+            );
+            piece.set_facing(Some(facing));
+            Box::new(JungleTemplePiece {
+                piece,
+                height_adjusted: false,
+                placed_main_chest: false,
+                placed_hidden_chest: false,
+                placed_trap_1: false,
+                placed_trap_2: false,
+            })
+        })
+    }
+}

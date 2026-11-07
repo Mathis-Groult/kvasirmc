@@ -6,6 +6,8 @@
 #[cfg(target_os = "wasi")]
 compile_error!("Compiling for WASI targets is not supported!");
 
+mod allocator;
+
 use pumpkin_data::packet::CURRENT_MC_VERSION;
 use pumpkin_world::{CURRENT_BEDROCK_MC_PROTOCOL, CURRENT_BEDROCK_MC_VERSION};
 use std::{

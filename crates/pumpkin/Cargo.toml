@@ -14,6 +14,7 @@ LegalCopyright = "Copyright © 2026 Aleksander Medvedev"
 
 [dependencies]
 pumpkin-core.workspace = true
+mimalloc.workspace = true
 kvasir-worldlock = { path = "../kvasir-worldlock" }
 pumpkin-wasm-host.workspace = true
 pumpkin-config.workspace = true

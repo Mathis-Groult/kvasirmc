@@ -1,3 +1,5 @@
+#[cfg(test)]
+mod golden;
 pub mod light;
 pub mod util;
 pub mod v1_18;

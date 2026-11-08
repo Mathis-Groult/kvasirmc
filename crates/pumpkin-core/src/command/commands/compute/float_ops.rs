@@ -8,9 +8,10 @@ use pumpkin_nbt::compound::NbtCompound;
 use pumpkin_nbt::tag::NbtTag;
 use rand::RngExt;
 
+use super::operands::{failed, inputs, operand};
 use super::{
-    ComputeContext, ERROR_DIV_BY_ZERO, ERROR_EVALUATION_FAILED, ERROR_POW_ZERO_ZERO,
-    evaluate_score_provider_float, evaluate_tag_float, evaluate_tag_int,
+    ComputeContext, ERROR_DIV_BY_ZERO, ERROR_POW_ZERO_ZERO, evaluate_score_provider_float,
+    evaluate_tag_float, evaluate_tag_int,
 };
 use crate::command::errors::command_syntax_error::CommandSyntaxError;
 
@@ -52,15 +53,6 @@ pub(super) fn evaluate_compound_float(compound: &NbtCompound, ctx: &ComputeConte
     }
 }
 
-fn failed() -> CommandSyntaxError {
-    ERROR_EVALUATION_FAILED.create_without_context()
-}
-
-/// The tag under `key`, or a failed evaluation when it is missing.
-fn operand<'a>(compound: &'a NbtCompound, key: &str) -> Result<&'a NbtTag, CommandSyntaxError> {
-    compound.get(key).ok_or_else(failed)
-}
-
 /// The float the operand under `key` evaluates to.
 fn evaluate_operand(compound: &NbtCompound, key: &str, ctx: &ComputeContext) -> FloatResult {
     evaluate_tag_float(operand(compound, key)?, ctx)
@@ -74,14 +66,6 @@ fn operands(
     let left = evaluate_operand(compound, "left", ctx)?;
     let right = evaluate_operand(compound, "right", ctx)?;
     Ok((left, right))
-}
-
-/// The `inputs` list, when the compound has one.
-fn inputs(compound: &NbtCompound) -> Option<&Vec<NbtTag>> {
-    match compound.get("inputs") {
-        Some(NbtTag::List(inputs)) => Some(inputs),
-        _ => None,
-    }
 }
 
 fn evaluate_all(inputs: &[NbtTag], ctx: &ComputeContext) -> Result<Vec<f64>, CommandSyntaxError> {

@@ -1243,4 +1243,5 @@ dynamic 3x2_mirrored: with=- without=-
 dynamic shapeless: with=minecraft:gold_ingot*3 without=-
 dynamic shapeless_charcoal: with=minecraft:gold_ingot*3 without=-
 dynamic shapeless_extra: with=- without=-
+dynamic shapeless_three_emeralds: with=- without=-
 dynamic nothing: with=- without=-

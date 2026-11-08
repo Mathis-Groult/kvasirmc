@@ -427,6 +427,11 @@ fn dynamic_lines(out: &mut String) -> std::fmt::Result {
             3,
             vec![(0, emerald), (4, coal), (8, emerald), (7, &Item::DIRT)],
         ),
+        (
+            "shapeless_three_emeralds",
+            3,
+            vec![(0, emerald), (1, emerald), (2, emerald)],
+        ),
         ("nothing", 3, vec![]),
     ];
     for (name, size, layout) in cases {

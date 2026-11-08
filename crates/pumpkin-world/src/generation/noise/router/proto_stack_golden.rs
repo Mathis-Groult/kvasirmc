@@ -152,7 +152,7 @@ use pumpkin_data::noise_router::{
     BinaryData, BinaryOperation, LinearData, LinearOperation, UnaryData, UnaryOperation,
 };
 
-const RANGES: [(f32, f32); 9] = [
+const RANGES: [(f32, f32); 12] = [
     (1.0, 2.0),
     (-3.0, -1.0),
     (-2.0, 5.0),
@@ -162,6 +162,9 @@ const RANGES: [(f32, f32); 9] = [
     (2.0, 2.0),
     (-1.0, -1.0),
     (0.5, 0.75),
+    (-2.0, -2.0),
+    (-3.0, -0.5),
+    (3.0, 6.0),
 ];
 
 const BINARY: [(BinaryOperation, &str); 7] = [
@@ -224,7 +227,7 @@ fn range_lines() -> Result<String, std::fmt::Error> {
         }
     }
     for (a, input) in inputs.iter().enumerate() {
-        for argument in [-2.0_f32, -0.5, 0.0, 3.0] {
+        for argument in [-2.0_f32, -1.0, -0.5, 0.0, 0.5, 1.0, 3.0] {
             for (operation, name) in [(LinearOperation::Add, "add"), (LinearOperation::Mul, "mul")]
             {
                 stack.push(BaseNoiseFunctionComponent::Linear {
@@ -251,13 +254,17 @@ fn range_lines() -> Result<String, std::fmt::Error> {
             stack.push(BaseNoiseFunctionComponent::IntervalSelect {
                 input_index: *first,
                 thresholds: &[],
-                functions_indices: Box::leak(Box::new([*first, *second, inputs[(a + b) % 9]])),
+                functions_indices: Box::leak(Box::new([
+                    *first,
+                    *second,
+                    inputs[(a + b) % RANGES.len()],
+                ])),
             });
             labels.push(format!(
                 "interval {:?} {:?} {:?}",
                 RANGES[a],
                 RANGES[b],
-                RANGES[(a + b) % 9]
+                RANGES[(a + b) % RANGES.len()]
             ));
         }
     }

@@ -300,6 +300,12 @@
 {type:"pow",base:0,exponent:0} => err TextComponent(TextComponentBase { content: Text { text: "0^0 is undefined" }, style: Style { color: None, bold: None, italic: None, underlined: None, strikethrough: None, obfuscated: None, insertion: None, click_event: None, hover_event: None, font: None, shadow_color: None }, extra: [] })
 {type:"pow",base:2,exponent:-1} => ok 0
 {type:"pow",base:0,exponent:-1} => ok 0
+{type:"pow",base:2,exponent:0} => ok 1
+{type:"pow",base:-3,exponent:0} => ok 1
+{type:"pow",base:3,exponent:-1} => ok 0
+{type:"pow",base:-3,exponent:-1} => ok 0
+{type:"pow",base:1,exponent:-1} => ok 0
+{type:"pow",base:1,exponent:-5} => ok 0
 {type:"pow",base:10,exponent:30} => ok 5076944270305263616
 {type:"pow",base:3,exponent:100} => ok -2984622845537545263
 {type:"pow",base:2,exponent:4294967296L} => ok 1

@@ -18,6 +18,7 @@ use std::any::Any;
 use std::sync::atomic::{AtomicU8, Ordering};
 use std::sync::{Arc, Mutex};
 
+use super::recipe_matching::{Occupancy, recipe_matches};
 use super::recipe_provider::{GenericRecipe, RecipeProvider};
 use super::recipes::{RecipeFinderScreenHandler, RecipeInputInventory};
 use crate::crafting::crafting_inventory::CraftingInventory;
@@ -28,14 +29,12 @@ use crate::screen_handler::{
 use crate::slot::{NormalSlot, Slot};
 
 use crate::inventory::Inventory;
-use pumpkin_data::data_component_impl::{PotDecorationsImpl, ProvidesPotteryPatternImpl};
+use pumpkin_data::data_component_impl::PotDecorationsImpl;
 use pumpkin_data::item_stack::ItemStack;
-use pumpkin_data::recipes::{CraftingRecipeTypes, RECIPES_CRAFTING};
+use pumpkin_data::recipes::RECIPES_CRAFTING;
 use pumpkin_data::screen::WindowType;
 use pumpkin_data::statistic::StatisticCategory;
-use pumpkin_data::tag;
-use pumpkin_data::tag::Taggable;
-use pumpkin_protocol::codec::recipe::{DynamicRecipe, OwnedCraftingRecipe};
+use pumpkin_protocol::codec::recipe::DynamicRecipe;
 
 /// The result slot in a crafting screen.
 pub struct ResultSlot {
@@ -86,288 +85,6 @@ impl RecipeResult {
     }
 }
 
-/// Checks if a recipe pattern is symmetrical horizontally.
-fn is_symmetrical_horizontally(pattern: &[&str]) -> bool {
-    let width = pattern.first().map_or(0, |s| s.len());
-    for row in pattern {
-        if row.len() != width {
-            return false;
-        }
-        for j in 0..width / 2 {
-            if row.chars().nth(j) != row.chars().nth(width - j - 1) {
-                return false;
-            }
-        }
-    }
-    true
-}
-
-/// Checks if a crafting recipe matches the current inventory state.
-#[expect(clippy::too_many_lines)]
-fn recipe_matches(
-    recipe: GenericRecipe<'_>,
-    input_height: usize,
-    input_width: usize,
-    top_x: usize,
-    top_y: usize,
-    count: usize,
-    inventory: &dyn RecipeInputInventory,
-) -> Option<RecipeResult> {
-    match recipe {
-        GenericRecipe::Vanilla(CraftingRecipeTypes::CraftingShaped {
-            key,
-            pattern,
-            result,
-            ..
-        }) => {
-            #[allow(clippy::redundant_closure_for_method_calls)]
-            if pattern.len() != input_height
-                || pattern.first().map_or(0, |f| f.len()) != input_width
-            {
-                return None;
-            }
-
-            if count
-                != pattern
-                    .iter()
-                    .map(|l| l.chars().filter(|c| *c != ' ').count())
-                    .sum::<usize>()
-            {
-                return None;
-            }
-
-            let x_offset = top_x;
-            let y_offset = top_y;
-
-            let mut matched = true;
-            'outer: for (y, row_str) in pattern.iter().enumerate() {
-                for (x, current_key) in row_str.chars().enumerate() {
-                    let slot = inventory
-                        .get_stack((y + y_offset) * inventory.get_width() + (x + x_offset));
-                    if current_key == ' ' {
-                        if !slot.is_empty() {
-                            matched = false;
-                            break 'outer;
-                        }
-                        continue;
-                    }
-
-                    let Some(ingredient) = key
-                        .iter()
-                        .find_map(|(k, v)| (*k == current_key).then_some(v))
-                    else {
-                        matched = false;
-                        break 'outer;
-                    };
-
-                    if !ingredient.match_item(slot.item) {
-                        matched = false;
-                        break 'outer;
-                    }
-                }
-            }
-
-            if !matched && !is_symmetrical_horizontally(pattern) {
-                matched = true;
-                'outer: for y in 0..pattern.len() {
-                    for x in 0..pattern[y].len() {
-                        let Some(current_key) = pattern[y].chars().nth(x) else {
-                            matched = false;
-                            break 'outer;
-                        };
-                        let slot = inventory.get_stack(
-                            (y + y_offset) * inventory.get_height()
-                                + (x_offset + input_width - 1 - x),
-                        );
-                        if current_key == ' ' {
-                            if !slot.is_empty() {
-                                matched = false;
-                                break 'outer;
-                            }
-                            continue;
-                        }
-                        let Some(ingredient) = key
-                            .iter()
-                            .find_map(|(k, v)| (*k == current_key).then_some(v))
-                        else {
-                            matched = false;
-                            break 'outer;
-                        };
-                        if !ingredient.match_item(slot.item) {
-                            matched = false;
-                            break 'outer;
-                        }
-                    }
-                }
-            }
-
-            matched.then_some(RecipeResult {
-                item_id: result.id.to_string(),
-                count: result.count,
-                pot_decorations: None,
-            })
-        }
-        GenericRecipe::Vanilla(CraftingRecipeTypes::CraftingShapeless {
-            ingredients,
-            result,
-            ..
-        }) => {
-            if count != ingredients.len() {
-                return None;
-            }
-            let mut ingredient_used = vec![false; ingredients.len()];
-            'next_slot: for i in 0..inventory.size() {
-                let slot = inventory.get_stack(i);
-                if slot.is_empty() {
-                    continue 'next_slot;
-                }
-                for i in 0..ingredients.len() {
-                    if !ingredient_used[i] && ingredients[i].match_item(slot.item) {
-                        ingredient_used[i] = true;
-                        continue 'next_slot;
-                    }
-                }
-                return None;
-            }
-            Some(RecipeResult {
-                item_id: result.id.to_string(),
-                count: result.count,
-                pot_decorations: None,
-            })
-        }
-        GenericRecipe::Vanilla(CraftingRecipeTypes::CraftingTransmute {
-            input,
-            material,
-            result,
-            ..
-        }) => {
-            if count != 2 {
-                return None;
-            }
-            'item_stack: for i in 0..inventory.size() {
-                let slot = inventory.get_stack(i);
-                if slot.is_empty() {
-                    continue 'item_stack;
-                }
-                if !material.match_item(slot.item) && !input.match_item(slot.item) {
-                    return None;
-                }
-            }
-            Some(RecipeResult {
-                item_id: result.id.to_string(),
-                count: result.count,
-                pot_decorations: None,
-            })
-        }
-        GenericRecipe::Vanilla(CraftingRecipeTypes::CraftingDecoratedPot { .. }) => {
-            if count != 4 || inventory.get_width() != 3 || inventory.get_height() != 3 {
-                return None;
-            }
-            let mut sherds = [0u16; 4];
-            for (idx, position) in (1..=7).step_by(2).enumerate() {
-                let slot = inventory.get_stack(position);
-                if slot.is_empty()
-                    || (!slot
-                        .item
-                        .has_tag(&tag::Item::MINECRAFT_DECORATED_POT_INGREDIENTS)
-                        && slot
-                            .get_data_component::<ProvidesPotteryPatternImpl>()
-                            .is_none())
-                {
-                    return None;
-                }
-                sherds[idx] = slot.item.id;
-            }
-            Some(RecipeResult {
-                item_id: "minecraft:decorated_pot".to_string(),
-                count: 1,
-                pot_decorations: Some(sherds),
-            })
-        }
-        GenericRecipe::Dynamic(OwnedCraftingRecipe::Shaped {
-            pattern,
-            key,
-            result,
-            ..
-        }) => {
-            #[allow(clippy::redundant_closure_for_method_calls)]
-            if pattern.len() != input_height
-                || pattern.first().map_or(0, |f| f.len()) != input_width
-            {
-                return None;
-            }
-            if count
-                != pattern
-                    .iter()
-                    .map(|l| l.chars().filter(|c| *c != ' ').count())
-                    .sum::<usize>()
-            {
-                return None;
-            }
-            let x_offset = top_x;
-            let y_offset = top_y;
-            let mut matched = true;
-            'outer: for (y, row_str) in pattern.iter().enumerate() {
-                for (x, current_key) in row_str.chars().enumerate() {
-                    let slot = inventory
-                        .get_stack((y + y_offset) * inventory.get_width() + (x + x_offset));
-                    if current_key == ' ' {
-                        if !slot.is_empty() {
-                            matched = false;
-                            break 'outer;
-                        }
-                        continue;
-                    }
-                    let Some(ingredient) =
-                        key.iter().find(|(k, _)| *k == current_key).map(|(_, v)| v)
-                    else {
-                        matched = false;
-                        break 'outer;
-                    };
-                    if !ingredient.match_item(slot.item) {
-                        matched = false;
-                        break 'outer;
-                    }
-                }
-            }
-            matched.then_some(RecipeResult {
-                item_id: result.item_id.clone(),
-                count: result.count,
-                pot_decorations: None,
-            })
-        }
-        GenericRecipe::Dynamic(OwnedCraftingRecipe::Shapeless {
-            ingredients,
-            result,
-            ..
-        }) => {
-            if count != ingredients.len() {
-                return None;
-            }
-            let mut ingredient_used = vec![false; ingredients.len()];
-            'next_slot: for i in 0..inventory.size() {
-                let slot = inventory.get_stack(i);
-                if slot.is_empty() {
-                    continue 'next_slot;
-                }
-                for i in 0..ingredients.len() {
-                    if !ingredient_used[i] && ingredients[i].match_item(slot.item) {
-                        ingredient_used[i] = true;
-                        continue 'next_slot;
-                    }
-                }
-                return None;
-            }
-            Some(RecipeResult {
-                item_id: result.item_id.clone(),
-                count: result.count,
-                pot_decorations: None,
-            })
-        }
-        _ => None,
-    }
-}
-
 #[must_use]
 pub fn match_crafting_recipe(
     inventory: &dyn RecipeInputInventory,
@@ -394,19 +111,16 @@ pub fn match_crafting_recipe(
     if count == 0 {
         return None;
     }
-    let input_width = bottom_x + 1 - top_x;
-    let input_height = bottom_y + 1 - top_y;
+    let grid = Occupancy {
+        height: bottom_y + 1 - top_y,
+        width: bottom_x + 1 - top_x,
+        top_x,
+        top_y,
+        count,
+    };
 
     for recipe in RECIPES_CRAFTING {
-        if let Some(result) = recipe_matches(
-            GenericRecipe::Vanilla(recipe),
-            input_height,
-            input_width,
-            top_x,
-            top_y,
-            count,
-            inventory,
-        ) {
+        if let Some(result) = recipe_matches(GenericRecipe::Vanilla(recipe), &grid, inventory) {
             return Some(result);
         }
     }
@@ -415,15 +129,8 @@ pub fn match_crafting_recipe(
         let dynamic = provider.get_dynamic_recipes();
         for recipe in &dynamic {
             if let DynamicRecipe::Crafting(crafting) = recipe
-                && let Some(result) = recipe_matches(
-                    GenericRecipe::Dynamic(crafting),
-                    input_height,
-                    input_width,
-                    top_x,
-                    top_y,
-                    count,
-                    inventory,
-                )
+                && let Some(result) =
+                    recipe_matches(GenericRecipe::Dynamic(crafting), &grid, inventory)
             {
                 return Some(result);
             }

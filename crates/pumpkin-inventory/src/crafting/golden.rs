@@ -33,7 +33,7 @@ struct Items {
 impl Items {
     fn new() -> Self {
         Self {
-            all: (0..5000_u16).filter_map(Item::from_id).collect(),
+            all: (0..5000u16).filter_map(Item::from_id).collect(),
             first: HashMap::new(),
             last: HashMap::new(),
         }

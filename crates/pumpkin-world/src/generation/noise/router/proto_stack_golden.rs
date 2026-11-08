@@ -142,3 +142,153 @@ fn proto_stacks_are_built_as_before() -> Result<(), Box<dyn std::error::Error>> 
     assert_eq!(std::fs::read_to_string(&path)?, now);
     Ok(())
 }
+
+// The real stacks only reach some sign cases of the range arithmetic (the ranges of two products
+// are mostly of mixed sign), so the ranges of binary, linear and unary components are also
+// recorded for synthetic stacks whose inputs have every kind of range: positive, negative,
+// containing zero, starting or ending at zero, and a single point.
+
+use pumpkin_data::noise_router::{
+    BinaryData, BinaryOperation, LinearData, LinearOperation, UnaryData, UnaryOperation,
+};
+
+const RANGES: [(f32, f32); 9] = [
+    (1.0, 2.0),
+    (-3.0, -1.0),
+    (-2.0, 5.0),
+    (0.0, 4.0),
+    (-4.0, 0.0),
+    (0.0, 0.0),
+    (2.0, 2.0),
+    (-1.0, -1.0),
+    (0.5, 0.75),
+];
+
+const BINARY: [(BinaryOperation, &str); 7] = [
+    (BinaryOperation::Add, "add"),
+    (BinaryOperation::Mul, "mul"),
+    (BinaryOperation::Min, "min"),
+    (BinaryOperation::Max, "max"),
+    (BinaryOperation::Sub, "sub"),
+    (BinaryOperation::Div, "div"),
+    (BinaryOperation::Pow, "pow"),
+];
+
+const UNARY: [(UnaryOperation, &str); 11] = [
+    (UnaryOperation::Abs, "abs"),
+    (UnaryOperation::Square, "square"),
+    (UnaryOperation::Cube, "cube"),
+    (UnaryOperation::HalfNegative, "half_negative"),
+    (UnaryOperation::QuarterNegative, "quarter_negative"),
+    (UnaryOperation::Squeeze, "squeeze"),
+    (UnaryOperation::Invert, "invert"),
+    (UnaryOperation::Negate, "negate"),
+    (UnaryOperation::Sqrt, "sqrt"),
+    (UnaryOperation::Log, "log"),
+    (UnaryOperation::Sign, "sign"),
+];
+
+/// Adds the constants for `value` once and returns the index of its constant.
+fn constant(stack: &mut Vec<BaseNoiseFunctionComponent>, value: f32) -> usize {
+    stack.push(BaseNoiseFunctionComponent::Constant { value });
+    stack.len() - 1
+}
+
+/// A component whose range is `low..=high`: an interval select over two constants.
+fn with_range(stack: &mut Vec<BaseNoiseFunctionComponent>, (low, high): (f32, f32)) -> usize {
+    let low_index = constant(stack, low);
+    let high_index = constant(stack, high);
+    stack.push(BaseNoiseFunctionComponent::IntervalSelect {
+        input_index: low_index,
+        thresholds: &[],
+        functions_indices: Box::leak(Box::new([low_index, high_index])),
+    });
+    stack.len() - 1
+}
+
+fn range_lines() -> Result<String, std::fmt::Error> {
+    let mut stack = Vec::new();
+    let inputs: Vec<usize> = RANGES.iter().map(|r| with_range(&mut stack, *r)).collect();
+    // What each component after the inputs is, to label the lines.
+    let mut labels = Vec::new();
+    for (a, first) in inputs.iter().enumerate() {
+        for (b, second) in inputs.iter().enumerate() {
+            for (operation, name) in BINARY {
+                stack.push(BaseNoiseFunctionComponent::Binary {
+                    argument1_index: *first,
+                    argument2_index: *second,
+                    data: Box::leak(Box::new(BinaryData { operation })),
+                });
+                labels.push(format!("binary {name} {:?} {:?}", RANGES[a], RANGES[b]));
+            }
+        }
+    }
+    for (a, input) in inputs.iter().enumerate() {
+        for argument in [-2.0_f32, -0.5, 0.0, 3.0] {
+            for (operation, name) in [(LinearOperation::Add, "add"), (LinearOperation::Mul, "mul")]
+            {
+                stack.push(BaseNoiseFunctionComponent::Linear {
+                    input_index: *input,
+                    data: Box::leak(Box::new(LinearData {
+                        operation,
+                        argument,
+                    })),
+                });
+                labels.push(format!("linear {name} {argument} {:?}", RANGES[a]));
+            }
+        }
+        for (operation, name) in UNARY {
+            stack.push(BaseNoiseFunctionComponent::Unary {
+                input_index: *input,
+                data: Box::leak(Box::new(UnaryData { operation })),
+            });
+            labels.push(format!("unary {name} {:?}", RANGES[a]));
+        }
+    }
+    // Interval selects over three ranges: the covering range.
+    for (a, first) in inputs.iter().enumerate() {
+        for (b, second) in inputs.iter().enumerate() {
+            stack.push(BaseNoiseFunctionComponent::IntervalSelect {
+                input_index: *first,
+                thresholds: &[],
+                functions_indices: Box::leak(Box::new([*first, *second, inputs[(a + b) % 9]])),
+            });
+            labels.push(format!(
+                "interval {:?} {:?} {:?}",
+                RANGES[a],
+                RANGES[b],
+                RANGES[(a + b) % 9]
+            ));
+        }
+    }
+
+    let config = GlobalRandomConfig::new(0, false);
+    let proto = ProtoNoiseRouters::generate_proto_stack(&stack, &config);
+    let first = proto.len() - labels.len();
+    let mut out = String::new();
+    for (offset, label) in labels.iter().enumerate() {
+        let component = &proto[first + offset];
+        writeln!(
+            out,
+            "{label} => {:08x} {:08x}",
+            component.min().to_bits(),
+            component.max().to_bits()
+        )?;
+    }
+    Ok(out)
+}
+
+#[test]
+fn component_ranges_are_computed_as_before() -> Result<(), Box<dyn std::error::Error>> {
+    let now = range_lines()?;
+    let path = std::path::Path::new(env!("CARGO_MANIFEST_DIR"))
+        .join("tests/golden")
+        .join("proto_stack_ranges.txt");
+    if std::env::var_os("KVASIR_BLESS").is_some() {
+        std::fs::create_dir_all(path.parent().ok_or("golden path has no parent")?)?;
+        std::fs::write(&path, &now)?;
+        return Ok(());
+    }
+    assert_eq!(std::fs::read_to_string(&path)?, now);
+    Ok(())
+}

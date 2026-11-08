@@ -7,5 +7,7 @@
 
 pub mod crafting_inventory;
 pub mod crafting_screen_handler;
+#[cfg(test)]
+mod golden;
 pub mod recipe_provider;
 pub mod recipes;

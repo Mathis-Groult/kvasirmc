@@ -1,0 +1,1246 @@
+0 shaped minecraft:acacia_boat*1: exact== extra=- wrong=- missing=- shifted== mirrored== exact/last== extra=- wrong=- missing=- shifted/last== mirrored/last==
+1 shapeless minecraft:acacia_button*1: exact== extra=- wrong=- missing=- last== reversed==
+2 shapeless minecraft:acacia_chest_boat*1: exact== extra=- wrong=- missing=- last== reversed==
+3 shaped minecraft:acacia_door*3: exact== extra=- wrong=- missing=- shifted== mirrored== exact/last== extra=- wrong=- missing=- shifted/last== mirrored/last==
+4 shaped minecraft:acacia_fence*3: exact== extra=- wrong=- missing=- shifted== mirrored== exact/last== extra=- wrong=- missing=- shifted/last== mirrored/last==
+5 shaped minecraft:acacia_fence_gate*1: exact== extra=- wrong=- missing=- shifted== mirrored== exact/last== extra=- wrong=- missing=- shifted/last== mirrored/last==
+6 shaped minecraft:acacia_hanging_sign*6: exact== extra=- wrong=- missing=- shifted== mirrored== exact/last== extra=- wrong=- missing=- shifted/last== mirrored/last==
+7 shapeless minecraft:acacia_planks*4: exact== extra=- wrong=- missing=- last== reversed==
+8 shaped minecraft:acacia_pressure_plate*1: exact== extra=- wrong=- missing=minecraft:acacia_button*1 shifted== mirrored== small== small_mirrored== exact/last== extra=- wrong=- missing=minecraft:acacia_button*1 shifted/last== mirrored/last== small/last== small_mirrored/last==
+9 shaped minecraft:acacia_shelf*6: exact== extra=- wrong=- missing=- shifted== mirrored== exact/last== extra=- wrong=- missing=- shifted/last== mirrored/last==
+10 shaped minecraft:acacia_sign*3: exact== extra=- wrong=- missing=minecraft:acacia_trapdoor*2 shifted== mirrored== exact/last== extra=- wrong=- missing=minecraft:acacia_trapdoor*2 shifted/last== mirrored/last==
+11 shaped minecraft:acacia_slab*6: exact== extra=- wrong=- missing=minecraft:acacia_pressure_plate*1 shifted== mirrored== exact/last== extra=- wrong=- missing=minecraft:acacia_pressure_plate*1 shifted/last== mirrored/last==
+12 shaped minecraft:acacia_stairs*4: exact== extra=- wrong=- missing=- shifted== mirrored== exact/last== extra=- wrong=- missing=- shifted/last== mirrored/last==
+13 shaped minecraft:acacia_trapdoor*2: exact== extra=- wrong=- missing=- shifted== mirrored== exact/last== extra=- wrong=- missing=- shifted/last== mirrored/last==
+14 shaped minecraft:acacia_wood*3: exact== extra=- wrong=- missing=- shifted== mirrored== small== small_mirrored== exact/last== extra=- wrong=- missing=- shifted/last== mirrored/last== small/last== small_mirrored/last==
+15 shaped minecraft:activator_rail*6: exact== wrong=- missing=- shifted== mirrored== exact/last== wrong=- missing=- shifted/last== mirrored/last==
+16 shaped minecraft:amethyst_block*1: exact== extra=- wrong=- missing=- shifted== mirrored== small== small_mirrored== exact/last== extra=- wrong=- missing=- shifted/last== mirrored/last== small/last== small_mirrored/last==
+17 shapeless minecraft:andesite*2: exact== extra=- wrong=- missing=- last== reversed==
+18 shaped minecraft:andesite_slab*6: exact== extra=- wrong=- missing=- shifted== mirrored== exact/last== extra=- wrong=- missing=- shifted/last== mirrored/last==
+19 shaped minecraft:andesite_stairs*4: exact== extra=- wrong=- missing=- shifted== mirrored== exact/last== extra=- wrong=- missing=- shifted/last== mirrored/last==
+20 shaped minecraft:andesite_wall*6: exact== extra=- wrong=- missing=- shifted== mirrored== exact/last== extra=- wrong=- missing=- shifted/last== mirrored/last==
+21 shaped minecraft:anvil*1: exact== extra=- wrong=- missing=- shifted== mirrored== exact/last== extra=- wrong=- missing=- shifted/last== mirrored/last==
+22 shaped minecraft:armor_stand*1: exact== extra=- wrong=- missing=- shifted== mirrored== exact/last== extra=- wrong=- missing=- shifted/last== mirrored/last==
+23 shaped minecraft:arrow*4: exact== extra=- wrong=- missing=- shifted== mirrored== exact/last== extra=- wrong=- missing=- shifted/last== mirrored/last==
+24 shapeless minecraft:bamboo_block*1: exact== wrong=- missing=- last== reversed==
+25 shapeless minecraft:bamboo_button*1: exact== extra=- wrong=- missing=- last== reversed==
+26 shapeless minecraft:bamboo_chest_raft*1: exact== extra=- wrong=- missing=- last== reversed==
+27 shaped minecraft:bamboo_door*3: exact== extra=- wrong=- missing=- shifted== mirrored== exact/last== extra=- wrong=- missing=- shifted/last== mirrored/last==
+28 shaped minecraft:bamboo_fence*3: exact== extra=- wrong=- missing=- shifted== mirrored== exact/last== extra=- wrong=- missing=- shifted/last== mirrored/last==
+29 shaped minecraft:bamboo_fence_gate*1: exact== extra=- wrong=- missing=- shifted== mirrored== exact/last== extra=- wrong=- missing=- shifted/last== mirrored/last==
+30 shaped minecraft:bamboo_hanging_sign*6: exact== extra=- wrong=- missing=- shifted== mirrored== exact/last== extra=- wrong=- missing=- shifted/last== mirrored/last==
+31 shaped minecraft:bamboo_mosaic*1: exact== extra=- wrong=- missing=- shifted== mirrored== small== small_mirrored== exact/last== extra=- wrong=- missing=- shifted/last== mirrored/last== small/last== small_mirrored/last==
+32 shaped minecraft:bamboo_mosaic_slab*6: exact== extra=- wrong=- missing=- shifted== mirrored== exact/last== extra=- wrong=- missing=- shifted/last== mirrored/last==
+33 shaped minecraft:bamboo_mosaic_stairs*4: exact== extra=- wrong=- missing=- shifted== mirrored== exact/last== extra=- wrong=- missing=- shifted/last== mirrored/last==
+34 shapeless minecraft:bamboo_planks*2: exact== extra=- wrong=- missing=- last== reversed==
+35 shaped minecraft:bamboo_pressure_plate*1: exact== extra=- wrong=- missing=minecraft:bamboo_button*1 shifted== mirrored== small== small_mirrored== exact/last== extra=- wrong=- missing=minecraft:bamboo_button*1 shifted/last== mirrored/last== small/last== small_mirrored/last==
+36 shaped minecraft:bamboo_raft*1: exact== extra=- wrong=- missing=- shifted== mirrored== exact/last== extra=- wrong=- missing=- shifted/last== mirrored/last==
+37 shaped minecraft:bamboo_shelf*6: exact== extra=- wrong=- missing=- shifted== mirrored== exact/last== extra=- wrong=- missing=- shifted/last== mirrored/last==
+38 shaped minecraft:bamboo_sign*3: exact== extra=- wrong=- missing=minecraft:bamboo_trapdoor*2 shifted== mirrored== exact/last== extra=- wrong=- missing=minecraft:bamboo_trapdoor*2 shifted/last== mirrored/last==
+39 shaped minecraft:bamboo_slab*6: exact== extra=- wrong=- missing=minecraft:bamboo_pressure_plate*1 shifted== mirrored== exact/last== extra=- wrong=- missing=minecraft:bamboo_pressure_plate*1 shifted/last== mirrored/last==
+40 shaped minecraft:bamboo_stairs*4: exact== extra=- wrong=- missing=- shifted== mirrored== exact/last== extra=- wrong=- missing=- shifted/last== mirrored/last==
+41 shaped minecraft:bamboo_trapdoor*2: exact== extra=- wrong=- missing=- shifted== mirrored== exact/last== extra=- wrong=- missing=- shifted/last== mirrored/last==
+42 shaped minecraft:barrel*1: exact== extra=- wrong=- missing=- shifted== mirrored== exact/last== extra=- wrong=- missing=- shifted/last== mirrored/last==
+43 shaped minecraft:beacon*1: exact== wrong=- missing=- shifted== mirrored== exact/last== wrong=- missing=- shifted/last== mirrored/last==
+44 shaped minecraft:beehive*1: exact== wrong=- missing=- shifted== mirrored== exact/last== wrong=- missing=- shifted/last== mirrored/last==
+45 shapeless minecraft:beetroot_soup*1: exact== extra=- wrong=- missing=- last== reversed==
+46 shaped minecraft:birch_boat*1: exact== extra=- wrong=- missing=- shifted== mirrored== exact/last== extra=- wrong=- missing=- shifted/last== mirrored/last==
+47 shapeless minecraft:birch_button*1: exact== extra=- wrong=- missing=- last== reversed==
+48 shapeless minecraft:birch_chest_boat*1: exact== extra=- wrong=- missing=- last== reversed==
+49 shaped minecraft:birch_door*3: exact== extra=- wrong=- missing=- shifted== mirrored== exact/last== extra=- wrong=- missing=- shifted/last== mirrored/last==
+50 shaped minecraft:birch_fence*3: exact== extra=- wrong=- missing=- shifted== mirrored== exact/last== extra=- wrong=- missing=- shifted/last== mirrored/last==
+51 shaped minecraft:birch_fence_gate*1: exact== extra=- wrong=- missing=- shifted== mirrored== exact/last== extra=- wrong=- missing=- shifted/last== mirrored/last==
+52 shaped minecraft:birch_hanging_sign*6: exact== extra=- wrong=- missing=- shifted== mirrored== exact/last== extra=- wrong=- missing=- shifted/last== mirrored/last==
+53 shapeless minecraft:birch_planks*4: exact== extra=- wrong=- missing=- last== reversed==
+54 shaped minecraft:birch_pressure_plate*1: exact== extra=- wrong=- missing=minecraft:birch_button*1 shifted== mirrored== small== small_mirrored== exact/last== extra=- wrong=- missing=minecraft:birch_button*1 shifted/last== mirrored/last== small/last== small_mirrored/last==
+55 shaped minecraft:birch_shelf*6: exact== extra=- wrong=- missing=- shifted== mirrored== exact/last== extra=- wrong=- missing=- shifted/last== mirrored/last==
+56 shaped minecraft:birch_sign*3: exact== extra=- wrong=- missing=minecraft:birch_trapdoor*2 shifted== mirrored== exact/last== extra=- wrong=- missing=minecraft:birch_trapdoor*2 shifted/last== mirrored/last==
+57 shaped minecraft:birch_slab*6: exact== extra=- wrong=- missing=minecraft:birch_pressure_plate*1 shifted== mirrored== exact/last== extra=- wrong=- missing=minecraft:birch_pressure_plate*1 shifted/last== mirrored/last==
+58 shaped minecraft:birch_stairs*4: exact== extra=- wrong=- missing=- shifted== mirrored== exact/last== extra=- wrong=- missing=- shifted/last== mirrored/last==
+59 shaped minecraft:birch_trapdoor*2: exact== extra=- wrong=- missing=- shifted== mirrored== exact/last== extra=- wrong=- missing=- shifted/last== mirrored/last==
+60 shaped minecraft:birch_wood*3: exact== extra=- wrong=- missing=- shifted== mirrored== small== small_mirrored== exact/last== extra=- wrong=- missing=- shifted/last== mirrored/last== small/last== small_mirrored/last==
+61 shaped minecraft:black_banner*1: exact== extra=- wrong=- missing=- shifted== mirrored== exact/last== extra=- wrong=- missing=- shifted/last== mirrored/last==
+62 shaped minecraft:black_bed*1: exact== extra=- wrong=- missing=- shifted== mirrored== exact/last== extra=- wrong=- missing=- shifted/last== mirrored/last==
+63 transmute minecraft:black_bundle*1: exact== extra=- wrong=- missing=- last== reversed==
+64 shapeless minecraft:black_candle*1: exact== extra=- wrong=- missing=- last== reversed==
+65 shaped minecraft:black_carpet*3: exact== extra=- wrong=- missing=- shifted== mirrored== small== small_mirrored== exact/last== extra=- wrong=- missing=- shifted/last== mirrored/last== small/last== small_mirrored/last==
+66 shapeless minecraft:black_concrete_powder*8: exact== wrong=- missing=- last== reversed==
+67 shaped minecraft:black_concrete_slab*6: exact== extra=- wrong=- missing=- shifted== mirrored== exact/last== extra=- wrong=- missing=- shifted/last== mirrored/last==
+68 shaped minecraft:black_concrete_stairs*4: exact== extra=- wrong=- missing=- shifted== mirrored== exact/last== extra=- wrong=- missing=- shifted/last== mirrored/last==
+69 shaped minecraft:black_cushion*1: exact== extra=- wrong=- missing=- shifted== mirrored== exact/last== extra=- wrong=- missing=- shifted/last== mirrored/last==
+70 shapeless minecraft:black_dye*1: exact== extra=- wrong=- missing=- last== reversed==
+71 shapeless minecraft:black_dye*1: exact== extra=- wrong=- missing=- last== reversed==
+72 shaped minecraft:black_harness*1: exact== extra=- wrong=- missing=- shifted== mirrored== exact/last== extra=- wrong=- missing=- shifted/last== mirrored/last==
+73 transmute minecraft:black_shulker_box*1: exact== extra=- wrong=- missing=- last== reversed==
+74 shaped minecraft:black_stained_glass*8: exact== wrong=- missing=- shifted== mirrored== exact/last== wrong=- missing=- shifted/last== mirrored/last==
+75 shaped minecraft:black_stained_glass_pane*16: exact== extra=- wrong=- missing=- shifted== mirrored== exact/last== extra=- wrong=- missing=- shifted/last== mirrored/last==
+76 shaped minecraft:black_stained_glass_pane*8: exact== wrong=- missing=- shifted== mirrored== exact/last== wrong=- missing=- shifted/last== mirrored/last==
+77 shaped minecraft:black_terracotta*8: exact== wrong=- missing=- shifted== mirrored== exact/last== wrong=- missing=- shifted/last== mirrored/last==
+78 shaped minecraft:black_wool_slab*6: exact== extra=- wrong=- missing=minecraft:black_carpet*3 shifted== mirrored== exact/last== extra=- wrong=- missing=minecraft:black_carpet*3 shifted/last== mirrored/last==
+79 shaped minecraft:black_wool_stairs*4: exact== extra=- wrong=- missing=- shifted== mirrored== exact/last== extra=- wrong=- missing=- shifted/last== mirrored/last==
+80 shaped minecraft:blackstone_slab*6: exact== extra=- wrong=- missing=- shifted== mirrored== exact/last== extra=- wrong=- missing=- shifted/last== mirrored/last==
+81 shaped minecraft:blackstone_stairs*4: exact== extra=- wrong=- missing=- shifted== mirrored== exact/last== extra=- wrong=- missing=- shifted/last== mirrored/last==
+82 shaped minecraft:blackstone_wall*6: exact== extra=- wrong=- missing=- shifted== mirrored== exact/last== extra=- wrong=- missing=- shifted/last== mirrored/last==
+83 shaped minecraft:blast_furnace*1: exact== wrong=- missing=- shifted== mirrored== exact/last== wrong=- missing=- shifted/last== mirrored/last==
+84 shapeless minecraft:blaze_powder*2: exact== extra=- wrong=- missing=- last== reversed==
+85 shaped minecraft:blue_banner*1: exact== extra=- wrong=- missing=- shifted== mirrored== exact/last== extra=- wrong=- missing=- shifted/last== mirrored/last==
+86 shaped minecraft:blue_bed*1: exact== extra=- wrong=- missing=- shifted== mirrored== exact/last== extra=- wrong=- missing=- shifted/last== mirrored/last==
+87 transmute minecraft:blue_bundle*1: exact== extra=- wrong=- missing=- last== reversed==
+88 shapeless minecraft:blue_candle*1: exact== extra=- wrong=- missing=- last== reversed==
+89 shaped minecraft:blue_carpet*3: exact== extra=- wrong=- missing=- shifted== mirrored== small== small_mirrored== exact/last== extra=- wrong=- missing=- shifted/last== mirrored/last== small/last== small_mirrored/last==
+90 shapeless minecraft:blue_concrete_powder*8: exact== wrong=- missing=- last== reversed==
+91 shaped minecraft:blue_concrete_slab*6: exact== extra=- wrong=- missing=- shifted== mirrored== exact/last== extra=- wrong=- missing=- shifted/last== mirrored/last==
+92 shaped minecraft:blue_concrete_stairs*4: exact== extra=- wrong=- missing=- shifted== mirrored== exact/last== extra=- wrong=- missing=- shifted/last== mirrored/last==
+93 shaped minecraft:blue_cushion*1: exact== extra=- wrong=- missing=- shifted== mirrored== exact/last== extra=- wrong=- missing=- shifted/last== mirrored/last==
+94 shapeless minecraft:blue_dye*1: exact== extra=- wrong=- missing=- last== reversed==
+95 shapeless minecraft:blue_dye*1: exact== extra=- wrong=- missing=- last== reversed==
+96 shaped minecraft:blue_harness*1: exact== extra=- wrong=- missing=- shifted== mirrored== exact/last== extra=- wrong=- missing=- shifted/last== mirrored/last==
+97 shapeless minecraft:blue_ice*1: exact== wrong=- missing=- last== reversed==
+98 transmute minecraft:blue_shulker_box*1: exact== extra=- wrong=- missing=- last== reversed==
+99 shaped minecraft:blue_stained_glass*8: exact== wrong=- missing=- shifted== mirrored== exact/last== wrong=- missing=- shifted/last== mirrored/last==
+100 shaped minecraft:blue_stained_glass_pane*16: exact== extra=- wrong=- missing=- shifted== mirrored== exact/last== extra=- wrong=- missing=- shifted/last== mirrored/last==
+101 shaped minecraft:blue_stained_glass_pane*8: exact== wrong=- missing=- shifted== mirrored== exact/last== wrong=- missing=- shifted/last== mirrored/last==
+102 shaped minecraft:blue_terracotta*8: exact== wrong=- missing=- shifted== mirrored== exact/last== wrong=- missing=- shifted/last== mirrored/last==
+103 shaped minecraft:blue_wool_slab*6: exact== extra=- wrong=- missing=minecraft:blue_carpet*3 shifted== mirrored== exact/last== extra=- wrong=- missing=minecraft:blue_carpet*3 shifted/last== mirrored/last==
+104 shaped minecraft:blue_wool_stairs*4: exact== extra=- wrong=- missing=- shifted== mirrored== exact/last== extra=- wrong=- missing=- shifted/last== mirrored/last==
+105 shaped minecraft:bolt_armor_trim_smithing_template*2: exact== wrong=- missing=- shifted== mirrored== exact/last== wrong=- missing=- shifted/last== mirrored/last==
+106 shaped minecraft:bone_block*1: exact== wrong=- missing=- shifted== mirrored== exact/last== wrong=- missing=- shifted/last== mirrored/last==
+107 shapeless minecraft:bone_meal*3: exact== extra=- wrong=- missing=- last== reversed==
+108 shapeless minecraft:bone_meal*9: exact== extra=- wrong=- missing=- last== reversed==
+109 shapeless minecraft:book*1: exact== extra=- wrong=- missing=- last== reversed==
+110 shaped minecraft:bookshelf*1: exact== wrong=- missing=- shifted== mirrored== exact/last== wrong=- missing=- shifted/last== mirrored/last==
+111 shapeless minecraft:bordure_indented_banner_pattern*1: exact== extra=- wrong=- missing=- last== reversed==
+112 shaped minecraft:bow*1: exact== extra=- wrong=- missing=- shifted== mirrored== exact/last== extra=- wrong=- missing=- shifted/last== mirrored/last==
+113 shaped minecraft:bowl*4: exact== extra=- wrong=- missing=- shifted== mirrored== exact/last== extra=- wrong=- missing=- shifted/last== mirrored/last==
+114 shaped minecraft:bread*1: exact== extra=- wrong=- missing=- shifted== mirrored== exact/last== extra=- wrong=- missing=- shifted/last== mirrored/last==
+115 shaped minecraft:brewing_stand*1: exact== extra=- wrong=- missing=- shifted== mirrored== exact/last== extra=- wrong=- missing=- shifted/last== mirrored/last==
+116 shaped minecraft:brick_slab*6: exact== extra=- wrong=- missing=- shifted== mirrored== exact/last== extra=- wrong=- missing=- shifted/last== mirrored/last==
+117 shaped minecraft:brick_stairs*4: exact== extra=- wrong=- missing=- shifted== mirrored== exact/last== extra=- wrong=- missing=- shifted/last== mirrored/last==
+118 shaped minecraft:brick_wall*6: exact== extra=- wrong=- missing=- shifted== mirrored== exact/last== extra=- wrong=- missing=- shifted/last== mirrored/last==
+119 shaped minecraft:bricks*1: exact== extra=- wrong=- missing=- shifted== mirrored== small== small_mirrored== exact/last== extra=- wrong=- missing=- shifted/last== mirrored/last== small/last== small_mirrored/last==
+120 shaped minecraft:brown_banner*1: exact== extra=- wrong=- missing=- shifted== mirrored== exact/last== extra=- wrong=- missing=- shifted/last== mirrored/last==
+121 shaped minecraft:brown_bed*1: exact== extra=- wrong=- missing=- shifted== mirrored== exact/last== extra=- wrong=- missing=- shifted/last== mirrored/last==
+122 transmute minecraft:brown_bundle*1: exact== extra=- wrong=- missing=- last== reversed==
+123 shapeless minecraft:brown_candle*1: exact== extra=- wrong=- missing=- last== reversed==
+124 shaped minecraft:brown_carpet*3: exact== extra=- wrong=- missing=- shifted== mirrored== small== small_mirrored== exact/last== extra=- wrong=- missing=- shifted/last== mirrored/last== small/last== small_mirrored/last==
+125 shapeless minecraft:brown_concrete_powder*8: exact== wrong=- missing=- last== reversed==
+126 shaped minecraft:brown_concrete_slab*6: exact== extra=- wrong=- missing=- shifted== mirrored== exact/last== extra=- wrong=- missing=- shifted/last== mirrored/last==
+127 shaped minecraft:brown_concrete_stairs*4: exact== extra=- wrong=- missing=- shifted== mirrored== exact/last== extra=- wrong=- missing=- shifted/last== mirrored/last==
+128 shaped minecraft:brown_cushion*1: exact== extra=- wrong=- missing=- shifted== mirrored== exact/last== extra=- wrong=- missing=- shifted/last== mirrored/last==
+129 shapeless minecraft:brown_dye*1: exact== extra=- wrong=- missing=- last== reversed==
+130 shaped minecraft:brown_harness*1: exact== extra=- wrong=- missing=- shifted== mirrored== exact/last== extra=- wrong=- missing=- shifted/last== mirrored/last==
+131 transmute minecraft:brown_shulker_box*1: exact== extra=- wrong=- missing=- last== reversed==
+132 shaped minecraft:brown_stained_glass*8: exact== wrong=- missing=- shifted== mirrored== exact/last== wrong=- missing=- shifted/last== mirrored/last==
+133 shaped minecraft:brown_stained_glass_pane*16: exact== extra=- wrong=- missing=- shifted== mirrored== exact/last== extra=- wrong=- missing=- shifted/last== mirrored/last==
+134 shaped minecraft:brown_stained_glass_pane*8: exact== wrong=- missing=- shifted== mirrored== exact/last== wrong=- missing=- shifted/last== mirrored/last==
+135 shaped minecraft:brown_terracotta*8: exact== wrong=- missing=- shifted== mirrored== exact/last== wrong=- missing=- shifted/last== mirrored/last==
+136 shaped minecraft:brown_wool_slab*6: exact== extra=- wrong=- missing=minecraft:brown_carpet*3 shifted== mirrored== exact/last== extra=- wrong=- missing=minecraft:brown_carpet*3 shifted/last== mirrored/last==
+137 shaped minecraft:brown_wool_stairs*4: exact== extra=- wrong=- missing=- shifted== mirrored== exact/last== extra=- wrong=- missing=- shifted/last== mirrored/last==
+138 shaped minecraft:brush*1: exact== extra=- wrong=- missing=- shifted== mirrored== exact/last== extra=- wrong=- missing=- shifted/last== mirrored/last==
+139 shaped minecraft:bucket*1: exact== extra=- wrong=- missing=- shifted== mirrored== exact/last== extra=- wrong=- missing=- shifted/last== mirrored/last==
+140 shaped minecraft:bundle*1: exact== extra=- wrong=- missing=- shifted== mirrored== small== small_mirrored== exact/last== extra=- wrong=- missing=- shifted/last== mirrored/last== small/last== small_mirrored/last==
+141 shaped minecraft:cake*1: exact== wrong=- missing=- shifted== mirrored== exact/last== wrong=- missing=- shifted/last== mirrored/last==
+142 shaped minecraft:calibrated_sculk_sensor*1: exact== extra=- wrong=- missing=- shifted== mirrored== exact/last== extra=- wrong=- missing=- shifted/last== mirrored/last==
+143 shaped minecraft:campfire*1: exact== extra=- wrong=- missing=- shifted== mirrored== exact/last== extra=- wrong=- missing=- shifted/last== mirrored/last==
+144 shaped minecraft:candle*1: exact== extra=- wrong=- missing=- shifted== mirrored== small== small_mirrored== exact/last== extra=- wrong=- missing=- shifted/last== mirrored/last== small/last== small_mirrored/last==
+145 shaped minecraft:carrot_on_a_stick*1: exact== extra=- wrong=- missing=- shifted== mirrored== small== small_mirrored== exact/last== extra=- wrong=- missing=- shifted/last== mirrored/last== small/last== small_mirrored/last==
+146 shaped minecraft:cartography_table*1: exact== extra=- wrong=- missing=- shifted== mirrored== exact/last== extra=- wrong=- missing=- shifted/last== mirrored/last==
+147 shaped minecraft:cauldron*1: exact== extra=- wrong=- missing=- shifted== mirrored== exact/last== extra=- wrong=- missing=- shifted/last== mirrored/last==
+148 shaped minecraft:cherry_boat*1: exact== extra=- wrong=- missing=- shifted== mirrored== exact/last== extra=- wrong=- missing=- shifted/last== mirrored/last==
+149 shapeless minecraft:cherry_button*1: exact== extra=- wrong=- missing=- last== reversed==
+150 shapeless minecraft:cherry_chest_boat*1: exact== extra=- wrong=- missing=- last== reversed==
+151 shaped minecraft:cherry_door*3: exact== extra=- wrong=- missing=- shifted== mirrored== exact/last== extra=- wrong=- missing=- shifted/last== mirrored/last==
+152 shaped minecraft:cherry_fence*3: exact== extra=- wrong=- missing=- shifted== mirrored== exact/last== extra=- wrong=- missing=- shifted/last== mirrored/last==
+153 shaped minecraft:cherry_fence_gate*1: exact== extra=- wrong=- missing=- shifted== mirrored== exact/last== extra=- wrong=- missing=- shifted/last== mirrored/last==
+154 shaped minecraft:cherry_hanging_sign*6: exact== extra=- wrong=- missing=- shifted== mirrored== exact/last== extra=- wrong=- missing=- shifted/last== mirrored/last==
+155 shapeless minecraft:cherry_planks*4: exact== extra=- wrong=- missing=- last== reversed==
+156 shaped minecraft:cherry_pressure_plate*1: exact== extra=- wrong=- missing=minecraft:cherry_button*1 shifted== mirrored== small== small_mirrored== exact/last== extra=- wrong=- missing=minecraft:cherry_button*1 shifted/last== mirrored/last== small/last== small_mirrored/last==
+157 shaped minecraft:cherry_shelf*6: exact== extra=- wrong=- missing=- shifted== mirrored== exact/last== extra=- wrong=- missing=- shifted/last== mirrored/last==
+158 shaped minecraft:cherry_sign*3: exact== extra=- wrong=- missing=minecraft:cherry_trapdoor*2 shifted== mirrored== exact/last== extra=- wrong=- missing=minecraft:cherry_trapdoor*2 shifted/last== mirrored/last==
+159 shaped minecraft:cherry_slab*6: exact== extra=- wrong=- missing=minecraft:cherry_pressure_plate*1 shifted== mirrored== exact/last== extra=- wrong=- missing=minecraft:cherry_pressure_plate*1 shifted/last== mirrored/last==
+160 shaped minecraft:cherry_stairs*4: exact== extra=- wrong=- missing=- shifted== mirrored== exact/last== extra=- wrong=- missing=- shifted/last== mirrored/last==
+161 shaped minecraft:cherry_trapdoor*2: exact== extra=- wrong=- missing=- shifted== mirrored== exact/last== extra=- wrong=- missing=- shifted/last== mirrored/last==
+162 shaped minecraft:cherry_wood*3: exact== extra=- wrong=- missing=- shifted== mirrored== small== small_mirrored== exact/last== extra=- wrong=- missing=- shifted/last== mirrored/last== small/last== small_mirrored/last==
+163 shaped minecraft:chest*1: exact== extra=- wrong=- missing=- shifted== mirrored== exact/last== extra=- wrong=- missing=- shifted/last== mirrored/last==
+164 shapeless minecraft:chest_minecart*1: exact== extra=- wrong=- missing=- last== reversed==
+165 shaped minecraft:chiseled_bookshelf*1: exact== wrong=- missing=- shifted== mirrored== exact/last== wrong=- missing=- shifted/last== mirrored/last==
+166 shaped minecraft:chiseled_cinnabar*1: exact== extra=- wrong=- missing=- shifted== mirrored== small== small_mirrored== exact/last== extra=- wrong=- missing=- shifted/last== mirrored/last== small/last== small_mirrored/last==
+167 shaped minecraft:chiseled_copper*1: exact== extra=- wrong=- missing=- shifted== mirrored== small== small_mirrored== exact/last== extra=- wrong=- missing=- shifted/last== mirrored/last== small/last== small_mirrored/last==
+168 shaped minecraft:chiseled_deepslate*1: exact== extra=- wrong=- missing=- shifted== mirrored== small== small_mirrored== exact/last== extra=- wrong=- missing=- shifted/last== mirrored/last== small/last== small_mirrored/last==
+169 shaped minecraft:chiseled_nether_bricks*1: exact== extra=- wrong=- missing=- shifted== mirrored== small== small_mirrored== exact/last== extra=- wrong=- missing=- shifted/last== mirrored/last== small/last== small_mirrored/last==
+170 shaped minecraft:chiseled_polished_blackstone*1: exact== extra=- wrong=- missing=- shifted== mirrored== small== small_mirrored== exact/last== extra=- wrong=- missing=- shifted/last== mirrored/last== small/last== small_mirrored/last==
+171 shaped minecraft:chiseled_quartz_block*1: exact== extra=- wrong=- missing=- shifted== mirrored== small== small_mirrored== exact/last== extra=- wrong=- missing=- shifted/last== mirrored/last== small/last== small_mirrored/last==
+172 shaped minecraft:chiseled_red_sandstone*1: exact== extra=- wrong=- missing=- shifted== mirrored== small== small_mirrored== exact/last== extra=- wrong=- missing=- shifted/last== mirrored/last== small/last== small_mirrored/last==
+173 shaped minecraft:chiseled_resin_bricks*1: exact== extra=- wrong=- missing=- shifted== mirrored== small== small_mirrored== exact/last== extra=- wrong=- missing=- shifted/last== mirrored/last== small/last== small_mirrored/last==
+174 shaped minecraft:chiseled_sandstone*1: exact== extra=- wrong=- missing=- shifted== mirrored== small== small_mirrored== exact/last== extra=- wrong=- missing=- shifted/last== mirrored/last== small/last== small_mirrored/last==
+175 shaped minecraft:chiseled_stone_bricks*1: exact== extra=- wrong=- missing=- shifted== mirrored== small== small_mirrored== exact/last== extra=- wrong=- missing=- shifted/last== mirrored/last== small/last== small_mirrored/last==
+176 shaped minecraft:chiseled_sulfur*1: exact== extra=- wrong=- missing=- shifted== mirrored== small== small_mirrored== exact/last== extra=- wrong=- missing=- shifted/last== mirrored/last== small/last== small_mirrored/last==
+177 shaped minecraft:chiseled_tuff*1: exact== extra=- wrong=- missing=- shifted== mirrored== small== small_mirrored== exact/last== extra=- wrong=- missing=- shifted/last== mirrored/last== small/last== small_mirrored/last==
+178 shaped minecraft:chiseled_tuff_bricks*1: exact== extra=- wrong=- missing=- shifted== mirrored== small== small_mirrored== exact/last== extra=- wrong=- missing=- shifted/last== mirrored/last== small/last== small_mirrored/last==
+179 shaped minecraft:cinnabar_brick_slab*6: exact== extra=- wrong=- missing=- shifted== mirrored== exact/last== extra=- wrong=- missing=- shifted/last== mirrored/last==
+180 shaped minecraft:cinnabar_brick_stairs*4: exact== extra=- wrong=- missing=- shifted== mirrored== exact/last== extra=- wrong=- missing=- shifted/last== mirrored/last==
+181 shaped minecraft:cinnabar_brick_wall*6: exact== extra=- wrong=- missing=- shifted== mirrored== exact/last== extra=- wrong=- missing=- shifted/last== mirrored/last==
+182 shaped minecraft:cinnabar_bricks*4: exact== extra=- wrong=- missing=- shifted== mirrored== small== small_mirrored== exact/last== extra=- wrong=- missing=- shifted/last== mirrored/last== small/last== small_mirrored/last==
+183 shaped minecraft:cinnabar_slab*6: exact== extra=- wrong=- missing=- shifted== mirrored== exact/last== extra=- wrong=- missing=- shifted/last== mirrored/last==
+184 shaped minecraft:cinnabar_stairs*4: exact== extra=- wrong=- missing=- shifted== mirrored== exact/last== extra=- wrong=- missing=- shifted/last== mirrored/last==
+185 shaped minecraft:cinnabar_wall*6: exact== extra=- wrong=- missing=- shifted== mirrored== exact/last== extra=- wrong=- missing=- shifted/last== mirrored/last==
+186 shaped minecraft:clay*1: exact== extra=- wrong=- missing=- shifted== mirrored== small== small_mirrored== exact/last== extra=- wrong=- missing=- shifted/last== mirrored/last== small/last== small_mirrored/last==
+187 shaped minecraft:clock*1: exact== extra=- wrong=- missing=- shifted== mirrored== exact/last== extra=- wrong=- missing=- shifted/last== mirrored/last==
+188 shapeless minecraft:coal*9: exact== extra=- wrong=- missing=- last== reversed==
+189 shaped minecraft:coal_block*1: exact== wrong=- missing=- shifted== mirrored== exact/last== wrong=- missing=- shifted/last== mirrored/last==
+190 shaped minecraft:coarse_dirt*4: exact== extra=- wrong=- missing=- shifted== mirrored== small== small_mirrored== exact/last== extra=- wrong=- missing=- shifted/last== mirrored/last== small/last== small_mirrored/last==
+191 shaped minecraft:coast_armor_trim_smithing_template*2: exact== wrong=- missing=- shifted== mirrored== exact/last== wrong=- missing=- shifted/last== mirrored/last==
+192 shaped minecraft:cobbled_deepslate_slab*6: exact== extra=- wrong=- missing=- shifted== mirrored== exact/last== extra=- wrong=- missing=- shifted/last== mirrored/last==
+193 shaped minecraft:cobbled_deepslate_stairs*4: exact== extra=- wrong=- missing=- shifted== mirrored== exact/last== extra=- wrong=- missing=- shifted/last== mirrored/last==
+194 shaped minecraft:cobbled_deepslate_wall*6: exact== extra=- wrong=- missing=- shifted== mirrored== exact/last== extra=- wrong=- missing=- shifted/last== mirrored/last==
+195 shaped minecraft:cobblestone_slab*6: exact== extra=- wrong=- missing=- shifted== mirrored== exact/last== extra=- wrong=- missing=- shifted/last== mirrored/last==
+196 shaped minecraft:cobblestone_stairs*4: exact== extra=- wrong=- missing=- shifted== mirrored== exact/last== extra=- wrong=- missing=- shifted/last== mirrored/last==
+197 shaped minecraft:cobblestone_wall*6: exact== extra=- wrong=- missing=- shifted== mirrored== exact/last== extra=- wrong=- missing=- shifted/last== mirrored/last==
+198 shaped minecraft:comparator*1: exact== extra=- wrong=- missing=- shifted== mirrored== exact/last== extra=- wrong=- missing=- shifted/last== mirrored/last==
+199 shaped minecraft:compass*1: exact== extra=- wrong=- missing=- shifted== mirrored== exact/last== extra=- wrong=- missing=- shifted/last== mirrored/last==
+200 shaped minecraft:composter*1: exact== extra=- wrong=- missing=- shifted== mirrored== exact/last== extra=- wrong=- missing=- shifted/last== mirrored/last==
+201 shaped minecraft:conduit*1: exact== wrong=- missing=- shifted== mirrored== exact/last== wrong=- missing=- shifted/last== mirrored/last==
+202 shaped minecraft:cookie*8: exact== extra=- wrong=- missing=- shifted== mirrored== exact/last== extra=- wrong=- missing=- shifted/last== mirrored/last==
+203 shaped minecraft:copper_axe*1: exact== extra=- wrong=- missing=- shifted== mirrored== exact/last== extra=- wrong=- missing=- shifted/last== mirrored/last==
+204 shaped minecraft:copper_bars*16: exact== extra=- wrong=- missing=- shifted== mirrored== exact/last== extra=- wrong=- missing=- shifted/last== mirrored/last==
+205 shaped minecraft:copper_block*1: exact== wrong=- missing=- shifted== mirrored== exact/last== wrong=- missing=- shifted/last== mirrored/last==
+206 shaped minecraft:copper_boots*1: exact== extra=- wrong=- missing=- shifted== mirrored== exact/last== extra=- wrong=- missing=- shifted/last== mirrored/last==
+207 shaped minecraft:copper_bulb*4: exact== extra=- wrong=- missing=- shifted== mirrored== exact/last== extra=- wrong=- missing=- shifted/last== mirrored/last==
+208 shaped minecraft:copper_chain*1: exact== extra=- wrong=- missing=- shifted== mirrored== exact/last== extra=- wrong=- missing=- shifted/last== mirrored/last==
+209 shaped minecraft:copper_chest*1: exact== wrong=- missing=- shifted== mirrored== exact/last== wrong=- missing=- shifted/last== mirrored/last==
+210 shaped minecraft:copper_chestplate*1: exact== extra=- wrong=- missing=- shifted== mirrored== exact/last== extra=- wrong=- missing=- shifted/last== mirrored/last==
+211 shaped minecraft:copper_door*3: exact== extra=- wrong=- missing=- shifted== mirrored== exact/last== extra=- wrong=- missing=- shifted/last== mirrored/last==
+212 shaped minecraft:copper_grate*4: exact== extra=- wrong=- missing=- shifted== mirrored== exact/last== extra=- wrong=- missing=- shifted/last== mirrored/last==
+213 shaped minecraft:copper_helmet*1: exact== extra=- wrong=- missing=- shifted== mirrored== exact/last== extra=- wrong=- missing=- shifted/last== mirrored/last==
+214 shaped minecraft:copper_hoe*1: exact== extra=- wrong=- missing=- shifted== mirrored== exact/last== extra=- wrong=- missing=- shifted/last== mirrored/last==
+215 shapeless minecraft:copper_ingot*9: exact== extra=- wrong=- missing=- last== reversed==
+216 shaped minecraft:copper_ingot*1: exact== wrong=- missing=- shifted== mirrored== exact/last== wrong=- missing=- shifted/last== mirrored/last==
+217 shapeless minecraft:copper_ingot*9: exact== extra=- wrong=- missing=- last== reversed==
+218 shaped minecraft:copper_lantern*1: exact== wrong=- missing=- shifted== mirrored== exact/last== wrong=- missing=- shifted/last== mirrored/last==
+219 shaped minecraft:copper_leggings*1: exact== extra=- wrong=- missing=- shifted== mirrored== exact/last== extra=- wrong=- missing=- shifted/last== mirrored/last==
+220 shapeless minecraft:copper_nugget*9: exact== extra=- wrong=- missing=- last== reversed==
+221 shaped minecraft:copper_pickaxe*1: exact== extra=- wrong=- missing=- shifted== mirrored== exact/last== extra=- wrong=- missing=- shifted/last== mirrored/last==
+222 shaped minecraft:copper_shovel*1: exact== extra=- wrong=- missing=- shifted== mirrored== exact/last== extra=- wrong=- missing=- shifted/last== mirrored/last==
+223 shaped minecraft:copper_spear*1: exact== extra=- wrong=- missing=- shifted== mirrored== exact/last== extra=- wrong=- missing=- shifted/last== mirrored/last==
+224 shaped minecraft:copper_sword*1: exact== extra=- wrong=- missing=- shifted== mirrored== exact/last== extra=- wrong=- missing=- shifted/last== mirrored/last==
+225 shaped minecraft:copper_torch*4: exact== extra=- wrong=- missing=- shifted== mirrored== exact/last== extra=- wrong=- missing=- shifted/last== mirrored/last==
+226 shaped minecraft:copper_trapdoor*1: exact== extra=- wrong=- missing=- shifted== mirrored== small== small_mirrored== exact/last== extra=- wrong=- missing=- shifted/last== mirrored/last== small/last== small_mirrored/last==
+227 shaped minecraft:crafter*1: exact== wrong=- missing=- shifted== mirrored== exact/last== wrong=- missing=- shifted/last== mirrored/last==
+228 shaped minecraft:crafting_table*1: exact== extra=- wrong=- missing=- shifted== mirrored== small== small_mirrored== exact/last== extra=- wrong=- missing=- shifted/last== mirrored/last== small/last== small_mirrored/last==
+229 shaped minecraft:creaking_heart*1: exact=- extra=- wrong=- missing=- shifted=- mirrored=- exact/last=- extra=- wrong=- missing=- shifted/last=- mirrored/last=-
+230 shapeless minecraft:creeper_banner_pattern*1: exact== extra=- wrong=- missing=- last== reversed==
+231 shapeless minecraft:crimson_button*1: exact== extra=- wrong=- missing=- last== reversed==
+232 shaped minecraft:crimson_door*3: exact== extra=- wrong=- missing=- shifted== mirrored== exact/last== extra=- wrong=- missing=- shifted/last== mirrored/last==
+233 shaped minecraft:crimson_fence*3: exact== extra=- wrong=- missing=- shifted== mirrored== exact/last== extra=- wrong=- missing=- shifted/last== mirrored/last==
+234 shaped minecraft:crimson_fence_gate*1: exact== extra=- wrong=- missing=- shifted== mirrored== exact/last== extra=- wrong=- missing=- shifted/last== mirrored/last==
+235 shaped minecraft:crimson_hanging_sign*6: exact== extra=- wrong=- missing=- shifted== mirrored== exact/last== extra=- wrong=- missing=- shifted/last== mirrored/last==
+236 shaped minecraft:crimson_hyphae*3: exact== extra=- wrong=- missing=- shifted== mirrored== small== small_mirrored== exact/last== extra=- wrong=- missing=- shifted/last== mirrored/last== small/last== small_mirrored/last==
+237 shapeless minecraft:crimson_planks*4: exact== extra=- wrong=- missing=- last== reversed==
+238 shaped minecraft:crimson_pressure_plate*1: exact== extra=- wrong=- missing=minecraft:crimson_button*1 shifted== mirrored== small== small_mirrored== exact/last== extra=- wrong=- missing=minecraft:crimson_button*1 shifted/last== mirrored/last== small/last== small_mirrored/last==
+239 shaped minecraft:crimson_shelf*6: exact== extra=- wrong=- missing=- shifted== mirrored== exact/last== extra=- wrong=- missing=- shifted/last== mirrored/last==
+240 shaped minecraft:crimson_sign*3: exact== extra=- wrong=- missing=minecraft:crimson_trapdoor*2 shifted== mirrored== exact/last== extra=- wrong=- missing=minecraft:crimson_trapdoor*2 shifted/last== mirrored/last==
+241 shaped minecraft:crimson_slab*6: exact== extra=- wrong=- missing=minecraft:crimson_pressure_plate*1 shifted== mirrored== exact/last== extra=- wrong=- missing=minecraft:crimson_pressure_plate*1 shifted/last== mirrored/last==
+242 shaped minecraft:crimson_stairs*4: exact== extra=- wrong=- missing=- shifted== mirrored== exact/last== extra=- wrong=- missing=- shifted/last== mirrored/last==
+243 shaped minecraft:crimson_trapdoor*2: exact== extra=- wrong=- missing=- shifted== mirrored== exact/last== extra=- wrong=- missing=- shifted/last== mirrored/last==
+244 shaped minecraft:crossbow*1: exact== extra=- wrong=- missing=- shifted== mirrored== exact/last== extra=- wrong=- missing=- shifted/last== mirrored/last==
+245 shaped minecraft:cut_copper*4: exact== extra=- wrong=- missing=- shifted== mirrored== small== small_mirrored== exact/last== extra=- wrong=- missing=- shifted/last== mirrored/last== small/last== small_mirrored/last==
+246 shaped minecraft:cut_copper_slab*6: exact== extra=- wrong=- missing=- shifted== mirrored== exact/last== extra=- wrong=- missing=- shifted/last== mirrored/last==
+247 shaped minecraft:cut_copper_stairs*4: exact== extra=- wrong=- missing=- shifted== mirrored== exact/last== extra=- wrong=- missing=- shifted/last== mirrored/last==
+248 shaped minecraft:cut_red_sandstone*4: exact== extra=- wrong=- missing=- shifted== mirrored== small== small_mirrored== exact/last== extra=- wrong=- missing=- shifted/last== mirrored/last== small/last== small_mirrored/last==
+249 shaped minecraft:cut_red_sandstone_slab*6: exact== extra=- wrong=- missing=- shifted== mirrored== exact/last== extra=- wrong=- missing=- shifted/last== mirrored/last==
+250 shaped minecraft:cut_sandstone*4: exact== extra=- wrong=- missing=- shifted== mirrored== small== small_mirrored== exact/last== extra=- wrong=- missing=- shifted/last== mirrored/last== small/last== small_mirrored/last==
+251 shaped minecraft:cut_sandstone_slab*6: exact== extra=- wrong=- missing=- shifted== mirrored== exact/last== extra=- wrong=- missing=- shifted/last== mirrored/last==
+252 shaped minecraft:cyan_banner*1: exact== extra=- wrong=- missing=- shifted== mirrored== exact/last== extra=- wrong=- missing=- shifted/last== mirrored/last==
+253 shaped minecraft:cyan_bed*1: exact== extra=- wrong=- missing=- shifted== mirrored== exact/last== extra=- wrong=- missing=- shifted/last== mirrored/last==
+254 transmute minecraft:cyan_bundle*1: exact== extra=- wrong=- missing=- last== reversed==
+255 shapeless minecraft:cyan_candle*1: exact== extra=- wrong=- missing=- last== reversed==
+256 shaped minecraft:cyan_carpet*3: exact== extra=- wrong=- missing=- shifted== mirrored== small== small_mirrored== exact/last== extra=- wrong=- missing=- shifted/last== mirrored/last== small/last== small_mirrored/last==
+257 shapeless minecraft:cyan_concrete_powder*8: exact== wrong=- missing=- last== reversed==
+258 shaped minecraft:cyan_concrete_slab*6: exact== extra=- wrong=- missing=- shifted== mirrored== exact/last== extra=- wrong=- missing=- shifted/last== mirrored/last==
+259 shaped minecraft:cyan_concrete_stairs*4: exact== extra=- wrong=- missing=- shifted== mirrored== exact/last== extra=- wrong=- missing=- shifted/last== mirrored/last==
+260 shaped minecraft:cyan_cushion*1: exact== extra=- wrong=- missing=- shifted== mirrored== exact/last== extra=- wrong=- missing=- shifted/last== mirrored/last==
+261 shapeless minecraft:cyan_dye*2: exact== extra=- wrong=- missing=- last== reversed==
+262 shapeless minecraft:cyan_dye*2: exact== extra=- wrong=- missing=- last== reversed==
+263 shaped minecraft:cyan_harness*1: exact== extra=- wrong=- missing=- shifted== mirrored== exact/last== extra=- wrong=- missing=- shifted/last== mirrored/last==
+264 transmute minecraft:cyan_shulker_box*1: exact== extra=- wrong=- missing=- last== reversed==
+265 shaped minecraft:cyan_stained_glass*8: exact== wrong=- missing=- shifted== mirrored== exact/last== wrong=- missing=- shifted/last== mirrored/last==
+266 shaped minecraft:cyan_stained_glass_pane*16: exact== extra=- wrong=- missing=- shifted== mirrored== exact/last== extra=- wrong=- missing=- shifted/last== mirrored/last==
+267 shaped minecraft:cyan_stained_glass_pane*8: exact== wrong=- missing=- shifted== mirrored== exact/last== wrong=- missing=- shifted/last== mirrored/last==
+268 shaped minecraft:cyan_terracotta*8: exact== wrong=- missing=- shifted== mirrored== exact/last== wrong=- missing=- shifted/last== mirrored/last==
+269 shaped minecraft:cyan_wool_slab*6: exact== extra=- wrong=- missing=minecraft:cyan_carpet*3 shifted== mirrored== exact/last== extra=- wrong=- missing=minecraft:cyan_carpet*3 shifted/last== mirrored/last==
+270 shaped minecraft:cyan_wool_stairs*4: exact== extra=- wrong=- missing=- shifted== mirrored== exact/last== extra=- wrong=- missing=- shifted/last== mirrored/last==
+271 shaped minecraft:dark_oak_boat*1: exact== extra=- wrong=- missing=- shifted== mirrored== exact/last== extra=- wrong=- missing=- shifted/last== mirrored/last==
+272 shapeless minecraft:dark_oak_button*1: exact== extra=- wrong=- missing=- last== reversed==
+273 shapeless minecraft:dark_oak_chest_boat*1: exact== extra=- wrong=- missing=- last== reversed==
+274 shaped minecraft:dark_oak_door*3: exact== extra=- wrong=- missing=- shifted== mirrored== exact/last== extra=- wrong=- missing=- shifted/last== mirrored/last==
+275 shaped minecraft:dark_oak_fence*3: exact== extra=- wrong=- missing=- shifted== mirrored== exact/last== extra=- wrong=- missing=- shifted/last== mirrored/last==
+276 shaped minecraft:dark_oak_fence_gate*1: exact== extra=- wrong=- missing=- shifted== mirrored== exact/last== extra=- wrong=- missing=- shifted/last== mirrored/last==
+277 shaped minecraft:dark_oak_hanging_sign*6: exact== extra=- wrong=- missing=- shifted== mirrored== exact/last== extra=- wrong=- missing=- shifted/last== mirrored/last==
+278 shapeless minecraft:dark_oak_planks*4: exact== extra=- wrong=- missing=- last== reversed==
+279 shaped minecraft:dark_oak_pressure_plate*1: exact== extra=- wrong=- missing=minecraft:dark_oak_button*1 shifted== mirrored== small== small_mirrored== exact/last== extra=- wrong=- missing=minecraft:dark_oak_button*1 shifted/last== mirrored/last== small/last== small_mirrored/last==
+280 shaped minecraft:dark_oak_shelf*6: exact== extra=- wrong=- missing=- shifted== mirrored== exact/last== extra=- wrong=- missing=- shifted/last== mirrored/last==
+281 shaped minecraft:dark_oak_sign*3: exact== extra=- wrong=- missing=minecraft:dark_oak_trapdoor*2 shifted== mirrored== exact/last== extra=- wrong=- missing=minecraft:dark_oak_trapdoor*2 shifted/last== mirrored/last==
+282 shaped minecraft:dark_oak_slab*6: exact== extra=- wrong=- missing=minecraft:dark_oak_pressure_plate*1 shifted== mirrored== exact/last== extra=- wrong=- missing=minecraft:dark_oak_pressure_plate*1 shifted/last== mirrored/last==
+283 shaped minecraft:dark_oak_stairs*4: exact== extra=- wrong=- missing=- shifted== mirrored== exact/last== extra=- wrong=- missing=- shifted/last== mirrored/last==
+284 shaped minecraft:dark_oak_trapdoor*2: exact== extra=- wrong=- missing=- shifted== mirrored== exact/last== extra=- wrong=- missing=- shifted/last== mirrored/last==
+285 shaped minecraft:dark_oak_wood*3: exact== extra=- wrong=- missing=- shifted== mirrored== small== small_mirrored== exact/last== extra=- wrong=- missing=- shifted/last== mirrored/last== small/last== small_mirrored/last==
+286 shaped minecraft:dark_prismarine*1: exact== wrong=- missing=- shifted== mirrored== exact/last== wrong=- missing=- shifted/last== mirrored/last==
+287 shaped minecraft:dark_prismarine_slab*6: exact== extra=- wrong=- missing=- shifted== mirrored== exact/last== extra=- wrong=- missing=- shifted/last== mirrored/last==
+288 shaped minecraft:dark_prismarine_stairs*4: exact== extra=- wrong=- missing=- shifted== mirrored== exact/last== extra=- wrong=- missing=- shifted/last== mirrored/last==
+289 shaped minecraft:daylight_detector*1: exact== wrong=- missing=- shifted== mirrored== exact/last== wrong=- missing=- shifted/last== mirrored/last==
+290 decorated_pot: exact==[1142, 1598, 1142, 1619] small=- wrong=- extra=- missing=-
+291 shaped minecraft:decorated_pot*1: exact==[1142, 1142, 1142, 1142] extra=- wrong=- missing=- shifted==[1142, 1142, 1142, 1142] mirrored==[1142, 1142, 1142, 1142] exact/last==[1142, 1142, 1142, 1142] extra=- wrong=- missing=- shifted/last==[1142, 1142, 1142, 1142] mirrored/last==[1142, 1142, 1142, 1142]
+292 shaped minecraft:deepslate_brick_slab*6: exact== extra=- wrong=- missing=- shifted== mirrored== exact/last== extra=- wrong=- missing=- shifted/last== mirrored/last==
+293 shaped minecraft:deepslate_brick_stairs*4: exact== extra=- wrong=- missing=- shifted== mirrored== exact/last== extra=- wrong=- missing=- shifted/last== mirrored/last==
+294 shaped minecraft:deepslate_brick_wall*6: exact== extra=- wrong=- missing=- shifted== mirrored== exact/last== extra=- wrong=- missing=- shifted/last== mirrored/last==
+295 shaped minecraft:deepslate_bricks*4: exact== extra=- wrong=- missing=- shifted== mirrored== small== small_mirrored== exact/last== extra=- wrong=- missing=- shifted/last== mirrored/last== small/last== small_mirrored/last==
+296 shaped minecraft:deepslate_tile_slab*6: exact== extra=- wrong=- missing=- shifted== mirrored== exact/last== extra=- wrong=- missing=- shifted/last== mirrored/last==
+297 shaped minecraft:deepslate_tile_stairs*4: exact== extra=- wrong=- missing=- shifted== mirrored== exact/last== extra=- wrong=- missing=- shifted/last== mirrored/last==
+298 shaped minecraft:deepslate_tile_wall*6: exact== extra=- wrong=- missing=- shifted== mirrored== exact/last== extra=- wrong=- missing=- shifted/last== mirrored/last==
+299 shaped minecraft:deepslate_tiles*4: exact== extra=- wrong=- missing=- shifted== mirrored== small== small_mirrored== exact/last== extra=- wrong=- missing=- shifted/last== mirrored/last== small/last== small_mirrored/last==
+300 shaped minecraft:detector_rail*6: exact== extra=- wrong=- missing=- shifted== mirrored== exact/last== extra=- wrong=- missing=- shifted/last== mirrored/last==
+301 shapeless minecraft:diamond*9: exact== extra=- wrong=- missing=- last== reversed==
+302 shaped minecraft:diamond_axe*1: exact== extra=- wrong=- missing=- shifted== mirrored== exact/last== extra=- wrong=- missing=- shifted/last== mirrored/last==
+303 shaped minecraft:diamond_block*1: exact== wrong=- missing=- shifted== mirrored== exact/last== wrong=- missing=- shifted/last== mirrored/last==
+304 shaped minecraft:diamond_boots*1: exact== extra=- wrong=- missing=- shifted== mirrored== exact/last== extra=- wrong=- missing=- shifted/last== mirrored/last==
+305 shaped minecraft:diamond_chestplate*1: exact== extra=- wrong=- missing=- shifted== mirrored== exact/last== extra=- wrong=- missing=- shifted/last== mirrored/last==
+306 shaped minecraft:diamond_helmet*1: exact== extra=- wrong=- missing=- shifted== mirrored== exact/last== extra=- wrong=- missing=- shifted/last== mirrored/last==
+307 shaped minecraft:diamond_hoe*1: exact== extra=- wrong=- missing=- shifted== mirrored== exact/last== extra=- wrong=- missing=- shifted/last== mirrored/last==
+308 shaped minecraft:diamond_leggings*1: exact== extra=- wrong=- missing=- shifted== mirrored== exact/last== extra=- wrong=- missing=- shifted/last== mirrored/last==
+309 shaped minecraft:diamond_pickaxe*1: exact== extra=- wrong=- missing=- shifted== mirrored== exact/last== extra=- wrong=- missing=- shifted/last== mirrored/last==
+310 shaped minecraft:diamond_shovel*1: exact== extra=- wrong=- missing=- shifted== mirrored== exact/last== extra=- wrong=- missing=- shifted/last== mirrored/last==
+311 shaped minecraft:diamond_spear*1: exact== extra=- wrong=- missing=- shifted== mirrored== exact/last== extra=- wrong=- missing=- shifted/last== mirrored/last==
+312 shaped minecraft:diamond_sword*1: exact== extra=- wrong=- missing=- shifted== mirrored== exact/last== extra=- wrong=- missing=- shifted/last== mirrored/last==
+313 shaped minecraft:diorite*2: exact== extra=- wrong=- missing=- shifted== mirrored== small== small_mirrored== exact/last== extra=- wrong=- missing=- shifted/last== mirrored/last== small/last== small_mirrored/last==
+314 shaped minecraft:diorite_slab*6: exact== extra=- wrong=- missing=- shifted== mirrored== exact/last== extra=- wrong=- missing=- shifted/last== mirrored/last==
+315 shaped minecraft:diorite_stairs*4: exact== extra=- wrong=- missing=- shifted== mirrored== exact/last== extra=- wrong=- missing=- shifted/last== mirrored/last==
+316 shaped minecraft:diorite_wall*6: exact== extra=- wrong=- missing=- shifted== mirrored== exact/last== extra=- wrong=- missing=- shifted/last== mirrored/last==
+317 shaped minecraft:dispenser*1: exact== wrong=- missing=- shifted== mirrored== exact/last== wrong=- missing=- shifted/last== mirrored/last==
+318 shaped minecraft:dried_ghast*1: exact== wrong=- missing=- shifted== mirrored== exact/last== wrong=- missing=- shifted/last== mirrored/last==
+319 shapeless minecraft:dried_kelp*9: exact== extra=- wrong=- missing=- last== reversed==
+320 shaped minecraft:dried_kelp_block*1: exact== wrong=- missing=- shifted== mirrored== exact/last== wrong=- missing=- shifted/last== mirrored/last==
+321 shaped minecraft:dripstone_block*1: exact== extra=- wrong=- missing=- shifted== mirrored== small== small_mirrored== exact/last== extra=- wrong=- missing=- shifted/last== mirrored/last== small/last== small_mirrored/last==
+322 shaped minecraft:dropper*1: exact== extra=- wrong=- missing=- shifted== mirrored== exact/last== extra=- wrong=- missing=- shifted/last== mirrored/last==
+323 shaped minecraft:dune_armor_trim_smithing_template*2: exact== wrong=- missing=- shifted== mirrored== exact/last== wrong=- missing=- shifted/last== mirrored/last==
+324 shapeless minecraft:black_bed*1: exact== extra=- wrong=- missing=- last== reversed==
+325 shapeless minecraft:black_carpet*1: exact== extra=- wrong=- missing=- last== reversed==
+326 shapeless minecraft:black_cushion*1: exact== extra=- wrong=- missing=- last== reversed==
+327 shapeless minecraft:black_harness*1: exact== extra=- wrong=- missing=- last== reversed==
+328 shapeless minecraft:black_wool*1: exact== extra=- wrong=- missing=- last== reversed==
+329 shapeless minecraft:black_wool_slab*1: exact== extra=- wrong=- missing=- last== reversed==
+330 shapeless minecraft:black_wool_stairs*1: exact== extra=- wrong=- missing=- last== reversed==
+331 shapeless minecraft:blue_bed*1: exact== extra=- wrong=- missing=- last== reversed==
+332 shapeless minecraft:blue_carpet*1: exact== extra=- wrong=- missing=- last== reversed==
+333 shapeless minecraft:blue_cushion*1: exact== extra=- wrong=- missing=- last== reversed==
+334 shapeless minecraft:blue_harness*1: exact== extra=- wrong=- missing=- last== reversed==
+335 shapeless minecraft:blue_wool*1: exact== extra=- wrong=- missing=- last== reversed==
+336 shapeless minecraft:blue_wool_slab*1: exact== extra=- wrong=- missing=- last== reversed==
+337 shapeless minecraft:blue_wool_stairs*1: exact== extra=- wrong=- missing=- last== reversed==
+338 shapeless minecraft:brown_bed*1: exact== extra=- wrong=- missing=- last== reversed==
+339 shapeless minecraft:brown_carpet*1: exact== extra=- wrong=- missing=- last== reversed==
+340 shapeless minecraft:brown_cushion*1: exact== extra=- wrong=- missing=- last== reversed==
+341 shapeless minecraft:brown_harness*1: exact== extra=- wrong=- missing=- last== reversed==
+342 shapeless minecraft:brown_wool*1: exact== extra=- wrong=- missing=- last== reversed==
+343 shapeless minecraft:brown_wool_slab*1: exact== extra=- wrong=- missing=- last== reversed==
+344 shapeless minecraft:brown_wool_stairs*1: exact== extra=- wrong=- missing=- last== reversed==
+345 shapeless minecraft:cyan_bed*1: exact== extra=- wrong=- missing=- last== reversed==
+346 shapeless minecraft:cyan_carpet*1: exact== extra=- wrong=- missing=- last== reversed==
+347 shapeless minecraft:cyan_cushion*1: exact== extra=- wrong=- missing=- last== reversed==
+348 shapeless minecraft:cyan_harness*1: exact== extra=- wrong=- missing=- last== reversed==
+349 shapeless minecraft:cyan_wool*1: exact== extra=- wrong=- missing=- last== reversed==
+350 shapeless minecraft:cyan_wool_slab*1: exact== extra=- wrong=- missing=- last== reversed==
+351 shapeless minecraft:cyan_wool_stairs*1: exact== extra=- wrong=- missing=- last== reversed==
+352 shapeless minecraft:gray_bed*1: exact== extra=- wrong=- missing=- last== reversed==
+353 shapeless minecraft:gray_carpet*1: exact== extra=- wrong=- missing=- last== reversed==
+354 shapeless minecraft:gray_cushion*1: exact== extra=- wrong=- missing=- last== reversed==
+355 shapeless minecraft:gray_harness*1: exact== extra=- wrong=- missing=- last== reversed==
+356 shapeless minecraft:gray_wool*1: exact== extra=- wrong=- missing=- last== reversed==
+357 shapeless minecraft:gray_wool_slab*1: exact== extra=- wrong=- missing=- last== reversed==
+358 shapeless minecraft:gray_wool_stairs*1: exact== extra=- wrong=- missing=- last== reversed==
+359 shapeless minecraft:green_bed*1: exact== extra=- wrong=- missing=- last== reversed==
+360 shapeless minecraft:green_carpet*1: exact== extra=- wrong=- missing=- last== reversed==
+361 shapeless minecraft:green_cushion*1: exact== extra=- wrong=- missing=- last== reversed==
+362 shapeless minecraft:green_harness*1: exact== extra=- wrong=- missing=- last== reversed==
+363 shapeless minecraft:green_wool*1: exact== extra=- wrong=- missing=- last== reversed==
+364 shapeless minecraft:green_wool_slab*1: exact== extra=- wrong=- missing=- last== reversed==
+365 shapeless minecraft:green_wool_stairs*1: exact== extra=- wrong=- missing=- last== reversed==
+366 shapeless minecraft:light_blue_bed*1: exact== extra=- wrong=- missing=- last== reversed==
+367 shapeless minecraft:light_blue_carpet*1: exact== extra=- wrong=- missing=- last== reversed==
+368 shapeless minecraft:light_blue_cushion*1: exact== extra=- wrong=- missing=- last== reversed==
+369 shapeless minecraft:light_blue_harness*1: exact== extra=- wrong=- missing=- last== reversed==
+370 shapeless minecraft:light_blue_wool*1: exact== extra=- wrong=- missing=- last== reversed==
+371 shapeless minecraft:light_blue_wool_slab*1: exact== extra=- wrong=- missing=- last== reversed==
+372 shapeless minecraft:light_blue_wool_stairs*1: exact== extra=- wrong=- missing=- last== reversed==
+373 shapeless minecraft:light_gray_bed*1: exact== extra=- wrong=- missing=- last== reversed==
+374 shapeless minecraft:light_gray_carpet*1: exact== extra=- wrong=- missing=- last== reversed==
+375 shapeless minecraft:light_gray_cushion*1: exact== extra=- wrong=- missing=- last== reversed==
+376 shapeless minecraft:light_gray_harness*1: exact== extra=- wrong=- missing=- last== reversed==
+377 shapeless minecraft:light_gray_wool*1: exact== extra=- wrong=- missing=- last== reversed==
+378 shapeless minecraft:light_gray_wool_slab*1: exact== extra=- wrong=- missing=- last== reversed==
+379 shapeless minecraft:light_gray_wool_stairs*1: exact== extra=- wrong=- missing=- last== reversed==
+380 shapeless minecraft:lime_bed*1: exact== extra=- wrong=- missing=- last== reversed==
+381 shapeless minecraft:lime_carpet*1: exact== extra=- wrong=- missing=- last== reversed==
+382 shapeless minecraft:lime_cushion*1: exact== extra=- wrong=- missing=- last== reversed==
+383 shapeless minecraft:lime_harness*1: exact== extra=- wrong=- missing=- last== reversed==
+384 shapeless minecraft:lime_wool*1: exact== extra=- wrong=- missing=- last== reversed==
+385 shapeless minecraft:lime_wool_slab*1: exact== extra=- wrong=- missing=- last== reversed==
+386 shapeless minecraft:lime_wool_stairs*1: exact== extra=- wrong=- missing=- last== reversed==
+387 shapeless minecraft:magenta_bed*1: exact== extra=- wrong=- missing=- last== reversed==
+388 shapeless minecraft:magenta_carpet*1: exact== extra=- wrong=- missing=- last== reversed==
+389 shapeless minecraft:magenta_cushion*1: exact== extra=- wrong=- missing=- last== reversed==
+390 shapeless minecraft:magenta_harness*1: exact== extra=- wrong=- missing=- last== reversed==
+391 shapeless minecraft:magenta_wool*1: exact== extra=- wrong=- missing=- last== reversed==
+392 shapeless minecraft:magenta_wool_slab*1: exact== extra=- wrong=- missing=- last== reversed==
+393 shapeless minecraft:magenta_wool_stairs*1: exact== extra=- wrong=- missing=- last== reversed==
+394 shapeless minecraft:orange_bed*1: exact== extra=- wrong=- missing=- last== reversed==
+395 shapeless minecraft:orange_carpet*1: exact== extra=- wrong=- missing=- last== reversed==
+396 shapeless minecraft:orange_cushion*1: exact== extra=- wrong=- missing=- last== reversed==
+397 shapeless minecraft:orange_harness*1: exact== extra=- wrong=- missing=- last== reversed==
+398 shapeless minecraft:orange_wool*1: exact== extra=- wrong=- missing=- last== reversed==
+399 shapeless minecraft:orange_wool_slab*1: exact== extra=- wrong=- missing=- last== reversed==
+400 shapeless minecraft:orange_wool_stairs*1: exact== extra=- wrong=- missing=- last== reversed==
+401 shapeless minecraft:pink_bed*1: exact== extra=- wrong=- missing=- last== reversed==
+402 shapeless minecraft:pink_carpet*1: exact== extra=- wrong=- missing=- last== reversed==
+403 shapeless minecraft:pink_cushion*1: exact== extra=- wrong=- missing=- last== reversed==
+404 shapeless minecraft:pink_harness*1: exact== extra=- wrong=- missing=- last== reversed==
+405 shapeless minecraft:pink_wool*1: exact== extra=- wrong=- missing=- last== reversed==
+406 shapeless minecraft:pink_wool_slab*1: exact== extra=- wrong=- missing=- last== reversed==
+407 shapeless minecraft:pink_wool_stairs*1: exact== extra=- wrong=- missing=- last== reversed==
+408 shapeless minecraft:purple_bed*1: exact== extra=- wrong=- missing=- last== reversed==
+409 shapeless minecraft:purple_carpet*1: exact== extra=- wrong=- missing=- last== reversed==
+410 shapeless minecraft:purple_cushion*1: exact== extra=- wrong=- missing=- last== reversed==
+411 shapeless minecraft:purple_harness*1: exact== extra=- wrong=- missing=- last== reversed==
+412 shapeless minecraft:purple_wool*1: exact== extra=- wrong=- missing=- last== reversed==
+413 shapeless minecraft:purple_wool_slab*1: exact== extra=- wrong=- missing=- last== reversed==
+414 shapeless minecraft:purple_wool_stairs*1: exact== extra=- wrong=- missing=- last== reversed==
+415 shapeless minecraft:red_bed*1: exact== extra=- wrong=- missing=- last== reversed==
+416 shapeless minecraft:red_carpet*1: exact== extra=- wrong=- missing=- last== reversed==
+417 shapeless minecraft:red_cushion*1: exact== extra=- wrong=- missing=- last== reversed==
+418 shapeless minecraft:red_harness*1: exact== extra=- wrong=- missing=- last== reversed==
+419 shapeless minecraft:red_wool*1: exact== extra=- wrong=- missing=- last== reversed==
+420 shapeless minecraft:red_wool_slab*1: exact== extra=- wrong=- missing=- last== reversed==
+421 shapeless minecraft:red_wool_stairs*1: exact== extra=- wrong=- missing=- last== reversed==
+422 shapeless minecraft:white_bed*1: exact== extra=- wrong=- missing=- last== reversed==
+423 shapeless minecraft:white_carpet*1: exact== extra=- wrong=- missing=- last== reversed==
+424 shapeless minecraft:white_cushion*1: exact== extra=- wrong=- missing=- last== reversed==
+425 shapeless minecraft:white_harness*1: exact== extra=- wrong=- missing=- last== reversed==
+426 shapeless minecraft:white_wool*1: exact== extra=- wrong=- missing=- last== reversed==
+427 shapeless minecraft:white_wool_slab*1: exact== extra=- wrong=- missing=- last== reversed==
+428 shapeless minecraft:white_wool_stairs*1: exact== extra=- wrong=- missing=- last== reversed==
+429 shapeless minecraft:yellow_bed*1: exact== extra=- wrong=- missing=- last== reversed==
+430 shapeless minecraft:yellow_carpet*1: exact== extra=- wrong=- missing=- last== reversed==
+431 shapeless minecraft:yellow_cushion*1: exact== extra=- wrong=- missing=- last== reversed==
+432 shapeless minecraft:yellow_harness*1: exact== extra=- wrong=- missing=- last== reversed==
+433 shapeless minecraft:yellow_wool*1: exact== extra=- wrong=- missing=- last== reversed==
+434 shapeless minecraft:yellow_wool_slab*1: exact== extra=- wrong=- missing=- last== reversed==
+435 shapeless minecraft:yellow_wool_stairs*1: exact== extra=- wrong=- missing=- last== reversed==
+436 shapeless minecraft:emerald*9: exact== extra=- wrong=- missing=- last== reversed==
+437 shaped minecraft:emerald_block*1: exact== wrong=- missing=- shifted== mirrored== exact/last== wrong=- missing=- shifted/last== mirrored/last==
+438 shaped minecraft:enchanting_table*1: exact== extra=- wrong=- missing=- shifted== mirrored== exact/last== extra=- wrong=- missing=- shifted/last== mirrored/last==
+439 shaped minecraft:end_crystal*1: exact== wrong=- missing=- shifted== mirrored== exact/last== wrong=- missing=- shifted/last== mirrored/last==
+440 shaped minecraft:end_rod*4: exact== extra=- wrong=- missing=minecraft:blaze_powder*2 shifted== mirrored== small== small_mirrored== exact/last== extra=- wrong=- missing=minecraft:blaze_powder*2 shifted/last== mirrored/last== small/last== small_mirrored/last==
+441 shaped minecraft:end_stone_brick_slab*6: exact== extra=- wrong=- missing=- shifted== mirrored== exact/last== extra=- wrong=- missing=- shifted/last== mirrored/last==
+442 shaped minecraft:end_stone_brick_stairs*4: exact== extra=- wrong=- missing=- shifted== mirrored== exact/last== extra=- wrong=- missing=- shifted/last== mirrored/last==
+443 shaped minecraft:end_stone_brick_wall*6: exact== extra=- wrong=- missing=- shifted== mirrored== exact/last== extra=- wrong=- missing=- shifted/last== mirrored/last==
+444 shaped minecraft:end_stone_bricks*4: exact== extra=- wrong=- missing=- shifted== mirrored== small== small_mirrored== exact/last== extra=- wrong=- missing=- shifted/last== mirrored/last== small/last== small_mirrored/last==
+445 shaped minecraft:ender_chest*1: exact== wrong=- missing=- shifted== mirrored== exact/last== wrong=- missing=- shifted/last== mirrored/last==
+446 shapeless minecraft:ender_eye*1: exact== extra=- wrong=- missing=- last== reversed==
+447 shaped minecraft:exposed_chiseled_copper*1: exact== extra=- wrong=- missing=- shifted== mirrored== small== small_mirrored== exact/last== extra=- wrong=- missing=- shifted/last== mirrored/last== small/last== small_mirrored/last==
+448 shaped minecraft:exposed_copper_bulb*4: exact== extra=- wrong=- missing=- shifted== mirrored== exact/last== extra=- wrong=- missing=- shifted/last== mirrored/last==
+449 shaped minecraft:exposed_copper_grate*4: exact== extra=- wrong=- missing=- shifted== mirrored== exact/last== extra=- wrong=- missing=- shifted/last== mirrored/last==
+450 shaped minecraft:exposed_cut_copper*4: exact== extra=- wrong=- missing=- shifted== mirrored== small== small_mirrored== exact/last== extra=- wrong=- missing=- shifted/last== mirrored/last== small/last== small_mirrored/last==
+451 shaped minecraft:exposed_cut_copper_slab*6: exact== extra=- wrong=- missing=- shifted== mirrored== exact/last== extra=- wrong=- missing=- shifted/last== mirrored/last==
+452 shaped minecraft:exposed_cut_copper_stairs*4: exact== extra=- wrong=- missing=- shifted== mirrored== exact/last== extra=- wrong=- missing=- shifted/last== mirrored/last==
+453 shaped minecraft:eye_armor_trim_smithing_template*2: exact== wrong=- missing=- shifted== mirrored== exact/last== wrong=- missing=- shifted/last== mirrored/last==
+454 shapeless minecraft:fermented_spider_eye*1: exact== extra=- wrong=- missing=- last== reversed==
+455 shapeless minecraft:field_masoned_banner_pattern*1: exact== extra=- wrong=- missing=- last== reversed==
+456 shapeless minecraft:fire_charge*3: exact== extra=- wrong=- missing=- last== reversed==
+457 shapeless minecraft:firework_rocket*3: exact== extra=- wrong=- missing=- last== reversed==
+458 shaped minecraft:fishing_rod*1: exact== extra=- wrong=- missing=- shifted== mirrored== exact/last== extra=- wrong=- missing=- shifted/last== mirrored/last==
+459 shaped minecraft:fletching_table*1: exact== extra=- wrong=- missing=- shifted== mirrored== exact/last== extra=- wrong=- missing=- shifted/last== mirrored/last==
+460 shapeless minecraft:flint_and_steel*1: exact== extra=- wrong=- missing=minecraft:iron_nugget*9 last== reversed==
+461 shaped minecraft:flow_armor_trim_smithing_template*2: exact== wrong=- missing=- shifted== mirrored== exact/last== wrong=- missing=- shifted/last== mirrored/last==
+462 shapeless minecraft:flower_banner_pattern*1: exact== extra=- wrong=- missing=- last== reversed==
+463 shaped minecraft:flower_pot*1: exact== extra=- wrong=- missing=- shifted== mirrored== exact/last== extra=- wrong=- missing=- shifted/last== mirrored/last==
+464 shaped minecraft:furnace*1: exact== extra=- wrong=- missing=- shifted== mirrored== exact/last== extra=- wrong=- missing=- shifted/last== mirrored/last==
+465 shapeless minecraft:furnace_minecart*1: exact== extra=- wrong=- missing=- last== reversed==
+466 shaped minecraft:glass_bottle*3: exact== extra=- wrong=- missing=- shifted== mirrored== exact/last== extra=- wrong=- missing=- shifted/last== mirrored/last==
+467 shaped minecraft:glass_pane*16: exact== extra=- wrong=- missing=- shifted== mirrored== exact/last== extra=- wrong=- missing=- shifted/last== mirrored/last==
+468 shaped minecraft:glistering_melon_slice*1: exact== wrong=- missing=- shifted== mirrored== exact/last== wrong=- missing=- shifted/last== mirrored/last==
+469 shapeless minecraft:glow_item_frame*1: exact== extra=- wrong=- missing=- last== reversed==
+470 shaped minecraft:glowstone*1: exact== extra=- wrong=- missing=- shifted== mirrored== small== small_mirrored== exact/last== extra=- wrong=- missing=- shifted/last== mirrored/last== small/last== small_mirrored/last==
+471 shaped minecraft:gold_block*1: exact== wrong=- missing=- shifted== mirrored== exact/last== wrong=- missing=- shifted/last== mirrored/last==
+472 shapeless minecraft:gold_ingot*9: exact== extra=- wrong=- missing=- last== reversed==
+473 shaped minecraft:gold_ingot*1: exact== wrong=- missing=- shifted== mirrored== exact/last== wrong=- missing=- shifted/last== mirrored/last==
+474 shapeless minecraft:gold_nugget*9: exact== extra=- wrong=- missing=- last== reversed==
+475 shaped minecraft:golden_apple*1: exact== wrong=- missing=- shifted== mirrored== exact/last== wrong=- missing=- shifted/last== mirrored/last==
+476 shaped minecraft:golden_axe*1: exact== extra=- wrong=- missing=- shifted== mirrored== exact/last== extra=- wrong=- missing=- shifted/last== mirrored/last==
+477 shaped minecraft:golden_boots*1: exact== extra=- wrong=- missing=- shifted== mirrored== exact/last== extra=- wrong=- missing=- shifted/last== mirrored/last==
+478 shaped minecraft:golden_carrot*1: exact== wrong=- missing=- shifted== mirrored== exact/last== wrong=- missing=- shifted/last== mirrored/last==
+479 shaped minecraft:golden_chestplate*1: exact== extra=- wrong=- missing=- shifted== mirrored== exact/last== extra=- wrong=- missing=- shifted/last== mirrored/last==
+480 shaped minecraft:golden_dandelion*1: exact== wrong=- missing=- shifted== mirrored== exact/last== wrong=- missing=- shifted/last== mirrored/last==
+481 shaped minecraft:golden_helmet*1: exact== extra=- wrong=- missing=- shifted== mirrored== exact/last== extra=- wrong=- missing=- shifted/last== mirrored/last==
+482 shaped minecraft:golden_hoe*1: exact== extra=- wrong=- missing=- shifted== mirrored== exact/last== extra=- wrong=- missing=- shifted/last== mirrored/last==
+483 shaped minecraft:golden_leggings*1: exact== extra=- wrong=- missing=- shifted== mirrored== exact/last== extra=- wrong=- missing=- shifted/last== mirrored/last==
+484 shaped minecraft:golden_pickaxe*1: exact== extra=- wrong=- missing=- shifted== mirrored== exact/last== extra=- wrong=- missing=- shifted/last== mirrored/last==
+485 shaped minecraft:golden_shovel*1: exact== extra=- wrong=- missing=- shifted== mirrored== exact/last== extra=- wrong=- missing=- shifted/last== mirrored/last==
+486 shaped minecraft:golden_spear*1: exact== extra=- wrong=- missing=- shifted== mirrored== exact/last== extra=- wrong=- missing=- shifted/last== mirrored/last==
+487 shaped minecraft:golden_sword*1: exact== extra=- wrong=- missing=- shifted== mirrored== exact/last== extra=- wrong=- missing=- shifted/last== mirrored/last==
+488 shapeless minecraft:granite*1: exact== extra=- wrong=- missing=- last== reversed==
+489 shaped minecraft:granite_slab*6: exact== extra=- wrong=- missing=- shifted== mirrored== exact/last== extra=- wrong=- missing=- shifted/last== mirrored/last==
+490 shaped minecraft:granite_stairs*4: exact== extra=- wrong=- missing=- shifted== mirrored== exact/last== extra=- wrong=- missing=- shifted/last== mirrored/last==
+491 shaped minecraft:granite_wall*6: exact== extra=- wrong=- missing=- shifted== mirrored== exact/last== extra=- wrong=- missing=- shifted/last== mirrored/last==
+492 shaped minecraft:gray_banner*1: exact== extra=- wrong=- missing=- shifted== mirrored== exact/last== extra=- wrong=- missing=- shifted/last== mirrored/last==
+493 shaped minecraft:gray_bed*1: exact== extra=- wrong=- missing=- shifted== mirrored== exact/last== extra=- wrong=- missing=- shifted/last== mirrored/last==
+494 transmute minecraft:gray_bundle*1: exact== extra=- wrong=- missing=- last== reversed==
+495 shapeless minecraft:gray_candle*1: exact== extra=- wrong=- missing=- last== reversed==
+496 shaped minecraft:gray_carpet*3: exact== extra=- wrong=- missing=- shifted== mirrored== small== small_mirrored== exact/last== extra=- wrong=- missing=- shifted/last== mirrored/last== small/last== small_mirrored/last==
+497 shapeless minecraft:gray_concrete_powder*8: exact== wrong=- missing=- last== reversed==
+498 shaped minecraft:gray_concrete_slab*6: exact== extra=- wrong=- missing=- shifted== mirrored== exact/last== extra=- wrong=- missing=- shifted/last== mirrored/last==
+499 shaped minecraft:gray_concrete_stairs*4: exact== extra=- wrong=- missing=- shifted== mirrored== exact/last== extra=- wrong=- missing=- shifted/last== mirrored/last==
+500 shaped minecraft:gray_cushion*1: exact== extra=- wrong=- missing=- shifted== mirrored== exact/last== extra=- wrong=- missing=- shifted/last== mirrored/last==
+501 shapeless minecraft:gray_dye*2: exact== extra=- wrong=- missing=- last== reversed==
+502 shapeless minecraft:gray_dye*1: exact== extra=- wrong=- missing=- last== reversed==
+503 shaped minecraft:gray_harness*1: exact== extra=- wrong=- missing=- shifted== mirrored== exact/last== extra=- wrong=- missing=- shifted/last== mirrored/last==
+504 transmute minecraft:gray_shulker_box*1: exact== extra=- wrong=- missing=- last== reversed==
+505 shaped minecraft:gray_stained_glass*8: exact== wrong=- missing=- shifted== mirrored== exact/last== wrong=- missing=- shifted/last== mirrored/last==
+506 shaped minecraft:gray_stained_glass_pane*16: exact== extra=- wrong=- missing=- shifted== mirrored== exact/last== extra=- wrong=- missing=- shifted/last== mirrored/last==
+507 shaped minecraft:gray_stained_glass_pane*8: exact== wrong=- missing=- shifted== mirrored== exact/last== wrong=- missing=- shifted/last== mirrored/last==
+508 shaped minecraft:gray_terracotta*8: exact== wrong=- missing=- shifted== mirrored== exact/last== wrong=- missing=- shifted/last== mirrored/last==
+509 shaped minecraft:gray_wool_slab*6: exact== extra=- wrong=- missing=minecraft:gray_carpet*3 shifted== mirrored== exact/last== extra=- wrong=- missing=minecraft:gray_carpet*3 shifted/last== mirrored/last==
+510 shaped minecraft:gray_wool_stairs*4: exact== extra=- wrong=- missing=- shifted== mirrored== exact/last== extra=- wrong=- missing=- shifted/last== mirrored/last==
+511 shaped minecraft:green_banner*1: exact== extra=- wrong=- missing=- shifted== mirrored== exact/last== extra=- wrong=- missing=- shifted/last== mirrored/last==
+512 shaped minecraft:green_bed*1: exact== extra=- wrong=- missing=- shifted== mirrored== exact/last== extra=- wrong=- missing=- shifted/last== mirrored/last==
+513 transmute minecraft:green_bundle*1: exact== extra=- wrong=- missing=- last== reversed==
+514 shapeless minecraft:green_candle*1: exact== extra=- wrong=- missing=- last== reversed==
+515 shaped minecraft:green_carpet*3: exact== extra=- wrong=- missing=- shifted== mirrored== small== small_mirrored== exact/last== extra=- wrong=- missing=- shifted/last== mirrored/last== small/last== small_mirrored/last==
+516 shapeless minecraft:green_concrete_powder*8: exact== wrong=- missing=- last== reversed==
+517 shaped minecraft:green_concrete_slab*6: exact== extra=- wrong=- missing=- shifted== mirrored== exact/last== extra=- wrong=- missing=- shifted/last== mirrored/last==
+518 shaped minecraft:green_concrete_stairs*4: exact== extra=- wrong=- missing=- shifted== mirrored== exact/last== extra=- wrong=- missing=- shifted/last== mirrored/last==
+519 shaped minecraft:green_cushion*1: exact== extra=- wrong=- missing=- shifted== mirrored== exact/last== extra=- wrong=- missing=- shifted/last== mirrored/last==
+520 shaped minecraft:green_harness*1: exact== extra=- wrong=- missing=- shifted== mirrored== exact/last== extra=- wrong=- missing=- shifted/last== mirrored/last==
+521 transmute minecraft:green_shulker_box*1: exact== extra=- wrong=- missing=- last== reversed==
+522 shaped minecraft:green_stained_glass*8: exact== wrong=- missing=- shifted== mirrored== exact/last== wrong=- missing=- shifted/last== mirrored/last==
+523 shaped minecraft:green_stained_glass_pane*16: exact== extra=- wrong=- missing=- shifted== mirrored== exact/last== extra=- wrong=- missing=- shifted/last== mirrored/last==
+524 shaped minecraft:green_stained_glass_pane*8: exact== wrong=- missing=- shifted== mirrored== exact/last== wrong=- missing=- shifted/last== mirrored/last==
+525 shaped minecraft:green_terracotta*8: exact== wrong=- missing=- shifted== mirrored== exact/last== wrong=- missing=- shifted/last== mirrored/last==
+526 shaped minecraft:green_wool_slab*6: exact== extra=- wrong=- missing=minecraft:green_carpet*3 shifted== mirrored== exact/last== extra=- wrong=- missing=minecraft:green_carpet*3 shifted/last== mirrored/last==
+527 shaped minecraft:green_wool_stairs*4: exact== extra=- wrong=- missing=- shifted== mirrored== exact/last== extra=- wrong=- missing=- shifted/last== mirrored/last==
+528 shaped minecraft:grindstone*1: exact== extra=- wrong=- missing=- shifted== mirrored== exact/last== extra=- wrong=- missing=- shifted/last== mirrored/last==
+529 shapeless minecraft:hay_block*1: exact== wrong=- missing=- last== reversed==
+530 shaped minecraft:heavy_weighted_pressure_plate*1: exact== extra=- wrong=- missing=minecraft:iron_nugget*9 shifted== mirrored== small== small_mirrored== exact/last== extra=- wrong=- missing=minecraft:iron_nugget*9 shifted/last== mirrored/last== small/last== small_mirrored/last==
+531 shaped minecraft:honey_block*1: exact== extra=- wrong=- missing=- shifted== mirrored== small== small_mirrored== exact/last== extra=- wrong=- missing=- shifted/last== mirrored/last== small/last== small_mirrored/last==
+532 shapeless minecraft:honey_bottle*4: exact== extra=- wrong=- missing=- last== reversed==
+533 shaped minecraft:honeycomb_block*1: exact== extra=- wrong=- missing=- shifted== mirrored== small== small_mirrored== exact/last== extra=- wrong=- missing=- shifted/last== mirrored/last== small/last== small_mirrored/last==
+534 shaped minecraft:hopper*1: exact== extra=- wrong=- missing=- shifted== mirrored== exact/last== extra=- wrong=- missing=- shifted/last== mirrored/last==
+535 shapeless minecraft:hopper_minecart*1: exact== extra=- wrong=- missing=- last== reversed==
+536 shaped minecraft:host_armor_trim_smithing_template*2: exact== wrong=- missing=- shifted== mirrored== exact/last== wrong=- missing=- shifted/last== mirrored/last==
+537 shaped minecraft:iron_axe*1: exact== extra=- wrong=- missing=- shifted== mirrored== exact/last== extra=- wrong=- missing=- shifted/last== mirrored/last==
+538 shaped minecraft:iron_bars*16: exact== extra=- wrong=- missing=- shifted== mirrored== exact/last== extra=- wrong=- missing=- shifted/last== mirrored/last==
+539 shaped minecraft:iron_block*1: exact== wrong=- missing=- shifted== mirrored== exact/last== wrong=- missing=- shifted/last== mirrored/last==
+540 shaped minecraft:iron_boots*1: exact== extra=- wrong=- missing=- shifted== mirrored== exact/last== extra=- wrong=- missing=- shifted/last== mirrored/last==
+541 shaped minecraft:iron_chain*1: exact== extra=- wrong=- missing=- shifted== mirrored== exact/last== extra=- wrong=- missing=- shifted/last== mirrored/last==
+542 shaped minecraft:iron_chestplate*1: exact== extra=- wrong=- missing=- shifted== mirrored== exact/last== extra=- wrong=- missing=- shifted/last== mirrored/last==
+543 shaped minecraft:iron_door*3: exact== extra=- wrong=- missing=- shifted== mirrored== exact/last== extra=- wrong=- missing=- shifted/last== mirrored/last==
+544 shaped minecraft:iron_helmet*1: exact== extra=- wrong=- missing=- shifted== mirrored== exact/last== extra=- wrong=- missing=- shifted/last== mirrored/last==
+545 shaped minecraft:iron_hoe*1: exact== extra=- wrong=- missing=- shifted== mirrored== exact/last== extra=- wrong=- missing=- shifted/last== mirrored/last==
+546 shapeless minecraft:iron_ingot*9: exact== extra=- wrong=- missing=- last== reversed==
+547 shaped minecraft:iron_ingot*1: exact== wrong=- missing=- shifted== mirrored== exact/last== wrong=- missing=- shifted/last== mirrored/last==
+548 shaped minecraft:iron_leggings*1: exact== extra=- wrong=- missing=- shifted== mirrored== exact/last== extra=- wrong=- missing=- shifted/last== mirrored/last==
+549 shapeless minecraft:iron_nugget*9: exact== extra=- wrong=- missing=- last== reversed==
+550 shaped minecraft:iron_pickaxe*1: exact== extra=- wrong=- missing=- shifted== mirrored== exact/last== extra=- wrong=- missing=- shifted/last== mirrored/last==
+551 shaped minecraft:iron_shovel*1: exact== extra=- wrong=- missing=- shifted== mirrored== exact/last== extra=- wrong=- missing=- shifted/last== mirrored/last==
+552 shaped minecraft:iron_spear*1: exact== extra=- wrong=- missing=- shifted== mirrored== exact/last== extra=- wrong=- missing=- shifted/last== mirrored/last==
+553 shaped minecraft:iron_sword*1: exact== extra=- wrong=- missing=- shifted== mirrored== exact/last== extra=- wrong=- missing=- shifted/last== mirrored/last==
+554 shaped minecraft:iron_trapdoor*1: exact== extra=- wrong=- missing=- shifted== mirrored== small== small_mirrored== exact/last== extra=- wrong=- missing=- shifted/last== mirrored/last== small/last== small_mirrored/last==
+555 shaped minecraft:item_frame*1: exact== wrong=- missing=- shifted== mirrored== exact/last== wrong=- missing=- shifted/last== mirrored/last==
+556 shaped minecraft:jack_o_lantern*1: exact== extra=- wrong=- missing=- shifted== mirrored== small== small_mirrored== exact/last== extra=- wrong=- missing=- shifted/last== mirrored/last== small/last== small_mirrored/last==
+557 shaped minecraft:jukebox*1: exact== wrong=- missing=- shifted== mirrored== exact/last== wrong=- missing=- shifted/last== mirrored/last==
+558 shaped minecraft:jungle_boat*1: exact== extra=- wrong=- missing=- shifted== mirrored== exact/last== extra=- wrong=- missing=- shifted/last== mirrored/last==
+559 shapeless minecraft:jungle_button*1: exact== extra=- wrong=- missing=- last== reversed==
+560 shapeless minecraft:jungle_chest_boat*1: exact== extra=- wrong=- missing=- last== reversed==
+561 shaped minecraft:jungle_door*3: exact== extra=- wrong=- missing=- shifted== mirrored== exact/last== extra=- wrong=- missing=- shifted/last== mirrored/last==
+562 shaped minecraft:jungle_fence*3: exact== extra=- wrong=- missing=- shifted== mirrored== exact/last== extra=- wrong=- missing=- shifted/last== mirrored/last==
+563 shaped minecraft:jungle_fence_gate*1: exact== extra=- wrong=- missing=- shifted== mirrored== exact/last== extra=- wrong=- missing=- shifted/last== mirrored/last==
+564 shaped minecraft:jungle_hanging_sign*6: exact== extra=- wrong=- missing=- shifted== mirrored== exact/last== extra=- wrong=- missing=- shifted/last== mirrored/last==
+565 shapeless minecraft:jungle_planks*4: exact== extra=- wrong=- missing=- last== reversed==
+566 shaped minecraft:jungle_pressure_plate*1: exact== extra=- wrong=- missing=minecraft:jungle_button*1 shifted== mirrored== small== small_mirrored== exact/last== extra=- wrong=- missing=minecraft:jungle_button*1 shifted/last== mirrored/last== small/last== small_mirrored/last==
+567 shaped minecraft:jungle_shelf*6: exact== extra=- wrong=- missing=- shifted== mirrored== exact/last== extra=- wrong=- missing=- shifted/last== mirrored/last==
+568 shaped minecraft:jungle_sign*3: exact== extra=- wrong=- missing=minecraft:jungle_trapdoor*2 shifted== mirrored== exact/last== extra=- wrong=- missing=minecraft:jungle_trapdoor*2 shifted/last== mirrored/last==
+569 shaped minecraft:jungle_slab*6: exact== extra=- wrong=- missing=minecraft:jungle_pressure_plate*1 shifted== mirrored== exact/last== extra=- wrong=- missing=minecraft:jungle_pressure_plate*1 shifted/last== mirrored/last==
+570 shaped minecraft:jungle_stairs*4: exact== extra=- wrong=- missing=- shifted== mirrored== exact/last== extra=- wrong=- missing=- shifted/last== mirrored/last==
+571 shaped minecraft:jungle_trapdoor*2: exact== extra=- wrong=- missing=- shifted== mirrored== exact/last== extra=- wrong=- missing=- shifted/last== mirrored/last==
+572 shaped minecraft:jungle_wood*3: exact== extra=- wrong=- missing=- shifted== mirrored== small== small_mirrored== exact/last== extra=- wrong=- missing=- shifted/last== mirrored/last== small/last== small_mirrored/last==
+573 shaped minecraft:ladder*3: exact== extra=- wrong=- missing=- shifted== mirrored== exact/last== extra=- wrong=- missing=- shifted/last== mirrored/last==
+574 shaped minecraft:lantern*1: exact== wrong=- missing=- shifted== mirrored== exact/last== wrong=- missing=- shifted/last== mirrored/last==
+575 shaped minecraft:lapis_block*1: exact== wrong=- missing=- shifted== mirrored== exact/last== wrong=- missing=- shifted/last== mirrored/last==
+576 shapeless minecraft:lapis_lazuli*9: exact== extra=- wrong=- missing=- last== reversed==
+577 shaped minecraft:lead*2: exact== extra=- wrong=- missing=minecraft:white_wool*1 shifted== mirrored== exact/last== extra=- wrong=- missing=minecraft:white_wool*1 shifted/last== mirrored/last==
+578 shaped minecraft:leather*1: exact== extra=- wrong=- missing=- shifted== mirrored== small== small_mirrored== exact/last== extra=- wrong=- missing=- shifted/last== mirrored/last== small/last== small_mirrored/last==
+579 shaped minecraft:leather_boots*1: exact== extra=- wrong=- missing=- shifted== mirrored== exact/last== extra=- wrong=- missing=- shifted/last== mirrored/last==
+580 shaped minecraft:leather_chestplate*1: exact== extra=- wrong=- missing=- shifted== mirrored== exact/last== extra=- wrong=- missing=- shifted/last== mirrored/last==
+581 shaped minecraft:leather_helmet*1: exact== extra=- wrong=- missing=- shifted== mirrored== exact/last== extra=- wrong=- missing=- shifted/last== mirrored/last==
+582 shaped minecraft:leather_horse_armor*1: exact== extra=- wrong=- missing=- shifted== mirrored== exact/last== extra=- wrong=- missing=- shifted/last== mirrored/last==
+583 shaped minecraft:leather_leggings*1: exact== extra=- wrong=- missing=- shifted== mirrored== exact/last== extra=- wrong=- missing=- shifted/last== mirrored/last==
+584 shaped minecraft:lectern*1: exact== extra=- wrong=- missing=- shifted== mirrored== exact/last== extra=- wrong=- missing=- shifted/last== mirrored/last==
+585 shaped minecraft:lever*1: exact== extra=- wrong=- missing=- shifted== mirrored== small== small_mirrored== exact/last== extra=- wrong=- missing=- shifted/last== mirrored/last== small/last== small_mirrored/last==
+586 shaped minecraft:light_blue_banner*1: exact== extra=- wrong=- missing=- shifted== mirrored== exact/last== extra=- wrong=- missing=- shifted/last== mirrored/last==
+587 shaped minecraft:light_blue_bed*1: exact== extra=- wrong=- missing=- shifted== mirrored== exact/last== extra=- wrong=- missing=- shifted/last== mirrored/last==
+588 transmute minecraft:light_blue_bundle*1: exact== extra=- wrong=- missing=- last== reversed==
+589 shapeless minecraft:light_blue_candle*1: exact== extra=- wrong=- missing=- last== reversed==
+590 shaped minecraft:light_blue_carpet*3: exact== extra=- wrong=- missing=- shifted== mirrored== small== small_mirrored== exact/last== extra=- wrong=- missing=- shifted/last== mirrored/last== small/last== small_mirrored/last==
+591 shapeless minecraft:light_blue_concrete_powder*8: exact== wrong=- missing=- last== reversed==
+592 shaped minecraft:light_blue_concrete_slab*6: exact== extra=- wrong=- missing=- shifted== mirrored== exact/last== extra=- wrong=- missing=- shifted/last== mirrored/last==
+593 shaped minecraft:light_blue_concrete_stairs*4: exact== extra=- wrong=- missing=- shifted== mirrored== exact/last== extra=- wrong=- missing=- shifted/last== mirrored/last==
+594 shaped minecraft:light_blue_cushion*1: exact== extra=- wrong=- missing=- shifted== mirrored== exact/last== extra=- wrong=- missing=- shifted/last== mirrored/last==
+595 shapeless minecraft:light_blue_dye*1: exact== extra=- wrong=- missing=- last== reversed==
+596 shapeless minecraft:light_blue_dye*2: exact== extra=- wrong=- missing=- last== reversed==
+597 shaped minecraft:light_blue_harness*1: exact== extra=- wrong=- missing=- shifted== mirrored== exact/last== extra=- wrong=- missing=- shifted/last== mirrored/last==
+598 transmute minecraft:light_blue_shulker_box*1: exact== extra=- wrong=- missing=- last== reversed==
+599 shaped minecraft:light_blue_stained_glass*8: exact== wrong=- missing=- shifted== mirrored== exact/last== wrong=- missing=- shifted/last== mirrored/last==
+600 shaped minecraft:light_blue_stained_glass_pane*16: exact== extra=- wrong=- missing=- shifted== mirrored== exact/last== extra=- wrong=- missing=- shifted/last== mirrored/last==
+601 shaped minecraft:light_blue_stained_glass_pane*8: exact== wrong=- missing=- shifted== mirrored== exact/last== wrong=- missing=- shifted/last== mirrored/last==
+602 shaped minecraft:light_blue_terracotta*8: exact== wrong=- missing=- shifted== mirrored== exact/last== wrong=- missing=- shifted/last== mirrored/last==
+603 shaped minecraft:light_blue_wool_slab*6: exact== extra=- wrong=- missing=minecraft:light_blue_carpet*3 shifted== mirrored== exact/last== extra=- wrong=- missing=minecraft:light_blue_carpet*3 shifted/last== mirrored/last==
+604 shaped minecraft:light_blue_wool_stairs*4: exact== extra=- wrong=- missing=- shifted== mirrored== exact/last== extra=- wrong=- missing=- shifted/last== mirrored/last==
+605 shaped minecraft:light_gray_banner*1: exact== extra=- wrong=- missing=- shifted== mirrored== exact/last== extra=- wrong=- missing=- shifted/last== mirrored/last==
+606 shaped minecraft:light_gray_bed*1: exact== extra=- wrong=- missing=- shifted== mirrored== exact/last== extra=- wrong=- missing=- shifted/last== mirrored/last==
+607 transmute minecraft:light_gray_bundle*1: exact== extra=- wrong=- missing=- last== reversed==
+608 shapeless minecraft:light_gray_candle*1: exact== extra=- wrong=- missing=- last== reversed==
+609 shaped minecraft:light_gray_carpet*3: exact== extra=- wrong=- missing=- shifted== mirrored== small== small_mirrored== exact/last== extra=- wrong=- missing=- shifted/last== mirrored/last== small/last== small_mirrored/last==
+610 shapeless minecraft:light_gray_concrete_powder*8: exact== wrong=- missing=- last== reversed==
+611 shaped minecraft:light_gray_concrete_slab*6: exact== extra=- wrong=- missing=- shifted== mirrored== exact/last== extra=- wrong=- missing=- shifted/last== mirrored/last==
+612 shaped minecraft:light_gray_concrete_stairs*4: exact== extra=- wrong=- missing=- shifted== mirrored== exact/last== extra=- wrong=- missing=- shifted/last== mirrored/last==
+613 shaped minecraft:light_gray_cushion*1: exact== extra=- wrong=- missing=- shifted== mirrored== exact/last== extra=- wrong=- missing=- shifted/last== mirrored/last==
+614 shapeless minecraft:light_gray_dye*1: exact== extra=- wrong=- missing=- last== reversed==
+615 shapeless minecraft:light_gray_dye*3: exact== extra=- wrong=- missing=minecraft:gray_dye*2 last== reversed==
+616 shapeless minecraft:light_gray_dye*2: exact== extra=- wrong=- missing=- last== reversed==
+617 shapeless minecraft:light_gray_dye*1: exact== extra=- wrong=- missing=- last== reversed==
+618 shapeless minecraft:light_gray_dye*1: exact== extra=- wrong=- missing=- last== reversed==
+619 shaped minecraft:light_gray_harness*1: exact== extra=- wrong=- missing=- shifted== mirrored== exact/last== extra=- wrong=- missing=- shifted/last== mirrored/last==
+620 transmute minecraft:light_gray_shulker_box*1: exact== extra=- wrong=- missing=- last== reversed==
+621 shaped minecraft:light_gray_stained_glass*8: exact== wrong=- missing=- shifted== mirrored== exact/last== wrong=- missing=- shifted/last== mirrored/last==
+622 shaped minecraft:light_gray_stained_glass_pane*16: exact== extra=- wrong=- missing=- shifted== mirrored== exact/last== extra=- wrong=- missing=- shifted/last== mirrored/last==
+623 shaped minecraft:light_gray_stained_glass_pane*8: exact== wrong=- missing=- shifted== mirrored== exact/last== wrong=- missing=- shifted/last== mirrored/last==
+624 shaped minecraft:light_gray_terracotta*8: exact== wrong=- missing=- shifted== mirrored== exact/last== wrong=- missing=- shifted/last== mirrored/last==
+625 shaped minecraft:light_gray_wool_slab*6: exact== extra=- wrong=- missing=minecraft:light_gray_carpet*3 shifted== mirrored== exact/last== extra=- wrong=- missing=minecraft:light_gray_carpet*3 shifted/last== mirrored/last==
+626 shaped minecraft:light_gray_wool_stairs*4: exact== extra=- wrong=- missing=- shifted== mirrored== exact/last== extra=- wrong=- missing=- shifted/last== mirrored/last==
+627 shaped minecraft:light_weighted_pressure_plate*1: exact== extra=- wrong=- missing=minecraft:gold_nugget*9 shifted== mirrored== small== small_mirrored== exact/last== extra=- wrong=- missing=minecraft:gold_nugget*9 shifted/last== mirrored/last== small/last== small_mirrored/last==
+628 shaped minecraft:lightning_rod*1: exact== extra=- wrong=- missing=- shifted== mirrored== exact/last== extra=- wrong=- missing=- shifted/last== mirrored/last==
+629 shaped minecraft:lime_banner*1: exact== extra=- wrong=- missing=- shifted== mirrored== exact/last== extra=- wrong=- missing=- shifted/last== mirrored/last==
+630 shaped minecraft:lime_bed*1: exact== extra=- wrong=- missing=- shifted== mirrored== exact/last== extra=- wrong=- missing=- shifted/last== mirrored/last==
+631 transmute minecraft:lime_bundle*1: exact== extra=- wrong=- missing=- last== reversed==
+632 shapeless minecraft:lime_candle*1: exact== extra=- wrong=- missing=- last== reversed==
+633 shaped minecraft:lime_carpet*3: exact== extra=- wrong=- missing=- shifted== mirrored== small== small_mirrored== exact/last== extra=- wrong=- missing=- shifted/last== mirrored/last== small/last== small_mirrored/last==
+634 shapeless minecraft:lime_concrete_powder*8: exact== wrong=- missing=- last== reversed==
+635 shaped minecraft:lime_concrete_slab*6: exact== extra=- wrong=- missing=- shifted== mirrored== exact/last== extra=- wrong=- missing=- shifted/last== mirrored/last==
+636 shaped minecraft:lime_concrete_stairs*4: exact== extra=- wrong=- missing=- shifted== mirrored== exact/last== extra=- wrong=- missing=- shifted/last== mirrored/last==
+637 shaped minecraft:lime_cushion*1: exact== extra=- wrong=- missing=- shifted== mirrored== exact/last== extra=- wrong=- missing=- shifted/last== mirrored/last==
+638 shapeless minecraft:lime_dye*2: exact== extra=- wrong=- missing=- last== reversed==
+639 shaped minecraft:lime_harness*1: exact== extra=- wrong=- missing=- shifted== mirrored== exact/last== extra=- wrong=- missing=- shifted/last== mirrored/last==
+640 transmute minecraft:lime_shulker_box*1: exact== extra=- wrong=- missing=- last== reversed==
+641 shaped minecraft:lime_stained_glass*8: exact== wrong=- missing=- shifted== mirrored== exact/last== wrong=- missing=- shifted/last== mirrored/last==
+642 shaped minecraft:lime_stained_glass_pane*16: exact== extra=- wrong=- missing=- shifted== mirrored== exact/last== extra=- wrong=- missing=- shifted/last== mirrored/last==
+643 shaped minecraft:lime_stained_glass_pane*8: exact== wrong=- missing=- shifted== mirrored== exact/last== wrong=- missing=- shifted/last== mirrored/last==
+644 shaped minecraft:lime_terracotta*8: exact== wrong=- missing=- shifted== mirrored== exact/last== wrong=- missing=- shifted/last== mirrored/last==
+645 shaped minecraft:lime_wool_slab*6: exact== extra=- wrong=- missing=minecraft:lime_carpet*3 shifted== mirrored== exact/last== extra=- wrong=- missing=minecraft:lime_carpet*3 shifted/last== mirrored/last==
+646 shaped minecraft:lime_wool_stairs*4: exact== extra=- wrong=- missing=- shifted== mirrored== exact/last== extra=- wrong=- missing=- shifted/last== mirrored/last==
+647 shaped minecraft:lodestone*1: exact== wrong=- missing=- shifted== mirrored== exact/last== wrong=- missing=- shifted/last== mirrored/last==
+648 shaped minecraft:loom*1: exact== extra=- wrong=- missing=- shifted== mirrored== small== small_mirrored== exact/last== extra=- wrong=- missing=- shifted/last== mirrored/last== small/last== small_mirrored/last==
+649 shaped minecraft:mace*1: exact=- extra=- wrong=- missing=- shifted=- mirrored=- exact/last=- extra=- wrong=- missing=- shifted/last=- mirrored/last=-
+650 shaped minecraft:magenta_banner*1: exact== extra=- wrong=- missing=- shifted== mirrored== exact/last== extra=- wrong=- missing=- shifted/last== mirrored/last==
+651 shaped minecraft:magenta_bed*1: exact== extra=- wrong=- missing=- shifted== mirrored== exact/last== extra=- wrong=- missing=- shifted/last== mirrored/last==
+652 transmute minecraft:magenta_bundle*1: exact== extra=- wrong=- missing=- last== reversed==
+653 shapeless minecraft:magenta_candle*1: exact== extra=- wrong=- missing=- last== reversed==
+654 shaped minecraft:magenta_carpet*3: exact== extra=- wrong=- missing=- shifted== mirrored== small== small_mirrored== exact/last== extra=- wrong=- missing=- shifted/last== mirrored/last== small/last== small_mirrored/last==
+655 shapeless minecraft:magenta_concrete_powder*8: exact== wrong=- missing=- last== reversed==
+656 shaped minecraft:magenta_concrete_slab*6: exact== extra=- wrong=- missing=- shifted== mirrored== exact/last== extra=- wrong=- missing=- shifted/last== mirrored/last==
+657 shaped minecraft:magenta_concrete_stairs*4: exact== extra=- wrong=- missing=- shifted== mirrored== exact/last== extra=- wrong=- missing=- shifted/last== mirrored/last==
+658 shaped minecraft:magenta_cushion*1: exact== extra=- wrong=- missing=- shifted== mirrored== exact/last== extra=- wrong=- missing=- shifted/last== mirrored/last==
+659 shapeless minecraft:magenta_dye*1: exact== extra=- wrong=- missing=- last== reversed==
+660 shapeless minecraft:magenta_dye*3: exact== extra=- wrong=- missing=minecraft:purple_dye*2 last== reversed==
+661 shapeless minecraft:magenta_dye*4: exact== extra=- wrong=- missing=- last== reversed==
+662 shapeless minecraft:magenta_dye*2: exact== extra=- wrong=- missing=- last== reversed==
+663 shapeless minecraft:magenta_dye*2: exact== extra=- wrong=- missing=- last== reversed==
+664 shaped minecraft:magenta_harness*1: exact== extra=- wrong=- missing=- shifted== mirrored== exact/last== extra=- wrong=- missing=- shifted/last== mirrored/last==
+665 transmute minecraft:magenta_shulker_box*1: exact== extra=- wrong=- missing=- last== reversed==
+666 shaped minecraft:magenta_stained_glass*8: exact== wrong=- missing=- shifted== mirrored== exact/last== wrong=- missing=- shifted/last== mirrored/last==
+667 shaped minecraft:magenta_stained_glass_pane*16: exact== extra=- wrong=- missing=- shifted== mirrored== exact/last== extra=- wrong=- missing=- shifted/last== mirrored/last==
+668 shaped minecraft:magenta_stained_glass_pane*8: exact== wrong=- missing=- shifted== mirrored== exact/last== wrong=- missing=- shifted/last== mirrored/last==
+669 shaped minecraft:magenta_terracotta*8: exact== wrong=- missing=- shifted== mirrored== exact/last== wrong=- missing=- shifted/last== mirrored/last==
+670 shaped minecraft:magenta_wool_slab*6: exact== extra=- wrong=- missing=minecraft:magenta_carpet*3 shifted== mirrored== exact/last== extra=- wrong=- missing=minecraft:magenta_carpet*3 shifted/last== mirrored/last==
+671 shaped minecraft:magenta_wool_stairs*4: exact== extra=- wrong=- missing=- shifted== mirrored== exact/last== extra=- wrong=- missing=- shifted/last== mirrored/last==
+672 shaped minecraft:magma_block*1: exact== extra=- wrong=- missing=- shifted== mirrored== small== small_mirrored== exact/last== extra=- wrong=- missing=- shifted/last== mirrored/last== small/last== small_mirrored/last==
+673 shapeless minecraft:magma_cream*1: exact== extra=- wrong=- missing=- last== reversed==
+674 shaped minecraft:mangrove_boat*1: exact== extra=- wrong=- missing=- shifted== mirrored== exact/last== extra=- wrong=- missing=- shifted/last== mirrored/last==
+675 shapeless minecraft:mangrove_button*1: exact== extra=- wrong=- missing=- last== reversed==
+676 shapeless minecraft:mangrove_chest_boat*1: exact== extra=- wrong=- missing=- last== reversed==
+677 shaped minecraft:mangrove_door*3: exact== extra=- wrong=- missing=- shifted== mirrored== exact/last== extra=- wrong=- missing=- shifted/last== mirrored/last==
+678 shaped minecraft:mangrove_fence*3: exact== extra=- wrong=- missing=- shifted== mirrored== exact/last== extra=- wrong=- missing=- shifted/last== mirrored/last==
+679 shaped minecraft:mangrove_fence_gate*1: exact== extra=- wrong=- missing=- shifted== mirrored== exact/last== extra=- wrong=- missing=- shifted/last== mirrored/last==
+680 shaped minecraft:mangrove_hanging_sign*6: exact== extra=- wrong=- missing=- shifted== mirrored== exact/last== extra=- wrong=- missing=- shifted/last== mirrored/last==
+681 shapeless minecraft:mangrove_planks*4: exact== extra=- wrong=- missing=- last== reversed==
+682 shaped minecraft:mangrove_pressure_plate*1: exact== extra=- wrong=- missing=minecraft:mangrove_button*1 shifted== mirrored== small== small_mirrored== exact/last== extra=- wrong=- missing=minecraft:mangrove_button*1 shifted/last== mirrored/last== small/last== small_mirrored/last==
+683 shaped minecraft:mangrove_shelf*6: exact== extra=- wrong=- missing=- shifted== mirrored== exact/last== extra=- wrong=- missing=- shifted/last== mirrored/last==
+684 shaped minecraft:mangrove_sign*3: exact== extra=- wrong=- missing=minecraft:mangrove_trapdoor*2 shifted== mirrored== exact/last== extra=- wrong=- missing=minecraft:mangrove_trapdoor*2 shifted/last== mirrored/last==
+685 shaped minecraft:mangrove_slab*6: exact== extra=- wrong=- missing=minecraft:mangrove_pressure_plate*1 shifted== mirrored== exact/last== extra=- wrong=- missing=minecraft:mangrove_pressure_plate*1 shifted/last== mirrored/last==
+686 shaped minecraft:mangrove_stairs*4: exact== extra=- wrong=- missing=- shifted== mirrored== exact/last== extra=- wrong=- missing=- shifted/last== mirrored/last==
+687 shaped minecraft:mangrove_trapdoor*2: exact== extra=- wrong=- missing=- shifted== mirrored== exact/last== extra=- wrong=- missing=- shifted/last== mirrored/last==
+688 shaped minecraft:mangrove_wood*3: exact== extra=- wrong=- missing=- shifted== mirrored== small== small_mirrored== exact/last== extra=- wrong=- missing=- shifted/last== mirrored/last== small/last== small_mirrored/last==
+689 shaped minecraft:map*1: exact== wrong=- missing=- shifted== mirrored== exact/last== wrong=- missing=- shifted/last== mirrored/last==
+690 transmute minecraft:air*1: exact== extra=- wrong=- missing=- last== reversed==
+691 shapeless minecraft:melon*1: exact== wrong=- missing=- last== reversed==
+692 shapeless minecraft:melon_seeds*1: exact== extra=- wrong=- missing=- last== reversed==
+693 shaped minecraft:minecart*1: exact== extra=- wrong=- missing=- shifted== mirrored== exact/last== extra=- wrong=- missing=- shifted/last== mirrored/last==
+694 shapeless minecraft:mojang_banner_pattern*1: exact== extra=- wrong=- missing=- last== reversed==
+695 shaped minecraft:moss_carpet*3: exact== extra=- wrong=- missing=- shifted== mirrored== small== small_mirrored== exact/last== extra=- wrong=- missing=- shifted/last== mirrored/last== small/last== small_mirrored/last==
+696 shapeless minecraft:mossy_cobblestone*1: exact== extra=- wrong=- missing=- last== reversed==
+697 shapeless minecraft:mossy_cobblestone*1: exact== extra=- wrong=- missing=- last== reversed==
+698 shaped minecraft:mossy_cobblestone_slab*6: exact== extra=- wrong=- missing=- shifted== mirrored== exact/last== extra=- wrong=- missing=- shifted/last== mirrored/last==
+699 shaped minecraft:mossy_cobblestone_stairs*4: exact== extra=- wrong=- missing=- shifted== mirrored== exact/last== extra=- wrong=- missing=- shifted/last== mirrored/last==
+700 shaped minecraft:mossy_cobblestone_wall*6: exact== extra=- wrong=- missing=- shifted== mirrored== exact/last== extra=- wrong=- missing=- shifted/last== mirrored/last==
+701 shaped minecraft:mossy_stone_brick_slab*6: exact== extra=- wrong=- missing=- shifted== mirrored== exact/last== extra=- wrong=- missing=- shifted/last== mirrored/last==
+702 shaped minecraft:mossy_stone_brick_stairs*4: exact== extra=- wrong=- missing=- shifted== mirrored== exact/last== extra=- wrong=- missing=- shifted/last== mirrored/last==
+703 shaped minecraft:mossy_stone_brick_wall*6: exact== extra=- wrong=- missing=- shifted== mirrored== exact/last== extra=- wrong=- missing=- shifted/last== mirrored/last==
+704 shapeless minecraft:mossy_stone_bricks*1: exact== extra=- wrong=- missing=- last== reversed==
+705 shapeless minecraft:mossy_stone_bricks*1: exact== extra=- wrong=- missing=- last== reversed==
+706 shaped minecraft:mud_brick_slab*6: exact== extra=- wrong=- missing=- shifted== mirrored== exact/last== extra=- wrong=- missing=- shifted/last== mirrored/last==
+707 shaped minecraft:mud_brick_stairs*4: exact== extra=- wrong=- missing=- shifted== mirrored== exact/last== extra=- wrong=- missing=- shifted/last== mirrored/last==
+708 shaped minecraft:mud_brick_wall*6: exact== extra=- wrong=- missing=- shifted== mirrored== exact/last== extra=- wrong=- missing=- shifted/last== mirrored/last==
+709 shaped minecraft:mud_bricks*4: exact== extra=- wrong=- missing=- shifted== mirrored== small== small_mirrored== exact/last== extra=- wrong=- missing=- shifted/last== mirrored/last== small/last== small_mirrored/last==
+710 shapeless minecraft:muddy_mangrove_roots*1: exact== extra=- wrong=- missing=- last== reversed==
+711 shapeless minecraft:mushroom_stew*1: exact== extra=- wrong=- missing=- last== reversed==
+712 shapeless minecraft:music_disc_5*1: exact== wrong=- missing=- last== reversed==
+713 shaped minecraft:name_tag*1: exact== extra=- wrong=- missing=- shifted== mirrored== small== small_mirrored== exact/last== extra=- wrong=- missing=- shifted/last== mirrored/last== small/last== small_mirrored/last==
+714 shaped minecraft:nether_brick_fence*6: exact== extra=- wrong=- missing=- shifted== mirrored== exact/last== extra=- wrong=- missing=- shifted/last== mirrored/last==
+715 shaped minecraft:nether_brick_slab*6: exact== extra=- wrong=- missing=- shifted== mirrored== exact/last== extra=- wrong=- missing=- shifted/last== mirrored/last==
+716 shaped minecraft:nether_brick_stairs*4: exact== extra=- wrong=- missing=- shifted== mirrored== exact/last== extra=- wrong=- missing=- shifted/last== mirrored/last==
+717 shaped minecraft:nether_brick_wall*6: exact== extra=- wrong=- missing=- shifted== mirrored== exact/last== extra=- wrong=- missing=- shifted/last== mirrored/last==
+718 shaped minecraft:nether_bricks*1: exact== extra=- wrong=- missing=- shifted== mirrored== small== small_mirrored== exact/last== extra=- wrong=- missing=- shifted/last== mirrored/last== small/last== small_mirrored/last==
+719 shapeless minecraft:nether_wart_block*1: exact== wrong=- missing=- last== reversed==
+720 shaped minecraft:netherite_block*1: exact== wrong=- missing=- shifted== mirrored== exact/last== wrong=- missing=- shifted/last== mirrored/last==
+721 shapeless minecraft:netherite_ingot*1: exact== extra=- wrong=- missing=- last== reversed==
+722 shapeless minecraft:netherite_ingot*9: exact== extra=- wrong=- missing=- last== reversed==
+723 shaped minecraft:netherite_upgrade_smithing_template*2: exact== wrong=- missing=- shifted== mirrored== exact/last== wrong=- missing=- shifted/last== mirrored/last==
+724 shaped minecraft:note_block*1: exact== wrong=- missing=- shifted== mirrored== exact/last== wrong=- missing=- shifted/last== mirrored/last==
+725 shaped minecraft:oak_boat*1: exact== extra=- wrong=- missing=- shifted== mirrored== exact/last== extra=- wrong=- missing=- shifted/last== mirrored/last==
+726 shapeless minecraft:oak_button*1: exact== extra=- wrong=- missing=- last== reversed==
+727 shapeless minecraft:oak_chest_boat*1: exact== extra=- wrong=- missing=- last== reversed==
+728 shaped minecraft:oak_door*3: exact== extra=- wrong=- missing=- shifted== mirrored== exact/last== extra=- wrong=- missing=- shifted/last== mirrored/last==
+729 shaped minecraft:oak_fence*3: exact== extra=- wrong=- missing=- shifted== mirrored== exact/last== extra=- wrong=- missing=- shifted/last== mirrored/last==
+730 shaped minecraft:oak_fence_gate*1: exact== extra=- wrong=- missing=- shifted== mirrored== exact/last== extra=- wrong=- missing=- shifted/last== mirrored/last==
+731 shaped minecraft:oak_hanging_sign*6: exact== extra=- wrong=- missing=- shifted== mirrored== exact/last== extra=- wrong=- missing=- shifted/last== mirrored/last==
+732 shapeless minecraft:oak_planks*4: exact== extra=- wrong=- missing=- last== reversed==
+733 shaped minecraft:oak_pressure_plate*1: exact== extra=- wrong=- missing=minecraft:oak_button*1 shifted== mirrored== small== small_mirrored== exact/last== extra=- wrong=- missing=minecraft:oak_button*1 shifted/last== mirrored/last== small/last== small_mirrored/last==
+734 shaped minecraft:oak_shelf*6: exact== extra=- wrong=- missing=- shifted== mirrored== exact/last== extra=- wrong=- missing=- shifted/last== mirrored/last==
+735 shaped minecraft:oak_sign*3: exact== extra=- wrong=- missing=minecraft:oak_trapdoor*2 shifted== mirrored== exact/last== extra=- wrong=- missing=minecraft:oak_trapdoor*2 shifted/last== mirrored/last==
+736 shaped minecraft:oak_slab*6: exact== extra=- wrong=- missing=minecraft:oak_pressure_plate*1 shifted== mirrored== exact/last== extra=- wrong=- missing=minecraft:oak_pressure_plate*1 shifted/last== mirrored/last==
+737 shaped minecraft:oak_stairs*4: exact== extra=- wrong=- missing=- shifted== mirrored== exact/last== extra=- wrong=- missing=- shifted/last== mirrored/last==
+738 shaped minecraft:oak_trapdoor*2: exact== extra=- wrong=- missing=- shifted== mirrored== exact/last== extra=- wrong=- missing=- shifted/last== mirrored/last==
+739 shaped minecraft:oak_wood*3: exact== extra=- wrong=- missing=- shifted== mirrored== small== small_mirrored== exact/last== extra=- wrong=- missing=- shifted/last== mirrored/last== small/last== small_mirrored/last==
+740 shaped minecraft:observer*1: exact== wrong=- missing=- shifted== mirrored== exact/last== wrong=- missing=- shifted/last== mirrored/last==
+741 shaped minecraft:orange_banner*1: exact== extra=- wrong=- missing=- shifted== mirrored== exact/last== extra=- wrong=- missing=- shifted/last== mirrored/last==
+742 shaped minecraft:orange_bed*1: exact== extra=- wrong=- missing=- shifted== mirrored== exact/last== extra=- wrong=- missing=- shifted/last== mirrored/last==
+743 transmute minecraft:orange_bundle*1: exact== extra=- wrong=- missing=- last== reversed==
+744 shapeless minecraft:orange_candle*1: exact== extra=- wrong=- missing=- last== reversed==
+745 shaped minecraft:orange_carpet*3: exact== extra=- wrong=- missing=- shifted== mirrored== small== small_mirrored== exact/last== extra=- wrong=- missing=- shifted/last== mirrored/last== small/last== small_mirrored/last==
+746 shapeless minecraft:orange_concrete_powder*8: exact== wrong=- missing=- last== reversed==
+747 shaped minecraft:orange_concrete_slab*6: exact== extra=- wrong=- missing=- shifted== mirrored== exact/last== extra=- wrong=- missing=- shifted/last== mirrored/last==
+748 shaped minecraft:orange_concrete_stairs*4: exact== extra=- wrong=- missing=- shifted== mirrored== exact/last== extra=- wrong=- missing=- shifted/last== mirrored/last==
+749 shaped minecraft:orange_cushion*1: exact== extra=- wrong=- missing=- shifted== mirrored== exact/last== extra=- wrong=- missing=- shifted/last== mirrored/last==
+750 shapeless minecraft:orange_dye*1: exact== extra=- wrong=- missing=- last== reversed==
+751 shapeless minecraft:orange_dye*1: exact== extra=- wrong=- missing=- last== reversed==
+752 shapeless minecraft:orange_dye*2: exact== extra=- wrong=- missing=- last== reversed==
+753 shapeless minecraft:orange_dye*1: exact== extra=- wrong=- missing=- last== reversed==
+754 shaped minecraft:orange_harness*1: exact== extra=- wrong=- missing=- shifted== mirrored== exact/last== extra=- wrong=- missing=- shifted/last== mirrored/last==
+755 transmute minecraft:orange_shulker_box*1: exact== extra=- wrong=- missing=- last== reversed==
+756 shaped minecraft:orange_stained_glass*8: exact== wrong=- missing=- shifted== mirrored== exact/last== wrong=- missing=- shifted/last== mirrored/last==
+757 shaped minecraft:orange_stained_glass_pane*16: exact== extra=- wrong=- missing=- shifted== mirrored== exact/last== extra=- wrong=- missing=- shifted/last== mirrored/last==
+758 shaped minecraft:orange_stained_glass_pane*8: exact== wrong=- missing=- shifted== mirrored== exact/last== wrong=- missing=- shifted/last== mirrored/last==
+759 shaped minecraft:orange_terracotta*8: exact== wrong=- missing=- shifted== mirrored== exact/last== wrong=- missing=- shifted/last== mirrored/last==
+760 shaped minecraft:orange_wool_slab*6: exact== extra=- wrong=- missing=minecraft:orange_carpet*3 shifted== mirrored== exact/last== extra=- wrong=- missing=minecraft:orange_carpet*3 shifted/last== mirrored/last==
+761 shaped minecraft:orange_wool_stairs*4: exact== extra=- wrong=- missing=- shifted== mirrored== exact/last== extra=- wrong=- missing=- shifted/last== mirrored/last==
+762 shaped minecraft:oxidized_chiseled_copper*1: exact== extra=- wrong=- missing=- shifted== mirrored== small== small_mirrored== exact/last== extra=- wrong=- missing=- shifted/last== mirrored/last== small/last== small_mirrored/last==
+763 shaped minecraft:oxidized_copper_bulb*4: exact== extra=- wrong=- missing=- shifted== mirrored== exact/last== extra=- wrong=- missing=- shifted/last== mirrored/last==
+764 shaped minecraft:oxidized_copper_grate*4: exact== extra=- wrong=- missing=- shifted== mirrored== exact/last== extra=- wrong=- missing=- shifted/last== mirrored/last==
+765 shaped minecraft:oxidized_cut_copper*4: exact== extra=- wrong=- missing=- shifted== mirrored== small== small_mirrored== exact/last== extra=- wrong=- missing=- shifted/last== mirrored/last== small/last== small_mirrored/last==
+766 shaped minecraft:oxidized_cut_copper_slab*6: exact== extra=- wrong=- missing=- shifted== mirrored== exact/last== extra=- wrong=- missing=- shifted/last== mirrored/last==
+767 shaped minecraft:oxidized_cut_copper_stairs*4: exact== extra=- wrong=- missing=- shifted== mirrored== exact/last== extra=- wrong=- missing=- shifted/last== mirrored/last==
+768 shapeless minecraft:packed_ice*1: exact== wrong=- missing=- last== reversed==
+769 shapeless minecraft:packed_mud*1: exact== extra=- wrong=- missing=- last== reversed==
+770 shaped minecraft:painting*1: exact== wrong=- missing=- shifted== mirrored== exact/last== wrong=- missing=- shifted/last== mirrored/last==
+771 shaped minecraft:pale_moss_carpet*3: exact== extra=- wrong=- missing=- shifted== mirrored== small== small_mirrored== exact/last== extra=- wrong=- missing=- shifted/last== mirrored/last== small/last== small_mirrored/last==
+772 shaped minecraft:pale_oak_boat*1: exact== extra=- wrong=- missing=- shifted== mirrored== exact/last== extra=- wrong=- missing=- shifted/last== mirrored/last==
+773 shapeless minecraft:pale_oak_button*1: exact== extra=- wrong=- missing=- last== reversed==
+774 shapeless minecraft:pale_oak_chest_boat*1: exact== extra=- wrong=- missing=- last== reversed==
+775 shaped minecraft:pale_oak_door*3: exact== extra=- wrong=- missing=- shifted== mirrored== exact/last== extra=- wrong=- missing=- shifted/last== mirrored/last==
+776 shaped minecraft:pale_oak_fence*3: exact== extra=- wrong=- missing=- shifted== mirrored== exact/last== extra=- wrong=- missing=- shifted/last== mirrored/last==
+777 shaped minecraft:pale_oak_fence_gate*1: exact== extra=- wrong=- missing=- shifted== mirrored== exact/last== extra=- wrong=- missing=- shifted/last== mirrored/last==
+778 shaped minecraft:pale_oak_hanging_sign*6: exact== extra=- wrong=- missing=- shifted== mirrored== exact/last== extra=- wrong=- missing=- shifted/last== mirrored/last==
+779 shapeless minecraft:pale_oak_planks*4: exact== extra=- wrong=- missing=- last== reversed==
+780 shaped minecraft:pale_oak_pressure_plate*1: exact== extra=- wrong=- missing=minecraft:pale_oak_button*1 shifted== mirrored== small== small_mirrored== exact/last== extra=- wrong=- missing=minecraft:pale_oak_button*1 shifted/last== mirrored/last== small/last== small_mirrored/last==
+781 shaped minecraft:pale_oak_shelf*6: exact== extra=- wrong=- missing=- shifted== mirrored== exact/last== extra=- wrong=- missing=- shifted/last== mirrored/last==
+782 shaped minecraft:pale_oak_sign*3: exact== extra=- wrong=- missing=minecraft:pale_oak_trapdoor*2 shifted== mirrored== exact/last== extra=- wrong=- missing=minecraft:pale_oak_trapdoor*2 shifted/last== mirrored/last==
+783 shaped minecraft:pale_oak_slab*6: exact== extra=- wrong=- missing=minecraft:pale_oak_pressure_plate*1 shifted== mirrored== exact/last== extra=- wrong=- missing=minecraft:pale_oak_pressure_plate*1 shifted/last== mirrored/last==
+784 shaped minecraft:pale_oak_stairs*4: exact== extra=- wrong=- missing=- shifted== mirrored== exact/last== extra=- wrong=- missing=- shifted/last== mirrored/last==
+785 shaped minecraft:pale_oak_trapdoor*2: exact== extra=- wrong=- missing=- shifted== mirrored== exact/last== extra=- wrong=- missing=- shifted/last== mirrored/last==
+786 shaped minecraft:pale_oak_wood*3: exact== extra=- wrong=- missing=- shifted== mirrored== small== small_mirrored== exact/last== extra=- wrong=- missing=- shifted/last== mirrored/last== small/last== small_mirrored/last==
+787 shaped minecraft:paper*3: exact== extra=- wrong=- missing=- shifted== mirrored== exact/last== extra=- wrong=- missing=- shifted/last== mirrored/last==
+788 shaped minecraft:pink_banner*1: exact== extra=- wrong=- missing=- shifted== mirrored== exact/last== extra=- wrong=- missing=- shifted/last== mirrored/last==
+789 shaped minecraft:pink_bed*1: exact== extra=- wrong=- missing=- shifted== mirrored== exact/last== extra=- wrong=- missing=- shifted/last== mirrored/last==
+790 transmute minecraft:pink_bundle*1: exact== extra=- wrong=- missing=- last== reversed==
+791 shapeless minecraft:pink_candle*1: exact== extra=- wrong=- missing=- last== reversed==
+792 shaped minecraft:pink_carpet*3: exact== extra=- wrong=- missing=- shifted== mirrored== small== small_mirrored== exact/last== extra=- wrong=- missing=- shifted/last== mirrored/last== small/last== small_mirrored/last==
+793 shapeless minecraft:pink_concrete_powder*8: exact== wrong=- missing=- last== reversed==
+794 shaped minecraft:pink_concrete_slab*6: exact== extra=- wrong=- missing=- shifted== mirrored== exact/last== extra=- wrong=- missing=- shifted/last== mirrored/last==
+795 shaped minecraft:pink_concrete_stairs*4: exact== extra=- wrong=- missing=- shifted== mirrored== exact/last== extra=- wrong=- missing=- shifted/last== mirrored/last==
+796 shaped minecraft:pink_cushion*1: exact== extra=- wrong=- missing=- shifted== mirrored== exact/last== extra=- wrong=- missing=- shifted/last== mirrored/last==
+797 shapeless minecraft:pink_dye*1: exact== extra=- wrong=- missing=- last== reversed==
+798 shapeless minecraft:pink_dye*2: exact== extra=- wrong=- missing=- last== reversed==
+799 shapeless minecraft:pink_dye*1: exact== extra=- wrong=- missing=- last== reversed==
+800 shapeless minecraft:pink_dye*1: exact== extra=- wrong=- missing=- last== reversed==
+801 shapeless minecraft:pink_dye*2: exact== extra=- wrong=- missing=- last== reversed==
+802 shaped minecraft:pink_harness*1: exact== extra=- wrong=- missing=- shifted== mirrored== exact/last== extra=- wrong=- missing=- shifted/last== mirrored/last==
+803 transmute minecraft:pink_shulker_box*1: exact== extra=- wrong=- missing=- last== reversed==
+804 shaped minecraft:pink_stained_glass*8: exact== wrong=- missing=- shifted== mirrored== exact/last== wrong=- missing=- shifted/last== mirrored/last==
+805 shaped minecraft:pink_stained_glass_pane*16: exact== extra=- wrong=- missing=- shifted== mirrored== exact/last== extra=- wrong=- missing=- shifted/last== mirrored/last==
+806 shaped minecraft:pink_stained_glass_pane*8: exact== wrong=- missing=- shifted== mirrored== exact/last== wrong=- missing=- shifted/last== mirrored/last==
+807 shaped minecraft:pink_terracotta*8: exact== wrong=- missing=- shifted== mirrored== exact/last== wrong=- missing=- shifted/last== mirrored/last==
+808 shaped minecraft:pink_wool_slab*6: exact== extra=- wrong=- missing=minecraft:pink_carpet*3 shifted== mirrored== exact/last== extra=- wrong=- missing=minecraft:pink_carpet*3 shifted/last== mirrored/last==
+809 shaped minecraft:pink_wool_stairs*4: exact== extra=- wrong=- missing=- shifted== mirrored== exact/last== extra=- wrong=- missing=- shifted/last== mirrored/last==
+810 shaped minecraft:piston*1: exact== wrong=- missing=- shifted== mirrored== exact/last== wrong=- missing=- shifted/last== mirrored/last==
+811 shaped minecraft:polished_andesite*4: exact== extra=- wrong=- missing=- shifted== mirrored== small== small_mirrored== exact/last== extra=- wrong=- missing=- shifted/last== mirrored/last== small/last== small_mirrored/last==
+812 shaped minecraft:polished_andesite_slab*6: exact== extra=- wrong=- missing=- shifted== mirrored== exact/last== extra=- wrong=- missing=- shifted/last== mirrored/last==
+813 shaped minecraft:polished_andesite_stairs*4: exact== extra=- wrong=- missing=- shifted== mirrored== exact/last== extra=- wrong=- missing=- shifted/last== mirrored/last==
+814 shaped minecraft:polished_basalt*4: exact== extra=- wrong=- missing=- shifted== mirrored== small== small_mirrored== exact/last== extra=- wrong=- missing=- shifted/last== mirrored/last== small/last== small_mirrored/last==
+815 shaped minecraft:polished_blackstone*4: exact== extra=- wrong=- missing=- shifted== mirrored== small== small_mirrored== exact/last== extra=- wrong=- missing=- shifted/last== mirrored/last== small/last== small_mirrored/last==
+816 shaped minecraft:polished_blackstone_brick_slab*6: exact== extra=- wrong=- missing=- shifted== mirrored== exact/last== extra=- wrong=- missing=- shifted/last== mirrored/last==
+817 shaped minecraft:polished_blackstone_brick_stairs*4: exact== extra=- wrong=- missing=- shifted== mirrored== exact/last== extra=- wrong=- missing=- shifted/last== mirrored/last==
+818 shaped minecraft:polished_blackstone_brick_wall*6: exact== extra=- wrong=- missing=- shifted== mirrored== exact/last== extra=- wrong=- missing=- shifted/last== mirrored/last==
+819 shaped minecraft:polished_blackstone_bricks*4: exact== extra=- wrong=- missing=- shifted== mirrored== small== small_mirrored== exact/last== extra=- wrong=- missing=- shifted/last== mirrored/last== small/last== small_mirrored/last==
+820 shapeless minecraft:polished_blackstone_button*1: exact== extra=- wrong=- missing=- last== reversed==
+821 shaped minecraft:polished_blackstone_pressure_plate*1: exact== extra=- wrong=- missing=minecraft:polished_blackstone_button*1 shifted== mirrored== small== small_mirrored== exact/last== extra=- wrong=- missing=minecraft:polished_blackstone_button*1 shifted/last== mirrored/last== small/last== small_mirrored/last==
+822 shaped minecraft:polished_blackstone_slab*6: exact== extra=- wrong=- missing=minecraft:polished_blackstone_pressure_plate*1 shifted== mirrored== exact/last== extra=- wrong=- missing=minecraft:polished_blackstone_pressure_plate*1 shifted/last== mirrored/last==
+823 shaped minecraft:polished_blackstone_stairs*4: exact== extra=- wrong=- missing=- shifted== mirrored== exact/last== extra=- wrong=- missing=- shifted/last== mirrored/last==
+824 shaped minecraft:polished_blackstone_wall*6: exact== extra=- wrong=- missing=- shifted== mirrored== exact/last== extra=- wrong=- missing=- shifted/last== mirrored/last==
+825 shaped minecraft:polished_cinnabar*4: exact== extra=- wrong=- missing=- shifted== mirrored== small== small_mirrored== exact/last== extra=- wrong=- missing=- shifted/last== mirrored/last== small/last== small_mirrored/last==
+826 shaped minecraft:polished_cinnabar_slab*6: exact== extra=- wrong=- missing=- shifted== mirrored== exact/last== extra=- wrong=- missing=- shifted/last== mirrored/last==
+827 shaped minecraft:polished_cinnabar_stairs*4: exact== extra=- wrong=- missing=- shifted== mirrored== exact/last== extra=- wrong=- missing=- shifted/last== mirrored/last==
+828 shaped minecraft:polished_cinnabar_wall*6: exact== extra=- wrong=- missing=- shifted== mirrored== exact/last== extra=- wrong=- missing=- shifted/last== mirrored/last==
+829 shaped minecraft:polished_deepslate*4: exact== extra=- wrong=- missing=- shifted== mirrored== small== small_mirrored== exact/last== extra=- wrong=- missing=- shifted/last== mirrored/last== small/last== small_mirrored/last==
+830 shaped minecraft:polished_deepslate_slab*6: exact== extra=- wrong=- missing=- shifted== mirrored== exact/last== extra=- wrong=- missing=- shifted/last== mirrored/last==
+831 shaped minecraft:polished_deepslate_stairs*4: exact== extra=- wrong=- missing=- shifted== mirrored== exact/last== extra=- wrong=- missing=- shifted/last== mirrored/last==
+832 shaped minecraft:polished_deepslate_wall*6: exact== extra=- wrong=- missing=- shifted== mirrored== exact/last== extra=- wrong=- missing=- shifted/last== mirrored/last==
+833 shaped minecraft:polished_diorite*4: exact== extra=- wrong=- missing=- shifted== mirrored== small== small_mirrored== exact/last== extra=- wrong=- missing=- shifted/last== mirrored/last== small/last== small_mirrored/last==
+834 shaped minecraft:polished_diorite_slab*6: exact== extra=- wrong=- missing=- shifted== mirrored== exact/last== extra=- wrong=- missing=- shifted/last== mirrored/last==
+835 shaped minecraft:polished_diorite_stairs*4: exact== extra=- wrong=- missing=- shifted== mirrored== exact/last== extra=- wrong=- missing=- shifted/last== mirrored/last==
+836 shaped minecraft:polished_granite*4: exact== extra=- wrong=- missing=- shifted== mirrored== small== small_mirrored== exact/last== extra=- wrong=- missing=- shifted/last== mirrored/last== small/last== small_mirrored/last==
+837 shaped minecraft:polished_granite_slab*6: exact== extra=- wrong=- missing=- shifted== mirrored== exact/last== extra=- wrong=- missing=- shifted/last== mirrored/last==
+838 shaped minecraft:polished_granite_stairs*4: exact== extra=- wrong=- missing=- shifted== mirrored== exact/last== extra=- wrong=- missing=- shifted/last== mirrored/last==
+839 shaped minecraft:polished_sulfur*4: exact== extra=- wrong=- missing=- shifted== mirrored== small== small_mirrored== exact/last== extra=- wrong=- missing=- shifted/last== mirrored/last== small/last== small_mirrored/last==
+840 shaped minecraft:polished_sulfur_slab*6: exact== extra=- wrong=- missing=- shifted== mirrored== exact/last== extra=- wrong=- missing=- shifted/last== mirrored/last==
+841 shaped minecraft:polished_sulfur_stairs*4: exact== extra=- wrong=- missing=- shifted== mirrored== exact/last== extra=- wrong=- missing=- shifted/last== mirrored/last==
+842 shaped minecraft:polished_sulfur_wall*6: exact== extra=- wrong=- missing=- shifted== mirrored== exact/last== extra=- wrong=- missing=- shifted/last== mirrored/last==
+843 shaped minecraft:polished_tuff*4: exact== extra=- wrong=- missing=- shifted== mirrored== small== small_mirrored== exact/last== extra=- wrong=- missing=- shifted/last== mirrored/last== small/last== small_mirrored/last==
+844 shaped minecraft:polished_tuff_slab*6: exact== extra=- wrong=- missing=- shifted== mirrored== exact/last== extra=- wrong=- missing=- shifted/last== mirrored/last==
+845 shaped minecraft:polished_tuff_stairs*4: exact== extra=- wrong=- missing=- shifted== mirrored== exact/last== extra=- wrong=- missing=- shifted/last== mirrored/last==
+846 shaped minecraft:polished_tuff_wall*6: exact== extra=- wrong=- missing=- shifted== mirrored== exact/last== extra=- wrong=- missing=- shifted/last== mirrored/last==
+847 shaped minecraft:poplar_boat*1: exact== extra=- wrong=- missing=- shifted== mirrored== exact/last== extra=- wrong=- missing=- shifted/last== mirrored/last==
+848 shapeless minecraft:poplar_button*1: exact== extra=- wrong=- missing=- last== reversed==
+849 shapeless minecraft:poplar_chest_boat*1: exact== extra=- wrong=- missing=- last== reversed==
+850 shaped minecraft:poplar_door*3: exact== extra=- wrong=- missing=- shifted== mirrored== exact/last== extra=- wrong=- missing=- shifted/last== mirrored/last==
+851 shaped minecraft:poplar_fence*3: exact== extra=- wrong=- missing=- shifted== mirrored== exact/last== extra=- wrong=- missing=- shifted/last== mirrored/last==
+852 shaped minecraft:poplar_fence_gate*1: exact== extra=- wrong=- missing=- shifted== mirrored== exact/last== extra=- wrong=- missing=- shifted/last== mirrored/last==
+853 shaped minecraft:poplar_hanging_sign*6: exact== extra=- wrong=- missing=- shifted== mirrored== exact/last== extra=- wrong=- missing=- shifted/last== mirrored/last==
+854 shapeless minecraft:poplar_planks*4: exact== extra=- wrong=- missing=- last== reversed==
+855 shaped minecraft:poplar_pressure_plate*1: exact== extra=- wrong=- missing=minecraft:poplar_button*1 shifted== mirrored== small== small_mirrored== exact/last== extra=- wrong=- missing=minecraft:poplar_button*1 shifted/last== mirrored/last== small/last== small_mirrored/last==
+856 shaped minecraft:poplar_shelf*6: exact== extra=- wrong=- missing=- shifted== mirrored== exact/last== extra=- wrong=- missing=- shifted/last== mirrored/last==
+857 shaped minecraft:poplar_sign*3: exact== extra=- wrong=- missing=minecraft:poplar_trapdoor*2 shifted== mirrored== exact/last== extra=- wrong=- missing=minecraft:poplar_trapdoor*2 shifted/last== mirrored/last==
+858 shaped minecraft:poplar_slab*6: exact== extra=- wrong=- missing=minecraft:poplar_pressure_plate*1 shifted== mirrored== exact/last== extra=- wrong=- missing=minecraft:poplar_pressure_plate*1 shifted/last== mirrored/last==
+859 shaped minecraft:poplar_stairs*4: exact== extra=- wrong=- missing=- shifted== mirrored== exact/last== extra=- wrong=- missing=- shifted/last== mirrored/last==
+860 shaped minecraft:poplar_trapdoor*2: exact== extra=- wrong=- missing=- shifted== mirrored== exact/last== extra=- wrong=- missing=- shifted/last== mirrored/last==
+861 shaped minecraft:poplar_wood*3: exact== extra=- wrong=- missing=- shifted== mirrored== small== small_mirrored== exact/last== extra=- wrong=- missing=- shifted/last== mirrored/last== small/last== small_mirrored/last==
+862 shapeless minecraft:potent_sulfur*1: exact== wrong=- missing=- last== reversed==
+863 shaped minecraft:powered_rail*6: exact== extra=- wrong=- missing=- shifted== mirrored== exact/last== extra=- wrong=- missing=- shifted/last== mirrored/last==
+864 shaped minecraft:prismarine*1: exact== extra=- wrong=- missing=- shifted== mirrored== small== small_mirrored== exact/last== extra=- wrong=- missing=- shifted/last== mirrored/last== small/last== small_mirrored/last==
+865 shaped minecraft:prismarine_brick_slab*6: exact== extra=- wrong=- missing=- shifted== mirrored== exact/last== extra=- wrong=- missing=- shifted/last== mirrored/last==
+866 shaped minecraft:prismarine_brick_stairs*4: exact== extra=- wrong=- missing=- shifted== mirrored== exact/last== extra=- wrong=- missing=- shifted/last== mirrored/last==
+867 shapeless minecraft:prismarine_bricks*1: exact== wrong=- missing=- last== reversed==
+868 shaped minecraft:prismarine_slab*6: exact== extra=- wrong=- missing=- shifted== mirrored== exact/last== extra=- wrong=- missing=- shifted/last== mirrored/last==
+869 shaped minecraft:prismarine_stairs*4: exact== extra=- wrong=- missing=- shifted== mirrored== exact/last== extra=- wrong=- missing=- shifted/last== mirrored/last==
+870 shaped minecraft:prismarine_wall*6: exact== extra=- wrong=- missing=- shifted== mirrored== exact/last== extra=- wrong=- missing=- shifted/last== mirrored/last==
+871 shapeless minecraft:pumpkin_pie*1: exact== extra=- wrong=- missing=- last== reversed==
+872 shapeless minecraft:pumpkin_seeds*4: exact== extra=- wrong=- missing=- last== reversed==
+873 shaped minecraft:purple_banner*1: exact== extra=- wrong=- missing=- shifted== mirrored== exact/last== extra=- wrong=- missing=- shifted/last== mirrored/last==
+874 shaped minecraft:purple_bed*1: exact== extra=- wrong=- missing=- shifted== mirrored== exact/last== extra=- wrong=- missing=- shifted/last== mirrored/last==
+875 transmute minecraft:purple_bundle*1: exact== extra=- wrong=- missing=- last== reversed==
+876 shapeless minecraft:purple_candle*1: exact== extra=- wrong=- missing=- last== reversed==
+877 shaped minecraft:purple_carpet*3: exact== extra=- wrong=- missing=- shifted== mirrored== small== small_mirrored== exact/last== extra=- wrong=- missing=- shifted/last== mirrored/last== small/last== small_mirrored/last==
+878 shapeless minecraft:purple_concrete_powder*8: exact== wrong=- missing=- last== reversed==
+879 shaped minecraft:purple_concrete_slab*6: exact== extra=- wrong=- missing=- shifted== mirrored== exact/last== extra=- wrong=- missing=- shifted/last== mirrored/last==
+880 shaped minecraft:purple_concrete_stairs*4: exact== extra=- wrong=- missing=- shifted== mirrored== exact/last== extra=- wrong=- missing=- shifted/last== mirrored/last==
+881 shaped minecraft:purple_cushion*1: exact== extra=- wrong=- missing=- shifted== mirrored== exact/last== extra=- wrong=- missing=- shifted/last== mirrored/last==
+882 shapeless minecraft:purple_dye*2: exact== extra=- wrong=- missing=- last== reversed==
+883 shaped minecraft:purple_harness*1: exact== extra=- wrong=- missing=- shifted== mirrored== exact/last== extra=- wrong=- missing=- shifted/last== mirrored/last==
+884 transmute minecraft:purple_shulker_box*1: exact== extra=- wrong=- missing=- last== reversed==
+885 shaped minecraft:purple_stained_glass*8: exact== wrong=- missing=- shifted== mirrored== exact/last== wrong=- missing=- shifted/last== mirrored/last==
+886 shaped minecraft:purple_stained_glass_pane*16: exact== extra=- wrong=- missing=- shifted== mirrored== exact/last== extra=- wrong=- missing=- shifted/last== mirrored/last==
+887 shaped minecraft:purple_stained_glass_pane*8: exact== wrong=- missing=- shifted== mirrored== exact/last== wrong=- missing=- shifted/last== mirrored/last==
+888 shaped minecraft:purple_terracotta*8: exact== wrong=- missing=- shifted== mirrored== exact/last== wrong=- missing=- shifted/last== mirrored/last==
+889 shaped minecraft:purple_wool_slab*6: exact== extra=- wrong=- missing=minecraft:purple_carpet*3 shifted== mirrored== exact/last== extra=- wrong=- missing=minecraft:purple_carpet*3 shifted/last== mirrored/last==
+890 shaped minecraft:purple_wool_stairs*4: exact== extra=- wrong=- missing=- shifted== mirrored== exact/last== extra=- wrong=- missing=- shifted/last== mirrored/last==
+891 shaped minecraft:purpur_block*4: exact== extra=- wrong=- missing=- shifted== mirrored== small== small_mirrored== exact/last== extra=- wrong=- missing=- shifted/last== mirrored/last== small/last== small_mirrored/last==
+892 shaped minecraft:purpur_pillar*1: exact== extra=- wrong=- missing=- shifted== mirrored== small== small_mirrored== exact/last== extra=- wrong=- missing=- shifted/last== mirrored/last== small/last== small_mirrored/last==
+893 shaped minecraft:purpur_slab*6: exact== extra=- wrong=- missing=- shifted== mirrored== exact/last== extra=- wrong=- missing=- shifted/last== mirrored/last==
+894 shaped minecraft:purpur_stairs*4: exact== extra=- wrong=- missing=- shifted== mirrored== exact/last== extra=- wrong=- missing=- shifted/last== mirrored/last==
+895 shaped minecraft:quartz_block*1: exact== extra=- wrong=- missing=- shifted== mirrored== small== small_mirrored== exact/last== extra=- wrong=- missing=- shifted/last== mirrored/last== small/last== small_mirrored/last==
+896 shaped minecraft:quartz_bricks*4: exact== extra=- wrong=- missing=- shifted== mirrored== small== small_mirrored== exact/last== extra=- wrong=- missing=- shifted/last== mirrored/last== small/last== small_mirrored/last==
+897 shaped minecraft:quartz_pillar*2: exact== extra=- wrong=- missing=- shifted== mirrored== small== small_mirrored== exact/last== extra=- wrong=- missing=- shifted/last== mirrored/last== small/last== small_mirrored/last==
+898 shaped minecraft:quartz_slab*6: exact== extra=- wrong=- missing=- shifted== mirrored== exact/last== extra=- wrong=- missing=- shifted/last== mirrored/last==
+899 shaped minecraft:quartz_stairs*4: exact== extra=- wrong=- missing=- shifted== mirrored== exact/last== extra=- wrong=- missing=- shifted/last== mirrored/last==
+900 shapeless minecraft:rabbit_stew*1: exact== extra=- wrong=- missing=- last== reversed==
+901 shapeless minecraft:rabbit_stew*1: exact== extra=- wrong=- missing=- last== reversed==
+902 shapeless minecraft:rabbit_stew*1: exact== extra=- wrong=- missing=- last== reversed==
+903 shaped minecraft:rail*16: exact== extra=- wrong=- missing=- shifted== mirrored== exact/last== extra=- wrong=- missing=- shifted/last== mirrored/last==
+904 shaped minecraft:raiser_armor_trim_smithing_template*2: exact== wrong=- missing=- shifted== mirrored== exact/last== wrong=- missing=- shifted/last== mirrored/last==
+905 shapeless minecraft:raw_copper*9: exact== extra=- wrong=- missing=- last== reversed==
+906 shaped minecraft:raw_copper_block*1: exact== wrong=- missing=- shifted== mirrored== exact/last== wrong=- missing=- shifted/last== mirrored/last==
+907 shapeless minecraft:raw_gold*9: exact== extra=- wrong=- missing=- last== reversed==
+908 shaped minecraft:raw_gold_block*1: exact== wrong=- missing=- shifted== mirrored== exact/last== wrong=- missing=- shifted/last== mirrored/last==
+909 shapeless minecraft:raw_iron*9: exact== extra=- wrong=- missing=- last== reversed==
+910 shaped minecraft:raw_iron_block*1: exact== wrong=- missing=- shifted== mirrored== exact/last== wrong=- missing=- shifted/last== mirrored/last==
+911 shaped minecraft:recovery_compass*1: exact== wrong=- missing=- shifted== mirrored== exact/last== wrong=- missing=- shifted/last== mirrored/last==
+912 shaped minecraft:red_banner*1: exact== extra=- wrong=- missing=- shifted== mirrored== exact/last== extra=- wrong=- missing=- shifted/last== mirrored/last==
+913 shaped minecraft:red_bed*1: exact== extra=- wrong=- missing=- shifted== mirrored== exact/last== extra=- wrong=- missing=- shifted/last== mirrored/last==
+914 transmute minecraft:red_bundle*1: exact== extra=- wrong=- missing=- last== reversed==
+915 shapeless minecraft:red_candle*1: exact== extra=- wrong=- missing=- last== reversed==
+916 shaped minecraft:red_carpet*3: exact== extra=- wrong=- missing=- shifted== mirrored== small== small_mirrored== exact/last== extra=- wrong=- missing=- shifted/last== mirrored/last== small/last== small_mirrored/last==
+917 shapeless minecraft:red_concrete_powder*8: exact== wrong=- missing=- last== reversed==
+918 shaped minecraft:red_concrete_slab*6: exact== extra=- wrong=- missing=- shifted== mirrored== exact/last== extra=- wrong=- missing=- shifted/last== mirrored/last==
+919 shaped minecraft:red_concrete_stairs*4: exact== extra=- wrong=- missing=- shifted== mirrored== exact/last== extra=- wrong=- missing=- shifted/last== mirrored/last==
+920 shaped minecraft:red_cushion*1: exact== extra=- wrong=- missing=- shifted== mirrored== exact/last== extra=- wrong=- missing=- shifted/last== mirrored/last==
+921 shapeless minecraft:red_dye*1: exact== extra=- wrong=- missing=- last== reversed==
+922 shapeless minecraft:red_dye*1: exact== extra=- wrong=- missing=- last== reversed==
+923 shapeless minecraft:red_dye*2: exact== extra=- wrong=- missing=- last== reversed==
+924 shapeless minecraft:red_dye*1: exact== extra=- wrong=- missing=- last== reversed==
+925 shaped minecraft:red_harness*1: exact== extra=- wrong=- missing=- shifted== mirrored== exact/last== extra=- wrong=- missing=- shifted/last== mirrored/last==
+926 shaped minecraft:red_nether_brick_slab*6: exact== extra=- wrong=- missing=- shifted== mirrored== exact/last== extra=- wrong=- missing=- shifted/last== mirrored/last==
+927 shaped minecraft:red_nether_brick_stairs*4: exact== extra=- wrong=- missing=- shifted== mirrored== exact/last== extra=- wrong=- missing=- shifted/last== mirrored/last==
+928 shaped minecraft:red_nether_brick_wall*6: exact== extra=- wrong=- missing=- shifted== mirrored== exact/last== extra=- wrong=- missing=- shifted/last== mirrored/last==
+929 shaped minecraft:red_nether_bricks*1: exact== extra=- wrong=- missing=- shifted== mirrored== small== small_mirrored== exact/last== extra=- wrong=- missing=- shifted/last== mirrored/last== small/last== small_mirrored/last==
+930 shaped minecraft:red_sandstone*1: exact== extra=- wrong=- missing=- shifted== mirrored== small== small_mirrored== exact/last== extra=- wrong=- missing=- shifted/last== mirrored/last== small/last== small_mirrored/last==
+931 shaped minecraft:red_sandstone_slab*6: exact== extra=- wrong=- missing=- shifted== mirrored== exact/last== extra=- wrong=- missing=- shifted/last== mirrored/last==
+932 shaped minecraft:red_sandstone_stairs*4: exact== extra=- wrong=- missing=- shifted== mirrored== exact/last== extra=- wrong=- missing=- shifted/last== mirrored/last==
+933 shaped minecraft:red_sandstone_wall*6: exact== extra=- wrong=- missing=- shifted== mirrored== exact/last== extra=- wrong=- missing=- shifted/last== mirrored/last==
+934 transmute minecraft:red_shulker_box*1: exact== extra=- wrong=- missing=- last== reversed==
+935 shaped minecraft:red_stained_glass*8: exact== wrong=- missing=- shifted== mirrored== exact/last== wrong=- missing=- shifted/last== mirrored/last==
+936 shaped minecraft:red_stained_glass_pane*16: exact== extra=- wrong=- missing=- shifted== mirrored== exact/last== extra=- wrong=- missing=- shifted/last== mirrored/last==
+937 shaped minecraft:red_stained_glass_pane*8: exact== wrong=- missing=- shifted== mirrored== exact/last== wrong=- missing=- shifted/last== mirrored/last==
+938 shaped minecraft:red_terracotta*8: exact== wrong=- missing=- shifted== mirrored== exact/last== wrong=- missing=- shifted/last== mirrored/last==
+939 shaped minecraft:red_wool_slab*6: exact== extra=- wrong=- missing=minecraft:red_carpet*3 shifted== mirrored== exact/last== extra=- wrong=- missing=minecraft:red_carpet*3 shifted/last== mirrored/last==
+940 shaped minecraft:red_wool_stairs*4: exact== extra=- wrong=- missing=- shifted== mirrored== exact/last== extra=- wrong=- missing=- shifted/last== mirrored/last==
+941 shapeless minecraft:redstone*9: exact== extra=- wrong=- missing=- last== reversed==
+942 shaped minecraft:redstone_block*1: exact== wrong=- missing=- shifted== mirrored== exact/last== wrong=- missing=- shifted/last== mirrored/last==
+943 shaped minecraft:redstone_lamp*1: exact== extra=- wrong=- missing=- shifted== mirrored== exact/last== extra=- wrong=- missing=- shifted/last== mirrored/last==
+944 shaped minecraft:redstone_torch*1: exact== extra=- wrong=- missing=- shifted== mirrored== small== small_mirrored== exact/last== extra=- wrong=- missing=- shifted/last== mirrored/last== small/last== small_mirrored/last==
+945 shaped minecraft:repeater*1: exact== extra=- wrong=- missing=- shifted== mirrored== exact/last== extra=- wrong=- missing=- shifted/last== mirrored/last==
+946 shaped minecraft:resin_block*1: exact== wrong=- missing=- shifted== mirrored== exact/last== wrong=- missing=- shifted/last== mirrored/last==
+947 shaped minecraft:resin_brick_slab*6: exact== extra=- wrong=- missing=- shifted== mirrored== exact/last== extra=- wrong=- missing=- shifted/last== mirrored/last==
+948 shaped minecraft:resin_brick_stairs*4: exact== extra=- wrong=- missing=- shifted== mirrored== exact/last== extra=- wrong=- missing=- shifted/last== mirrored/last==
+949 shaped minecraft:resin_brick_wall*6: exact== extra=- wrong=- missing=- shifted== mirrored== exact/last== extra=- wrong=- missing=- shifted/last== mirrored/last==
+950 shaped minecraft:resin_bricks*1: exact== extra=- wrong=- missing=- shifted== mirrored== small== small_mirrored== exact/last== extra=- wrong=- missing=- shifted/last== mirrored/last== small/last== small_mirrored/last==
+951 shapeless minecraft:resin_clump*9: exact== extra=- wrong=- missing=- last== reversed==
+952 shaped minecraft:respawn_anchor*1: exact== wrong=- missing=- shifted== mirrored== exact/last== wrong=- missing=- shifted/last== mirrored/last==
+953 shaped minecraft:rib_armor_trim_smithing_template*2: exact== wrong=- missing=- shifted== mirrored== exact/last== wrong=- missing=- shifted/last== mirrored/last==
+954 shaped minecraft:saddle*1: exact== extra=- wrong=- missing=- shifted== mirrored== exact/last== extra=- wrong=- missing=- shifted/last== mirrored/last==
+955 shaped minecraft:sandstone*1: exact== extra=- wrong=- missing=- shifted== mirrored== small== small_mirrored== exact/last== extra=- wrong=- missing=- shifted/last== mirrored/last== small/last== small_mirrored/last==
+956 shaped minecraft:sandstone_slab*6: exact== extra=- wrong=- missing=- shifted== mirrored== exact/last== extra=- wrong=- missing=- shifted/last== mirrored/last==
+957 shaped minecraft:sandstone_stairs*4: exact== extra=- wrong=- missing=- shifted== mirrored== exact/last== extra=- wrong=- missing=- shifted/last== mirrored/last==
+958 shaped minecraft:sandstone_wall*6: exact== extra=- wrong=- missing=- shifted== mirrored== exact/last== extra=- wrong=- missing=- shifted/last== mirrored/last==
+959 shaped minecraft:scaffolding*6: exact== extra=- wrong=- missing=- shifted== mirrored== exact/last== extra=- wrong=- missing=- shifted/last== mirrored/last==
+960 shaped minecraft:sea_lantern*1: exact== wrong=- missing=- shifted== mirrored== exact/last== wrong=- missing=- shifted/last== mirrored/last==
+961 shaped minecraft:sentry_armor_trim_smithing_template*2: exact== wrong=- missing=- shifted== mirrored== exact/last== wrong=- missing=- shifted/last== mirrored/last==
+962 shaped minecraft:shaper_armor_trim_smithing_template*2: exact== wrong=- missing=- shifted== mirrored== exact/last== wrong=- missing=- shifted/last== mirrored/last==
+963 shaped minecraft:shears*1: exact== extra=- wrong=- missing=minecraft:iron_nugget*9 shifted== mirrored== small== small_mirrored== exact/last== extra=- wrong=- missing=minecraft:iron_nugget*9 shifted/last== mirrored/last== small/last== small_mirrored/last==
+964 shaped minecraft:shield*1: exact== extra=- wrong=- missing=- shifted== mirrored== exact/last== extra=- wrong=- missing=- shifted/last== mirrored/last==
+965 shaped minecraft:shulker_box*1: exact== extra=- wrong=- missing=- shifted== mirrored== exact/last== extra=- wrong=- missing=- shifted/last== mirrored/last==
+966 shaped minecraft:silence_armor_trim_smithing_template*2: exact== wrong=- missing=- shifted== mirrored== exact/last== wrong=- missing=- shifted/last== mirrored/last==
+967 shapeless minecraft:skull_banner_pattern*1: exact== extra=- wrong=- missing=- last== reversed==
+968 shapeless minecraft:slime_ball*9: exact== extra=- wrong=- missing=- last== reversed==
+969 shaped minecraft:slime_block*1: exact== wrong=- missing=- shifted== mirrored== exact/last== wrong=- missing=- shifted/last== mirrored/last==
+970 shaped minecraft:smithing_table*1: exact== extra=- wrong=- missing=- shifted== mirrored== exact/last== extra=- wrong=- missing=- shifted/last== mirrored/last==
+971 shaped minecraft:smoker*1: exact== extra=- wrong=- missing=- shifted== mirrored== exact/last== extra=- wrong=- missing=- shifted/last== mirrored/last==
+972 shaped minecraft:smooth_quartz_slab*6: exact== extra=- wrong=- missing=- shifted== mirrored== exact/last== extra=- wrong=- missing=- shifted/last== mirrored/last==
+973 shaped minecraft:smooth_quartz_stairs*4: exact== extra=- wrong=- missing=- shifted== mirrored== exact/last== extra=- wrong=- missing=- shifted/last== mirrored/last==
+974 shaped minecraft:smooth_red_sandstone_slab*6: exact== extra=- wrong=- missing=- shifted== mirrored== exact/last== extra=- wrong=- missing=- shifted/last== mirrored/last==
+975 shaped minecraft:smooth_red_sandstone_stairs*4: exact== extra=- wrong=- missing=- shifted== mirrored== exact/last== extra=- wrong=- missing=- shifted/last== mirrored/last==
+976 shaped minecraft:smooth_sandstone_slab*6: exact== extra=- wrong=- missing=- shifted== mirrored== exact/last== extra=- wrong=- missing=- shifted/last== mirrored/last==
+977 shaped minecraft:smooth_sandstone_stairs*4: exact== extra=- wrong=- missing=- shifted== mirrored== exact/last== extra=- wrong=- missing=- shifted/last== mirrored/last==
+978 shaped minecraft:smooth_stone_slab*6: exact== extra=- wrong=- missing=- shifted== mirrored== exact/last== extra=- wrong=- missing=- shifted/last== mirrored/last==
+979 shaped minecraft:snout_armor_trim_smithing_template*2: exact== wrong=- missing=- shifted== mirrored== exact/last== wrong=- missing=- shifted/last== mirrored/last==
+980 shaped minecraft:snow*6: exact== extra=- wrong=- missing=- shifted== mirrored== exact/last== extra=- wrong=- missing=- shifted/last== mirrored/last==
+981 shaped minecraft:snow_block*1: exact== extra=- wrong=- missing=- shifted== mirrored== small== small_mirrored== exact/last== extra=- wrong=- missing=- shifted/last== mirrored/last== small/last== small_mirrored/last==
+982 shaped minecraft:soul_campfire*1: exact== extra=- wrong=- missing=- shifted== mirrored== exact/last== extra=- wrong=- missing=- shifted/last== mirrored/last==
+983 shaped minecraft:soul_lantern*1: exact== wrong=- missing=- shifted== mirrored== exact/last== wrong=- missing=- shifted/last== mirrored/last==
+984 shaped minecraft:soul_torch*4: exact== extra=- wrong=- missing=minecraft:torch*4 shifted== mirrored== exact/last== extra=- wrong=- missing=minecraft:torch*4 shifted/last== mirrored/last==
+985 shaped minecraft:spectral_arrow*2: exact== extra=- wrong=- missing=- shifted== mirrored== exact/last== extra=- wrong=- missing=- shifted/last== mirrored/last==
+986 shaped minecraft:spire_armor_trim_smithing_template*2: exact== wrong=- missing=- shifted== mirrored== exact/last== wrong=- missing=- shifted/last== mirrored/last==
+987 shaped minecraft:spruce_boat*1: exact== extra=- wrong=- missing=- shifted== mirrored== exact/last== extra=- wrong=- missing=- shifted/last== mirrored/last==
+988 shapeless minecraft:spruce_button*1: exact== extra=- wrong=- missing=- last== reversed==
+989 shapeless minecraft:spruce_chest_boat*1: exact== extra=- wrong=- missing=- last== reversed==
+990 shaped minecraft:spruce_door*3: exact== extra=- wrong=- missing=- shifted== mirrored== exact/last== extra=- wrong=- missing=- shifted/last== mirrored/last==
+991 shaped minecraft:spruce_fence*3: exact== extra=- wrong=- missing=- shifted== mirrored== exact/last== extra=- wrong=- missing=- shifted/last== mirrored/last==
+992 shaped minecraft:spruce_fence_gate*1: exact== extra=- wrong=- missing=- shifted== mirrored== exact/last== extra=- wrong=- missing=- shifted/last== mirrored/last==
+993 shaped minecraft:spruce_hanging_sign*6: exact== extra=- wrong=- missing=- shifted== mirrored== exact/last== extra=- wrong=- missing=- shifted/last== mirrored/last==
+994 shapeless minecraft:spruce_planks*4: exact== extra=- wrong=- missing=- last== reversed==
+995 shaped minecraft:spruce_pressure_plate*1: exact== extra=- wrong=- missing=minecraft:spruce_button*1 shifted== mirrored== small== small_mirrored== exact/last== extra=- wrong=- missing=minecraft:spruce_button*1 shifted/last== mirrored/last== small/last== small_mirrored/last==
+996 shaped minecraft:spruce_shelf*6: exact== extra=- wrong=- missing=- shifted== mirrored== exact/last== extra=- wrong=- missing=- shifted/last== mirrored/last==
+997 shaped minecraft:spruce_sign*3: exact== extra=- wrong=- missing=minecraft:spruce_trapdoor*2 shifted== mirrored== exact/last== extra=- wrong=- missing=minecraft:spruce_trapdoor*2 shifted/last== mirrored/last==
+998 shaped minecraft:spruce_slab*6: exact== extra=- wrong=- missing=minecraft:spruce_pressure_plate*1 shifted== mirrored== exact/last== extra=- wrong=- missing=minecraft:spruce_pressure_plate*1 shifted/last== mirrored/last==
+999 shaped minecraft:spruce_stairs*4: exact== extra=- wrong=- missing=- shifted== mirrored== exact/last== extra=- wrong=- missing=- shifted/last== mirrored/last==
+1000 shaped minecraft:spruce_trapdoor*2: exact== extra=- wrong=- missing=- shifted== mirrored== exact/last== extra=- wrong=- missing=- shifted/last== mirrored/last==
+1001 shaped minecraft:spruce_wood*3: exact== extra=- wrong=- missing=- shifted== mirrored== small== small_mirrored== exact/last== extra=- wrong=- missing=- shifted/last== mirrored/last== small/last== small_mirrored/last==
+1002 shaped minecraft:spyglass*1: exact=- extra=- wrong=- missing=- shifted=- mirrored=- exact/last=- extra=- wrong=- missing=- shifted/last=- mirrored/last=-
+1003 shaped minecraft:stick*4: exact== extra=- wrong=- missing=minecraft:oak_button*1 shifted== mirrored== small== small_mirrored== exact/last== extra=- wrong=- missing=minecraft:warped_button*1 shifted/last== mirrored/last== small/last== small_mirrored/last==
+1004 shaped minecraft:stick*1: exact== extra=- wrong=- missing=- shifted== mirrored== small== small_mirrored== exact/last== extra=- wrong=- missing=- shifted/last== mirrored/last== small/last== small_mirrored/last==
+1005 shaped minecraft:sticky_piston*1: exact== extra=- wrong=- missing=- shifted== mirrored== small== small_mirrored== exact/last== extra=- wrong=- missing=- shifted/last== mirrored/last== small/last== small_mirrored/last==
+1006 shaped minecraft:stone_axe*1: exact== extra=- wrong=- missing=- shifted== mirrored== exact/last== extra=- wrong=- missing=- shifted/last== mirrored/last==
+1007 shaped minecraft:stone_brick_slab*6: exact== extra=- wrong=- missing=- shifted== mirrored== exact/last== extra=- wrong=- missing=- shifted/last== mirrored/last==
+1008 shaped minecraft:stone_brick_stairs*4: exact== extra=- wrong=- missing=- shifted== mirrored== exact/last== extra=- wrong=- missing=- shifted/last== mirrored/last==
+1009 shaped minecraft:stone_brick_wall*6: exact== extra=- wrong=- missing=- shifted== mirrored== exact/last== extra=- wrong=- missing=- shifted/last== mirrored/last==
+1010 shaped minecraft:stone_bricks*4: exact== extra=- wrong=- missing=- shifted== mirrored== small== small_mirrored== exact/last== extra=- wrong=- missing=- shifted/last== mirrored/last== small/last== small_mirrored/last==
+1011 shapeless minecraft:stone_button*1: exact== extra=- wrong=- missing=- last== reversed==
+1012 shaped minecraft:stone_hoe*1: exact== extra=- wrong=- missing=- shifted== mirrored== exact/last== extra=- wrong=- missing=- shifted/last== mirrored/last==
+1013 shaped minecraft:stone_pickaxe*1: exact== extra=- wrong=- missing=- shifted== mirrored== exact/last== extra=- wrong=- missing=- shifted/last== mirrored/last==
+1014 shaped minecraft:stone_pressure_plate*1: exact== extra=- wrong=- missing=minecraft:stone_button*1 shifted== mirrored== small== small_mirrored== exact/last== extra=- wrong=- missing=minecraft:stone_button*1 shifted/last== mirrored/last== small/last== small_mirrored/last==
+1015 shaped minecraft:stone_shovel*1: exact== extra=- wrong=- missing=- shifted== mirrored== exact/last== extra=- wrong=- missing=- shifted/last== mirrored/last==
+1016 shaped minecraft:stone_slab*6: exact== extra=- wrong=- missing=minecraft:stone_pressure_plate*1 shifted== mirrored== exact/last== extra=- wrong=- missing=minecraft:stone_pressure_plate*1 shifted/last== mirrored/last==
+1017 shaped minecraft:stone_spear*1: exact== extra=- wrong=- missing=- shifted== mirrored== exact/last== extra=- wrong=- missing=- shifted/last== mirrored/last==
+1018 shaped minecraft:stone_stairs*4: exact== extra=- wrong=- missing=- shifted== mirrored== exact/last== extra=- wrong=- missing=- shifted/last== mirrored/last==
+1019 shaped minecraft:stone_sword*1: exact== extra=- wrong=- missing=- shifted== mirrored== exact/last== extra=- wrong=- missing=- shifted/last== mirrored/last==
+1020 shaped minecraft:stonecutter*1: exact== extra=- wrong=- missing=- shifted== mirrored== exact/last== extra=- wrong=- missing=- shifted/last== mirrored/last==
+1021 shaped minecraft:straw_bed*4: exact== extra=- wrong=- missing=- shifted== mirrored== exact/last== extra=- wrong=- missing=- shifted/last== mirrored/last==
+1022 shaped minecraft:stripped_acacia_wood*3: exact== extra=- wrong=- missing=- shifted== mirrored== small== small_mirrored== exact/last== extra=- wrong=- missing=- shifted/last== mirrored/last== small/last== small_mirrored/last==
+1023 shaped minecraft:stripped_birch_wood*3: exact== extra=- wrong=- missing=- shifted== mirrored== small== small_mirrored== exact/last== extra=- wrong=- missing=- shifted/last== mirrored/last== small/last== small_mirrored/last==
+1024 shaped minecraft:stripped_cherry_wood*3: exact== extra=- wrong=- missing=- shifted== mirrored== small== small_mirrored== exact/last== extra=- wrong=- missing=- shifted/last== mirrored/last== small/last== small_mirrored/last==
+1025 shaped minecraft:stripped_crimson_hyphae*3: exact== extra=- wrong=- missing=- shifted== mirrored== small== small_mirrored== exact/last== extra=- wrong=- missing=- shifted/last== mirrored/last== small/last== small_mirrored/last==
+1026 shaped minecraft:stripped_dark_oak_wood*3: exact== extra=- wrong=- missing=- shifted== mirrored== small== small_mirrored== exact/last== extra=- wrong=- missing=- shifted/last== mirrored/last== small/last== small_mirrored/last==
+1027 shaped minecraft:stripped_jungle_wood*3: exact== extra=- wrong=- missing=- shifted== mirrored== small== small_mirrored== exact/last== extra=- wrong=- missing=- shifted/last== mirrored/last== small/last== small_mirrored/last==
+1028 shaped minecraft:stripped_mangrove_wood*3: exact== extra=- wrong=- missing=- shifted== mirrored== small== small_mirrored== exact/last== extra=- wrong=- missing=- shifted/last== mirrored/last== small/last== small_mirrored/last==
+1029 shaped minecraft:stripped_oak_wood*3: exact== extra=- wrong=- missing=- shifted== mirrored== small== small_mirrored== exact/last== extra=- wrong=- missing=- shifted/last== mirrored/last== small/last== small_mirrored/last==
+1030 shaped minecraft:stripped_pale_oak_wood*3: exact== extra=- wrong=- missing=- shifted== mirrored== small== small_mirrored== exact/last== extra=- wrong=- missing=- shifted/last== mirrored/last== small/last== small_mirrored/last==
+1031 shaped minecraft:stripped_poplar_wood*3: exact== extra=- wrong=- missing=- shifted== mirrored== small== small_mirrored== exact/last== extra=- wrong=- missing=- shifted/last== mirrored/last== small/last== small_mirrored/last==
+1032 shaped minecraft:stripped_spruce_wood*3: exact== extra=- wrong=- missing=- shifted== mirrored== small== small_mirrored== exact/last== extra=- wrong=- missing=- shifted/last== mirrored/last== small/last== small_mirrored/last==
+1033 shaped minecraft:stripped_warped_hyphae*3: exact== extra=- wrong=- missing=- shifted== mirrored== small== small_mirrored== exact/last== extra=- wrong=- missing=- shifted/last== mirrored/last== small/last== small_mirrored/last==
+1034 shapeless minecraft:sugar*3: exact== extra=- wrong=- missing=- last== reversed==
+1035 shapeless minecraft:sugar*1: exact== extra=- wrong=- missing=- last== reversed==
+1036 shaped minecraft:sulfur_brick_slab*6: exact== extra=- wrong=- missing=- shifted== mirrored== exact/last== extra=- wrong=- missing=- shifted/last== mirrored/last==
+1037 shaped minecraft:sulfur_brick_stairs*4: exact== extra=- wrong=- missing=- shifted== mirrored== exact/last== extra=- wrong=- missing=- shifted/last== mirrored/last==
+1038 shaped minecraft:sulfur_brick_wall*6: exact== extra=- wrong=- missing=- shifted== mirrored== exact/last== extra=- wrong=- missing=- shifted/last== mirrored/last==
+1039 shaped minecraft:sulfur_bricks*4: exact== extra=- wrong=- missing=- shifted== mirrored== small== small_mirrored== exact/last== extra=- wrong=- missing=- shifted/last== mirrored/last== small/last== small_mirrored/last==
+1040 shaped minecraft:sulfur*1: exact== extra=- wrong=- missing=- shifted== mirrored== small== small_mirrored== exact/last== extra=- wrong=- missing=- shifted/last== mirrored/last== small/last== small_mirrored/last==
+1041 shaped minecraft:sulfur_slab*6: exact== extra=- wrong=- missing=- shifted== mirrored== exact/last== extra=- wrong=- missing=- shifted/last== mirrored/last==
+1042 shaped minecraft:sulfur_stairs*4: exact== extra=- wrong=- missing=- shifted== mirrored== exact/last== extra=- wrong=- missing=- shifted/last== mirrored/last==
+1043 shaped minecraft:sulfur_wall*6: exact== extra=- wrong=- missing=- shifted== mirrored== exact/last== extra=- wrong=- missing=- shifted/last== mirrored/last==
+1044 shapeless minecraft:suspicious_stew*1: exact== extra=- wrong=- missing=minecraft:mushroom_stew*1 last== reversed==
+1045 shapeless minecraft:suspicious_stew*1: exact== extra=- wrong=- missing=minecraft:mushroom_stew*1 last== reversed==
+1046 shapeless minecraft:suspicious_stew*1: exact== extra=- wrong=- missing=minecraft:mushroom_stew*1 last== reversed==
+1047 shapeless minecraft:suspicious_stew*1: exact== extra=- wrong=- missing=minecraft:mushroom_stew*1 last== reversed==
+1048 shapeless minecraft:suspicious_stew*1: exact== extra=- wrong=- missing=minecraft:mushroom_stew*1 last== reversed==
+1049 shapeless minecraft:suspicious_stew*1: exact== extra=- wrong=- missing=minecraft:mushroom_stew*1 last== reversed==
+1050 shapeless minecraft:suspicious_stew*1: exact== extra=- wrong=- missing=minecraft:mushroom_stew*1 last== reversed==
+1051 shapeless minecraft:suspicious_stew*1: exact== extra=- wrong=- missing=minecraft:mushroom_stew*1 last== reversed==
+1052 shapeless minecraft:suspicious_stew*1: exact== extra=- wrong=- missing=minecraft:mushroom_stew*1 last== reversed==
+1053 shapeless minecraft:suspicious_stew*1: exact== extra=- wrong=- missing=minecraft:mushroom_stew*1 last== reversed==
+1054 shapeless minecraft:suspicious_stew*1: exact== extra=- wrong=- missing=minecraft:mushroom_stew*1 last== reversed==
+1055 shapeless minecraft:suspicious_stew*1: exact== extra=- wrong=- missing=minecraft:mushroom_stew*1 last== reversed==
+1056 shapeless minecraft:suspicious_stew*1: exact== extra=- wrong=- missing=minecraft:mushroom_stew*1 last== reversed==
+1057 shapeless minecraft:suspicious_stew*1: exact== extra=- wrong=- missing=minecraft:mushroom_stew*1 last== reversed==
+1058 shapeless minecraft:suspicious_stew*1: exact== extra=- wrong=- missing=minecraft:mushroom_stew*1 last== reversed==
+1059 shapeless minecraft:suspicious_stew*1: exact== extra=- wrong=- missing=minecraft:mushroom_stew*1 last== reversed==
+1060 shapeless minecraft:suspicious_stew*1: exact== extra=- wrong=- missing=minecraft:mushroom_stew*1 last== reversed==
+1061 shaped minecraft:target*1: exact== extra=- wrong=- missing=- shifted== mirrored== exact/last== extra=- wrong=- missing=- shifted/last== mirrored/last==
+1062 shaped minecraft:tide_armor_trim_smithing_template*2: exact== wrong=- missing=- shifted== mirrored== exact/last== wrong=- missing=- shifted/last== mirrored/last==
+1063 shaped minecraft:tinted_glass*2: exact== extra=- wrong=- missing=- shifted== mirrored== exact/last== extra=- wrong=- missing=- shifted/last== mirrored/last==
+1064 shaped minecraft:tnt*1: exact== wrong=- missing=- shifted== mirrored== exact/last== wrong=- missing=- shifted/last== mirrored/last==
+1065 shapeless minecraft:tnt_minecart*1: exact== extra=- wrong=- missing=- last== reversed==
+1066 shaped minecraft:torch*4: exact== extra=- wrong=- missing=- shifted== mirrored== small== small_mirrored== exact/last== extra=- wrong=- missing=- shifted/last== mirrored/last== small/last== small_mirrored/last==
+1067 shapeless minecraft:trapped_chest*1: exact== extra=- wrong=- missing=- last== reversed==
+1068 shaped minecraft:tripwire_hook*2: exact== extra=- wrong=- missing=- shifted== mirrored== exact/last== extra=- wrong=- missing=- shifted/last== mirrored/last==
+1069 shaped minecraft:tuff_brick_slab*6: exact== extra=- wrong=- missing=- shifted== mirrored== exact/last== extra=- wrong=- missing=- shifted/last== mirrored/last==
+1070 shaped minecraft:tuff_brick_stairs*4: exact== extra=- wrong=- missing=- shifted== mirrored== exact/last== extra=- wrong=- missing=- shifted/last== mirrored/last==
+1071 shaped minecraft:tuff_brick_wall*6: exact== extra=- wrong=- missing=- shifted== mirrored== exact/last== extra=- wrong=- missing=- shifted/last== mirrored/last==
+1072 shaped minecraft:tuff_bricks*4: exact== extra=- wrong=- missing=- shifted== mirrored== small== small_mirrored== exact/last== extra=- wrong=- missing=- shifted/last== mirrored/last== small/last== small_mirrored/last==
+1073 shaped minecraft:tuff_slab*6: exact== extra=- wrong=- missing=- shifted== mirrored== exact/last== extra=- wrong=- missing=- shifted/last== mirrored/last==
+1074 shaped minecraft:tuff_stairs*4: exact== extra=- wrong=- missing=- shifted== mirrored== exact/last== extra=- wrong=- missing=- shifted/last== mirrored/last==
+1075 shaped minecraft:tuff_wall*6: exact== extra=- wrong=- missing=- shifted== mirrored== exact/last== extra=- wrong=- missing=- shifted/last== mirrored/last==
+1076 shaped minecraft:turtle_helmet*1: exact== extra=- wrong=- missing=- shifted== mirrored== exact/last== extra=- wrong=- missing=- shifted/last== mirrored/last==
+1077 shaped minecraft:vex_armor_trim_smithing_template*2: exact== wrong=- missing=- shifted== mirrored== exact/last== wrong=- missing=- shifted/last== mirrored/last==
+1078 shaped minecraft:ward_armor_trim_smithing_template*2: exact== wrong=- missing=- shifted== mirrored== exact/last== wrong=- missing=- shifted/last== mirrored/last==
+1079 shapeless minecraft:warped_button*1: exact== extra=- wrong=- missing=- last== reversed==
+1080 shaped minecraft:warped_door*3: exact== extra=- wrong=- missing=- shifted== mirrored== exact/last== extra=- wrong=- missing=- shifted/last== mirrored/last==
+1081 shaped minecraft:warped_fence*3: exact== extra=- wrong=- missing=- shifted== mirrored== exact/last== extra=- wrong=- missing=- shifted/last== mirrored/last==
+1082 shaped minecraft:warped_fence_gate*1: exact== extra=- wrong=- missing=- shifted== mirrored== exact/last== extra=- wrong=- missing=- shifted/last== mirrored/last==
+1083 shaped minecraft:warped_fungus_on_a_stick*1: exact== extra=- wrong=- missing=- shifted== mirrored== small== small_mirrored== exact/last== extra=- wrong=- missing=- shifted/last== mirrored/last== small/last== small_mirrored/last==
+1084 shaped minecraft:warped_hanging_sign*6: exact== extra=- wrong=- missing=- shifted== mirrored== exact/last== extra=- wrong=- missing=- shifted/last== mirrored/last==
+1085 shaped minecraft:warped_hyphae*3: exact== extra=- wrong=- missing=- shifted== mirrored== small== small_mirrored== exact/last== extra=- wrong=- missing=- shifted/last== mirrored/last== small/last== small_mirrored/last==
+1086 shapeless minecraft:warped_planks*4: exact== extra=- wrong=- missing=- last== reversed==
+1087 shaped minecraft:warped_pressure_plate*1: exact== extra=- wrong=- missing=minecraft:warped_button*1 shifted== mirrored== small== small_mirrored== exact/last== extra=- wrong=- missing=minecraft:warped_button*1 shifted/last== mirrored/last== small/last== small_mirrored/last==
+1088 shaped minecraft:warped_shelf*6: exact== extra=- wrong=- missing=- shifted== mirrored== exact/last== extra=- wrong=- missing=- shifted/last== mirrored/last==
+1089 shaped minecraft:warped_sign*3: exact== extra=- wrong=- missing=minecraft:warped_trapdoor*2 shifted== mirrored== exact/last== extra=- wrong=- missing=minecraft:warped_trapdoor*2 shifted/last== mirrored/last==
+1090 shaped minecraft:warped_slab*6: exact== extra=- wrong=- missing=minecraft:warped_pressure_plate*1 shifted== mirrored== exact/last== extra=- wrong=- missing=minecraft:warped_pressure_plate*1 shifted/last== mirrored/last==
+1091 shaped minecraft:warped_stairs*4: exact== extra=- wrong=- missing=- shifted== mirrored== exact/last== extra=- wrong=- missing=- shifted/last== mirrored/last==
+1092 shaped minecraft:warped_trapdoor*2: exact== extra=- wrong=- missing=- shifted== mirrored== exact/last== extra=- wrong=- missing=- shifted/last== mirrored/last==
+1093 shaped minecraft:waxed_chiseled_copper*1: exact=- extra=- wrong=- missing=- shifted=- mirrored=- exact/last=- extra=- wrong=- missing=- shifted/last=- mirrored/last=-
+1094 shapeless minecraft:waxed_chiseled_copper*1: exact== extra=- wrong=- missing=- last== reversed==
+1095 shapeless minecraft:waxed_copper_bars*1: exact== extra=- wrong=- missing=- last== reversed==
+1096 shapeless minecraft:waxed_copper_block*1: exact== extra=- wrong=- missing=minecraft:copper_ingot*9 last== reversed==
+1097 shaped minecraft:waxed_copper_bulb*4: exact== extra=- wrong=- missing=- shifted== mirrored== exact/last== extra=- wrong=- missing=- shifted/last== mirrored/last==
+1098 shapeless minecraft:waxed_copper_bulb*1: exact== extra=- wrong=- missing=- last== reversed==
+1099 shapeless minecraft:waxed_copper_chain*1: exact== extra=- wrong=- missing=- last== reversed==
+1100 shapeless minecraft:waxed_copper_chest*1: exact== extra=- wrong=- missing=- last== reversed==
+1101 shapeless minecraft:waxed_copper_door*1: exact== extra=- wrong=- missing=- last== reversed==
+1102 shapeless minecraft:waxed_copper_golem_statue*1: exact== extra=- wrong=- missing=- last== reversed==
+1103 shaped minecraft:waxed_copper_grate*4: exact== extra=- wrong=- missing=- shifted== mirrored== exact/last== extra=- wrong=- missing=- shifted/last== mirrored/last==
+1104 shapeless minecraft:waxed_copper_grate*1: exact== extra=- wrong=- missing=- last== reversed==
+1105 shapeless minecraft:waxed_copper_lantern*1: exact== extra=- wrong=- missing=- last== reversed==
+1106 shapeless minecraft:waxed_copper_trapdoor*1: exact== extra=- wrong=- missing=- last== reversed==
+1107 shaped minecraft:waxed_cut_copper*4: exact== extra=- wrong=- missing=- shifted== mirrored== small== small_mirrored== exact/last== extra=- wrong=- missing=- shifted/last== mirrored/last== small/last== small_mirrored/last==
+1108 shapeless minecraft:waxed_cut_copper*1: exact== extra=- wrong=- missing=- last== reversed==
+1109 shaped minecraft:waxed_cut_copper_slab*6: exact== extra=- wrong=- missing=- shifted== mirrored== exact/last== extra=- wrong=- missing=- shifted/last== mirrored/last==
+1110 shapeless minecraft:waxed_cut_copper_slab*1: exact== extra=- wrong=- missing=- last== reversed==
+1111 shaped minecraft:waxed_cut_copper_stairs*4: exact== extra=- wrong=- missing=- shifted== mirrored== exact/last== extra=- wrong=- missing=- shifted/last== mirrored/last==
+1112 shapeless minecraft:waxed_cut_copper_stairs*1: exact== extra=- wrong=- missing=- last== reversed==
+1113 shaped minecraft:waxed_exposed_chiseled_copper*1: exact=- extra=- wrong=- missing=- shifted=- mirrored=- exact/last=- extra=- wrong=- missing=- shifted/last=- mirrored/last=-
+1114 shapeless minecraft:waxed_exposed_chiseled_copper*1: exact== extra=- wrong=- missing=- last== reversed==
+1115 shapeless minecraft:waxed_exposed_copper_bars*1: exact== extra=- wrong=- missing=- last== reversed==
+1116 shaped minecraft:waxed_exposed_copper_bulb*4: exact== extra=- wrong=- missing=- shifted== mirrored== exact/last== extra=- wrong=- missing=- shifted/last== mirrored/last==
+1117 shapeless minecraft:waxed_exposed_copper_bulb*1: exact== extra=- wrong=- missing=- last== reversed==
+1118 shapeless minecraft:waxed_exposed_copper_chain*1: exact== extra=- wrong=- missing=- last== reversed==
+1119 shapeless minecraft:waxed_exposed_copper_chest*1: exact== extra=- wrong=- missing=- last== reversed==
+1120 shapeless minecraft:waxed_exposed_copper_door*1: exact== extra=- wrong=- missing=- last== reversed==
+1121 shapeless minecraft:waxed_exposed_copper*1: exact== extra=- wrong=- missing=- last== reversed==
+1122 shapeless minecraft:waxed_exposed_copper_golem_statue*1: exact== extra=- wrong=- missing=- last== reversed==
+1123 shaped minecraft:waxed_exposed_copper_grate*4: exact== extra=- wrong=- missing=- shifted== mirrored== exact/last== extra=- wrong=- missing=- shifted/last== mirrored/last==
+1124 shapeless minecraft:waxed_exposed_copper_grate*1: exact== extra=- wrong=- missing=- last== reversed==
+1125 shapeless minecraft:waxed_exposed_copper_lantern*1: exact== extra=- wrong=- missing=- last== reversed==
+1126 shapeless minecraft:waxed_exposed_copper_trapdoor*1: exact== extra=- wrong=- missing=- last== reversed==
+1127 shaped minecraft:waxed_exposed_cut_copper*4: exact== extra=- wrong=- missing=- shifted== mirrored== small== small_mirrored== exact/last== extra=- wrong=- missing=- shifted/last== mirrored/last== small/last== small_mirrored/last==
+1128 shapeless minecraft:waxed_exposed_cut_copper*1: exact== extra=- wrong=- missing=- last== reversed==
+1129 shaped minecraft:waxed_exposed_cut_copper_slab*6: exact== extra=- wrong=- missing=- shifted== mirrored== exact/last== extra=- wrong=- missing=- shifted/last== mirrored/last==
+1130 shapeless minecraft:waxed_exposed_cut_copper_slab*1: exact== extra=- wrong=- missing=- last== reversed==
+1131 shaped minecraft:waxed_exposed_cut_copper_stairs*4: exact== extra=- wrong=- missing=- shifted== mirrored== exact/last== extra=- wrong=- missing=- shifted/last== mirrored/last==
+1132 shapeless minecraft:waxed_exposed_cut_copper_stairs*1: exact== extra=- wrong=- missing=- last== reversed==
+1133 shapeless minecraft:waxed_exposed_lightning_rod*1: exact== extra=- wrong=- missing=- last== reversed==
+1134 shapeless minecraft:waxed_lightning_rod*1: exact== extra=- wrong=- missing=- last== reversed==
+1135 shaped minecraft:waxed_oxidized_chiseled_copper*1: exact=- extra=- wrong=- missing=- shifted=- mirrored=- exact/last=- extra=- wrong=- missing=- shifted/last=- mirrored/last=-
+1136 shapeless minecraft:waxed_oxidized_chiseled_copper*1: exact== extra=- wrong=- missing=- last== reversed==
+1137 shapeless minecraft:waxed_oxidized_copper_bars*1: exact== extra=- wrong=- missing=- last== reversed==
+1138 shaped minecraft:waxed_oxidized_copper_bulb*4: exact== extra=- wrong=- missing=- shifted== mirrored== exact/last== extra=- wrong=- missing=- shifted/last== mirrored/last==
+1139 shapeless minecraft:waxed_oxidized_copper_bulb*1: exact== extra=- wrong=- missing=- last== reversed==
+1140 shapeless minecraft:waxed_oxidized_copper_chain*1: exact== extra=- wrong=- missing=- last== reversed==
+1141 shapeless minecraft:waxed_oxidized_copper_chest*1: exact== extra=- wrong=- missing=- last== reversed==
+1142 shapeless minecraft:waxed_oxidized_copper_door*1: exact== extra=- wrong=- missing=- last== reversed==
+1143 shapeless minecraft:waxed_oxidized_copper*1: exact== extra=- wrong=- missing=- last== reversed==
+1144 shapeless minecraft:waxed_oxidized_copper_golem_statue*1: exact== extra=- wrong=- missing=- last== reversed==
+1145 shaped minecraft:waxed_oxidized_copper_grate*4: exact== extra=- wrong=- missing=- shifted== mirrored== exact/last== extra=- wrong=- missing=- shifted/last== mirrored/last==
+1146 shapeless minecraft:waxed_oxidized_copper_grate*1: exact== extra=- wrong=- missing=- last== reversed==
+1147 shapeless minecraft:waxed_oxidized_copper_lantern*1: exact== extra=- wrong=- missing=- last== reversed==
+1148 shapeless minecraft:waxed_oxidized_copper_trapdoor*1: exact== extra=- wrong=- missing=- last== reversed==
+1149 shaped minecraft:waxed_oxidized_cut_copper*4: exact== extra=- wrong=- missing=- shifted== mirrored== small== small_mirrored== exact/last== extra=- wrong=- missing=- shifted/last== mirrored/last== small/last== small_mirrored/last==
+1150 shapeless minecraft:waxed_oxidized_cut_copper*1: exact== extra=- wrong=- missing=- last== reversed==
+1151 shaped minecraft:waxed_oxidized_cut_copper_slab*6: exact== extra=- wrong=- missing=- shifted== mirrored== exact/last== extra=- wrong=- missing=- shifted/last== mirrored/last==
+1152 shapeless minecraft:waxed_oxidized_cut_copper_slab*1: exact== extra=- wrong=- missing=- last== reversed==
+1153 shaped minecraft:waxed_oxidized_cut_copper_stairs*4: exact== extra=- wrong=- missing=- shifted== mirrored== exact/last== extra=- wrong=- missing=- shifted/last== mirrored/last==
+1154 shapeless minecraft:waxed_oxidized_cut_copper_stairs*1: exact== extra=- wrong=- missing=- last== reversed==
+1155 shapeless minecraft:waxed_oxidized_lightning_rod*1: exact== extra=- wrong=- missing=- last== reversed==
+1156 shaped minecraft:waxed_weathered_chiseled_copper*1: exact=- extra=- wrong=- missing=- shifted=- mirrored=- exact/last=- extra=- wrong=- missing=- shifted/last=- mirrored/last=-
+1157 shapeless minecraft:waxed_weathered_chiseled_copper*1: exact== extra=- wrong=- missing=- last== reversed==
+1158 shapeless minecraft:waxed_weathered_copper_bars*1: exact== extra=- wrong=- missing=- last== reversed==
+1159 shaped minecraft:waxed_weathered_copper_bulb*4: exact== extra=- wrong=- missing=- shifted== mirrored== exact/last== extra=- wrong=- missing=- shifted/last== mirrored/last==
+1160 shapeless minecraft:waxed_weathered_copper_bulb*1: exact== extra=- wrong=- missing=- last== reversed==
+1161 shapeless minecraft:waxed_weathered_copper_chain*1: exact== extra=- wrong=- missing=- last== reversed==
+1162 shapeless minecraft:waxed_weathered_copper_chest*1: exact== extra=- wrong=- missing=- last== reversed==
+1163 shapeless minecraft:waxed_weathered_copper_door*1: exact== extra=- wrong=- missing=- last== reversed==
+1164 shapeless minecraft:waxed_weathered_copper*1: exact== extra=- wrong=- missing=- last== reversed==
+1165 shapeless minecraft:waxed_weathered_copper_golem_statue*1: exact== extra=- wrong=- missing=- last== reversed==
+1166 shaped minecraft:waxed_weathered_copper_grate*4: exact== extra=- wrong=- missing=- shifted== mirrored== exact/last== extra=- wrong=- missing=- shifted/last== mirrored/last==
+1167 shapeless minecraft:waxed_weathered_copper_grate*1: exact== extra=- wrong=- missing=- last== reversed==
+1168 shapeless minecraft:waxed_weathered_copper_lantern*1: exact== extra=- wrong=- missing=- last== reversed==
+1169 shapeless minecraft:waxed_weathered_copper_trapdoor*1: exact== extra=- wrong=- missing=- last== reversed==
+1170 shaped minecraft:waxed_weathered_cut_copper*4: exact== extra=- wrong=- missing=- shifted== mirrored== small== small_mirrored== exact/last== extra=- wrong=- missing=- shifted/last== mirrored/last== small/last== small_mirrored/last==
+1171 shapeless minecraft:waxed_weathered_cut_copper*1: exact== extra=- wrong=- missing=- last== reversed==
+1172 shaped minecraft:waxed_weathered_cut_copper_slab*6: exact== extra=- wrong=- missing=- shifted== mirrored== exact/last== extra=- wrong=- missing=- shifted/last== mirrored/last==
+1173 shapeless minecraft:waxed_weathered_cut_copper_slab*1: exact== extra=- wrong=- missing=- last== reversed==
+1174 shaped minecraft:waxed_weathered_cut_copper_stairs*4: exact== extra=- wrong=- missing=- shifted== mirrored== exact/last== extra=- wrong=- missing=- shifted/last== mirrored/last==
+1175 shapeless minecraft:waxed_weathered_cut_copper_stairs*1: exact== extra=- wrong=- missing=- last== reversed==
+1176 shapeless minecraft:waxed_weathered_lightning_rod*1: exact== extra=- wrong=- missing=- last== reversed==
+1177 shaped minecraft:wayfinder_armor_trim_smithing_template*2: exact== wrong=- missing=- shifted== mirrored== exact/last== wrong=- missing=- shifted/last== mirrored/last==
+1178 shaped minecraft:weathered_chiseled_copper*1: exact== extra=- wrong=- missing=- shifted== mirrored== small== small_mirrored== exact/last== extra=- wrong=- missing=- shifted/last== mirrored/last== small/last== small_mirrored/last==
+1179 shaped minecraft:weathered_copper_bulb*4: exact== extra=- wrong=- missing=- shifted== mirrored== exact/last== extra=- wrong=- missing=- shifted/last== mirrored/last==
+1180 shaped minecraft:weathered_copper_grate*4: exact== extra=- wrong=- missing=- shifted== mirrored== exact/last== extra=- wrong=- missing=- shifted/last== mirrored/last==
+1181 shaped minecraft:weathered_cut_copper*4: exact== extra=- wrong=- missing=- shifted== mirrored== small== small_mirrored== exact/last== extra=- wrong=- missing=- shifted/last== mirrored/last== small/last== small_mirrored/last==
+1182 shaped minecraft:weathered_cut_copper_slab*6: exact== extra=- wrong=- missing=- shifted== mirrored== exact/last== extra=- wrong=- missing=- shifted/last== mirrored/last==
+1183 shaped minecraft:weathered_cut_copper_stairs*4: exact== extra=- wrong=- missing=- shifted== mirrored== exact/last== extra=- wrong=- missing=- shifted/last== mirrored/last==
+1184 shapeless minecraft:wheat*9: exact== extra=- wrong=- missing=- last== reversed==
+1185 shaped minecraft:white_banner*1: exact== extra=- wrong=- missing=- shifted== mirrored== exact/last== extra=- wrong=- missing=- shifted/last== mirrored/last==
+1186 shaped minecraft:white_bed*1: exact== extra=- wrong=- missing=- shifted== mirrored== exact/last== extra=- wrong=- missing=- shifted/last== mirrored/last==
+1187 transmute minecraft:white_bundle*1: exact== extra=- wrong=- missing=- last== reversed==
+1188 shapeless minecraft:white_candle*1: exact== extra=- wrong=- missing=- last== reversed==
+1189 shaped minecraft:white_carpet*3: exact== extra=- wrong=- missing=- shifted== mirrored== small== small_mirrored== exact/last== extra=- wrong=- missing=- shifted/last== mirrored/last== small/last== small_mirrored/last==
+1190 shapeless minecraft:white_concrete_powder*8: exact== wrong=- missing=- last== reversed==
+1191 shaped minecraft:white_concrete_slab*6: exact== extra=- wrong=- missing=- shifted== mirrored== exact/last== extra=- wrong=- missing=- shifted/last== mirrored/last==
+1192 shaped minecraft:white_concrete_stairs*4: exact== extra=- wrong=- missing=- shifted== mirrored== exact/last== extra=- wrong=- missing=- shifted/last== mirrored/last==
+1193 shaped minecraft:white_cushion*1: exact== extra=- wrong=- missing=- shifted== mirrored== exact/last== extra=- wrong=- missing=- shifted/last== mirrored/last==
+1194 shapeless minecraft:white_dye*1: exact== extra=- wrong=- missing=- last== reversed==
+1195 shapeless minecraft:white_dye*1: exact== extra=- wrong=- missing=- last== reversed==
+1196 shaped minecraft:white_harness*1: exact== extra=- wrong=- missing=- shifted== mirrored== exact/last== extra=- wrong=- missing=- shifted/last== mirrored/last==
+1197 transmute minecraft:white_shulker_box*1: exact== extra=- wrong=- missing=- last== reversed==
+1198 shaped minecraft:white_stained_glass*8: exact== wrong=- missing=- shifted== mirrored== exact/last== wrong=- missing=- shifted/last== mirrored/last==
+1199 shaped minecraft:white_stained_glass_pane*16: exact== extra=- wrong=- missing=- shifted== mirrored== exact/last== extra=- wrong=- missing=- shifted/last== mirrored/last==
+1200 shaped minecraft:white_stained_glass_pane*8: exact== wrong=- missing=- shifted== mirrored== exact/last== wrong=- missing=- shifted/last== mirrored/last==
+1201 shaped minecraft:white_terracotta*8: exact== wrong=- missing=- shifted== mirrored== exact/last== wrong=- missing=- shifted/last== mirrored/last==
+1202 shaped minecraft:white_wool*1: exact== extra=- wrong=- missing=- shifted== mirrored== small== small_mirrored== exact/last== extra=- wrong=- missing=- shifted/last== mirrored/last== small/last== small_mirrored/last==
+1203 shaped minecraft:white_wool_slab*6: exact== extra=- wrong=- missing=minecraft:white_carpet*3 shifted== mirrored== exact/last== extra=- wrong=- missing=minecraft:white_carpet*3 shifted/last== mirrored/last==
+1204 shaped minecraft:white_wool_stairs*4: exact== extra=- wrong=- missing=- shifted== mirrored== exact/last== extra=- wrong=- missing=- shifted/last== mirrored/last==
+1205 shaped minecraft:wild_armor_trim_smithing_template*2: exact== wrong=- missing=- shifted== mirrored== exact/last== wrong=- missing=- shifted/last== mirrored/last==
+1206 shapeless minecraft:wind_charge*4: exact== extra=- wrong=- missing=- last== reversed==
+1207 shaped minecraft:wolf_armor*1: exact== extra=- wrong=- missing=- shifted== mirrored== exact/last== extra=- wrong=- missing=- shifted/last== mirrored/last==
+1208 shaped minecraft:wooden_axe*1: exact== extra=- wrong=- missing=- shifted== mirrored== exact/last== extra=- wrong=- missing=- shifted/last== mirrored/last==
+1209 shaped minecraft:wooden_hoe*1: exact== extra=- wrong=- missing=- shifted== mirrored== exact/last== extra=- wrong=- missing=- shifted/last== mirrored/last==
+1210 shaped minecraft:wooden_pickaxe*1: exact== extra=- wrong=- missing=- shifted== mirrored== exact/last== extra=- wrong=- missing=- shifted/last== mirrored/last==
+1211 shaped minecraft:wooden_shovel*1: exact== extra=- wrong=- missing=- shifted== mirrored== exact/last== extra=- wrong=- missing=- shifted/last== mirrored/last==
+1212 shaped minecraft:wooden_spear*1: exact== extra=- wrong=- missing=- shifted== mirrored== exact/last== extra=- wrong=- missing=- shifted/last== mirrored/last==
+1213 shaped minecraft:wooden_sword*1: exact== extra=- wrong=- missing=minecraft:stick*4 shifted== mirrored== exact/last== extra=- wrong=- missing=minecraft:stick*4 shifted/last== mirrored/last==
+1214 shapeless minecraft:writable_book*1: exact== extra=- wrong=- missing=- last== reversed==
+1215 shaped minecraft:yellow_banner*1: exact== extra=- wrong=- missing=- shifted== mirrored== exact/last== extra=- wrong=- missing=- shifted/last== mirrored/last==
+1216 shaped minecraft:yellow_bed*1: exact== extra=- wrong=- missing=- shifted== mirrored== exact/last== extra=- wrong=- missing=- shifted/last== mirrored/last==
+1217 transmute minecraft:yellow_bundle*1: exact== extra=- wrong=- missing=- last== reversed==
+1218 shapeless minecraft:yellow_candle*1: exact== extra=- wrong=- missing=- last== reversed==
+1219 shaped minecraft:yellow_carpet*3: exact== extra=- wrong=- missing=- shifted== mirrored== small== small_mirrored== exact/last== extra=- wrong=- missing=- shifted/last== mirrored/last== small/last== small_mirrored/last==
+1220 shapeless minecraft:yellow_concrete_powder*8: exact== wrong=- missing=- last== reversed==
+1221 shaped minecraft:yellow_concrete_slab*6: exact== extra=- wrong=- missing=- shifted== mirrored== exact/last== extra=- wrong=- missing=- shifted/last== mirrored/last==
+1222 shaped minecraft:yellow_concrete_stairs*4: exact== extra=- wrong=- missing=- shifted== mirrored== exact/last== extra=- wrong=- missing=- shifted/last== mirrored/last==
+1223 shaped minecraft:yellow_cushion*1: exact== extra=- wrong=- missing=- shifted== mirrored== exact/last== extra=- wrong=- missing=- shifted/last== mirrored/last==
+1224 shapeless minecraft:yellow_dye*1: exact== extra=- wrong=- missing=- last== reversed==
+1225 shapeless minecraft:yellow_dye*1: exact== extra=- wrong=- missing=- last== reversed==
+1226 shapeless minecraft:yellow_dye*2: exact== extra=- wrong=- missing=- last== reversed==
+1227 shapeless minecraft:yellow_dye*1: exact== extra=- wrong=- missing=- last== reversed==
+1228 shaped minecraft:yellow_harness*1: exact== extra=- wrong=- missing=- shifted== mirrored== exact/last== extra=- wrong=- missing=- shifted/last== mirrored/last==
+1229 transmute minecraft:yellow_shulker_box*1: exact== extra=- wrong=- missing=- last== reversed==
+1230 shaped minecraft:yellow_stained_glass*8: exact== wrong=- missing=- shifted== mirrored== exact/last== wrong=- missing=- shifted/last== mirrored/last==
+1231 shaped minecraft:yellow_stained_glass_pane*16: exact== extra=- wrong=- missing=- shifted== mirrored== exact/last== extra=- wrong=- missing=- shifted/last== mirrored/last==
+1232 shaped minecraft:yellow_stained_glass_pane*8: exact== wrong=- missing=- shifted== mirrored== exact/last== wrong=- missing=- shifted/last== mirrored/last==
+1233 shaped minecraft:yellow_terracotta*8: exact== wrong=- missing=- shifted== mirrored== exact/last== wrong=- missing=- shifted/last== mirrored/last==
+1234 shaped minecraft:yellow_wool_slab*6: exact== extra=- wrong=- missing=minecraft:yellow_carpet*3 shifted== mirrored== exact/last== extra=- wrong=- missing=minecraft:yellow_carpet*3 shifted/last== mirrored/last==
+1235 shaped minecraft:yellow_wool_stairs*4: exact== extra=- wrong=- missing=- shifted== mirrored== exact/last== extra=- wrong=- missing=- shifted/last== mirrored/last==
+dynamic 2x2: with=minecraft:diamond*2 without=-
+dynamic 2x2_in_2x2: with=minecraft:diamond*2 without=-
+dynamic 2x2_shifted: with=minecraft:diamond*2 without=-
+dynamic 2x2_wrong: with=- without=-
+dynamic 3x2: with=minecraft:netherite_ingot*2 without=-
+dynamic 3x2_mirrored: with=- without=-
+dynamic shapeless: with=minecraft:gold_ingot*3 without=-
+dynamic shapeless_charcoal: with=minecraft:gold_ingot*3 without=-
+dynamic shapeless_extra: with=- without=-
+dynamic nothing: with=- without=-

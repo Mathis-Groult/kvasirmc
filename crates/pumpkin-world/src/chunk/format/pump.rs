@@ -1,3 +1,5 @@
+mod read;
+
 use std::{
     fs::{File, OpenOptions},
     path::{Path, PathBuf},

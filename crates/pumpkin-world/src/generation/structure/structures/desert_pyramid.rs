@@ -530,7 +530,6 @@ impl StructurePieceBase for DesertPyramidPiece {
         &mut self.piece
     }
 
-    #[expect(clippy::too_many_lines)]
     fn place(
         &mut self,
         chunk: &mut ProtoChunk,
@@ -551,19 +550,64 @@ impl StructurePieceBase for DesertPyramidPiece {
         let mut level_random = splitter.split_pos(origin.x, origin.y, origin.z);
 
         let bb = chunk_box;
-        let ss = Block::SANDSTONE.default_state;
-        let air = Block::AIR.default_state;
-        let cut = Block::CUT_SANDSTONE.default_state;
-        let chiseled = Block::CHISELED_SANDSTONE.default_state;
-        let orange = Block::ORANGE_TERRACOTTA.default_state;
-        let blue = Block::BLUE_TERRACOTTA.default_state;
-        let slab = Block::SANDSTONE_SLAB.default_state;
+        let palette = Palette::new();
 
-        let north_stairs = Self::sandstone_stairs(HorizontalFacing::North);
-        let south_stairs = Self::sandstone_stairs(HorizontalFacing::South);
-        let east_stairs = Self::sandstone_stairs(HorizontalFacing::East);
-        let west_stairs = Self::sandstone_stairs(HorizontalFacing::West);
+        self.place_shell(chunk, bb, &palette);
+        self.place_interior_walls(chunk, bb, &palette);
+        self.place_inner_chambers(chunk, bb, &palette);
+        self.place_floor_pattern(chunk, bb, &palette);
+        self.place_entrance_and_cellar_chambers(chunk, bb, &palette);
+        self.place_chests(chunk, bb);
 
+        self.add_cellar(chunk, bb, &mut level_random);
+    }
+}
+
+/// The block states a desert pyramid is built from, looked up once per `place`.
+#[derive(Clone, Copy)]
+struct Palette {
+    ss: &'static BlockState,
+    air: &'static BlockState,
+    cut: &'static BlockState,
+    chiseled: &'static BlockState,
+    orange: &'static BlockState,
+    blue: &'static BlockState,
+    slab: &'static BlockState,
+    north_stairs: &'static BlockState,
+    south_stairs: &'static BlockState,
+    east_stairs: &'static BlockState,
+    west_stairs: &'static BlockState,
+}
+
+impl Palette {
+    fn new() -> Self {
+        Self {
+            ss: Block::SANDSTONE.default_state,
+            air: Block::AIR.default_state,
+            cut: Block::CUT_SANDSTONE.default_state,
+            chiseled: Block::CHISELED_SANDSTONE.default_state,
+            orange: Block::ORANGE_TERRACOTTA.default_state,
+            blue: Block::BLUE_TERRACOTTA.default_state,
+            slab: Block::SANDSTONE_SLAB.default_state,
+            north_stairs: DesertPyramidPiece::sandstone_stairs(HorizontalFacing::North),
+            south_stairs: DesertPyramidPiece::sandstone_stairs(HorizontalFacing::South),
+            east_stairs: DesertPyramidPiece::sandstone_stairs(HorizontalFacing::East),
+            west_stairs: DesertPyramidPiece::sandstone_stairs(HorizontalFacing::West),
+        }
+    }
+}
+
+impl DesertPyramidPiece {
+    fn place_shell(&self, chunk: &mut ProtoChunk, bb: &BlockBox, palette: &Palette) {
+        let Palette {
+            ss,
+            air,
+            north_stairs,
+            south_stairs,
+            east_stairs,
+            west_stairs,
+            ..
+        } = *palette;
         self.piece
             .fill_with_outline(chunk, bb, false, 0, -4, 0, WIDTH - 1, 0, DEPTH - 1, ss, ss);
 
@@ -621,6 +665,16 @@ impl StructurePieceBase for DesertPyramidPiece {
             .add_block(chunk, south_stairs, WIDTH - 3, 10, 4, bb);
         self.piece
             .add_block(chunk, east_stairs, WIDTH - 5, 10, 2, bb);
+    }
+
+    fn place_interior_walls(&self, chunk: &mut ProtoChunk, bb: &BlockBox, palette: &Palette) {
+        let Palette {
+            ss,
+            air,
+            cut,
+            west_stairs,
+            ..
+        } = *palette;
         self.piece
             .add_block(chunk, west_stairs, WIDTH - 1, 10, 2, bb);
 
@@ -685,6 +739,21 @@ impl StructurePieceBase for DesertPyramidPiece {
         );
 
         self.piece.add_block(chunk, air, 5, 5, 10, bb);
+    }
+
+    fn place_inner_chambers(&self, chunk: &mut ProtoChunk, bb: &BlockBox, palette: &Palette) {
+        let Palette {
+            ss,
+            air,
+            cut,
+            chiseled,
+            orange,
+            slab,
+            north_stairs,
+            east_stairs,
+            west_stairs,
+            ..
+        } = *palette;
         self.piece.add_block(chunk, air, 5, 6, 10, bb);
         self.piece.add_block(chunk, air, 6, 6, 10, bb);
         self.piece.add_block(chunk, air, WIDTH - 6, 5, 10, bb);
@@ -742,6 +811,16 @@ impl StructurePieceBase for DesertPyramidPiece {
         }
 
         self.piece.add_block(chunk, orange, 10, 0, 7, bb);
+    }
+
+    fn place_floor_pattern(&self, chunk: &mut ProtoChunk, bb: &BlockBox, palette: &Palette) {
+        let Palette {
+            cut,
+            chiseled,
+            orange,
+            blue,
+            ..
+        } = *palette;
         self.piece.add_block(chunk, orange, 10, 0, 8, bb);
         self.piece.add_block(chunk, orange, 9, 0, 9, bb);
         self.piece.add_block(chunk, orange, 11, 0, 9, bb);
@@ -805,6 +884,22 @@ impl StructurePieceBase for DesertPyramidPiece {
 
         self.piece
             .fill_with_outline(chunk, bb, false, 8, 4, 0, 12, 6, 0, cut, cut);
+    }
+
+    fn place_entrance_and_cellar_chambers(
+        &self,
+        chunk: &mut ProtoChunk,
+        bb: &BlockBox,
+        palette: &Palette,
+    ) {
+        let Palette {
+            ss,
+            air,
+            cut,
+            chiseled,
+            orange,
+            ..
+        } = *palette;
         self.piece.add_block(chunk, air, 8, 6, 0, bb);
         self.piece.add_block(chunk, air, 12, 6, 0, bb);
         self.piece.add_block(chunk, orange, 9, 5, 0, bb);
@@ -859,12 +954,12 @@ impl StructurePieceBase for DesertPyramidPiece {
         self.piece.add_block(chunk, air, 10, -10, 12, bb);
         self.piece.add_block(chunk, chiseled, 10, -10, 13, bb);
         self.piece.add_block(chunk, cut, 10, -11, 13, bb);
+    }
 
+    fn place_chests(&mut self, chunk: &mut ProtoChunk, bb: &BlockBox) {
         for (index, x, z) in [(0, 10, 12), (1, 8, 10), (2, 10, 8), (3, 12, 10)] {
             self.try_place_chest(chunk, bb, index, x, -11, z);
         }
-
-        self.add_cellar(chunk, bb, &mut level_random);
     }
 }
 

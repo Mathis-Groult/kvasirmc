@@ -149,7 +149,7 @@ pub(crate) fn check(
     let mut now = String::new();
     for facing in FACINGS {
         for terrain in Terrain::ALL {
-            for seed in [1_i64, 987_654_321] {
+            for seed in [1i64, 987_654_321] {
                 let label = format!("{facing:?}/{terrain:?}/{seed}");
                 now.push_str(&place_everywhere(&label, make(facing), terrain, seed)?);
             }

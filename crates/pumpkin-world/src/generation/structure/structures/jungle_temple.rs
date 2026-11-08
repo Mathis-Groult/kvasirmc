@@ -89,7 +89,6 @@ impl StructurePieceBase for JungleTemplePiece {
         &mut self.piece
     }
 
-    #[expect(clippy::too_many_lines)]
     fn place(
         &mut self,
         chunk: &mut ProtoChunk,
@@ -103,6 +102,22 @@ impl StructurePieceBase for JungleTemplePiece {
         }
         let bb = chunk_box;
 
+        self.place_walls(chunk, bb, random);
+        self.place_walls_rest(chunk, bb, random);
+        self.place_hollows_and_windows(chunk, bb, random);
+        self.place_hollows_and_windows_rest(chunk, bb, random);
+        self.place_stairs_and_roof(chunk, bb, random);
+        self.place_basement_floor(chunk, bb, random);
+        self.place_basement_floor_rest(chunk, bb, random);
+        self.place_redstone_corridor_and_first_trap(chunk, bb, random);
+        self.place_redstone_corridor_and_first_trap_rest(chunk, bb);
+        self.place_second_trap_and_main_chest(chunk, bb, random);
+        self.place_second_trap_and_main_chest_rest(chunk, bb, random);
+        self.place_lever_room_and_hidden_chest(chunk, bb, random);
+    }
+}
+impl JungleTemplePiece {
+    fn place_walls(&self, chunk: &mut ProtoChunk, bb: &BlockBox, random: &mut RandomGenerator) {
         self.piece.fill(
             chunk,
             bb,
@@ -171,6 +186,14 @@ impl StructurePieceBase for JungleTemplePiece {
             13,
             MossStoneSelector::next(random),
         );
+    }
+
+    fn place_walls_rest(
+        &self,
+        chunk: &mut ProtoChunk,
+        bb: &BlockBox,
+        random: &mut RandomGenerator,
+    ) {
         self.piece.fill(
             chunk,
             bb,
@@ -237,6 +260,14 @@ impl StructurePieceBase for JungleTemplePiece {
             10,
             MossStoneSelector::next(random),
         );
+    }
+
+    fn place_hollows_and_windows(
+        &self,
+        chunk: &mut ProtoChunk,
+        bb: &BlockBox,
+        random: &mut RandomGenerator,
+    ) {
         let a = Block::AIR.default_state;
         self.piece.fill(chunk, bb, 3, 1, 3, 8, 2, 11, a);
         self.piece.fill(chunk, bb, 4, 3, 6, 7, 3, 9, a);
@@ -280,6 +311,14 @@ impl StructurePieceBase for JungleTemplePiece {
             .fill(chunk, bb, 2, 7, 2, 2, 9, 2, MossStoneSelector::next(random));
         self.piece
             .fill(chunk, bb, 9, 7, 2, 9, 9, 2, MossStoneSelector::next(random));
+    }
+
+    fn place_hollows_and_windows_rest(
+        &self,
+        chunk: &mut ProtoChunk,
+        bb: &BlockBox,
+        random: &mut RandomGenerator,
+    ) {
         self.piece.fill(
             chunk,
             bb,
@@ -330,6 +369,15 @@ impl StructurePieceBase for JungleTemplePiece {
         );
         self.piece
             .fill(chunk, bb, 5, 9, 7, 6, 9, 7, MossStoneSelector::next(random));
+    }
+
+    fn place_stairs_and_roof(
+        &self,
+        chunk: &mut ProtoChunk,
+        bb: &BlockBox,
+        random: &mut RandomGenerator,
+    ) {
+        let a = Block::AIR.default_state;
         let east_stairs = Self::cobblestone_stairs(HorizontalFacing::East);
         let west_stairs = Self::cobblestone_stairs(HorizontalFacing::West);
         let south_stairs = Self::cobblestone_stairs(HorizontalFacing::South);
@@ -375,7 +423,15 @@ impl StructurePieceBase for JungleTemplePiece {
             self.piece
                 .fill(chunk, bb, 5, 0 - i, 7 + i, 6, 0 - i, 9 + i, a);
         }
+    }
 
+    fn place_basement_floor(
+        &self,
+        chunk: &mut ProtoChunk,
+        bb: &BlockBox,
+        random: &mut RandomGenerator,
+    ) {
+        let a = Block::AIR.default_state;
         self.piece.fill(chunk, bb, 1, -3, 12, 10, -1, 13, a);
         self.piece.fill(chunk, bb, 1, -3, 1, 3, -1, 13, a);
         self.piece.fill(chunk, bb, 1, -3, 1, 9, -1, 5, a);
@@ -428,6 +484,14 @@ impl StructurePieceBase for JungleTemplePiece {
             1,
             MossStoneSelector::next(random),
         );
+    }
+
+    fn place_basement_floor_rest(
+        &self,
+        chunk: &mut ProtoChunk,
+        bb: &BlockBox,
+        random: &mut RandomGenerator,
+    ) {
         self.piece.fill(
             chunk,
             bb,
@@ -482,8 +546,15 @@ impl StructurePieceBase for JungleTemplePiece {
             8,
             bb,
         );
-        let redstone_wire_ns =
-            Self::redstone_wire_bidirectional(HorizontalFacing::North, HorizontalFacing::South);
+    }
+
+    fn place_redstone_corridor_and_first_trap(
+        &mut self,
+        chunk: &mut ProtoChunk,
+        bb: &BlockBox,
+        random: &mut RandomGenerator,
+    ) {
+        let redstone_wire_ns = Self::north_south_wire();
         self.piece.add_block(chunk, redstone_wire_ns, 5, -3, 7, bb);
         self.piece.add_block(chunk, redstone_wire_ns, 5, -3, 6, bb);
         self.piece.add_block(chunk, redstone_wire_ns, 5, -3, 5, bb);
@@ -531,6 +602,9 @@ impl StructurePieceBase for JungleTemplePiece {
             1,
             bb,
         );
+    }
+
+    fn place_redstone_corridor_and_first_trap_rest(&self, chunk: &mut ProtoChunk, bb: &BlockBox) {
         self.piece.add_block(
             chunk,
             Self::attached_tripwire_hook_facing(HorizontalFacing::South),
@@ -579,7 +653,15 @@ impl StructurePieceBase for JungleTemplePiece {
             6,
             bb,
         );
+    }
 
+    fn place_second_trap_and_main_chest(
+        &mut self,
+        chunk: &mut ProtoChunk,
+        bb: &BlockBox,
+        random: &mut RandomGenerator,
+    ) {
+        let redstone_wire_ns = Self::north_south_wire();
         {
             let r_state = {
                 let mut props = RedstoneWireLikeProperties::default(&Block::REDSTONE_WIRE);
@@ -625,6 +707,15 @@ impl StructurePieceBase for JungleTemplePiece {
             .add_block(chunk, Block::MOSSY_COBBLESTONE.default_state, 9, -3, 2, bb);
         self.piece
             .add_block(chunk, Block::MOSSY_COBBLESTONE.default_state, 8, -3, 1, bb);
+    }
+
+    fn place_second_trap_and_main_chest_rest(
+        &self,
+        chunk: &mut ProtoChunk,
+        bb: &BlockBox,
+        random: &mut RandomGenerator,
+    ) {
+        let a = Block::AIR.default_state;
         self.piece
             .add_block(chunk, Block::MOSSY_COBBLESTONE.default_state, 4, -3, 5, bb);
         self.piece
@@ -675,6 +766,15 @@ impl StructurePieceBase for JungleTemplePiece {
             11,
             bb,
         );
+    }
+
+    fn place_lever_room_and_hidden_chest(
+        &mut self,
+        chunk: &mut ProtoChunk,
+        bb: &BlockBox,
+        random: &mut RandomGenerator,
+    ) {
+        let redstone_wire_ns = Self::north_south_wire();
         let lever = {
             let mut props = LeverLikeProperties::default(&Block::LEVER);
             props.facing = HorizontalFacing::North;
@@ -756,6 +856,10 @@ impl StructurePieceBase for JungleTemplePiece {
                 "minecraft:chests/jungle_temple",
             );
         }
+    }
+    /// Redstone wire connecting north and south.
+    fn north_south_wire() -> &'static BlockState {
+        Self::redstone_wire_bidirectional(HorizontalFacing::North, HorizontalFacing::South)
     }
 }
 const fn set_side_dir(props: &mut RedstoneWireLikeProperties, facing: HorizontalFacing) {

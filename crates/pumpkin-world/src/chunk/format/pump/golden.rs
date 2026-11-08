@@ -317,22 +317,125 @@ fn corpus_lines(out: &mut String) -> std::fmt::Result {
     Ok(())
 }
 
-/// Every prefix of a small chunk's bytes, and the header with each of its bytes replaced.
-fn damaged_pump_lines(out: &mut String) -> std::fmt::Result {
-    let chunk = {
-        let chunk = ChunkData::empty(2, 3);
-        fill_ticks_entities_and_custom_data(&chunk);
-        chunk
-    };
+/// A chunk that has every optional part of the format, with little in each section.
+fn prefix_chunk() -> ChunkData {
+    let chunk = ChunkData::empty(2, 3);
+    fill_heightmaps(&chunk);
+    fill_ticks_entities_and_custom_data(&chunk);
+    {
+        let mut light = chunk
+            .light_engine
+            .lock()
+            .unwrap_or_else(std::sync::PoisonError::into_inner);
+        let full = |seed: usize| {
+            LightContainer::Full(
+                (0..LightContainer::ARRAY_SIZE)
+                    .map(|i| ((i + seed) % 7) as u8)
+                    .collect(),
+            )
+        };
+        light.block_light = (0..chunk.section.count)
+            .map(|i| {
+                if i == 1 {
+                    full(1)
+                } else {
+                    LightContainer::Empty(0)
+                }
+            })
+            .collect();
+        light.sky_light = (0..chunk.section.count)
+            .map(|i| {
+                if i == 2 {
+                    full(2)
+                } else {
+                    LightContainer::Empty(0)
+                }
+            })
+            .collect();
+    }
+    chunk
+}
+
+/// Consecutive prefixes with the same outcome are written as one line.
+fn prefix_runs(
+    out: &mut String,
+    label: &str,
+    bytes: &[u8],
+    at: Vector2<i32>,
+    read: impl Fn(&[u8], Vector2<i32>) -> Result<ChunkData, String>,
+) -> std::fmt::Result {
+    let mut run: Option<(usize, String)> = None;
+    for len in 0..=bytes.len() {
+        let now = outcome(&read, &bytes[..len], at);
+        match &run {
+            Some((_, last)) if *last == now => {}
+            Some((start, last)) => {
+                writeln!(out, "{label} prefix {start}..{}: {last}", len - 1)?;
+                run = Some((len, now));
+            }
+            None => run = Some((len, now)),
+        }
+    }
+    if let Some((start, last)) = run {
+        writeln!(out, "{label} prefix {start}..{}: {last}", bytes.len())?;
+    }
+    Ok(())
+}
+
+/// Bytes written by hand: the header of a chunk without heightmaps, no sections, then the counts
+/// and fillers given.
+fn raw_pump(block_ticks: (u32, usize), fluid_ticks: (u32, usize), block_entities: u32) -> Vec<u8> {
+    let mut bytes = Vec::new();
+    bytes.extend_from_slice(&super::PUMP_CHUNK_MAGIC);
+    bytes.push(1);
+    bytes.extend_from_slice(&0_i32.to_be_bytes());
+    bytes.extend_from_slice(&2_i32.to_be_bytes());
+    bytes.extend_from_slice(&3_i32.to_be_bytes());
+    bytes.extend_from_slice(&(-64_i32).to_be_bytes());
+    bytes.push(9);
+    bytes.push(0);
+    bytes.extend_from_slice(&0_u64.to_be_bytes());
+    bytes.extend_from_slice(&0_u16.to_be_bytes());
+    bytes.extend_from_slice(&block_ticks.0.to_be_bytes());
+    bytes.extend(std::iter::repeat_n(0_u8, block_ticks.1));
+    bytes.extend_from_slice(&fluid_ticks.0.to_be_bytes());
+    bytes.extend(std::iter::repeat_n(0_u8, fluid_ticks.1));
+    bytes.extend_from_slice(&block_entities.to_be_bytes());
+    bytes
+}
+
+/// Counts at and around their limits, with the bytes they announce where that is affordable.
+fn limit_lines(out: &mut String) -> std::fmt::Result {
     let at = Vector2::new(2, 3);
-    let bytes = chunk.internal_to_pump_bytes();
-    for len in 0..bytes.len() {
+    for count in [65_535_u32, 65_536, 65_537] {
+        let filled = |c: u32| if c <= 65_536 { c as usize * 16 } else { 0 };
         writeln!(
             out,
-            "pump prefix {len}: {}",
-            outcome(read_pump, &bytes[..len], at)
+            "pump {count} block ticks: {}",
+            outcome(read_pump, &raw_pump((count, filled(count)), (0, 0), 0), at)
+        )?;
+        writeln!(
+            out,
+            "pump {count} fluid ticks: {}",
+            outcome(read_pump, &raw_pump((0, 0), (count, filled(count)), 0), at)
+        )?;
+        writeln!(
+            out,
+            "pump {count} block entities: {}",
+            outcome(read_pump, &raw_pump((0, 0), (0, 0), count), at)
         )?;
     }
+    Ok(())
+}
+
+/// Every prefix of a chunk with every optional part, and the header with each of its bytes
+/// replaced.
+fn damaged_pump_lines(out: &mut String) -> std::fmt::Result {
+    let chunk = prefix_chunk();
+    let at = Vector2::new(2, 3);
+    let bytes = chunk.internal_to_pump_bytes();
+    writeln!(out, "pump damaged chunk: {} bytes", bytes.len())?;
+    prefix_runs(out, "pump", &bytes, at, read_pump)?;
     for index in 0..48.min(bytes.len()) {
         for value in [0x00_u8, 0x01, 0x02, 0x7f, 0x80, 0xff] {
             let mut damaged = bytes.to_vec();
@@ -344,9 +447,9 @@ fn damaged_pump_lines(out: &mut String) -> std::fmt::Result {
             )?;
         }
     }
-    // The count fields that size what follows.
+    // The count field that sizes the sections.
     let mut tail = bytes.to_vec();
-    let sections_at = 4 + 1 + 4 + 4 + 4 + 4 + 1 + 1 + 8;
+    let sections_at = 4 + 1 + 4 + 4 + 4 + 4 + 1 + 1 + 8 + 3 * ChunkHeightmaps::LONGS * 8;
     for value in [0_u16, 1, 24, 255, 256, 257, 65_535] {
         tail[sections_at..sections_at + 2].copy_from_slice(&value.to_be_bytes());
         writeln!(
@@ -355,7 +458,7 @@ fn damaged_pump_lines(out: &mut String) -> std::fmt::Result {
             outcome(read_pump, &tail, at)
         )?;
     }
-    Ok(())
+    limit_lines(out)
 }
 
 /// The anvil bytes of a chunk with each top-level key removed or replaced by a byte, and with
@@ -420,13 +523,14 @@ fn damaged_anvil_lines(out: &mut String) -> std::fmt::Result {
             )?;
         }
     }
-    for len in (0..bytes.len()).step_by(61) {
-        writeln!(
-            out,
-            "anvil prefix {len}: {}",
-            outcome(read_anvil, &bytes[..len], at)
-        )?;
-    }
+    let small = prefix_chunk();
+    prefix_runs(
+        out,
+        "anvil",
+        &small.internal_to_bytes(),
+        Vector2::new(small.x, small.z),
+        read_anvil,
+    )?;
     Ok(())
 }
 

@@ -211,6 +211,14 @@ fn shapeless_line(
             for (variant, layout) in variants_of(&layout, 9) {
                 write!(out, " {}={}", variant, run(3, 3, &layout, None))?;
             }
+            // The last ingredient replaced by a second copy of the first.
+            if let (Some(first), true) = (layout.first(), layout.len() > 1) {
+                let mut duplicate = layout.clone();
+                if let Some(last) = duplicate.last_mut() {
+                    last.1 = first.1;
+                }
+                write!(out, " duplicate={}", run(3, 3, &duplicate, None))?;
+            }
         }
     }
     Ok(())

@@ -7,11 +7,13 @@ use pumpkin_util::math::position::get_local_cord;
 use pumpkin_util::version::JavaMinecraftVersion;
 use pumpkin_world::chunk::ChunkData;
 use pumpkin_world::chunk::format::LightContainer;
-use pumpkin_world::chunk::palette::NetworkPalette;
+use pumpkin_world::chunk::palette::{BiomePalette, BlockPalette, NetworkPalette};
 use std::io::Write;
 
 /// Serializes chunk data for Minecraft 1.18+ through 26.2+.
-#[expect(clippy::too_many_lines)]
+///
+/// The packet is the position, the heightmaps, the sections (blocks and biomes, length-prefixed),
+/// the block entities and the light; each part is written by a function of its own.
 pub fn write_chunk_data(
     chunk: &ChunkData,
     mut write: impl Write,
@@ -20,11 +22,23 @@ pub fn write_chunk_data(
     write.write_i32_be(chunk.x)?;
     write.write_i32_be(chunk.z)?;
 
+    write_heightmaps(chunk, &mut write, *version)?;
+    write_sections(chunk, &mut write, *version)?;
+    write_block_entities(chunk, &mut write, *version)?;
+    write_light(chunk, &mut write, *version)
+}
+
+/// Heightmaps, as a map of indexes to arrays from 1.21.5 and as an NBT compound before.
+fn write_heightmaps(
+    chunk: &ChunkData,
+    write: &mut impl Write,
+    version: JavaMinecraftVersion,
+) -> Result<(), WritingError> {
     let heightmaps = chunk
         .heightmap
         .lock()
         .map_err(|_| WritingError::Message("heightmap lock poisoned".into()))?;
-    if version >= &JavaMinecraftVersion::V_1_21_5 {
+    if version >= JavaMinecraftVersion::V_1_21_5 {
         write.write_var_int(&VarInt(3))?; // Map size
 
         let mut write_heightmap = |index: i32, data: &[i64]| -> Result<(), WritingError> {
@@ -65,121 +79,166 @@ pub fn write_chunk_data(
                 pumpkin_nbt::tag::NbtTag::LongArray(mbnl.to_vec()),
             );
         }
-        write_compound_nbt(&mut write, &comp, *version)?;
+        write_compound_nbt(write, &comp, version)?;
     }
-    drop(heightmaps);
+    Ok(())
+}
 
-    {
-        let mut blocks_and_biomes_buf = Vec::new();
-        let block_sections = chunk
-            .section
-            .block_sections
-            .read()
-            .map_err(|_| WritingError::Message("block_sections read lock poisoned".into()))?;
-        let biome_sections = chunk
-            .section
-            .biome_sections
-            .read()
-            .map_err(|_| WritingError::Message("biome_sections read lock poisoned".into()))?;
-
-        let mut zero_bytes_count = 0;
-
-        for (block_palette, biome_palette) in block_sections.iter().zip(biome_sections.iter()) {
-            let non_empty_block_count = block_palette.non_air_block_count() as i16;
-            blocks_and_biomes_buf.write_i16_be(non_empty_block_count)?;
-            if version >= &JavaMinecraftVersion::V_26_1 {
-                // New in 26.1, fluid count
-                let liquid_count = block_palette.liquid_block_count() as i16;
-                blocks_and_biomes_buf.write_i16_be(liquid_count)?;
-            }
-
-            let block_network = block_palette.convert_network();
-            blocks_and_biomes_buf.write_u8(block_network.bits_per_entry)?;
-
-            match block_network.palette {
-                NetworkPalette::Single(registry_id) => {
-                    blocks_and_biomes_buf.write_var_int(&registry_id.into())?;
-                }
-                NetworkPalette::Indirect(palette) => {
-                    blocks_and_biomes_buf.write_var_int(&palette.len().try_into().map_err(
-                        |_| {
-                            WritingError::Message(format!(
-                                "{} is not representable as a VarInt!",
-                                palette.len()
-                            ))
-                        },
-                    )?)?;
-                    for registry_id in palette {
-                        blocks_and_biomes_buf.write_var_int(&registry_id.into())?;
-                    }
-                }
-                NetworkPalette::Direct => {}
-            }
-
-            if version <= &JavaMinecraftVersion::V_1_21_4 {
-                blocks_and_biomes_buf.write_list(&block_network.packed_data, |buf, &packed| {
-                    buf.write_i64_be(packed)
-                })?;
-            } else {
-                for packed in &block_network.packed_data {
-                    blocks_and_biomes_buf.write_i64_be(*packed)?;
-                }
-            }
-
-            let biome_network = biome_palette.convert_network();
-            blocks_and_biomes_buf.write_u8(biome_network.bits_per_entry)?;
-
-            match biome_network.palette {
-                NetworkPalette::Single(registry_id) => {
-                    blocks_and_biomes_buf.write_var_int(&registry_id.into())?;
-                }
-                NetworkPalette::Indirect(palette) => {
-                    blocks_and_biomes_buf.write_var_int(&palette.len().try_into().map_err(
-                        |_| {
-                            WritingError::Message(format!(
-                                "{} is not representable as a VarInt!",
-                                palette.len()
-                            ))
-                        },
-                    )?)?;
-                    for registry_id in palette {
-                        blocks_and_biomes_buf.write_var_int(&registry_id.into())?;
-                    }
-                }
-                NetworkPalette::Direct => {}
-            }
-
-            if version <= &JavaMinecraftVersion::V_1_21_4 {
-                blocks_and_biomes_buf.write_list(&biome_network.packed_data, |buf, &packed| {
-                    buf.write_i64_be(packed)
-                })?;
-            } else {
-                for packed in &biome_network.packed_data {
-                    blocks_and_biomes_buf.write_i64_be(*packed)?;
-                }
-            }
-
-            if version == &JavaMinecraftVersion::V_1_21_5 {
-                let block_storage_len = block_network.packed_data.len() as i32;
-                let biome_storage_len = biome_network.packed_data.len() as i32;
-                zero_bytes_count += VarInt(block_storage_len).written_size()
-                    + VarInt(biome_storage_len).written_size();
+/// A palette: its entries for an indirect palette, the single entry for a single-value one, and
+/// nothing for a direct one.
+fn write_network_palette<V: Into<VarInt>>(
+    buf: &mut Vec<u8>,
+    palette: NetworkPalette<V>,
+) -> Result<(), WritingError> {
+    match palette {
+        NetworkPalette::Single(registry_id) => {
+            buf.write_var_int(&registry_id.into())?;
+        }
+        NetworkPalette::Indirect(palette) => {
+            buf.write_var_int(&palette.len().try_into().map_err(|_| {
+                WritingError::Message(format!(
+                    "{} is not representable as a VarInt!",
+                    palette.len()
+                ))
+            })?)?;
+            for registry_id in palette {
+                buf.write_var_int(&registry_id.into())?;
             }
         }
+        NetworkPalette::Direct => {}
+    }
+    Ok(())
+}
 
-        if version == &JavaMinecraftVersion::V_1_21_5 && zero_bytes_count > 0 {
-            blocks_and_biomes_buf.resize(blocks_and_biomes_buf.len() + zero_bytes_count, 0);
+/// The packed entries of a palette: a length-prefixed array up to 1.21.4, the bare longs after.
+fn write_packed_data(
+    buf: &mut Vec<u8>,
+    packed_data: &[i64],
+    version: JavaMinecraftVersion,
+) -> Result<(), WritingError> {
+    if version <= JavaMinecraftVersion::V_1_21_4 {
+        buf.write_list(packed_data, |buf, &packed| buf.write_i64_be(packed))?;
+    } else {
+        for packed in packed_data {
+            buf.write_i64_be(*packed)?;
         }
+    }
+    Ok(())
+}
 
-        write.write_var_int(&blocks_and_biomes_buf.len().try_into().map_err(|_| {
-            WritingError::Message(format!(
-                "{} is not representable as a VarInt!",
-                blocks_and_biomes_buf.len()
-            ))
-        })?)?;
-        write.write_slice(&blocks_and_biomes_buf)?;
-    };
+/// One section: the block counts, the block palette with its data, the biome palette with its
+/// data. Returns the bytes 1.21.5 expects as padding for it.
+fn write_section(
+    buf: &mut Vec<u8>,
+    block_palette: &BlockPalette,
+    biome_palette: &BiomePalette,
+    version: JavaMinecraftVersion,
+) -> Result<usize, WritingError> {
+    let non_empty_block_count = block_palette.non_air_block_count() as i16;
+    buf.write_i16_be(non_empty_block_count)?;
+    if version >= JavaMinecraftVersion::V_26_1 {
+        // New in 26.1, fluid count
+        let liquid_count = block_palette.liquid_block_count() as i16;
+        buf.write_i16_be(liquid_count)?;
+    }
 
+    let block_network = block_palette.convert_network();
+    buf.write_u8(block_network.bits_per_entry)?;
+    write_network_palette(buf, block_network.palette)?;
+    write_packed_data(buf, &block_network.packed_data, version)?;
+
+    let biome_network = biome_palette.convert_network();
+    buf.write_u8(biome_network.bits_per_entry)?;
+    write_network_palette(buf, biome_network.palette)?;
+    write_packed_data(buf, &biome_network.packed_data, version)?;
+
+    if version == JavaMinecraftVersion::V_1_21_5 {
+        let block_storage_len = block_network.packed_data.len() as i32;
+        let biome_storage_len = biome_network.packed_data.len() as i32;
+        return Ok(
+            VarInt(block_storage_len).written_size() + VarInt(biome_storage_len).written_size()
+        );
+    }
+    Ok(0)
+}
+
+/// All sections, written to a buffer first because the packet prefixes them with their length.
+fn write_sections(
+    chunk: &ChunkData,
+    write: &mut impl Write,
+    version: JavaMinecraftVersion,
+) -> Result<(), WritingError> {
+    let mut blocks_and_biomes_buf = Vec::new();
+    let block_sections = chunk
+        .section
+        .block_sections
+        .read()
+        .map_err(|_| WritingError::Message("block_sections read lock poisoned".into()))?;
+    let biome_sections = chunk
+        .section
+        .biome_sections
+        .read()
+        .map_err(|_| WritingError::Message("biome_sections read lock poisoned".into()))?;
+
+    let mut zero_bytes_count = 0;
+    for (block_palette, biome_palette) in block_sections.iter().zip(biome_sections.iter()) {
+        zero_bytes_count += write_section(
+            &mut blocks_and_biomes_buf,
+            block_palette,
+            biome_palette,
+            version,
+        )?;
+    }
+
+    if version == JavaMinecraftVersion::V_1_21_5 && zero_bytes_count > 0 {
+        blocks_and_biomes_buf.resize(blocks_and_biomes_buf.len() + zero_bytes_count, 0);
+    }
+
+    write.write_var_int(&blocks_and_biomes_buf.len().try_into().map_err(|_| {
+        WritingError::Message(format!(
+            "{} is not representable as a VarInt!",
+            blocks_and_biomes_buf.len()
+        ))
+    })?)?;
+    write.write_slice(&blocks_and_biomes_buf)
+}
+
+/// The id of a block entity's type in the registry; 0 when it is unknown.
+fn block_entity_type_id(nbt: &pumpkin_nbt::compound::NbtCompound) -> usize {
+    nbt.get_string("id").map_or(0, |id_str| {
+        let name = id_str.split(':').next_back().unwrap_or(id_str);
+        pumpkin_data::block_properties::BLOCK_ENTITY_TYPES
+            .iter()
+            .position(|&n| n == name)
+            .unwrap_or(0)
+    })
+}
+
+/// What the client gets of a block entity: its data without the keys the server keeps.
+fn client_block_entity_nbt(
+    nbt: &pumpkin_nbt::compound::NbtCompound,
+) -> pumpkin_nbt::compound::NbtCompound {
+    let mut client_nbt = nbt.clone();
+    for key in [
+        "id",
+        "x",
+        "y",
+        "z",
+        "LootTable",
+        "LootTableSeed",
+        "PumpkinCustomData",
+        "BukkitValues",
+    ] {
+        client_nbt.child_tags.remove(key);
+    }
+    client_nbt
+}
+
+fn write_block_entities(
+    chunk: &ChunkData,
+    write: &mut impl Write,
+    version: JavaMinecraftVersion,
+) -> Result<(), WritingError> {
     let block_entities = chunk
         .pending_block_entities
         .lock()
@@ -190,102 +249,100 @@ pub fn write_chunk_data(
 
         write.write_u8(local_xz as u8)?;
         write.write_i16_be(pos.0.y as i16)?;
-
-        let id = nbt.get_string("id").map_or(0, |id_str| {
-            let name = id_str.split(':').next_back().unwrap_or(id_str);
-            pumpkin_data::block_properties::BLOCK_ENTITY_TYPES
-                .iter()
-                .position(|&n| n == name)
-                .unwrap_or(0)
-        });
-        write.write_var_int(&VarInt(id as i32))?;
-
-        let mut client_nbt = nbt.clone();
-        client_nbt.child_tags.remove("id");
-        client_nbt.child_tags.remove("x");
-        client_nbt.child_tags.remove("y");
-        client_nbt.child_tags.remove("z");
-        client_nbt.child_tags.remove("LootTable");
-        client_nbt.child_tags.remove("LootTableSeed");
-        client_nbt.child_tags.remove("PumpkinCustomData");
-        client_nbt.child_tags.remove("BukkitValues");
-        write_compound_nbt(&mut write, &client_nbt, *version)?;
+        write.write_var_int(&VarInt(block_entity_type_id(nbt) as i32))?;
+        write_compound_nbt(&mut *write, &client_block_entity_nbt(nbt), version)?;
     }
+    Ok(())
+}
 
-    {
-        // Light masks include sections from -1 (below world) to num_sections (above world)
-        // This means we need to account for 2 extra sections in the bitset
-        let light_engine = chunk
-            .light_engine
-            .lock()
-            .map_err(|_| WritingError::Message("light_engine lock poisoned".into()))?;
-        let num_sections = light_engine.sky_light.len();
+/// Which sections have light and which are known to have none, as the bit masks the packet uses.
+/// Bit 0 is the section below the world and bit `n + 1` the section above it; both are always
+/// empty.
+struct LightMasks {
+    sky: u64,
+    block: u64,
+    empty_sky: u64,
+    empty_block: u64,
+}
 
-        let mut sky_light_empty_mask = 0u64;
-        let mut block_light_empty_mask = 0u64;
-        let mut sky_light_mask = 0u64;
-        let mut block_light_mask = 0u64;
-
-        // Bit 0 represents the section below the world (always empty)
-        sky_light_empty_mask |= 1 << 0;
-        block_light_empty_mask |= 1 << 0;
-
+impl LightMasks {
+    fn of(sky_light: &[LightContainer], block_light: &[LightContainer]) -> Self {
+        let num_sections = sky_light.len();
+        let mut masks = Self {
+            sky: 0,
+            block: 0,
+            // The sections below and above the world.
+            empty_sky: 1 | (1 << (num_sections + 1)),
+            empty_block: 1 | (1 << (num_sections + 1)),
+        };
         // Bits 1..=num_sections represent the actual world sections
         for section_index in 0..num_sections {
-            let bit_index = section_index + 1; // Offset by 1 for the below-world section
+            let bit_index = section_index + 1;
 
-            if let LightContainer::Full(_) = &light_engine.sky_light[section_index] {
-                sky_light_mask |= 1 << bit_index;
+            if let LightContainer::Full(_) = &sky_light[section_index] {
+                masks.sky |= 1 << bit_index;
             } else {
-                sky_light_empty_mask |= 1 << bit_index;
+                masks.empty_sky |= 1 << bit_index;
             }
 
-            if let LightContainer::Full(_) = &light_engine.block_light[section_index] {
-                block_light_mask |= 1 << bit_index;
+            if let LightContainer::Full(_) = &block_light[section_index] {
+                masks.block |= 1 << bit_index;
             } else {
-                block_light_empty_mask |= 1 << bit_index;
+                masks.empty_block |= 1 << bit_index;
             }
         }
+        masks
+    }
+}
 
-        // Bit num_sections+1 represents the section above the world (always empty)
-        sky_light_empty_mask |= 1 << (num_sections + 1);
-        block_light_empty_mask |= 1 << (num_sections + 1);
-
-        // Trust edges (1.18 - 1.19.4; removed in 1.20)
-        if version < &JavaMinecraftVersion::V_1_20 {
-            write.write_bool(true)?;
-        }
-
-        // Write Sky Light Mask
-        BitSet(Box::new([sky_light_mask as i64])).encode_with_version(&mut write, version)?;
-        // Write Block Light Mask
-        BitSet(Box::new([block_light_mask as i64])).encode_with_version(&mut write, version)?;
-        // Write Empty Sky Light Mask
-        BitSet(Box::new([sky_light_empty_mask as i64])).encode_with_version(&mut write, version)?;
-        // Write Empty Block Light Mask
-        BitSet(Box::new([block_light_empty_mask as i64]))
-            .encode_with_version(&mut write, version)?;
-
-        let light_data_size: VarInt = VarInt(LightContainer::ARRAY_SIZE as i32);
-
-        // Write Sky Light arrays
-        write.write_var_int(&VarInt(sky_light_mask.count_ones() as i32))?;
-        for section_index in 0..num_sections {
-            if let LightContainer::Full(data) = &light_engine.sky_light[section_index] {
-                write.write_var_int(&light_data_size)?;
-                write.write_slice(data.as_ref())?;
-            }
-        }
-
-        // Write Block Light arrays
-        write.write_var_int(&VarInt(block_light_mask.count_ones() as i32))?;
-        for section_index in 0..num_sections {
-            if let LightContainer::Full(data) = &light_engine.block_light[section_index] {
-                write.write_var_int(&light_data_size)?;
-                write.write_slice(data.as_ref())?;
-            }
+/// The light arrays of the sections whose bit is set: their count, then each array.
+fn write_light_arrays(
+    write: &mut impl Write,
+    light: &[LightContainer],
+    mask: u64,
+) -> Result<(), WritingError> {
+    let light_data_size = VarInt(LightContainer::ARRAY_SIZE as i32);
+    write.write_var_int(&VarInt(mask.count_ones() as i32))?;
+    for container in light {
+        if let LightContainer::Full(data) = container {
+            write.write_var_int(&light_data_size)?;
+            write.write_slice(data.as_ref())?;
         }
     }
-
     Ok(())
+}
+
+fn write_light(
+    chunk: &ChunkData,
+    write: &mut impl Write,
+    version: JavaMinecraftVersion,
+) -> Result<(), WritingError> {
+    // Light masks include sections from -1 (below world) to num_sections (above world)
+    // This means we need to account for 2 extra sections in the bitset
+    let light_engine = chunk
+        .light_engine
+        .lock()
+        .map_err(|_| WritingError::Message("light_engine lock poisoned".into()))?;
+    let num_sections = light_engine.sky_light.len();
+    let masks = LightMasks::of(
+        &light_engine.sky_light,
+        &light_engine.block_light[..num_sections],
+    );
+
+    // Trust edges (1.18 - 1.19.4; removed in 1.20)
+    if version < JavaMinecraftVersion::V_1_20 {
+        write.write_bool(true)?;
+    }
+
+    // Sky light mask, block light mask, empty sky light mask, empty block light mask
+    for mask in [masks.sky, masks.block, masks.empty_sky, masks.empty_block] {
+        BitSet(Box::new([mask as i64])).encode_with_version(&mut *write, &version)?;
+    }
+
+    write_light_arrays(write, &light_engine.sky_light, masks.sky)?;
+    write_light_arrays(
+        write,
+        &light_engine.block_light[..num_sections],
+        masks.block,
+    )
 }

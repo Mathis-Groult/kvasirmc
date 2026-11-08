@@ -45,8 +45,8 @@ fn fill_terrain(chunk: &ChunkData, varied: bool) {
         .block_sections
         .write()
         .unwrap_or_else(std::sync::PoisonError::into_inner);
-    for x in 0..16_i32 {
-        for z in 0..16_i32 {
+    for x in 0..16i32 {
+        for z in 0..16i32 {
             let top = 50 + (x * 5 + z * 3 + chunk.x * 7 + chunk.z).rem_euclid(14);
             for y in chunk.section.min_y..=top.max(62) {
                 let block = if y > top {
@@ -71,7 +71,7 @@ fn fill_terrain(chunk: &ChunkData, varied: bool) {
     if varied {
         // Many different blocks in the one section: a palette that needs a direct encoding.
         let section = ((100 - chunk.section.min_y) >> 4) as usize;
-        for (index, raw) in (0..300_u16).enumerate() {
+        for (index, raw) in (0..300u16).enumerate() {
             if let Some(id) = BlockStateId::new(raw.wrapping_mul(37) % BlockStateId::COUNT) {
                 sections[section].set(index % 16, (index / 16) % 16, (index / 7) % 16, id);
             }

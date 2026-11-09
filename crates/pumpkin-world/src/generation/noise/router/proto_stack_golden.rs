@@ -82,12 +82,11 @@ fn stack_line(base: &[BaseNoiseFunctionComponent], config: &GlobalRandomConfig) 
             let sampled = catch_unwind(AssertUnwindSafe(|| {
                 ChunkNoiseFunctionComponent::sample_from_stack(&mut stack[..=index], &pos)
             }));
-            match sampled {
-                Ok(value) => hash.float(value),
-                Err(_) => {
-                    panics += 1;
-                    hash.bytes(b"panic");
-                }
+            if let Ok(value) = sampled {
+                hash.float(value);
+            } else {
+                panics += 1;
+                hash.bytes(b"panic");
             }
         }
     }
@@ -104,7 +103,7 @@ fn lines() -> Result<String, std::fmt::Error> {
     ];
     let mut out = String::new();
     for (name, base) in routers {
-        for seed in [0_u64, 1_779_920_288_596_261_407] {
+        for seed in [0u64, 1_779_920_288_596_261_407] {
             for legacy in [false, true] {
                 let config = GlobalRandomConfig::new(seed, legacy);
                 writeln!(
@@ -227,7 +226,7 @@ fn range_lines() -> Result<String, std::fmt::Error> {
         }
     }
     for (a, input) in inputs.iter().enumerate() {
-        for argument in [-2.0_f32, -1.0, -0.5, 0.0, 0.5, 1.0, 3.0] {
+        for argument in [-2.0f32, -1.0, -0.5, 0.0, 0.5, 1.0, 3.0] {
             for (operation, name) in [(LinearOperation::Add, "add"), (LinearOperation::Mul, "mul")]
             {
                 stack.push(BaseNoiseFunctionComponent::Linear {

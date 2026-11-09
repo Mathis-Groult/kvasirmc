@@ -24,6 +24,9 @@ use pumpkin_util::math::position::BlockPos;
 use pumpkin_util::math::vector3::Vector3;
 use std::sync::atomic::Ordering::Relaxed;
 
+#[cfg(test)]
+mod damage_golden;
+
 impl LivingEntity {
     #[must_use]
     pub fn should_take_drowning_damage(&self) -> bool {

@@ -1,0 +1,25 @@
+case 249: a4c24300bc4f68ff
+case 499: 1b79d2174e5b0a7d
+case 749: fcadf6c6f6e03efd
+case 999: 75caa6623cbe578f
+case 1249: ec7fc26178da34d1
+case 1499: 75b6d0e77fe5a2db
+case 1749: ac134df465fb571d
+case 1999: ec16f4bdc27602fa
+case 2249: 7103883dbb6b1b35
+case 2499: d27b83ffb7589f04
+case 2749: f8a49b13651e3ca8
+case 2999: c25c5013e9ba2d9f
+case 3249: 3f98617ec3ad31f5
+case 3499: df372e16d4accfa5
+case 3749: 7cdf7a29217a8564
+case 3999: dcb41e20f8cdf7f0
+case 4249: 20e0d0ecb524d85e
+case 4499: c1aab1a03f437aae
+case 4749: fd210298c0de8607
+case 4999: 49ad8c79e431f0d7
+case 5249: 14474c8e0fae29cd
+case 5499: f25e78e22bf0eac7
+case 5749: e61455028eef4785
+case 5999: add811fd270d1479
+hits 11998: landed 6393, refused 5605

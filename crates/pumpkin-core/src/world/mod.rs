@@ -19,6 +19,7 @@ mod neighbour_updates;
 mod player_membership;
 mod sky_and_environment;
 mod sounds_and_particles;
+mod tick_phases;
 mod time_and_weather;
 mod world_settings;
 use crate::block::entities::BlockEntity;
@@ -33,9 +34,7 @@ use pumpkin_data::chunk::Biome;
 use pumpkin_world::generation::proto_chunk::GenerationCache;
 use rayon::prelude::*;
 use std::collections::HashMap;
-use std::sync::atomic::Ordering::Relaxed;
 use std::sync::{Arc, RwLock, Weak};
-use tracing::debug;
 
 mod active_chunks;
 pub mod brightness;
@@ -78,11 +77,11 @@ use pumpkin_data::dimension::Dimension;
 use pumpkin_data::{Block, BlockStateId};
 use pumpkin_nbt::compound::NbtCompound;
 use pumpkin_protocol::java::client::play::PlayerInfoFlags;
-use pumpkin_util::math::{get_section_cord, vector2::Vector2};
+use pumpkin_util::math::vector2::Vector2;
 use pumpkin_util::math::{position::BlockPos, vector3::Vector3};
+use pumpkin_world::level::Level;
 use pumpkin_world::world::BlockAccessor;
 use pumpkin_world::world::{GetBlockError, WorldPortalExt};
-use pumpkin_world::{level::Level, tick::order};
 pub use pumpkin_world::{world::BlockFlags, world_info::LevelData};
 use scoreboard::Scoreboard;
 use time::LevelTime;
@@ -219,51 +218,10 @@ impl World {
         | PlayerInfoFlags::UPDATE_LIST_PRIORITY.bits()
         | PlayerInfoFlags::UPDATE_HAT.bits();
 
-    #[expect(clippy::too_many_lines)]
     pub fn tick(self: &Arc<Self>, server: &Arc<Server>) {
         let start = std::time::Instant::now();
 
-        let t_prelude = std::time::Instant::now();
-        self.flush_block_updates();
-        self.flush_synced_block_events();
-        server
-            .tickprof
-            .record(kvasir_tickprof::Phase::PreludeBlocks, t_prelude.elapsed());
-        let t_prelude = std::time::Instant::now();
-        self.update_active_chunks();
-        server.tickprof.record(
-            kvasir_tickprof::Phase::PreludeActiveChunks,
-            t_prelude.elapsed(),
-        );
-        let t_prelude = std::time::Instant::now();
-        self.tick_environment();
-        server.tickprof.record(
-            kvasir_tickprof::Phase::PreludeEnvironment,
-            t_prelude.elapsed(),
-        );
-        let t_prelude = std::time::Instant::now();
-        let mut raids = {
-            let mut guard = self
-                .raids
-                .lock()
-                .unwrap_or_else(std::sync::PoisonError::into_inner);
-            std::mem::take(&mut *guard)
-        };
-        raids.tick(self);
-        {
-            let mut guard = self
-                .raids
-                .lock()
-                .unwrap_or_else(std::sync::PoisonError::into_inner);
-            for (id, raid) in guard.raid_map.drain() {
-                raids.raid_map.insert(id, raid);
-            }
-            raids.next_id = raids.next_id.max(guard.next_id);
-            *guard = raids;
-        };
-        server
-            .tickprof
-            .record(kvasir_tickprof::Phase::PreludeRaids, t_prelude.elapsed());
+        self.tick_prelude(server);
 
         let prelude_elapsed = start.elapsed();
         let t_chunks = std::time::Instant::now();
@@ -272,19 +230,7 @@ impl World {
 
         let players = self.players.load();
         let player_count = players.len();
-        let players_cache: Vec<_> = players
-            .par_iter()
-            .map(|player| {
-                let entity = player.get_entity();
-                let pos = entity.pos.load();
-                let bb = entity.bounding_box.load().expand(1.0, 0.5, 1.0);
-                let chunk_pos = Vector2::new(
-                    get_section_cord(pos.x.floor() as i32),
-                    get_section_cord(pos.z.floor() as i32),
-                );
-                (player, pos, bb, chunk_pos)
-            })
-            .collect();
+        let players_cache = tick_phases::player_snapshots(&players);
 
         let t_players = std::time::Instant::now();
         players.par_iter().for_each(|player| {
@@ -299,256 +245,44 @@ impl World {
             .read()
             .unwrap_or_else(std::sync::PoisonError::into_inner)
             .clone();
-        let level_for_entities = self.level.clone();
-
-        let t_entities = std::time::Instant::now();
-        let tickable: Vec<_> = entities_to_tick
-            .par_iter()
-            .filter_map(|entity| {
-                let entity_pos = entity.get_entity().pos.load();
-                let entity_chunk = Vector2::new(
-                    get_section_cord(entity_pos.x.floor() as i32),
-                    get_section_cord(entity_pos.z.floor() as i32),
-                );
-                if !active_chunks.contains(&entity_chunk) {
-                    return None;
-                }
-                if !level_for_entities.is_chunk_loaded(&entity_chunk) {
-                    return None;
-                }
-                Some((entity, entity_chunk))
-            })
-            .collect();
-
-        server
-            .tickprof
-            .record(kvasir_tickprof::Phase::EntityFilter, t_entities.elapsed());
-        let t_planning = std::time::Instant::now();
-        // Entities that can affect each other tick in list order; separate islands run in
-        // parallel.
-        let islands_config = &server.advanced_config.world.entity_islands;
-        // Islands exist so that separate groups of entities can tick on different threads. On a
-        // one-thread pool (the default tick mode, see `kvasir-tickmode`) that cannot happen, so
-        // the planning pass would be pure cost: entities then tick in list order, as the plan
-        // would have made them.
-        let plan_islands = rayon::current_num_threads() > 1
-            && !entity_islands::plugins_observe_entity_ticks(server)
-            && self
-                .island_schedule
-                .lock()
-                .unwrap_or_else(std::sync::PoisonError::into_inner)
-                .should_plan(tickable.len());
-        let islands = if plan_islands {
-            let islands = (|| {
-                let reports: Vec<_> = tickable
-                    .par_iter()
-                    .map(|(entity, _)| {
-                        entity_islands::EntityReach::of(entity.as_ref(), islands_config)
-                    })
-                    .collect();
-                let block_write_checks: Vec<_> = reports
-                    .iter()
-                    .zip(&tickable)
-                    .map(|(report, (entity, _))| report.block_write_check(entity.as_ref()))
-                    .collect();
-                let mut reaches = entity_islands::resolve(reports, islands_config)?;
-                entity_islands::prune_block_writes(self, &mut reaches, &block_write_checks)?;
-                let nodes: Vec<_> = tickable
-                    .iter()
-                    .map(|(entity, _)| entity.get_entity().entity_id)
-                    .zip(reaches)
-                    .collect();
-                let ticking: FxHashSet<i32> = nodes.iter().map(|(id, _)| *id).collect();
-                let idle_entities: Vec<_> = entities_to_tick
-                    .iter()
-                    .map(|entity| entity.get_entity())
-                    .filter(|entity| !ticking.contains(&entity.entity_id))
-                    .map(|entity| (entity.entity_id, entity.bounding_box.load()))
-                    .collect();
-                let player_bodies: Vec<_> = players
-                    .iter()
-                    .map(|player| {
-                        let entity = player.get_entity();
-                        (entity.entity_id, entity.bounding_box.load())
-                    })
-                    .collect();
-                let mut islands =
-                    entity_islands::partition(&nodes, &idle_entities, &player_bodies)?;
-                // Start the largest islands first.
-                islands
-                    .islands
-                    .sort_by_key(|island| std::cmp::Reverse(island.len()));
-                Some(islands)
-            })();
-            let parallel = self
-                .island_schedule
-                .lock()
-                .unwrap_or_else(std::sync::PoisonError::into_inner)
-                .record_plan(islands.as_ref().map_or(tickable.len(), |islands| {
-                    islands.islands.first().map_or(0, Vec::len)
-                }));
-            islands.filter(|_| parallel)
-        } else {
-            None
-        };
-        let first_order = self.level.reserve_entity_tick_orders(tickable.len());
-        server
-            .tickprof
-            .record(kvasir_tickprof::Phase::EntityPlanning, t_planning.elapsed());
-        let t_ticking = std::time::Instant::now();
-
-        let server_ref = server.as_ref();
-        let lod = server.advanced_config.world.mob_lod.sanitised();
-        let motion_counted = kvasir_tickprof::motion::is_enabled();
-        // With the feature off the ranks are only needed to tell which tier a mob would be in.
-        let crowd_ranks = if lod.enabled || motion_counted {
-            let ticking: Vec<_> = tickable.iter().map(|(e, c)| (*e, *c)).collect();
-            mob_attention::crowd_ranks(&lod, &ticking)
-        } else {
-            vec![0; tickable.len()]
-        };
-        let player_positions: Vec<Vector3<f64>> = players_cache.iter().map(|p| p.1).collect();
-        let tick_entity = |index: usize| {
-            let (entity, entity_chunk) = &tickable[index];
-            order::set_entity_order(Some(first_order + index as u64 * order::ORDERS_PER_ENTITY));
-
-            let tier =
-                self.attend_to_mob(&lod, entity.as_ref(), crowd_ranks[index], &player_positions);
-            let before = (motion_counted && tier.is_some()).then(|| entity.get_entity().pos.load());
-            entity.get_entity().tick_count.fetch_add(1, Relaxed);
-            let t_kind = server_ref
-                .tickprof
-                .kinds
-                .is_enabled()
-                .then(std::time::Instant::now);
-            entity.tick(entity.as_ref(), server_ref);
-            if let Some(t_kind) = t_kind {
-                server_ref.tickprof.kinds.record(
-                    usize::from(entity.get_entity().entity_type.id),
-                    t_kind.elapsed(),
-                );
-            }
-
-            let entity_inner = entity.get_entity();
-            let entity_pos = entity_inner.pos.load();
-            if let (Some(before), Some(tier)) = (before, tier) {
-                let moved = entity_pos - before;
-                kvasir_tickprof::motion::record(tier.index(), moved.length(), moved.y);
-            }
-            let entity_bb = entity_inner.bounding_box.load();
-
-            for (player, player_pos, player_bb, player_chunk) in &players_cache {
-                if player.living_entity.health.load() > 0.0
-                    && !player.is_spectator()
-                    && (player_chunk.x - entity_chunk.x).abs() <= 1
-                    && (player_chunk.y - entity_chunk.y).abs() <= 1
-                    && (player_pos.x - entity_pos.x).abs() < 5.0
-                    && (player_pos.y - entity_pos.y).abs() < 5.0
-                    && (player_pos.z - entity_pos.z).abs() < 5.0
-                    && player_bb.intersects(&entity_bb)
-                {
-                    entity.on_player_collision(player);
-                }
-            }
-        };
-        if let Some(islands) = islands {
-            islands
-                .islands
-                .par_iter()
-                .with_max_len(1)
-                .for_each(|island| {
-                    for &index in island {
-                        #[cfg(debug_assertions)]
-                        entity_islands::enter(&islands, tickable[index].0.get_entity().entity_id);
-                        tick_entity(index);
-                    }
-                    order::set_entity_order(None);
-                    #[cfg(debug_assertions)]
-                    entity_islands::leave();
-                });
-        } else {
-            for index in 0..tickable.len() {
-                tick_entity(index);
-            }
-            order::set_entity_order(None);
-        }
-        server
-            .tickprof
-            .record(kvasir_tickprof::Phase::EntityTicking, t_ticking.elapsed());
-        self.order_tick_spawns();
-        let entity_elapsed = t_entities.elapsed();
+        let entity_elapsed = self.tick_entities(
+            server,
+            &players,
+            &players_cache,
+            &entities_to_tick,
+            &active_chunks,
+        );
 
         let t_tracking = std::time::Instant::now();
         self.entity_tracker.update_all(self);
         let tracking_elapsed = t_tracking.elapsed();
 
-        let mut block_entities: Vec<Arc<dyn BlockEntity>> = Vec::new();
-        if self.block_entities.len() < active_chunks.len() {
-            for chunk_block_entities in &self.block_entities {
-                if active_chunks.contains(chunk_block_entities.key()) {
-                    block_entities.extend(chunk_block_entities.values().cloned());
-                }
-            }
-        } else {
-            for chunk_pos in active_chunks.iter() {
-                if let Some(chunk_block_entities) = self.block_entities.get(chunk_pos) {
-                    block_entities.extend(chunk_block_entities.values().cloned());
-                }
-            }
-        }
+        let block_entities = self.collect_block_entities(&active_chunks);
         let block_entity_count = block_entities.len();
+        let block_entity_elapsed = self.tick_block_entities(&block_entities);
 
-        let t_be = std::time::Instant::now();
-        block_entities.par_chunks(16).for_each(|batch| {
-            for be in batch {
-                be.tick(self);
-            }
-        });
-        // Drained after all ticks, so changes (hopper -> chest) land in the same tick.
-        self.flush_comparator_updates(&block_entities);
-        let block_entity_elapsed = t_be.elapsed();
-
-        let t_tickets = std::time::Instant::now();
-        self.level
-            .chunk_loading
-            .lock()
-            .unwrap_or_else(std::sync::PoisonError::into_inner)
-            .send_change();
-        let tickets_elapsed = t_tickets.elapsed();
+        let tickets_elapsed = self.send_chunk_ticket_changes();
 
         if let Some(ref fight_mutex) = self.dragon_fight {
             dragon_fight::DragonFight::tick(fight_mutex, self);
         }
 
-        let total_elapsed = start.elapsed();
-        {
-            use kvasir_tickprof::Phase;
-            let profile = &server.tickprof;
-            profile.record(Phase::World, total_elapsed);
-            if player_count == 0 {
-                profile.record(Phase::EmptyWorld, total_elapsed);
-            }
-            profile.record(Phase::Prelude, prelude_elapsed);
-            profile.record(Phase::Chunks, chunk_elapsed);
-            profile.record(Phase::Players, player_elapsed);
-            profile.record(Phase::Entities, entity_elapsed);
-            profile.record(Phase::EntityTracking, tracking_elapsed);
-            profile.record(Phase::BlockEntities, block_entity_elapsed);
-            profile.record(Phase::ChunkTickets, tickets_elapsed);
-        };
-        if total_elapsed.as_millis() > 50 {
-            debug!(
-                "Slow Tick [{}ms]: Chunks: {:?} | Players({}): {:?} | Entities({}): {:?} | Block Entities({}): {:?}",
-                total_elapsed.as_millis(),
-                chunk_elapsed,
+        tick_phases::record_tick(
+            server,
+            &tick_phases::TickTimes {
+                total: start.elapsed(),
+                prelude: prelude_elapsed,
+                chunks: chunk_elapsed,
+                players: player_elapsed,
+                entities: entity_elapsed,
+                tracking: tracking_elapsed,
+                block_entities: block_entity_elapsed,
+                tickets: tickets_elapsed,
                 player_count,
-                player_elapsed,
                 entity_count,
-                entity_elapsed,
                 block_entity_count,
-                block_entity_elapsed,
-            );
-        }
+            },
+        );
     }
 
     /* ItemScatterer.java */

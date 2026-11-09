@@ -1,0 +1,240 @@
+advancement nodes=25 hash=e73d2e389592c82c
+attribute nodes=24 hash=a3eebbc498f04de7
+ban nodes=3 hash=b642d766a2cd1839
+ban-ip nodes=3 hash=ed5c45d05a09242b
+banlist nodes=3 hash=b5a7e79bfea31a4c
+bossbar nodes=39 hash=e8cd8ddac9270f19
+clear nodes=4 hash=c7aea0775006a2c2
+clone nodes=17 hash=72afe934034ef1c6
+compute nodes=21 hash=fbf02f807af7ea45
+damage nodes=10 hash=1dc032efe231a397
+data nodes=242 hash=3b0e68900c135958
+datapack nodes=17 hash=e6ba3c2d1655c5e1
+debug nodes=3 hash=e971fce0ec4d4af7
+defaultgamemode nodes=2 hash=c27a6ee1cbb87c9f
+deop nodes=2 hash=934e78495674dcc5
+dialog nodes=6 hash=ad9551aed4d5a266
+difficulty nodes=5 hash=c2eebd8377b6196b
+effect nodes=13 hash=214c878870a00dbd
+enchant nodes=4 hash=61d175cc742e6a1d
+execute nodes=142 hash=d409e81ef92ae49e
+experience nodes=15 hash=29665974a9f9d8d6
+fetchprofile nodes=7 hash=d34cb5639a655d59
+fill nodes=15 hash=6c12abd884ac61ca
+fillbiome nodes=6 hash=e869fda819e05c5b
+forceload nodes=10 hash=bb6d218a96215ff6
+function nodes=2 hash=8d0c1205ffe76383
+gamemode nodes=3 hash=526400af8bd05052
+gamerule nodes=237 hash=7401fbbc77b8aacd
+give nodes=4 hash=af94721fa2a3a27a
+help nodes=2 hash=16fd8ff90726983b
+item nodes=14 hash=a6ea945be18d95f2
+kick nodes=3 hash=3c37ad7793c0d0db
+kill nodes=2 hash=b3174c26ad396a26
+list nodes=2 hash=1929ed178ee1414c
+locate nodes=7 hash=764fd8c030e7ff59
+loot nodes=121 hash=18be864453da24a0
+me nodes=2 hash=36763fff77035332
+msg nodes=3 hash=4c84dbc5be7a069c
+op nodes=2 hash=91ee67bd1c5c5b3a
+pardon nodes=2 hash=992419a24aec2806
+pardon-ip nodes=2 hash=329eca1060286306
+particle nodes=10 hash=cee616412af227e6
+place nodes=15 hash=77215ac98b495d1c
+playsound nodes=62 hash=8db6cd5627389265
+plugin nodes=9 hash=7c20dda40a53c0d4
+plugins nodes=1 hash=0dc6268b2fc5af0d
+posteffect nodes=11 hash=e44d3496ce80fc35
+pregen nodes=12 hash=8410dfa19546b3e1
+pumpkin nodes=2 hash=a6a3bf3dadf25302
+raid nodes=10 hash=654cd527be16be02
+random nodes=16 hash=e14e9a1b13aadcd8
+recipe nodes=9 hash=05869fd091dd5d94
+reload nodes=1 hash=9e006327ca3df5e4
+return nodes=4 hash=afaac53a6b23ac52
+ride nodes=5 hash=aae2ba67bbedd087
+rotate nodes=8 hash=34504c65221e7045
+save-all nodes=2 hash=206a712f264933b1
+save-off nodes=1 hash=a67389ef6ce6aef0
+save-on nodes=1 hash=fcacb5b0acc1953c
+say nodes=2 hash=605717acd9b3ede4
+schedule nodes=8 hash=0ec7cf3b7707eebb
+scoreboard nodes=36 hash=cae34736dab75a83
+seed nodes=1 hash=b9e38bfe2c98a938
+setblock nodes=7 hash=bca7e1f357eeaa28
+setidletimeout nodes=2 hash=5fafb4a33f1a9e96
+setworldspawn nodes=3 hash=6b7100616ecc411f
+spawnpoint nodes=4 hash=419dc1221f384e30
+spectate nodes=3 hash=af11c33e7142993e
+spreadplayers nodes=10 hash=ac28a1ce03ba9877
+stop nodes=1 hash=4fcbfa3fc73f86b5
+stopsound nodes=26 hash=6cdb0b23efc26e6e
+stopwatch nodes=10 hash=50568ca3fa8fc5c3
+summon nodes=4 hash=2a8f75520beff5fb
+swing nodes=4 hash=9aa587359d03c1d6
+tag nodes=7 hash=98ecb27ecbed79ec
+team nodes=45 hash=339348acfd811413
+teammsg nodes=2 hash=b2506eb92423c207
+teleport nodes=12 hash=47e28e7bdc51d9a7
+tell nodes=1 hash=ddce06088ca7a635
+tellraw nodes=3 hash=807a6cef7f88c58a
+test nodes=8 hash=d5ed1832cd5d2c4b
+tick nodes=12 hash=3655cb799b8aed04
+tickprofile nodes=2 hash=18ba1de7148d224d
+time nodes=37 hash=dbc463a0140328ca
+title nodes=14 hash=98bdd9830fc08b81
+tm nodes=1 hash=831caf27ede43d9e
+tp nodes=1 hash=74bdc2082988c8ed
+tps nodes=1 hash=0ec28e8e758caeec
+transfer nodes=4 hash=d148f0cd387d1385
+trigger nodes=6 hash=a68cea1927d9e712
+version nodes=1 hash=6feb97fffb0a8f2c
+w nodes=1 hash=75f38d390f659387
+waypoint nodes=13 hash=4de861733878c025
+weather nodes=7 hash=d583a995d7f6f007
+whitelist nodes=9 hash=6df16b2e57460033
+worldborder nodes=20 hash=533ea78972c8a883
+xp nodes=1 hash=07161cc0cb07a4d3
+---- execute
+command execute runs=false forks=false modifier=keep redirect=- requirements=1
+  literal align runs=false forks=false modifier=keep redirect=- requirements=0
+    argument axes runs=false forks=false modifier=custom redirect=162 requirements=0 parser=Swizzle suggestions=false override=None
+  literal anchored runs=false forks=false modifier=keep redirect=- requirements=0
+    argument anchor runs=false forks=false modifier=custom redirect=162 requirements=0 parser=EntityAnchor suggestions=false override=None
+  literal as runs=false forks=false modifier=keep redirect=- requirements=0
+    argument targets runs=false forks=true modifier=custom redirect=162 requirements=0 parser=Entity { flags: 0 } suggestions=false override=None
+  literal at runs=false forks=false modifier=keep redirect=- requirements=0
+    argument targets runs=false forks=true modifier=custom redirect=162 requirements=0 parser=Entity { flags: 0 } suggestions=false override=None
+  literal facing runs=false forks=false modifier=keep redirect=- requirements=0
+    literal entity runs=false forks=false modifier=keep redirect=- requirements=0
+      argument targets runs=false forks=false modifier=keep redirect=- requirements=0 parser=Entity { flags: 0 } suggestions=false override=None
+        argument anchor runs=false forks=true modifier=custom redirect=162 requirements=0 parser=EntityAnchor suggestions=false override=None
+    argument pos runs=false forks=false modifier=custom redirect=162 requirements=0 parser=Vec3 suggestions=false override=None
+  literal if runs=false forks=false modifier=keep redirect=- requirements=0
+    literal biome runs=false forks=false modifier=keep redirect=- requirements=0
+      argument pos runs=false forks=false modifier=keep redirect=- requirements=0 parser=BlockPos suggestions=false override=None
+        argument biome runs=true forks=true modifier=custom redirect=162 requirements=0 parser=ResourceOrTag { identifier: Identifier { namespace: "minecraft", path: "worldgen/biome" } } suggestions=false override=None
+    literal block runs=false forks=false modifier=keep redirect=- requirements=0
+      argument pos runs=false forks=false modifier=keep redirect=- requirements=0 parser=BlockPos suggestions=false override=None
+        argument block runs=true forks=true modifier=custom redirect=162 requirements=0 parser=BlockPredicate suggestions=false override=None
+    literal blocks runs=false forks=false modifier=keep redirect=- requirements=0
+      argument start runs=false forks=false modifier=keep redirect=- requirements=0 parser=BlockPos suggestions=false override=None
+        argument end runs=false forks=false modifier=keep redirect=- requirements=0 parser=BlockPos suggestions=false override=None
+          argument destination runs=false forks=false modifier=keep redirect=- requirements=0 parser=BlockPos suggestions=false override=None
+            literal all runs=true forks=true modifier=custom redirect=162 requirements=0
+            literal masked runs=true forks=true modifier=custom redirect=162 requirements=0
+    literal data runs=false forks=false modifier=keep redirect=- requirements=0
+      literal block runs=false forks=false modifier=keep redirect=- requirements=0
+        argument pos runs=false forks=false modifier=keep redirect=- requirements=0 parser=BlockPos suggestions=false override=None
+          argument path runs=true forks=true modifier=custom redirect=162 requirements=0 parser=NbtPath suggestions=false override=None
+      literal entity runs=false forks=false modifier=keep redirect=- requirements=0
+        argument target runs=false forks=false modifier=keep redirect=- requirements=0 parser=Entity { flags: 1 } suggestions=false override=None
+          argument path runs=true forks=true modifier=custom redirect=162 requirements=0 parser=NbtPath suggestions=false override=None
+      literal storage runs=false forks=false modifier=keep redirect=- requirements=0
+        argument id runs=false forks=false modifier=keep redirect=- requirements=0 parser=ResourceLocation suggestions=false override=None
+          argument path runs=true forks=true modifier=custom redirect=162 requirements=0 parser=NbtPath suggestions=false override=None
+    literal dimension runs=false forks=false modifier=keep redirect=- requirements=0
+      argument dimension runs=true forks=true modifier=custom redirect=162 requirements=0 parser=Dimension suggestions=false override=None
+    literal entity runs=false forks=false modifier=keep redirect=- requirements=0
+      argument entities runs=true forks=true modifier=custom redirect=162 requirements=0 parser=Entity { flags: 0 } suggestions=false override=None
+    literal loaded runs=false forks=false modifier=keep redirect=- requirements=0
+      argument pos runs=true forks=true modifier=custom redirect=162 requirements=0 parser=BlockPos suggestions=false override=None
+    literal score runs=false forks=false modifier=keep redirect=- requirements=0
+      argument target runs=false forks=false modifier=keep redirect=- requirements=0 parser=ScoreHolder { flags: 0 } suggestions=false override=None
+        argument targetObjective runs=false forks=false modifier=keep redirect=- requirements=0 parser=Objective suggestions=false override=None
+          literal < runs=false forks=false modifier=keep redirect=- requirements=0
+            argument source runs=false forks=false modifier=keep redirect=- requirements=0 parser=ScoreHolder { flags: 0 } suggestions=false override=None
+              argument sourceObjective runs=true forks=true modifier=custom redirect=162 requirements=0 parser=Objective suggestions=false override=None
+          literal <= runs=false forks=false modifier=keep redirect=- requirements=0
+            argument source runs=false forks=false modifier=keep redirect=- requirements=0 parser=ScoreHolder { flags: 0 } suggestions=false override=None
+              argument sourceObjective runs=true forks=true modifier=custom redirect=162 requirements=0 parser=Objective suggestions=false override=None
+          literal = runs=false forks=false modifier=keep redirect=- requirements=0
+            argument source runs=false forks=false modifier=keep redirect=- requirements=0 parser=ScoreHolder { flags: 0 } suggestions=false override=None
+              argument sourceObjective runs=true forks=true modifier=custom redirect=162 requirements=0 parser=Objective suggestions=false override=None
+          literal > runs=false forks=false modifier=keep redirect=- requirements=0
+            argument source runs=false forks=false modifier=keep redirect=- requirements=0 parser=ScoreHolder { flags: 0 } suggestions=false override=None
+              argument sourceObjective runs=true forks=true modifier=custom redirect=162 requirements=0 parser=Objective suggestions=false override=None
+          literal >= runs=false forks=false modifier=keep redirect=- requirements=0
+            argument source runs=false forks=false modifier=keep redirect=- requirements=0 parser=ScoreHolder { flags: 0 } suggestions=false override=None
+              argument sourceObjective runs=true forks=true modifier=custom redirect=162 requirements=0 parser=Objective suggestions=false override=None
+          literal matches runs=false forks=false modifier=keep redirect=- requirements=0
+            argument range runs=true forks=true modifier=custom redirect=162 requirements=0 parser=IntRange suggestions=false override=None
+    literal stopwatch runs=false forks=false modifier=keep redirect=- requirements=0
+      argument id runs=false forks=false modifier=keep redirect=- requirements=0 parser=ResourceLocation suggestions=false override=None
+        argument range runs=true forks=true modifier=custom redirect=162 requirements=0 parser=FloatRange suggestions=false override=None
+  literal in runs=false forks=false modifier=keep redirect=- requirements=0
+    argument dimension runs=false forks=false modifier=custom redirect=162 requirements=0 parser=Dimension suggestions=false override=None
+  literal on runs=false forks=false modifier=keep redirect=- requirements=0
+    literal attacker runs=false forks=true modifier=custom redirect=162 requirements=0
+    literal controller runs=false forks=true modifier=custom redirect=162 requirements=0
+    literal leasher runs=false forks=true modifier=custom redirect=162 requirements=0
+    literal origin runs=false forks=true modifier=custom redirect=162 requirements=0
+    literal owner runs=false forks=true modifier=custom redirect=162 requirements=0
+    literal passengers runs=false forks=true modifier=custom redirect=162 requirements=0
+    literal target runs=false forks=true modifier=custom redirect=162 requirements=0
+    literal vehicle runs=false forks=true modifier=custom redirect=162 requirements=0
+  literal positioned runs=false forks=false modifier=keep redirect=- requirements=0
+    literal as runs=false forks=false modifier=keep redirect=- requirements=0
+      argument targets runs=false forks=true modifier=custom redirect=162 requirements=0 parser=Entity { flags: 0 } suggestions=false override=None
+    literal over runs=false forks=false modifier=keep redirect=- requirements=0
+      argument heightmap runs=false forks=false modifier=custom redirect=162 requirements=0 parser=Heightmap suggestions=false override=None
+    argument pos runs=false forks=false modifier=custom redirect=162 requirements=0 parser=Vec3 suggestions=false override=None
+  literal rotated runs=false forks=false modifier=keep redirect=- requirements=0
+    literal as runs=false forks=false modifier=keep redirect=- requirements=0
+      argument targets runs=false forks=true modifier=custom redirect=162 requirements=0 parser=Entity { flags: 0 } suggestions=false override=None
+    argument rot runs=false forks=false modifier=custom redirect=162 requirements=0 parser=Rotation suggestions=false override=None
+  literal run runs=false forks=false modifier=keep redirect=1 requirements=0
+  literal summon runs=false forks=false modifier=keep redirect=- requirements=0
+    argument entity runs=false forks=false modifier=custom redirect=162 requirements=0 parser=Resource { identifier: Identifier { namespace: "minecraft", path: "entity_type" } } suggestions=false override=Some(SummonableEntities)
+  literal unless runs=false forks=false modifier=keep redirect=- requirements=0
+    literal biome runs=false forks=false modifier=keep redirect=- requirements=0
+      argument pos runs=false forks=false modifier=keep redirect=- requirements=0 parser=BlockPos suggestions=false override=None
+        argument biome runs=true forks=true modifier=custom redirect=162 requirements=0 parser=ResourceOrTag { identifier: Identifier { namespace: "minecraft", path: "worldgen/biome" } } suggestions=false override=None
+    literal block runs=false forks=false modifier=keep redirect=- requirements=0
+      argument pos runs=false forks=false modifier=keep redirect=- requirements=0 parser=BlockPos suggestions=false override=None
+        argument block runs=true forks=true modifier=custom redirect=162 requirements=0 parser=BlockPredicate suggestions=false override=None
+    literal blocks runs=false forks=false modifier=keep redirect=- requirements=0
+      argument start runs=false forks=false modifier=keep redirect=- requirements=0 parser=BlockPos suggestions=false override=None
+        argument end runs=false forks=false modifier=keep redirect=- requirements=0 parser=BlockPos suggestions=false override=None
+          argument destination runs=false forks=false modifier=keep redirect=- requirements=0 parser=BlockPos suggestions=false override=None
+            literal all runs=true forks=true modifier=custom redirect=162 requirements=0
+            literal masked runs=true forks=true modifier=custom redirect=162 requirements=0
+    literal data runs=false forks=false modifier=keep redirect=- requirements=0
+      literal block runs=false forks=false modifier=keep redirect=- requirements=0
+        argument pos runs=false forks=false modifier=keep redirect=- requirements=0 parser=BlockPos suggestions=false override=None
+          argument path runs=true forks=true modifier=custom redirect=162 requirements=0 parser=NbtPath suggestions=false override=None
+      literal entity runs=false forks=false modifier=keep redirect=- requirements=0
+        argument target runs=false forks=false modifier=keep redirect=- requirements=0 parser=Entity { flags: 1 } suggestions=false override=None
+          argument path runs=true forks=true modifier=custom redirect=162 requirements=0 parser=NbtPath suggestions=false override=None
+      literal storage runs=false forks=false modifier=keep redirect=- requirements=0
+        argument id runs=false forks=false modifier=keep redirect=- requirements=0 parser=ResourceLocation suggestions=false override=None
+          argument path runs=true forks=true modifier=custom redirect=162 requirements=0 parser=NbtPath suggestions=false override=None
+    literal dimension runs=false forks=false modifier=keep redirect=- requirements=0
+      argument dimension runs=true forks=true modifier=custom redirect=162 requirements=0 parser=Dimension suggestions=false override=None
+    literal entity runs=false forks=false modifier=keep redirect=- requirements=0
+      argument entities runs=true forks=true modifier=custom redirect=162 requirements=0 parser=Entity { flags: 0 } suggestions=false override=None
+    literal loaded runs=false forks=false modifier=keep redirect=- requirements=0
+      argument pos runs=true forks=true modifier=custom redirect=162 requirements=0 parser=BlockPos suggestions=false override=None
+    literal score runs=false forks=false modifier=keep redirect=- requirements=0
+      argument target runs=false forks=false modifier=keep redirect=- requirements=0 parser=ScoreHolder { flags: 0 } suggestions=false override=None
+        argument targetObjective runs=false forks=false modifier=keep redirect=- requirements=0 parser=Objective suggestions=false override=None
+          literal < runs=false forks=false modifier=keep redirect=- requirements=0
+            argument source runs=false forks=false modifier=keep redirect=- requirements=0 parser=ScoreHolder { flags: 0 } suggestions=false override=None
+              argument sourceObjective runs=true forks=true modifier=custom redirect=162 requirements=0 parser=Objective suggestions=false override=None
+          literal <= runs=false forks=false modifier=keep redirect=- requirements=0
+            argument source runs=false forks=false modifier=keep redirect=- requirements=0 parser=ScoreHolder { flags: 0 } suggestions=false override=None
+              argument sourceObjective runs=true forks=true modifier=custom redirect=162 requirements=0 parser=Objective suggestions=false override=None
+          literal = runs=false forks=false modifier=keep redirect=- requirements=0
+            argument source runs=false forks=false modifier=keep redirect=- requirements=0 parser=ScoreHolder { flags: 0 } suggestions=false override=None
+              argument sourceObjective runs=true forks=true modifier=custom redirect=162 requirements=0 parser=Objective suggestions=false override=None
+          literal > runs=false forks=false modifier=keep redirect=- requirements=0
+            argument source runs=false forks=false modifier=keep redirect=- requirements=0 parser=ScoreHolder { flags: 0 } suggestions=false override=None
+              argument sourceObjective runs=true forks=true modifier=custom redirect=162 requirements=0 parser=Objective suggestions=false override=None
+          literal >= runs=false forks=false modifier=keep redirect=- requirements=0
+            argument source runs=false forks=false modifier=keep redirect=- requirements=0 parser=ScoreHolder { flags: 0 } suggestions=false override=None
+              argument sourceObjective runs=true forks=true modifier=custom redirect=162 requirements=0 parser=Objective suggestions=false override=None
+          literal matches runs=false forks=false modifier=keep redirect=- requirements=0
+            argument range runs=true forks=true modifier=custom redirect=162 requirements=0 parser=IntRange suggestions=false override=None
+    literal stopwatch runs=false forks=false modifier=keep redirect=- requirements=0
+      argument id runs=false forks=false modifier=keep redirect=- requirements=0 parser=ResourceLocation suggestions=false override=None
+        argument range runs=true forks=true modifier=custom redirect=162 requirements=0 parser=FloatRange suggestions=false override=None

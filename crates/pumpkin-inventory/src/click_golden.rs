@@ -185,15 +185,15 @@ impl Sequence {
 fn filler(sequence: &mut Sequence) -> ItemStack {
     let count = u8::try_from(sequence.next(64) + 1).unwrap_or(1);
     match sequence.next(14) {
-        0..=2 => ItemStack::new(count, &Item::STONE),
-        3 | 4 => ItemStack::new(count.min(40), &Item::DIRT),
-        5 => ItemStack::new(1, &Item::DIAMOND_SWORD),
-        6 => ItemStack::new(1, &Item::IRON_HELMET),
-        7 => ItemStack::new(1, &Item::DIAMOND_CHESTPLATE),
-        8 => ItemStack::new(count.min(64), &Item::APPLE),
-        9 => ItemStack::new(count.min(16), &Item::ENDER_PEARL),
-        10 => ItemStack::new(count, &Item::OAK_PLANKS),
-        11 => {
+        0..=4 => ItemStack::new(count, &Item::STONE),
+        5 => ItemStack::new(count.min(40), &Item::DIRT),
+        6 => ItemStack::new(1, &Item::DIAMOND_SWORD),
+        7 => ItemStack::new(1, &Item::IRON_HELMET),
+        8 => ItemStack::new(1, &Item::DIAMOND_CHESTPLATE),
+        9 => ItemStack::new(count.min(64), &Item::APPLE),
+        10 => ItemStack::new(count.min(16), &Item::ENDER_PEARL),
+        11 => ItemStack::new(count, &Item::OAK_PLANKS),
+        12 => {
             let mut bundle = ItemStack::new(1, &Item::BUNDLE);
             let mut items = Vec::new();
             for _ in 0..sequence.next(3) {
@@ -227,6 +227,11 @@ fn next_click(sequence: &mut Sequence, slots: usize) -> Vec<(i32, i32, SlotActio
         52..=59 => vec![(slot, button, SlotActionType::Throw)],
         60..=64 => vec![(slot, 2, SlotActionType::Clone)],
         65..=71 => vec![(slot, 0, SlotActionType::PickupAll)],
+        // A double click: pick a stack up, then gather every equal stack onto the cursor.
+        96..=99 => vec![
+            (slot, 0, SlotActionType::Pickup),
+            (slot, 0, SlotActionType::PickupAll),
+        ],
         72..=77 => vec![(slot, 7, SlotActionType::PickupAll)],
         78..=79 => vec![(slot, 3, SlotActionType::Pickup)],
         _ => drag(sequence, slots),

@@ -11,7 +11,9 @@ use std::fmt::Write;
 
 use pumpkin_core::entity::player::advancement::predicate::CriterionConditions;
 use pumpkin_data::Advancement;
-use pumpkin_data::advancement_data::AdvancementCondition;
+use pumpkin_data::advancement_data::{
+    AdvancementCondition, InventoryChangedCondition, InventorySlotsCondition, ItemCondition,
+};
 
 /// FNV-1a: a hash that does not change with the Rust version.
 fn fnv(text: &str) -> u64 {
@@ -65,14 +67,64 @@ fn record() -> Result<String, std::fmt::Error> {
     Ok(out)
 }
 
-/// Kinds that no advancement of the game data uses.
-const fn synthetic_conditions() -> [AdvancementCondition; 5] {
-    [
+/// The two ends of a bound, either of which may be missing.
+type Ends = (Option<i64>, Option<i64>);
+
+/// Conditions the game data does not contain: kinds that no advancement uses, and bounds with
+/// only one end given (the data always gives both or neither).
+fn synthetic_conditions() -> Vec<AdvancementCondition> {
+    let item = |count_min, count_max, durability_min, durability_max| ItemCondition {
+        items: &["minecraft:stone"],
+        count_min,
+        count_max,
+        durability_min,
+        durability_max,
+        ..ItemCondition::default()
+    };
+    let slots = |empty: Ends, full: Ends, occupied: Ends| InventorySlotsCondition {
+        empty_min: empty.0,
+        empty_max: empty.1,
+        full_min: full.0,
+        full_max: full.1,
+        occupied_min: occupied.0,
+        occupied_max: occupied.1,
+    };
+    let inventory: &'static InventoryChangedCondition =
+        Box::leak(Box::new(InventoryChangedCondition {
+            items: Box::leak(Box::new([
+                item(Some(2), None, None, None),
+                item(None, Some(5), None, None),
+                ItemCondition {
+                    tag: Some("c:ores"),
+                    ..ItemCondition::default()
+                },
+            ])),
+            slots: Some(slots((Some(1), None), (None, Some(3)), (Some(4), Some(9)))),
+        }));
+    let other_slots: &'static InventoryChangedCondition =
+        Box::leak(Box::new(InventoryChangedCondition {
+            items: &[],
+            slots: Some(slots((None, Some(6)), (Some(7), None), (None, None))),
+        }));
+    let interacted = |item| AdvancementCondition::PlayerInteractedWithEntity {
+        entity: None,
+        item: Some(item),
+        player: None,
+    };
+    vec![
         AdvancementCondition::UsedEnderEye,
         AdvancementCondition::Custom("{}"),
         AdvancementCondition::Custom(r#"{"player": {"type_specific": {"type": "player"}}}"#),
         AdvancementCondition::Custom("not json"),
         AdvancementCondition::Empty,
+        AdvancementCondition::InventoryChanged(inventory),
+        AdvancementCondition::InventoryChanged(other_slots),
+        interacted(item(Some(1), None, None, None)),
+        interacted(item(None, Some(4), None, None)),
+        interacted(item(None, None, Some(3), None)),
+        interacted(item(None, None, None, Some(7))),
+        interacted(item(Some(1), Some(2), Some(3), Some(4))),
+        interacted(item(None, None, None, None)),
     ]
 }
 

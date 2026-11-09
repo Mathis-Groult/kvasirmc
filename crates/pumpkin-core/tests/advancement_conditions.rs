@@ -99,12 +99,12 @@ fn synthetic_conditions() -> Vec<AdvancementCondition> {
                     ..ItemCondition::default()
                 },
             ])),
-            slots: Some(slots((Some(1), None), (None, Some(3)), (Some(4), Some(9)))),
+            slots: Some(slots((Some(1), None), (None, Some(3)), (Some(4), None))),
         }));
     let other_slots: &'static InventoryChangedCondition =
         Box::leak(Box::new(InventoryChangedCondition {
             items: &[],
-            slots: Some(slots((None, Some(6)), (Some(7), None), (None, None))),
+            slots: Some(slots((None, Some(6)), (Some(7), None), (None, Some(8)))),
         }));
     let interacted = |item| AdvancementCondition::PlayerInteractedWithEntity {
         entity: None,

@@ -21,6 +21,7 @@ mod spawn_point;
 pub mod statistics;
 mod tab_list;
 mod teleport;
+mod tick;
 mod xp_levels;
 
 use core::f32;
@@ -28,7 +29,7 @@ use std::collections::{HashMap, VecDeque};
 use std::num::NonZero;
 use std::sync::atomic::{AtomicBool, AtomicI8, AtomicI32, AtomicU8, AtomicU32, Ordering};
 use std::sync::{Arc, Mutex, Weak};
-use std::time::{Duration, Instant};
+use std::time::Instant;
 
 use crate::plugin::api::events::enchantment::{EnchantItemEvent, PrepareItemEnchantEvent};
 use crate::world::scoreboard::{BedrockScoreboard, Scoreboard};
@@ -38,10 +39,8 @@ use crossbeam::atomic::AtomicCell;
 use crossbeam::channel::Receiver;
 use crossbeam::queue::SegQueue;
 use pumpkin_data::dimension::Dimension;
-use pumpkin_inventory::merchant::merchant_screen_handler::MerchantScreenHandler;
 use pumpkin_inventory::player::ender_chest_inventory::EnderChestInventory;
 use pumpkin_protocol::RawPacket;
-use pumpkin_protocol::bedrock::client::play_status::CPlayStatus;
 use pumpkin_protocol::bedrock::client::{
     CommandPermissionLevel, PlayerPermissionLevel, SerializedAbilitiesData,
 };
@@ -49,7 +48,6 @@ use pumpkin_protocol::bedrock::client::{
     SerializedAbilitiesDataSerializedLayer, add_player::CAddPlayer, common::BuildPlatform,
     player_list::CPlayerList, set_actor_data::PropertySyncData,
 };
-use pumpkin_protocol::bedrock::server::respawn::RespawnState;
 use pumpkin_util::version::JavaMinecraftVersion;
 use pumpkin_world::chunk::ChunkData;
 use tokio::task::JoinHandle;
@@ -244,7 +242,7 @@ use pumpkin_data::item_stack::ItemStack;
 use pumpkin_data::sound::{Sound, SoundCategory};
 use pumpkin_data::statistic::StatisticCategory;
 use pumpkin_data::tag::Taggable;
-use pumpkin_data::{Block, BlockState, screen::WindowType, tag, translation};
+use pumpkin_data::{BlockState, screen::WindowType, tag};
 use pumpkin_inventory::player::{
     player_inventory::PlayerInventory, player_screen_handler::PlayerScreenHandler,
 };
@@ -257,7 +255,7 @@ use pumpkin_nbt::tag::NbtTag;
 use pumpkin_protocol::codec::var_int::VarInt;
 use pumpkin_protocol::codec::var_ulong::VarULong;
 use pumpkin_protocol::java::client::play::{
-    CCustomPayload, CEntityPositionSync, CSetCamera, CSetContainerContent, CSetContainerProperty,
+    CCustomPayload, CEntityPositionSync, CSetContainerContent, CSetContainerProperty,
     CSetContainerSlot, CSetCursorItem, CSetPlayerInventory, CSetSelectedSlot, PreviousMessage,
 };
 use pumpkin_util::math::{experience, position::BlockPos, vector2::Vector2, vector3::Vector3};
@@ -265,11 +263,11 @@ use pumpkin_util::permission::PermissionLvl;
 use pumpkin_util::text::TextComponent;
 use pumpkin_util::text::click::ClickEvent;
 use pumpkin_util::text::hover::HoverEvent;
-use pumpkin_util::{Difficulty, GameMode, Hand};
+use pumpkin_util::{GameMode, Hand};
 use pumpkin_world::cylindrical_chunk_iterator::Cylindrical;
 
+use crate::net::PlayerConfig;
 use crate::net::{ClientPlatform, GameProfile};
-use crate::net::{DisconnectReason, PlayerConfig};
 use crate::server::Server;
 use crate::world::World;
 
@@ -991,7 +989,6 @@ impl Player {
             .add_passenger(vehicle.clone(), self.clone());
     }
 
-    #[expect(clippy::too_many_lines)]
     pub fn tick<'a>(&'a self, server: &'a Server) {
         let t_inbound = std::time::Instant::now();
         self.process_inbound_packets();
@@ -1006,281 +1003,34 @@ impl Player {
                 .store(false, Ordering::Relaxed);
         }
 
-        if let Some(camera_id) = self.camera_target_id.load() {
-            if camera_id == self.entity_id() {
-                self.camera_target_id.store(None);
-            } else {
-                let world = self.world();
-                let target = world
-                    .get_player_by_id(camera_id)
-                    .map(|p| Arc::clone(&p) as Arc<dyn EntityBase>)
-                    .or_else(|| world.get_entity_by_id(camera_id));
-                if let Some(target) = target {
-                    let target_pos = target.get_entity().pos.load();
-                    let player_pos = self.living_entity.entity.pos.load();
-                    if player_pos != target_pos {
-                        self.living_entity.entity.set_pos(target_pos);
-                        if let Some(p) = self.world().get_player_by_uuid(self.gameprofile.id) {
-                            crate::world::chunker::update_position(&p);
-                        }
-                    }
-                } else {
-                    // Target no longer exists, reset camera back to player
-                    self.camera_target_id.store(None);
-                    self.try_send_client_packet(&CSetCamera::new(self.entity_id().into()));
-                }
-            }
-        }
-
-        if let Ok(current_screen_handler_guard) = self.current_screen_handler.try_lock() {
-            let current_screen_handler = current_screen_handler_guard.clone();
-            drop(current_screen_handler_guard);
-            let is_invalid = current_screen_handler
-                .try_lock()
-                .is_ok_and(|screen_handler| {
-                    screen_handler.as_any().is::<MerchantScreenHandler>()
-                        && !screen_handler.can_use(self)
-                });
-
-            if is_invalid {
-                if let Some(p) = self.world().get_player_by_uuid(self.gameprofile.id) {
-                    p.close_handled_screen();
-                }
-            } else if let Ok(mut screen_handler) = current_screen_handler.try_lock() {
-                screen_handler.send_content_updates();
-            }
-        }
+        self.tick_camera();
+        self.tick_screen_handler();
 
         // Statistics updates
-        if let Ok(mut stats) = self.stats.try_lock() {
-            stats.increment_custom(statistics::CustomStatistic::PlayTime, 1);
-            stats.increment_custom(statistics::CustomStatistic::TotalWorldTime, 1);
-            if !self.living_entity.dead.load(Ordering::Relaxed)
-                && self.living_entity.health.load() > 0.0
-            {
-                stats.increment_custom(statistics::CustomStatistic::TimeSinceDeath, 1);
-            }
-            if !self.is_sleeping() {
-                stats.increment_custom(statistics::CustomStatistic::TimeSinceRest, 1);
-            }
-            if self.living_entity.entity.sneaking.load(Ordering::Relaxed) {
-                stats.increment_custom(statistics::CustomStatistic::SneakTime, 1);
-            }
-        }
+        self.tick_statistics();
+        self.tick_timers();
 
-        if let Ok(mut xp) = self.experience_pick_up_delay.try_lock()
-            && *xp > 0
-        {
-            *xp -= 1;
-        }
-        self.warden_spawn_tracker
-            .lock()
-            .unwrap_or_else(std::sync::PoisonError::into_inner)
-            .tick();
         let t_chunks = std::time::Instant::now();
-        if let Ok(listener) = self.chunk_listener.try_lock()
-            && let Ok(mut sender) = self.chunk_sender.try_lock()
-        {
-            let watched = self.watched_section.load();
-            while let Ok((pos, _)) = listener.try_recv() {
-                if watched.is_within_distance(pos.x, pos.y) {
-                    sender.enqueue_chunk(pos);
-                }
-            }
-        }
-
-        let world = self.world();
-        let player_chunk = self.get_entity().chunk_pos.load();
-        let epoch = self.chunk_send_epoch.load(Ordering::Relaxed);
-        let version = match self.client.as_ref() {
-            ClientPlatform::Java(java_client) => java_client.version.load(),
-            ClientPlatform::Bedrock(_) => JavaMinecraftVersion::V_1_20_2,
-        };
-
-        let view_distance = self.watched_section.load().view_distance;
-        let prepared_batch = self.chunk_sender.try_lock().ok().and_then(|mut sender| {
-            sender.prepare_batch(&world.level, player_chunk, view_distance, epoch, version)
-        });
-
-        let total_sent_chunks = prepared_batch.map_or_else(
-            || {
-                self.chunk_sender
-                    .try_lock()
-                    .map_or(0, |s| s.sent_chunks_count())
-            },
-            |batch| match self.client.as_ref() {
-                ClientPlatform::Java(_) => {
-                    let mut per_player_cache = rustc_hash::FxHashMap::default();
-                    let encoded =
-                        crate::net::ChunkSender::encode_batch(&batch, &mut per_player_cache);
-                    let current_epoch = self.chunk_send_epoch.load(Ordering::Relaxed);
-                    let (sent, total_sent_chunks) = self.chunk_sender.try_lock().map_or_else(
-                        |_| (Vec::new(), 0),
-                        |mut sender| {
-                            let sent =
-                                sender.commit_batch(&batch, &encoded, &self.client, current_epoch);
-                            (sent, sender.sent_chunks_count())
-                        },
-                    );
-                    self.pair_entities_in_chunks(&world, &sent);
-                    total_sent_chunks
-                }
-                ClientPlatform::Bedrock(_) => {
-                    let current_epoch = self.chunk_send_epoch.load(Ordering::Relaxed);
-                    let (chunks, total_sent_chunks) = self.chunk_sender.try_lock().map_or_else(
-                        |_| (Vec::new(), 0),
-                        |mut sender| {
-                            let chunks = sender.commit_bedrock_batch(&batch, current_epoch);
-                            let total_sent_chunks = sender.sent_chunks_count();
-                            (chunks, total_sent_chunks)
-                        },
-                    );
-                    if !chunks.is_empty() {
-                        let client = self.client.clone();
-                        let world = world.clone();
-                        let uuid = self.gameprofile.id;
-                        self.spawn_task(async move {
-                            let (deliveries, chunks): (Vec<_>, Vec<_>) = chunks
-                                .into_iter()
-                                .map(|c| ((c.position, c.delivery_token), c.chunk))
-                                .unzip();
-                            client.send_chunks(&chunks).await;
-                            if let Some(player) = world.get_player_by_uuid(uuid) {
-                                // dispatcher sets a reset or a re-enqueue since then holds a newer token.
-                                let delivered = player
-                                    .chunk_sender
-                                    .lock()
-                                    .unwrap_or_else(std::sync::PoisonError::into_inner)
-                                    .mark_delivered(&deliveries);
-                                player.pair_entities_in_chunks(&world, &delivered);
-                            }
-                        });
-                    }
-                    total_sent_chunks
-                }
-            },
-        );
-
+        let total_sent_chunks = self.send_chunks();
         server
             .tickprof
             .record(kvasir_tickprof::Phase::PlayerChunks, t_chunks.elapsed());
-        if let ClientPlatform::Bedrock(bedrock_client) = self.client.as_ref()
-            && !self.bedrock_spawned.load(Ordering::Relaxed)
-            && total_sent_chunks > 4
-        {
-            if let Ok(data) = bedrock_client.serialize_packet(&CPlayStatus::PlayerSpawn) {
-                bedrock_client.try_enqueue_packet(data);
-            }
-            self.bedrock_spawned.store(true, Ordering::Relaxed);
-            self.set_client_loaded(true);
-            self.send_health();
-            if self.living_entity.health.load() <= 0.0 {
-                self.send_bedrock_respawn_state(RespawnState::SearchingForSpawn);
-            }
-        }
-        self.tick_counter.fetch_add(1, Ordering::Relaxed);
-        self.living_entity
-            .entity
-            .tick_count
-            .fetch_add(1, Ordering::Relaxed);
-        if let Some(sleeping_since) = self.sleeping_since.load()
-            && sleeping_since < 101
-        {
-            self.sleeping_since.store(Some(sleeping_since + 1));
-        }
+        self.finish_bedrock_spawn(total_sent_chunks);
+        self.advance_tick_counters();
 
-        if self.mining.load(Ordering::Relaxed)
-            && let Some(p) = self.world().get_player_by_uuid(self.gameprofile.id)
-        {
-            let world_clone = p.world();
-            let server_clone = world_clone.server.upgrade();
-            let pos = *p
-                .mining_pos
-                .lock()
-                .unwrap_or_else(std::sync::PoisonError::into_inner);
-            let world = p.world();
-            let state = world.get_block_state(&pos);
-            // Is the block broken?
-            if state.is_air() {
-                p.stop_mining();
-            } else {
-                let finished = p.continue_mining(
-                    pos,
-                    &world,
-                    state,
-                    p.start_mining_time.load(Ordering::Relaxed),
-                );
-                if finished && matches!(p.client.as_ref(), ClientPlatform::Bedrock(_)) {
-                    p.stop_mining();
-
-                    let block = Block::from_state_id(state.id);
-                    let can_harvest = p.can_harvest(state, block);
-                    let flags = if can_harvest {
-                        pumpkin_world::world::BlockFlags::NOTIFY_ALL
-                    } else {
-                        pumpkin_world::world::BlockFlags::SKIP_DROPS
-                            | pumpkin_world::world::BlockFlags::NOTIFY_ALL
-                    };
-                    if world.break_block(&pos, Some(&p), flags).is_some() {
-                        if let Some(server) = server_clone {
-                            server
-                                .block_registry
-                                .broken(&world, block, &p, &pos, &server, state);
-                        }
-                        p.apply_tool_damage_for_block_break(state);
-                        if can_harvest {
-                            p.add_exhaustion(MINE_BLOCK_EXHAUSTION);
-                        }
-                        let item_id = p.inventory().held_item().item.id;
-                        p.increment_stat(StatisticCategory::Used, item_id as i32, 1);
-                        p.increment_stat(StatisticCategory::Mined, state.id.as_u16() as i32, 1);
-                    }
-                }
-            }
-        }
+        self.tick_mining();
         self.last_attacked_ticks.fetch_add(1, Ordering::Relaxed);
 
         self.living_entity.tick(self, server);
 
         self.breath_manager.tick(self);
 
-        let level_info = self.world().level_info.load();
-        if level_info.difficulty == Difficulty::Peaceful
-            && level_info.game_rules.natural_health_regeneration
-        {
-            let tick_count = self.tick_counter.load(Ordering::Relaxed);
-            if tick_count % 20 == 0 {
-                if self.can_food_heal() {
-                    self.heal(1.0);
-                }
-
-                let saturation = self.hunger_manager.saturation.load();
-                if saturation < 20.0 {
-                    self.hunger_manager.set_saturation(saturation + 1.0);
-                }
-            }
-
-            if tick_count % 10 == 0 && self.hunger_manager.level.load() < 20 {
-                self.hunger_manager.add_hunger(1);
-            }
-        }
+        self.tick_peaceful_regeneration();
 
         self.hunger_manager.tick(self);
 
         // Vanilla updates pose in PlayerEntity#tick after super.tick().
-        self.update_player_pose();
-        self.check_inventory_advancements();
-        if self.tick_counter.load(Ordering::Relaxed) % 20 == 0 {
-            self.trigger_advancement(
-                crate::entity::player::advancement::trigger::AdvancementTrigger::Location,
-            );
-            self.trigger_advancement(
-                crate::entity::player::advancement::trigger::AdvancementTrigger::Tick,
-            );
-        }
-        if let Ok(mut adv) = self.advancements.try_lock() {
-            adv.flush_dirty(self, true);
-        }
+        self.tick_advancements();
 
         // experience handling
         self.tick_experience();
@@ -1289,33 +1039,12 @@ impl Player {
         self.tick_maps(server);
 
         // Anti-spam counter decay
-        let anti_spam = &server.advanced_config.chat.anti_spam;
-        if anti_spam.enabled && anti_spam.decay_per_tick > 0 {
-            let _ = self.chat_spam_tick_count.fetch_update(
-                Ordering::Relaxed,
-                Ordering::Relaxed,
-                |count| Some(count.saturating_sub(anti_spam.decay_per_tick)),
-            );
-        }
+        self.decay_chat_spam(server);
 
         // Timeout/keep alive handling
         self.tick_client_load_timeout();
         // Idle timeout handling
-        let now = Instant::now();
-        let idle_timeout_minutes = server.player_idle_timeout.load(Ordering::Relaxed);
-        if idle_timeout_minutes > 0 {
-            let idle_duration = now.duration_since(self.last_action_time.load());
-            if idle_duration >= Duration::from_secs(idle_timeout_minutes as u64 * 60) {
-                self.kick(
-                    DisconnectReason::KickedForIdle,
-                    &TextComponent::translate_cross(
-                        translation::java::MULTIPLAYER_DISCONNECT_IDLING,
-                        translation::java::MULTIPLAYER_DISCONNECT_IDLING,
-                        [],
-                    ),
-                );
-            }
-        }
+        self.kick_when_idle(server);
     }
 
     pub const fn entity_id(&self) -> i32 {

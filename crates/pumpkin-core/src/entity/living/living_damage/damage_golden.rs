@@ -71,11 +71,11 @@ async fn server(folder: &tempfile::TempDir) -> Arc<Server> {
         ..TelemetryConfig::default()
     };
     let vanilla = VanillaData {
-        banned_ip_list: Default::default(),
-        banned_player_list: Default::default(),
-        operator_config: Default::default(),
-        user_cache: Default::default(),
-        whitelist_config: Default::default(),
+        banned_ip_list: std::sync::RwLock::default(),
+        banned_player_list: std::sync::RwLock::default(),
+        operator_config: std::sync::RwLock::default(),
+        user_cache: std::sync::RwLock::default(),
+        whitelist_config: std::sync::RwLock::default(),
     };
     Server::new(
         basic,
@@ -332,8 +332,8 @@ fn run(world: &Arc<World>) -> String {
     let mut sequence = Sequence(0x6b_7661_7369);
     let mut hash = Fnv(0xcbf2_9ce4_8422_2325);
     let mut report = String::new();
-    let (mut landed, mut refused, mut cases) = (0_u32, 0_u32, 0_u32);
-    for case in 0..6_000_u32 {
+    let (mut landed, mut refused, mut cases) = (0u32, 0u32, 0u32);
+    for case in 0..6_000u32 {
         let victim = victim(world, &mut sequence);
         let first = attacker(world, &mut sequence);
         let second = attacker(world, &mut sequence);

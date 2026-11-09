@@ -96,7 +96,7 @@ fn living(world: &Arc<World>, kind: &'static EntityType, x: f64, z: f64) -> Livi
     ))
 }
 
-const DAMAGE_TYPES: [DamageType; 22] = [
+const DAMAGE_TYPES: [DamageType; 23] = [
     DamageType::GENERIC,
     DamageType::IN_FIRE,
     DamageType::LAVA,
@@ -108,6 +108,7 @@ const DAMAGE_TYPES: [DamageType; 22] = [
     DamageType::HOT_FLOOR,
     DamageType::STALAGMITE,
     DamageType::MOB_ATTACK,
+    DamageType::MOB_ATTACK_NO_AGGRO,
     DamageType::PLAYER_ATTACK,
     DamageType::ARROW,
     DamageType::OUT_OF_WORLD,
@@ -207,6 +208,7 @@ fn victim(world: &Arc<World>, sequence: &mut Sequence) -> LivingEntity {
         &EntityType::COW,
         &EntityType::IRON_GOLEM,
         &EntityType::PLAYER,
+        &EntityType::BREEZE,
         &EntityType::ZOMBIE,
     ]);
     let victim = living(world, kind, 0.5, 0.5);
@@ -215,7 +217,7 @@ fn victim(world: &Arc<World>, sequence: &mut Sequence) -> LivingEntity {
         .absorption
         .store(sequence.pick(&[0.0, 0.0, 2.0, 4.0]));
     victim.hurt_cooldown.store(
-        sequence.pick(&[0, 0, 5, 15, 20]),
+        sequence.pick(&[0, 0, 5, 10, 11, 15, 20]),
         std::sync::atomic::Ordering::Relaxed,
     );
     victim
@@ -231,12 +233,14 @@ fn victim(world: &Arc<World>, sequence: &mut Sequence) -> LivingEntity {
 
 /// A living entity that hits: bare handed, with an axe (which disables shields) or a sword.
 fn attacker(world: &Arc<World>, sequence: &mut Sequence) -> LivingEntity {
+    let x = sequence.pick(&[2.5, -2.5, -1.5, 4.0]);
+    let z = sequence.pick(&[0.5, -3.5, 2.5]);
     let kind = sequence.pick(&[
         &EntityType::ZOMBIE,
         &EntityType::SKELETON,
         &EntityType::WARDEN,
     ]);
-    let attacker = living(world, kind, 2.5, 0.5);
+    let attacker = living(world, kind, x, z);
     match sequence.next(3) {
         0 => {}
         1 => {
@@ -265,7 +269,7 @@ fn attacker(world: &Arc<World>, sequence: &mut Sequence) -> LivingEntity {
 
 /// What a hit leaves behind, as text. Entity ids are left out because they depend on how many
 /// entities other tests made.
-fn state(victim: &LivingEntity, hit: bool) -> String {
+fn state(victim: &LivingEntity, hit: bool, attackers: [i32; 2]) -> String {
     use std::sync::atomic::Ordering::Relaxed;
     let mut out = String::new();
     let equipment = victim.entity_equipment.lock().expect("equipment lock");
@@ -295,10 +299,16 @@ fn state(victim: &LivingEntity, hit: bool) -> String {
             )
         });
     let velocity = victim.entity.velocity.load();
+    let angry = match victim.last_hurt_by_mob.load() {
+        None => "none",
+        Some(by) if by.entity_id == attackers[0] => "first",
+        Some(by) if by.entity_id == attackers[1] => "second",
+        Some(_) => "other",
+    };
     let _ = write!(
         out,
         "hit={hit} health={} abs={} cooldown={} last={} dead={} idle={} type={:?} attacker={} \
-         velocity=({:.5},{:.5},{:.5}) hand={:?} use={} items=[{}] killer={killer:?}",
+         velocity=({:.5},{:.5},{:.5}) hand={:?} use={} items=[{}] killer={killer:?} angry={angry}",
         victim.health.load(),
         victim.absorption.load(),
         victim.hurt_cooldown.load(Relaxed),
@@ -350,7 +360,8 @@ fn run(world: &Arc<World>) -> String {
                 refused += 1;
             }
             cases += 1;
-            hash.text(&format!("{case}:{}", state(&victim, hit)));
+            let ids = [first.entity.entity_id, second.entity.entity_id];
+            hash.text(&format!("{case}:{}", state(&victim, hit, ids)));
         }
         if case % 250 == 249 {
             let _ = writeln!(report, "case {case}: {:016x}", hash.0);

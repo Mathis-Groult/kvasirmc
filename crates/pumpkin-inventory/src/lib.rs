@@ -33,6 +33,9 @@
 //! [`PlayerInventory`]: PlayerInventory
 //! [`SyncHandler`]: sync_handler::SyncHandler
 
+#[cfg(test)]
+mod click_golden;
+
 pub mod anvil;
 pub mod beacon_screen_handler;
 pub mod brewing;

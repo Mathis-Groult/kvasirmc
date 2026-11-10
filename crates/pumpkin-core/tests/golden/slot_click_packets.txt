@@ -1,0 +1,90 @@
+inventory clicks 1-50: be85d7de2f31e91b packets 0
+inventory clicks 51-100: bc70aaa9795d59c4 packets 0
+inventory clicks 101-150: aa34e29e5ec173d2 packets 0
+inventory clicks 151-200: 18bb20d2a0f7fb03 packets 0
+inventory clicks 201-250: b4a999aeaf568b1c packets 0
+inventory clicks 251-300: f7a32c840c430698 packets 0
+inventory clicks 301-350: 12985e1fd53a43ee packets 0
+inventory clicks 351-400: c4afe7bd7d83ae57 packets 0
+inventory events (fired, cancelled): {"click": (366, 12), "craft": (44, 3), "drag": (52, 1), "interact": (314, 11), "prepare_craft": (44, 0), "prepare_result": (268, 0)}
+inventory_creative clicks 1-50: cccf9eff2f3b265f packets 0
+inventory_creative clicks 51-100: b5a629acc2d2c411 packets 0
+inventory_creative clicks 101-150: 80807faa12694886 packets 0
+inventory_creative clicks 151-200: bd0e78f58d6575dc packets 0
+inventory_creative clicks 201-250: 9ffd7e026930f898 packets 0
+inventory_creative clicks 251-300: 5400896ec8bd3956 packets 0
+inventory_creative clicks 301-350: f1099bcc707429ba packets 0
+inventory_creative clicks 351-400: b094abbad6e30a59 packets 0
+inventory_creative events (fired, cancelled): {"click": (372, 17), "craft": (50, 4), "drag": (44, 0), "interact": (315, 9), "prepare_craft": (50, 1), "prepare_result": (272, 0)}
+spectator clicks 1-50: a394a3393a2eeeb9 packets 0
+spectator clicks 51-100: 578705af60d7d4fa packets 0
+spectator clicks 101-150: da9422c5e58c15be packets 0
+spectator clicks 151-200: 66d62923627c4f19 packets 0
+spectator clicks 201-250: a0ad1967555b4974 packets 0
+spectator clicks 251-300: 1a0be1b07e52cf83 packets 0
+spectator clicks 301-350: 91b59459e565b2e7 packets 0
+spectator clicks 351-400: 8c59be193543497e packets 0
+spectator events (fired, cancelled): {"click": (44, 1)}
+crafting clicks 1-50: a74e5cde5fa4113d packets 0
+crafting clicks 51-100: a60fb910db6f207f packets 0
+crafting clicks 101-150: 82c2131fd1bb99d9 packets 0
+crafting clicks 151-200: f577c446c915b78c packets 0
+crafting clicks 201-250: 6fbc9b832890b271 packets 0
+crafting clicks 251-300: 318aed3bd420e421 packets 0
+crafting clicks 301-350: 3218b5931a4bc45b packets 0
+crafting clicks 351-400: 4fcffae9b41b53e5 packets 0
+crafting events (fired, cancelled): {"click": (372, 11), "craft": (9, 0), "drag": (40, 2), "interact": (329, 14), "prepare_craft": (9, 1), "prepare_result": (285, 0)}
+smithing clicks 1-50: b4925ed2ddff6e86 packets 0
+smithing clicks 51-100: 9baab4da1e960e23 packets 0
+smithing clicks 101-150: b8daf7b6ffecfc1f packets 0
+smithing clicks 151-200: c7d106fec51f2202 packets 0
+smithing clicks 201-250: cfd31d69b72683b0 packets 0
+smithing clicks 251-300: f2d1abd5015be3b7 packets 0
+smithing clicks 301-350: ed9c4b21826a09ed packets 0
+smithing clicks 351-400: b1ebd713e39c91b9 packets 0
+smithing events (fired, cancelled): {"click": (368, 15), "craft": (1, 0), "drag": (35, 1), "interact": (321, 13), "prepare_craft": (1, 0), "prepare_result": (288, 0), "prepare_smithing": (89, 0), "smith": (89, 2)}
+furnace clicks 1-50: ddc3b3a6edfb381e packets 0
+furnace clicks 51-100: 34aeb1bdcad9ba3b packets 0
+furnace clicks 101-150: 566313d71b86dc1f packets 0
+furnace clicks 151-200: 9a1a3085e12dc2c6 packets 0
+furnace clicks 201-250: 8c8979a89cfa48f8 packets 0
+furnace clicks 251-300: 586fc674a32032fb packets 0
+furnace clicks 301-350: b4ee166b0d35b5cf packets 0
+furnace clicks 351-400: 5414ac7200824573 packets 0
+furnace events (fired, cancelled): {"click": (371, 13), "craft": (2, 0), "drag": (33, 1), "furnace_extract": (125, 0), "interact": (318, 17), "prepare_craft": (2, 1), "prepare_result": (276, 0)}
+blast_furnace clicks 1-50: d33e0c050f343400 packets 0
+blast_furnace clicks 51-100: a0c07ba02faae815 packets 0
+blast_furnace clicks 101-150: 4077f86320b8e2f8 packets 0
+blast_furnace clicks 151-200: e1d9394c4ecb2fab packets 0
+blast_furnace clicks 201-250: 8f0c4c7d99e58394 packets 0
+blast_furnace clicks 251-300: b27a587ea4ce8038 packets 0
+blast_furnace clicks 301-350: 67e0d03f6695efa4 packets 0
+blast_furnace clicks 351-400: c32c5b997b34e71b packets 0
+blast_furnace events (fired, cancelled): {"click": (370, 20), "craft": (1, 0), "drag": (37, 0), "furnace_extract": (127, 0), "interact": (307, 12), "prepare_craft": (1, 0), "prepare_result": (269, 0)}
+smoker clicks 1-50: fc389cb3f7edf920 packets 0
+smoker clicks 51-100: 6c7189cf7bdf5f1c packets 0
+smoker clicks 101-150: 6659bc72334151cd packets 0
+smoker clicks 151-200: 6a31ca9a12ea896a packets 0
+smoker clicks 201-250: ce29a9b92ae4804d packets 0
+smoker clicks 251-300: a92b259af17267f1 packets 0
+smoker clicks 301-350: 1900f3ca932fd4a6 packets 0
+smoker clicks 351-400: 5a2fa0c4d655d6d3 packets 0
+smoker events (fired, cancelled): {"click": (372, 21), "drag": (41, 2), "furnace_extract": (138, 0), "interact": (321, 17), "prepare_result": (277, 0)}
+grindstone clicks 1-50: 4e2cd516200113f6 packets 0
+grindstone clicks 51-100: 79d0d8c5111b4c5a packets 0
+grindstone clicks 101-150: 8a14d0fb58eaaa00 packets 0
+grindstone clicks 151-200: ca43d861a030ed0a packets 0
+grindstone clicks 201-250: a8d5f64eb5169313 packets 0
+grindstone clicks 251-300: 0e64b7d9ebc1029f packets 0
+grindstone clicks 301-350: 199eb3e1d13e636e packets 0
+grindstone clicks 351-400: 6b851a0b312bc2a9 packets 0
+grindstone events (fired, cancelled): {"click": (361, 18), "drag": (38, 1), "interact": (302, 13), "prepare_grindstone": (261, 0), "prepare_result": (261, 0)}
+chest clicks 1-50: 22973df57ac79556 packets 0
+chest clicks 51-100: 55fece7fcbf5e7af packets 0
+chest clicks 101-150: a46fa6d4ac306d23 packets 0
+chest clicks 151-200: 52014a2555c819eb packets 0
+chest clicks 201-250: ff0473d9a8b83b51 packets 0
+chest clicks 251-300: c91398deedf5cdf8 packets 0
+chest clicks 301-350: 519dd7c68d9bd287 packets 0
+chest clicks 351-400: 8f883385606f609e packets 0
+chest events (fired, cancelled): {"click": (350, 16), "craft": (1, 0), "drag": (44, 2), "interact": (286, 10), "prepare_craft": (1, 0), "prepare_result": (228, 0)}

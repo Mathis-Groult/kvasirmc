@@ -24,6 +24,9 @@ use std::sync::Arc;
 use std::sync::atomic::Ordering;
 use tracing::warn;
 
+#[cfg(test)]
+mod click_golden;
+
 impl Player {
     pub fn open_book(&self, hand: Hand) {
         let hand_val = match hand {

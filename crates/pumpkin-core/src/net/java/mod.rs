@@ -755,3 +755,29 @@ impl JavaClient {
         self.dispatch_play_packet(player, server, packet_id, payload)
     }
 }
+
+/// Test only: what the server queues for one client, taken before any writer task runs.
+#[cfg(test)]
+pub(crate) struct PacketTap(tokio::sync::mpsc::UnboundedReceiver<OutgoingPacket>);
+
+#[cfg(test)]
+impl PacketTap {
+    /// The encoded packets queued since the last call (flush markers left out).
+    pub(crate) fn drain(&mut self) -> Vec<Bytes> {
+        let mut packets = Vec::new();
+        while let Ok(packet) = self.0.try_recv() {
+            if let OutgoingPacket::Data { data, .. } = packet {
+                packets.push(data);
+            }
+        }
+        packets
+    }
+}
+
+#[cfg(test)]
+impl JavaClient {
+    /// Test only: takes the outgoing queue, so that nothing but the test reads it.
+    pub(crate) fn take_packet_tap(&mut self) -> Option<PacketTap> {
+        self.outgoing_packet_queue_recv.take().map(PacketTap)
+    }
+}

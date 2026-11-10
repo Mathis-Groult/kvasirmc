@@ -85,6 +85,22 @@ pub(crate) mod test_support {
     /// to the world. Each call gets a new id and UUID. `world` must belong to a live server
     /// (see [`server`]): `Player::new` exits the process otherwise.
     pub fn java_player(world: &Arc<World>, gamemode: GameMode) -> Arc<Player> {
+        let (client, profile) = java_client();
+        player_of(world, gamemode, client, profile)
+    }
+
+    /// [`java_player`] whose outgoing packets the test reads through the returned tap (`None`
+    /// only if a new client no longer owned its outgoing queue).
+    pub fn java_player_with_tap(
+        world: &Arc<World>,
+        gamemode: GameMode,
+    ) -> Option<(Arc<Player>, crate::net::java::PacketTap)> {
+        let (mut client, profile) = java_client();
+        let tap = client.take_packet_tap()?;
+        Some((player_of(world, gamemode, client, profile), tap))
+    }
+
+    fn java_client() -> (JavaClient, GameProfile) {
         static NEXT_ID: AtomicU64 = AtomicU64::new(1);
         let id = NEXT_ID.fetch_add(1, Ordering::Relaxed);
         let (client_end, server_end) = tokio::io::duplex(1 << 16);
@@ -105,6 +121,15 @@ pub(crate) mod test_support {
             profile_actions: None,
         };
         let client = JavaClient::from_pending(pending, profile.clone(), PlayerConfig::default());
+        (client, profile)
+    }
+
+    fn player_of(
+        world: &Arc<World>,
+        gamemode: GameMode,
+        client: JavaClient,
+        profile: GameProfile,
+    ) -> Arc<Player> {
         Arc::new(Player::new(
             Arc::new(ClientPlatform::Java(client)),
             profile,

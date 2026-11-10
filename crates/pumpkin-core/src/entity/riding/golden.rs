@@ -1,7 +1,7 @@
 //! A record of what `Entity::remove_passenger_internal` does, made before the function was
 //! split (`tests/golden/dismount.txt`; rewrite it on purpose with `KVASIR_BLESS=1`).
 //!
-//! Fourteen small terrains are built once, side by side (open floor, pillars on chosen sides,
+//! Seventeen small terrains are built once, side by side (open floor, pillars on chosen sides, each corner left as the only free column,
 //! all sides walled, water under the vehicle, low ceilings, a slab floor, no floor, closed in
 //! with and without room on top of the vehicle, a ceiling that leaves room only to crouch). On each, a minecart or a horse carrying one or
 //! two passengers (a zombie, a real player over an in-memory connection, a sneaking player)
@@ -44,7 +44,7 @@ fn fnv(hash: u64, text: &str) -> u64 {
     hash
 }
 
-const TERRAINS: [&str; 14] = [
+const TERRAINS: [&str; 17] = [
     "open",
     "pillar_n",
     "pillars_ew",
@@ -59,6 +59,9 @@ const TERRAINS: [&str; 14] = [
     "closed",
     "closed_room_on_top",
     "top_slab_ceiling",
+    "all_but_ne",
+    "all_but_nw",
+    "all_but_se",
 ];
 
 /// Neighbour columns in the order north, south, east, west, then the corners.
@@ -124,6 +127,9 @@ fn build(world: &Arc<World>, index: usize) {
         "pillars_ew" => pillars(world, index, &[2, 3]),
         "pillars_nsew" => pillars(world, index, &[0, 1, 2, 3]),
         "pillars_7" => pillars(world, index, &[0, 1, 2, 3, 4, 5, 6]),
+        "all_but_ne" => pillars(world, index, &[0, 1, 2, 3, 5, 6, 7]),
+        "all_but_nw" => pillars(world, index, &[0, 1, 2, 3, 4, 6, 7]),
+        "all_but_se" => pillars(world, index, &[0, 1, 2, 3, 4, 5, 7]),
         "walled" => pillars(world, index, &[0, 1, 2, 3, 4, 5, 6, 7]),
         "water_below" => put(world, cx, FLOOR_Y, cz, Block::WATER.default_state.id),
         "ceiling_1" => layer(world, index, FLOOR_Y + 2, stone),

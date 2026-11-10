@@ -12,6 +12,9 @@ use pumpkin_data::tag::Taggable;
 use pumpkin_data::{Block, BlockId, BlockState};
 use pumpkin_world::world::BlockFlags;
 
+#[cfg(test)]
+mod golden;
+
 pub struct CauldronBlock;
 
 impl BlockMetadata for CauldronBlock {

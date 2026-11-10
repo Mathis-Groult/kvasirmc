@@ -10,8 +10,12 @@ use pumpkin_protocol::{
     codec::var_int::VarInt,
     java::client::play::{CPlayerPosition, CSetPassengers},
 };
-use pumpkin_util::math::{boundingbox::BoundingBox, position::BlockPos, vector3::Vector3};
+use pumpkin_util::math::{
+    boundingbox::BoundingBox, position::BlockPos, vector2::Vector2, vector3::Vector3,
+};
 use std::sync::{Arc, atomic::Ordering::Relaxed};
+
+use crate::world::World;
 
 #[cfg(test)]
 mod golden;
@@ -230,8 +234,29 @@ impl Entity {
         self.remove_passenger_internal(passenger_id, false);
     }
 
-    #[allow(clippy::too_many_lines)]
     pub(super) fn remove_passenger_internal(&self, passenger_id: i32, reposition: bool) {
+        if !self.dismount_allowed(passenger_id) {
+            return;
+        }
+
+        let (removed_passenger, passenger_ids) = self.detach_passenger(passenger_id);
+
+        let chunk_pos = self.chunk_pos.load();
+
+        if let Some(passenger) = removed_passenger {
+            self.dismount(&passenger, &passenger_ids, chunk_pos, reposition);
+        } else {
+            // No passenger was removed, still need to broadcast the passenger list
+            let world = self.world.load();
+            world.broadcast_to_chunk(
+                chunk_pos,
+                &CSetPassengers::new(VarInt(self.entity_id), &passenger_ids),
+            );
+        }
+    }
+
+    /// Fires the dismount and vehicle-exit events; false when a plugin cancelled either.
+    fn dismount_allowed(&self, passenger_id: i32) -> bool {
         let mut dismount_event =
             crate::plugin::api::events::entity::entity_dismount::EntityDismountEvent::new(
                 passenger_id,
@@ -250,303 +275,334 @@ impl Entity {
                 .plugin_manager
                 .fire_blocking(&server, &mut vehicle_exit);
         }
-        if dismount_event.cancelled || vehicle_exit.cancelled {
+        !(dismount_event.cancelled || vehicle_exit.cancelled)
+    }
+
+    /// Takes the passenger off the list (clearing its vehicle link) and returns it with the ids
+    /// of those who still ride.
+    fn detach_passenger(&self, passenger_id: i32) -> (Option<Arc<dyn EntityBase>>, Vec<VarInt>) {
+        let mut passengers = self
+            .passengers
+            .lock()
+            .unwrap_or_else(std::sync::PoisonError::into_inner);
+        let removed_passenger = passengers
+            .iter()
+            .position(|p| p.get_entity().entity_id == passenger_id)
+            .map(|idx| {
+                let passenger = passengers.remove(idx);
+                *passenger
+                    .get_entity()
+                    .vehicle
+                    .lock()
+                    .unwrap_or_else(std::sync::PoisonError::into_inner) = None;
+                passenger
+            });
+
+        let passenger_ids: Vec<VarInt> = passengers
+            .iter()
+            .map(|p| VarInt(p.get_entity().entity_id))
+            .collect();
+        (removed_passenger, passenger_ids)
+    }
+
+    /// Tells the clients, then (when `reposition`) moves the passenger to a safe spot beside
+    /// the vehicle and teleports a player there.
+    fn dismount(
+        &self,
+        passenger: &Arc<dyn EntityBase>,
+        passenger_ids: &[VarInt],
+        chunk_pos: Vector2<i32>,
+        reposition: bool,
+    ) {
+        let vehicle_box = self.bounding_box.load();
+        let passenger_entity = passenger.get_entity();
+
+        // Pre-allocate teleport ID and block movement packets BEFORE sending
+        // CSetPassengers. This prevents a race condition where the client receives
+        // the dismount packet, sends stale position packets from the old riding
+        // position, and the server processes them before the teleport arrives.
+        let teleport_id = if reposition && let Some(player) = passenger.get_player() {
+            let id = player
+                .teleport_id_count
+                .fetch_add(1, std::sync::atomic::Ordering::Relaxed)
+                + 1;
+            // Use fallback position as placeholder — updated below with real position
+            let placeholder = Vector3::new(self.pos.load().x, vehicle_box.max.y, self.pos.load().z);
+            *player
+                .awaiting_teleport
+                .lock()
+                .unwrap_or_else(std::sync::PoisonError::into_inner) =
+                Some((id.into(), placeholder));
+            Some(id)
+        } else {
+            None
+        };
+
+        // Vanilla: ridingCooldown = 60 (prevents immediate re-mount)
+        passenger_entity.riding_cooldown.store(60, Relaxed);
+        // TODO: world.emitGameEvent(passenger, GameEvent.ENTITY_DISMOUNT, vehicle.pos)
+
+        // Send CSetPassengers directly to the dismounting player before broadcasting it.
+        let world = self.world.load();
+        let passengers_packet = CSetPassengers::new(VarInt(self.entity_id), passenger_ids);
+        if let Some(player) = passenger.get_player() {
+            player.try_send_client_packet(&passengers_packet);
+            world.broadcast_to_chunk_except(
+                chunk_pos,
+                &[player.get_entity().entity_uuid],
+                &passengers_packet,
+            );
+        } else {
+            world.broadcast_to_chunk(chunk_pos, &passengers_packet);
+        }
+
+        if !reposition {
             return;
         }
 
-        let (removed_passenger, passenger_ids) = {
-            let mut passengers = self
-                .passengers
-                .lock()
-                .unwrap_or_else(std::sync::PoisonError::into_inner);
-            let removed_passenger = passengers
-                .iter()
-                .position(|p| p.get_entity().entity_id == passenger_id)
-                .map(|idx| {
-                    let passenger = passengers.remove(idx);
-                    *passenger
-                        .get_entity()
-                        .vehicle
-                        .lock()
-                        .unwrap_or_else(std::sync::PoisonError::into_inner) = None;
-                    passenger
-                });
+        let dismount_pos = self.dismount_position(&world, passenger_entity, &vehicle_box);
+        finish_dismount(passenger, dismount_pos, teleport_id);
+    }
 
-            let passenger_ids: Vec<VarInt> = passengers
-                .iter()
-                .map(|p| VarInt(p.get_entity().entity_id))
-                .collect();
-            (removed_passenger, passenger_ids)
-        };
+    /// Vanilla `DismountHelper`: a free spot beside the vehicle, else on top of it, else the
+    /// top of the vehicle anyway; above water always the top. Sets the pose the spot needs.
+    fn dismount_position(
+        &self,
+        world: &World,
+        passenger_entity: &Self,
+        vehicle_box: &BoundingBox,
+    ) -> Vector3<f64> {
+        let offsets = dismount_offsets(self.yaw.load());
 
-        let chunk_pos = self.chunk_pos.load();
+        let target_block_y = vehicle_box.max.y.floor() as i32;
+        let below_pos = BlockPos(Vector3::new(
+            self.pos.load().x.floor() as i32,
+            target_block_y - 1,
+            self.pos.load().z.floor() as i32,
+        ));
 
-        if let Some(passenger) = removed_passenger {
-            let vehicle_box = self.bounding_box.load();
-            let passenger_entity = passenger.get_entity();
+        let below_state_id = world.get_block_state_id(&below_pos);
+        // Vanilla: isWater checks specifically for water fluid, not any fluid
+        let is_water = Fluid::from_state_id(below_state_id)
+            .is_some_and(|f| f.id == Fluid::WATER.id || f.id == Fluid::FLOWING_WATER.id);
 
-            // Pre-allocate teleport ID and block movement packets BEFORE sending
-            // CSetPassengers. This prevents a race condition where the client receives
-            // the dismount packet, sends stale position packets from the old riding
-            // position, and the server processes them before the teleport arrives.
-            let teleport_id = if reposition && let Some(player) = passenger.get_player() {
-                let id = player
-                    .teleport_id_count
-                    .fetch_add(1, std::sync::atomic::Ordering::Relaxed)
-                    + 1;
-                // Use fallback position as placeholder — updated below with real position
-                let placeholder =
-                    Vector3::new(self.pos.load().x, vehicle_box.max.y, self.pos.load().z);
-                *player
-                    .awaiting_teleport
-                    .lock()
-                    .unwrap_or_else(std::sync::PoisonError::into_inner) =
-                    Some((id.into(), placeholder));
-                Some(id)
-            } else {
-                None
-            };
+        let fallback_pos = Vector3::new(self.pos.load().x, vehicle_box.max.y, self.pos.load().z);
 
-            // Vanilla: ridingCooldown = 60 (prevents immediate re-mount)
-            passenger_entity.riding_cooldown.store(60, Relaxed);
-            // TODO: world.emitGameEvent(passenger, GameEvent.ENTITY_DISMOUNT, vehicle.pos)
-
-            // Send CSetPassengers directly to the dismounting player before broadcasting it.
-            let world = self.world.load();
-            let passengers_packet = CSetPassengers::new(VarInt(self.entity_id), &passenger_ids);
-            if let Some(player) = passenger.get_player() {
-                player.try_send_client_packet(&passengers_packet);
-                world.broadcast_to_chunk_except(
-                    chunk_pos,
-                    &[player.get_entity().entity_uuid],
-                    &passengers_packet,
-                );
-            } else {
-                world.broadcast_to_chunk(chunk_pos, &passengers_packet);
+        if is_water {
+            fallback_pos
+        } else if let Some((pos, pose)) = self.find_dismount_spot(world, passenger_entity, &offsets)
+        {
+            if pose != EntityPose::Standing {
+                passenger_entity.set_pose(pose);
             }
-
-            if !reposition {
-                return;
+            pos
+        } else if let Some((pos, pose)) =
+            self.find_spot_on_top(world, passenger_entity, vehicle_box)
+        {
+            if pose != EntityPose::Standing {
+                passenger_entity.set_pose(pose);
             }
-
-            // Calculate dismount directions and offsets (vanilla DismountHelper)
-            let vehicle_yaw = self.yaw.load();
-            // Wrap yaw to 0..360 range
-            let wrapped_yaw = (vehicle_yaw % 360.0 + 360.0) % 360.0;
-            let forward_dir = if !(45.0..315.0).contains(&wrapped_yaw) {
-                BlockDirection::South
-            } else if (45.0..135.0).contains(&wrapped_yaw) {
-                BlockDirection::West
-            } else if (135.0..225.0).contains(&wrapped_yaw) {
-                BlockDirection::North
-            } else {
-                BlockDirection::East
-            };
-
-            let get_step = |dir: BlockDirection| -> (i32, i32) {
-                match dir {
-                    BlockDirection::North => (0, -1),
-                    BlockDirection::South => (0, 1),
-                    BlockDirection::East => (1, 0),
-                    BlockDirection::West => (-1, 0),
-                    _ => (0, 0),
-                }
-            };
-
-            let get_clockwise = |dir: BlockDirection| -> BlockDirection {
-                match dir {
-                    BlockDirection::North => BlockDirection::East,
-                    BlockDirection::East => BlockDirection::South,
-                    BlockDirection::South => BlockDirection::West,
-                    BlockDirection::West => BlockDirection::North,
-                    other => other,
-                }
-            };
-
-            let get_opposite = |dir: BlockDirection| -> BlockDirection {
-                match dir {
-                    BlockDirection::North => BlockDirection::South,
-                    BlockDirection::South => BlockDirection::North,
-                    BlockDirection::East => BlockDirection::West,
-                    BlockDirection::West => BlockDirection::East,
-                    other => other,
-                }
-            };
-
-            let right_dir = get_clockwise(forward_dir);
-            let left_dir = get_opposite(right_dir);
-            let back_dir = get_opposite(forward_dir);
-
-            let (fx, fz) = get_step(forward_dir);
-            let (rx, rz) = get_step(right_dir);
-            let (lx, lz) = get_step(left_dir);
-            let (bx, bz) = get_step(back_dir);
-
-            let offsets = [
-                (rx, rz),
-                (lx, lz),
-                (bx + rx, bz + rz),
-                (bx + lx, bz + lz),
-                (fx + rx, fz + rz),
-                (fx + lx, fz + lz),
-                (bx, bz),
-                (fx, fz),
-            ];
-
-            let target_block_y = vehicle_box.max.y.floor() as i32;
-            let below_pos = BlockPos(Vector3::new(
-                self.pos.load().x.floor() as i32,
-                target_block_y - 1,
-                self.pos.load().z.floor() as i32,
-            ));
-
-            let below_state_id = world.get_block_state_id(&below_pos);
-            // Vanilla: isWater checks specifically for water fluid, not any fluid
-            let is_water = Fluid::from_state_id(below_state_id)
-                .is_some_and(|f| f.id == Fluid::WATER.id || f.id == Fluid::FLOWING_WATER.id);
-
-            let fallback_pos =
-                Vector3::new(self.pos.load().x, vehicle_box.max.y, self.pos.load().z);
-
-            let dismount_pos = if is_water {
-                fallback_pos
-            } else {
-                // Vanilla checks Standing, Crouching, Swimming poses and their respective height checks
-                let poses_and_heights = [
-                    (EntityPose::Standing, vec![0, 1, -1]),
-                    (EntityPose::Crouching, vec![0, 1, -1]),
-                    (EntityPose::Swimming, vec![0, 1]),
-                ];
-
-                let vehicle_block_pos = self.block_pos.load();
-                let mut found = None;
-
-                'search: for (pose, y_offsets) in poses_and_heights {
-                    let dims = passenger_entity.get_dimensions(pose);
-
-                    for y_offset in y_offsets {
-                        for &(ox, oz) in &offsets {
-                            let target_block_x = vehicle_block_pos.0.x + ox;
-                            let target_block_y = vehicle_block_pos.0.y + y_offset;
-                            let target_block_z = vehicle_block_pos.0.z + oz;
-
-                            let target_pos = BlockPos(Vector3::new(
-                                target_block_x,
-                                target_block_y,
-                                target_block_z,
-                            ));
-                            let height = world.get_dismount_height(&target_pos);
-
-                            if height.is_finite() && height < 1.0 {
-                                let location = Vector3::new(
-                                    f64::from(target_block_x) + 0.5,
-                                    f64::from(target_block_y) + height,
-                                    f64::from(target_block_z) + 0.5,
-                                );
-
-                                let bbox = BoundingBox::new_from_pos(
-                                    location.x, location.y, location.z, &dims,
-                                );
-                                if world.is_space_empty(bbox) {
-                                    found = Some((location, pose));
-                                    break 'search;
-                                }
-                            }
-                        }
-                    }
-                }
-
-                if let Some((pos, pose)) = found {
-                    if pose != EntityPose::Standing {
-                        passenger_entity.set_pose(pose);
-                    }
-                    pos
-                } else {
-                    // Try dismounting directly on top of the vehicle as fallback
-                    let mut found_fallback = None;
-                    let vehicle_top = vehicle_box.max.y;
-
-                    let poses = [
-                        EntityPose::Standing,
-                        EntityPose::Crouching,
-                        EntityPose::Swimming,
-                    ];
-
-                    for pose in poses {
-                        let dims = passenger_entity.get_dimensions(pose);
-                        let bbox = BoundingBox::new_from_pos(
-                            self.pos.load().x,
-                            vehicle_top,
-                            self.pos.load().z,
-                            &dims,
-                        );
-                        if world.is_space_empty(bbox) {
-                            found_fallback = Some((
-                                Vector3::new(self.pos.load().x, vehicle_top, self.pos.load().z),
-                                pose,
-                            ));
-                            break;
-                        }
-                    }
-
-                    if let Some((pos, pose)) = found_fallback {
-                        if pose != EntityPose::Standing {
-                            passenger_entity.set_pose(pose);
-                        }
-                        pos
-                    } else {
-                        fallback_pos
-                    }
-                }
-            };
-
-            // Clean up any remaining reference to the dismounted passenger.
-            passenger_entity.set_pos(dismount_pos);
-
-            // Phase 2: Teleport to safety (unblocks movement)
-            if let Some(player) = passenger.get_player() {
-                if let Some(id) = teleport_id {
-                    player.get_entity().set_pos(dismount_pos);
-                    // Update awaiting_teleport with the real dismount position
-                    *player
-                        .awaiting_teleport
-                        .lock()
-                        .unwrap_or_else(std::sync::PoisonError::into_inner) =
-                        Some((id.into(), dismount_pos));
-                    // Use send_client_packet so the teleport goes through
-                    // the same packet queue as CSetPassengers, preserving send order.
-                    // Vanilla uses DELTA | ROT flags: position absolute, delta/rotation relative.
-                    // With rotation relative and yaw/pitch=0, the client preserves its current look.
-                    player.try_send_client_packet(&CPlayerPosition::new(
-                        id.into(),
-                        dismount_pos,
-                        Vector3::new(0.0, 0.0, 0.0),
-                        0.0,
-                        0.0,
-                        vec![
-                            PositionFlag::DeltaX,
-                            PositionFlag::DeltaY,
-                            PositionFlag::DeltaZ,
-                            PositionFlag::YRot,
-                            PositionFlag::XRot,
-                        ],
-                    ));
-                }
-
-                // Vanilla: setSneaking(false) after dismount via sneak input
-                if passenger_entity.sneaking.load(Relaxed) {
-                    passenger_entity.set_sneaking(false);
-                }
-            } else {
-                passenger_entity.set_pos(dismount_pos);
-            }
+            pos
         } else {
-            // No passenger was removed, still need to broadcast the passenger list
-            let world = self.world.load();
-            world.broadcast_to_chunk(
-                chunk_pos,
-                &CSetPassengers::new(VarInt(self.entity_id), &passenger_ids),
-            );
+            fallback_pos
         }
+    }
+
+    /// The first spot beside the vehicle (by pose, then height, then offset) where the
+    /// passenger fits.
+    fn find_dismount_spot(
+        &self,
+        world: &World,
+        passenger_entity: &Self,
+        offsets: &[(i32, i32); 8],
+    ) -> Option<(Vector3<f64>, EntityPose)> {
+        // Vanilla checks Standing, Crouching, Swimming poses and their respective height checks
+        let poses_and_heights = [
+            (EntityPose::Standing, vec![0, 1, -1]),
+            (EntityPose::Crouching, vec![0, 1, -1]),
+            (EntityPose::Swimming, vec![0, 1]),
+        ];
+
+        let vehicle_block_pos = self.block_pos.load();
+        let mut found = None;
+
+        'search: for (pose, y_offsets) in poses_and_heights {
+            let dims = passenger_entity.get_dimensions(pose);
+
+            for y_offset in y_offsets {
+                for &(ox, oz) in offsets {
+                    let target_block_x = vehicle_block_pos.0.x + ox;
+                    let target_block_y = vehicle_block_pos.0.y + y_offset;
+                    let target_block_z = vehicle_block_pos.0.z + oz;
+
+                    let target_pos =
+                        BlockPos(Vector3::new(target_block_x, target_block_y, target_block_z));
+                    let height = world.get_dismount_height(&target_pos);
+
+                    if height.is_finite() && height < 1.0 {
+                        let location = Vector3::new(
+                            f64::from(target_block_x) + 0.5,
+                            f64::from(target_block_y) + height,
+                            f64::from(target_block_z) + 0.5,
+                        );
+
+                        let bbox =
+                            BoundingBox::new_from_pos(location.x, location.y, location.z, &dims);
+                        if world.is_space_empty(bbox) {
+                            found = Some((location, pose));
+                            break 'search;
+                        }
+                    }
+                }
+            }
+        }
+        found
+    }
+
+    /// A spot on top of the vehicle where the passenger fits in some pose.
+    fn find_spot_on_top(
+        &self,
+        world: &World,
+        passenger_entity: &Self,
+        vehicle_box: &BoundingBox,
+    ) -> Option<(Vector3<f64>, EntityPose)> {
+        let mut found_fallback = None;
+        let vehicle_top = vehicle_box.max.y;
+
+        let poses = [
+            EntityPose::Standing,
+            EntityPose::Crouching,
+            EntityPose::Swimming,
+        ];
+
+        for pose in poses {
+            let dims = passenger_entity.get_dimensions(pose);
+            let bbox =
+                BoundingBox::new_from_pos(self.pos.load().x, vehicle_top, self.pos.load().z, &dims);
+            if world.is_space_empty(bbox) {
+                found_fallback = Some((
+                    Vector3::new(self.pos.load().x, vehicle_top, self.pos.load().z),
+                    pose,
+                ));
+                break;
+            }
+        }
+        found_fallback
+    }
+}
+
+/// The eight columns around the vehicle in vanilla's order: right, left, back-right,
+/// back-left, front-right, front-left, back, front of the vehicle's facing.
+fn dismount_offsets(vehicle_yaw: f32) -> [(i32, i32); 8] {
+    // Wrap yaw to 0..360 range
+    let wrapped_yaw = (vehicle_yaw % 360.0 + 360.0) % 360.0;
+    let forward_dir = if !(45.0..315.0).contains(&wrapped_yaw) {
+        BlockDirection::South
+    } else if (45.0..135.0).contains(&wrapped_yaw) {
+        BlockDirection::West
+    } else if (135.0..225.0).contains(&wrapped_yaw) {
+        BlockDirection::North
+    } else {
+        BlockDirection::East
+    };
+
+    let get_step = |dir: BlockDirection| -> (i32, i32) {
+        match dir {
+            BlockDirection::North => (0, -1),
+            BlockDirection::South => (0, 1),
+            BlockDirection::East => (1, 0),
+            BlockDirection::West => (-1, 0),
+            _ => (0, 0),
+        }
+    };
+
+    let get_clockwise = |dir: BlockDirection| -> BlockDirection {
+        match dir {
+            BlockDirection::North => BlockDirection::East,
+            BlockDirection::East => BlockDirection::South,
+            BlockDirection::South => BlockDirection::West,
+            BlockDirection::West => BlockDirection::North,
+            other => other,
+        }
+    };
+
+    let get_opposite = |dir: BlockDirection| -> BlockDirection {
+        match dir {
+            BlockDirection::North => BlockDirection::South,
+            BlockDirection::South => BlockDirection::North,
+            BlockDirection::East => BlockDirection::West,
+            BlockDirection::West => BlockDirection::East,
+            other => other,
+        }
+    };
+
+    let right_dir = get_clockwise(forward_dir);
+    let left_dir = get_opposite(right_dir);
+    let back_dir = get_opposite(forward_dir);
+
+    let (fx, fz) = get_step(forward_dir);
+    let (rx, rz) = get_step(right_dir);
+    let (lx, lz) = get_step(left_dir);
+    let (bx, bz) = get_step(back_dir);
+
+    [
+        (rx, rz),
+        (lx, lz),
+        (bx + rx, bz + rz),
+        (bx + lx, bz + lz),
+        (fx + rx, fz + rz),
+        (fx + lx, fz + lz),
+        (bx, bz),
+        (fx, fz),
+    ]
+}
+
+/// Puts the passenger at `dismount_pos`; a player also gets the teleport it waits for and
+/// stops sneaking.
+fn finish_dismount(
+    passenger: &Arc<dyn EntityBase>,
+    dismount_pos: Vector3<f64>,
+    teleport_id: Option<i32>,
+) {
+    let passenger_entity = passenger.get_entity();
+    // Clean up any remaining reference to the dismounted passenger.
+    passenger_entity.set_pos(dismount_pos);
+
+    // Phase 2: Teleport to safety (unblocks movement)
+    if let Some(player) = passenger.get_player() {
+        if let Some(id) = teleport_id {
+            player.get_entity().set_pos(dismount_pos);
+            // Update awaiting_teleport with the real dismount position
+            *player
+                .awaiting_teleport
+                .lock()
+                .unwrap_or_else(std::sync::PoisonError::into_inner) =
+                Some((id.into(), dismount_pos));
+            // Use send_client_packet so the teleport goes through
+            // the same packet queue as CSetPassengers, preserving send order.
+            // Vanilla uses DELTA | ROT flags: position absolute, delta/rotation relative.
+            // With rotation relative and yaw/pitch=0, the client preserves its current look.
+            player.try_send_client_packet(&CPlayerPosition::new(
+                id.into(),
+                dismount_pos,
+                Vector3::new(0.0, 0.0, 0.0),
+                0.0,
+                0.0,
+                vec![
+                    PositionFlag::DeltaX,
+                    PositionFlag::DeltaY,
+                    PositionFlag::DeltaZ,
+                    PositionFlag::YRot,
+                    PositionFlag::XRot,
+                ],
+            ));
+        }
+
+        // Vanilla: setSneaking(false) after dismount via sneak input
+        if passenger_entity.sneaking.load(Relaxed) {
+            passenger_entity.set_sneaking(false);
+        }
+    } else {
+        passenger_entity.set_pos(dismount_pos);
     }
 }

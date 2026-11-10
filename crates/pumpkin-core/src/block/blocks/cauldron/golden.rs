@@ -15,8 +15,6 @@
 use std::fmt::Write;
 use std::sync::Arc;
 
-use arc_swap::ArcSwap;
-use pumpkin_config::{AdvancedConfiguration, BasicConfiguration, TelemetryConfig};
 use pumpkin_data::data_component::DataComponent;
 use pumpkin_data::data_component_impl::{
     BannerPatternsImpl, DataComponentImpl, DyedColorImpl, EquipmentSlot,
@@ -30,18 +28,13 @@ use pumpkin_util::math::position::BlockPos;
 use pumpkin_util::math::vector2::Vector2;
 use pumpkin_util::math::vector3::Vector3;
 use pumpkin_world::world::BlockFlags;
-use uuid::Uuid;
 
 use super::CauldronBlock;
 use crate::block::registry::BlockActionResult;
 use crate::block::{BlockBehaviour, BlockHitResult, UseWithItemArgs};
-use crate::data::VanillaData;
 use crate::entity::EntityBase;
+use crate::entity::ai::test_support;
 use crate::entity::player::Player;
-use crate::net::java::JavaClient;
-use crate::net::java::pending::PendingConnection;
-use crate::net::packet_limiter::PacketRateLimiter;
-use crate::net::{ClientPlatform, GameProfile, PlayerConfig};
 use crate::server::Server;
 use crate::world::World;
 
@@ -54,63 +47,6 @@ fn fnv(text: &str) -> u64 {
         hash = (hash ^ u64::from(byte)).wrapping_mul(0x0100_0000_01b3);
     }
     hash
-}
-
-async fn server(folder: &tempfile::TempDir) -> Result<Arc<Server>, Box<dyn std::error::Error>> {
-    let basic = BasicConfiguration {
-        default_level_name: folder.path().join("world").to_string_lossy().into_owned(),
-        ..BasicConfiguration::default()
-    };
-    let telemetry = TelemetryConfig {
-        enabled: false,
-        ..TelemetryConfig::default()
-    };
-    let vanilla = VanillaData {
-        banned_ip_list: std::sync::RwLock::default(),
-        banned_player_list: std::sync::RwLock::default(),
-        operator_config: std::sync::RwLock::default(),
-        user_cache: std::sync::RwLock::default(),
-        whitelist_config: std::sync::RwLock::default(),
-    };
-    Ok(Server::new(
-        basic,
-        AdvancedConfiguration::default(),
-        telemetry,
-        vanilla,
-        Vec::new(),
-    )
-    .await?)
-}
-
-/// A player over an in-memory pipe: nothing reads what the server sends it.
-fn player(world: &Arc<World>, id: u64, gamemode: GameMode, feet: Vector3<f64>) -> Arc<Player> {
-    let (client_end, server_end) = tokio::io::duplex(1 << 16);
-    drop(client_end);
-    let (read, write) = tokio::io::split(server_end);
-    let pending = PendingConnection::from_transport(
-        Box::new(read),
-        Box::new(write),
-        std::net::SocketAddr::from(([127, 0, 0, 1], 25565)),
-        id,
-        PacketRateLimiter::new(false, 0.0, 0.0),
-        std::sync::Weak::new(),
-    );
-    let profile = GameProfile {
-        id: Uuid::from_u128(u128::from(id)),
-        name: format!("Golden{id}"),
-        properties: ArcSwap::from_pointee(Vec::new()),
-        profile_actions: None,
-    };
-    let client = JavaClient::from_pending(pending, profile.clone(), PlayerConfig::default());
-    let player = Player::new(
-        Arc::new(ClientPlatform::Java(client)),
-        profile,
-        PlayerConfig::default(),
-        world,
-        gamemode,
-    );
-    player.get_entity().set_pos(feet);
-    Arc::new(player)
 }
 
 fn level_state(block: &Block, level: u8) -> BlockStateId {
@@ -301,7 +237,8 @@ fn run_case(server: &Server, world: &Arc<World>, case: &Case) -> String {
         f64::from(position.0.y) + 1.0,
         f64::from(position.0.z) + 0.5,
     );
-    let player = player(world, case.index as u64 + 1, case.gamemode, feet);
+    let player = test_support::java_player(world, case.gamemode);
+    player.get_entity().set_pos(feet);
     fill_inventory(&player, case.setup);
     let (held_label, mut stack) = held(case.kind, case.count);
     let entities_before = world.entities.load().len();
@@ -362,7 +299,7 @@ fn run(server: &Server, world: &Arc<World>) -> String {
 #[tokio::test(flavor = "multi_thread")]
 async fn cauldron_use() -> TestResult {
     let folder = tempfile::tempdir()?;
-    let server = server(&folder).await?;
+    let server = test_support::server(&folder).await?;
     let world = server
         .worlds
         .load()

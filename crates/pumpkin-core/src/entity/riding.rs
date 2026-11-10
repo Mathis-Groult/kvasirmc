@@ -13,6 +13,9 @@ use pumpkin_protocol::{
 use pumpkin_util::math::{boundingbox::BoundingBox, position::BlockPos, vector3::Vector3};
 use std::sync::{Arc, atomic::Ordering::Relaxed};
 
+#[cfg(test)]
+mod golden;
+
 impl Entity {
     #[must_use]
     pub fn root_vehicle_id(&self) -> i32 {

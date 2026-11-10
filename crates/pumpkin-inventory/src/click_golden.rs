@@ -34,15 +34,15 @@ use crate::player::player_screen_handler::PlayerScreenHandler;
 use crate::screen_handler::{InventoryPlayer, ScreenHandler};
 
 /// A player that remembers what the handler asked it to do.
-struct RecordingPlayer {
+pub struct RecordingPlayer {
     creative: bool,
-    inventory: Arc<PlayerInventory>,
+    pub inventory: Arc<PlayerInventory>,
     log: Mutex<String>,
     level: AtomicI32,
 }
 
 impl RecordingPlayer {
-    fn new(creative: bool) -> Self {
+    pub fn new(creative: bool) -> Self {
         Self {
             creative,
             inventory: Arc::new(PlayerInventory::new(
@@ -62,7 +62,7 @@ impl RecordingPlayer {
     }
 
     /// What the player has been asked to do since the last call.
-    fn take_log(&self) -> String {
+    pub fn take_log(&self) -> String {
         self.log
             .lock()
             .map(|mut log| std::mem::take(&mut *log))

@@ -586,15 +586,6 @@ fn run_screen(
         if let Some(slot) = refilled {
             packet.slot = slot;
         }
-        if Some(packet.slot) == special
-            && packet.mode == SlotActionType::Throw
-            && packet.button == 1
-        {
-            // Throwing the whole stack from a result slot loops forever when taking does not
-            // change the slot (`slot_clicks::throw`): a creative player's crafting result, a
-            // smithing output without a recipe. A finding (card #22), kept out of this record.
-            packet.mode = SlotActionType::Pickup;
-        }
         player.on_slot_click(packet, server);
         let lines = {
             let journal = journal

@@ -221,6 +221,11 @@ fn throw<H: ScreenHandler + ?Sized>(
                     .are_items_and_components_equal(&prev_stack)
                 {
                     let drop_stack = slot.safe_take(prev_stack.item_count, u8::MAX, player);
+                    // Vanilla stops once a take gives nothing; a slot that refuses to give
+                    // (a smithing output without a recipe) would otherwise loop forever.
+                    if drop_stack.is_empty() {
+                        break;
+                    }
                     player.drop_item(drop_stack, true);
                     // player.handleCreativeModeItemDrop(itemStack);
                 }

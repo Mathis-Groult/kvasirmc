@@ -35,6 +35,8 @@
 
 #[cfg(test)]
 mod click_golden;
+#[cfg(test)]
+mod result_slot_tests;
 
 pub mod anvil;
 pub mod beacon_screen_handler;

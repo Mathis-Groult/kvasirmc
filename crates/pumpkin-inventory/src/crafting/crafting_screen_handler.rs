@@ -193,6 +193,9 @@ impl Slot for ResultSlot {
         for i in 0..self.inventory.size() {
             self.inventory.remove_stack_specific(i, 1);
         }
+        // The ingredients changed, so the result must too (vanilla recomputes it at once);
+        // a stale result let a throw-all take crafts that no longer had ingredients, forever.
+        self.refill_output();
         self.mark_dirty();
     }
     fn can_insert(&self, _stack: &ItemStack) -> bool {

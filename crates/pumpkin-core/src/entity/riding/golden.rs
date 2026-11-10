@@ -1,7 +1,7 @@
 //! A record of what `Entity::remove_passenger_internal` does, made before the function was
 //! split (`tests/golden/dismount.txt`; rewrite it on purpose with `KVASIR_BLESS=1`).
 //!
-//! Seventeen small terrains are built once, side by side (open floor, pillars on chosen sides, each corner left as the only free column,
+//! Seventeen small terrains are built once, side by side (open floor, pillars on chosen sides, each corner left as the only free column, a step up on one side and a pit on the other,
 //! all sides walled, water under the vehicle, low ceilings, a slab floor, no floor, closed in
 //! with and without room on top of the vehicle, a ceiling that leaves room only to crouch). On each, a minecart or a horse carrying one or
 //! two passengers (a zombie, a real player over an in-memory connection, a sneaking player)
@@ -44,7 +44,7 @@ fn fnv(hash: u64, text: &str) -> u64 {
     hash
 }
 
-const TERRAINS: [&str; 17] = [
+const TERRAINS: [&str; 18] = [
     "open",
     "pillar_n",
     "pillars_ew",
@@ -62,6 +62,7 @@ const TERRAINS: [&str; 17] = [
     "all_but_ne",
     "all_but_nw",
     "all_but_se",
+    "step_north_pit_south",
 ];
 
 /// Neighbour columns in the order north, south, east, west, then the corners.
@@ -130,6 +131,14 @@ fn build(world: &Arc<World>, index: usize) {
         "all_but_ne" => pillars(world, index, &[0, 1, 2, 3, 5, 6, 7]),
         "all_but_nw" => pillars(world, index, &[0, 1, 2, 3, 4, 6, 7]),
         "all_but_se" => pillars(world, index, &[0, 1, 2, 3, 4, 5, 7]),
+        "step_north_pit_south" => {
+            // Nothing fits at the vehicle's level; one block up in the north column and one
+            // block down in the south column both fit, so the search order of the heights shows.
+            pillars(world, index, &[2, 3, 4, 5, 6, 7]);
+            put(world, cx, FLOOR_Y + 1, cz - 1, stone);
+            put(world, cx, FLOOR_Y, cz + 1, Block::AIR.default_state.id);
+            put(world, cx, FLOOR_Y - 1, cz + 1, stone);
+        }
         "walled" => pillars(world, index, &[0, 1, 2, 3, 4, 5, 6, 7]),
         "water_below" => put(world, cx, FLOOR_Y, cz, Block::WATER.default_state.id),
         "ceiling_1" => layer(world, index, FLOOR_Y + 2, stone),

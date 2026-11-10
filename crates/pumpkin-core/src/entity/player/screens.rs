@@ -3,6 +3,7 @@
 use super::Player;
 use crate::plugin::player::inventory_interact::InventoryClickEvent;
 use crate::server::Server;
+use pumpkin_data::item_stack::ItemStack;
 use pumpkin_data::{screen::WindowType, translation};
 use pumpkin_inventory::player::player_screen_handler::PlayerScreenHandler;
 use pumpkin_inventory::screen_handler::{
@@ -357,11 +358,10 @@ impl Player {
         self.open_container_pos.store(None);
     }
 
-    #[allow(clippy::too_many_lines)]
     pub fn on_slot_click(self: &Arc<Self>, packet: SClickSlot, server: &Arc<Server>) {
         self.update_last_action_time();
 
-        let (
+        let ClickView {
             sync_id,
             can_use,
             is_slot_valid,
@@ -369,44 +369,7 @@ impl Player {
             clicked_item,
             cursor_item,
             window_type,
-        ) = {
-            let screen_handler_arc = self
-                .current_screen_handler
-                .lock()
-                .unwrap_or_else(std::sync::PoisonError::into_inner)
-                .clone();
-            let screen_handler = screen_handler_arc
-                .lock()
-                .unwrap_or_else(std::sync::PoisonError::into_inner);
-
-            let b = screen_handler.get_behaviour();
-            let sync_id = b.sync_id;
-            let can_use = screen_handler.can_use(self.as_ref());
-            let is_slot_valid = screen_handler.is_slot_valid(i32::from(packet.slot));
-            let available_slots = b.slots.len();
-
-            let clicked_item = (packet.slot >= 0 && (packet.slot as usize) < b.slots.len())
-                .then(|| b.slots[packet.slot as usize].get_cloned_stack());
-
-            let cursor_item = Some(
-                b.cursor_stack
-                    .lock()
-                    .unwrap_or_else(std::sync::PoisonError::into_inner)
-                    .clone(),
-            );
-
-            let window_type = screen_handler.window_type();
-
-            (
-                sync_id,
-                can_use,
-                is_slot_valid,
-                available_slots,
-                clicked_item,
-                cursor_item,
-                window_type,
-            )
-        };
+        } = self.click_view(&packet);
 
         let slot = packet.slot;
         let raw_slot = slot; // For now raw_slot == slot, as we don't have separate view/inventory indexing yet
@@ -416,41 +379,7 @@ impl Player {
             -1
         };
 
-        let click_type = match packet.mode {
-            SlotActionType::Pickup => {
-                if packet.button == SClickSlot::BUTTON_LEFT {
-                    ClickType::Left
-                } else {
-                    ClickType::Right
-                }
-            }
-            SlotActionType::QuickMove => {
-                if packet.button == SClickSlot::BUTTON_LEFT {
-                    ClickType::ShiftLeft
-                } else {
-                    ClickType::ShiftRight
-                }
-            }
-            SlotActionType::Swap => ClickType::NumberKey(packet.button as u8),
-            SlotActionType::Clone => ClickType::Middle,
-            SlotActionType::Throw => {
-                if packet.button == SClickSlot::BUTTON_DROP_SINGLE {
-                    ClickType::Drop
-                } else {
-                    ClickType::ControlDrop
-                }
-            }
-            SlotActionType::QuickCraft => {
-                if [0, 4, 8].contains(&packet.button) {
-                    ClickType::Left
-                } else if [1, 5, 9].contains(&packet.button) {
-                    ClickType::Right
-                } else {
-                    ClickType::Middle
-                }
-            }
-            SlotActionType::PickupAll => ClickType::DoubleClick,
-        };
+        let click_type = click_type_of(&packet);
 
         if i32::from(sync_id) != packet.sync_id.0 {
             send_cancellable_blocking! {{
@@ -500,17 +429,91 @@ impl Player {
             return;
         }
 
-        let cancel_screen = || {
-            let screen_handler_arc = self
-                .current_screen_handler
-                .lock()
-                .unwrap_or_else(std::sync::PoisonError::into_inner)
-                .clone();
-            screen_handler_arc
-                .lock()
-                .unwrap_or_else(std::sync::PoisonError::into_inner)
-                .cancel();
+        let click = SlotClick {
+            window_type,
+            click_type,
+            slot,
+            raw_slot,
+            hotbar_button,
+            clicked_item,
+            cursor_item,
         };
+        if !self.fire_click_events(server, click, &packet.mode) {
+            return;
+        }
+        self.apply_slot_click(packet);
+    }
+
+    /// What the click needs to know about the open screen, read under one lock.
+    fn click_view(self: &Arc<Self>, packet: &SClickSlot) -> ClickView {
+        let screen_handler_arc = self
+            .current_screen_handler
+            .lock()
+            .unwrap_or_else(std::sync::PoisonError::into_inner)
+            .clone();
+        let screen_handler = screen_handler_arc
+            .lock()
+            .unwrap_or_else(std::sync::PoisonError::into_inner);
+
+        let b = screen_handler.get_behaviour();
+        let sync_id = b.sync_id;
+        let can_use = screen_handler.can_use(self.as_ref());
+        let is_slot_valid = screen_handler.is_slot_valid(i32::from(packet.slot));
+        let available_slots = b.slots.len();
+
+        let clicked_item = (packet.slot >= 0 && (packet.slot as usize) < b.slots.len())
+            .then(|| b.slots[packet.slot as usize].get_cloned_stack());
+
+        let cursor_item = Some(
+            b.cursor_stack
+                .lock()
+                .unwrap_or_else(std::sync::PoisonError::into_inner)
+                .clone(),
+        );
+
+        let window_type = screen_handler.window_type();
+
+        ClickView {
+            sync_id,
+            can_use,
+            is_slot_valid,
+            available_slots,
+            clicked_item,
+            cursor_item,
+            window_type,
+        }
+    }
+
+    /// Cancels the open screen (after a plugin cancelled the click).
+    fn cancel_current_screen(&self) {
+        let screen_handler_arc = self
+            .current_screen_handler
+            .lock()
+            .unwrap_or_else(std::sync::PoisonError::into_inner)
+            .clone();
+        screen_handler_arc
+            .lock()
+            .unwrap_or_else(std::sync::PoisonError::into_inner)
+            .cancel();
+    }
+
+    /// The plugin events of a click; false when a plugin cancelled it (the screen is then
+    /// cancelled too).
+    fn fire_click_events(
+        self: &Arc<Self>,
+        server: &Arc<Server>,
+        click: SlotClick,
+        mode: &SlotActionType,
+    ) -> bool {
+        let SlotClick {
+            window_type,
+            click_type,
+            slot,
+            raw_slot,
+            hotbar_button,
+            clicked_item,
+            cursor_item,
+        } = click;
 
         send_cancellable_blocking! {{
             server;
@@ -526,8 +529,8 @@ impl Player {
             );
             'after: {}
             'cancelled: {
-                cancel_screen();
-                return;
+                self.cancel_current_screen();
+                return false;
             }
         }}
 
@@ -541,12 +544,26 @@ impl Player {
                 .fire_blocking(&server, &mut interact_event);
         }
         if interact_event.cancelled {
-            cancel_screen();
-            return;
+            self.cancel_current_screen();
+            return false;
         }
 
+        if !self.fire_craft_and_smith_events(window_type, slot, clicked_item.as_ref()) {
+            return false;
+        }
+        self.fire_result_preview_events(window_type, slot, clicked_item.as_ref());
+        self.fire_drag_event(mode)
+    }
+
+    /// Crafting (result slot 0) and smithing (output slot 3) events; false when cancelled.
+    fn fire_craft_and_smith_events(
+        self: &Arc<Self>,
+        window_type: Option<WindowType>,
+        slot: i16,
+        clicked_item: Option<&ItemStack>,
+    ) -> bool {
         if slot == 0
-            && let Some(ref stack) = clicked_item
+            && let Some(stack) = clicked_item
             && !stack.is_empty()
         {
             let mut craft_event =
@@ -568,14 +585,14 @@ impl Player {
                     .fire_blocking(&server, &mut prep_craft);
             }
             if craft_event.cancelled || prep_craft.cancelled {
-                cancel_screen();
-                return;
+                self.cancel_current_screen();
+                return false;
             }
         }
 
         if window_type == Some(WindowType::Smithing)
             && slot == 3
-            && let Some(ref stack) = clicked_item
+            && let Some(stack) = clicked_item
             && !stack.is_empty()
         {
             let mut smith_event =
@@ -597,16 +614,25 @@ impl Player {
                     .fire_blocking(&server, &mut prep_smith);
             }
             if smith_event.cancelled {
-                cancel_screen();
-                return;
+                self.cancel_current_screen();
+                return false;
             }
         }
+        true
+    }
 
+    /// Furnace extraction, grindstone and result previews; plugins cannot cancel these.
+    fn fire_result_preview_events(
+        self: &Arc<Self>,
+        window_type: Option<WindowType>,
+        slot: i16,
+        clicked_item: Option<&ItemStack>,
+    ) {
         if (window_type == Some(WindowType::Furnace)
             || window_type == Some(WindowType::BlastFurnace)
             || window_type == Some(WindowType::Smoker))
             && slot == 2
-            && let Some(ref stack) = clicked_item
+            && let Some(stack) = clicked_item
             && !stack.is_empty()
         {
             let mut extract_event =
@@ -625,7 +651,7 @@ impl Player {
         }
 
         if window_type == Some(WindowType::Grindstone)
-            && let Some(ref stack) = clicked_item
+            && let Some(stack) = clicked_item
         {
             let mut prep_grindstone =
                 crate::plugin::api::events::inventory::prepare_grindstone::PrepareGrindstoneEvent::new(
@@ -639,7 +665,7 @@ impl Player {
             }
         }
 
-        if let Some(ref stack) = clicked_item {
+        if let Some(stack) = clicked_item {
             let mut prep_result =
                 crate::plugin::api::events::inventory::prepare_inventory_result::PrepareInventoryResultEvent::new(
                     self.clone(),
@@ -651,8 +677,11 @@ impl Player {
                     .fire_blocking(&server, &mut prep_result);
             }
         }
+    }
 
-        if packet.mode == SlotActionType::QuickCraft {
+    /// The drag event of a quick-craft click; false when cancelled.
+    fn fire_drag_event(self: &Arc<Self>, mode: &SlotActionType) -> bool {
+        if *mode == SlotActionType::QuickCraft {
             let mut drag_event =
                 crate::plugin::api::events::inventory::inventory_drag::InventoryDragEvent::new(
                     self.clone(),
@@ -663,11 +692,15 @@ impl Player {
                     .fire_blocking(&server, &mut drag_event);
             }
             if drag_event.cancelled {
-                cancel_screen();
-                return;
+                self.cancel_current_screen();
+                return false;
             }
         }
+        true
+    }
 
+    /// Runs the click on the open screen and syncs the client.
+    fn apply_slot_click(self: &Arc<Self>, packet: SClickSlot) {
         let screen_handler_arc = self
             .current_screen_handler
             .lock()
@@ -685,7 +718,7 @@ impl Player {
 
         screen_handler.disable_sync();
         screen_handler.on_slot_click(
-            i32::from(slot),
+            i32::from(packet.slot),
             i32::from(packet.button),
             packet.mode.clone(),
             self.as_ref(),
@@ -721,5 +754,66 @@ impl Player {
         }
 
         screen_handler.on_button_click(self, packet.button_id.0);
+    }
+}
+
+/// The open screen as a click sees it.
+struct ClickView {
+    sync_id: u8,
+    can_use: bool,
+    is_slot_valid: bool,
+    available_slots: usize,
+    clicked_item: Option<ItemStack>,
+    cursor_item: Option<ItemStack>,
+    window_type: Option<WindowType>,
+}
+
+/// One click as the plugin events report it.
+struct SlotClick {
+    window_type: Option<WindowType>,
+    click_type: ClickType,
+    slot: i16,
+    raw_slot: i16,
+    hotbar_button: i8,
+    clicked_item: Option<ItemStack>,
+    cursor_item: Option<ItemStack>,
+}
+
+/// The click type the plugin events report for a packet.
+fn click_type_of(packet: &SClickSlot) -> ClickType {
+    match packet.mode {
+        SlotActionType::Pickup => {
+            if packet.button == SClickSlot::BUTTON_LEFT {
+                ClickType::Left
+            } else {
+                ClickType::Right
+            }
+        }
+        SlotActionType::QuickMove => {
+            if packet.button == SClickSlot::BUTTON_LEFT {
+                ClickType::ShiftLeft
+            } else {
+                ClickType::ShiftRight
+            }
+        }
+        SlotActionType::Swap => ClickType::NumberKey(packet.button as u8),
+        SlotActionType::Clone => ClickType::Middle,
+        SlotActionType::Throw => {
+            if packet.button == SClickSlot::BUTTON_DROP_SINGLE {
+                ClickType::Drop
+            } else {
+                ClickType::ControlDrop
+            }
+        }
+        SlotActionType::QuickCraft => {
+            if [0, 4, 8].contains(&packet.button) {
+                ClickType::Left
+            } else if [1, 5, 9].contains(&packet.button) {
+                ClickType::Right
+            } else {
+                ClickType::Middle
+            }
+        }
+        SlotActionType::PickupAll => ClickType::DoubleClick,
     }
 }

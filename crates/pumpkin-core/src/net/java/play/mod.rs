@@ -260,6 +260,7 @@ pub mod container_slot_state_changed;
 pub mod cookie_response;
 pub mod debug_sample_subscription;
 pub mod debug_subscription_request;
+mod dispatch;
 pub mod edit_book;
 pub mod interact;
 pub mod jigsaw_generate;

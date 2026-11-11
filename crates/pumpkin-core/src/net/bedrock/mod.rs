@@ -1,4 +1,8 @@
 pub mod nethernet;
+#[cfg(test)]
+mod packet_tap;
+#[cfg(test)]
+pub(crate) use packet_tap::BedrockPacketTap;
 pub mod play;
 pub(crate) mod recipe;
 use crossbeam::atomic::AtomicCell;
@@ -964,39 +968,5 @@ impl BedrockClient {
         } else {
             Some(self.tasks.spawn_on(task, &self.rt_handle))
         }
-    }
-}
-
-/// Test only: what the server queues for one Bedrock client, taken before any writer task runs.
-/// Draining releases the queued bytes as the writer task would, so a long test does not trip
-/// the outbound buffer limit.
-#[cfg(test)]
-pub(crate) struct BedrockPacketTap {
-    packets: UnboundedReceiver<OutgoingPacket>,
-    pending_bytes: Arc<AtomicUsize>,
-}
-
-#[cfg(test)]
-impl BedrockPacketTap {
-    /// The encoded game packets queued since the last call.
-    pub(crate) fn drain(&mut self) -> Vec<Bytes> {
-        let mut packets = Vec::new();
-        while let Ok(packet) = self.packets.try_recv() {
-            decrement_pending_bytes(&self.pending_bytes, packet.data.len());
-            packets.push(packet.data);
-        }
-        packets
-    }
-}
-
-#[cfg(test)]
-impl BedrockClient {
-    /// Test only: takes the outgoing queue, so that nothing but the test reads it.
-    pub(crate) fn take_packet_tap(&self) -> Option<BedrockPacketTap> {
-        let packets = self.outgoing_packet_queue_recv.try_lock().ok()?.take()?;
-        Some(BedrockPacketTap {
-            packets,
-            pending_bytes: Arc::clone(&self.pending_bytes),
-        })
     }
 }

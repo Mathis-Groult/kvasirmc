@@ -1,136 +1,136 @@
-inventory requests 1-50: 3b23dd0b7e7e9a10 ok 21 error 29 panic 0
-inventory requests 51-100: 0a2077b6737e7363 ok 40 error 60 panic 0
-inventory requests 101-150: fca9c0a625f127ec ok 53 error 97 panic 0
-inventory requests 151-200: 0e57b38fef29c65c ok 57 error 143 panic 0
-inventory requests 201-250: 95d7d8dd9f1ec613 ok 63 error 187 panic 0
-inventory requests 251-300: 282c7dc790e7edcc ok 71 error 229 panic 0
-inventory actions (ok, error): {"beacon": (0, 15), "consume": (23, 153), "craft": (27, 144), "craft_auto": (4, 10), "create": (3, 1), "creative": (10, 9), "deprecated": (2, 1), "destroy": (2, 8), "drop": (5, 8), "grindstone": (3, 5), "lab_table": (1, 3), "loom": (5, 2), "mine_block": (6, 4), "non_implemented": (4, 1), "optional": (7, 7), "place": (21, 87), "reserved": (4, 3), "swap": (2, 15), "take": (20, 140)}
-inventory packets: {49: 19, 148: 300}
-inventory_creative requests 1-50: a9b24d0e459bf720 ok 16 error 34 panic 0
-inventory_creative requests 51-100: 830e48f8f0af1054 ok 24 error 76 panic 0
-inventory_creative requests 101-150: 765ef2f2a8a2d988 ok 35 error 115 panic 0
-inventory_creative requests 151-200: 69eb6d272d128998 ok 44 error 156 panic 0
-inventory_creative requests 201-250: 9d022727b4920f44 ok 56 error 194 panic 0
-inventory_creative requests 251-300: dca152f0f8f63e48 ok 69 error 231 panic 0
-inventory_creative actions (ok, error): {"beacon": (0, 8), "consume": (12, 91), "craft": (18, 78), "craft_auto": (6, 6), "create": (2, 3), "creative": (12, 74), "deprecated": (3, 0), "destroy": (5, 15), "drop": (3, 11), "grindstone": (2, 3), "lab_table": (2, 2), "loom": (5, 2), "mine_block": (5, 5), "non_implemented": (1, 1), "optional": (5, 6), "place": (13, 128), "reserved": (0, 2), "swap": (6, 8), "take": (21, 110)}
-inventory_creative packets: {49: 15, 148: 300}
-crafting requests 1-50: 88a66088be651a46 ok 15 error 35 panic 0
-crafting requests 51-100: 02172cb21a0ea022 ok 33 error 67 panic 0
-crafting requests 101-150: 2b7c4c7e75a63bcb ok 49 error 101 panic 0
-crafting requests 151-200: cb82b144158edc93 ok 61 error 139 panic 0
-crafting requests 201-250: e46281bfbf7641ba ok 65 error 185 panic 0
-crafting requests 251-300: f153757233549b6b ok 73 error 227 panic 0
-crafting actions (ok, error): {"beacon": (0, 15), "consume": (22, 127), "craft": (34, 137), "craft_auto": (5, 14), "create": (1, 2), "creative": (9, 7), "deprecated": (6, 4), "destroy": (1, 15), "drop": (4, 8), "grindstone": (2, 5), "lab_table": (4, 0), "loom": (3, 7), "mine_block": (7, 5), "non_implemented": (3, 1), "optional": (9, 17), "place": (17, 99), "reserved": (0, 2), "swap": (3, 13), "take": (28, 104)}
-crafting packets: {49: 23, 148: 300}
-stonecutter requests 1-50: 193a16406ccce20f ok 12 error 38 panic 0
-stonecutter requests 51-100: ed4d7b7ed91459d7 ok 25 error 75 panic 0
-stonecutter requests 101-150: f233f6088164a608 ok 35 error 115 panic 0
-stonecutter requests 151-200: 43539f63536cbc91 ok 48 error 152 panic 0
-stonecutter requests 201-250: 3891278e3c9601df ok 63 error 187 panic 0
-stonecutter requests 251-300: 0ea0105770f8804e ok 76 error 224 panic 0
-stonecutter actions (ok, error): {"beacon": (0, 19), "consume": (24, 130), "craft": (23, 138), "craft_auto": (3, 9), "create": (2, 0), "creative": (8, 6), "deprecated": (4, 1), "destroy": (8, 7), "drop": (9, 12), "grindstone": (3, 6), "lab_table": (0, 3), "loom": (8, 8), "mine_block": (8, 12), "non_implemented": (1, 0), "optional": (11, 6), "place": (13, 101), "reserved": (1, 0), "swap": (1, 6), "take": (23, 121)}
-stonecutter packets: {49: 19, 148: 300}
-merchant requests 1-50: cbc3899e1e5cfb48 ok 8 error 42 panic 0
-merchant requests 51-100: fcebba94457b1d55 ok 21 error 79 panic 0
-merchant requests 101-150: 759d8f0f414d7258 ok 34 error 116 panic 0
-merchant requests 151-200: 2affab029fbb439a ok 41 error 159 panic 0
-merchant requests 201-250: 1ec1944697e5d4db ok 48 error 202 panic 0
-merchant requests 251-300: 0d039c0f82297787 ok 53 error 247 panic 0
-merchant actions (ok, error): {"beacon": (0, 13), "consume": (27, 220), "craft": (17, 155), "craft_auto": (6, 14), "create": (1, 1), "creative": (5, 6), "deprecated": (0, 1), "destroy": (5, 8), "drop": (1, 17), "grindstone": (3, 3), "lab_table": (1, 2), "loom": (4, 2), "mine_block": (6, 4), "non_implemented": (0, 1), "optional": (5, 5), "place": (12, 105), "reserved": (1, 3), "swap": (1, 11), "take": (12, 143)}
-merchant packets: {49: 18, 148: 300}
-enchanting requests 1-50: 0eca9ae0c7f772d9 ok 6 error 44 panic 0
-enchanting requests 51-100: 4f4f8f8007e47996 ok 14 error 86 panic 0
-enchanting requests 101-150: 4f948079952a7274 ok 27 error 123 panic 0
-enchanting requests 151-200: 2f858b3fb0b35415 ok 33 error 167 panic 0
-enchanting requests 201-250: 8ff656ac71977289 ok 40 error 210 panic 0
-enchanting requests 251-300: eca653bebd3f9e62 ok 46 error 254 panic 0
-enchanting actions (ok, error): {"beacon": (0, 12), "consume": (5, 9), "craft": (6, 160), "craft_auto": (0, 17), "create": (1, 1), "creative": (5, 6), "deprecated": (2, 0), "destroy": (3, 15), "drop": (3, 8), "grindstone": (4, 3), "lab_table": (1, 2), "loom": (1, 4), "mine_block": (6, 7), "non_implemented": (2, 2), "optional": (6, 10), "place": (11, 79), "swap": (7, 4), "take": (15, 103)}
-enchanting packets: {49: 18, 148: 300}
-enchanting_creative requests 1-50: 5d11acb50ae157cb ok 6 error 44 panic 0
-enchanting_creative requests 51-100: cd59cc510b3e6d45 ok 20 error 80 panic 0
-enchanting_creative requests 101-150: aacfc0e011d4897f ok 28 error 122 panic 0
-enchanting_creative requests 151-200: c8936e02bc7e4d79 ok 37 error 163 panic 0
-enchanting_creative requests 201-250: 12c5cd8974d4502d ok 42 error 208 panic 0
-enchanting_creative requests 251-300: 7135b70af71986a8 ok 50 error 250 panic 0
-enchanting_creative actions (ok, error): {"beacon": (0, 15), "consume": (2, 9), "craft": (13, 159), "craft_auto": (0, 18), "create": (1, 3), "creative": (8, 9), "deprecated": (3, 2), "destroy": (3, 14), "drop": (2, 8), "grindstone": (1, 5), "lab_table": (1, 1), "loom": (5, 1), "mine_block": (2, 6), "non_implemented": (1, 4), "optional": (6, 7), "place": (3, 70), "reserved": (2, 1), "swap": (9, 8), "take": (18, 102)}
-enchanting_creative packets: {49: 14, 148: 300}
-beacon requests 1-50: 2300ce49e74ec102 ok 11 error 39 panic 0
-beacon requests 51-100: 3e6f6844a7236a66 ok 21 error 79 panic 0
-beacon requests 101-150: c5cc449484a6e710 ok 29 error 121 panic 0
-beacon requests 151-200: 6cf75b2f697bed89 ok 33 error 167 panic 0
-beacon requests 201-250: dffa7831e77f20d5 ok 43 error 207 panic 0
-beacon requests 251-300: fec7ec4092312ab0 ok 51 error 249 panic 0
-beacon actions (ok, error): {"beacon": (3, 158), "consume": (4, 114), "craft": (5, 11), "craft_auto": (10, 13), "create": (2, 0), "creative": (6, 5), "deprecated": (2, 3), "destroy": (0, 13), "drop": (2, 13), "grindstone": (2, 1), "lab_table": (2, 1), "loom": (4, 1), "mine_block": (6, 9), "optional": (3, 4), "place": (8, 45), "reserved": (0, 2), "swap": (8, 9), "take": (15, 60)}
-beacon packets: {49: 12, 148: 300}
-anvil requests 1-50: 645fec718ed46266 ok 6 error 44 panic 0
-anvil requests 51-100: 9006375b3f32ce18 ok 12 error 88 panic 0
-anvil requests 101-150: 8b9a5dc2bd0c6f60 ok 22 error 128 panic 0
-anvil requests 151-200: 1a6245d4e22a07ef ok 27 error 173 panic 0
-anvil requests 201-250: 69cad6942778e461 ok 33 error 217 panic 0
-anvil requests 251-300: a2acb166170bf19d ok 39 error 261 panic 0
-anvil actions (ok, error): {"beacon": (0, 10), "consume": (5, 316), "craft": (0, 10), "craft_auto": (6, 12), "create": (2, 1), "creative": (4, 6), "deprecated": (1, 0), "destroy": (1, 8), "drop": (3, 9), "grindstone": (3, 3), "lab_table": (1, 2), "loom": (4, 3), "mine_block": (5, 10), "non_implemented": (2, 2), "optional": (6, 157), "place": (4, 108), "reserved": (0, 1), "swap": (7, 11), "take": (12, 162)}
-anvil packets: {49: 15, 148: 300}
-anvil_creative requests 1-50: a546e21acf5dc2a8 ok 4 error 46 panic 0
-anvil_creative requests 51-100: be13e78a24b874a0 ok 13 error 87 panic 0
-anvil_creative requests 101-150: 27cd4d334173634a ok 20 error 130 panic 0
-anvil_creative requests 151-200: 633b542cfb296644 ok 29 error 171 panic 0
-anvil_creative requests 201-250: 420eff112c9b0a3f ok 32 error 218 panic 0
-anvil_creative requests 251-300: e74140ed901e7cd4 ok 40 error 260 panic 0
-anvil_creative actions (ok, error): {"beacon": (0, 14), "consume": (1, 330), "craft": (2, 8), "craft_auto": (2, 9), "create": (1, 3), "creative": (13, 7), "deprecated": (1, 2), "destroy": (2, 12), "drop": (2, 16), "grindstone": (3, 2), "lab_table": (0, 2), "loom": (5, 4), "mine_block": (5, 7), "non_implemented": (1, 2), "optional": (8, 167), "place": (6, 126), "reserved": (0, 2), "swap": (4, 7), "take": (3, 129)}
-anvil_creative packets: {49: 7, 148: 300}
-grindstone requests 1-50: 7982d27c86282f78 ok 7 error 43 panic 0
-grindstone requests 51-100: 17aba3acc77013c4 ok 12 error 88 panic 0
-grindstone requests 101-150: 3f7b1a86aeee2522 ok 23 error 127 panic 0
-grindstone requests 151-200: 0ac8e30fb079affd ok 28 error 172 panic 0
-grindstone requests 201-250: 00579547cebf944c ok 34 error 216 panic 0
-grindstone requests 251-300: 2d18e5f9091ee504 ok 38 error 262 panic 0
-grindstone actions (ok, error): {"beacon": (0, 14), "consume": (9, 327), "craft": (4, 8), "craft_auto": (2, 9), "create": (1, 2), "creative": (4, 9), "deprecated": (2, 1), "destroy": (0, 21), "drop": (2, 12), "grindstone": (6, 160), "lab_table": (1, 0), "loom": (0, 4), "mine_block": (8, 10), "non_implemented": (2, 3), "optional": (4, 15), "place": (4, 116), "reserved": (3, 2), "swap": (3, 11), "take": (8, 139)}
+inventory requests 1-50: 3bd99a99f08d110d ok 18 error 32 panic 0
+inventory requests 51-100: c6950a3a16a8b135 ok 34 error 66 panic 0
+inventory requests 101-150: 057a2e675a33b540 ok 44 error 106 panic 0
+inventory requests 151-200: 45285ee85a1dfa04 ok 48 error 152 panic 0
+inventory requests 201-250: c75c64a694cad914 ok 53 error 197 panic 0
+inventory requests 251-300: ce20c3db1b900787 ok 60 error 240 panic 0
+inventory actions (ok, error): {"beacon": (0, 15), "consume": (21, 155), "craft": (22, 149), "craft_auto": (4, 10), "create": (3, 1), "creative": (9, 10), "deprecated": (2, 1), "destroy": (2, 8), "drop": (5, 8), "grindstone": (2, 6), "lab_table": (1, 3), "loom": (5, 2), "mine_block": (6, 4), "non_implemented": (4, 1), "optional": (7, 7), "place": (17, 91), "reserved": (4, 3), "swap": (0, 17), "take": (15, 145)}
+inventory packets: {49: 13, 148: 300}
+inventory_creative requests 1-50: 274b391604bdd28a ok 14 error 36 panic 0
+inventory_creative requests 51-100: 479d19d482787961 ok 20 error 80 panic 0
+inventory_creative requests 101-150: 8920cb21c4cf3e61 ok 25 error 125 panic 0
+inventory_creative requests 151-200: b0b69c3c39e23cb6 ok 27 error 173 panic 0
+inventory_creative requests 201-250: b0d6d37cf15d544d ok 33 error 217 panic 0
+inventory_creative requests 251-300: b11e73dfd24a8547 ok 38 error 262 panic 0
+inventory_creative actions (ok, error): {"beacon": (0, 8), "consume": (4, 99), "craft": (5, 91), "craft_auto": (1, 11), "create": (2, 3), "creative": (10, 76), "deprecated": (2, 1), "destroy": (4, 16), "drop": (1, 13), "grindstone": (1, 4), "lab_table": (0, 4), "loom": (5, 2), "mine_block": (5, 5), "non_implemented": (1, 1), "optional": (4, 7), "place": (5, 136), "reserved": (0, 2), "swap": (3, 11), "take": (7, 124)}
+inventory_creative packets: {49: 12, 148: 300}
+crafting requests 1-50: 5f07a14648cf70cb ok 13 error 37 panic 0
+crafting requests 51-100: bd6d626d86c7be07 ok 26 error 74 panic 0
+crafting requests 101-150: 3dc11c406d2decb0 ok 40 error 110 panic 0
+crafting requests 151-200: 4b262f70b090dd66 ok 51 error 149 panic 0
+crafting requests 201-250: bcc8bbc444361315 ok 55 error 195 panic 0
+crafting requests 251-300: b9eec7a4559a221d ok 63 error 237 panic 0
+crafting actions (ok, error): {"beacon": (0, 15), "consume": (18, 131), "craft": (31, 140), "craft_auto": (5, 14), "create": (1, 2), "creative": (9, 7), "deprecated": (6, 4), "destroy": (1, 15), "drop": (4, 8), "grindstone": (2, 5), "lab_table": (4, 0), "loom": (3, 7), "mine_block": (5, 7), "non_implemented": (3, 1), "optional": (9, 17), "place": (13, 103), "reserved": (0, 2), "swap": (1, 15), "take": (22, 110)}
+crafting packets: {49: 16, 148: 300}
+stonecutter requests 1-50: 3f34dc9873fb100d ok 11 error 39 panic 0
+stonecutter requests 51-100: 9debf26575865414 ok 24 error 76 panic 0
+stonecutter requests 101-150: 893b12d8fcade3bf ok 33 error 117 panic 0
+stonecutter requests 151-200: 2691f65cad8e62f4 ok 44 error 156 panic 0
+stonecutter requests 201-250: 2969f0db5eaa4da0 ok 59 error 191 panic 0
+stonecutter requests 251-300: a0e8f47b2164b615 ok 72 error 228 panic 0
+stonecutter actions (ok, error): {"beacon": (0, 19), "consume": (24, 130), "craft": (23, 138), "craft_auto": (3, 9), "create": (2, 0), "creative": (8, 6), "deprecated": (4, 1), "destroy": (8, 7), "drop": (8, 13), "grindstone": (3, 6), "lab_table": (0, 3), "loom": (7, 9), "mine_block": (8, 12), "non_implemented": (1, 0), "optional": (9, 8), "place": (10, 104), "reserved": (1, 0), "swap": (1, 6), "take": (20, 124)}
+stonecutter packets: {49: 17, 148: 300}
+merchant requests 1-50: 599fd5bb2c692178 ok 6 error 44 panic 0
+merchant requests 51-100: a16da286d778d136 ok 18 error 82 panic 0
+merchant requests 101-150: 959f0022d8cb28e8 ok 28 error 122 panic 0
+merchant requests 151-200: e4f734b61675b907 ok 40 error 160 panic 0
+merchant requests 201-250: 2ea2712db6a83617 ok 51 error 199 panic 0
+merchant requests 251-300: f8c5b0a62fb5351e ok 56 error 244 panic 0
+merchant actions (ok, error): {"beacon": (0, 13), "consume": (29, 218), "craft": (16, 156), "craft_auto": (6, 14), "create": (1, 1), "creative": (5, 6), "deprecated": (0, 1), "destroy": (5, 8), "drop": (1, 17), "grindstone": (3, 3), "lab_table": (3, 0), "loom": (4, 2), "mine_block": (6, 4), "non_implemented": (0, 1), "optional": (5, 5), "place": (12, 105), "reserved": (1, 3), "swap": (3, 9), "take": (13, 142)}
+merchant packets: {49: 23, 148: 300}
+enchanting requests 1-50: 2d037450cc93abfd ok 5 error 45 panic 0
+enchanting requests 51-100: 26c6bb512e5cc915 ok 10 error 90 panic 0
+enchanting requests 101-150: 28559b199b6f121e ok 20 error 130 panic 0
+enchanting requests 151-200: 374a623f51fd5d5c ok 25 error 175 panic 0
+enchanting requests 201-250: a568fed522ec0f7d ok 31 error 219 panic 0
+enchanting requests 251-300: 2521274647e6427a ok 37 error 263 panic 0
+enchanting actions (ok, error): {"beacon": (0, 12), "consume": (5, 9), "craft": (6, 160), "craft_auto": (0, 17), "create": (0, 2), "creative": (5, 6), "deprecated": (2, 0), "destroy": (2, 16), "drop": (3, 8), "grindstone": (4, 3), "lab_table": (1, 2), "loom": (1, 4), "mine_block": (5, 8), "non_implemented": (1, 3), "optional": (6, 10), "place": (5, 85), "swap": (4, 7), "take": (10, 108)}
+enchanting packets: {49: 14, 148: 300}
+enchanting_creative requests 1-50: c9569cc96eb9057b ok 5 error 45 panic 0
+enchanting_creative requests 51-100: af16547e4e0fdd35 ok 16 error 84 panic 0
+enchanting_creative requests 101-150: 12b18ad3b318c08e ok 22 error 128 panic 0
+enchanting_creative requests 151-200: 1deb860be2276e02 ok 28 error 172 panic 0
+enchanting_creative requests 201-250: 0318f25bde0c4d79 ok 32 error 218 panic 0
+enchanting_creative requests 251-300: d7562889975ad9f8 ok 36 error 264 panic 0
+enchanting_creative actions (ok, error): {"beacon": (0, 15), "consume": (2, 9), "craft": (11, 161), "craft_auto": (0, 18), "create": (1, 3), "creative": (5, 12), "deprecated": (3, 2), "destroy": (3, 14), "drop": (2, 8), "grindstone": (0, 6), "lab_table": (1, 1), "loom": (4, 2), "mine_block": (1, 7), "non_implemented": (1, 4), "optional": (5, 8), "place": (2, 71), "reserved": (2, 1), "swap": (1, 16), "take": (8, 112)}
+enchanting_creative packets: {49: 6, 148: 300}
+beacon requests 1-50: 538cdd88dd23c21d ok 8 error 42 panic 0
+beacon requests 51-100: c5b0ef7113fc1ef1 ok 16 error 84 panic 0
+beacon requests 101-150: 0c8ae0dff12b2ede ok 24 error 126 panic 0
+beacon requests 151-200: 38df7ef65e9d8c8a ok 28 error 172 panic 0
+beacon requests 201-250: 649049a30cbdd020 ok 38 error 212 panic 0
+beacon requests 251-300: 96148f71f5d11864 ok 46 error 254 panic 0
+beacon actions (ok, error): {"beacon": (3, 158), "consume": (5, 113), "craft": (6, 10), "craft_auto": (10, 13), "create": (2, 0), "creative": (6, 5), "deprecated": (2, 3), "destroy": (0, 13), "drop": (2, 13), "grindstone": (2, 1), "lab_table": (3, 0), "loom": (4, 1), "mine_block": (4, 11), "optional": (2, 5), "place": (6, 47), "reserved": (0, 2), "swap": (5, 12), "take": (11, 64)}
+beacon packets: {49: 8, 148: 300}
+anvil requests 1-50: eb945458526b9ed6 ok 4 error 46 panic 0
+anvil requests 51-100: 11d7251a445ab4fc ok 10 error 90 panic 0
+anvil requests 101-150: 1d388a587ed89cc6 ok 17 error 133 panic 0
+anvil requests 151-200: 98e2f36fb24db40f ok 22 error 178 panic 0
+anvil requests 201-250: 0d9d7d01494c86eb ok 27 error 223 panic 0
+anvil requests 251-300: fe0fdb6256be1ee2 ok 31 error 269 panic 0
+anvil actions (ok, error): {"beacon": (0, 10), "consume": (4, 317), "craft": (0, 10), "craft_auto": (5, 13), "create": (1, 2), "creative": (4, 6), "deprecated": (1, 0), "destroy": (1, 8), "drop": (3, 9), "grindstone": (2, 4), "lab_table": (1, 2), "loom": (3, 4), "mine_block": (5, 10), "non_implemented": (2, 2), "optional": (5, 158), "place": (2, 110), "reserved": (0, 1), "swap": (3, 15), "take": (8, 166)}
+anvil packets: {49: 11, 148: 300}
+anvil_creative requests 1-50: 0c45b06e2042a30d ok 3 error 47 panic 0
+anvil_creative requests 51-100: bf787fc938508807 ok 12 error 88 panic 0
+anvil_creative requests 101-150: 7464589bb1337753 ok 19 error 131 panic 0
+anvil_creative requests 151-200: 3e9bd8242f5c8af2 ok 27 error 173 panic 0
+anvil_creative requests 201-250: 9af80be2d8f3a75f ok 30 error 220 panic 0
+anvil_creative requests 251-300: 41db4f4fd821ed0b ok 38 error 262 panic 0
+anvil_creative actions (ok, error): {"beacon": (0, 14), "consume": (0, 331), "craft": (2, 8), "craft_auto": (2, 9), "create": (1, 3), "creative": (12, 8), "deprecated": (0, 3), "destroy": (2, 12), "drop": (3, 15), "grindstone": (3, 2), "lab_table": (0, 2), "loom": (5, 4), "mine_block": (5, 7), "non_implemented": (0, 3), "optional": (9, 166), "place": (5, 127), "reserved": (0, 2), "swap": (1, 10), "take": (4, 128)}
+anvil_creative packets: {49: 8, 148: 300}
+grindstone requests 1-50: 318d6b2acdf7e91a ok 7 error 43 panic 0
+grindstone requests 51-100: 3e043384521cd67b ok 12 error 88 panic 0
+grindstone requests 101-150: f1ab5a78e0f788c5 ok 23 error 127 panic 0
+grindstone requests 151-200: 00e34108cebaf5da ok 28 error 172 panic 0
+grindstone requests 201-250: 29de6f19abf62ab7 ok 32 error 218 panic 0
+grindstone requests 251-300: 49c91ac21f4e44df ok 35 error 265 panic 0
+grindstone actions (ok, error): {"beacon": (0, 14), "consume": (9, 327), "craft": (4, 8), "craft_auto": (2, 9), "create": (1, 2), "creative": (4, 9), "deprecated": (2, 1), "destroy": (0, 21), "drop": (2, 12), "grindstone": (6, 160), "lab_table": (1, 0), "loom": (0, 4), "mine_block": (8, 10), "non_implemented": (2, 3), "optional": (4, 15), "place": (3, 117), "reserved": (3, 2), "swap": (3, 11), "take": (6, 141)}
 grindstone packets: {49: 12, 148: 300}
 loom requests 1-50: 0f45f0f8d000a463 ok 8 error 42 panic 0
 loom requests 51-100: 684681727d670141 ok 15 error 85 panic 0
 loom requests 101-150: d045ab130517e771 ok 21 error 129 panic 0
 loom requests 151-200: 6439749910a293ef ok 26 error 174 panic 0
-loom requests 201-250: 7258f916ec2e52e3 ok 33 error 217 panic 0
-loom requests 251-300: ee91b93eb1898f33 ok 41 error 259 panic 0
-loom actions (ok, error): {"beacon": (0, 9), "consume": (16, 332), "craft": (5, 9), "craft_auto": (5, 12), "creative": (4, 11), "deprecated": (0, 3), "destroy": (2, 9), "drop": (3, 14), "grindstone": (2, 3), "lab_table": (3, 1), "loom": (8, 161), "mine_block": (5, 10), "non_implemented": (2, 0), "optional": (6, 10), "place": (10, 115), "reserved": (0, 1), "swap": (4, 7), "take": (8, 139)}
+loom requests 201-250: 561c4bd00c3a896a ok 32 error 218 panic 0
+loom requests 251-300: 62de779b45683190 ok 39 error 261 panic 0
+loom actions (ok, error): {"beacon": (0, 9), "consume": (12, 336), "craft": (5, 9), "craft_auto": (5, 12), "creative": (4, 11), "deprecated": (0, 3), "destroy": (2, 9), "drop": (3, 14), "grindstone": (2, 3), "lab_table": (3, 1), "loom": (6, 163), "mine_block": (5, 10), "non_implemented": (2, 0), "optional": (6, 10), "place": (9, 116), "reserved": (0, 1), "swap": (4, 7), "take": (7, 140)}
 loom packets: {49: 13, 148: 300}
-smithing requests 1-50: 976062d2c6f71959 ok 4 error 46 panic 0
-smithing requests 51-100: 3fa51d7e3e65878b ok 10 error 90 panic 0
-smithing requests 101-150: 403dd717bc315dd6 ok 10 error 140 panic 0
-smithing requests 151-200: 3544c192da4c8678 ok 20 error 180 panic 0
-smithing requests 201-250: 7418629bebc36323 ok 26 error 224 panic 0
-smithing requests 251-300: 0b24fa7e409c2392 ok 34 error 266 panic 0
-smithing actions (ok, error): {"beacon": (0, 18), "consume": (4, 453), "craft": (3, 15), "craft_auto": (1, 14), "create": (0, 1), "creative": (5, 4), "deprecated": (1, 2), "destroy": (3, 18), "drop": (2, 16), "grindstone": (3, 9), "lab_table": (1, 1), "loom": (3, 4), "mine_block": (8, 12), "non_implemented": (1, 2), "optional": (6, 9), "place": (4, 120), "reserved": (0, 2), "swap": (2, 11), "take": (4, 136)}
-smithing packets: {49: 10, 148: 300}
-cartography requests 1-50: 21256d10a1041d88 ok 7 error 43 panic 0
-cartography requests 51-100: ad06a1c29f2748af ok 16 error 84 panic 0
-cartography requests 101-150: d8e684f1bafb9860 ok 21 error 129 panic 0
-cartography requests 151-200: d9bc908f74755e5c ok 32 error 168 panic 0
-cartography requests 201-250: 1b09b66e52262a82 ok 38 error 212 panic 0
-cartography requests 251-300: e04cff555da421a4 ok 44 error 256 panic 0
-cartography actions (ok, error): {"beacon": (0, 20), "consume": (2, 12), "craft": (1, 14), "craft_auto": (3, 18), "create": (0, 1), "creative": (12, 7), "deprecated": (1, 1), "destroy": (1, 9), "drop": (4, 16), "grindstone": (2, 4), "lab_table": (1, 1), "loom": (4, 9), "mine_block": (5, 10), "non_implemented": (1, 2), "optional": (10, 8), "place": (8, 122), "reserved": (2, 3), "swap": (6, 9), "take": (7, 135)}
-cartography packets: {49: 13, 148: 300}
+smithing requests 1-50: 55ace60f97816980 ok 3 error 47 panic 0
+smithing requests 51-100: e7dfb379697220c4 ok 9 error 91 panic 0
+smithing requests 101-150: 86e5b9b0ea19c37f ok 9 error 141 panic 0
+smithing requests 151-200: 7d68978665c7824e ok 19 error 181 panic 0
+smithing requests 201-250: 616a282a680fff01 ok 25 error 225 panic 0
+smithing requests 251-300: a621f90142816cc4 ok 32 error 268 panic 0
+smithing actions (ok, error): {"beacon": (0, 18), "consume": (4, 453), "craft": (3, 15), "craft_auto": (1, 14), "create": (0, 1), "creative": (4, 5), "deprecated": (1, 2), "destroy": (3, 18), "drop": (2, 16), "grindstone": (3, 9), "lab_table": (1, 1), "loom": (3, 4), "mine_block": (8, 12), "non_implemented": (1, 2), "optional": (6, 9), "place": (3, 121), "reserved": (0, 2), "swap": (1, 12), "take": (4, 136)}
+smithing packets: {49: 9, 148: 300}
+cartography requests 1-50: 70e72028132522a3 ok 5 error 45 panic 0
+cartography requests 51-100: a1cb655bff153fbe ok 13 error 87 panic 0
+cartography requests 101-150: 860669600398d38c ok 18 error 132 panic 0
+cartography requests 151-200: 69eeccf7163cfd72 ok 25 error 175 panic 0
+cartography requests 201-250: c0d0417cad3cbc79 ok 31 error 219 panic 0
+cartography requests 251-300: 1194c10786b1c7ea ok 34 error 266 panic 0
+cartography actions (ok, error): {"beacon": (0, 20), "consume": (2, 12), "craft": (1, 14), "craft_auto": (3, 18), "create": (0, 1), "creative": (9, 10), "deprecated": (1, 1), "destroy": (0, 10), "drop": (3, 17), "grindstone": (2, 4), "lab_table": (1, 1), "loom": (4, 9), "mine_block": (4, 11), "non_implemented": (1, 2), "optional": (8, 10), "place": (2, 128), "reserved": (2, 3), "swap": (2, 13), "take": (3, 139)}
+cartography packets: {49: 6, 148: 300}
 chest requests 1-50: 55ff3e805f0ea9bb ok 21 error 29 panic 0
-chest requests 51-100: 6fb1a2abfb842fdc ok 37 error 63 panic 0
-chest requests 101-150: 2809325456d9d59c ok 56 error 94 panic 0
-chest requests 151-200: 15ff3860aa71d44a ok 73 error 127 panic 0
-chest requests 201-250: 0e2baf62713d21d5 ok 87 error 163 panic 0
-chest requests 251-300: 820379680903407b ok 98 error 202 panic 0
-chest actions (ok, error): {"beacon": (0, 16), "consume": (4, 6), "craft": (5, 7), "craft_auto": (2, 5), "create": (1, 1), "creative": (10, 9), "deprecated": (2, 2), "destroy": (4, 16), "drop": (5, 6), "grindstone": (7, 5), "lab_table": (1, 0), "loom": (4, 2), "mine_block": (5, 5), "non_implemented": (4, 1), "optional": (3, 6), "place": (31, 103), "reserved": (1, 1), "swap": (3, 10), "take": (33, 116)}
-chest packets: {49: 45, 148: 300}
+chest requests 51-100: 8839a26b48e56599 ok 35 error 65 panic 0
+chest requests 101-150: f05fb6773487d342 ok 54 error 96 panic 0
+chest requests 151-200: 3a907ea9c7c48ee5 ok 68 error 132 panic 0
+chest requests 201-250: 64abb6d143c663ec ok 81 error 169 panic 0
+chest requests 251-300: 88ffe8d99988d59d ok 92 error 208 panic 0
+chest actions (ok, error): {"beacon": (0, 16), "consume": (4, 6), "craft": (6, 6), "craft_auto": (2, 5), "create": (1, 1), "creative": (8, 11), "deprecated": (2, 2), "destroy": (6, 14), "drop": (4, 7), "grindstone": (7, 5), "lab_table": (1, 0), "loom": (3, 3), "mine_block": (2, 8), "non_implemented": (4, 1), "optional": (3, 6), "place": (28, 106), "reserved": (1, 1), "swap": (2, 11), "take": (30, 119)}
+chest packets: {49: 41, 148: 300}
 furnace requests 1-50: fa615397c0125d68 ok 28 error 22 panic 0
-furnace requests 51-100: 57ff09a006c31b66 ok 55 error 45 panic 0
-furnace requests 101-150: 85ea500d901d6d6c ok 83 error 67 panic 0
-furnace requests 151-200: 908fcf3fb4a1c5d9 ok 115 error 85 panic 0
-furnace requests 201-250: 5c8a019db47738c8 ok 141 error 109 panic 0
-furnace requests 251-300: e59a70ed7c20c8cd ok 171 error 129 panic 0
-furnace actions (ok, error): {"beacon": (0, 15), "consume": (7, 13), "craft": (13, 5), "craft_auto": (8, 8), "create": (2, 1), "creative": (7, 10), "deprecated": (3, 0), "destroy": (7, 10), "drop": (47, 19), "grindstone": (7, 3), "loom": (5, 7), "mine_block": (9, 4), "non_implemented": (3, 1), "optional": (10, 5), "place": (37, 55), "reserved": (2, 2), "swap": (3, 8), "take": (59, 63)}
-furnace packets: {49: 34, 148: 300}
-brewing requests 1-50: ef9a2da37468794a ok 16 error 34 panic 0
-brewing requests 51-100: 6c114415c5aff631 ok 41 error 59 panic 0
-brewing requests 101-150: 3546f562ba2cdde6 ok 69 error 81 panic 0
-brewing requests 151-200: 4ebc18cd63dc8b58 ok 85 error 115 panic 0
-brewing requests 201-250: 482cbcac94681b85 ok 104 error 146 panic 0
-brewing requests 251-300: bd975331ff938f60 ok 129 error 171 panic 0
-brewing actions (ok, error): {"beacon": (0, 11), "consume": (7, 23), "craft": (6, 8), "craft_auto": (5, 16), "creative": (6, 8), "deprecated": (1, 3), "destroy": (2, 8), "drop": (4, 10), "grindstone": (3, 3), "lab_table": (1, 2), "loom": (1, 3), "mine_block": (10, 7), "non_implemented": (1, 2), "optional": (12, 4), "place": (45, 61), "reserved": (2, 1), "swap": (11, 8), "take": (46, 107)}
-brewing packets: {49: 43, 148: 300}
+furnace requests 51-100: d939bbfbeda2dcac ok 54 error 46 panic 0
+furnace requests 101-150: 7756ffadea508d6b ok 78 error 72 panic 0
+furnace requests 151-200: 86c850f947c43cfb ok 110 error 90 panic 0
+furnace requests 201-250: 17428d13cd602ee2 ok 135 error 115 panic 0
+furnace requests 251-300: 8fe6da14dc7e612e ok 163 error 137 panic 0
+furnace actions (ok, error): {"beacon": (0, 15), "consume": (7, 13), "craft": (12, 6), "craft_auto": (7, 9), "create": (1, 2), "creative": (7, 10), "deprecated": (2, 1), "destroy": (7, 10), "drop": (45, 21), "grindstone": (7, 3), "loom": (5, 7), "mine_block": (8, 5), "non_implemented": (3, 1), "optional": (7, 8), "place": (36, 56), "reserved": (2, 2), "swap": (1, 10), "take": (54, 68)}
+furnace packets: {49: 29, 148: 300}
+brewing requests 1-50: 743cf2274c7542fa ok 14 error 36 panic 0
+brewing requests 51-100: 737e029dbb005ea5 ok 39 error 61 panic 0
+brewing requests 101-150: 9f829a9e21aa0975 ok 62 error 88 panic 0
+brewing requests 151-200: 38149fc86ee394b9 ok 76 error 124 panic 0
+brewing requests 201-250: a43fce6c924ec149 ok 91 error 159 panic 0
+brewing requests 251-300: 3200129b755e1df6 ok 114 error 186 panic 0
+brewing actions (ok, error): {"beacon": (0, 11), "consume": (7, 23), "craft": (4, 10), "craft_auto": (4, 17), "creative": (5, 9), "deprecated": (0, 4), "destroy": (1, 9), "drop": (2, 12), "grindstone": (4, 2), "lab_table": (1, 2), "loom": (1, 3), "mine_block": (7, 10), "non_implemented": (1, 2), "optional": (9, 7), "place": (39, 67), "reserved": (2, 1), "swap": (4, 15), "take": (40, 113)}
+brewing packets: {49: 35, 148: 300}

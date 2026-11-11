@@ -103,6 +103,13 @@ impl BedrockClient {
                             }
                             let count = count.min(source_stack.item_count);
                             if count > 0 {
+                                if !names_a_slot(&*screen_handler, &destination) {
+                                    tracing::debug!(
+                                        "Destination slot does not exist in Take/Place"
+                                    );
+                                    result = 1;
+                                    break;
+                                }
                                 let mut dest_stack = get_slot_stack(
                                     &*screen_handler,
                                     &destination,
@@ -260,6 +267,8 @@ impl BedrockClient {
                         ItemStackRequestAction::Swap { slot1, slot2 } => {
                             if get_output_screen_slot(&*screen_handler, &slot1).is_some()
                                 || get_output_screen_slot(&*screen_handler, &slot2).is_some()
+                                || !names_a_slot(&*screen_handler, &slot1)
+                                || !names_a_slot(&*screen_handler, &slot2)
                             {
                                 result = 1;
                                 break;
@@ -1193,6 +1202,19 @@ pub(crate) fn record_update(
             stack_id,
         });
     }
+}
+
+/// Whether `slot_info` is the cursor or a slot of the open screen. Bedrock's server rejects a
+/// request that moves items to any other place; writing to it would store nothing, so the
+/// items would vanish while the response tells the client they arrived.
+fn names_a_slot(screen_handler: &dyn ScreenHandler, slot_info: &ItemStackRequestSlotInfo) -> bool {
+    slot_info.container_name.container_name == ContainerName::Cursor
+        || map_bedrock_container_slot(
+            screen_handler,
+            slot_info.container_name.container_name,
+            slot_info.slot_id,
+        )
+        .is_some()
 }
 
 fn get_slot_stack(

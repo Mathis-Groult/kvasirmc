@@ -1444,6 +1444,11 @@ async fn run_scene(server: &Arc<Server>, scene: &Scene, seed: u64) -> Result<Str
         fix_enchanting_seed(&player);
         let request = request(&mut sequence, scene, &cutter_ids, -(number as i32));
         let kinds: Vec<&'static str> = request.actions.iter().map(kind).collect();
+        let asked = if std::env::var_os("KVASIR_DUMP").is_some() {
+            format!("{:?}", request.actions)
+        } else {
+            String::new()
+        };
         let entities = world.entities.load().len();
         let packet = SItemStackRequest {
             requests: vec![request],
@@ -1470,7 +1475,7 @@ async fn run_scene(server: &Arc<Server>, scene: &Scene, seed: u64) -> Result<Str
             {
                 let _ = writeln!(
                     file,
-                    "{} {number} {text}\n  {state} drops {drops}",
+                    "{} {number} {text}\n  {state} drops {drops}\n  asked {asked}",
                     scene.name
                 );
             }

@@ -52,18 +52,19 @@ use tokio::task::JoinHandle;
 use tokio_util::sync::CancellationToken;
 use tokio_util::task::TaskTracker;
 
-#[cfg(test)]
-mod new_golden;
 pub mod builtin_game_tests;
 mod connection_cache;
 pub(crate) mod debug_profiler;
 pub mod enchantment;
 mod key_store;
+#[cfg(test)]
+mod new_golden;
 pub mod pregen;
 pub mod recipe;
 pub mod scheduler;
 pub mod seasonal_events;
 pub mod server_test_manager;
+mod startup;
 pub mod tick_rate_manager;
 pub mod ticker;
 
@@ -204,51 +205,7 @@ impl Server {
 
         let block_registry = super::block::registry::default_registry();
 
-        let level_info = match AnvilLevelInfo.read_world_info(&world_path) {
-            Ok(level_info) => {
-                let dat_path = world_path.join(LEVEL_DAT_FILE_NAME);
-                if dat_path.exists() {
-                    let backup_path = world_path.join(LEVEL_DAT_BACKUP_FILE_NAME);
-                    if let Err(err) = fs::copy(&dat_path, &backup_path) {
-                        warn!("Failed to create backup {LEVEL_DAT_BACKUP_FILE_NAME}: {err}");
-                    }
-                }
-                level_info
-            }
-            Err(WorldInfoError::InfoNotFound) => {
-                warn!(
-                    "No {LEVEL_DAT_FILE_NAME} in {}, creating a new world with seed {}",
-                    world_path.display(),
-                    basic_config.seed.0 as i64
-                );
-                let overworld_gen = pumpkin_world::generation::generator::VanillaGenerator::new(
-                    basic_config.seed,
-                    Dimension::OVERWORLD,
-                );
-                let default_data =
-                    LevelData::from_world_generator(basic_config.seed, &overworld_gen);
-                AnvilLevelInfo.write_world_info(&default_data, &world_path)?;
-                default_data
-            }
-            Err(
-                error @ (WorldInfoError::UnsupportedDataVersion(_)
-                | WorldInfoError::UnsupportedLevelVersion(_)),
-            ) => {
-                error!("Failed to load world info!");
-                error!("{error}");
-                error!("Unsupported world version! See the logs for more info.");
-                return Err(error);
-            }
-            Err(error) => {
-                error!("Failed to load the world data in {}!", world_path.display());
-                error!("{error}");
-                error!(
-                    "Refusing to continue: a default world would generate different terrain on top of the existing region files. Restore {LEVEL_DAT_FILE_NAME} from {LEVEL_DAT_BACKUP_FILE_NAME}, which also holds a copy of the world seed, or move the world folder aside to start a new world."
-                );
-                error!("Failed to load the world data! See the logs for more info.");
-                return Err(error);
-            }
-        };
+        let level_info = startup::load_level_info(&world_path, &basic_config)?;
 
         let seed = level_info.world_gen_settings.seed;
         let level_info = Arc::new(ArcSwap::new(Arc::new(level_info)));
@@ -275,23 +232,7 @@ impl Server {
 
         let tick_rate_manager = Arc::new(ServerTickRateManager::new(basic_config.tps));
 
-        let dimensions = {
-            let mut dimensions = vec![Dimension::OVERWORLD];
-            if basic_config.allow_nether {
-                dimensions.push(Dimension::THE_NETHER);
-            }
-            if basic_config.allow_end {
-                dimensions.push(Dimension::THE_END);
-            }
-            dimensions
-        };
-        info!(
-            "Enabled dimensions: {:?}",
-            dimensions
-                .iter()
-                .map(|d| d.minecraft_name)
-                .collect::<Vec<_>>()
-        );
+        let dimensions = startup::enabled_dimensions(&basic_config);
 
         let management_settings = Arc::new(crate::net::management::hub::ManagementSettings::new(
             &basic_config,
@@ -302,34 +243,7 @@ impl Server {
             management_settings,
         ));
 
-        let cpus = std::thread::available_parallelism().map_or(1, std::num::NonZero::get);
-        // Two cores stay free for the rest of the machine; see `kvasir-tickmode`.
-        let tick_threads = kvasir_tickmode::pool_threads(
-            cpus,
-            kvasir_tickmode::reserved_cores(std::env::var("KVASIR_RESERVED_CORES").ok().as_deref()),
-        );
-        let simulation_pool = Arc::new(
-            rayon::ThreadPoolBuilder::new()
-                .num_threads(tick_threads)
-                .thread_name(|i| format!("Simulation-{i}"))
-                .build()
-                .map_err(|e| WorldInfoError::IoError(std::io::Error::other(e)))?,
-        );
-        let sequential_pool = Arc::new(
-            rayon::ThreadPoolBuilder::new()
-                .num_threads(1)
-                .thread_name(|_| "Simulation-seq".to_owned())
-                .build()
-                .map_err(|e| WorldInfoError::IoError(std::io::Error::other(e)))?,
-        );
-        let compute_threads = (cpus / 2).clamp(2, 8);
-        let compute_pool = Arc::new(
-            rayon::ThreadPoolBuilder::new()
-                .num_threads(compute_threads)
-                .thread_name(|i| format!("Compute-{i}"))
-                .build()
-                .map_err(|e| WorldInfoError::IoError(std::io::Error::other(e)))?,
-        );
+        let pools = startup::build_pools()?;
 
         let server = Self {
             basic_config,
@@ -370,29 +284,14 @@ impl Server {
             debug_profiler: debug_profiler::DebugProfiler::new(),
             tasks: TaskTracker::new(),
             pregen: pregen::PregenService::default(),
-            tickprof: {
-                let profile = kvasir_tickprof::TickProfile::new();
-                // KVASIR_TICK_KINDS=1: time every entity's tick, per kind (see /tickprofile).
-                if std::env::var_os("KVASIR_TICK_KINDS").is_some() {
-                    profile.kinds.enable();
-                    kvasir_tickprof::parts::enable();
-                    kvasir_tickprof::motion::enable();
-                }
-                // KVASIR_TICK_TRACE=<file>: one line per tick, for finding what makes ticks slow.
-                if let Some(path) = std::env::var_os("KVASIR_TICK_TRACE")
-                    && let Err(error) = profile.start_trace(std::path::Path::new(&path))
-                {
-                    tracing::warn!("cannot write the tick trace: {error}");
-                }
-                profile
-            },
+            tickprof: startup::tick_profile(),
             stop_token: crate::STOP_INTERRUPT.child_token(),
             admission_closed: std::sync::RwLock::new(false),
             runtime: tokio::runtime::Handle::current(),
-            simulation_pool,
-            sequential_pool,
+            simulation_pool: pools.simulation,
+            sequential_pool: pools.sequential,
             tick_parallel: std::sync::atomic::AtomicBool::new(false),
-            compute_pool,
+            compute_pool: pools.compute,
             scheduled_functions: Arc::new(crate::server::scheduler::ScheduledFunctionQueue::new()),
             server_guid: rand::random(),
             player_idle_timeout: AtomicI32::new(0),
@@ -403,106 +302,9 @@ impl Server {
         };
         let server = Arc::new(server);
 
-        // Fetch / generate keys in background tasks to avoid blocking startup
-        let server_clone = server.clone();
-        server.spawn_task(async move {
-            let key_store = Arc::new(KeyStore::new());
-            let _ = server_clone.key_store.set(key_store);
-        });
+        server.spawn_key_fetches();
 
-        if server.basic_config.allow_chat_reports {
-            let server_clone = server.clone();
-            server.spawn_task(async move {
-                let auth_config = server_clone
-                    .advanced_config
-                    .networking
-                    .java
-                    .authentication
-                    .clone();
-                let keys = fetch_mojang_public_keys(&auth_config)
-                    .await
-                    .unwrap_or_else(|e| {
-                        error!("Failed to fetch Mojang keys: {e}");
-                        Vec::new()
-                    });
-                server_clone.mojang_public_keys.store(Arc::new(keys));
-            });
-        }
-
-        if server.advanced_config.networking.bedrock.online_mode
-            && server
-                .advanced_config
-                .networking
-                .bedrock
-                .authentication
-                .enabled
-        {
-            let server_clone = server.clone();
-            server.spawn_task(async move {
-                let auth = server_clone
-                    .advanced_config
-                    .networking
-                    .bedrock
-                    .authentication
-                    .clone();
-                let keys = match pumpkin_auth::jwt::fetch_oidc_jwks(
-                    auth.url.as_deref(),
-                    auth.connect_timeout,
-                    auth.read_timeout,
-                )
-                .await
-                {
-                    Ok(keys) => keys,
-                    Err(error) => {
-                        error!("Failed to fetch Bedrock OIDC keys: {error}");
-                        (String::new(), pumpkin_auth::jwt::Jwks { keys: Vec::new() })
-                    }
-                };
-                let _ = server_clone.bedrock_oidc_keys.set(keys);
-            });
-        }
-
-        let mut worlds_vec = Vec::new();
-        for dim in &server.dimensions {
-            info!(
-                "Loading {}",
-                TextComponent::text(dim.minecraft_name.to_string())
-                    .color_named(NamedColor::DarkGreen)
-                    .to_pretty_console()
-            );
-            let config = Arc::new(server.advanced_config.world.clone());
-            let level = into_level(dim.clone(), &config, world_path.clone(), seed);
-            let world = Arc::new(World::load(
-                level.clone(),
-                server.level_info.clone(),
-                dim.clone(),
-                block_registry.clone(),
-                Arc::downgrade(&server),
-            ));
-            let portal: Arc<dyn WorldPortalExt> = Arc::new(WorldPortal(world.clone()));
-            level.world_portal.store(Arc::new(Some(portal)));
-            worlds_vec.push(world);
-        }
-
-        for world in &worlds_vec {
-            let mut world_init_event =
-                crate::plugin::api::events::world::world_init::WorldInitEvent::new(world.clone());
-            server
-                .plugin_manager
-                .fire(&server, &mut world_init_event)
-                .await;
-
-            let mut world_load_event =
-                crate::plugin::api::events::world::world_load::WorldLoadEvent::new(world.clone());
-            server
-                .plugin_manager
-                .fire(&server, &mut world_load_event)
-                .await;
-        }
-
-        server.worlds.store(Arc::new(worlds_vec));
-
-        info!("All worlds loaded successfully.");
+        server.load_worlds(&world_path, seed, &block_registry).await;
 
         let enabled_packs = server.level_info.load().data_packs.enabled.clone();
         server

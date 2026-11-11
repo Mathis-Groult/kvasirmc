@@ -4,6 +4,7 @@
 //! holds a timestamp), whether the backup equals `level.dat`, and whether a refused
 //! `level.dat` kept its bytes.
 
+use std::fmt::Write;
 use std::path::{Path, PathBuf};
 
 use pumpkin_config::{AdvancedConfiguration, BasicConfiguration, TelemetryConfig};
@@ -111,7 +112,8 @@ async fn start_seeded(world: &Path, nether: bool, end: bool, seed: u64) -> Strin
     }
     let after = read(&dat);
     let backup = read(&world.join(LEVEL_DAT_BACKUP_FILE_NAME));
-    line.push_str(&format!(
+    let _ = write!(
+        line,
         " | level.dat {} | backup {} | files {:?}",
         match (&before, &after) {
             (None, None) => "absent",
@@ -126,7 +128,7 @@ async fn start_seeded(world: &Path, nether: bool, end: bool, seed: u64) -> Strin
             (Some(_), _) => "differs",
         },
         tree(world),
-    ));
+    );
     line
 }
 

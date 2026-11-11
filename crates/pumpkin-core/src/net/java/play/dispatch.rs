@@ -15,7 +15,7 @@ use pumpkin_protocol::java::server::play::{
     SClientCommand, SClientInformationPlay, SClientTickEnd, SCloseContainer, SCommandSuggestion,
     SConfigurationAcknowledged, SConfirmTeleport, SContainerButtonClick,
     SContainerSlotStateChanged, SCookieResponse as SPCookieResponse, SCustomPayload,
-    SDebugSampleSubscription, SDebugSubscriptionRequest, SEditBook, SEntityTagQuery, SInteract,
+    SDebugSubscriptionRequest, SEditBook, SEntityTagQuery, SInteract,
     SJigsawGenerate, SLockDifficulty, SMoveVehicle, SPaddleBoat, SPickItemFromBlock, SPlaceRecipe,
     SPlayPingRequest, SPlayPong, SPlayResourcePack, SPlayerAbilities, SPlayerAction,
     SPlayerCommand, SPlayerInput, SPlayerLoaded, SPlayerPosition, SPlayerPositionRotation,
@@ -459,12 +459,6 @@ impl JavaClient {
                     &SDebugSubscriptionRequest::read(&mut payload, &version)?,
                 );
             }
-            id if id == SDebugSampleSubscription::to_id(version) => {
-                self.handle_debug_sample_subscription(
-                    player,
-                    &SDebugSampleSubscription::read(&mut payload, &version)?,
-                );
-            }
             id if id == SLockDifficulty::to_id(version) => {
                 self.handle_lock_difficulty(
                     server,
@@ -673,7 +667,7 @@ mod tests {
     type IdOf = fn(JavaMinecraftVersion) -> i32;
 
     /// Every packet the routers handle, with the function that gives its id.
-    const ROUTED: [(&str, IdOf); 70] = [
+    const ROUTED: [(&str, IdOf); 69] = [
         ("SConfirmTeleport", SConfirmTeleport::to_id),
         ("SChangeGameMode", SChangeGameMode::to_id),
         ("SChatAck", SChatAck::to_id),
@@ -700,7 +694,6 @@ mod tests {
             "SDebugSubscriptionRequest",
             SDebugSubscriptionRequest::to_id,
         ),
-        ("SDebugSampleSubscription", SDebugSampleSubscription::to_id),
         ("SPlayerPosition", SPlayerPosition::to_id),
         ("SPlayerPositionRotation", SPlayerPositionRotation::to_id),
         ("SPlayerRotation", SPlayerRotation::to_id),
@@ -767,13 +760,12 @@ mod tests {
         ),
     ];
 
-    /// The routers are asked in turn, which equals the old single `match` (first matching arm
-    /// wins) only while no two routed packets share an id, or while the packets sharing one sit
-    /// in the same router in their old order. In 26.3 exactly one pair shares id 23:
-    /// `SDebugSampleSubscription` was already unreachable behind `SDebugSubscriptionRequest`, and
-    /// `route_operator` keeps the request first. A new pair must be placed the same way.
+    /// The routers are asked in turn, which equals a single `match` (first matching arm wins)
+    /// only while no two routed packets share an id. Upstream's id aliases (for example
+    /// `DEBUG_SAMPLE_SUBSCRIPTION` = `DEBUG_SUBSCRIPTION_REQUEST`) give two packet types one id;
+    /// route only one of them.
     #[test]
-    fn routed_play_packet_ids_are_unique_but_one_known_pair() {
+    fn routed_play_packet_ids_are_unique() {
         let mut first_with_id = HashMap::new();
         let mut shared = Vec::new();
         for (name, to_id) in ROUTED {
@@ -782,9 +774,6 @@ mod tests {
                 shared.push((first, name, id));
             }
         }
-        assert_eq!(
-            shared,
-            [("SDebugSubscriptionRequest", "SDebugSampleSubscription", 23)]
-        );
+        assert!(shared.is_empty(), "packets sharing an id: {shared:?}");
     }
 }

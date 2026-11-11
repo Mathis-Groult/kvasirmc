@@ -113,8 +113,6 @@ pub use set_test_block::*;
 mod debug_subscription_request;
 pub use debug_subscription_request::*;
 
-mod debug_sample_subscription;
-pub use debug_sample_subscription::*;
 
 mod block_entity_tag_query;
 pub use block_entity_tag_query::*;

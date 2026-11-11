@@ -1298,24 +1298,15 @@ pub fn deserialize_java_serverbound_packet(
             ))
         }
         id if id
-            == pumpkin_protocol::java::server::play::SDebugSampleSubscription::to_id(version) =>
-        {
-            use pumpkin_protocol::ServerPacket;
-            let p = <pumpkin_protocol::java::server::play::SDebugSampleSubscription as pumpkin_protocol::ServerPacket>::read(&mut payload, &version).ok()?;
-            Some(ServerboundPacket::SDebugSampleSubscription(
-                crate::pumpkin::plugin::java_packets::SDebugSampleSubscription {
-                    sample_type: p.sample_type.0.try_into().unwrap(),
-                },
-            ))
-        }
-        id if id
             == pumpkin_protocol::java::server::play::SDebugSubscriptionRequest::to_id(version) =>
         {
             use pumpkin_protocol::ServerPacket;
             let p = <pumpkin_protocol::java::server::play::SDebugSubscriptionRequest as pumpkin_protocol::ServerPacket>::read(&mut payload, &version).ok()?;
+            // The v0.1 record keeps one `sample-type`: the first requested id, -1 for none
+            // (the packet carries a set since 26.3; v0.2 exposes the whole list).
             Some(ServerboundPacket::SDebugSubscriptionRequest(
                 crate::pumpkin::plugin::java_packets::SDebugSubscriptionRequest {
-                    sample_type: p.sample_type.0.try_into().unwrap(),
+                    sample_type: p.subscriptions.first().map_or(-1, |id| id.0),
                 },
             ))
         }

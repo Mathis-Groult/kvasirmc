@@ -235,11 +235,13 @@ interface java-packets {
     /// The payload sent by the client.
     data: list<u8>,
   }
-  record s-debug-sample-subscription {
-    sample-type: s32,
-  }
+  /// The set of debug values a client wants from now on.
+  /// 
+  /// Vanilla `ServerboundDebugSubscriptionRequestPacket`: a set of `debug_subscription` registry
+  /// ids, read as a `VarInt` count of at most 32 and then the ids. Each request replaces the
+  /// previous set; an empty one ends every subscription.
   record s-debug-subscription-request {
-    sample-type: s32,
+    subscriptions: list<s32>,
   }
   record s-edit-book {
     slot: s32,
@@ -2383,7 +2385,11 @@ interface java-packets {
     /// This allows mods, plugins, or proxy software to send proprietary data over the standard
     /// Minecraft protocol.
     s-custom-payload(s-custom-payload),
-    s-debug-sample-subscription(s-debug-sample-subscription),
+    /// The set of debug values a client wants from now on.
+    /// 
+    /// Vanilla `ServerboundDebugSubscriptionRequestPacket`: a set of `debug_subscription` registry
+    /// ids, read as a `VarInt` count of at most 32 and then the ids. Each request replaces the
+    /// previous set; an empty one ends every subscription.
     s-debug-subscription-request(s-debug-subscription-request),
     s-edit-book(s-edit-book),
     s-entity-tag-query(s-entity-tag-query),

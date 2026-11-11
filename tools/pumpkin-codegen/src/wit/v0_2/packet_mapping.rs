@@ -202,6 +202,19 @@ fn get_type_info(ty: &syn::Type) -> (String, bool, bool) {
             {
                 return ("BoxedU8Slice".to_string(), false, false);
             }
+            // An owned list of VarInts (a packet that reads a set of registry ids) maps like a
+            // slice; other `Vec`s stay unsupported.
+            if segment.ident == "Vec"
+                && let syn::PathArguments::AngleBracketed(args) = &segment.arguments
+                && let Some(syn::GenericArgument::Type(syn::Type::Path(inner))) = args.args.first()
+                && inner
+                    .path
+                    .segments
+                    .last()
+                    .is_some_and(|segment| segment.ident == "VarInt")
+            {
+                return ("VarInt".to_string(), false, true);
+            }
             (segment.ident.to_string(), false, false)
         }
         syn::Type::Reference(tr) => {

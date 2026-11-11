@@ -12,6 +12,9 @@ use pumpkin_protocol::bedrock::server::inventory_transaction::{
 use super::item_stack_request::SlotUpdate;
 use crate::world::World;
 
+#[cfg(test)]
+mod tests;
+
 impl BedrockClient {
     fn correct_rejected_food_use(&self, player: &Player) {
         // Holding use can repeat rejected transactions. Limit prediction corrections
@@ -580,6 +583,12 @@ fn use_item_on_entity(
     };
     if !player.can_interact_with_entity(target.as_ref(), 1.0) {
         return ControlFlow::Break(());
+    }
+    // A spectator only watches. Java turns this click into a camera switch before any attack
+    // or interaction (`net/java/play/interact.rs`); Bedrock has no entity camera for spectators,
+    // so the click does nothing, but a legacy request still gets its answer.
+    if player.gamemode.load() == GameMode::Spectator {
+        return ControlFlow::Continue(());
     }
     let Some(server) = world.server.upgrade() else {
         return ControlFlow::Break(());

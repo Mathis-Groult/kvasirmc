@@ -149,6 +149,8 @@ pub mod interaction;
 pub mod inventory_action;
 pub mod item_stack_request;
 #[cfg(test)]
+mod item_stack_golden;
+#[cfg(test)]
 mod item_stack_tests;
 pub(super) use item_stack_request::record_update;
 pub mod mob_equipment;

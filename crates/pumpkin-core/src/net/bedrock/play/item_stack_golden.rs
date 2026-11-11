@@ -73,7 +73,7 @@ type Action = ItemStackRequestAction;
 const REQUESTS: u32 = 300;
 
 /// FNV-1a: a hash that does not change with the Rust version.
-fn fnv(hash: u64, bytes: &[u8]) -> u64 {
+pub fn fnv(hash: u64, bytes: &[u8]) -> u64 {
     let mut hash = hash;
     for &byte in bytes {
         hash = (hash ^ u64::from(byte)).wrapping_mul(0x0100_0000_01b3);
@@ -82,10 +82,10 @@ fn fnv(hash: u64, bytes: &[u8]) -> u64 {
 }
 
 /// A fixed pseudo-random sequence (64-bit linear congruential generator).
-struct Sequence(u64);
+pub struct Sequence(pub u64);
 
 impl Sequence {
-    fn next(&mut self, below: u64) -> u64 {
+    pub fn next(&mut self, below: u64) -> u64 {
         self.0 = self
             .0
             .wrapping_mul(6_364_136_223_846_793_005)
@@ -93,11 +93,11 @@ impl Sequence {
         (self.0 >> 33) % below
     }
 
-    fn pick<T: Copy>(&mut self, items: &[T]) -> T {
+    pub fn pick<T: Copy>(&mut self, items: &[T]) -> T {
         items[self.next(items.len() as u64) as usize]
     }
 
-    fn chance(&mut self, one_in: u64) -> bool {
+    pub fn chance(&mut self, one_in: u64) -> bool {
         self.next(one_in) == 0
     }
 }
@@ -1113,7 +1113,7 @@ fn stonecutter_ids(player: &Player) -> Vec<u32> {
 
 /// Gives each stack net id a number in order of first appearance.
 #[derive(Default)]
-struct NetIds(HashMap<i32, usize>);
+pub struct NetIds(HashMap<i32, usize>);
 
 impl NetIds {
     fn name(&mut self, id: i32) -> usize {
@@ -1177,7 +1177,7 @@ impl Reader<'_> {
 }
 
 /// The packet id and the payload of a queued Bedrock packet.
-fn split_packet(packet: &[u8]) -> Option<(u32, &[u8])> {
+pub fn split_packet(packet: &[u8]) -> Option<(u32, &[u8])> {
     let mut reader = Reader {
         bytes: packet,
         at: 0,
@@ -1188,7 +1188,7 @@ fn split_packet(packet: &[u8]) -> Option<(u32, &[u8])> {
 }
 
 /// `ItemStackResponse` as text, and the result code of each response.
-fn read_response(payload: &[u8], ids: &mut NetIds) -> Option<(String, Vec<u8>)> {
+pub fn read_response(payload: &[u8], ids: &mut NetIds) -> Option<(String, Vec<u8>)> {
     let mut reader = Reader {
         bytes: payload,
         at: 0,
@@ -1249,7 +1249,7 @@ fn read_descriptor(reader: &mut Reader<'_>, ids: &mut NetIds, text: &mut String)
 }
 
 /// `InventoryContent` as text.
-fn read_inventory_content(payload: &[u8], ids: &mut NetIds) -> Option<String> {
+pub fn read_inventory_content(payload: &[u8], ids: &mut NetIds) -> Option<String> {
     let mut reader = Reader {
         bytes: payload,
         at: 0,
@@ -1302,7 +1302,7 @@ fn compound_text(compound: &NbtCompound, text: &mut String) {
     text.push('}');
 }
 
-fn stack_text(stack: &ItemStack) -> String {
+pub fn stack_text(stack: &ItemStack) -> String {
     if stack.is_empty() {
         return "-".to_string();
     }

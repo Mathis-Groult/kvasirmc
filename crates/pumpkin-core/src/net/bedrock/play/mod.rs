@@ -147,6 +147,8 @@ pub mod emote;
 pub mod emote_list;
 pub mod interaction;
 pub mod inventory_action;
+#[cfg(test)]
+mod inventory_action_golden;
 pub mod item_stack_request;
 #[cfg(test)]
 mod item_stack_golden;

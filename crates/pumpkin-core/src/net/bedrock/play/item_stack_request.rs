@@ -907,13 +907,10 @@ pub(crate) fn map_bedrock_container_slot(
     slot_id: u8,
 ) -> Option<usize> {
     let is_player_screen = screen_handler.window_type().is_none();
-    let container_slots = screen_handler
-        .get_behaviour()
-        .slots
-        .len()
-        .saturating_sub(PlayerInventory::MAIN_SIZE);
+    let screen_slots = screen_handler.get_behaviour().slots.len();
+    let container_slots = screen_slots.saturating_sub(PlayerInventory::MAIN_SIZE);
 
-    match container_name {
+    let screen_slot = match container_name {
         ContainerName::HotBar => {
             if is_player_screen {
                 Some(36 + slot_id as usize)
@@ -1156,7 +1153,11 @@ pub(crate) fn map_bedrock_container_slot(
         )
         .then_some(2),
         _ => ((slot_id as usize) < container_slots).then_some(slot_id as usize),
-    }
+    };
+    // The client names any slot id (a hotbar slot past 8, the offhand in a screen without one):
+    // an index past this screen's slots maps nowhere, or every caller would index past the slot
+    // list and the panic would stop the server.
+    screen_slot.filter(|&index| index < screen_slots)
 }
 
 pub(crate) struct SlotUpdate {

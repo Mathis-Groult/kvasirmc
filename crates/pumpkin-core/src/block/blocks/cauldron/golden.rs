@@ -17,8 +17,9 @@ use std::sync::Arc;
 
 use pumpkin_data::data_component::DataComponent;
 use pumpkin_data::data_component_impl::{
-    BannerPatternsImpl, DataComponentImpl, DyedColorImpl, EquipmentSlot,
+    BannerPatternLayer, BannerPatternsImpl, DataComponentImpl, DyedColorImpl, EquipmentSlot,
 };
+use pumpkin_data::dye_color::DyeColor;
 use pumpkin_data::item::Item;
 use pumpkin_data::item_stack::ItemStack;
 use pumpkin_data::statistic::CustomStatistic;
@@ -143,10 +144,39 @@ fn held(kind: usize, count: u8) -> (&'static str, ItemStack) {
                 Some(Box::new(DyedColorImpl { rgb: 0x00ff_0000 })),
             ),
         ),
-        _ => ("stone", ItemStack::new(count, &Item::STONE)),
+        14 => ("stone", ItemStack::new(count, &Item::STONE)),
+        15 => (
+            "banner_layers",
+            with(
+                &Item::WHITE_BANNER,
+                DataComponent::BannerPatterns,
+                Some(Box::new(layers(&["stripe_bottom", "border"]))),
+            ),
+        ),
+        _ => (
+            "shield_layers",
+            with(
+                &Item::SHIELD,
+                DataComponent::BannerPatterns,
+                Some(Box::new(layers(&["cross"]))),
+            ),
+        ),
     }
 }
-const HELD_KINDS: usize = 15;
+const HELD_KINDS: usize = 17;
+
+/// Banner pattern layers, bottom first, all red.
+fn layers(patterns: &[&str]) -> BannerPatternsImpl {
+    BannerPatternsImpl {
+        layers: patterns
+            .iter()
+            .map(|pattern| BannerPatternLayer {
+                pattern: format!("minecraft:{pattern}"),
+                color: DyeColor::Red,
+            })
+            .collect(),
+    }
+}
 
 /// Inventory set-ups: 0 empty, 1 full of stone, 2 full but with room for a bucket, a glass
 /// bottle and (in an empty slot) one more item.
@@ -177,6 +207,14 @@ fn stack_text(stack: &ItemStack) -> String {
             " {component:?}{}",
             if value.is_some() { "" } else { "-" }
         );
+    }
+    if let Some(patterns) = stack.get_data_component::<BannerPatternsImpl>() {
+        let names: Vec<&str> = patterns
+            .layers
+            .iter()
+            .map(|layer| layer.pattern.as_str())
+            .collect();
+        let _ = write!(text, " layers[{}]", names.join(","));
     }
     text
 }

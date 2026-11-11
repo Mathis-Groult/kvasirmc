@@ -591,7 +591,68 @@ async fn run_scene(
         }
     }
     let _ = writeln!(report, "{name} kinds: {kinds:?}");
+    report.push_str(&on_cow_steps(
+        &player,
+        client,
+        &mut tap,
+        &mut ids,
+        (name, &world, &area),
+    ));
     Ok(report)
+}
+
+/// Fixed last steps: one spawn egg, then one wheat, used on the cow. The egg is not handled by
+/// the cow, so the item's own entity use spawns a calf; the wheat is eaten by the cow and empties
+/// the stack, which is not a break.
+fn on_cow_steps(
+    player: &Arc<Player>,
+    client: &crate::net::bedrock::BedrockClient,
+    tap: &mut crate::net::bedrock::BedrockPacketTap,
+    ids: &mut NetIds,
+    (name, world, area): (&str, &Arc<World>, &Area),
+) -> String {
+    let mut report = String::new();
+    for (label, item) in [("egg", &Item::COW_SPAWN_EGG), ("wheat", &Item::WHEAT)] {
+        player.inventory.set_held_item(ItemStack::new(1, item));
+        let held = player.inventory.held_item();
+        let packet = SInventoryTransaction {
+            legacy_request_id: VarInt(0),
+            legacy_set_item_slots: Vec::new(),
+            has_value: false,
+            actions: Vec::new(),
+            transaction_type: VarUInt(0),
+            transaction_data: TransactionData::UseItemOnEntity(UseItemOnEntityTransactionData {
+                target_entity_runtime_id: VarULong(area.cow as u64),
+                action_type: VarInt(0),
+                hot_bar_slot: VarInt(player.inventory.get_selected_slot().into()),
+                hand: HandSlot::Mainhand,
+                item_in_hand: descriptor(&held),
+                player_position: Vector3::new(area.corner as f32 + 4.5, 66.62, FAR as f32 + 6.5),
+                click_position: Vector3::new(0.0, 0.0, 0.0),
+            }),
+        };
+        let outcome = std::panic::catch_unwind(AssertUnwindSafe(|| {
+            client.handle_inventory_action(player, packet);
+        }));
+        let packets = if outcome.is_err() {
+            "panic".to_string()
+        } else {
+            packets_text(tap, ids)
+        };
+        let text = format!(
+            "{packets} | {} | {}",
+            player_text(player),
+            world_text(world, area)
+        );
+        dump(name, 0, label, &text);
+        clear_spawned(world, area);
+        let _ = writeln!(
+            report,
+            "{name} {label} on cow: {:016x}",
+            fnv(0xcbf2_9ce4_8422_2325, text.as_bytes())
+        );
+    }
+    report
 }
 
 #[tokio::test(flavor = "multi_thread")]

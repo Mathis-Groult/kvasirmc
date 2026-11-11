@@ -52,6 +52,8 @@ use tokio::task::JoinHandle;
 use tokio_util::sync::CancellationToken;
 use tokio_util::task::TaskTracker;
 
+#[cfg(test)]
+mod new_golden;
 pub mod builtin_game_tests;
 mod connection_cache;
 pub(crate) mod debug_profiler;

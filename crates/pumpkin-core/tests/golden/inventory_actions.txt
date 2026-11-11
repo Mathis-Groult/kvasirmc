@@ -1,24 +1,24 @@
-survival steps 1-50: 4671bae62f7c98f5
-survival steps 51-100: 828f799e297b584c
-survival steps 101-150: 207d15883ee3aae8
-survival steps 151-200: 2f71251c5efe7781
-survival steps 201-250: 63eeb139ed67e8c8
+survival steps 1-50: ae8e65f7c27bd6ec
+survival steps 51-100: 96fab366ad218b0c
+survival steps 101-150: 62a32c7707b26625
+survival steps 151-200: ab1a7b97c17ae34a
+survival steps 201-250: dd00a92641c02826
 survival kinds: {"mismatch": 37, "normal": 23, "release": 26, "use_in_air": 45, "use_on_block": 65, "use_on_entity": 23, "use_other": 31}
-survival_hungry steps 1-50: e2869de7c3370d40
-survival_hungry steps 51-100: beae327823dd58d9
-survival_hungry steps 101-150: ee02d5e2390bd238
-survival_hungry steps 151-200: 4f3adc06789a167d
-survival_hungry steps 201-250: b56bf3c6cd2dbc03
+survival_hungry steps 1-50: 4aceeb1e3acbb968
+survival_hungry steps 51-100: c47d0b030fe66710
+survival_hungry steps 101-150: 4b6994bc52d0149b
+survival_hungry steps 151-200: 91f3bd9b7c0d30b9
+survival_hungry steps 201-250: 2bfce397f5fe186a
 survival_hungry kinds: {"mismatch": 24, "normal": 21, "release": 22, "use_in_air": 52, "use_on_block": 78, "use_on_entity": 21, "use_other": 32}
-creative steps 1-50: dcb97895e475c77b
-creative steps 51-100: 9fd792a7d95c5d58
-creative steps 101-150: 22e37a75f515d85d
-creative steps 151-200: af42c2ed0b102e35
-creative steps 201-250: b7289d470e48cefd
+creative steps 1-50: 12f0aedc035adcdd
+creative steps 51-100: 7b42036c428022e2
+creative steps 101-150: a304571bb5e58d2d
+creative steps 151-200: a7caa2beec62ea64
+creative steps 201-250: ac786c157d684f10
 creative kinds: {"mismatch": 28, "normal": 24, "release": 23, "use_in_air": 55, "use_on_block": 77, "use_on_entity": 25, "use_other": 18}
-spectator steps 1-50: e44f6cdbffa34f9f
-spectator steps 51-100: 4dd0315c9f855c38
-spectator steps 101-150: b366aab4168ab40f
-spectator steps 151-200: 6587432d7a4823f0
-spectator steps 201-250: 8b844745d39df5c7
+spectator steps 1-50: 1a5cd3322165378a
+spectator steps 51-100: d27c135acb45d079
+spectator steps 101-150: 6f7a133d9ee15bb3
+spectator steps 151-200: dbae124d60dc4a3e
+spectator steps 201-250: 20334fbaf33b646e
 spectator kinds: {"mismatch": 24, "normal": 26, "release": 23, "use_in_air": 50, "use_on_block": 76, "use_on_entity": 25, "use_other": 26}

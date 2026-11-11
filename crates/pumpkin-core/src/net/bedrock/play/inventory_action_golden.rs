@@ -9,12 +9,12 @@
 //! request id, use-item on the built blocks, the floor and the air with every face and hand,
 //! click-air, use-item on the cow, the zombie and missing entities with every action type, and
 //! release. Before a third of them the held and offhand items change (blocks, food, armour,
-//! tools, buckets, projectiles, a bow, a shield), and the item the client claims to hold is the
-//! held one, another one or none.
+//! tools, buckets, projectiles, a bow, a shield, a cow spawn egg, wheat), and the item the
+//! client claims to hold is the held one, another one or none.
 //!
 //! After each transaction the decoded packets (net ids renamed by first appearance), the
 //! inventory, the equipment, the selected slot, the item in use, health and food, the blocks of
-//! the area, the entity count, the two mobs' health, the use statistics and the pearl cooldown
+//! the area, the entity count, the two mobs' health, the use and break statistics and the pearl cooldown
 //! go into a running hash; a line every 50 transactions, and per scene the count of each kind.
 //! Entities other than the two mobs are removed after each step (random places and speeds).
 //! `KVASIR_DUMP=<file>` appends each step's text to the file.
@@ -72,7 +72,7 @@ const SCENES: [(&str, GameMode); 4] = [
     ("spectator", GameMode::Spectator),
 ];
 
-const HELD: [&Item; 22] = [
+const HELD: [&Item; 24] = [
     &Item::STONE,
     &Item::OAK_PLANKS,
     &Item::TORCH,
@@ -95,6 +95,8 @@ const HELD: [&Item; 22] = [
     &Item::BONE_MEAL,
     &Item::STICK,
     &Item::ELYTRA,
+    &Item::COW_SPAWN_EGG,
+    &Item::WHEAT,
 ];
 
 /// The built blocks: (x, z) offset from the scene's corner, all at y = 65 on the floor.
@@ -427,9 +429,13 @@ fn player_text(player: &Player) -> String {
         .iter()
         .map(|item| player.get_stat(StatisticCategory::Used, i32::from(item.id)))
         .collect();
+    let broken: Vec<i32> = HELD
+        .iter()
+        .map(|item| player.get_stat(StatisticCategory::Broken, i32::from(item.id)))
+        .collect();
     let _ = write!(
         text,
-        " eq {} sel {} use {in_use} t {} hp {} food {} used {used:?} pearl {}",
+        " eq {} sel {} use {in_use} t {} hp {} food {} used {used:?} broken {broken:?} pearl {}",
         equipment_text(player),
         player.inventory.get_selected_slot(),
         player.living_entity.item_use_time.load(Ordering::Relaxed),

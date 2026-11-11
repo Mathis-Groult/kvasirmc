@@ -54,7 +54,7 @@ impl BedrockClient {
             inventory_updated |=
                 drop_legacy_slots(player, &packet.legacy_set_item_slots, &mut updates);
         }
-        inventory_updated |= apply_inventory_actions(player, &packet.actions);
+        inventory_updated |= ignore_inventory_actions(&packet.actions);
         if inventory_updated {
             self.send_main_inventory(player);
         }
@@ -134,18 +134,13 @@ impl BedrockClient {
     }
 
     fn click_air(&self, player: &Arc<Player>, data: &UseItemTransactionData, server: &Arc<Server>) {
-        // Click air / Use item
-        let client_stack = descriptor_to_stack(&data.item_in_hand);
-
+        // Click air / Use item. The item is the one the server has in that hand, never the one
+        // the client claims (`item_in_hand`): taking the claim would hand out items for free.
         let hand = match data.hand {
             HandSlot::Mainhand => Hand::Right,
             HandSlot::Offhand => Hand::Left,
         };
         let mut held = player.inventory().get_stack_in_hand(hand);
-        if !client_stack.is_empty() && (held.is_empty() || held.item.id != client_stack.item.id) {
-            held = client_stack;
-            player.inventory().set_stack_in_hand(hand, held.clone());
-        }
         if !held.is_empty() {
             player.increment_stat(
                 pumpkin_data::statistic::StatisticCategory::Used,
@@ -325,69 +320,19 @@ fn drop_legacy_slots(
     inventory_updated
 }
 
-/// The slots the client wrote and the items it threw into the world.
-#[allow(clippy::collapsible_if, clippy::unreachable)]
-fn apply_inventory_actions(player: &Player, actions: &[InventoryAction]) -> bool {
-    let mut inventory_updated = false;
-
-    for action in actions {
-        use pumpkin_protocol::bedrock::server::inventory_transaction::InventoryActionSource;
-        let source_type = InventoryActionSource::from(action.source_type);
-        if source_type == InventoryActionSource::World {
-            let old_stack = descriptor_to_stack(&action.old_item);
-            let new_stack = descriptor_to_stack(&action.new_item);
-            if old_stack.is_empty() && !new_stack.is_empty() {
-                player.drop_item(new_stack);
-            }
-        } else if let Some(window_id) = action.window_id {
-            if let Some(screen_slot) =
-                map_bedrock_slot_to_screen_handler(window_id, action.inventory_slot)
-            {
-                let item_stack = descriptor_to_stack(&action.new_item);
-
-                let mut player_screen_handler = player
-                    .player_screen_handler
-                    .lock()
-                    .unwrap_or_else(std::sync::PoisonError::into_inner);
-
-                let is_armor_equipped = player_screen_handler
-                    .get_slot(screen_slot)
-                    .get_stack()
-                    .are_equal(&item_stack);
-
-                if !is_armor_equipped {
-                    if (5..9).contains(&screen_slot) {
-                        player.enqueue_equipment_change(
-                            &match screen_slot {
-                                5 => EquipmentSlot::HEAD,
-                                6 => EquipmentSlot::CHEST,
-                                7 => EquipmentSlot::LEGS,
-                                8 => EquipmentSlot::FEET,
-                                _ => unreachable!(),
-                            },
-                            &item_stack,
-                        );
-                    } else if (36..45).contains(&screen_slot) {
-                        let hotbar_slot = screen_slot - 36;
-                        if player.inventory().get_selected_slot() == hotbar_slot as u8 {
-                            let equipment = &[(EquipmentSlot::MAIN_HAND, item_stack.clone())];
-                            player.living_entity.send_equipment_changes(equipment);
-                        }
-                    }
-                }
-
-                player_screen_handler
-                    .get_slot(screen_slot)
-                    .set_stack(item_stack.clone());
-                player_screen_handler.set_received_stack(screen_slot, item_stack);
-                player_screen_handler.send_content_updates();
-                drop(player_screen_handler);
-
-                inventory_updated = true;
-            }
-        }
+/// The slot changes the client predicted for this transaction. The server's inventory stays the
+/// truth, as in Bedrock Dedicated Server with server-authoritative inventories (moves go through
+/// item stack requests): a slot the client writes keeps the server's stack and an item the client
+/// says it threw on the ground from nothing is not dropped. Answers whether the inventory must be
+/// resent to undo the prediction.
+fn ignore_inventory_actions(actions: &[InventoryAction]) -> bool {
+    if !actions.is_empty() {
+        tracing::debug!(
+            "ignoring {} client-side inventory actions; the server's inventory is the truth",
+            actions.len()
+        );
     }
-    inventory_updated
+    !actions.is_empty()
 }
 
 /// Clicking a block: the block's use with the held item, its default use, then the item's.
@@ -399,15 +344,9 @@ fn use_on_block(
     server: &Arc<Server>,
     world: &Arc<World>,
 ) -> ControlFlow<()> {
-    // Click block
-    let client_stack = descriptor_to_stack(&data.item_in_hand);
-
+    // Click block, with the item the server has in the hand, never the one the client claims
+    // (`item_in_hand`): taking the claim would let a client place or use items it does not have.
     let mut held_item = player.inventory().held_item();
-    if !client_stack.is_empty()
-        && (held_item.is_empty() || held_item.item.id != client_stack.item.id)
-    {
-        held_item = client_stack;
-    }
 
     let result = server.block_registry.use_with_item(
         block,

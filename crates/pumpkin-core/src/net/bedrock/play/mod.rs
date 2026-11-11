@@ -20,9 +20,7 @@ use pumpkin_protocol::{
             inventory_content::CInventoryContent, player_hotbar::CPlayerHotbar,
             update_block::CUpdateBlock,
         },
-        network_item::{
-            ContainerName, FullContainerName, NetworkItemDescriptor, NetworkItemStackDescriptor,
-        },
+        network_item::{ContainerName, FullContainerName, NetworkItemStackDescriptor},
         server::{
             actor_event::{ActorEventID, SActorEvent},
             animate::{AnimateAction, SAnimate},
@@ -78,28 +76,6 @@ use tracing::{debug, info};
 
 const MIN_PREDICTED_BREAK_PROGRESS: f32 = 0.65;
 
-fn descriptor_to_stack(desc: &NetworkItemDescriptor) -> ItemStack {
-    if desc.id.0 == 0 || desc.stack_size == 0 {
-        ItemStack::EMPTY.clone()
-    } else {
-        pumpkin_data::item::JavaToBedrockItemMapping::from_bedrock(
-            desc.id.0 as i16,
-            desc.aux_value.0,
-        )
-        .map_or_else(
-            || {
-                tracing::warn!(
-                    "Failed to map bedrock item id {} and data {} to Java item",
-                    desc.id.0,
-                    desc.aux_value.0
-                );
-                ItemStack::EMPTY.clone()
-            },
-            |mapping| ItemStack::new(desc.stack_size as u8, mapping.java_item),
-        )
-    }
-}
-
 const fn map_bedrock_slot_to_screen_handler(window_id: i32, slot: u32) -> Option<usize> {
     match window_id {
         0 => {
@@ -149,9 +125,9 @@ pub mod interaction;
 pub mod inventory_action;
 #[cfg(test)]
 mod inventory_action_golden;
-pub mod item_stack_request;
 #[cfg(test)]
 mod item_stack_golden;
+pub mod item_stack_request;
 #[cfg(test)]
 mod item_stack_tests;
 pub(super) use item_stack_request::record_update;

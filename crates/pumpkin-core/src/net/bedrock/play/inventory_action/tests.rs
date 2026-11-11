@@ -1,15 +1,17 @@
 //! Tests of `BedrockClient::handle_inventory_action` over a real Bedrock player (see
-//! `test_support::bedrock_player_with_tap`): a spectator only watches.
+//! `test_support::bedrock_player_with_tap`): the server keeps its own inventory as the truth,
+//! and a spectator only watches.
 
 use std::sync::Arc;
 
 use pumpkin_data::entity::EntityType;
 use pumpkin_data::item::{Item, JavaToBedrockItemMapping};
 use pumpkin_data::item_stack::ItemStack;
+use pumpkin_data::statistic::StatisticCategory;
 use pumpkin_protocol::bedrock::network_item::NetworkItemDescriptor;
 use pumpkin_protocol::bedrock::server::inventory_transaction::{
-    HandSlot, InventoryAction, SInventoryTransaction, TransactionData,
-    UseItemOnEntityTransactionData,
+    HandSlot, InventoryAction, NormalTransactionData, SInventoryTransaction, TransactionData,
+    UseItemOnEntityTransactionData, UseItemTransactionData,
 };
 use pumpkin_protocol::codec::var_int::VarInt;
 use pumpkin_protocol::codec::var_uint::VarUInt;
@@ -30,6 +32,11 @@ use crate::server::Server;
 use crate::world::World;
 
 type TestResult = Result<(), Box<dyn std::error::Error>>;
+
+/// Inventory source `World` (items the client says it threw on the ground).
+const SOURCE_WORLD: u32 = 2;
+/// Inventory source `Container` with window 0 (the player's own inventory).
+const SOURCE_CONTAINER: u32 = 0;
 
 struct Scene {
     _folder: tempfile::TempDir,
@@ -134,6 +141,27 @@ fn descriptor(stack: &ItemStack) -> NetworkItemDescriptor {
     )
 }
 
+fn diamonds() -> NetworkItemDescriptor {
+    descriptor(&ItemStack::new(64, &Item::DIAMOND))
+}
+
+fn use_item(action_type: i32, item_in_hand: NetworkItemDescriptor) -> TransactionData {
+    TransactionData::UseItem(UseItemTransactionData {
+        action_type: VarInt(action_type),
+        trigger_type: 1,
+        block_position: BlockPos::new(4, 64, 6),
+        block_face: 1,
+        hot_bar_slot: VarInt(0),
+        hand: HandSlot::Mainhand,
+        item_in_hand,
+        player_position: Vector3::new(4.5, 66.62, 4.5),
+        click_position: Vector3::new(0.5, 1.0, 0.5),
+        block_runtime_id: VarUInt(0),
+        client_prediction: 1,
+        client_cooldown_state: 0,
+    })
+}
+
 fn on_entity(target: i32, action_type: i32, item: &ItemStack) -> TransactionData {
     TransactionData::UseItemOnEntity(UseItemOnEntityTransactionData {
         target_entity_runtime_id: VarULong(target as u64),
@@ -144,6 +172,78 @@ fn on_entity(target: i32, action_type: i32, item: &ItemStack) -> TransactionData
         player_position: Vector3::new(4.5, 66.62, 4.5),
         click_position: Vector3::new(0.0, 0.0, 0.0),
     })
+}
+
+/// A client that writes 64 diamonds into its empty hotbar gets nothing.
+#[tokio::test(flavor = "multi_thread")]
+async fn a_slot_the_client_writes_keeps_the_server_stack() -> TestResult {
+    let scene = Scene::new(GameMode::Survival).await?;
+    let write = InventoryAction {
+        source_type: SOURCE_CONTAINER,
+        window_id: Some(0),
+        source_flags: Some(0),
+        inventory_slot: 0,
+        old_item: NetworkItemDescriptor::default(),
+        new_item: diamonds(),
+    };
+    scene.send(TransactionData::Normal(NormalTransactionData), vec![write])?;
+    assert_eq!(scene.hotbar(0), "empty");
+    Ok(())
+}
+
+/// A client that says it threw 64 diamonds it never had on the ground drops nothing.
+#[tokio::test(flavor = "multi_thread")]
+async fn items_thrown_from_nothing_are_not_dropped() -> TestResult {
+    let scene = Scene::new(GameMode::Survival).await?;
+    let before = scene.entity_count();
+    let throw = InventoryAction {
+        source_type: SOURCE_WORLD,
+        window_id: None,
+        source_flags: Some(0),
+        inventory_slot: 0,
+        old_item: NetworkItemDescriptor::default(),
+        new_item: diamonds(),
+    };
+    scene.send(TransactionData::Normal(NormalTransactionData), vec![throw])?;
+    assert_eq!(
+        scene.entity_count(),
+        before,
+        "an item appeared in the world"
+    );
+    Ok(())
+}
+
+/// Clicking a block with an empty hand while claiming a stone places nothing.
+#[tokio::test(flavor = "multi_thread")]
+async fn a_claimed_block_in_hand_is_not_placed() -> TestResult {
+    let scene = Scene::new(GameMode::Survival).await?;
+    let stone = descriptor(&ItemStack::new(64, &Item::STONE));
+    scene.send(use_item(0, stone), Vec::new())?;
+    let above = scene.world.get_block_state_id(&BlockPos::new(4, 65, 6));
+    assert_eq!(
+        above,
+        pumpkin_data::Block::AIR.default_state.id,
+        "a block was placed"
+    );
+    assert_eq!(scene.hotbar(0), "empty");
+    Ok(())
+}
+
+/// Clicking the air with an empty hand while claiming a stack of diamonds leaves the hand empty
+/// and counts no use.
+#[tokio::test(flavor = "multi_thread")]
+async fn a_claimed_item_in_hand_is_not_given() -> TestResult {
+    let scene = Scene::new(GameMode::Survival).await?;
+    scene.send(use_item(1, diamonds()), Vec::new())?;
+    assert_eq!(scene.hotbar(0), "empty");
+    let used = scene
+        .player
+        .get_stat(StatisticCategory::Used, i32::from(Item::DIAMOND.id));
+    assert_eq!(
+        used, 0,
+        "a use of an item the player does not hold was counted"
+    );
+    Ok(())
 }
 
 /// A spectator only watches: hitting a cow or using a spawn egg on it does nothing (the Java

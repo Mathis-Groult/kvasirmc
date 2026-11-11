@@ -153,12 +153,21 @@ fn held(kind: usize, count: u8) -> (&'static str, ItemStack) {
                 Some(Box::new(layers(&["stripe_bottom", "border"]))),
             ),
         ),
-        _ => (
+        16 => (
             "shield_layers",
             with(
                 &Item::SHIELD,
                 DataComponent::BannerPatterns,
                 Some(Box::new(layers(&["cross"]))),
+            ),
+        ),
+        // Not in the corpus (`HELD_KINDS`): used by `washing_the_only_layer_gives_a_plain_banner`.
+        _ => (
+            "banner_one_layer",
+            with(
+                &Item::WHITE_BANNER,
+                DataComponent::BannerPatterns,
+                Some(Box::new(layers(&["border"]))),
             ),
         ),
     }
@@ -360,5 +369,42 @@ async fn cauldron_use() -> TestResult {
         return Ok(());
     }
     assert_eq!(std::fs::read_to_string(&path)?, now);
+    Ok(())
+}
+
+/// Vanilla drops a component patch entry equal to the item's default, so a banner washed of its
+/// only layer is a plain banner again and stacks with plain banners.
+#[tokio::test(flavor = "multi_thread")]
+async fn washing_the_only_layer_gives_a_plain_banner() -> TestResult {
+    let folder = tempfile::tempdir()?;
+    let server = test_support::server(&folder).await?;
+    let world = server
+        .worlds
+        .load()
+        .first()
+        .cloned()
+        .ok_or("the server has no world")?;
+    world.level.loaded_chunks.insert(
+        Vector2::new(0, 0),
+        pumpkin_world::chunk::ChunkData::empty_sync(0, 0),
+    );
+    let water3 = cauldrons()
+        .into_iter()
+        .find(|(label, _, _)| *label == "water3")
+        .ok_or("no water3 cauldron")?;
+    let case = Case {
+        index: 0,
+        cauldron: water3,
+        kind: HELD_KINDS,
+        gamemode: GameMode::Survival,
+        count: 1,
+        setup: 0,
+    };
+    let line = run_case(&server, &world, &case);
+    server.stop();
+    assert!(
+        line.contains(": success ") && line.contains(" hand [white_banner x1 layers[]] "),
+        "{line}"
+    );
     Ok(())
 }

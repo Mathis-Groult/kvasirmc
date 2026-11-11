@@ -5,8 +5,11 @@ use crate::block::{
     BlockBehaviour, BlockMetadata, GetComparatorOutputArgs, PathComputationType, UseWithItemArgs,
 };
 use pumpkin_data::block_properties::WaterCauldronLikeProperties;
+use pumpkin_data::data_component::DataComponent;
+use pumpkin_data::data_component_impl::{BannerPatternsImpl, PotionContentsImpl};
 use pumpkin_data::item::Item;
 use pumpkin_data::item_stack::ItemStack;
+use pumpkin_data::potion::Potion;
 use pumpkin_data::sound::{Sound, SoundCategory};
 use pumpkin_data::statistic::{CustomStatistic, StatisticCategory};
 use pumpkin_data::tag::Taggable;
@@ -79,6 +82,25 @@ fn level_state(block: &Block, level: u8) -> BlockStateId {
     block
         .from_properties(&[pumpkin_data::Property::Level(level)])
         .to_state_id(block)
+}
+
+/// Only a water bottle pours into a cauldron: vanilla checks the potion contents, not the item.
+fn is_water_bottle(stack: &ItemStack) -> bool {
+    stack
+        .get_data_component::<PotionContentsImpl>()
+        .is_some_and(|contents| contents.potion_id == Some(i32::from(Potion::WATER.id)))
+}
+
+/// Vanilla `ItemUtils.createFilledResult(held, player, result, false)`: one held item is used up
+/// (none in creative); `result` takes the emptied hand, or else goes to the inventory or the
+/// ground.
+fn hand_back(args: &mut UseWithItemArgs<'_>, gamemode: GameMode, result: ItemStack) {
+    args.item_stack.decrement_unless_creative(gamemode, 1);
+    if args.item_stack.is_empty() {
+        *args.item_stack = result;
+    } else {
+        give_stack_or_drop(args.player, args.world, result);
+    }
 }
 
 /// Puts `state` in place, plays `sound`, takes one held item (unless creative), hands one
@@ -164,7 +186,7 @@ fn fill_empty(
             &Item::BUCKET,
             CustomStatistic::FillCauldron,
         ))
-    } else if item_id == Item::POTION.id {
+    } else if item_id == Item::POTION.id && is_water_bottle(args.item_stack) {
         let state_id = level_state(&Block::WATER_CAULDRON, 1);
         Some(exchange(
             args,
@@ -232,7 +254,7 @@ fn use_on_water(
     if props.level == 0 {
         return None;
     }
-    if item_id == Item::POTION.id && props.level < 3 {
+    if item_id == Item::POTION.id && props.level < 3 && is_water_bottle(args.item_stack) {
         let new_state_id = level_state(&Block::WATER_CAULDRON, props.level + 1);
         return Some(exchange(
             args,
@@ -272,7 +294,9 @@ fn use_on_water(
         && args.item_stack.item.id != Item::SHULKER_BOX.id
     {
         lower_water_level(args.world, args.position, props.level);
-        args.item_stack.item = &Item::SHULKER_BOX;
+        let mut washed = args.item_stack.copy_with_count(1);
+        washed.item = &Item::SHULKER_BOX;
+        hand_back(args, gamemode, washed);
         args.player.increment_stat(
             StatisticCategory::Custom,
             CustomStatistic::CleanShulkerBox as i32,
@@ -283,21 +307,20 @@ fn use_on_water(
 
     if args
         .item_stack
-        .get_data_component::<pumpkin_data::data_component_impl::BannerPatternsImpl>()
-        .is_some()
+        .item
+        .has_tag(&pumpkin_data::tag::Item::MINECRAFT_BANNERS)
     {
-        return Some(wash(
-            args,
-            props.level,
-            pumpkin_data::data_component::DataComponent::BannerPatterns,
-            CustomStatistic::CleanBanner,
-        ));
+        return wash_banner(args, props.level, gamemode);
     }
 
     if args
         .item_stack
-        .get_data_component::<pumpkin_data::data_component_impl::DyedColorImpl>()
-        .is_some()
+        .item
+        .has_tag(&pumpkin_data::tag::Item::MINECRAFT_CAULDRON_CAN_REMOVE_DYE)
+        && args
+            .item_stack
+            .get_data_component::<pumpkin_data::data_component_impl::DyedColorImpl>()
+            .is_some()
     {
         return Some(wash(
             args,
@@ -307,6 +330,38 @@ fn use_on_water(
         ));
     }
     None
+}
+
+/// Washes the top pattern layer off one held banner (vanilla `bannerInteraction`); a banner
+/// without layers is left alone.
+fn wash_banner(
+    args: &mut UseWithItemArgs<'_>,
+    level: u8,
+    gamemode: GameMode,
+) -> Option<BlockActionResult> {
+    let mut layers = args
+        .item_stack
+        .get_data_component::<BannerPatternsImpl>()?
+        .layers
+        .clone();
+    layers.pop()?;
+    let mut washed = args.item_stack.copy_with_count(1);
+    if layers.is_empty() {
+        // Equal to a plain banner's default: vanilla's patch drops the entry, so it stacks.
+        washed
+            .patch
+            .retain(|(id, _)| *id != DataComponent::BannerPatterns);
+    } else {
+        washed.set_data_component(BannerPatternsImpl { layers });
+    }
+    hand_back(args, gamemode, washed);
+    args.player.increment_stat(
+        StatisticCategory::Custom,
+        CustomStatistic::CleanBanner as i32,
+        1,
+    );
+    lower_water_level(args.world, args.position, level);
+    Some(BlockActionResult::Success)
 }
 
 /// Washes `component` off the held item with one level of water and counts `stat`.

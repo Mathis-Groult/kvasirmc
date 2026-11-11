@@ -1,5 +1,6 @@
 //! Golden of `Server::new` over world folders: fresh, restarted, without nether and end, with
-//! a corrupt or an unsupported `level.dat`, and with only a backup. Records the result, the
+//! a corrupt or an unsupported `level.dat`, with only a backup, and with a corrupt `level.dat`
+//! or a missing one next to a good or a corrupt backup. Records the result, the
 //! seed, the dimensions and loaded worlds, the files left behind (names only; `level.dat`
 //! holds a timestamp), whether the backup equals `level.dat`, and whether a refused
 //! `level.dat` kept its bytes.
@@ -59,6 +60,9 @@ fn tree(root: &Path) -> Vec<String> {
             if path.is_dir() {
                 found.push(format!("{name}/"));
                 pending.push(path);
+            } else if let Some(stamp) = name.strip_prefix("level.dat_corrupted_") {
+                // A moved-aside level.dat is named after the time it was moved.
+                found.push(format!("level.dat_corrupted_<{} chars>", stamp.len()));
             } else {
                 found.push(name);
             }
@@ -195,6 +199,30 @@ async fn server_new_over_world_folders() -> TestResult {
         world.join(LEVEL_DAT_BACKUP_FILE_NAME),
     )?;
     case("backup only", start(&world, true, true).await);
+
+    let world = folder.path().join("corrupt_good_backup");
+    std::fs::create_dir_all(&world)?;
+    write_level_dat(&world, SEED + 2, None)?;
+    std::fs::rename(
+        world.join(LEVEL_DAT_FILE_NAME),
+        world.join(LEVEL_DAT_BACKUP_FILE_NAME),
+    )?;
+    std::fs::write(world.join(LEVEL_DAT_FILE_NAME), b"not a level.dat")?;
+    case("corrupt, good backup", start(&world, true, true).await);
+
+    let world = folder.path().join("corrupt_backup_only");
+    std::fs::create_dir_all(&world)?;
+    std::fs::write(world.join(LEVEL_DAT_BACKUP_FILE_NAME), b"not a level.dat")?;
+    case("missing, corrupt backup", start(&world, true, true).await);
+
+    let world = folder.path().join("both_corrupt");
+    std::fs::create_dir_all(&world)?;
+    std::fs::write(world.join(LEVEL_DAT_FILE_NAME), b"not a level.dat")?;
+    std::fs::write(
+        world.join(LEVEL_DAT_BACKUP_FILE_NAME),
+        b"not a level.dat either",
+    )?;
+    case("both corrupt", start(&world, true, true).await);
 
     let path = Path::new(env!("CARGO_MANIFEST_DIR")).join("tests/golden/server_new.txt");
     if std::env::var_os("KVASIR_BLESS").is_some() {

@@ -100,6 +100,42 @@ pub(crate) mod test_support {
         Some((player_of(world, gamemode, client, profile), tap))
     }
 
+    /// A real Bedrock player over an offline `NetherNet` session (see
+    /// `nethernet::offline_session`), not added to the world, with its outgoing packets read
+    /// through the returned tap. `world` must belong to a live server (see [`server`]).
+    pub async fn bedrock_player_with_tap(
+        world: &Arc<World>,
+        gamemode: GameMode,
+    ) -> Result<(Arc<Player>, crate::net::bedrock::BedrockPacketTap), String> {
+        static NEXT_ID: AtomicU64 = AtomicU64::new(1);
+        let id = NEXT_ID.fetch_add(1, Ordering::Relaxed);
+        let address = std::net::SocketAddr::from(([127, 0, 0, 1], 19132));
+        let session = crate::net::bedrock::nethernet::offline_session(address).await?;
+        let client = Arc::new(crate::net::bedrock::BedrockClient::new(
+            session,
+            address,
+            Arc::default(),
+            PacketRateLimiter::new(false, 0.0, 0.0),
+        ));
+        let tap = client
+            .take_packet_tap()
+            .ok_or("a new Bedrock client no longer owned its outgoing queue")?;
+        let profile = GameProfile {
+            id: Uuid::from_u128((1 << 64) | u128::from(id)),
+            name: format!("Bedrock{id}"),
+            properties: ArcSwap::from_pointee(Vec::new()),
+            profile_actions: None,
+        };
+        let player = Arc::new(Player::new(
+            Arc::new(ClientPlatform::Bedrock(client)),
+            profile,
+            PlayerConfig::default(),
+            world,
+            gamemode,
+        ));
+        Ok((player, tap))
+    }
+
     fn java_client() -> (JavaClient, GameProfile) {
         static NEXT_ID: AtomicU64 = AtomicU64::new(1);
         let id = NEXT_ID.fetch_add(1, Ordering::Relaxed);

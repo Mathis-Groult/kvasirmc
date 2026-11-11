@@ -11,3 +11,5 @@ pub use endpoint::NetherNetListener;
 pub use ice_socket::IceSocket;
 pub use identity::load_or_create_identity_key;
 pub use session::NetherNetSession;
+#[cfg(test)]
+pub(crate) use peer::offline_session;

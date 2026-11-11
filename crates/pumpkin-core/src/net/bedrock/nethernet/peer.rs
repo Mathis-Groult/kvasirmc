@@ -297,6 +297,33 @@ fn remove_component_two_candidates(sdp: &str) -> String {
     filtered
 }
 
+/// Test only: a session over a real but unconnected peer (one loopback UDP socket, no STUN),
+/// so that a `BedrockClient` can exist in a test. Nothing is ever offered or sent on it.
+#[cfg(test)]
+pub async fn offline_session(address: SocketAddr) -> Result<Arc<NetherNetSession>, String> {
+    let handler = Arc::new(NetherNetEventHandler {
+        session: Mutex::new(None),
+        address,
+        gathering_notify: Arc::new(tokio::sync::Notify::new()),
+    });
+    let peer: Arc<dyn PeerConnection> = Arc::new(
+        Box::pin(
+            PeerConnectionBuilder::new()
+                .with_configuration(rtc_configuration(&[]))
+                .with_setting_engine(SettingEngineBuilder::default().build())
+                .with_handler(handler)
+                .with_udp_addrs(vec![SocketAddr::from(([127, 0, 0, 1], 0))])
+                .build(),
+        )
+        .await
+        .map_err(|error| error.to_string())?,
+    );
+    let (incoming, _) = tokio::sync::mpsc::channel(1);
+    Ok(Arc::new(NetherNetSession::new(
+        peer, None, address, incoming,
+    )))
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;

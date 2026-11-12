@@ -16,7 +16,8 @@
 //! inventory, the equipment, the selected slot, the item in use, health and food, the blocks of
 //! the area, the entity count, the two mobs' health, the use and break statistics and the pearl cooldown
 //! go into a running hash; a line every 50 transactions, and per scene the count of each kind.
-//! Entities other than the two mobs are removed after each step (random places and speeds).
+//! Entities other than the two mobs are removed after each step (random places and speeds), and
+//! plants grown by bone meal before it is recorded (random kinds).
 //! `KVASIR_DUMP=<file>` appends each step's text to the file.
 
 use std::collections::BTreeMap;
@@ -30,6 +31,7 @@ use pumpkin_data::entity::EntityType;
 use pumpkin_data::item::{Item, JavaToBedrockItemMapping};
 use pumpkin_data::item_stack::ItemStack;
 use pumpkin_data::statistic::StatisticCategory;
+use pumpkin_data::tag::Taggable;
 use pumpkin_data::{Block, BlockStateId};
 use pumpkin_protocol::bedrock::network_item::NetworkItemDescriptor;
 use pumpkin_protocol::bedrock::server::inventory_transaction::{
@@ -503,6 +505,30 @@ fn packets_text(tap: &mut crate::net::bedrock::BedrockPacketTap, ids: &mut NetId
     text
 }
 
+/// Plants grown by bone meal on the grass block leave the world before each step is recorded:
+/// their kind is random (`rand::rng()`: short grass, a flower, tall grass), and no held item
+/// places a plant. Their block updates are only sent on a tick, which the scenes never run.
+fn clear_grown_plants(world: &Arc<World>, area: &Area) {
+    for x in 0..10 {
+        for y in 65..68 {
+            for z in 0..10 {
+                let position = BlockPos::new(area.corner + x, y, FAR + z);
+                let block = world.get_block(&position);
+                if block == &Block::SHORT_GRASS
+                    || block == &Block::TALL_GRASS
+                    || block.has_tag(&pumpkin_data::tag::Block::MINECRAFT_FLOWERS)
+                {
+                    world.set_block_state(
+                        &position,
+                        Block::AIR.default_state.id,
+                        BlockFlags::FORCE_STATE | BlockFlags::SKIP_DROPS,
+                    );
+                }
+            }
+        }
+    }
+}
+
 /// Dropped items and thrown projectiles leave the world after each step: their places and
 /// speeds are random, and a later block placement checks for entities in the way.
 fn clear_spawned(world: &Arc<World>, area: &Area) {
@@ -578,6 +604,7 @@ async fn run_scene(
         } else {
             packets_text(&mut tap, &mut ids)
         };
+        clear_grown_plants(&world, &area);
         let text = format!(
             "{packets} | {} | {}",
             player_text(&player),

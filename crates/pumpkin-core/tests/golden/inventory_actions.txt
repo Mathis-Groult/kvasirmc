@@ -1,11 +1,11 @@
-survival steps 1-50: 4b20f410f4f69b0b
-survival steps 51-100: 9619c7d31177f54a
-survival steps 101-150: 1d91ad9f80091011
-survival steps 151-200: 4ea552b18849113e
-survival steps 201-250: 3ea75bc907a34366
+survival steps 1-50: 5af6b9214faaae1f
+survival steps 51-100: cd5adf8940322c81
+survival steps 101-150: 984ac584119eda07
+survival steps 151-200: d11e211484702e82
+survival steps 201-250: 7b66d24bd75ef162
 survival kinds: {"mismatch": 37, "normal": 23, "release": 26, "use_in_air": 45, "use_on_block": 65, "use_on_entity": 23, "use_other": 31}
-survival egg on cow: e11ef2735d5f57b8
-survival wheat on cow: d29805bf027b85b4
+survival egg on cow: 87fd7e0345445495
+survival wheat on cow: e48979fa7f21e0d1
 survival_hungry steps 1-50: 8d38cc57745826af
 survival_hungry steps 51-100: d1f68691043c928e
 survival_hungry steps 101-150: 49de24fa582bf803

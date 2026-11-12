@@ -5,6 +5,8 @@ pub mod biome_hashes;
 #[cfg(test)]
 pub mod dumps;
 #[cfg(test)]
+pub mod feature_golden;
+#[cfg(test)]
 pub mod piece_golden;
 #[cfg(test)]
 pub mod resume;

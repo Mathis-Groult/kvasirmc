@@ -3,6 +3,8 @@ mod container;
 mod furnace;
 mod hopper;
 mod rideable;
+#[cfg(test)]
+mod tick_golden;
 mod tnt;
 
 use std::sync::Arc;

@@ -1,0 +1,310 @@
+rail_x_east ticks 1-25: 4156b1a980326fcb
+rail_x_east ticks 26-50: e4c1456293b7d9cb
+rail_x_east ticks 51-75: 31f91eacb1e2b056
+rail_x_east ticks 76-100: 846f53cc4889b44e
+rail_x_east end: (25.87 64.06 16.50) v 0.005
+rail_x_west ticks 1-25: 75f26676e255eed4
+rail_x_west ticks 26-50: 45a35fbbef23c508
+rail_x_west ticks 51-75: ebccadb7cf4b1e9a
+rail_x_west ticks 76-100: 8ea75f9a20310172
+rail_x_west end: (95.13 64.06 16.50) v 0.005
+rail_z_south ticks 1-25: ad037ee6ff04755d
+rail_z_south ticks 26-50: 9552b927aae176df
+rail_z_south ticks 51-75: 22b2ed60c6981cf0
+rail_z_south ticks 76-100: eb968424fc5eb096
+rail_z_south end: (144.50 64.06 25.87) v 0.005
+rail_z_north ticks 1-25: 6a3b6d25dfe519a3
+rail_z_north ticks 26-50: 29d293a5c4d01cc5
+rail_z_north ticks 51-75: 41f80e0b968dfa89
+rail_z_north ticks 76-100: a793e9bbed1189c9
+rail_z_north end: (208.50 64.06 31.13) v 0.005
+rail_x_off_centre ticks 1-25: 3a0127f9133921bc
+rail_x_off_centre ticks 26-50: 26d0dfad27140253
+rail_x_off_centre ticks 51-75: 0c2fc8e97b904391
+rail_x_off_centre ticks 76-100: dfeb54c24f84be92
+rail_x_off_centre end: (280.63 64.06 16.50) v 0.000
+loop_top_east ticks 1-25: ee1b218264d3161c
+loop_top_east ticks 26-50: b40b46d897d1e9b2
+loop_top_east ticks 51-75: 71f569880e71fc23
+loop_top_east ticks 76-100: f085fe825e920d42
+loop_top_east end: (339.22 64.06 20.50) v 0.007
+loop_top_west ticks 1-25: 533479f6eca5ff17
+loop_top_west ticks 26-50: 6d9a02784a4273a4
+loop_top_west ticks 51-75: b34fb5bac0b1a883
+loop_top_west ticks 76-100: eb25b77af5377eed
+loop_top_west end: (403.78 64.06 20.50) v 0.007
+loop_bottom_west ticks 1-25: 7f728e10be2145a6
+loop_bottom_west ticks 26-50: 6fac0d8560c34525
+loop_bottom_west ticks 51-75: 8a6fb2c13ff9ef07
+loop_bottom_west ticks 76-100: 91585f2136dfaf98
+loop_bottom_west end: (467.78 64.06 16.50) v 0.007
+loop_bottom_east ticks 1-25: 012bb9275db8b14f
+loop_bottom_east ticks 26-50: 063ddf1aa2af5af5
+loop_bottom_east ticks 51-75: a0b0d167d49ea4bf
+loop_bottom_east ticks 76-100: 521ce03bff4858a2
+loop_bottom_east end: (531.22 64.06 16.50) v 0.007
+slope_up_east ticks 1-25: b433cc986c3febea
+slope_up_east ticks 26-50: 7b173b65c57030eb
+slope_up_east ticks 51-75: dbeebbf1220e2de1
+slope_up_east ticks 76-100: 6247f347eb622909
+slope_up_east end: (604.51 64.06 16.50) v 0.007
+slope_down_east ticks 1-25: 49999bdf12a21614
+slope_down_east ticks 26-50: cde24a8388eb2aca
+slope_down_east ticks 51-75: 7c2990f93b311e49
+slope_down_east ticks 76-100: dfa12c79990b143e
+slope_down_east end: (663.13 64.06 16.50) v 0.005
+slope_up_west ticks 1-25: 62cf63fbb7c2fbff
+slope_up_west ticks 26-50: f70168e37bb45578
+slope_up_west ticks 51-75: cdd2e74bded6c503
+slope_up_west ticks 76-100: cd2a665636c4db8c
+slope_up_west end: (732.49 64.06 16.50) v 0.007
+slope_down_west ticks 1-25: 5e8f589b02ee4a4e
+slope_down_west ticks 26-50: 40a0bec7e061849e
+slope_down_west ticks 51-75: 1bc875288660c05b
+slope_down_west ticks 76-100: cbb7a28d5ae176ce
+slope_down_west end: (800.87 64.06 16.50) v 0.005
+slope_up_south ticks 1-25: 7d13936f26dfe7b6
+slope_up_south ticks 26-50: e0c7801fcbbc0047
+slope_up_south ticks 51-75: 650fbfcd6502d993
+slope_up_south ticks 76-100: 3df0b20e7d69ccc3
+slope_up_south end: (848.50 64.06 28.51) v 0.007
+slope_up_north ticks 1-25: 7d045d2241385dae
+slope_up_north ticks 26-50: 0225a3936e4a811b
+slope_up_north ticks 51-75: f99f469245046901
+slope_up_north ticks 76-100: 0b74eb1eee50b84d
+slope_up_north end: (912.50 64.06 28.49) v 0.007
+above_plain ticks 1-25: 71e529109426c4a9
+above_plain ticks 26-50: 5974acb7f4f39a0c
+above_plain ticks 51-75: ddde53397e191af7
+above_plain ticks 76-100: bdbcdb1ac03ea14b
+above_plain end: (985.38 64.06 16.50) v 0.000
+above_powered ticks 1-25: 13b1b5c99f5f3040
+above_powered ticks 26-50: c8f851841f7188af
+above_powered ticks 51-75: c0dd411c48bf7a04
+above_powered ticks 76-100: e7c70799040ad0c0
+above_powered end: (1065.79 64.00 16.50) v 0.000
+above_detector ticks 1-25: 297485734bee9d53
+above_detector ticks 26-50: 5386bfc40774605d
+above_detector ticks 51-75: 4bc1ee1d058a9268
+above_detector ticks 76-100: d6c286406d8c80b1
+above_detector end: (1113.38 64.06 16.50) v 0.000
+above_activator ticks 1-25: 89b7d048b22d0ee7
+above_activator ticks 26-50: a17528176bb7e197
+above_activator ticks 51-75: cb7ac079d291a423
+above_activator ticks 76-100: c21fa5ec8f578535
+above_activator end: (1177.38 64.06 16.50) v 0.000
+ground ticks 1-25: 8ba5c46a5192cf1f
+ground ticks 26-50: 9cc0df5872dab0cb
+ground ticks 51-75: 49e449a227f454af
+ground ticks 76-100: e0ed74f522634a3b
+ground end: (1237.09 64.00 16.70) v 0.000
+falling_to_ground ticks 1-25: a4aea2576e9fda55
+falling_to_ground ticks 26-50: 4d92eb371fccb070
+falling_to_ground ticks 51-75: 6d51649fe11358b1
+falling_to_ground ticks 76-100: 0f87c7b1c53e881c
+falling_to_ground end: (1301.78 64.00 16.50) v 0.000
+over_water ticks 1-25: 27ef6cdd4937f773
+over_water ticks 26-50: 129965530f41c3b1
+over_water ticks 51-75: b633dd382ee739b5
+over_water ticks 76-100: 7d00af582ad5a9b7
+over_water end: (1368.48 -0.89 16.50) v 0.756
+over_lava ticks 1-25: 5627a69286a9e3fe
+over_lava ticks 26-50: bc617c93aa977d08
+over_lava ticks 51-75: f7bf34ef4f91bf28
+over_lava ticks 76-100: 07ee53c9b5f7ebbc
+over_lava end: (1432.48 -0.89 16.50) v 0.756
+void ticks 1-25: af968bb80b20641f
+void ticks 26-50: 6a87eea0e71554f4
+void ticks 51-75: 4ff32e8e05069bad
+void ticks 76-100: 2ca60fcecf827892
+void end: (1494.49 5.11 16.50) v 0.756
+chest_on_ground ticks 1-25: 25b4af03d322e336
+chest_on_ground ticks 26-50: 7341ca02ad959388
+chest_on_ground ticks 51-75: c16a06720856716e
+chest_on_ground ticks 76-100: 04c66f4d77825e70
+chest_on_ground end: (1557.09 64.00 16.50) v 0.000
+furnace_on_ground ticks 1-25: 54007bd4764eeeb3
+furnace_on_ground ticks 26-50: 4f687e641fe826ea
+furnace_on_ground ticks 51-75: 7cf54c1c9ce3d673
+furnace_on_ground ticks 76-100: 20ce9682f9cefd52
+furnace_on_ground end: (1620.89 64.00 16.50) v 0.000
+rest ticks 1-25: 705a4966e66477d7
+rest ticks 26-50: 9aca2e83182d4008
+rest ticks 51-75: 033a320cee17cef3
+rest ticks 76-100: d104190b674af724
+rest end: (1684.50 64.06 16.50) v 0.000, (1684.50 64.06 19.50) v 0.001, (1684.50 64.06 22.50) v 0.000
+powered_on_moving ticks 1-25: 72cb6f7ab41a8109
+powered_on_moving ticks 26-50: fada2e34618d9978
+powered_on_moving ticks 51-75: ee5a5ba2c28d79c8
+powered_on_moving ticks 76-100: ec99bef78b59d168
+powered_on_moving end: (1769.79 64.00 16.50) v 0.000, (1743.09 64.00 19.50) v 0.000
+powered_on_rest_x ticks 1-25: 81fbfdd485b41c5e
+powered_on_rest_x ticks 26-50: f174861a97a80201
+powered_on_rest_x ticks 51-75: 0702209208e867cb
+powered_on_rest_x ticks 76-100: a0c0c94e869ca091
+powered_on_rest_x end: (1807.14 64.00 16.50) v 0.000, (1807.14 64.00 19.50) v 0.000, (1833.86 64.00 22.50) v 0.000, (1833.86 64.00 25.50) v 0.000, (1807.14 64.00 28.50) v 0.000
+powered_on_rest_z ticks 1-25: 1f4b8f8bf250ee3d
+powered_on_rest_z ticks 26-50: fab99b566c3312ba
+powered_on_rest_z ticks 51-75: 9990a95393689cf4
+powered_on_rest_z ticks 76-100: 435b40847cf969d2
+powered_on_rest_z end: (1872.50 64.00 41.86) v 0.000, (1875.50 64.00 15.14) v 0.000, (1878.50 64.00 15.14) v 0.000
+powered_off ticks 1-25: 3b37465e9cdf6977
+powered_off ticks 26-50: 0915add1f2a8351f
+powered_off ticks 51-75: 1973394371943b17
+powered_off ticks 76-100: 7ab815bf058506ff
+powered_off end: (1938.77 64.06 16.50) v 0.000, (1948.50 64.06 19.50) v 0.000, (1956.32 64.06 22.50) v 0.000
+powered_slope_east ticks 1-25: 03a282380d181186
+powered_slope_east ticks 26-50: 27f090c55e70e54b
+powered_slope_east ticks 51-75: 30d1705c1358fd14
+powered_slope_east ticks 76-100: 1ddbc07e78c75071
+powered_slope_east end: (2012.51 64.06 16.50) v 0.384
+powered_slope_west ticks 1-25: 02b3466a2981beac
+powered_slope_west ticks 26-50: 6c8fb60a2d3ed2a7
+powered_slope_west ticks 51-75: a3b06f674cb47cee
+powered_slope_west ticks 76-100: 44e74ccc5fe3f4c9
+powered_slope_west end: (2076.49 64.06 16.50) v 0.384
+powered_slope_south ticks 1-25: 845444fd79c14f96
+powered_slope_south ticks 26-50: e4fbea7050da16c9
+powered_slope_south ticks 51-75: 5ca97637de927154
+powered_slope_south ticks 76-100: b5f3fe66439dc977
+powered_slope_south end: (2128.50 64.06 28.51) v 0.384
+powered_slope_north ticks 1-25: 71f672e05d24d7bb
+powered_slope_north ticks 26-50: c53451677a16b8af
+powered_slope_north ticks 51-75: 9e6be07776fe1823
+powered_slope_north ticks 76-100: abbb521d42378aa7
+powered_slope_north end: (2192.50 64.06 28.49) v 0.384
+activator_on ticks 1-25: 096e78a10b6d53bc
+activator_on ticks 26-50: a5073acf774b66e8
+activator_on ticks 51-75: 81bf95d667567507
+activator_on ticks 76-100: 6a0aa1b193224e51
+activator_on end: (2260.50 64.06 16.50) v 0.000, (2260.50 64.06 19.50) v 0.000, (2262.88 64.06 22.50) v 0.000, (2260.50 64.06 25.50) v 0.000, (2268.38 64.06 28.50) v 0.061
+activator_off ticks 1-25: b532f728ee8692c4
+activator_off ticks 26-50: 62048e6570b5f79f
+activator_off ticks 51-75: ea70898885396b86
+activator_off ticks 76-100: 1992930aad068141
+activator_off end: (2324.50 64.06 16.50) v 0.000 riders 1/1, (2324.50 64.06 19.50) v 0.000, (2324.50 64.06 22.50) v 0.000
+activator_slope_east ticks 1-25: 7239891093552bc5
+activator_slope_east ticks 26-50: d7665c3d0fc1b4b0
+activator_slope_east ticks 51-75: 2fb46b2efe4d49c9
+activator_slope_east ticks 76-100: 11ab3a33f40dfdc3
+activator_slope_east end: (2396.51 64.06 16.50) v 0.005
+activator_on_tnt ticks 1-25: b20ae9888168bb72
+activator_on_tnt ticks 26-50: 529f62beae789528
+activator_on_tnt ticks 51-75: d926463608c4786a
+activator_on_tnt ticks 76-100: 293579da0fecbd19
+activator_on_tnt end: (2452.50 64.06 16.50) v 0.000 removed
+detector ticks 1-25: afeab6f970a538da
+detector ticks 26-50: ba0706d6af292209
+detector ticks 51-75: 84f0510e261612a3
+detector ticks 76-100: 9c8d848e3d20d2b0
+detector end: (2519.38 64.06 16.50) v 0.000, (2522.50 64.06 19.50) v 0.000
+detector_slope_north ticks 1-25: bf75f20d87ab588a
+detector_slope_north ticks 26-50: ae97ee43885ec121
+detector_slope_north ticks 51-75: b9f65809a7756eec
+detector_slope_north ticks 76-100: f59b07e00297952d
+detector_slope_north end: (2576.50 64.06 28.49) v 0.005
+mixed ticks 1-25: 5c9049c5541c4bbc
+mixed ticks 26-50: 701447e2c77f3cd2
+mixed ticks 51-75: e1feeb839c9a5b41
+mixed ticks 76-100: 862f1305d38550c8
+mixed end: (2659.10 64.06 16.50) v 0.000
+tnt_fuse ticks 1-25: edff7d8275ff4090
+tnt_fuse ticks 26-50: 8f9f1f00f031abe6
+tnt_fuse ticks 51-75: 595dc29e02295630
+tnt_fuse ticks 76-100: 126ce1dba461d786
+tnt_fuse end: (2708.50 64.06 16.50) v 0.000 removed
+tnt_wall_fast ticks 1-25: eb408b7721272b21
+tnt_wall_fast ticks 26-50: 677a1185fb552d12
+tnt_wall_fast ticks 51-75: 108e2b829a5ac925
+tnt_wall_fast ticks 76-100: e52d13b4d3bbb15e
+tnt_wall_fast end: (2792.51 64.06 16.50) v 0.224 removed
+tnt_wall_slow ticks 1-25: b98aabd12c1ee097
+tnt_wall_slow ticks 26-50: 7c3a74e96c46919e
+tnt_wall_slow ticks 51-75: c76392a5dd8b5632
+tnt_wall_slow ticks 76-100: adb59ac7a379d768
+tnt_wall_slow end: (2856.51 64.06 16.50) v 0.000
+tnt_ground_wall ticks 1-25: 29a54891ed364d62
+tnt_ground_wall ticks 26-50: 1bd43f034caea92b
+tnt_ground_wall ticks 51-75: 791bee236c2c5694
+tnt_ground_wall ticks 76-100: 2b2dedeefd962a29
+tnt_ground_wall end: (2900.51 64.00 16.50) v 0.010 removed
+driver_forward ticks 1-25: 98efc2a416c80cb4
+driver_forward ticks 26-50: 084d704085bbaa3d
+driver_forward ticks 51-75: 0c32e959d5ea334a
+driver_forward ticks 76-100: 9bfc633291e3c791
+driver_forward end: (2979.00 64.06 16.50) v 0.148 riders 1/1
+driver_backward ticks 1-25: 09693d3e621d99a9
+driver_backward ticks 26-50: fc039cc2a3660a61
+driver_backward ticks 51-75: 98ecfd1f0f25e5cb
+driver_backward ticks 76-100: 252858a3875063a5
+driver_backward end: (3030.00 64.06 16.50) v 0.148 riders 1/1
+driver_both ticks 1-25: 95e5ec35ac8490d8
+driver_both ticks 26-50: 1affccaef18bc4ad
+driver_both ticks 51-75: 442ec0ddf511509e
+driver_both ticks 76-100: ad32542d44ce0c99
+driver_both end: (3107.00 64.06 16.50) v 0.148 riders 1/1
+driver_idle ticks 1-25: 1455b4e272513746
+driver_idle ticks 26-50: 89a25adfdfc88c2e
+driver_idle ticks 51-75: b8e68bded818df40
+driver_idle ticks 76-100: 8d23aa329c12eecd
+driver_idle end: (3169.18 64.06 16.50) v 0.073 riders 1/1
+driver_speeds ticks 1-25: 28403aa8744ee6da
+driver_speeds ticks 26-50: 10b2ff2d8cf6c911
+driver_speeds ticks 51-75: db70400306af66bb
+driver_speeds ticks 76-100: be57ddd59b192b17
+driver_speeds end: (3240.85 64.06 16.50) v 0.148 riders 1/1, (3241.47 64.00 19.50) v 0.000 riders 1/1, (3233.46 64.06 22.50) v 0.148 riders 1/1
+driver_diagonal ticks 1-25: 0b07c94f5821769b
+driver_diagonal ticks 26-50: 6ec3808ecd183525
+driver_diagonal ticks 51-75: a728b5b8e3a3d423
+driver_diagonal ticks 76-100: a500d3461f5ef69f
+driver_diagonal end: (3280.50 64.06 34.95) v 0.148 riders 1/1
+driver_on_ground ticks 1-25: 3549700ee1eef365
+driver_on_ground ticks 26-50: 02c40f163dc02aac
+driver_on_ground ticks 51-75: ee270f4384229ceb
+driver_on_ground ticks 76-100: 2c5cd0b472138d02
+driver_on_ground end: (3348.50 64.00 16.50) v 0.000 riders 1/1
+driver_behind_zombie ticks 1-25: a735942392292b22
+driver_behind_zombie ticks 26-50: 3178479c54968eaf
+driver_behind_zombie ticks 51-75: 9e4f6dc55ff03c64
+driver_behind_zombie ticks 76-100: 7e9c96d39bbbd019
+driver_behind_zombie end: (3412.50 64.06 16.50) v 0.000 riders 2/2
+passenger_zombie ticks 1-25: 1bff1b08877c6199
+passenger_zombie ticks 26-50: 06824fd4dd4afb3d
+passenger_zombie ticks 51-75: 35ce1a5624b6551d
+passenger_zombie ticks 76-100: ca181a12c3727d2b
+passenger_zombie end: (3493.52 64.06 16.50) v 0.110 riders 1/1
+furnace ticks 1-25: 05c6fb32767a18c2
+furnace ticks 26-50: 7f85baa0c15ed984
+furnace ticks 51-75: 355300170d81d3df
+furnace ticks 76-100: af138669f1a6efc5
+furnace end: (3558.40 64.06 16.50) v 0.188, (3541.80 64.06 19.50) v 0.000, (3535.51 64.00 22.50) v 0.000, (3539.74 64.06 25.50) v 0.000
+chests ticks 1-25: ff19e7d1ed69f4a6
+chests ticks 26-50: 8b193dbf3fa733d8
+chests ticks 51-75: 27b722fe73b28ab6
+chests ticks 76-100: f18f257105193925
+chests end: (3625.41 64.00 16.50) v 0.000, (3620.02 64.06 19.50) v 0.090, (3615.51 64.06 22.50) v 0.040, (3615.51 64.06 25.50) v 0.040
+hopper_under_chest ticks 1-25: 5ba2432926a8e4af
+hopper_under_chest ticks 26-50: de3b349e190874be
+hopper_under_chest ticks 51-75: e3b5c53b1611d71d
+hopper_under_chest ticks 76-100: 62a197a6d635fa64
+hopper_under_chest end: (3668.50 64.06 16.50) v 0.000
+hopper_items_around ticks 1-25: 964c2d1b6d0612cc
+hopper_items_around ticks 26-50: 12555474424d8b2d
+hopper_items_around ticks 51-75: e1792d49d0e5b994
+hopper_items_around ticks 76-100: 3dfc582c0745bcd5
+hopper_items_around end: (3732.50 64.06 16.50) v 0.000
+hopper_moving_full ticks 1-25: 20e9e65f142cac7f
+hopper_moving_full ticks 26-50: 750ebcfd9f0416ff
+hopper_moving_full ticks 51-75: f7c8da5c8944aa0c
+hopper_moving_full ticks 76-100: 3e41d76b165f624b
+hopper_moving_full end: (3807.51 64.06 16.50) v 0.040
+collision ticks 1-25: baf4c1997bb4c379
+collision ticks 26-50: e33f295653116241
+collision ticks 51-75: 0e7794d4645f8194
+collision ticks 76-100: f69b623e46f9e3ad
+collision end: (3867.55 64.06 16.50) v 0.006, (3881.60 64.00 16.50) v 0.000
+collision_furnace ticks 1-25: 32619621a466efd8
+collision_furnace ticks 26-50: 3f3f5098cef3e4b1
+collision_furnace ticks 51-75: 9ec52f718871ea67
+collision_furnace ticks 76-100: d4bc00d0d452a941
+collision_furnace end: (3942.60 64.06 16.50) v 0.188, (3943.79 64.06 16.50) v 0.138

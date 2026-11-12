@@ -26,6 +26,8 @@ pub mod dag;
 pub mod generation;
 pub mod generation_cache;
 pub mod schedule;
+#[cfg(test)]
+mod schedule_oracle;
 pub mod worker_logic;
 
 #[cfg(test)]

@@ -1,0 +1,6 @@
+flat fresh: 49 chunks {"Full": 49} hash 6a152d96b1e72d84
+flat second folder equal: true
+flat after unload equal: true
+flat after reopen equal: true
+noise fresh: 9 chunks, statuses {"Full"}
+noise after reopen equal: true

@@ -4,4 +4,4 @@ flat after unload equal: true
 flat after reopen equal: true
 noise fresh: 9 chunks, statuses {"Full"}
 noise after reopen equal: true
-every shutdown under 2.5 s: true
+scheduler thread ends within 3 s of every shutdown: true

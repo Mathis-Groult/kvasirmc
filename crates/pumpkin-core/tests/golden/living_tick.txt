@@ -123,21 +123,21 @@ bread_off_hand ticks 11-20: 23a66f6cc4ebd619
 bread_off_hand ticks 21-30: fa694935e7b6cd61
 bread_off_hand ticks 31-40: 45a5f0971c0eb516
 bread_off_hand end: health 20.00 death 0 food 11 held air 0
-bread_elsewhere_right ticks 1-10: a19ad5c35479a66d
-bread_elsewhere_right ticks 11-20: a3ffeab9ebfd981d
-bread_elsewhere_right ticks 21-30: 3e1a67761873ab6d
-bread_elsewhere_right ticks 31-40: c375d5ba6388bb40
-bread_elsewhere_right end: health 20.00 death 0 food 11 held dirt 2
-bread_elsewhere_left ticks 1-10: 4d1241a669c70817
-bread_elsewhere_left ticks 11-20: 83eec556f39e80d9
-bread_elsewhere_left ticks 21-30: f9c57dac252af781
-bread_elsewhere_left ticks 31-40: 0ddeb1fa54b37128
-bread_elsewhere_left end: health 20.00 death 0 food 11 held dirt 3
-bread_elsewhere_none ticks 1-10: 5b775daf0c95e66d
-bread_elsewhere_none ticks 11-20: b4b072d4c2a7c5b1
-bread_elsewhere_none ticks 21-30: 26028f9052bcf605
-bread_elsewhere_none ticks 31-40: d1bf6baeda891d54
-bread_elsewhere_none end: health 20.00 death 0 food 11 held dirt 2
+bread_elsewhere_right ticks 1-10: 4ee8e7f74f7d7ff1
+bread_elsewhere_right ticks 11-20: 65a6a422e84ed835
+bread_elsewhere_right ticks 21-30: ebca3971a39074fb
+bread_elsewhere_right ticks 31-40: d2fa0f52cdd35df6
+bread_elsewhere_right end: health 20.00 death 0 food 6 held dirt 3
+bread_elsewhere_left ticks 1-10: 09245944fefe1d19
+bread_elsewhere_left ticks 11-20: 590b8e7dfdad8ebd
+bread_elsewhere_left ticks 21-30: 31c3203129224b43
+bread_elsewhere_left ticks 31-40: f4067901019c3c26
+bread_elsewhere_left end: health 20.00 death 0 food 6 held dirt 3
+bread_elsewhere_none ticks 1-10: e251530aae07d7ed
+bread_elsewhere_none ticks 11-20: 4151b79961c1a151
+bread_elsewhere_none ticks 21-30: 68974580486abd57
+bread_elsewhere_none ticks 31-40: 1d75e6586215269a
+bread_elsewhere_none end: health 20.00 death 0 food 6 held dirt 3
 bread_creative ticks 1-10: 5fcfe5d51c17d82f
 bread_creative ticks 11-20: e691af4a854bfcb5
 bread_creative ticks 21-30: 6e08fc1fb8a9f045

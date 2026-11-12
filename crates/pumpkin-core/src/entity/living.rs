@@ -11,6 +11,8 @@ mod living_sounds;
 mod living_travel;
 #[cfg(test)]
 mod tick_golden;
+#[cfg(test)]
+mod use_tests;
 use kvasir_tickprof::parts::Part;
 use pumpkin_data::particle::Particle;
 use pumpkin_data::potion::Effect;
@@ -480,7 +482,10 @@ impl EntityBase for LivingEntity {
                 .lock()
                 .unwrap_or_else(std::sync::PoisonError::into_inner)
                 .clone();
-            if let Some(item) = item_in_use.as_ref() {
+            if let Some(item) = item_in_use
+                .as_ref()
+                .filter(|item| self.is_in_used_hand(caller, item))
+            {
                 // Consume item
                 if let Some(food) = item.get_data_component::<FoodImpl>()
                     && let Some(player) = caller.get_player()
@@ -574,42 +579,12 @@ impl EntityBase for LivingEntity {
                         }
                     };
 
-                    // Prefer modifying the exact stack that matches the consumed item:
-                    // 1) selected hotbar (held_item)
-                    // 2) off-hand
-                    // 3) fallback to active_hand if the above didn't match
-                    let mut handled = false;
-
-                    // Check main hand (hotbar selected)
-                    let held = player.inventory.held_item();
-                    if held.are_items_and_components_equal(item) {
-                        player.inventory.set_held_item(finish_using(held));
-                        handled = true;
-                    }
-
-                    if !handled {
-                        // Check off-hand
-                        let off_hand = player.inventory.off_hand_item();
-                        if off_hand.are_items_and_components_equal(item) {
-                            player
-                                .inventory
-                                .set_stack_in_hand(Hand::Left, finish_using(off_hand));
-                            handled = true;
-                        }
-                    }
-
-                    if !handled {
-                        // Use stored active_hand (as a fallback)
-                        let active_hand = *self
-                            .active_hand
-                            .lock()
-                            .unwrap_or_else(std::sync::PoisonError::into_inner);
-                        let hand_to_modify = active_hand.unwrap_or(Hand::Right);
-                        let item_stack = self.get_stack_in_hand(caller, hand_to_modify);
-                        player
-                            .inventory
-                            .set_stack_in_hand(hand_to_modify, finish_using(item_stack));
-                    }
+                    // The used hand holds the item (checked above), as in vanilla.
+                    let hand = self.used_hand();
+                    let stack = self.get_stack_in_hand(caller, hand);
+                    player
+                        .inventory
+                        .set_stack_in_hand(hand, finish_using(stack));
 
                     if let Some(cooldown) = item.get_use_cooldown() {
                         let group = cooldown
@@ -619,9 +594,9 @@ impl EntityBase for LivingEntity {
                         player.start_cooldown(group, (cooldown.seconds * 20.0) as i32);
                     }
                 }
-
-                self.clear_active_hand();
             }
+            // Finished or released (the item left the used hand): the use ends either way.
+            self.clear_active_hand();
         }
 
         if self.hurt_cooldown.load(Relaxed) > 0 {

@@ -410,6 +410,23 @@ impl LivingEntity {
         self.entity.send_bedrock_actor_data(&meta);
     }
 
+    /// The hand the current item is used from (the main hand when none is stored).
+    pub(crate) fn used_hand(&self) -> Hand {
+        self.active_hand
+            .lock()
+            .unwrap_or_else(std::sync::PoisonError::into_inner)
+            .unwrap_or(Hand::Right)
+    }
+
+    /// Vanilla `completeUsingItem`: a finished item counts only while it is still the stack in
+    /// the hand it is used from; otherwise the use is released with no effect. Without this a
+    /// player could start eating, switch slots, and get the item's food and effects while the
+    /// newly held stack was consumed instead (#34).
+    pub(crate) fn is_in_used_hand(&self, caller: &dyn EntityBase, item: &ItemStack) -> bool {
+        self.get_stack_in_hand(caller, self.used_hand())
+            .are_items_and_components_equal(item)
+    }
+
     pub fn clear_active_hand(&self) {
         *self
             .item_in_use

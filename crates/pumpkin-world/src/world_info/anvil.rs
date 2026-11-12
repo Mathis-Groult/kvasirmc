@@ -360,7 +360,22 @@ fn existing_level_dat_root(path: &Path) -> Result<NbtCompound, WorldInfoError> {
 
 impl WorldInfoReader for AnvilLevelInfo {
     fn read_world_info(&self, level_folder: &Path) -> Result<LevelData, WorldInfoError> {
-        let path = level_folder.join(LEVEL_DAT_FILE_NAME);
+        self.read_world_info_from(level_folder, LEVEL_DAT_FILE_NAME)
+    }
+}
+
+impl AnvilLevelInfo {
+    /// Reads the level data from `file_name` in `level_folder`.
+    ///
+    /// The file is `level.dat`, or its backup [`LEVEL_DAT_BACKUP_FILE_NAME`] when vanilla falls
+    /// back to it; the other files of the folder (world generation settings, game rules) are read
+    /// as for `level.dat`.
+    pub fn read_world_info_from(
+        &self,
+        level_folder: &Path,
+        file_name: &str,
+    ) -> Result<LevelData, WorldInfoError> {
+        let path = level_folder.join(file_name);
 
         let file = match File::open(path) {
             Ok(file) => file,

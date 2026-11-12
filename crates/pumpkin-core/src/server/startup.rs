@@ -4,6 +4,9 @@
 #[allow(clippy::wildcard_imports)]
 use super::*;
 
+#[cfg(test)]
+mod level_fallback_tests;
+
 /// The rayon pools the tick runs on.
 pub(super) struct TickPools {
     pub(super) simulation: Arc<rayon::ThreadPool>,
@@ -11,13 +14,78 @@ pub(super) struct TickPools {
     pub(super) compute: Arc<rayon::ThreadPool>,
 }
 
-/// The world's `level.dat`, backed up to `level.dat_old` first; a missing one is created from
-/// the configured seed. Unsupported or unreadable data stops the start.
+/// Vanilla 26.3 `LevelStorageAccess.getUnfixedDataTagWithFallback` and
+/// `restoreLevelDataFromOld`: when `level.dat` is missing or cannot be read and `level.dat_old`
+/// exists, the backup is read; if that works, an unreadable `level.dat` is moved aside as
+/// `level.dat_corrupted_<time>` and the backup takes its place. Without a backup, or when the
+/// data was read but is unsupported, the first answer stands.
+fn read_level_info_with_fallback(
+    world_path: &std::path::Path,
+) -> Result<LevelData, WorldInfoError> {
+    let first = AnvilLevelInfo.read_world_info(world_path);
+    let backup_path = world_path.join(LEVEL_DAT_BACKUP_FILE_NAME);
+    let Err(
+        error @ (WorldInfoError::InfoNotFound
+        | WorldInfoError::DeserializationError(_)
+        | WorldInfoError::IoError(_)),
+    ) = first
+    else {
+        return first;
+    };
+    if !backup_path.exists() {
+        return Err(error);
+    }
+    warn!(
+        "Failed to load world data from {}: {error}",
+        world_path.join(LEVEL_DAT_FILE_NAME).display()
+    );
+    info!("Attempting to use fallback {}", backup_path.display());
+    let level_info = AnvilLevelInfo
+        .read_world_info_from(world_path, LEVEL_DAT_BACKUP_FILE_NAME)
+        .inspect_err(|error| {
+            error!(
+                "The fallback {} cannot be read either: {error}",
+                backup_path.display()
+            );
+        })?;
+    restore_level_data_from_old(world_path)?;
+    Ok(level_info)
+}
+
+/// Moves an unreadable `level.dat` aside (vanilla names it after the local time,
+/// `yyyy-MM-dd_HH-mm-ss`) and puts `level.dat_old` in its place.
+fn restore_level_data_from_old(world_path: &std::path::Path) -> std::io::Result<()> {
+    let dat_path = world_path.join(LEVEL_DAT_FILE_NAME);
+    if dat_path.exists() {
+        let now =
+            time::OffsetDateTime::now_local().unwrap_or_else(|_| time::OffsetDateTime::now_utc());
+        let aside = world_path.join(format!(
+            "{LEVEL_DAT_FILE_NAME}_corrupted_{:04}-{:02}-{:02}_{:02}-{:02}-{:02}",
+            now.year(),
+            u8::from(now.month()),
+            now.day(),
+            now.hour(),
+            now.minute(),
+            now.second()
+        ));
+        warn!(
+            "Moving the unreadable {} aside to {}",
+            dat_path.display(),
+            aside.display()
+        );
+        fs::rename(&dat_path, aside)?;
+    }
+    fs::rename(world_path.join(LEVEL_DAT_BACKUP_FILE_NAME), &dat_path)
+}
+
+/// The world's `level.dat` (or its backup, see [`read_level_info_with_fallback`]), backed up to
+/// `level.dat_old` first; a world without either is created from the configured seed.
+/// Unsupported or unreadable data stops the start.
 pub(super) fn load_level_info(
     world_path: &std::path::Path,
     basic_config: &BasicConfiguration,
 ) -> Result<LevelData, WorldInfoError> {
-    let level_info = match AnvilLevelInfo.read_world_info(world_path) {
+    let level_info = match read_level_info_with_fallback(world_path) {
         Ok(level_info) => {
             let dat_path = world_path.join(LEVEL_DAT_FILE_NAME);
             if dat_path.exists() {

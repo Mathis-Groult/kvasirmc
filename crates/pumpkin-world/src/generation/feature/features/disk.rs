@@ -1,3 +1,4 @@
+use crate::generation::feature::configured_features::FeatureArgs;
 use pumpkin_util::math::{int_provider::IntProvider, position::BlockPos};
 use pumpkin_util::random::RandomGenerator;
 
@@ -15,17 +16,17 @@ pub struct DiskFeature {
 }
 
 impl DiskFeature {
-    #[expect(clippy::too_many_arguments)]
     pub fn generate<T: GenerationCache>(
         &self,
         chunk: &mut T,
-        block_registry: &dyn WorldPortalExt,
-        _min_y: i8,
-        _height: u16,
-        _feature: pumpkin_data::placed_feature::PlacedFeature,
+        args: FeatureArgs<'_>,
         random: &mut RandomGenerator,
-        pos: BlockPos,
     ) -> bool {
+        let FeatureArgs {
+            block_registry,
+            pos,
+            ..
+        } = args;
         let mut placed_any = false;
         let origin_y = pos.0.y;
         let top = origin_y + self.half_height;

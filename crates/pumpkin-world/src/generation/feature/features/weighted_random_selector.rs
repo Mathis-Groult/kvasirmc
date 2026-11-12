@@ -1,10 +1,8 @@
-use pumpkin_util::{
-    math::position::BlockPos,
-    random::{RandomGenerator, RandomImpl},
-};
+use pumpkin_util::random::{RandomGenerator, RandomImpl};
 
+use crate::generation::feature::configured_features::FeatureArgs;
 use crate::generation::proto_chunk::GenerationCache;
-use crate::{generation::feature::placed_features::PlacedFeatureWrapper, world::WorldPortalExt};
+use crate::generation::feature::placed_features::PlacedFeatureWrapper;
 
 pub struct WeightedRandomFeature {
     pub features: Vec<WeightedRandomFeatureEntry>,
@@ -17,17 +15,19 @@ pub struct WeightedRandomFeatureEntry {
 }
 
 impl WeightedRandomFeature {
-    #[expect(clippy::too_many_arguments)]
     pub fn generate<T: GenerationCache>(
         &self,
         chunk: &mut T,
-        block_registry: &dyn WorldPortalExt,
-        min_y: i8,
-        height: u16,
-        feature_name: pumpkin_data::placed_feature::PlacedFeature,
+        args: FeatureArgs<'_>,
         random: &mut RandomGenerator,
-        pos: BlockPos,
     ) -> bool {
+        let FeatureArgs {
+            block_registry,
+            min_y,
+            height,
+            feature_name,
+            pos,
+        } = args;
         if self.total_weight <= 0 {
             return false;
         }

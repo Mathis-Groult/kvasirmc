@@ -1,3 +1,4 @@
+use crate::generation::feature::configured_features::FeatureArgs;
 use std::collections::{HashMap, HashSet};
 
 use pumpkin_data::{Block, BlockDirection, BlockId, BlockState, BlockStateId};
@@ -8,7 +9,7 @@ use pumpkin_util::{
 
 use crate::generation::feature::features::spring_feature::BlockWrapper;
 use crate::{
-    block::BlockStateCodec, generation::proto_chunk::GenerationCache, world::WorldPortalExt,
+    block::BlockStateCodec, generation::proto_chunk::GenerationCache,
 };
 use pumpkin_util::random::RandomImpl;
 use std::cmp::Ordering;
@@ -88,18 +89,15 @@ impl GeodeFeature {
             .is_some_and(|props| props.to_props().iter().any(|p| p.key() == property))
     }
 
-    #[allow(clippy::too_many_arguments)]
     #[allow(clippy::too_many_lines)]
     pub fn generate<T: GenerationCache>(
         &self,
         chunk: &mut T,
-        block_registry: &dyn WorldPortalExt,
-        _min_y: i8,
-        _height: u16,
-        _feature_name: pumpkin_data::placed_feature::PlacedFeature,
+        args: FeatureArgs<'_>,
         random: &mut RandomGenerator,
-        pos: BlockPos,
     ) -> bool {
+        let block_registry = args.block_registry;
+        let pos = args.pos;
         let origin = pos;
         let num_points = self.distribution_points.get(random);
         let noise = NormalNoise::create(random, -4, &[1.0]);

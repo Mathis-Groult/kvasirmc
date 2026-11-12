@@ -1,10 +1,11 @@
+use crate::generation::feature::configured_features::FeatureArgs;
 use pumpkin_data::{Block, BlockId, block_properties::is_air};
 use pumpkin_util::{
     math::{int_provider::IntProvider, position::BlockPos},
     random::{RandomGenerator, RandomImpl},
 };
 
-use crate::{generation::proto_chunk::GenerationCache, world::WorldPortalExt};
+use crate::generation::proto_chunk::GenerationCache;
 
 const CLUSTERED_REACH: i32 = 5;
 const UNCLUSTERED_REACH: i32 = 8;
@@ -17,17 +18,13 @@ pub struct BasaltColumnsFeature {
 }
 
 impl BasaltColumnsFeature {
-    #[expect(clippy::too_many_arguments)]
     pub fn generate<T: GenerationCache>(
         &self,
         chunk: &mut T,
-        _block_registry: &dyn WorldPortalExt,
-        _min_y: i8,
-        _height_limit: u16,
-        _feature: pumpkin_data::placed_feature::PlacedFeature,
+        args: FeatureArgs<'_>,
         random: &mut RandomGenerator,
-        pos: BlockPos,
     ) -> bool {
+        let FeatureArgs { pos, .. } = args;
         if !can_place_at(chunk, pos) {
             return false;
         }

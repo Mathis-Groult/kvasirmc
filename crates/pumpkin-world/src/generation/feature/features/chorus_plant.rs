@@ -10,6 +10,7 @@ use pumpkin_util::{
     random::{RandomGenerator, RandomImpl},
 };
 
+use crate::generation::feature::configured_features::FeatureArgs;
 use crate::generation::proto_chunk::GenerationCache;
 
 pub struct ChorusPlantFeature;
@@ -17,12 +18,10 @@ pub struct ChorusPlantFeature;
 impl ChorusPlantFeature {
     pub fn generate<T: GenerationCache>(
         chunk: &mut T,
-        _min_y: i8,
-        _height: u16,
-        _feature: pumpkin_data::placed_feature::PlacedFeature,
+        args: FeatureArgs<'_>,
         random: &mut RandomGenerator,
-        pos: BlockPos,
     ) -> bool {
+        let FeatureArgs { pos, .. } = args;
         let origin = pos.0;
 
         // Must be an empty block placed on a supports_chorus_plant block (end_stone)

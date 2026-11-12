@@ -8,6 +8,7 @@ use pumpkin_util::{
     random::{RandomGenerator, RandomImpl},
 };
 
+use crate::generation::feature::configured_features::FeatureArgs;
 use crate::generation::proto_chunk::GenerationCache;
 
 pub struct SeagrassFeature {
@@ -18,12 +19,10 @@ impl SeagrassFeature {
     pub fn generate<T: GenerationCache>(
         &self,
         chunk: &mut T,
-        _min_y: i8,
-        _height: u16,
-        _feature: pumpkin_data::placed_feature::PlacedFeature,
+        args: FeatureArgs<'_>,
         random: &mut RandomGenerator,
-        pos: BlockPos,
     ) -> bool {
+        let FeatureArgs { pos, .. } = args;
         let mut placed_any = false;
         let x = random.next_bounded_i32(8) - random.next_bounded_i32(8);
         let z = random.next_bounded_i32(8) - random.next_bounded_i32(8);

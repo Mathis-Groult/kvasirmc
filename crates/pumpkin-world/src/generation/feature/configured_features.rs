@@ -81,6 +81,18 @@ use super::features::{
 use crate::generation::proto_chunk::GenerationCache;
 use crate::world::WorldPortalExt;
 
+/// What `ConfiguredFeature::generate` hands to every feature besides the chunk and the random
+/// source.
+#[derive(Clone, Copy)]
+pub struct FeatureArgs<'a> {
+    pub block_registry: &'a dyn WorldPortalExt,
+    pub min_y: i8,
+    pub height: u16,
+    /// The placed feature being generated.
+    pub feature_name: pumpkin_data::placed_feature::PlacedFeature,
+    pub pos: BlockPos,
+}
+
 pub static CONFIGURED_FEATURES: LazyLock<
     HashMap<pumpkin_data::configured_feature::ConfiguredFeature, ConfiguredFeature>,
 > = LazyLock::new(build_configured_features);
@@ -175,7 +187,6 @@ pub enum ConfiguredFeature {
 
 impl ConfiguredFeature {
     #[expect(clippy::too_many_arguments)]
-    #[expect(clippy::too_many_lines)]
     pub fn generate<T: GenerationCache>(
         &self,
         chunk: &mut T,
@@ -186,353 +197,84 @@ impl ConfiguredFeature {
         random: &mut RandomGenerator,
         pos: BlockPos,
     ) -> bool {
+        let args = FeatureArgs {
+            block_registry,
+            min_y,
+            height,
+            feature_name,
+            pos,
+        };
         match self {
-            Self::NetherrackReplaceBlobs(feature) => feature.generate(
-                chunk,
-                block_registry,
-                min_y,
-                height,
-                feature_name,
-                random,
-                pos,
-            ),
-            Self::NetherForestVegetation(feature) => feature.generate(
-                chunk,
-                block_registry,
-                min_y,
-                height,
-                feature_name,
-                random,
-                pos,
-            ),
-            Self::VegetationPatch(feature) => feature.generate(
-                chunk,
-                block_registry,
-                min_y,
-                height,
-                feature_name,
-                random,
-                pos,
-            ),
-            Self::WaterloggedVegetationPatch(feature) => feature.generate(
-                chunk,
-                block_registry,
-                min_y,
-                height,
-                feature_name,
-                random,
-                pos,
-            ),
+            Self::NetherrackReplaceBlobs(feature) => feature.generate(chunk, args, random),
+            Self::NetherForestVegetation(feature) => feature.generate(chunk, args, random),
+            Self::VegetationPatch(feature) => feature.generate(chunk, args, random),
+            Self::WaterloggedVegetationPatch(feature) => feature.generate(chunk, args, random),
             Self::PointedDripstone(feature) => feature.generate(chunk, random, pos),
-            Self::CoralMushroom(_feature) => CoralMushroomFeature::generate(
-                chunk,
-                block_registry,
-                min_y,
-                height,
-                feature_name,
-                random,
-                pos,
-            ),
-            Self::CoralTree(_feature) => CoralTreeFeature::generate(
-                chunk,
-                block_registry,
-                min_y,
-                height,
-                feature_name,
-                random,
-                pos,
-            ),
+            Self::CoralMushroom(_feature) => CoralMushroomFeature::generate(chunk, args, random),
+            Self::CoralTree(_feature) => CoralTreeFeature::generate(chunk, args, random),
             Self::CoralClaw(_feature) => {
                 CoralClawFeature::generate(chunk, block_registry, random, pos)
             }
-            Self::EndPlatform(_feature) => EndPlatformFeature::generate(
-                chunk,
-                block_registry,
-                min_y,
-                height,
-                feature_name,
-                random,
-                pos,
-            ),
+            Self::EndPlatform(_feature) => EndPlatformFeature::generate(chunk, args, random),
             Self::EndPodium(feature) => feature.generate(chunk, pos),
-            Self::EndSpike(feature) => feature.generate(
-                chunk,
-                block_registry,
-                min_y,
-                height,
-                feature_name,
-                random,
-                pos,
-            ),
+            Self::EndSpike(feature) => feature.generate(chunk, args, random),
             Self::SpringFeature(feature) => feature.generate(block_registry, chunk, random, pos),
             Self::SimpleBlock(feature) => feature.generate(block_registry, chunk, random, pos),
             Self::RandomPatch(feature)
             | Self::Flower(feature)
-            | Self::NoBonemealFlower(feature) => feature.generate(
-                chunk,
-                block_registry,
-                min_y,
-                height,
-                feature_name,
-                random,
-                pos,
-            ),
-            Self::DesertWell(_feature) => {
-                DesertWellFeature::generate(chunk, min_y, height, feature_name, random, pos)
-            }
-            Self::Fossil(feature) => feature.generate(chunk, min_y, height, random, pos),
-            Self::Bamboo(feature) => feature.generate(
-                chunk,
-                block_registry,
-                min_y,
-                height,
-                feature_name,
-                random,
-                pos,
-            ),
-            Self::BlockColumn(feature) => feature.generate(
-                chunk,
-                block_registry,
-                min_y,
-                height,
-                feature_name,
-                random,
-                pos,
-            ),
-            Self::RandomBooleanSelector(feature) => feature.generate(
-                chunk,
-                block_registry,
-                min_y,
-                height,
-                feature_name,
-                random,
-                pos,
-            ),
+            | Self::NoBonemealFlower(feature) => feature.generate(chunk, args, random),
+            Self::DesertWell(_feature) => DesertWellFeature::generate(chunk, args, random),
+            Self::Fossil(feature) => feature.generate(chunk, args, random),
+            Self::Bamboo(feature) => feature.generate(chunk, args, random),
+            Self::BlockColumn(feature) => feature.generate(chunk, args, random),
+            Self::RandomBooleanSelector(feature) => feature.generate(chunk, args, random),
             Self::Tree(feature) => feature.generate(block_registry, chunk, random, pos),
-            Self::RandomSelector(feature) => feature.generate(
-                chunk,
-                block_registry,
-                min_y,
-                height,
-                feature_name,
-                random,
-                pos,
-            ),
-            Self::SimpleRandomSelector(feature) => feature.generate(
-                chunk,
-                block_registry,
-                min_y,
-                height,
-                feature_name,
-                random,
-                pos,
-            ),
-            Self::WeightedRandomSelector(feature) => feature.generate(
-                chunk,
-                block_registry,
-                min_y,
-                height,
-                feature_name,
-                random,
-                pos,
-            ),
-            Self::Vines(_feature) => VinesFeature::generate(
-                chunk,
-                block_registry,
-                min_y,
-                height,
-                feature_name,
-                random,
-                pos,
-            ),
-            Self::Seagrass(feature) => {
-                feature.generate(chunk, min_y, height, feature_name, random, pos)
-            }
-            Self::TwistingVines(feature) => {
-                feature.generate(chunk, min_y, height, feature_name, random, pos)
-            }
-            Self::UnderwaterMagma(feature) => {
-                feature.generate(chunk, min_y, height, feature_name, random, pos)
-            }
-            Self::SeaPickle(feature) => {
-                feature.generate(chunk, min_y, height, feature_name, random, pos)
-            }
-            Self::Geode(feature) => feature.generate(
-                chunk,
-                block_registry,
-                min_y,
-                height,
-                feature_name,
-                random,
-                pos,
-            ),
-            Self::Kelp(_feature) => {
-                KelpFeature::generate(chunk, min_y, height, feature_name, random, pos)
-            }
-            Self::Ore(feature) => feature.generate(
-                chunk,
-                block_registry,
-                min_y,
-                height,
-                feature_name,
-                random,
-                pos,
-            ),
-            Self::ScatteredOre(feature) => feature.generate(
-                chunk,
-                block_registry,
-                min_y,
-                height,
-                feature_name,
-                random,
-                pos,
-            ),
-            Self::MonsterRoom(_feature) => {
-                DungeonFeature::generate(chunk, min_y, height, feature_name, random, pos)
-            }
+            Self::RandomSelector(feature) => feature.generate(chunk, args, random),
+            Self::SimpleRandomSelector(feature) => feature.generate(chunk, args, random),
+            Self::WeightedRandomSelector(feature) => feature.generate(chunk, args, random),
+            Self::Vines(_feature) => VinesFeature::generate(chunk, args, random),
+            Self::Seagrass(feature) => feature.generate(chunk, args, random),
+            Self::TwistingVines(feature) => feature.generate(chunk, args, random),
+            Self::UnderwaterMagma(feature) => feature.generate(chunk, args, random),
+            Self::SeaPickle(feature) => feature.generate(chunk, args, random),
+            Self::Geode(feature) => feature.generate(chunk, args, random),
+            Self::Kelp(_feature) => KelpFeature::generate(chunk, args, random),
+            Self::Ore(feature) => feature.generate(chunk, args, random),
+            Self::ScatteredOre(feature) => feature.generate(chunk, args, random),
+            Self::MonsterRoom(_feature) => DungeonFeature::generate(chunk, args, random),
             Self::BlueIce(_feature) => BlueIceFeature::generate(chunk, random, pos),
-            Self::GlowstoneBlob(_feature) => {
-                GlowstoneBlobFeature::generate(chunk, min_y, height, feature_name, random, pos)
-            }
-            Self::Disk(feature) => feature.generate(
-                chunk,
-                block_registry,
-                min_y,
-                height,
-                feature_name,
-                random,
-                pos,
-            ),
+            Self::GlowstoneBlob(_feature) => GlowstoneBlobFeature::generate(chunk, args, random),
+            Self::Disk(feature) => feature.generate(chunk, args, random),
             Self::Lake(feature) => feature.generate(block_registry, chunk, random, pos),
-            Self::BasaltColumns(feature) => feature.generate(
-                chunk,
-                block_registry,
-                min_y,
-                height,
-                feature_name,
-                random,
-                pos,
-            ),
+            Self::BasaltColumns(feature) => feature.generate(chunk, args, random),
             Self::BasaltPillar(_feature) => BasaltPillarFeature::generate(chunk, random, pos),
             Self::ForestRock(feature) => feature.generate(chunk, random, pos),
-            Self::FreezeTopLayer(_feature) => {
-                FreezeTopLayerFeature::generate(chunk, min_y, height, feature_name, random, pos)
-            }
-            Self::IceSpike(_feature) => {
-                IceSpikeFeature::generate(chunk, min_y, height, feature_name, random, pos)
-            }
-            Self::Iceberg(feature) => {
-                feature.generate(chunk, min_y, height, feature_name, random, pos)
-            }
-            Self::ChorusPlant(_feature) => {
-                ChorusPlantFeature::generate(chunk, min_y, height, feature_name, random, pos)
-            }
-            Self::EndIsland(_feature) => {
-                EndIslandFeature::generate(chunk, min_y, height, feature_name, random, pos)
-            }
+            Self::FreezeTopLayer(_feature) => FreezeTopLayerFeature::generate(chunk, args, random),
+            Self::IceSpike(_feature) => IceSpikeFeature::generate(chunk, args, random),
+            Self::Iceberg(feature) => feature.generate(chunk, args, random),
+            Self::ChorusPlant(_feature) => ChorusPlantFeature::generate(chunk, args, random),
+            Self::EndIsland(_feature) => EndIslandFeature::generate(chunk, args, random),
             Self::SculkPatch(feature) => feature.generate(block_registry, chunk, random, pos),
-            Self::RootSystem(feature) => feature.generate(
-                chunk,
-                block_registry,
-                min_y,
-                height,
-                feature_name,
-                random,
-                pos,
-            ),
-            Self::BonusChest(_feature) => {
-                BonusChestFeature::generate(chunk, min_y, height, feature_name, random, pos)
-            }
-            Self::DeltaFeature(feature) => {
-                feature.generate(chunk, min_y, height, feature_name, random, pos)
-            }
-            Self::BlockPile(feature) => feature.generate(
-                chunk,
-                block_registry,
-                min_y,
-                height,
-                feature_name,
-                random,
-                pos,
-            ),
+            Self::RootSystem(feature) => feature.generate(chunk, args, random),
+            Self::BonusChest(_feature) => BonusChestFeature::generate(chunk, args, random),
+            Self::DeltaFeature(feature) => feature.generate(chunk, args, random),
+            Self::BlockPile(feature) => feature.generate(chunk, args, random),
             Self::DripstoneCluster(feature) => feature.generate(chunk, pos),
             Self::LargeDripstone(feature) => feature.generate(chunk, random, pos),
             Self::EndGateway(feature) => feature.generate(chunk, pos),
-            Self::FillLayer(feature) => {
-                feature.generate(chunk, min_y, height, feature_name, random, pos)
-            }
-            Self::FallenTree(feature) => feature.generate(
-                chunk,
-                block_registry,
-                min_y,
-                height,
-                feature_name,
-                random,
-                pos,
-            ),
-            Self::HugeBrownMushroom(feature) => {
-                feature.generate(chunk, min_y, height, feature_name, random, pos)
-            }
-            Self::HugeFungus(feature) => feature.generate(
-                chunk,
-                block_registry,
-                min_y,
-                height,
-                feature_name,
-                random,
-                pos,
-            ),
-            Self::HugeRedMushroom(feature) => {
-                feature.generate(chunk, min_y, height, feature_name, random, pos)
-            }
-            Self::MultifaceGrowth(feature) => {
-                feature.generate(chunk, min_y, height, feature_name, random, pos)
-            }
-            Self::ReplaceSingleBlock(feature) => {
-                feature.generate(chunk, min_y, height, feature_name, random, pos)
-            }
-            Self::VoidStartPlatform(feature) => {
-                feature.generate(chunk, min_y, height, feature_name, random, pos)
-            }
-            Self::WeepingVines(feature) => {
-                feature.generate(chunk, min_y, height, feature_name, random, pos)
-            }
-            Self::Overlay(feature) => feature.generate(
-                chunk,
-                block_registry,
-                min_y,
-                height,
-                feature_name,
-                random,
-                pos,
-            ),
-            Self::ProjectedRandomPatchySquare(feature) => feature.generate(
-                chunk,
-                block_registry,
-                min_y,
-                height,
-                feature_name,
-                random,
-                pos,
-            ),
-            Self::RandomNeighborSpread(feature) => feature.generate(
-                chunk,
-                block_registry,
-                min_y,
-                height,
-                feature_name,
-                random,
-                pos,
-            ),
-            Self::SingleBlockPillar(feature) => feature.generate(
-                chunk,
-                block_registry,
-                min_y,
-                height,
-                feature_name,
-                random,
-                pos,
-            ),
+            Self::FillLayer(feature) => feature.generate(chunk, args, random),
+            Self::FallenTree(feature) => feature.generate(chunk, args, random),
+            Self::HugeBrownMushroom(feature) => feature.generate(chunk, args, random),
+            Self::HugeFungus(feature) => feature.generate(chunk, args, random),
+            Self::HugeRedMushroom(feature) => feature.generate(chunk, args, random),
+            Self::MultifaceGrowth(feature) => feature.generate(chunk, args, random),
+            Self::ReplaceSingleBlock(feature) => feature.generate(chunk, args, random),
+            Self::VoidStartPlatform(feature) => feature.generate(chunk, args, random),
+            Self::WeepingVines(feature) => feature.generate(chunk, args, random),
+            Self::Overlay(feature) => feature.generate(chunk, args, random),
+            Self::ProjectedRandomPatchySquare(feature) => feature.generate(chunk, args, random),
+            Self::RandomNeighborSpread(feature) => feature.generate(chunk, args, random),
+            Self::SingleBlockPillar(feature) => feature.generate(chunk, args, random),
             Self::SteppedColumnCluster(feature) => {
                 feature.generate(chunk, block_registry, random, pos)
             }

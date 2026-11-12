@@ -1,15 +1,13 @@
+use crate::generation::feature::configured_features::FeatureArgs;
 use pumpkin_util::{
-    math::{int_provider::IntProvider, position::BlockPos},
+    math::int_provider::IntProvider,
     random::{RandomGenerator, RandomImpl},
 };
 
-use crate::{
-    generation::{
+use crate::generation::{
         block_predicate::BlockPredicate, block_state_provider::BlockStateProvider,
         proto_chunk::GenerationCache,
-    },
-    world::WorldPortalExt,
-};
+    };
 
 pub struct ProjectedRandomPatchySquareFeature {
     pub block: BlockStateProvider,
@@ -19,17 +17,17 @@ pub struct ProjectedRandomPatchySquareFeature {
 }
 
 impl ProjectedRandomPatchySquareFeature {
-    #[expect(clippy::too_many_arguments)]
     pub fn generate<T: GenerationCache>(
         &self,
         chunk: &mut T,
-        block_registry: &dyn WorldPortalExt,
-        _min_y: i8,
-        _height: u16,
-        _feature: pumpkin_data::placed_feature::PlacedFeature,
+        args: FeatureArgs<'_>,
         random: &mut RandomGenerator,
-        pos: BlockPos,
     ) -> bool {
+        let FeatureArgs {
+            block_registry,
+            pos,
+            ..
+        } = args;
         let size = self.size.get(random);
         let bound = size * size + 1;
 

@@ -1,3 +1,4 @@
+use crate::generation::feature::configured_features::FeatureArgs;
 use pumpkin_data::{Block, BlockDirection, BlockState, block_properties::GlowLichenLikeProperties};
 use pumpkin_util::{
     math::position::BlockPos,
@@ -21,12 +22,10 @@ impl MultifaceGrowthFeature {
     pub fn generate<T: GenerationCache>(
         &self,
         chunk: &mut T,
-        _min_y: i8,
-        _height: u16,
-        _feature: pumpkin_data::placed_feature::PlacedFeature,
+        args: FeatureArgs<'_>,
         random: &mut RandomGenerator,
-        pos: BlockPos,
     ) -> bool {
+        let FeatureArgs { pos, .. } = args;
         if !Self::is_air_or_water(chunk, pos) {
             return false;
         }

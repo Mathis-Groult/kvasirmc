@@ -1,3 +1,4 @@
+use crate::generation::feature::configured_features::FeatureArgs;
 use pumpkin_data::{BlockDirection, BlockId, BlockState};
 use pumpkin_util::{
     math::{int_provider::IntProvider, position::BlockPos},
@@ -17,12 +18,10 @@ impl DeltaFeatureFeature {
     pub fn generate<T: GenerationCache>(
         &self,
         chunk: &mut T,
-        _min_y: i8,
-        _height: u16,
-        _feature: pumpkin_data::placed_feature::PlacedFeature,
+        args: FeatureArgs<'_>,
         random: &mut RandomGenerator,
-        pos: BlockPos,
     ) -> bool {
+        let FeatureArgs { pos, .. } = args;
         let mut any_placed = false;
         let spawn_rim = random.next_f64() < 0.9;
         let rim_x = if spawn_rim {

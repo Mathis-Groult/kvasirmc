@@ -1,3 +1,4 @@
+use crate::generation::feature::configured_features::FeatureArgs;
 use pumpkin_data::{Block, BlockDirection};
 use pumpkin_util::{
     math::position::BlockPos,
@@ -13,17 +14,18 @@ pub struct BlockPileFeature {
 }
 
 impl BlockPileFeature {
-    #[expect(clippy::too_many_arguments)]
     pub fn generate<T: GenerationCache>(
         &self,
         chunk: &mut T,
-        block_registry: &dyn WorldPortalExt,
-        min_y: i8,
-        _height: u16,
-        _feature: pumpkin_data::placed_feature::PlacedFeature,
+        args: FeatureArgs<'_>,
         random: &mut RandomGenerator,
-        pos: BlockPos,
     ) -> bool {
+        let FeatureArgs {
+            block_registry,
+            min_y,
+            pos,
+            ..
+        } = args;
         if pos.0.y < min_y as i32 + 5 {
             return false;
         }

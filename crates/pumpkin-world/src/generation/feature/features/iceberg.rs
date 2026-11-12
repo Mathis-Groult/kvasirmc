@@ -1,8 +1,9 @@
+use crate::generation::feature::configured_features::FeatureArgs;
 use std::f64::consts;
 
 use pumpkin_data::{Block, BlockId, BlockState, block_properties::is_air};
 use pumpkin_util::{
-    math::{position::BlockPos, vector3::Vector3},
+    math::vector3::Vector3,
     random::{RandomGenerator, RandomImpl},
 };
 
@@ -17,12 +18,10 @@ impl IcebergFeature {
     pub fn generate<T: GenerationCache>(
         &self,
         chunk: &mut T,
-        _min_y: i8,
-        _height: u16,
-        _feature: pumpkin_data::placed_feature::PlacedFeature,
+        args: FeatureArgs<'_>,
         random: &mut RandomGenerator,
-        pos: BlockPos,
     ) -> bool {
+        let FeatureArgs { pos, .. } = args;
         let origin = Vector3::new(pos.0.x, chunk.get_sea_level(), pos.0.z);
         let main_block = self.main_block.get_state();
 

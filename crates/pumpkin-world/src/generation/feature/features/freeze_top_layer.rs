@@ -1,3 +1,4 @@
+use crate::generation::feature::configured_features::FeatureArgs;
 use crate::generation::proto_chunk::GenerationCache;
 use crate::lighting::engine::{BlockLightProvider, LightProvider};
 use pumpkin_data::block_properties::{
@@ -13,12 +14,10 @@ pub struct FreezeTopLayerFeature;
 impl FreezeTopLayerFeature {
     pub fn generate<T: GenerationCache>(
         chunk: &mut T,
-        _min_y: i8,
-        _height: u16,
-        _feature_name: pumpkin_data::placed_feature::PlacedFeature,
+        args: FeatureArgs<'_>,
         _random: &mut RandomGenerator,
-        pos: BlockPos,
     ) -> bool {
+        let FeatureArgs { pos, .. } = args;
         let origin_x = pos.0.x;
         let origin_z = pos.0.z;
 
@@ -168,14 +167,20 @@ mod tests {
     }
 
     fn run_freeze(chunk: &mut ProtoChunk) {
+        use crate::generation::feature::configured_features::FeatureArgs;
+        use crate::generation::proto_chunk_test::stage_parity::TestBlockRegistry;
+
         let mut random = RandomGenerator::Legacy(LegacyRand::from_seed(42));
         FreezeTopLayerFeature::generate(
             chunk,
-            -64,
-            384,
-            PlacedFeature::FreezeTopLayer,
+            FeatureArgs {
+                block_registry: &TestBlockRegistry,
+                min_y: -64,
+                height: 384,
+                feature_name: PlacedFeature::FreezeTopLayer,
+                pos: BlockPos::new(0, 0, 0),
+            },
             &mut random,
-            BlockPos::new(0, 0, 0),
         );
     }
 

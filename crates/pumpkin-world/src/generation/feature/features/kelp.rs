@@ -1,3 +1,4 @@
+use crate::generation::feature::configured_features::FeatureArgs;
 use pumpkin_data::{Block, BlockDirection, BlockState, block_properties::KelpLikeProperties, tag};
 use pumpkin_util::{
     math::position::BlockPos,
@@ -9,15 +10,12 @@ use crate::generation::proto_chunk::GenerationCache;
 pub struct KelpFeature;
 
 impl KelpFeature {
-    #[allow(clippy::too_many_arguments)]
     pub fn generate<T: GenerationCache>(
         chunk: &mut T,
-        _min_y: i8,
-        _height: u16,
-        _feature: pumpkin_data::placed_feature::PlacedFeature,
+        args: FeatureArgs<'_>,
         random: &mut RandomGenerator,
-        pos: BlockPos,
     ) -> bool {
+        let FeatureArgs { pos, .. } = args;
         let mut placed = 0;
 
         let y = chunk.ocean_floor_height_exclusive(pos.0.x, pos.0.z);

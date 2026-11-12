@@ -1,10 +1,7 @@
-use pumpkin_util::{
-    math::position::BlockPos,
-    random::{RandomGenerator, RandomImpl},
-};
+use pumpkin_util::random::{RandomGenerator, RandomImpl};
 
+use crate::generation::feature::configured_features::FeatureArgs;
 use crate::generation::proto_chunk::GenerationCache;
-use crate::world::WorldPortalExt;
 
 use super::ore::{OreFeature, OreTarget};
 
@@ -15,17 +12,13 @@ pub struct ScatteredOreFeature {
 }
 
 impl ScatteredOreFeature {
-    #[expect(clippy::too_many_arguments)]
     pub fn generate<T: GenerationCache>(
         &self,
         chunk: &mut T,
-        _block_registry: &dyn WorldPortalExt,
-        _min_y: i8,
-        _height: u16,
-        _feature: pumpkin_data::placed_feature::PlacedFeature,
+        args: FeatureArgs<'_>,
         random: &mut RandomGenerator,
-        pos: BlockPos,
     ) -> bool {
+        let FeatureArgs { pos, .. } = args;
         let count = random.next_bounded_i32(self.size + 1);
         for i in 0..count {
             let max_dist = i.min(7);

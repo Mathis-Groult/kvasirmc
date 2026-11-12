@@ -1,29 +1,29 @@
-use pumpkin_util::{math::position::BlockPos, random::RandomGenerator};
+use crate::generation::feature::configured_features::FeatureArgs;
+use pumpkin_util::random::RandomGenerator;
 
-use crate::{
-    generation::{
+use crate::generation::{
         feature::placed_features::{PLACED_FEATURES, PlacedFeatureWrapper},
         proto_chunk::GenerationCache,
-    },
-    world::WorldPortalExt,
-};
+    };
 
 pub struct OverlayFeature {
     pub features: Vec<PlacedFeatureWrapper>,
 }
 
 impl OverlayFeature {
-    #[expect(clippy::too_many_arguments)]
     pub fn generate<T: GenerationCache>(
         &self,
         chunk: &mut T,
-        block_registry: &dyn WorldPortalExt,
-        min_y: i8,
-        height: u16,
-        feature_name: pumpkin_data::placed_feature::PlacedFeature,
+        args: FeatureArgs<'_>,
         random: &mut RandomGenerator,
-        origin: BlockPos,
     ) -> bool {
+        let FeatureArgs {
+            block_registry,
+            min_y,
+            height,
+            feature_name,
+            pos: origin,
+        } = args;
         let mut placed_any = false;
         for feature_wrapper in &self.features {
             let (target_feature_name, placed_feature) = match feature_wrapper {

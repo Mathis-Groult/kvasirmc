@@ -1,4 +1,5 @@
 use super::JavaBlockPosHashSet;
+use crate::generation::feature::configured_features::FeatureArgs;
 
 use pumpkin_util::{
     math::position::BlockPos,
@@ -16,17 +17,19 @@ pub struct WaterloggedVegetationPatchFeature {
 }
 
 impl WaterloggedVegetationPatchFeature {
-    #[allow(clippy::too_many_arguments)]
     pub fn generate<T: GenerationCache>(
         &self,
         chunk: &mut T,
-        block_registry: &dyn WorldPortalExt,
-        min_y: i8,
-        height: u16,
-        feature_name: pumpkin_data::placed_feature::PlacedFeature,
+        args: FeatureArgs<'_>,
         random: &mut RandomGenerator,
-        pos: BlockPos,
     ) -> bool {
+        let FeatureArgs {
+            block_registry,
+            min_y,
+            height,
+            feature_name,
+            pos,
+        } = args;
         let x_radius = self.base.xz_radius.get(random) + 1;
         let z_radius = self.base.xz_radius.get(random) + 1;
 

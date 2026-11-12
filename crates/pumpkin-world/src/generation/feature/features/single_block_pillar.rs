@@ -1,18 +1,13 @@
+use crate::generation::feature::configured_features::FeatureArgs;
 use pumpkin_data::BlockDirection;
-use pumpkin_util::{
-    math::position::BlockPos,
-    random::{RandomGenerator, RandomImpl},
-};
+use pumpkin_util::random::{RandomGenerator, RandomImpl};
 
-use crate::{
-    generation::{
+use crate::generation::{
         block_predicate::BlockPredicate,
         block_state_provider::BlockStateProvider,
         feature::placed_features::{PLACED_FEATURES, PlacedFeatureWrapper},
         proto_chunk::GenerationCache,
-    },
-    world::WorldPortalExt,
-};
+    };
 
 pub struct SingleBlockPillarFeature {
     pub block: BlockStateProvider,
@@ -23,17 +18,19 @@ pub struct SingleBlockPillarFeature {
 }
 
 impl SingleBlockPillarFeature {
-    #[expect(clippy::too_many_arguments)]
     pub fn generate<T: GenerationCache>(
         &self,
         chunk: &mut T,
-        block_registry: &dyn WorldPortalExt,
-        min_y: i8,
-        height: u16,
-        feature_name: pumpkin_data::placed_feature::PlacedFeature,
+        args: FeatureArgs<'_>,
         random: &mut RandomGenerator,
-        origin: BlockPos,
     ) -> bool {
+        let FeatureArgs {
+            block_registry,
+            min_y,
+            height,
+            feature_name,
+            pos: origin,
+        } = args;
         let mut pos = origin;
 
         while self.can_replace.test(block_registry, chunk, &pos)

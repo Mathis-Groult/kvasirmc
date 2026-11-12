@@ -3,8 +3,9 @@ use pumpkin_util::{
     random::{RandomGenerator, RandomImpl},
 };
 
+use crate::generation::feature::configured_features::FeatureArgs;
 use crate::generation::proto_chunk::GenerationCache;
-use crate::{generation::feature::placed_features::PlacedFeature, world::WorldPortalExt};
+use crate::generation::feature::placed_features::PlacedFeature;
 
 pub struct RandomPatchFeature {
     pub tries: u8,
@@ -14,17 +15,19 @@ pub struct RandomPatchFeature {
 }
 
 impl RandomPatchFeature {
-    #[expect(clippy::too_many_arguments)]
     pub fn generate<T: GenerationCache>(
         &self,
         chunk: &mut T,
-        block_registry: &dyn WorldPortalExt,
-        min_y: i8,
-        height: u16,
-        feature: pumpkin_data::placed_feature::PlacedFeature,
+        args: FeatureArgs<'_>,
         random: &mut RandomGenerator,
-        pos: BlockPos,
     ) -> bool {
+        let FeatureArgs {
+            block_registry,
+            min_y,
+            height,
+            feature_name: feature,
+            pos,
+        } = args;
         let xz = self.xz_spread as i32 + 1;
         let y = self.y_spread as i32 + 1;
         let mut is_some = false;

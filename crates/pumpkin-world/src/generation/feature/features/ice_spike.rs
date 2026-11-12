@@ -1,6 +1,7 @@
+use crate::generation::feature::configured_features::FeatureArgs;
 use pumpkin_data::{Block, BlockId, block_properties::is_air, tag};
 use pumpkin_util::{
-    math::{position::BlockPos, vector3::Vector3},
+    math::vector3::Vector3,
     random::{RandomGenerator, RandomImpl},
 };
 
@@ -11,12 +12,10 @@ pub struct IceSpikeFeature;
 impl IceSpikeFeature {
     pub fn generate<T: GenerationCache>(
         chunk: &mut T,
-        _min_y: i8,
-        _height: u16,
-        _feature: pumpkin_data::placed_feature::PlacedFeature,
+        args: FeatureArgs<'_>,
         random: &mut RandomGenerator,
-        pos: BlockPos,
     ) -> bool {
+        let FeatureArgs { pos, .. } = args;
         let mut origin = pos.0;
 
         // Walk down while block is air, staying above minY + 2

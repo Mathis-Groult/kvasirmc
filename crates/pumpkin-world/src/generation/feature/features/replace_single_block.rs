@@ -1,4 +1,5 @@
-use pumpkin_util::{math::position::BlockPos, random::RandomGenerator};
+use crate::generation::feature::configured_features::FeatureArgs;
+use pumpkin_util::random::RandomGenerator;
 
 use crate::generation::feature::features::ore::OreTarget;
 use crate::generation::proto_chunk::GenerationCache;
@@ -11,12 +12,10 @@ impl ReplaceSingleBlockFeature {
     pub fn generate<T: GenerationCache>(
         &self,
         chunk: &mut T,
-        _min_y: i8,
-        _height: u16,
-        _feature: pumpkin_data::placed_feature::PlacedFeature,
+        args: FeatureArgs<'_>,
         random: &mut RandomGenerator,
-        pos: BlockPos,
     ) -> bool {
+        let FeatureArgs { pos, .. } = args;
         let block_state = GenerationCache::get_block_state(chunk, &pos.0);
         for target in &self.targets {
             if target.target.test(block_state, pos.0.y, random) {

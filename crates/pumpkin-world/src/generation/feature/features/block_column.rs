@@ -1,14 +1,12 @@
+use crate::generation::feature::configured_features::FeatureArgs;
 use pumpkin_data::BlockDirection;
 use pumpkin_util::{
-    math::{int_provider::IntProvider, position::BlockPos},
+    math::int_provider::IntProvider,
     random::RandomGenerator,
 };
 
 use crate::generation::proto_chunk::GenerationCache;
-use crate::{
-    generation::{block_predicate::BlockPredicate, block_state_provider::BlockStateProvider},
-    world::WorldPortalExt,
-};
+use crate::generation::{block_predicate::BlockPredicate, block_state_provider::BlockStateProvider};
 
 pub struct BlockColumnFeature {
     pub layers: Vec<Layer>,
@@ -23,17 +21,17 @@ pub struct Layer {
 }
 
 impl BlockColumnFeature {
-    #[expect(clippy::too_many_arguments)]
     pub fn generate<T: GenerationCache>(
         &self,
         chunk: &mut T,
-        block_registry: &dyn WorldPortalExt,
-        _min_y: i8,
-        _height: u16,
-        _feature: pumpkin_data::placed_feature::PlacedFeature,
+        args: FeatureArgs<'_>,
         random: &mut RandomGenerator,
-        pos: BlockPos,
     ) -> bool {
+        let FeatureArgs {
+            block_registry,
+            pos,
+            ..
+        } = args;
         let i = self.layers.len();
         let mut is = vec![0; i];
         let mut j = 0;

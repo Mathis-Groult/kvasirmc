@@ -1,3 +1,4 @@
+use crate::generation::feature::configured_features::FeatureArgs;
 use core::f32;
 
 use pumpkin_data::{BlockDirection, BlockState, BlockStateId};
@@ -7,7 +8,7 @@ use pumpkin_util::{
 };
 
 use crate::generation::proto_chunk::GenerationCache;
-use crate::{generation::rule::RuleTest, world::WorldPortalExt};
+use crate::generation::rule::RuleTest;
 
 pub struct OreFeature {
     pub size: i32,
@@ -21,17 +22,13 @@ pub struct OreTarget {
 }
 
 impl OreFeature {
-    #[expect(clippy::too_many_arguments)]
     pub fn generate<T: GenerationCache>(
         &self,
         chunk: &mut T,
-        _block_registry: &dyn WorldPortalExt,
-        _min_y: i8,
-        _height: u16,
-        _feature: pumpkin_data::placed_feature::PlacedFeature, // This placed feature
+        args: FeatureArgs<'_>,
         random: &mut RandomGenerator,
-        pos: BlockPos,
     ) -> bool {
+        let FeatureArgs { pos, .. } = args;
         let f = random.next_f32() * f32::consts::PI;
         let g = self.size as f32 / 8.0f32;
         let i = f32::midpoint(self.size as f32 / 16.0f32 * 2.0, 1.0).ceil() as i32;

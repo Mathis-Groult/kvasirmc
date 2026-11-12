@@ -1,3 +1,4 @@
+use crate::generation::feature::configured_features::FeatureArgs;
 use pumpkin_data::{Block, BlockDirection};
 use pumpkin_nbt::compound::NbtCompound;
 use pumpkin_util::{
@@ -18,13 +19,11 @@ impl DesertWellFeature {
     #[expect(clippy::too_many_lines)]
     pub fn generate<T: GenerationCache>(
         chunk: &mut T,
-        _min_y: i8,
-        _height: u16,
-        _feature: pumpkin_data::placed_feature::PlacedFeature,
+        args: FeatureArgs<'_>,
         random: &mut RandomGenerator,
-        pos: BlockPos,
     ) -> bool {
         const CAN_GENERATE: Block = Block::SAND;
+        let FeatureArgs { pos, .. } = args;
 
         let mut block_pos = pos.up();
         while chunk.is_air(&block_pos.0) && block_pos.0.y > chunk.bottom_y() as i32 + 2 {

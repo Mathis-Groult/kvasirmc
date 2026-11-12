@@ -1,6 +1,7 @@
+use crate::generation::feature::configured_features::FeatureArgs;
 use pumpkin_data::Block;
 use pumpkin_util::{
-    math::{position::BlockPos, vector3::Vector3},
+    math::vector3::Vector3,
     random::RandomGenerator,
 };
 
@@ -12,12 +13,10 @@ impl VoidStartPlatformFeature {
     pub fn generate<T: GenerationCache>(
         &self,
         chunk: &mut T,
-        _min_y: i8,
-        _height: u16,
-        _feature: pumpkin_data::placed_feature::PlacedFeature,
+        args: FeatureArgs<'_>,
         _random: &mut RandomGenerator,
-        pos: BlockPos,
     ) -> bool {
+        let FeatureArgs { pos, .. } = args;
         let chunk_x = pos.0.x >> 4;
         let chunk_z = pos.0.z >> 4;
 

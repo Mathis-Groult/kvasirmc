@@ -1,3 +1,4 @@
+use crate::generation::feature::configured_features::FeatureArgs;
 use pumpkin_data::{Block, BlockState};
 use pumpkin_util::{
     math::position::BlockPos,
@@ -20,17 +21,17 @@ pub struct HugeFungusFeature {
 }
 
 impl HugeFungusFeature {
-    #[allow(clippy::too_many_arguments)]
     pub fn generate<T: GenerationCache>(
         &self,
         chunk: &mut T,
-        block_registry: &dyn WorldPortalExt,
-        _min_y: i8,
-        _height: u16,
-        _feature: pumpkin_data::placed_feature::PlacedFeature,
+        args: FeatureArgs<'_>,
         random: &mut RandomGenerator,
-        pos: BlockPos,
     ) -> bool {
+        let FeatureArgs {
+            block_registry,
+            pos,
+            ..
+        } = args;
         let below = pos.down();
         let below_block = GenerationCache::get_block_state(chunk, &below.0).to_block_id();
         let valid_base_id = Block::from_state_id(self.valid_base_block.id).id;

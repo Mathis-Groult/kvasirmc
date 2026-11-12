@@ -1,7 +1,8 @@
+use crate::generation::feature::configured_features::FeatureArgs;
 use pumpkin_data::{Block, BlockDirection};
 use pumpkin_nbt::compound::NbtCompound;
 use pumpkin_util::{
-    math::{position::BlockPos, vector3::Vector3},
+    math::vector3::Vector3,
     random::{RandomGenerator, RandomImpl},
 };
 
@@ -20,12 +21,10 @@ impl DungeonFeature {
     #[expect(clippy::too_many_lines)]
     pub fn generate<T: GenerationCache>(
         chunk: &mut T,
-        _min_y: i8,
-        _height: u16,
-        _feature: pumpkin_data::placed_feature::PlacedFeature,
+        args: FeatureArgs<'_>,
         random: &mut RandomGenerator,
-        pos: BlockPos,
     ) -> bool {
+        let FeatureArgs { pos, .. } = args;
         let xr = random.next_bounded_i32(2) + 2;
         let zr = random.next_bounded_i32(2) + 2;
 

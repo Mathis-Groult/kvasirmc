@@ -1,3 +1,4 @@
+use crate::generation::feature::configured_features::FeatureArgs;
 use pumpkin_data::BlockState;
 use pumpkin_util::{math::position::BlockPos, random::RandomGenerator};
 
@@ -12,12 +13,10 @@ impl FillLayerFeature {
     pub fn generate<T: GenerationCache>(
         &self,
         chunk: &mut T,
-        min_y: i8,
-        _height: u16,
-        _feature: pumpkin_data::placed_feature::PlacedFeature,
+        args: FeatureArgs<'_>,
         _random: &mut RandomGenerator,
-        pos: BlockPos,
     ) -> bool {
+        let FeatureArgs { min_y, pos, .. } = args;
         let y = min_y as i32 + self.height;
         for dx in 0..16 {
             for dz in 0..16 {

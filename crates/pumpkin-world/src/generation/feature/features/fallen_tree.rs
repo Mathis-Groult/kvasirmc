@@ -1,3 +1,4 @@
+use crate::generation::feature::configured_features::FeatureArgs;
 use pumpkin_data::{Block, BlockDirection, BlockState};
 use pumpkin_util::{
     math::{int_provider::IntProvider, position::BlockPos},
@@ -21,17 +22,17 @@ pub struct FallenTreeFeature {
 }
 
 impl FallenTreeFeature {
-    #[allow(clippy::too_many_arguments)]
     pub fn generate<T: GenerationCache>(
         &self,
         chunk: &mut T,
-        block_registry: &dyn WorldPortalExt,
-        _min_y: i8,
-        _height: u16,
-        _feature: pumpkin_data::placed_feature::PlacedFeature,
+        args: FeatureArgs<'_>,
         random: &mut RandomGenerator,
-        pos: BlockPos,
     ) -> bool {
+        let FeatureArgs {
+            block_registry,
+            pos,
+            ..
+        } = args;
         self.place_stump(chunk, block_registry, random, pos);
         let direction =
             BlockDirection::from_cardinal_direction(BlockDirection::random_horizontal(random));

@@ -1,16 +1,14 @@
+use crate::generation::feature::configured_features::FeatureArgs;
 use pumpkin_data::{BlockDirection, BlockId};
 use pumpkin_util::{
-    math::{int_provider::IntProvider, position::BlockPos},
+    math::int_provider::IntProvider,
     random::RandomGenerator,
 };
 
-use crate::{
-    generation::{
+use crate::generation::{
         block_predicate::BlockPredicate, block_state_provider::BlockStateProvider,
         proto_chunk::GenerationCache,
-    },
-    world::WorldPortalExt,
-};
+    };
 
 pub struct RandomNeighborSpreadFeature {
     pub block: BlockStateProvider,
@@ -22,17 +20,17 @@ pub struct RandomNeighborSpreadFeature {
 }
 
 impl RandomNeighborSpreadFeature {
-    #[expect(clippy::too_many_arguments)]
     pub fn generate<T: GenerationCache>(
         &self,
         chunk: &mut T,
-        block_registry: &dyn WorldPortalExt,
-        _min_y: i8,
-        _height: u16,
-        _feature: pumpkin_data::placed_feature::PlacedFeature,
+        args: FeatureArgs<'_>,
         random: &mut RandomGenerator,
-        origin: BlockPos,
     ) -> bool {
+        let FeatureArgs {
+            block_registry,
+            pos: origin,
+            ..
+        } = args;
         let origin_state = self.block.get(random, origin, chunk, block_registry);
         chunk.set_block_state(&origin.0, origin_state);
 

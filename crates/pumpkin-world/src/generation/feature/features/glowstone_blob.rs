@@ -1,8 +1,6 @@
+use crate::generation::feature::configured_features::FeatureArgs;
 use pumpkin_data::{Block, BlockDirection};
-use pumpkin_util::{
-    math::position::BlockPos,
-    random::{RandomGenerator, RandomImpl},
-};
+use pumpkin_util::random::{RandomGenerator, RandomImpl};
 
 use crate::generation::proto_chunk::GenerationCache;
 
@@ -11,12 +9,10 @@ pub struct GlowstoneBlobFeature;
 impl GlowstoneBlobFeature {
     pub fn generate<T: GenerationCache>(
         chunk: &mut T,
-        _min_y: i8,
-        _height: u16,
-        _feature: pumpkin_data::placed_feature::PlacedFeature,
+        args: FeatureArgs<'_>,
         random: &mut RandomGenerator,
-        pos: BlockPos,
     ) -> bool {
+        let FeatureArgs { pos, .. } = args;
         if !chunk.is_air(&pos.0) {
             return false;
         }

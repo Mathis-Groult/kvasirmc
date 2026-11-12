@@ -1,8 +1,9 @@
+use crate::generation::feature::configured_features::FeatureArgs;
 use pumpkin_data::{Block, BlockDirection};
 use pumpkin_nbt::compound::NbtCompound;
 use pumpkin_util::{
     HeightMap,
-    math::{position::BlockPos, vector3::Vector3},
+    math::vector3::Vector3,
     random::{RandomGenerator, RandomImpl},
 };
 
@@ -13,12 +14,10 @@ pub struct BonusChestFeature;
 impl BonusChestFeature {
     pub fn generate<T: GenerationCache>(
         chunk: &mut T,
-        _min_y: i8,
-        _height: u16,
-        _feature: pumpkin_data::placed_feature::PlacedFeature,
+        args: FeatureArgs<'_>,
         random: &mut RandomGenerator,
-        pos: BlockPos,
     ) -> bool {
+        let FeatureArgs { pos, .. } = args;
         let chunk_min_x = (pos.0.x >> 4) << 4;
         let chunk_min_z = (pos.0.z >> 4) << 4;
 

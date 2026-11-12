@@ -1,4 +1,5 @@
-use crate::{generation::proto_chunk::GenerationCache, world::WorldPortalExt};
+use crate::generation::feature::configured_features::FeatureArgs;
+use crate::generation::proto_chunk::GenerationCache;
 use pumpkin_data::tag;
 use pumpkin_util::{
     math::position::BlockPos,
@@ -12,13 +13,14 @@ pub struct CoralMushroomFeature;
 impl CoralMushroomFeature {
     pub fn generate<T: GenerationCache>(
         chunk: &mut T,
-        block_registry: &dyn WorldPortalExt,
-        _min_y: i8,
-        _height: u16,
-        _feature: pumpkin_data::placed_feature::PlacedFeature,
+        args: FeatureArgs<'_>,
         random: &mut RandomGenerator,
-        pos: BlockPos,
     ) -> bool {
+        let FeatureArgs {
+            block_registry,
+            pos,
+            ..
+        } = args;
         let block = CoralFeature::get_random_tag_entry(tag::Block::MINECRAFT_CORAL_BLOCKS, random);
 
         let height = random.next_bounded_i32(3) + 3;

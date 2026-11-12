@@ -1,8 +1,9 @@
+use crate::generation::feature::configured_features::FeatureArgs;
 use pumpkin_data::{Block, BlockState, block_properties::OakFenceLikeProperties};
 use pumpkin_util::{math::position::BlockPos, random::RandomGenerator};
 
 use crate::generation::proto_chunk::GenerationCache;
-use crate::{generation::section_coords, world::WorldPortalExt};
+use crate::generation::section_coords;
 
 pub struct EndSpikeFeature {
     pub crystal_invulnerable: bool,
@@ -126,17 +127,13 @@ impl EndSpikeFeature {
         spikes
     }
 
-    #[expect(clippy::too_many_arguments)]
     pub fn generate<T: GenerationCache>(
         &self,
         chunk: &mut T,
-        _block_registry: &dyn WorldPortalExt,
-        _min_y: i8,
-        _height: u16,
-        _feature: pumpkin_data::placed_feature::PlacedFeature,
+        args: FeatureArgs<'_>,
         _random: &mut RandomGenerator,
-        pos: BlockPos,
     ) -> bool {
+        let FeatureArgs { pos, .. } = args;
         let spikes = if self.spikes.is_empty() {
             Self::get_spikes_for_seed(0).to_vec()
         } else {

@@ -8,25 +8,25 @@ use pumpkin_util::{
     random::{RandomGenerator, RandomImpl},
 };
 
+use crate::generation::feature::configured_features::FeatureArgs;
 use crate::generation::proto_chunk::GenerationCache;
-use crate::world::WorldPortalExt;
 
 pub struct BambooFeature {
     pub probability: f32,
 }
 
 impl BambooFeature {
-    #[expect(clippy::too_many_arguments)]
     pub fn generate<T: GenerationCache>(
         &self,
         chunk: &mut T,
-        block_registry: &dyn WorldPortalExt,
-        _min_y: i8,
-        _height: u16,
-        _feature: pumpkin_data::placed_feature::PlacedFeature,
+        args: FeatureArgs<'_>,
         random: &mut RandomGenerator,
-        pos: BlockPos,
     ) -> bool {
+        let FeatureArgs {
+            block_registry,
+            pos,
+            ..
+        } = args;
         let mut placed = 0;
         if chunk.is_air(&pos.0)
             && block_registry.can_place_at(&Block::BAMBOO, Block::BAMBOO.default_state, chunk, &pos)

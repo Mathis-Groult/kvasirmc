@@ -1,3 +1,4 @@
+use crate::generation::feature::configured_features::FeatureArgs;
 use pumpkin_data::{Block, BlockState};
 use pumpkin_util::{
     math::{int_provider::IntProvider, position::BlockPos},
@@ -5,7 +6,6 @@ use pumpkin_util::{
 };
 
 use crate::generation::proto_chunk::GenerationCache;
-use crate::world::WorldPortalExt;
 
 pub struct ReplaceBlobsFeature {
     pub target: &'static BlockState,
@@ -14,17 +14,13 @@ pub struct ReplaceBlobsFeature {
 }
 
 impl ReplaceBlobsFeature {
-    #[expect(clippy::too_many_arguments)]
     pub fn generate<T: GenerationCache>(
         &self,
         chunk: &mut T,
-        _block_registry: &dyn WorldPortalExt,
-        _min_y: i8,
-        _height: u16,
-        _feature: pumpkin_data::placed_feature::PlacedFeature, // This placed feature
+        args: FeatureArgs<'_>,
         random: &mut RandomGenerator,
-        pos: BlockPos,
     ) -> bool {
+        let FeatureArgs { pos, .. } = args;
         let target = Block::from_state_id(self.target.id);
         let state = &self.state;
         let Some(pos) = Self::move_down_to_target(pos, chunk, target) else {

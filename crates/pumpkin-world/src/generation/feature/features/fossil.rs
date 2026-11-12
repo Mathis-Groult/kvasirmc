@@ -1,7 +1,8 @@
+use crate::generation::feature::configured_features::FeatureArgs;
 use pumpkin_data::{Block, BlockState, Mirror, Rotation, tag};
 use pumpkin_util::{
     HeightMap,
-    math::{block_box::BlockBox, position::BlockPos, vector3::Vector3},
+    math::{block_box::BlockBox, vector3::Vector3},
     random::{RandomGenerator, RandomImpl},
 };
 
@@ -46,11 +47,12 @@ impl FossilFeature {
     pub fn generate<T: GenerationCache>(
         &self,
         chunk: &mut T,
-        min_y: i8,
-        height: u16,
+        args: FeatureArgs<'_>,
         random: &mut RandomGenerator,
-        pos: BlockPos,
     ) -> bool {
+        let FeatureArgs {
+            min_y, height, pos, ..
+        } = args;
         if self.fossil_structures.is_empty()
             || self.fossil_structures.len() != self.overlay_structures.len()
         {

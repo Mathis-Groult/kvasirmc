@@ -1,3 +1,4 @@
+use crate::generation::feature::configured_features::FeatureArgs;
 use pumpkin_data::tag::Taggable;
 use pumpkin_data::{Block, BlockState, block_properties::BrownMushroomBlockLikeProperties, tag};
 use pumpkin_util::{math::position::BlockPos, random::RandomGenerator};
@@ -14,12 +15,12 @@ impl HugeRedMushroomFeature {
     pub fn generate<T: GenerationCache>(
         &self,
         chunk: &mut T,
-        min_y: i8,
-        height: u16,
-        _feature: pumpkin_data::placed_feature::PlacedFeature,
+        args: FeatureArgs<'_>,
         random: &mut RandomGenerator,
-        pos: BlockPos,
     ) -> bool {
+        let FeatureArgs {
+            min_y, height, pos, ..
+        } = args;
         let tree_height = super::huge_brown_mushroom::mushroom_tree_height(random);
 
         let min_y = i32::from(min_y);

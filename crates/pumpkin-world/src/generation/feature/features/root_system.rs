@@ -1,3 +1,4 @@
+use crate::generation::feature::configured_features::FeatureArgs;
 use pumpkin_data::{Block, BlockDirection};
 use pumpkin_util::{
     math::position::BlockPos,
@@ -26,17 +27,19 @@ pub struct RootSystemFeature {
 }
 
 impl RootSystemFeature {
-    #[allow(clippy::too_many_arguments)]
     pub fn generate<T: GenerationCache>(
         &self,
         chunk: &mut T,
-        block_registry: &dyn WorldPortalExt,
-        min_y: i8,
-        height: u16,
-        feature_name: pumpkin_data::placed_feature::PlacedFeature,
+        args: FeatureArgs<'_>,
         random: &mut RandomGenerator,
-        pos: BlockPos,
     ) -> bool {
+        let FeatureArgs {
+            block_registry,
+            min_y,
+            height,
+            feature_name,
+            pos,
+        } = args;
         if !chunk.is_air(&pos.0) {
             return false;
         }

@@ -4,7 +4,7 @@ use super::World;
 use crate::{
     command::client_suggestions,
     entity::{Entity, EntityBase, player::Player},
-    net::ClientPlatform,
+    net::{ClientPlatform, bedrock::BedrockClient},
     plugin::player::player_join::PlayerJoinEvent,
     server::Server,
 };
@@ -35,6 +35,7 @@ use pumpkin_util::math::vector2::Vector2;
 use pumpkin_util::math::{position::BlockPos, vector3::Vector3};
 use pumpkin_util::text::{TextComponent, color::NamedColor};
 use pumpkin_world::CURRENT_BEDROCK_MC_VERSION;
+use pumpkin_world::world_info::LevelData;
 use std::sync::Arc;
 use std::{collections::HashMap, sync::atomic::Ordering};
 use tracing::info;
@@ -44,18 +45,12 @@ use uuid::Uuid;
 mod golden;
 
 impl World {
-    #[allow(clippy::too_many_lines)]
     pub async fn spawn_bedrock_player(
         &self,
         base_config: &BasicConfiguration,
         player: Arc<Player>,
         server: &Arc<Server>,
     ) {
-        static CREATIVE_CONTENT: std::sync::OnceLock<(
-            Vec<CreativeGroupInfoPayload>,
-            Vec<CreativeItemEntryPayload>,
-        )> = std::sync::OnceLock::new();
-
         let level_info = server.level_info.load();
         let (rain_level, lightning_level) = {
             let weather = self
@@ -65,6 +60,51 @@ impl World {
             (weather.rain_level, weather.thunder_level)
         };
         let runtime_id = player.entity_id() as u64;
+        let (position, yaw, pitch) = self.place_joining_player(&player, &level_info).await;
+
+        // Todo make the data less spread
+        let level_settings = self.level_settings(
+            base_config,
+            server,
+            &level_info,
+            rain_level,
+            lightning_level,
+        );
+        drop(level_info);
+
+        let Some(client) = player.client.bedrock() else {
+            return;
+        };
+
+        self.send_start_game(
+            client,
+            &player,
+            runtime_id,
+            (position, yaw, pitch),
+            level_settings,
+        )
+        .await;
+        Self::send_item_and_recipe_data(client, server).await;
+        let actor_data = Self::send_own_state(client, &player, server, runtime_id).await;
+
+        // --- MULTIPLAYER BROADCASTING ---
+
+        self.announce_to_others(&player, runtime_id, position, yaw, pitch, &actor_data);
+        self.show_existing_players(client, &player).await;
+
+        player.has_played_before.store(true, Ordering::Relaxed);
+
+        self.fire_join_event(&player, server).await;
+    }
+
+    /// Where the player appears: its stored place when it has played before, else above the top
+    /// block at the level spawn (loading that chunk) or at the level spawn height over an empty
+    /// column. Also moves the player there.
+    async fn place_joining_player(
+        &self,
+        player: &Player,
+        level_info: &LevelData,
+    ) -> (Vector3<f64>, f32, f32) {
         let (position, yaw, pitch) = if player.has_played_before.load(Ordering::Relaxed) {
             let position = player.position();
             let yaw = player.get_entity().yaw.load(); //info.spawn_angle;
@@ -95,9 +135,18 @@ impl World {
         player.living_entity.entity.set_pos(position);
         player.living_entity.entity.set_rotation(yaw, pitch);
         player.living_entity.entity.last_pos.store(position);
+        (position, yaw, pitch)
+    }
 
-        // Todo make the data less spread
-        let level_settings = LevelSettings {
+    fn level_settings(
+        &self,
+        base_config: &BasicConfiguration,
+        server: &Server,
+        level_info: &LevelData,
+        rain_level: f32,
+        lightning_level: f32,
+    ) -> LevelSettings {
+        LevelSettings {
             seed: self.level.seed.0,
             spawn_biome_type: 0,
             custom_biome_name: String::new(),
@@ -171,13 +220,18 @@ impl World {
             disable_player_interactions: false,
             server_editor_connection_policy: VarInt(0),
             allow_anonymous_block_drops_in_editor_worlds: false,
-        };
-        drop(level_info);
+        }
+    }
 
-        let Some(client) = player.client.bedrock() else {
-            return;
-        };
-
+    /// The jigsaw and voxel data, `StartGame` and the biome definitions.
+    async fn send_start_game(
+        &self,
+        client: &BedrockClient,
+        player: &Player,
+        runtime_id: u64,
+        (position, yaw, pitch): (Vector3<f64>, f32, f32),
+        level_settings: LevelSettings,
+    ) {
         let start_game = CStartGame {
             entity_id: VarLong(runtime_id as _),
             runtime_entity_id: VarULong(runtime_id),
@@ -229,6 +283,14 @@ impl World {
         if let Ok(data) = client.serialize_packet(&CBiomeDefinitionList) {
             client.send_game_packet(data).await;
         }
+    }
+
+    /// The item registry, the creative inventory and the crafting recipes.
+    async fn send_item_and_recipe_data(client: &BedrockClient, server: &Server) {
+        static CREATIVE_CONTENT: std::sync::OnceLock<(
+            Vec<CreativeGroupInfoPayload>,
+            Vec<CreativeItemEntryPayload>,
+        )> = std::sync::OnceLock::new();
 
         let item_registry = CItemRegistry {
             items: BedrockItem::ALL_BEDROCK_ITEMS
@@ -318,7 +380,16 @@ impl World {
         if let Ok(data) = client.serialize_packet(&crafting_data) {
             client.send_game_packet(data).await;
         }
+    }
 
+    /// The player's own screen handler, abilities, actor data, commands and attributes; returns
+    /// the actor data, which the Java players also need.
+    async fn send_own_state(
+        client: &BedrockClient,
+        player: &Arc<Player>,
+        server: &Arc<Server>,
+        runtime_id: u64,
+    ) -> CSetActorData {
         player.on_screen_handler_opened(&player.player_screen_handler);
 
         {
@@ -348,80 +419,26 @@ impl World {
 
         {
             let command_dispatcher = server.command_dispatcher.load();
-            client_suggestions::send_bedrock_commands_packet(&player, server, &command_dispatcher);
+            client_suggestions::send_bedrock_commands_packet(player, server, &command_dispatcher);
         };
 
         client
-            .enqueue_client_packet(&CUpdateAttributes {
-                target_runtime_id: VarULong(runtime_id),
-                attribute_list: vec![
-                    AttributeData {
-                        min_value: 0.0,
-                        max_value: 3.402_823_5E38,
-                        current_value: 0.1,
-                        default_min_value: 0.0,
-                        default_max_value: 3.402_823_5E38,
-                        default_value: 0.1,
-                        name: "minecraft:movement".to_string(),
-                        modifiers: Vec::new(),
-                    },
-                    AttributeData {
-                        min_value: 0.0,
-                        max_value: 3.402_823_5E38,
-                        current_value: 0.02,
-                        default_min_value: 0.0,
-                        default_max_value: 3.402_823_5E38,
-                        default_value: 0.02,
-                        name: "minecraft:underwater_movement".to_string(),
-                        modifiers: Vec::new(),
-                    },
-                    AttributeData {
-                        min_value: 0.0,
-                        max_value: 1.0,
-                        current_value: 0.08,
-                        default_min_value: 0.0,
-                        default_max_value: 1.0,
-                        default_value: 0.08,
-                        name: "minecraft:gravity".to_string(),
-                        modifiers: Vec::new(),
-                    },
-                    AttributeData {
-                        min_value: 0.0,
-                        max_value: 400.0,
-                        current_value: 400.0,
-                        default_min_value: 0.0,
-                        default_max_value: 400.0,
-                        default_value: 400.0,
-                        name: "minecraft:air".to_string(),
-                        modifiers: Vec::new(),
-                    },
-                    AttributeData {
-                        min_value: 0.0,
-                        max_value: 20.0,
-                        current_value: player.living_entity.health.load(),
-                        default_min_value: 0.0,
-                        default_max_value: 20.0,
-                        default_value: 20.0,
-                        name: "minecraft:health".to_string(),
-                        modifiers: Vec::new(),
-                    },
-                    AttributeData {
-                        min_value: 0.0,
-                        max_value: 20.0,
-                        current_value: player.hunger_manager.level.load().into(),
-                        default_min_value: 0.0,
-                        default_max_value: 20.0,
-                        default_value: 20.0,
-                        name: "minecraft:player.hunger".to_string(),
-                        modifiers: Vec::new(),
-                    },
-                ],
-                tick: VarULong(0),
-            })
+            .enqueue_client_packet(&join_attributes(player, runtime_id))
             .await;
+        actor_data
+    }
 
-        // --- MULTIPLAYER BROADCASTING ---
-
+    /// Adds the new player to everyone else's list (Java and Bedrock), spawns it for the Java
+    /// players and sends them its equipment and skin parts.
+    fn announce_to_others(
+        &self,
+        player: &Arc<Player>,
+        runtime_id: u64,
+        position: Vector3<f64>,
+        yaw: f32,
+        pitch: f32,
+        actor_data: &CSetActorData,
+    ) {
         let gameprofile = &player.gameprofile;
         let velocity = player.get_entity().velocity.load();
 
@@ -488,7 +505,7 @@ impl World {
             ),
         );
 
-        self.send_player_equipment(&player);
+        self.send_player_equipment(player);
         player
             .living_entity
             .send_current_equipment_attribute_modifiers();
@@ -496,13 +513,13 @@ impl World {
         // Broadcast metadata to Java players so they can correctly interact with the new player
         let skin_parts = player.config.load().skin_parts;
 
-        self.broadcast_skin_parts(
-            &[gameprofile.id],
-            runtime_id as i32,
-            skin_parts,
-            &actor_data,
-        );
+        self.broadcast_skin_parts(&[gameprofile.id], runtime_id as i32, skin_parts, actor_data);
+    }
 
+    /// The other players' list entries for the new Bedrock client, then the tracked entities
+    /// in range.
+    async fn show_existing_players(&self, client: &BedrockClient, player: &Arc<Player>) {
+        let gameprofile = &player.gameprofile;
         // 2. Spawn existing players for our new Bedrock client
         let players = self.players.load();
 
@@ -515,10 +532,11 @@ impl World {
                 .await;
         }
         // Actors come from the tracker, in range only.
-        self.pair_new_player_with_tracked_entities(&player);
+        self.pair_new_player_with_tracked_entities(player);
+    }
 
-        player.has_played_before.store(true, Ordering::Relaxed);
-
+    /// The join event, then the join message unless a plugin cancelled it.
+    async fn fire_join_event(&self, player: &Arc<Player>, server: &Arc<Server>) {
         // 3. Trigger Join Event and Broadcast Join Message
         let msg_comp = TextComponent::translate_cross(
             translation::java::MULTIPLAYER_PLAYER_JOINED,
@@ -568,5 +586,75 @@ impl World {
                 client.send_packet(&add_player).await;
             }
         }
+    }
+}
+
+/// The attributes a Bedrock client gets on join (movement, gravity, air, health, hunger).
+fn join_attributes(player: &Player, runtime_id: u64) -> CUpdateAttributes {
+    CUpdateAttributes {
+        target_runtime_id: VarULong(runtime_id),
+        attribute_list: vec![
+            AttributeData {
+                min_value: 0.0,
+                max_value: 3.402_823_5E38,
+                current_value: 0.1,
+                default_min_value: 0.0,
+                default_max_value: 3.402_823_5E38,
+                default_value: 0.1,
+                name: "minecraft:movement".to_string(),
+                modifiers: Vec::new(),
+            },
+            AttributeData {
+                min_value: 0.0,
+                max_value: 3.402_823_5E38,
+                current_value: 0.02,
+                default_min_value: 0.0,
+                default_max_value: 3.402_823_5E38,
+                default_value: 0.02,
+                name: "minecraft:underwater_movement".to_string(),
+                modifiers: Vec::new(),
+            },
+            AttributeData {
+                min_value: 0.0,
+                max_value: 1.0,
+                current_value: 0.08,
+                default_min_value: 0.0,
+                default_max_value: 1.0,
+                default_value: 0.08,
+                name: "minecraft:gravity".to_string(),
+                modifiers: Vec::new(),
+            },
+            AttributeData {
+                min_value: 0.0,
+                max_value: 400.0,
+                current_value: 400.0,
+                default_min_value: 0.0,
+                default_max_value: 400.0,
+                default_value: 400.0,
+                name: "minecraft:air".to_string(),
+                modifiers: Vec::new(),
+            },
+            AttributeData {
+                min_value: 0.0,
+                max_value: 20.0,
+                current_value: player.living_entity.health.load(),
+                default_min_value: 0.0,
+                default_max_value: 20.0,
+                default_value: 20.0,
+                name: "minecraft:health".to_string(),
+                modifiers: Vec::new(),
+            },
+            AttributeData {
+                min_value: 0.0,
+                max_value: 20.0,
+                current_value: player.hunger_manager.level.load().into(),
+                default_min_value: 0.0,
+                default_max_value: 20.0,
+                default_value: 20.0,
+                name: "minecraft:player.hunger".to_string(),
+                modifiers: Vec::new(),
+            },
+        ],
+        tick: VarULong(0),
     }
 }

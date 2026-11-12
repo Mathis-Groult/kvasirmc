@@ -1,3 +1,5 @@
+#[cfg(test)]
+mod activator_tests;
 mod chest;
 mod container;
 mod furnace;
@@ -233,18 +235,27 @@ impl EntityBase for MinecartEntity {
                             minecart.prime(&self.vehicle.entity, 80);
                         }
                         MinecartKind::Rideable(_) => {
-                            if let Ok(passengers) = self.vehicle.entity.passengers.try_lock() {
-                                let p_ids: Vec<i32> = passengers
-                                    .iter()
-                                    .map(|p| p.get_entity().entity_id)
-                                    .collect();
-                                if !p_ids.is_empty() {
-                                    let world = self.vehicle.entity.world.load();
-                                    let vid = self.vehicle.entity.entity_id;
-                                    if let Some(v) = world.get_entity_by_id(vid) {
-                                        for pid in p_ids {
-                                            v.get_entity().remove_passenger_sync(pid);
-                                        }
+                            // Vanilla ejects every passenger. Release the passenger lock before
+                            // removing them: removal takes it again, and a std mutex locked twice
+                            // on one thread never returns (the tick froze the server, #31).
+                            let p_ids: Vec<i32> = self
+                                .vehicle
+                                .entity
+                                .passengers
+                                .try_lock()
+                                .map(|passengers| {
+                                    passengers
+                                        .iter()
+                                        .map(|p| p.get_entity().entity_id)
+                                        .collect()
+                                })
+                                .unwrap_or_default();
+                            if !p_ids.is_empty() {
+                                let world = self.vehicle.entity.world.load();
+                                let vid = self.vehicle.entity.entity_id;
+                                if let Some(v) = world.get_entity_by_id(vid) {
+                                    for pid in p_ids {
+                                        v.get_entity().remove_passenger_sync(pid);
                                     }
                                 }
                             }

@@ -352,8 +352,8 @@ const SCENES: &[Scene] = &[
         line(Rails::Activator(true), true, 1),
         &[at_height(ride(4.5, 0, (0.2, 0.0, 0.0)), 65.2)],
     ),
-    // A cart WITH a passenger on a powered activator rail is left out: the tick deadlocks on the
-    // passenger lock it already holds (card #31); those scenes come with the fix.
+    // Carts WITH passengers on powered activator rails are the last scenes: the tick deadlocked
+    // on the passenger lock it held until the fix of card #31.
     // Off rails.
     off_rails("ground", Floor::Stone, &[ride(4.5, 0, (0.3, 0.0, 0.1))]),
     off_rails(
@@ -751,6 +751,36 @@ const SCENES: &[Scene] = &[
             with_setup(cart(FURNACE_CART, 2.5, 0, (0.3, 0.0, 0.0)), FUELLED),
             ride(8.5, 0, (0.0, 0.0, 0.0)),
         ],
+    ),
+    // Passengers on powered activator rails (added with the fix of card #31).
+    scene(
+        "activator_on_riders",
+        line(Rails::Activator(true), true, 3),
+        &[
+            with_riders(ride(4.5, 0, (0.0, 0.0, 0.0)), &[Rider::Zombie]),
+            with_riders(
+                ride(2.5, 1, (0.1, 0.0, 0.0)),
+                &[
+                    Rider::Driver {
+                        input: 0,
+                        yaw: -90.0,
+                    },
+                    Rider::Zombie,
+                ],
+            ),
+            with_setup(
+                with_riders(ride(4.5, 2, (0.0, 0.0, 0.0)), &[Rider::Zombie]),
+                Setup::HurtTime(5),
+            ),
+        ],
+    ),
+    scene(
+        "above_activator_rider",
+        line(Rails::Activator(true), true, 1),
+        &[at_height(
+            with_riders(ride(4.5, 0, (0.2, 0.0, 0.0)), &[Rider::Zombie]),
+            65.2,
+        )],
     ),
 ];
 

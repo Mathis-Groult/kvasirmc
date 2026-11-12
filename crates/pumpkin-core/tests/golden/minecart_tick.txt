@@ -308,3 +308,13 @@ collision_furnace ticks 26-50: 3f3f5098cef3e4b1
 collision_furnace ticks 51-75: 9ec52f718871ea67
 collision_furnace ticks 76-100: d4bc00d0d452a941
 collision_furnace end: (3942.60 64.06 16.50) v 0.188, (3943.79 64.06 16.50) v 0.138
+activator_on_riders ticks 1-25: 8cd12b75662b6cb3
+activator_on_riders ticks 26-50: 69f18ae9ec2fdb75
+activator_on_riders ticks 51-75: e05a80f7cdda9b24
+activator_on_riders ticks 76-100: 04dac0e2ebbbf55f
+activator_on_riders end: (3988.50 64.06 16.50) v 0.000 riders 0/1, (3988.88 64.06 19.50) v 0.000 riders 0/2, (3988.50 64.06 22.50) v 0.000 riders 0/1
+above_activator_rider ticks 1-25: bc575ce1a6f7e787
+above_activator_rider ticks 26-50: 91f3e7082fcec05f
+above_activator_rider ticks 51-75: bc57083fd8480033
+above_activator_rider ticks 76-100: 7e7a3eccfc64d952
+above_activator_rider end: (4057.38 64.06 16.50) v 0.000 riders 0/1

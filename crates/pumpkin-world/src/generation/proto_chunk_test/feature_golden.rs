@@ -46,6 +46,10 @@ enum Terrain {
     Nether,
     /// End stone from y = 50 to 60; generated at y = 61.
     End,
+    /// Stone from y = 10 to 90; generated inside it at y = 40. Its lines were appended after
+    /// the others (the feature list again, prefixed `deep`), so the earlier lines stayed as they
+    /// were; geodes need stone all around their origin.
+    Deep,
 }
 
 impl Terrain {
@@ -64,6 +68,7 @@ impl Terrain {
             Self::Cave => "cave",
             Self::Nether => "nether",
             Self::End => "end",
+            Self::Deep => "deep",
         }
     }
 
@@ -74,6 +79,7 @@ impl Terrain {
             Self::Cave => BlockPos::new(8, 36, 8),
             Self::Nether => BlockPos::new(8, 65, 8),
             Self::End => BlockPos::new(8, 61, 8),
+            Self::Deep => BlockPos::new(8, 40, 8),
         }
     }
 
@@ -108,10 +114,17 @@ impl Terrain {
                 50..=60 => Block::END_STONE.default_state,
                 _ => return None,
             },
+            Self::Deep => match y {
+                10..=90 => Block::STONE.default_state,
+                _ => return None,
+            },
         };
         Some(state)
     }
 }
+
+/// The nine chunks of a terrain by chunk position.
+type Template = HashMap<(i32, i32), ProtoChunk>;
 
 /// The nine chunks of `terrain`, built block by block.
 fn build_terrain(world_gen: &WorldGenerator, terrain: Terrain) -> HashMap<(i32, i32), ProtoChunk> {
@@ -232,6 +245,93 @@ fn compound_text(compound: &NbtCompound, text: &mut String) {
     text.push('}');
 }
 
+/// The terrains of one section of the report, built once, with the hash of each bare grid.
+struct Section {
+    prefix: &'static str,
+    templates: Vec<(Terrain, Template)>,
+    bare: Vec<u64>,
+}
+
+impl Section {
+    fn new(world_gen: &WorldGenerator, prefix: &'static str, terrains: &[Terrain]) -> Self {
+        let templates: Vec<_> = terrains
+            .iter()
+            .map(|&terrain| (terrain, build_terrain(world_gen, terrain)))
+            .collect();
+        let bare = templates
+            .iter()
+            .map(|(_, template)| grid_hash(&copy_grid(world_gen, template)))
+            .collect();
+        Self {
+            prefix,
+            templates,
+            bare,
+        }
+    }
+
+    /// One line per feature: every terrain of the section with every seed.
+    fn report(
+        &self,
+        world_gen: &WorldGenerator,
+        fallback: pumpkin_data::placed_feature::PlacedFeature,
+        report: &mut String,
+    ) {
+        let mut features: Vec<_> = CONFIGURED_FEATURES.iter().collect();
+        features.sort_by_key(|(key, _)| key.to_name());
+        for (key, feature) in features {
+            let name = key.to_name();
+            let placed =
+                pumpkin_data::placed_feature::PlacedFeature::from_name(name).unwrap_or(fallback);
+            let mut hash = 0xcbf2_9ce4_8422_2325u64;
+            let (mut placed_true, mut acted, mut panics, mut entities) = (0, 0, 0, 0);
+            for ((terrain, template), bare_hash) in self.templates.iter().zip(&self.bare) {
+                for seed in SEEDS {
+                    let mut grid = copy_grid(world_gen, template);
+                    let mut random = RandomGenerator::Xoroshiro(Xoroshiro::from_seed(seed));
+                    let outcome = catch_unwind(AssertUnwindSafe(|| {
+                        feature.generate(
+                            &mut grid,
+                            &TestBlockRegistry,
+                            -64,
+                            384,
+                            placed,
+                            &mut random,
+                            terrain.origin(),
+                        )
+                    }));
+                    let mut text = format!("{} {seed} ", terrain.name());
+                    if let Ok(result) = outcome {
+                        placed_true += usize::from(result);
+                        let blocks = grid_hash(&grid);
+                        acted += usize::from(blocks != *bare_hash);
+                        let _ = write!(text, "{result} {blocks:016x}");
+                        if let Some(centre) = grid.chunks.get(&(0, 0)) {
+                            entities += centre.pending_block_entities.len();
+                            for nbt in &centre.pending_block_entities {
+                                compound_text(nbt, &mut text);
+                            }
+                        }
+                    } else {
+                        panics += 1;
+                        text.push_str("panic");
+                    }
+                    hash = fnv(hash, text.as_bytes());
+                }
+            }
+            let _ = writeln!(
+                report,
+                "{}{name}: {hash:016x} true {placed_true} acted {acted} entities {entities}{}",
+                self.prefix,
+                if panics > 0 {
+                    format!(" PANICS {panics}")
+                } else {
+                    String::new()
+                }
+            );
+        }
+    }
+}
+
 #[test]
 fn configured_features() -> Result<(), Box<dyn std::error::Error>> {
     let world_gen = get_world_gen(
@@ -241,72 +341,13 @@ fn configured_features() -> Result<(), Box<dyn std::error::Error>> {
         Vec::new(),
         "minecraft:plains".to_owned(),
     );
-    let templates: Vec<_> = Terrain::ALL
-        .iter()
-        .map(|&terrain| (terrain, build_terrain(&world_gen, terrain)))
-        .collect();
-    let bare: Vec<u64> = templates
-        .iter()
-        .map(|(_, template)| grid_hash(&copy_grid(&world_gen, template)))
-        .collect();
     let fallback = pumpkin_data::placed_feature::PlacedFeature::from_name(
         pumpkin_data::placed_feature::PlacedFeature::all_names()[0],
     )
     .ok_or("no placed feature")?;
-
-    let mut features: Vec<_> = CONFIGURED_FEATURES.iter().collect();
-    features.sort_by_key(|(key, _)| key.to_name());
     let mut report = String::new();
-    for (key, feature) in features {
-        let name = key.to_name();
-        let placed =
-            pumpkin_data::placed_feature::PlacedFeature::from_name(name).unwrap_or(fallback);
-        let mut hash = 0xcbf2_9ce4_8422_2325u64;
-        let (mut placed_true, mut acted, mut panics, mut entities) = (0, 0, 0, 0);
-        for ((terrain, template), bare_hash) in templates.iter().zip(&bare) {
-            for seed in SEEDS {
-                let mut grid = copy_grid(&world_gen, template);
-                let mut random = RandomGenerator::Xoroshiro(Xoroshiro::from_seed(seed));
-                let outcome = catch_unwind(AssertUnwindSafe(|| {
-                    feature.generate(
-                        &mut grid,
-                        &TestBlockRegistry,
-                        -64,
-                        384,
-                        placed,
-                        &mut random,
-                        terrain.origin(),
-                    )
-                }));
-                let mut text = format!("{} {seed} ", terrain.name());
-                if let Ok(result) = outcome {
-                    placed_true += usize::from(result);
-                    let blocks = grid_hash(&grid);
-                    acted += usize::from(blocks != *bare_hash);
-                    let _ = write!(text, "{result} {blocks:016x}");
-                    if let Some(centre) = grid.chunks.get(&(0, 0)) {
-                        entities += centre.pending_block_entities.len();
-                        for nbt in &centre.pending_block_entities {
-                            compound_text(nbt, &mut text);
-                        }
-                    }
-                } else {
-                    panics += 1;
-                    text.push_str("panic");
-                }
-                hash = fnv(hash, text.as_bytes());
-            }
-        }
-        let _ = writeln!(
-            report,
-            "{name}: {hash:016x} true {placed_true} acted {acted} entities {entities}{}",
-            if panics > 0 {
-                format!(" PANICS {panics}")
-            } else {
-                String::new()
-            }
-        );
-    }
+    Section::new(&world_gen, "", &Terrain::ALL).report(&world_gen, fallback, &mut report);
+    Section::new(&world_gen, "deep ", &[Terrain::Deep]).report(&world_gen, fallback, &mut report);
 
     let path = std::path::Path::new(env!("CARGO_MANIFEST_DIR"))
         .join("tests/golden")

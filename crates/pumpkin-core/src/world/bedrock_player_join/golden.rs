@@ -9,8 +9,8 @@
 //! scene: every packet the joiner and both watchers receive (id, length, FNV-1a of the bytes),
 //! the joiner's position, rotation, abilities and `has_played_before`.
 //! Not covered: a plugin that cancels the join event (no plugin is loaded).
-//! Blessed with the heightmap bug of `ChunkData::update_heightmap` (arguments in x, z, y
-//! order): the stone column reads as top block 0, so the first joins spawn at y = 1.
+//! Re-blessed after the heightmap fix of `ChunkData::update_heightmap` (arguments were x, z, y
+//! order, the stone column read as top block 0): first joins over the column spawn at y = 71.
 //! `KVASIR_DUMP=<file>` appends each scene's packet list.
 
 use std::fmt::Write;

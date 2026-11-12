@@ -824,7 +824,7 @@ impl ChunkData {
             ChunkHeightmapType::MotionBlocking,
             ChunkHeightmapType::MotionBlockingNoLeaves,
         ] {
-            heightmap.update(hm_type, x, z, y, block_state, min_y, |y_at| {
+            heightmap.update(hm_type, x, y, z, block_state, min_y, |y_at| {
                 let id = self
                     .section
                     .get_block_absolute_y(relative_x, y_at, relative_z)
@@ -980,6 +980,39 @@ mod tests {
     use super::ChunkSections;
     use crate::chunk::palette::BlockPalette;
     use pumpkin_data::{Block, block_properties::has_random_ticks};
+
+    /// A block set at (x, y, z) moves the heights of column (x, z) and of no other column, for
+    /// both writers that keep the heightmaps (`set_block_absolute_y`, `set_relative_block`).
+    #[test]
+    fn a_placed_block_raises_its_own_column_only() {
+        use super::{ChunkData, ChunkHeightmapType};
+        let types = [
+            ChunkHeightmapType::WorldSurface,
+            ChunkHeightmapType::MotionBlocking,
+            ChunkHeightmapType::MotionBlockingNoLeaves,
+        ];
+        let heights = |chunk: &ChunkData, x: i32, z: i32| {
+            let heightmap = chunk.heightmap.lock().unwrap();
+            types.map(|kind| heightmap.get(kind, x, z, chunk.section.min_y))
+        };
+        let min_y = ChunkData::empty(0, 0).section.min_y;
+
+        let chunk = ChunkData::empty(0, 0);
+        for y in 64..=70 {
+            chunk.set_block_absolute_y(3, y, 9, Block::STONE.default_state.id);
+        }
+        assert_eq!(heights(&chunk, 3, 9), [70; 3]);
+        for (x, z) in [(3, 0), (3, 6), (9, 3), (0, 0)] {
+            assert_eq!(heights(&chunk, x, z), [min_y - 1; 3], "column {x} {z}");
+        }
+        chunk.set_block_absolute_y(3, 70, 9, Block::AIR.default_state.id);
+        assert_eq!(heights(&chunk, 3, 9), [69; 3]);
+
+        let mut chunk = ChunkData::empty(0, 0);
+        chunk.set_relative_block(3, (70 - min_y) as usize, 9, Block::STONE.default_state.id);
+        assert_eq!(heights(&chunk, 3, 9), [70; 3]);
+        assert_eq!(heights(&chunk, 3, 6), [min_y - 1; 3]);
+    }
 
     #[test]
     fn random_tick_cache_initializes_from_palette_contents() {

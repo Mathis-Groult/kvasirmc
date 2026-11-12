@@ -11,7 +11,8 @@
 //!   (`should_unload`), fetching it again reads it back from disk unchanged; after `shutdown`
 //!   and a reopen of the folder, unchanged again;
 //! - noise world (content near chunk borders depends on the order): a 3 x 3 area reaches the
-//!   caller; after `shutdown` and a reopen, every chunk reads back unchanged.
+//!   caller; after `shutdown` and a reopen, every chunk reads back unchanged;
+//! - every `shutdown` ends within 2.5 s (the scheduler thread stops promptly).
 //!
 //! Every wait has a deadline, so a scheduler that stalls fails the test instead of hanging it.
 
@@ -132,6 +133,13 @@ async fn unload(level: &Arc<Level>, radius: i32) -> Result<(), String> {
     }
 }
 
+/// Shuts the level down and returns how long it took.
+async fn timed_shutdown(level: &Arc<Level>) -> Duration {
+    let start = Instant::now();
+    level.shutdown().await;
+    start.elapsed()
+}
+
 fn area_line(name: &str, area: &Area) -> String {
     let mut statuses: BTreeMap<&str, usize> = BTreeMap::new();
     let mut hash = 0xcbf2_9ce4_8422_2325u64;
@@ -148,6 +156,7 @@ fn area_line(name: &str, area: &Area) -> String {
 #[tokio::test]
 async fn chunk_schedule() -> TestResult {
     let mut report = String::new();
+    let mut slowest_shutdown = Duration::ZERO;
 
     // Flat world.
     let folder = tempfile::tempdir()?;
@@ -158,24 +167,24 @@ async fn chunk_schedule() -> TestResult {
     let other_folder = tempfile::tempdir()?;
     let other = open(other_folder.path(), true);
     let fresh_again = fetch(&other, 3).await?;
-    other.shutdown().await;
+    slowest_shutdown = slowest_shutdown.max(timed_shutdown(&other).await);
     let _ = writeln!(report, "flat second folder equal: {}", fresh_again == fresh);
 
     unload(&level, 3).await?;
     let reloaded = fetch(&level, 3).await?;
     let _ = writeln!(report, "flat after unload equal: {}", reloaded == fresh);
-    level.shutdown().await;
+    slowest_shutdown = slowest_shutdown.max(timed_shutdown(&level).await);
 
     let level = open(folder.path(), true);
     let reopened = fetch(&level, 3).await?;
-    level.shutdown().await;
+    slowest_shutdown = slowest_shutdown.max(timed_shutdown(&level).await);
     let _ = writeln!(report, "flat after reopen equal: {}", reopened == fresh);
 
     // Noise world.
     let folder = tempfile::tempdir()?;
     let level = open(folder.path(), false);
     let noise = fetch(&level, 1).await?;
-    level.shutdown().await;
+    slowest_shutdown = slowest_shutdown.max(timed_shutdown(&level).await);
     let statuses: Vec<&String> = noise.values().map(|(status, _)| status).collect();
     let _ = writeln!(
         report,
@@ -185,11 +194,19 @@ async fn chunk_schedule() -> TestResult {
     );
     let level = open(folder.path(), false);
     let noise_reopened = fetch(&level, 1).await?;
-    level.shutdown().await;
+    slowest_shutdown = slowest_shutdown.max(timed_shutdown(&level).await);
     let _ = writeln!(
         report,
         "noise after reopen equal: {}",
         noise_reopened == noise
+    );
+
+    // The scheduler thread must end promptly at shutdown (it waits for running tasks only while
+    // there are some); `Level::shutdown` gives up joining after 3 s and carries on.
+    let _ = writeln!(
+        report,
+        "every shutdown under 2.5 s: {}",
+        slowest_shutdown < Duration::from_millis(2500)
     );
 
     let path = Path::new(env!("CARGO_MANIFEST_DIR"))

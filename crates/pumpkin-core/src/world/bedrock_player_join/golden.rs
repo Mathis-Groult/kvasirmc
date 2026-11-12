@@ -4,7 +4,8 @@
 //! Each scene starts its own real server with a Java player and a Bedrock player already in the
 //! world, then lets a Bedrock player join (first join over a built column in survival, creative
 //! and spectator, a first join over an empty chunk, a returning player at its stored position,
-//! and a second Bedrock player joining while the first stays). Every player has a fixed name,
+//! a first join whose spawn chunk is not loaded yet, and a second Bedrock player joining while
+//! the first stays). Every player has a fixed name,
 //! UUID and entity id (`test_support::Identity`), so the packets are the same in every run. Per
 //! scene: every packet the joiner and both watchers receive (id, length, FNV-1a of the bytes),
 //! the joiner's position, rotation, abilities and `has_played_before`.
@@ -65,6 +66,9 @@ enum Spawn {
     Void,
     /// A returning player at its stored position.
     Returning,
+    /// First join at a level spawn whose chunk is not loaded: the join requests it
+    /// ([`answer_spawn_chunk_requests`]).
+    Unloaded,
 }
 
 fn fnv(bytes: &[u8]) -> u64 {
@@ -182,12 +186,40 @@ fn prepare_spawn(server: &Server, world: &Arc<World>, spawn: Spawn) {
         );
     }
     let mut level = (**server.level_info.load()).clone();
-    level.spawn_x = if matches!(spawn, Spawn::Void) { 64 } else { 0 };
+    level.spawn_x = match spawn {
+        Spawn::Void => 64,
+        Spawn::Unloaded => 200,
+        Spawn::Column | Spawn::Returning => 0,
+    };
     level.spawn_z = level.spawn_x;
     level.spawn_y = 72;
     level.spawn_yaw = 45.0;
     level.spawn_pitch = 5.0;
     server.level_info.store(Arc::new(level));
+}
+
+/// Stands in for the chunk system, which does not run in a test server: answers every request
+/// for chunk (12, 12) with an empty chunk holding a stone column at (200, 64..=70, 200). The
+/// chunk is not published, so only the join's own request can load it.
+fn answer_spawn_chunk_requests(
+    world: &Arc<World>,
+) -> (Arc<AtomicBool>, tokio::task::JoinHandle<()>) {
+    let chunk = pumpkin_world::chunk::ChunkData::empty_sync(12, 12);
+    for y in 64..=70 {
+        chunk.set_block_absolute_y(8, y, 8, Block::STONE.default_state.id);
+    }
+    let stop = Arc::new(AtomicBool::new(false));
+    let task = tokio::spawn({
+        let listener = Arc::clone(&world.level.chunk_listener);
+        let stop = Arc::clone(&stop);
+        async move {
+            while !stop.load(Ordering::Acquire) {
+                listener.process_new_chunk(Vector2::new(12, 12), &chunk);
+                tokio::time::sleep(std::time::Duration::from_millis(1)).await;
+            }
+        }
+    });
+    (stop, task)
 }
 
 fn player_text(player: &Player) -> String {
@@ -274,7 +306,13 @@ async fn run_scene(
         joiner.has_played_before.store(true, Ordering::Relaxed);
     }
     let joiner_packets = Drained::start(joiner_tap);
+    let chunk_system =
+        matches!(spawn, Spawn::Unloaded).then(|| answer_spawn_chunk_requests(&world));
     join(&server, &world, &joiner).await?;
+    if let Some((stop, task)) = chunk_system {
+        stop.store(true, Ordering::Release);
+        let _ = task.await;
+    }
 
     let mut text = format!(
         "joiner [{}] | java watcher [{}] | bedrock watcher [{}] | {}",
@@ -350,6 +388,12 @@ async fn bedrock_player_join() -> TestResult {
         (
             "returning player",
             Spawn::Returning,
+            GameMode::Survival,
+            false,
+        ),
+        (
+            "first join in a chunk not loaded yet",
+            Spawn::Unloaded,
             GameMode::Survival,
             false,
         ),

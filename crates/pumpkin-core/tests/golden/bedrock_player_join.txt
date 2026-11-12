@@ -3,4 +3,5 @@ first join, creative: 35b0e3cf29d68050 pos 0.5 71 0.5 rot 45 5 last true abiliti
 first join, spectator: fce64d47bb47ee62 pos 0.5 71 0.5 rot 45 5 last true abilities fly true true creative false invulnerable true modify false speeds 0.05 0.1 played true
 first join over an empty chunk: c7cafa88a7a50b1a pos 64.5 72 64.5 rot 45 5 last true abilities fly false false creative false invulnerable false modify true speeds 0.05 0.1 played true
 returning player: 12cbfabd92c8dc24 pos 5.5 80 7.5 rot 90 10 last true abilities fly false false creative false invulnerable false modify true speeds 0.05 0.1 played true
+first join in a chunk not loaded yet: 5459367bb3f52f07 pos 200.5 71 200.5 rot 45 5 last true abilities fly false false creative false invulnerable false modify true speeds 0.05 0.1 played true
 a second Bedrock player joins: c70b6a60b3adc621 pos 0.5 71 0.5 rot 45 5 last true abilities fly false false creative false invulnerable false modify true speeds 0.05 0.1 played true

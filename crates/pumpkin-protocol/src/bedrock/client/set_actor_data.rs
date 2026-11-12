@@ -87,7 +87,11 @@ impl PacketWrite for SyncedActorDataList {
     fn write<W: Write>(&self, writer: &mut W) -> Result<(), Error> {
         VarUInt(self.0.len() as u32).write(writer)?;
 
-        for (key, value) in &self.0 {
+        // In key order: a `HashMap` iterates in a different order per instance, so equal lists
+        // would otherwise go out as different bytes.
+        let mut entries: Vec<_> = self.0.iter().collect();
+        entries.sort_unstable_by_key(|(key, _)| **key);
+        for (key, value) in entries {
             VarUInt(*key).write(writer)?;
             VarUInt(value.type_id()).write(writer)?;
             (value.type_id() as u8).write(writer)?;
@@ -149,14 +153,19 @@ pub struct PropertySyncData {
 
 impl PacketWrite for PropertySyncData {
     fn write<W: Write>(&self, writer: &mut W) -> Result<(), Error> {
+        // Both lists in key order (see `SyncedActorDataList::write`).
         VarUInt(self.int_entries_list.len() as u32).write(writer)?;
-        for (key, value) in &self.int_entries_list {
+        let mut ints: Vec<_> = self.int_entries_list.iter().collect();
+        ints.sort_unstable_by_key(|(key, _)| **key);
+        for (key, value) in ints {
             VarUInt(*key).write(writer)?;
             VarInt(*value).write(writer)?;
         }
 
         VarUInt(self.float_entries_list.len() as u32).write(writer)?;
-        for (key, value) in &self.float_entries_list {
+        let mut floats: Vec<_> = self.float_entries_list.iter().collect();
+        floats.sort_unstable_by_key(|(key, _)| **key);
+        for (key, value) in floats {
             VarUInt(*key).write(writer)?;
             value.write(writer)?;
         }
@@ -480,5 +489,45 @@ mod tests {
         } else {
             panic!("FLAGS_TWO key missing");
         }
+    }
+}
+
+#[cfg(test)]
+mod order_tests {
+    use super::{MetadataValue, PropertySyncData, SyncedActorDataList};
+    use crate::serial::PacketWrite;
+
+    fn bytes(value: &impl PacketWrite) -> Vec<u8> {
+        let mut out = Vec::new();
+        let _ = value.write(&mut out);
+        out
+    }
+
+    /// Two equal lists built in other orders give the same bytes: entries go out by key, as a
+    /// `HashMap`'s iteration order differs per instance (a golden of the join saw it).
+    #[test]
+    fn metadata_is_written_in_key_order() {
+        let keys: Vec<u32> = (0..24).collect();
+        let mut forward = SyncedActorDataList::new();
+        for key in &keys {
+            forward.0.insert(*key, MetadataValue::Int(*key as i32));
+        }
+        let mut backward = SyncedActorDataList::new();
+        for key in keys.iter().rev() {
+            backward.0.insert(*key, MetadataValue::Int(*key as i32));
+        }
+        assert_eq!(bytes(&forward), bytes(&backward));
+
+        let mut properties = PropertySyncData::default();
+        let mut other = PropertySyncData::default();
+        for key in &keys {
+            properties.int_entries_list.insert(*key, *key as i32);
+            properties.float_entries_list.insert(*key, *key as f32);
+        }
+        for key in keys.iter().rev() {
+            other.int_entries_list.insert(*key, *key as i32);
+            other.float_entries_list.insert(*key, *key as f32);
+        }
+        assert_eq!(bytes(&properties), bytes(&other));
     }
 }

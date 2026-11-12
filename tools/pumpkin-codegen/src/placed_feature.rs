@@ -859,3 +859,18 @@ fn value_to_option_i32(v: &Value) -> TokenStream {
 fn value_to_inline_configured_feature(_v: &Value) -> TokenStream {
     quote! { crate::generation::feature::configured_features::ConfiguredFeature::NoOp }
 }
+
+/// `value` as an int provider, or vanilla's `UniformInt.of(min, max)` default when the field is
+/// omitted: reading a missing provider as 0 made amethyst geodes place nothing (#33).
+pub fn int_or_uniform(value: &Value, min: i32, max: i32) -> TokenStream {
+    if value.is_null() {
+        quote! {
+            IntProvider::Object(NormalIntProvider::Uniform(UniformIntProvider {
+                min_inclusive: #min,
+                max_inclusive: #max,
+            }))
+        }
+    } else {
+        value_to_int_provider(value)
+    }
+}

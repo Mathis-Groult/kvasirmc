@@ -7,7 +7,7 @@ use std::fs;
 use std::path::Path;
 
 use crate::placed_feature::{
-    value_to_block_direction, value_to_block_predicate, value_to_block_state,
+    int_or_uniform, value_to_block_direction, value_to_block_predicate, value_to_block_state,
     value_to_block_state_codec, value_to_height_provider, value_to_int_provider,
 };
 
@@ -585,9 +585,9 @@ pub fn value_to_configured_feature(v: &Value) -> TokenStream {
             let placements_require_layer0_alternate = config["placements_require_layer0_alternate"]
                 .as_bool()
                 .unwrap_or(true);
-            let outer_wall_distance = value_to_int_provider(&config["outer_wall_distance"]);
-            let distribution_points = value_to_int_provider(&config["distribution_points"]);
-            let point_offset = value_to_int_provider(&config["point_offset"]);
+            let outer_wall_distance = int_or_uniform(&config["outer_wall_distance"], 4, 5);
+            let distribution_points = int_or_uniform(&config["distribution_points"], 3, 4);
+            let point_offset = int_or_uniform(&config["point_offset"], 1, 2);
             let min_gen_offset = config["min_gen_offset"].as_i64().unwrap_or(-16) as i32;
             let max_gen_offset = config["max_gen_offset"].as_i64().unwrap_or(16) as i32;
             let noise_multiplier = config["noise_multiplier"].as_f64().unwrap_or(0.05);

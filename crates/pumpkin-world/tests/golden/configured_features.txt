@@ -1,5 +1,5 @@
 acacia: e8933781b8b414e1 true 10 acted 10 entities 0
-amethyst_geode: 5b797b6016c2487b true 10 acted 0 entities 0
+amethyst_geode: 689b55977dd4082b true 0 acted 0 entities 0
 azalea_tree: fa9889e2206f578d true 10 acted 10 entities 0
 bamboo_no_podzol: 2f6893d0288e6636 true 2 acted 2 entities 0
 bamboo_some_podzol: 2f6893d0288e6636 true 2 acted 2 entities 0
@@ -239,7 +239,7 @@ wildflower: 1a729523d7cc669c true 2 acted 2 entities 0
 yellow_poplar: f801ccacb4981c92 true 8 acted 8 entities 0
 yellow_poplar_leaf_litter: 29d18e1c217d3109 true 8 acted 8 entities 0
 deep acacia: 01a5e56abf7115c3 true 0 acted 0 entities 0
-deep amethyst_geode: db9b0645ef376981 true 2 acted 0 entities 0
+deep amethyst_geode: b829f16f526e453b true 2 acted 2 entities 0
 deep azalea_tree: 01a5e56abf7115c3 true 0 acted 0 entities 0
 deep bamboo_no_podzol: 01a5e56abf7115c3 true 0 acted 0 entities 0
 deep bamboo_some_podzol: 01a5e56abf7115c3 true 0 acted 0 entities 0

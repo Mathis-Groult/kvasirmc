@@ -8,9 +8,7 @@ use pumpkin_util::{
 };
 
 use crate::generation::feature::features::spring_feature::BlockWrapper;
-use crate::{
-    block::BlockStateCodec, generation::proto_chunk::GenerationCache,
-};
+use crate::{block::BlockStateCodec, generation::proto_chunk::GenerationCache};
 use pumpkin_util::random::RandomImpl;
 use std::cmp::Ordering;
 
@@ -103,37 +101,8 @@ impl GeodeFeature {
         let noise = NormalNoise::create(random, -4, &[1.0]);
 
         // Precompute sets of raw block ids for fast lookups
-        let mut invalid_raw_ids: HashSet<BlockId> = HashSet::new();
-        match &self.invalid_blocks {
-            BlockWrapper::Single(s) => {
-                if let Some(b) = Block::from_name(s.as_str()) {
-                    invalid_raw_ids.insert(b.id);
-                }
-            }
-            BlockWrapper::Multi(v) => {
-                for s in v {
-                    if let Some(b) = Block::from_name(s.as_str()) {
-                        invalid_raw_ids.insert(b.id);
-                    }
-                }
-            }
-        }
-
-        let mut cannot_replace_raw_ids: HashSet<BlockId> = HashSet::new();
-        match &self.cannot_replace {
-            BlockWrapper::Single(s) => {
-                if let Some(b) = Block::from_name(s.as_str()) {
-                    cannot_replace_raw_ids.insert(b.id);
-                }
-            }
-            BlockWrapper::Multi(v) => {
-                for s in v {
-                    if let Some(b) = Block::from_name(s.as_str()) {
-                        cannot_replace_raw_ids.insert(b.id);
-                    }
-                }
-            }
-        }
+        let invalid_raw_ids = block_ids(&self.invalid_blocks);
+        let cannot_replace_raw_ids = block_ids(&self.cannot_replace);
 
         let mut points: Vec<(BlockPos, i32)> = Vec::with_capacity(num_points as usize);
         let mut crack_points: Vec<BlockPos> = Vec::new();
@@ -361,3 +330,33 @@ impl GeodeFeature {
         true
     }
 }
+
+/// The blocks a block list names. Vanilla's geode lists are block tags (`#minecraft:...`), which
+/// `Block::from_name` does not resolve: they used to give empty sets, so geodes overwrote bedrock,
+/// spawners and chests and grew into water (#33).
+fn block_ids(blocks: &BlockWrapper) -> HashSet<BlockId> {
+    let names: Vec<&str> = match blocks {
+        BlockWrapper::Single(name) => vec![name.as_str()],
+        BlockWrapper::Multi(names) => names.iter().map(String::as_str).collect(),
+    };
+    let mut ids = HashSet::new();
+    for name in names {
+        if let Some(tag) = name.strip_prefix('#') {
+            let members =
+                pumpkin_data::tag::get_tag_values(pumpkin_data::tag::RegistryKey::Block, tag)
+                    .unwrap_or_default();
+            ids.extend(
+                members
+                    .iter()
+                    .filter_map(|member| Block::from_name(member))
+                    .map(|block| block.id),
+            );
+        } else if let Some(block) = Block::from_name(name) {
+            ids.insert(block.id);
+        }
+    }
+    ids
+}
+
+#[cfg(test)]
+mod tests;

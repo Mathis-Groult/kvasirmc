@@ -40,6 +40,9 @@ use std::{collections::HashMap, sync::atomic::Ordering};
 use tracing::info;
 use uuid::Uuid;
 
+#[cfg(test)]
+mod golden;
+
 impl World {
     #[allow(clippy::too_many_lines)]
     pub async fn spawn_bedrock_player(

@@ -51,15 +51,18 @@ pub(crate) mod test_support {
         ))
     }
 
-    /// A real server on an empty folder: no network, telemetry off, nothing read from or written
-    /// to the working directory. About one second. Call `stop()` at the end.
+    /// A real server on an empty folder: no network, telemetry off, a fixed seed, nothing read
+    /// from or written to the working directory. About one second. Call `stop()` at the end.
     pub async fn server(
         folder: &tempfile::TempDir,
     ) -> Result<Arc<Server>, Box<dyn std::error::Error>> {
-        let basic = BasicConfiguration {
+        let mut basic = BasicConfiguration {
             default_level_name: folder.path().join("world").to_string_lossy().into_owned(),
             ..BasicConfiguration::default()
         };
+        // A fixed seed: packets that carry it (Bedrock `StartGame`) are then the same in every
+        // run; the default configuration picks a random one.
+        basic.seed.0 = 20_261_112;
         let telemetry = TelemetryConfig {
             enabled: false,
             ..TelemetryConfig::default()
@@ -136,9 +139,93 @@ pub(crate) mod test_support {
         Ok((player, tap))
     }
 
+    /// Who a test player is, fixed by the test: packets that carry the name, the UUID or the
+    /// entity id are then the same in every run (the entity id counter is global to the test
+    /// process, so it depends on which tests ran before).
+    pub struct Identity {
+        pub name: &'static str,
+        pub uuid: Uuid,
+        pub entity_id: i32,
+    }
+
+    impl Identity {
+        fn profile(&self) -> GameProfile {
+            GameProfile {
+                id: self.uuid,
+                name: self.name.to_string(),
+                properties: ArcSwap::from_pointee(Vec::new()),
+                profile_actions: None,
+            }
+        }
+
+        fn player(
+            &self,
+            client: ClientPlatform,
+            world: &Arc<World>,
+            gamemode: GameMode,
+        ) -> Arc<Player> {
+            let mut player = Player::new(
+                Arc::new(client),
+                self.profile(),
+                PlayerConfig::default(),
+                world,
+                gamemode,
+            );
+            player.living_entity.entity.entity_id = self.entity_id;
+            Arc::new(player)
+        }
+    }
+
+    /// As [`bedrock_player_with_tap`], as `who`.
+    pub async fn bedrock_player_as(
+        world: &Arc<World>,
+        gamemode: GameMode,
+        who: &Identity,
+    ) -> Result<(Arc<Player>, crate::net::bedrock::BedrockPacketTap), String> {
+        let address = std::net::SocketAddr::from(([127, 0, 0, 1], 19132));
+        let session = crate::net::bedrock::nethernet::offline_session(address).await?;
+        let client = Arc::new(crate::net::bedrock::BedrockClient::new(
+            session,
+            address,
+            Arc::default(),
+            PacketRateLimiter::new(false, 0.0, 0.0),
+        ));
+        let tap = client
+            .take_packet_tap()
+            .ok_or("a new Bedrock client no longer owned its outgoing queue")?;
+        Ok((
+            who.player(ClientPlatform::Bedrock(client), world, gamemode),
+            tap,
+        ))
+    }
+
+    /// As [`java_player_with_tap`], as `who`.
+    pub fn java_player_as(
+        world: &Arc<World>,
+        gamemode: GameMode,
+        who: &Identity,
+    ) -> Option<(Arc<Player>, crate::net::java::PacketTap)> {
+        let mut client = java_client_of(who.profile(), u64::from(who.entity_id.unsigned_abs()));
+        let tap = client.take_packet_tap()?;
+        Some((
+            who.player(ClientPlatform::Java(client), world, gamemode),
+            tap,
+        ))
+    }
+
     fn java_client() -> (JavaClient, GameProfile) {
         static NEXT_ID: AtomicU64 = AtomicU64::new(1);
         let id = NEXT_ID.fetch_add(1, Ordering::Relaxed);
+        let profile = GameProfile {
+            id: Uuid::from_u128(u128::from(id)),
+            name: format!("Test{id}"),
+            properties: ArcSwap::from_pointee(Vec::new()),
+            profile_actions: None,
+        };
+        (java_client_of(profile.clone(), id), profile)
+    }
+
+    fn java_client_of(profile: GameProfile, id: u64) -> JavaClient {
         let (client_end, server_end) = tokio::io::duplex(1 << 16);
         drop(client_end);
         let (read, write) = tokio::io::split(server_end);
@@ -150,14 +237,7 @@ pub(crate) mod test_support {
             PacketRateLimiter::new(false, 0.0, 0.0),
             Weak::new(),
         );
-        let profile = GameProfile {
-            id: Uuid::from_u128(u128::from(id)),
-            name: format!("Test{id}"),
-            properties: ArcSwap::from_pointee(Vec::new()),
-            profile_actions: None,
-        };
-        let client = JavaClient::from_pending(pending, profile.clone(), PlayerConfig::default());
-        (client, profile)
+        JavaClient::from_pending(pending, profile, PlayerConfig::default())
     }
 
     fn player_of(

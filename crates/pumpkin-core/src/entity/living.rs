@@ -9,6 +9,8 @@ mod living_health;
 mod living_save;
 mod living_sounds;
 mod living_travel;
+#[cfg(test)]
+mod tick_golden;
 use kvasir_tickprof::parts::Part;
 use pumpkin_data::particle::Particle;
 use pumpkin_data::potion::Effect;

@@ -248,181 +248,28 @@ fn convert_value(
     let mut prep = String::new();
     let mut possible = true;
 
+    let site = ValueSite {
+        type_ident,
+        is_ref,
+        is_slice,
+        src,
+        dst,
+        mode,
+        prep_prefix,
+    };
+
     let expr = match type_ident {
-        "String" | "str" => match mode {
-            MappingMode::Serialize => {
-                if is_slice {
-                    let tmp = dst.unwrap_or("slice");
-                    if is_ref {
-                        if type_ident == "str" {
-                            prep.push_str(&format!(
-                                "{}let vec_{}: Vec<&str> = {}.iter().map(|s| s.as_str()).collect();\n",
-                                prep_prefix, tmp, src
-                            ));
-                            format!("&vec_{}", tmp)
-                        } else {
-                            format!("&{}", src)
-                        }
-                    } else {
-                        format!("{}.clone()", src)
-                    }
-                } else if is_ref {
-                    format!("&{}", src)
-                } else {
-                    format!("{}.clone()", src)
-                }
-            }
-            MappingMode::Deserialize => {
-                if is_slice {
-                    format!("{}.iter().map(|s| s.to_string()).collect()", src)
-                } else {
-                    format!("{}.into()", src)
-                }
-            }
-            MappingMode::ToWit => {
-                if is_slice {
-                    format!("{}.iter().map(|s| s.to_string()).collect()", src)
-                } else {
-                    format!("{}.to_string()", src)
-                }
-            }
-            MappingMode::Downcast => String::new(),
-        },
-        "Identifier" => match mode {
-            MappingMode::Serialize => {
-                format!(
-                    "pumpkin_util::identifier::Identifier::try_from({}).unwrap()",
-                    src
-                )
-            }
-            MappingMode::Deserialize | MappingMode::ToWit => {
-                format!("{}.to_string()", src)
-            }
-            MappingMode::Downcast => String::new(),
-        },
-        "VarUInt" => match mode {
-            MappingMode::Serialize => {
-                format!(
-                    "pumpkin_protocol::codec::var_uint::VarUInt({}.try_into().unwrap())",
-                    src
-                )
-            }
-            MappingMode::Deserialize | MappingMode::ToWit => {
-                format!("{}.0.try_into().unwrap()", src)
-            }
-            MappingMode::Downcast => String::new(),
-        },
-        "VarLong" | "VarULong" => {
-            let is_ulong = type_ident == "VarULong";
-            let path = if is_ulong {
-                "pumpkin_protocol::codec::var_ulong::VarULong"
-            } else {
-                "pumpkin_protocol::codec::var_long::VarLong"
-            };
+        "String" | "str" => convert_string(site, &mut prep),
+        "Identifier" => convert_identifier(site),
+        "VarUInt" => convert_var_uint(site),
+        "VarLong" | "VarULong" => convert_var_long(site, &mut prep),
+        "TextComponent" => convert_text_component(site, &mut prep),
 
-            if mode == MappingMode::Serialize {
-                let tmp = dst.unwrap_or("tmp").replace('.', "_");
-                if is_slice {
-                    prep.push_str(&format!(
-                        "{}let vec_{}: Vec<{}> = {}.iter().map(|v| {}(*v as _)).collect();\n",
-                        prep_prefix, tmp, path, src, path
-                    ));
-                    if is_ref {
-                        format!("&vec_{}", tmp)
-                    } else {
-                        format!("vec_{}", tmp)
-                    }
-                } else {
-                    if is_ref {
-                        prep.push_str(&format!(
-                            "{}let var_long_{} = {}({}.try_into().unwrap());\n",
-                            prep_prefix, tmp, path, src
-                        ));
-                        format!("&var_long_{}", tmp)
-                    } else {
-                        format!("{}({}.try_into().unwrap())", path, src)
-                    }
-                }
-            } else if mode == MappingMode::Deserialize {
-                if is_slice {
-                    format!("{}.iter().map(|v| v.0 as _).collect()", src)
-                } else {
-                    format!("{}.0.try_into().unwrap()", src)
-                }
-            } else {
-                // ToWit
-                if is_slice {
-                    format!("{}.iter().map(|v| v.0 as _).collect()", src)
-                } else {
-                    format!("{}.0.try_into().unwrap()", src)
-                }
-            }
-        }
-        "TextComponent" => match mode {
-            MappingMode::Serialize => {
-                let tmp = dst.unwrap_or("tmp").replace('.', "_");
-                prep.push_str(&format!(
-                    "{}let component_{} = pumpkin_util::text::TextComponent::text({}.clone());\n",
-                    prep_prefix, tmp, src
-                ));
-                if is_ref {
-                    format!("&component_{}", tmp)
-                } else {
-                    format!("component_{}", tmp)
-                }
-            }
-            MappingMode::Deserialize | MappingMode::ToWit => {
-                format!("serde_json::to_string(&{}).unwrap_or_default()", src)
-            }
-            MappingMode::Downcast => String::new(),
-        },
+        "BlockPos" => convert_block_pos(site),
 
-        "BlockPos" => match mode {
-            MappingMode::Serialize => {
-                format!(
-                    "pumpkin_util::math::position::BlockPos::new({}.0, {}.1, {}.2)",
-                    src, src, src
-                )
-            }
-            MappingMode::Deserialize | MappingMode::ToWit => {
-                format!("({}.0.x, {}.0.y, {}.0.z)", src, src, src)
-            }
-            MappingMode::Downcast => String::new(),
-        },
+        "Vector3" => convert_vector3(site),
 
-        "Vector3" => match mode {
-            MappingMode::Serialize => {
-                format!(
-                    "pumpkin_util::math::vector3::Vector3::new({}.0 as _, {}.1 as _, {}.2 as _)",
-                    src, src, src
-                )
-            }
-            MappingMode::Deserialize | MappingMode::ToWit => {
-                format!("({}.x as _, {}.y as _, {}.z as _)", src, src, src)
-            }
-            MappingMode::Downcast => String::new(),
-        },
-
-        "LpVector3d" => match mode {
-            MappingMode::Serialize => {
-                let tmp = dst.unwrap_or("velocity").replace('.', "_");
-                prep.push_str(&format!(
-                    "{}let parsed_{}: [f64; 3] = serde_json::from_str(&{}).ok()?;\n",
-                    prep_prefix, tmp, src
-                ));
-                format!(
-                    "pumpkin_protocol::codec::lp_vector_3d::LpVector3d(pumpkin_util::math::vector3::Vector3::new(parsed_{0}[0], parsed_{0}[1], parsed_{0}[2]))",
-                    tmp
-                )
-            }
-            MappingMode::Deserialize | MappingMode::ToWit => {
-                format!(
-                    "serde_json::to_string(&[{}.0.x, {}.0.y, {}.0.z]).unwrap_or_default()",
-                    src, src, src
-                )
-            }
-            MappingMode::Downcast => String::new(),
-        },
+        "LpVector3d" => convert_lp_vector3d(site, &mut prep),
 
         "BoxedU8Slice" => match mode {
             MappingMode::Serialize => format!("{}.clone().into_boxed_slice()", src),
@@ -430,130 +277,10 @@ fn convert_value(
             MappingMode::Downcast => String::new(),
         },
 
-        "Uuid" => match mode {
-            MappingMode::Serialize => {
-                let tmp = dst.unwrap_or("tmp").replace('.', "_");
-                if is_slice {
-                    prep.push_str(&format!(
-                        "{}let vec_{} = {}.iter().map(|u| uuid::Uuid::from_u64_pair(u.high, u.low)).collect::<Vec<_>>();\n",
-                        prep_prefix, tmp, src
-                    ));
-                    if is_ref {
-                        format!("&vec_{}", tmp)
-                    } else {
-                        format!("vec_{}", tmp)
-                    }
-                } else {
-                    prep.push_str(&format!(
-                        "{}let uuid_{} = uuid::Uuid::from_u64_pair({}.high, {}.low);\n",
-                        prep_prefix, tmp, src, src
-                    ));
-                    if is_ref {
-                        format!("&uuid_{}", tmp)
-                    } else {
-                        format!("uuid_{}", tmp)
-                    }
-                }
-            }
-            MappingMode::Deserialize | MappingMode::ToWit => {
-                let map_fn = format!(
-                    "crate::pumpkin::plugin::uuid::Uuid {{ high: {{}}.as_u64_pair().1, low: {{}}.as_u64_pair().0 }}",
-                );
-                if is_slice {
-                    format!(
-                        "{}.iter().map(|u| {}).collect()",
-                        src,
-                        map_fn.replace("{}", "u")
-                    )
-                } else {
-                    format!(
-                        "crate::pumpkin::plugin::uuid::Uuid {{ high: {}.as_u64_pair().1, low: {}.as_u64_pair().0 }}",
-                        src, src
-                    )
-                }
-            }
-            MappingMode::Downcast => String::new(),
-        },
+        "Uuid" => convert_uuid(site, &mut prep),
 
         "i32" | "u32" | "i64" | "u64" | "bool" | "f32" | "f64" | "u8" | "i8" | "u16" | "i16"
-        | "VarInt" => match mode {
-            MappingMode::Serialize => {
-                let tmp = dst.unwrap_or("tmp").replace('.', "_");
-                if is_slice {
-                    if type_ident == "u8" {
-                        if is_ref {
-                            format!("&{}", src)
-                        } else {
-                            format!("{}.clone()", src)
-                        }
-                    } else if type_ident == "VarInt" {
-                        prep.push_str(&format!(
-                            "{}let vec_{}: Vec<VarInt> = {}.iter().map(|v| VarInt(*v)).collect();\n",
-                            prep_prefix, tmp, src
-                        ));
-                        if is_ref {
-                            format!("&vec_{}", tmp)
-                        } else {
-                            format!("vec_{}", tmp)
-                        }
-                    } else if is_ref {
-                        prep.push_str(&format!(
-                            "{}let vec_{}: Vec<_> = {}.iter().map(|v| *v as _).collect();\n",
-                            prep_prefix, tmp, src
-                        ));
-                        format!("&vec_{}", tmp)
-                    } else {
-                        format!("{}.iter().map(|v| *v as _).collect()", src)
-                    }
-                } else if type_ident == "VarInt" {
-                    if is_ref {
-                        prep.push_str(&format!(
-                            "{}let var_int_{} = VarInt({});\n",
-                            prep_prefix, tmp, src
-                        ));
-                        format!("&var_int_{}", tmp)
-                    } else {
-                        format!("VarInt({})", src)
-                    }
-                } else if type_ident == "i8" {
-                    if is_ref {
-                        format!("&{}", src)
-                    } else {
-                        src.to_string()
-                    }
-                } else {
-                    if is_ref {
-                        prep.push_str(&format!(
-                            "{}let val_{} = {}.try_into().unwrap();\n",
-                            prep_prefix, tmp, src
-                        ));
-                        format!("&val_{}", tmp)
-                    } else {
-                        format!("{}.try_into().unwrap()", src)
-                    }
-                }
-            }
-            MappingMode::Deserialize | MappingMode::ToWit => {
-                if is_slice {
-                    if type_ident == "VarInt" {
-                        format!("{}.iter().map(|v| v.0 as _).collect()", src)
-                    } else {
-                        format!("{}.iter().map(|v| *v as _).collect()", src)
-                    }
-                } else if type_ident == "VarInt" {
-                    format!("{}.0.try_into().unwrap()", src)
-                } else if type_ident == "i8" {
-                    if is_ref {
-                        format!("*{}", src)
-                    } else {
-                        src.to_string()
-                    }
-                } else {
-                    format!("{}.try_into().unwrap()", src)
-                }
-            }
-            MappingMode::Downcast => String::new(),
-        },
+        | "VarInt" => convert_primitive(site, &mut prep),
 
         _ => {
             possible = false;
@@ -562,6 +289,396 @@ fn convert_value(
     };
 
     (prep, expr, possible)
+}
+
+/// The inputs of `convert_value`, passed whole to the per-type conversions.
+#[derive(Clone, Copy)]
+struct ValueSite<'a> {
+    type_ident: &'a str,
+    is_ref: bool,
+    is_slice: bool,
+    src: &'a str,
+    dst: Option<&'a str>,
+    mode: MappingMode,
+    prep_prefix: &'a str,
+}
+
+fn convert_string(site: ValueSite<'_>, prep: &mut String) -> String {
+    let ValueSite {
+        type_ident,
+        is_ref,
+        is_slice,
+        src,
+        dst,
+        mode,
+        prep_prefix,
+    } = site;
+    match mode {
+        MappingMode::Serialize => {
+            if is_slice {
+                let tmp = dst.unwrap_or("slice");
+                if is_ref {
+                    if type_ident == "str" {
+                        prep.push_str(&format!(
+                            "{}let vec_{}: Vec<&str> = {}.iter().map(|s| s.as_str()).collect();\n",
+                            prep_prefix, tmp, src
+                        ));
+                        format!("&vec_{}", tmp)
+                    } else {
+                        format!("&{}", src)
+                    }
+                } else {
+                    format!("{}.clone()", src)
+                }
+            } else if is_ref {
+                format!("&{}", src)
+            } else {
+                format!("{}.clone()", src)
+            }
+        }
+        MappingMode::Deserialize => {
+            if is_slice {
+                format!("{}.iter().map(|s| s.to_string()).collect()", src)
+            } else {
+                format!("{}.into()", src)
+            }
+        }
+        MappingMode::ToWit => {
+            if is_slice {
+                format!("{}.iter().map(|s| s.to_string()).collect()", src)
+            } else {
+                format!("{}.to_string()", src)
+            }
+        }
+        MappingMode::Downcast => String::new(),
+    }
+}
+
+fn convert_identifier(site: ValueSite<'_>) -> String {
+    let ValueSite { src, mode, .. } = site;
+    match mode {
+        MappingMode::Serialize => {
+            format!(
+                "pumpkin_util::identifier::Identifier::try_from({}).unwrap()",
+                src
+            )
+        }
+        MappingMode::Deserialize | MappingMode::ToWit => {
+            format!("{}.to_string()", src)
+        }
+        MappingMode::Downcast => String::new(),
+    }
+}
+
+fn convert_var_uint(site: ValueSite<'_>) -> String {
+    let ValueSite { src, mode, .. } = site;
+    match mode {
+        MappingMode::Serialize => {
+            format!(
+                "pumpkin_protocol::codec::var_uint::VarUInt({}.try_into().unwrap())",
+                src
+            )
+        }
+        MappingMode::Deserialize | MappingMode::ToWit => {
+            format!("{}.0.try_into().unwrap()", src)
+        }
+        MappingMode::Downcast => String::new(),
+    }
+}
+
+fn convert_var_long(site: ValueSite<'_>, prep: &mut String) -> String {
+    let ValueSite {
+        type_ident,
+        is_ref,
+        is_slice,
+        src,
+        dst,
+        mode,
+        prep_prefix,
+    } = site;
+    {
+        let is_ulong = type_ident == "VarULong";
+        let path = if is_ulong {
+            "pumpkin_protocol::codec::var_ulong::VarULong"
+        } else {
+            "pumpkin_protocol::codec::var_long::VarLong"
+        };
+
+        if mode == MappingMode::Serialize {
+            let tmp = dst.unwrap_or("tmp").replace('.', "_");
+            if is_slice {
+                prep.push_str(&format!(
+                    "{}let vec_{}: Vec<{}> = {}.iter().map(|v| {}(*v as _)).collect();\n",
+                    prep_prefix, tmp, path, src, path
+                ));
+                if is_ref {
+                    format!("&vec_{}", tmp)
+                } else {
+                    format!("vec_{}", tmp)
+                }
+            } else {
+                if is_ref {
+                    prep.push_str(&format!(
+                        "{}let var_long_{} = {}({}.try_into().unwrap());\n",
+                        prep_prefix, tmp, path, src
+                    ));
+                    format!("&var_long_{}", tmp)
+                } else {
+                    format!("{}({}.try_into().unwrap())", path, src)
+                }
+            }
+        } else if mode == MappingMode::Deserialize {
+            if is_slice {
+                format!("{}.iter().map(|v| v.0 as _).collect()", src)
+            } else {
+                format!("{}.0.try_into().unwrap()", src)
+            }
+        } else {
+            // ToWit
+            if is_slice {
+                format!("{}.iter().map(|v| v.0 as _).collect()", src)
+            } else {
+                format!("{}.0.try_into().unwrap()", src)
+            }
+        }
+    }
+}
+
+fn convert_text_component(site: ValueSite<'_>, prep: &mut String) -> String {
+    let ValueSite {
+        is_ref,
+        src,
+        dst,
+        mode,
+        prep_prefix,
+        ..
+    } = site;
+    match mode {
+        MappingMode::Serialize => {
+            let tmp = dst.unwrap_or("tmp").replace('.', "_");
+            prep.push_str(&format!(
+                "{}let component_{} = pumpkin_util::text::TextComponent::text({}.clone());\n",
+                prep_prefix, tmp, src
+            ));
+            if is_ref {
+                format!("&component_{}", tmp)
+            } else {
+                format!("component_{}", tmp)
+            }
+        }
+        MappingMode::Deserialize | MappingMode::ToWit => {
+            format!("serde_json::to_string(&{}).unwrap_or_default()", src)
+        }
+        MappingMode::Downcast => String::new(),
+    }
+}
+
+fn convert_block_pos(site: ValueSite<'_>) -> String {
+    let ValueSite { src, mode, .. } = site;
+    match mode {
+        MappingMode::Serialize => {
+            format!(
+                "pumpkin_util::math::position::BlockPos::new({}.0, {}.1, {}.2)",
+                src, src, src
+            )
+        }
+        MappingMode::Deserialize | MappingMode::ToWit => {
+            format!("({}.0.x, {}.0.y, {}.0.z)", src, src, src)
+        }
+        MappingMode::Downcast => String::new(),
+    }
+}
+
+fn convert_vector3(site: ValueSite<'_>) -> String {
+    let ValueSite { src, mode, .. } = site;
+    match mode {
+        MappingMode::Serialize => {
+            format!(
+                "pumpkin_util::math::vector3::Vector3::new({}.0 as _, {}.1 as _, {}.2 as _)",
+                src, src, src
+            )
+        }
+        MappingMode::Deserialize | MappingMode::ToWit => {
+            format!("({}.x as _, {}.y as _, {}.z as _)", src, src, src)
+        }
+        MappingMode::Downcast => String::new(),
+    }
+}
+
+fn convert_lp_vector3d(site: ValueSite<'_>, prep: &mut String) -> String {
+    let ValueSite {
+        src,
+        dst,
+        mode,
+        prep_prefix,
+        ..
+    } = site;
+    match mode {
+        MappingMode::Serialize => {
+            let tmp = dst.unwrap_or("velocity").replace('.', "_");
+            prep.push_str(&format!(
+                "{}let parsed_{}: [f64; 3] = serde_json::from_str(&{}).ok()?;\n",
+                prep_prefix, tmp, src
+            ));
+            format!(
+                "pumpkin_protocol::codec::lp_vector_3d::LpVector3d(pumpkin_util::math::vector3::Vector3::new(parsed_{0}[0], parsed_{0}[1], parsed_{0}[2]))",
+                tmp
+            )
+        }
+        MappingMode::Deserialize | MappingMode::ToWit => {
+            format!(
+                "serde_json::to_string(&[{}.0.x, {}.0.y, {}.0.z]).unwrap_or_default()",
+                src, src, src
+            )
+        }
+        MappingMode::Downcast => String::new(),
+    }
+}
+
+fn convert_uuid(site: ValueSite<'_>, prep: &mut String) -> String {
+    let ValueSite {
+        is_ref,
+        is_slice,
+        src,
+        dst,
+        mode,
+        prep_prefix,
+        ..
+    } = site;
+    match mode {
+        MappingMode::Serialize => {
+            let tmp = dst.unwrap_or("tmp").replace('.', "_");
+            if is_slice {
+                prep.push_str(&format!(
+                    "{}let vec_{} = {}.iter().map(|u| uuid::Uuid::from_u64_pair(u.high, u.low)).collect::<Vec<_>>();\n",
+                    prep_prefix, tmp, src
+                ));
+                if is_ref {
+                    format!("&vec_{}", tmp)
+                } else {
+                    format!("vec_{}", tmp)
+                }
+            } else {
+                prep.push_str(&format!(
+                    "{}let uuid_{} = uuid::Uuid::from_u64_pair({}.high, {}.low);\n",
+                    prep_prefix, tmp, src, src
+                ));
+                if is_ref {
+                    format!("&uuid_{}", tmp)
+                } else {
+                    format!("uuid_{}", tmp)
+                }
+            }
+        }
+        MappingMode::Deserialize | MappingMode::ToWit => {
+            let map_fn = format!(
+                "crate::pumpkin::plugin::uuid::Uuid {{ high: {{}}.as_u64_pair().1, low: {{}}.as_u64_pair().0 }}",
+            );
+            if is_slice {
+                format!(
+                    "{}.iter().map(|u| {}).collect()",
+                    src,
+                    map_fn.replace("{}", "u")
+                )
+            } else {
+                format!(
+                    "crate::pumpkin::plugin::uuid::Uuid {{ high: {}.as_u64_pair().1, low: {}.as_u64_pair().0 }}",
+                    src, src
+                )
+            }
+        }
+        MappingMode::Downcast => String::new(),
+    }
+}
+
+fn convert_primitive(site: ValueSite<'_>, prep: &mut String) -> String {
+    let ValueSite {
+        type_ident,
+        is_ref,
+        is_slice,
+        src,
+        dst,
+        mode,
+        prep_prefix,
+    } = site;
+    match mode {
+        MappingMode::Serialize => {
+            let tmp = dst.unwrap_or("tmp").replace('.', "_");
+            if is_slice {
+                if type_ident == "u8" {
+                    if is_ref {
+                        format!("&{}", src)
+                    } else {
+                        format!("{}.clone()", src)
+                    }
+                } else if type_ident == "VarInt" {
+                    prep.push_str(&format!(
+                        "{}let vec_{}: Vec<VarInt> = {}.iter().map(|v| VarInt(*v)).collect();\n",
+                        prep_prefix, tmp, src
+                    ));
+                    if is_ref {
+                        format!("&vec_{}", tmp)
+                    } else {
+                        format!("vec_{}", tmp)
+                    }
+                } else if is_ref {
+                    prep.push_str(&format!(
+                        "{}let vec_{}: Vec<_> = {}.iter().map(|v| *v as _).collect();\n",
+                        prep_prefix, tmp, src
+                    ));
+                    format!("&vec_{}", tmp)
+                } else {
+                    format!("{}.iter().map(|v| *v as _).collect()", src)
+                }
+            } else if type_ident == "VarInt" {
+                if is_ref {
+                    prep.push_str(&format!(
+                        "{}let var_int_{} = VarInt({});\n",
+                        prep_prefix, tmp, src
+                    ));
+                    format!("&var_int_{}", tmp)
+                } else {
+                    format!("VarInt({})", src)
+                }
+            } else if type_ident == "i8" {
+                if is_ref {
+                    format!("&{}", src)
+                } else {
+                    src.to_string()
+                }
+            } else {
+                if is_ref {
+                    prep.push_str(&format!(
+                        "{}let val_{} = {}.try_into().unwrap();\n",
+                        prep_prefix, tmp, src
+                    ));
+                    format!("&val_{}", tmp)
+                } else {
+                    format!("{}.try_into().unwrap()", src)
+                }
+            }
+        }
+        MappingMode::Deserialize | MappingMode::ToWit => {
+            if is_slice {
+                if type_ident == "VarInt" {
+                    format!("{}.iter().map(|v| v.0 as _).collect()", src)
+                } else {
+                    format!("{}.iter().map(|v| *v as _).collect()", src)
+                }
+            } else if type_ident == "VarInt" {
+                format!("{}.0.try_into().unwrap()", src)
+            } else if type_ident == "i8" {
+                if is_ref {
+                    format!("*{}", src)
+                } else {
+                    src.to_string()
+                }
+            } else {
+                format!("{}.try_into().unwrap()", src)
+            }
+        }
+        MappingMode::Downcast => String::new(),
+    }
 }
 
 fn process_packets(

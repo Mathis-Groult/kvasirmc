@@ -1,3 +1,8 @@
+mod basic;
+mod combat;
+mod consumption;
+mod equipment;
+
 use crate::block::{Block, BlockAssets};
 use crate::enchantments::AttributeModifierSlot;
 use heck::{ToPascalCase, ToShoutySnakeCase};
@@ -248,305 +253,24 @@ pub struct MobVisibilityComponent {
 impl ToTokens for ItemComponents {
     /// Emits a sequence of `(DataComponent, &impl DataComponentImpl)` tuple expressions for code generation.
     fn to_tokens(&self, tokens: &mut TokenStream) {
-        let max_stack_size = LitInt::new(&self.max_stack_size.to_string(), Span::call_site());
-        tokens.extend(quote! {
-            (MaxStackSize, &MaxStackSizeImpl {
-                size: #max_stack_size,
-            }),
-        });
+        self.push_max_stack_size(tokens);
 
-        if let Some(use_cooldown) = &self.use_cooldown {
-            let seconds = LitFloat::new(&format!("{:.1}", use_cooldown.seconds), Span::call_site());
-            let cooldown_group = if let Some(cd_group) = &use_cooldown.cooldown_group {
-                quote! { Some(#cd_group) }
-            } else {
-                quote! { None }
-            };
+        self.push_use_cooldown(tokens);
 
-            tokens.extend(quote! {
-                (UseCooldown, &UseCooldownImpl {
-                    seconds: #seconds,
-                    cooldown_group: #cooldown_group,
-                }),
-            });
-        }
+        self.push_jukebox_playable(tokens);
 
-        if let Some(playable) = &self.jukebox_playable {
-            let song = LitStr::new(playable, Span::call_site());
-            tokens.extend(quote! {
-                (JukeboxPlayable, &JukeboxPlayableImpl{
-                    song: #song,
-                }),
-            });
-        }
+        self.push_item_name(tokens);
+        self.push_damage(tokens);
 
-        let TextContent::Translate {
-            translate: text,
-            bedrock_translate: _,
-            with: _,
-        } = *self.item_name.clone().0.content
-        else {
-            unreachable!()
-        };
-        let item_name = LitStr::new(&text, Span::call_site());
-        tokens.extend(quote! {
-            (ItemName, &ItemNameImpl {
-                name: Cow::Borrowed(#item_name),
-            }),
-        });
+        self.push_max_damage(tokens);
 
-        if let Some(d) = self.damage {
-            let damage_lit = LitInt::new(&d.to_string(), Span::call_site());
-            tokens.extend(quote! {
-                (Damage, &DamageImpl {
-                    damage: #damage_lit,
-                }),
-            });
-        }
+        self.push_attribute_modifiers(tokens);
 
-        if let Some(md) = self.max_damage {
-            let max_damage_lit = LitInt::new(&md.to_string(), Span::call_site());
-            tokens.extend(quote! {
-                (MaxDamage, &MaxDamageImpl {
-                    max_damage: #max_damage_lit,
-                }),
-            });
-        }
+        self.push_tool(tokens);
 
-        if let Some(modifiers) = &self.attribute_modifiers {
-            let modifier_code = modifiers.iter().map(|modifier| {
-                let r#type = format_ident!(
-                    "{}",
-                    modifier
-                        .r#type
-                        .strip_prefix("minecraft:")
-                        .unwrap()
-                        .to_uppercase()
-                );
-                let id = LitStr::new(&modifier.id, Span::call_site());
-                let amount = modifier.amount;
-                let operation = Ident::new(&format!("{:?}", modifier.operation), Span::call_site());
-                let slot = modifier.slot.to_tokens();
+        self.push_food(tokens);
 
-                quote! {
-                    Modifier {
-                        r#type: &Attributes::#r#type,
-                        id: #id,
-                        amount: #amount,
-                        operation: Operation::#operation,
-                        slot: #slot,
-                    }
-                }
-            });
-            tokens.extend(quote! {
-                (AttributeModifiers, &AttributeModifiersImpl {
-                    attribute_modifiers: Cow::Borrowed(&[#(#modifier_code),*])
-                }),
-            });
-        }
-
-        if let Some(tool) = &self.tool {
-            let rules_code = tool.rules.iter().map(|rule| {
-                let block_array;
-
-                if let RegistryEntryList::Single(t) = &rule.blocks {
-                    if let TagType::Item(str) = t {
-                        let ident = format_ident!(
-                            "{}",
-                            str.strip_prefix("minecraft:").unwrap().to_uppercase()
-                        );
-                        block_array = quote! {
-                            IDs(Cow::Borrowed(&[&Block::#ident]))
-                        }
-                    } else if let TagType::Tag(str) = t {
-                        block_array = quote! {
-                            Tag(Cow::Borrowed(#str))
-                        }
-                    } else {
-                        unreachable!();
-                    }
-                } else if let RegistryEntryList::Many(t) = &rule.blocks {
-                    let mut array = vec![];
-                    for i in t {
-                        let TagType::Item(str) = i else {
-                            unreachable!();
-                        };
-                        let ident = format_ident!(
-                            "{}",
-                            str.strip_prefix("minecraft:").unwrap().to_uppercase()
-                        );
-                        array.push(quote! {
-                            &Block::#ident
-                        });
-                    }
-                    block_array = quote! {
-                        IDs(Cow::Borrowed(&[#(#array),*]))
-                    }
-                } else {
-                    unreachable!();
-                }
-                let speed = if let Some(speed) = rule.speed {
-                    quote! { Some(#speed) }
-                } else {
-                    quote! { None }
-                };
-                let correct_for_drops = if let Some(correct_for_drops) = rule.correct_for_drops {
-                    let correct_for_drops = LitBool::new(correct_for_drops, Span::call_site());
-                    quote! { Some(#correct_for_drops) }
-                } else {
-                    quote! { None }
-                };
-                quote! {
-                    ToolRule {
-                        blocks: #block_array,
-                        speed: #speed,
-                        correct_for_drops: #correct_for_drops
-                    }
-                }
-            });
-            let damage_per_block = {
-                let speed = LitInt::new(&tool.damage_per_block.to_string(), Span::call_site());
-                quote! { #speed }
-            };
-            let default_mining_speed = {
-                let speed = LitFloat::new(
-                    &format!("{:.1}", tool.default_mining_speed),
-                    Span::call_site(),
-                );
-                quote! { #speed }
-            };
-            let can_destroy_blocks_in_creative =
-                LitBool::new(tool.can_destroy_blocks_in_creative, Span::call_site());
-            tokens.extend(quote! { (Tool, &ToolImpl {
-                rules: Cow::Borrowed(&[#(#rules_code),*]),
-                default_mining_speed: #default_mining_speed,
-                damage_per_block: #damage_per_block,
-                can_destroy_blocks_in_creative: #can_destroy_blocks_in_creative
-            }), });
-        }
-
-        if let Some(food) = &self.food {
-            let nutrition = LitInt::new(&food.nutrition.to_string(), Span::call_site());
-            let saturation = LitFloat::new(&format!("{:.1}", food.saturation), Span::call_site());
-            let can_always_eat = {
-                let can = LitBool::new(food.can_always_eat, Span::call_site());
-                quote! { #can }
-            };
-            tokens.extend(quote! { (Food, &FoodImpl {
-                nutrition: #nutrition,
-                saturation: #saturation,
-                can_always_eat: #can_always_eat,
-            }), });
-        }
-
-        if let Some(consumable) = &self.consumable {
-            let consume_seconds = LitFloat::new(
-                &format!("{:.1}", consumable.consume_seconds.unwrap_or(1.6)),
-                Span::call_site(),
-            );
-            let consume_particles = LitBool::new(
-                consumable.has_consume_particles.unwrap_or(true),
-                Span::call_site(),
-            );
-
-            let anim_str = consumable.animation.clone().unwrap_or("eat".to_string());
-            let animation = format_ident!("{}", anim_str.to_pascal_case());
-
-            let sound_id = consumable
-                .sound
-                .clone()
-                .unwrap_or("minecraft:entity.generic.eat".to_string());
-            let variant_name = format_ident!(
-                "{}",
-                sound_id
-                    .strip_prefix("minecraft:")
-                    .unwrap()
-                    .to_pascal_case()
-            );
-            let effects: Vec<ConsumeEffect> =
-                consumable.on_consume_effects.clone().unwrap_or(vec![]);
-            let mut effect_tokens = TokenStream::new();
-
-            for effect in effects {
-                match effect.r#type.as_str() {
-                    "minecraft:clear_all_effects" => {
-                        effect_tokens.extend(quote! { ConsumeEffect::ClearAllEffects, });
-                    }
-                    "minecraft:teleport_randomly" => {
-                        let diameter = effect.diameter.unwrap_or(16.);
-                        effect_tokens
-                            .extend(quote! { ConsumeEffect::TeleportRandomly(#diameter), });
-                    }
-                    "minecraft:play_sound" => {
-                        let sound = format_ident!(
-                            "{}",
-                            effect
-                                .sound
-                                .unwrap()
-                                .strip_prefix("minecraft:")
-                                .unwrap()
-                                .to_pascal_case()
-                        );
-                        effect_tokens
-                            .extend(quote! { ConsumeEffect::PlaySound(IdOr::Id(Sound::#sound)), });
-                    }
-                    "minecraft:apply_effects" => {
-                        let probability = effect.probability.unwrap_or(1.);
-                        if let StringOrStatusEffects::Effects(status_effect_instances) =
-                            effect.effects.unwrap()
-                        {
-                            let mut status_tokens = TokenStream::new();
-
-                            for status in status_effect_instances {
-                                let effect_id = status.id;
-                                let amplifier = status.amplifier.unwrap_or(0);
-                                let duration = status.duration.unwrap_or(1);
-                                let ambient = status.ambient.unwrap_or(false);
-                                let show_particles = status.show_particles.unwrap_or(true);
-                                let show_icon = status.show_icon.unwrap_or(true);
-                                status_tokens.extend(quote! {
-                                    StatusEffectInstance {
-                                        effect_id: Cow::Borrowed(#effect_id),
-                                        amplifier: #amplifier,
-                                        duration: #duration,
-                                        ambient: #ambient,
-                                        show_particles: #show_particles,
-                                        show_icon: #show_icon
-                                    },
-                                });
-                            }
-                            effect_tokens.extend(quote! {
-                                ConsumeEffect::ApplyEffects((Cow::Borrowed(&[#status_tokens]), #probability)),
-                            });
-                        }
-                    }
-                    "minecraft:remove_effects" => {
-                        if let StringOrStatusEffects::String(id) = effect.effects.unwrap() {
-                            let effect_id = format_ident!(
-                                "{}",
-                                id.strip_prefix("minecraft:")
-                                    .unwrap()
-                                    .to_pascal_case()
-                                    .to_uppercase()
-                            );
-
-                            effect_tokens.extend(quote! {
-                                ConsumeEffect::RemoveEffects(IDSet::IDs(Cow::Borrowed(&[&StatusEffect::#effect_id]))),
-                            });
-                        }
-                    }
-                    _ => println!("Unknown CustomEffect type: {}", effect.r#type),
-                }
-            }
-
-            tokens.extend(quote! { (Consumable, &ConsumableImpl {
-                consume_seconds: #consume_seconds,
-                animation: ConsumeAnimation::#animation,
-                sound_event: IdOr::Id(Sound::#variant_name),
-                consume_particles: #consume_particles,
-                effects: Cow::Borrowed(&[#effect_tokens])
-            }), });
-        }
+        self.push_consumable(tokens);
 
         if self.blocks_attacks.is_some() {
             tokens.extend(quote! { (BlocksAttacks, &BlocksAttacksImpl), });
@@ -556,267 +280,24 @@ impl ToTokens for ItemComponents {
             tokens.extend(quote! { (DeathProtection, &DeathProtectionImpl), });
         }
 
-        if let Some(weapon) = &self.weapon {
-            let damage = LitInt::new(
-                &weapon.item_damage_per_attack.to_string(),
-                Span::call_site(),
-            );
-            let disable_blocking_for_seconds = float_literal(weapon.disable_blocking_for_seconds);
-            tokens.extend(quote! {
-                (Weapon, &WeaponImpl {
-                    item_damage_per_attack: #damage,
-                    disable_blocking_for_seconds: #disable_blocking_for_seconds,
-                }),
-            });
-        }
+        self.push_weapon(tokens);
 
-        if let Some(damage_resistant) = &self.damage_resistant {
-            let res_type_variant = match damage_resistant.types.as_str() {
-                // Common canonical and shorthand forms mapped to enum variant names
-                "#minecraft:always_hurts_ender_dragons"
-                | "minecraft:always_hurts_ender_dragons"
-                | "always_hurts_ender_dragons" => "AlwaysHurtsEnderDragons",
-                "#minecraft:always_kills_armor_stands"
-                | "minecraft:always_kills_armor_stands"
-                | "always_kills_armor_stands" => "AlwaysKillsArmorStands",
-                "#minecraft:always_most_significant_fall"
-                | "minecraft:always_most_significant_fall"
-                | "always_most_significant_fall" => "AlwaysMostSignificantFall",
-                "#minecraft:always_triggers_silverfish"
-                | "minecraft:always_triggers_silverfish"
-                | "always_triggers_silverfish" => "AlwaysTriggersSilverfish",
-                "#minecraft:avoids_guardian_thorns"
-                | "minecraft:avoids_guardian_thorns"
-                | "avoids_guardian_thorns" => "AvoidsGuardianThorns",
-                "#minecraft:burns_armor_stands"
-                | "minecraft:burns_armor_stands"
-                | "burns_armor_stands" => "BurnsArmorStands",
-                "#minecraft:burn_from_stepping"
-                | "minecraft:burn_from_stepping"
-                | "burn_from_stepping" => "BurnFromStepping",
-                "#minecraft:bypasses_armor" | "minecraft:bypasses_armor" | "bypasses_armor" => {
-                    "BypassesArmor"
-                }
-                "#minecraft:bypasses_cooldown"
-                | "minecraft:bypasses_cooldown"
-                | "bypasses_cooldown" => "BypassesCooldown",
-                "#minecraft:bypasses_effects"
-                | "minecraft:bypasses_effects"
-                | "bypasses_effects" => "BypassesEffects",
-                "#minecraft:bypasses_enchantments"
-                | "minecraft:bypasses_enchantments"
-                | "bypasses_enchantments" => "BypassesEnchantments",
-                "#minecraft:bypasses_invulnerability"
-                | "minecraft:bypasses_invulnerability"
-                | "bypasses_invulnerability" => "BypassesInvulnerability",
-                "#minecraft:bypasses_resistance"
-                | "minecraft:bypasses_resistance"
-                | "bypasses_resistance" => "BypassesResistance",
-                "#minecraft:bypasses_shield" | "minecraft:bypasses_shield" | "bypasses_shield" => {
-                    "BypassesShield"
-                }
-                "#minecraft:bypasses_wolf_armor"
-                | "minecraft:bypasses_wolf_armor"
-                | "bypasses_wolf_armor" => "BypassesWolfArmor",
-                "#minecraft:can_break_armor_stand"
-                | "minecraft:can_break_armor_stand"
-                | "can_break_armor_stand" => "CanBreakArmorStands",
-                "#minecraft:damages_helmet" | "minecraft:damages_helmet" | "damages_helmet" => {
-                    "DamagesHelmet"
-                }
-                "#minecraft:ignites_armor_stands"
-                | "minecraft:ignites_armor_stands"
-                | "ignites_armor_stands" => "IgnitesArmorStands",
-                "#minecraft:is_drowning" | "minecraft:is_drowning" | "is_drowning" => "Drowning",
-                "#minecraft:is_explosion"
-                | "minecraft:is_explosion"
-                | "is_explosion"
-                | "explosion" => "Explosion",
-                "#minecraft:is_fall" | "minecraft:is_fall" | "is_fall" | "fall" => "Fall",
-                "#minecraft:is_fire" | "minecraft:is_fire" | "is_fire" | "fire" | "in_fire"
-                | "minecraft:in_fire" => "Fire",
-                "#minecraft:is_freezing" | "minecraft:is_freezing" | "is_freezing" => "Freezing",
-                "#minecraft:is_lightning" | "minecraft:is_lightning" | "is_lightning" => {
-                    "Lightning"
-                }
-                "#minecraft:is_player_attack"
-                | "minecraft:is_player_attack"
-                | "is_player_attack" => "PlayerAttack",
-                "#minecraft:is_projectile" | "minecraft:is_projectile" | "is_projectile" => {
-                    "Projectile"
-                }
-                "#minecraft:mace_smash" | "minecraft:mace_smash" | "mace_smash" => "MaceSmash",
-                "#minecraft:no_anger" | "minecraft:no_anger" | "no_anger" => "NoAnger",
-                "#minecraft:no_impact" | "minecraft:no_impact" | "no_impact" => "NoImpact",
-                "#minecraft:no_knockback" | "minecraft:no_knockback" | "no_knockback" => {
-                    "NoKnockback"
-                }
-                "#minecraft:panic_causes" | "minecraft:panic_causes" | "panic_causes" => {
-                    "PanicCauses"
-                }
-                "#minecraft:panic_environmental_causes"
-                | "minecraft:panic_environmental_causes"
-                | "panic_environmental_causes" => "PanicEnvironmentalCauses",
-                "#minecraft:witch_resistant_to"
-                | "minecraft:witch_resistant_to"
-                | "witch_resistant_to" => "WitchResistantTo",
-                "#minecraft:wither_immune_to"
-                | "minecraft:wither_immune_to"
-                | "wither_immune_to" => "WitherImmuneTo",
-                _ => "Generic",
-            };
-            let res_type_ident = format_ident!("{}", res_type_variant);
-            tokens.extend(quote! { (DamageResistant, &DamageResistantImpl {
-                res_type: DamageResistantType::#res_type_ident,
-            }), });
-        }
+        self.push_damage_resistant(tokens);
 
-        if let Some(equippable) = &self.equippable {
-            let slot = match equippable.slot.as_str() {
-                "mainhand" => quote! { &EquipmentSlot::MAIN_HAND },
-                "offhand" => quote! { &EquipmentSlot::OFF_HAND },
-                "head" => quote! { &EquipmentSlot::HEAD },
-                "chest" => quote! { &EquipmentSlot::CHEST },
-                "legs" => quote! { &EquipmentSlot::LEGS },
-                "feet" => quote! { &EquipmentSlot::FEET },
-                "body" => quote! { &EquipmentSlot::BODY },
-                "saddle" => quote! { &EquipmentSlot::SADDLE },
-                _ => panic!("Unknown equippable slot: {}", equippable.slot),
-            };
-            let equip_sound = equippable
-                .equip_sound
-                .as_ref()
-                .map(|s| {
-                    let variant_name =
-                        format_ident!("{}", s.strip_prefix("minecraft:").unwrap().to_pascal_case());
-                    quote! { IdOr::Id(Sound::#variant_name) }
-                })
-                .unwrap_or(quote! { IdOr::Id(Sound::ItemArmorEquipGeneric) });
-            let asset_id = equippable
-                .asset_id
-                .as_ref()
-                .map(|s| {
-                    let asset_id = LitStr::new(s, Span::call_site());
-                    quote! { Some(Cow::Borrowed(#asset_id)) }
-                })
-                .unwrap_or(quote! { None });
-            let camera_overlay = equippable
-                .camera_overlay
-                .as_ref()
-                .map(|s| {
-                    let camera_overlay = LitStr::new(s, Span::call_site());
-                    quote! { Some(Cow::Borrowed(#camera_overlay)) }
-                })
-                .unwrap_or(quote! { None });
-            let entities_option = equippable.allowed_entities.as_ref().map_or_else(
-                || quote! { None },
-                |entities| {
-                    let allowed_entities = entity_idset_tokens(entities);
-                    quote! { Some(#allowed_entities) }
-                },
-            );
-            let dispensable = LitBool::new(equippable.dispensable, Span::call_site());
-            let swappable = LitBool::new(equippable.swappable, Span::call_site());
-            let damage_on_hurt = LitBool::new(equippable.damage_on_hurt, Span::call_site());
-            let equip_on_interact = LitBool::new(equippable.equip_on_interact, Span::call_site());
-            let can_be_sheared = LitBool::new(equippable.can_be_sheared, Span::call_site());
-            let shearing_sound = equippable
-                .shearing_sound
-                .as_ref()
-                .map(|s| {
-                    let variant_name =
-                        format_ident!("{}", s.strip_prefix("minecraft:").unwrap().to_pascal_case());
-                    quote! { IdOr::Id(Sound::#variant_name) }
-                })
-                .unwrap_or(quote! { IdOr::Id(Sound::ItemShearsSnip) });
+        self.push_equippable(tokens);
 
-            tokens.extend(quote! { (Equippable, &EquippableImpl {
-                slot: #slot,
-                equip_sound: #equip_sound,
-                asset_id: #asset_id,
-                camera_overlay: #camera_overlay,
-                allowed_entities: #entities_option,
-                dispensable: #dispensable,
-                swappable: #swappable,
-                damage_on_hurt: #damage_on_hurt,
-                equip_on_interact: #equip_on_interact,
-                can_be_sheared: #can_be_sheared,
-                shearing_sound: #shearing_sound
-            }), });
-        }
+        self.push_enchantable(tokens);
 
-        if let Some(enchantable) = &self.enchantable {
-            let value = LitInt::new(&enchantable.value.to_string(), Span::call_site());
-            tokens.extend(quote! { (Enchantable, &EnchantableImpl { value: #value }), });
-        }
-
-        if let Some(attack_range) = &self.attack_range {
-            let min_reach = float_literal(attack_range.min_reach);
-            let max_reach = float_literal(attack_range.max_reach);
-            let min_creative_reach = float_literal(attack_range.min_creative_reach);
-            let max_creative_reach = float_literal(attack_range.max_creative_reach);
-            let hitbox_margin = float_literal(attack_range.hitbox_margin);
-            let mob_factor = float_literal(attack_range.mob_factor);
-            tokens.extend(quote! {
-                (AttackRange, &AttackRangeImpl {
-                    min_reach: #min_reach,
-                    max_reach: #max_reach,
-                    min_creative_reach: #min_creative_reach,
-                    max_creative_reach: #max_creative_reach,
-                    hitbox_margin: #hitbox_margin,
-                    mob_factor: #mob_factor,
-                }),
-            });
-        }
+        self.push_attack_range(tokens);
         if self.banner_patterns.is_some() {
             tokens.extend(quote! { (BannerPatterns, &BannerPatternsImpl::EMPTY), });
         }
         if self.bees.is_some() {
             tokens.extend(quote! { (Bees, &BeesImpl), });
         }
-        if let Some(block_state) = &self.block_state {
-            let mut entries = TokenStream::new();
-            if let serde_json::Value::Object(map) = block_state {
-                for (k, v) in map {
-                    let v_str = match v {
-                        serde_json::Value::String(s) => s.clone(),
-                        _ => v.to_string(),
-                    };
-                    let k_lit = LitStr::new(k, Span::call_site());
-                    let v_lit = LitStr::new(&v_str, Span::call_site());
-                    entries.extend(quote! {
-                        (Cow::Borrowed(#k_lit), Cow::Borrowed(#v_lit)),
-                    });
-                }
-            }
-            tokens.extend(quote! {
-                (BlockState, &BlockStateImpl {
-                    properties: Cow::Borrowed(&[#entries])
-                }),
-            });
-        }
-        if let Some(transformer) = &self.block_transformer {
-            let tr_lit = LitStr::new(transformer, Span::call_site());
-            tokens.extend(quote! {
-                (BlockTransformer, &BlockTransformerImpl {
-                    transformer: Cow::Borrowed(#tr_lit),
-                }),
-            });
-        }
-        if let Some(break_sound) = &self.break_sound {
-            let variant = format_ident!(
-                "{}",
-                break_sound
-                    .strip_prefix("minecraft:")
-                    .unwrap_or(break_sound)
-                    .to_pascal_case()
-            );
-            tokens.extend(quote! {
-                (BreakSound, &BreakSoundImpl {
-                    sound: IdOr::Id(Sound::#variant),
-                }),
-            });
-        }
+        self.push_block_state(tokens);
+        self.push_block_transformer(tokens);
+        self.push_break_sound(tokens);
         if self.bucket_entity_data.is_some() {
             tokens.extend(quote! { (BucketEntityData, &BucketEntityDataImpl), });
         }
@@ -826,332 +307,63 @@ impl ToTokens for ItemComponents {
         if self.charged_projectiles.is_some() {
             tokens.extend(quote! { (ChargedProjectiles, &ChargedProjectilesImpl { projectiles: Vec::new() }), });
         }
-        if let Some(val) = &self.chicken_variant {
-            let val_str = match val {
-                serde_json::Value::String(s) => s.clone(),
-                _ => val.to_string(),
-            };
-            let val_lit = LitStr::new(&val_str, Span::call_site());
-            tokens.extend(quote! { (ChickenVariant, &ChickenVariantImpl { value: Cow::Borrowed(#val_lit) }), });
-        }
+        self.push_chicken_variant(tokens);
         if self.container.is_some() {
             tokens.extend(quote! { (Container, &ContainerImpl { items: Vec::new() }), });
         }
-        if let Some(color) = &self.cushion_color {
-            let color_ident = format_ident!("{}", color.to_pascal_case());
-            tokens.extend(quote! {
-                (CushionColor, &CushionColorImpl {
-                    color: crate::dye_color::DyeColor::#color_ident,
-                }),
-            });
-        }
-        if let Some(damage_type) = &self.damage_type {
-            let damage_type = format_ident!(
-                "{}",
-                damage_type
-                    .strip_prefix("minecraft:")
-                    .unwrap_or(damage_type)
-                    .to_shouty_snake_case()
-            );
-            tokens.extend(quote! {
-                (DamageType, &DamageTypeImpl {
-                    damage_type: crate::damage::DamageType::#damage_type,
-                }),
-            });
-        }
+        self.push_cushion_color(tokens);
+        self.push_damage_type(tokens);
         if self.debug_stick_state.is_some() {
             tokens.extend(quote! { (DebugStickState, &DebugStickStateImpl), });
         }
-        if let Some(dye) = &self.dye {
-            let color_ident = format_ident!("{}", dye.to_pascal_case());
-            tokens.extend(quote! {
-                (Dye, &DyeImpl {
-                    color: crate::dye_color::DyeColor::#color_ident,
-                }),
-            });
-        }
+        self.push_dye(tokens);
         if self.brewing_fuel.is_some() {
             tokens.extend(quote! { (BrewingFuel, &BrewingFuelImpl), });
         }
-        if let Some(compostable) = &self.compostable {
-            let layers = compostable
-                .layers
-                .strip_prefix("minecraft:")
-                .unwrap_or(&compostable.layers);
-            let chance = match layers {
-                "compostable/low" => 0.3,
-                "compostable/low_medium" => 0.5,
-                "compostable/medium" => 0.65,
-                "compostable/medium_high" => 0.85,
-                "compostable/always_add_one" => 1.0,
-                _ => panic!("Unknown compostable layers: {}", compostable.layers),
-            };
-            let chance_lit = LitFloat::new(&format!("{chance:?}f32"), Span::call_site());
-            tokens.extend(quote! {
-                (Compostable, &CompostableImpl { chance: #chance_lit }),
-            });
-        }
-        if let Some(fuel) = &self.cooking_fuel {
-            let burn_time_tokens = match &fuel.burn_time {
-                serde_json::Value::Number(n) => {
-                    let val = n.as_i64().unwrap_or(0) as i32;
-                    let val_lit = LitInt::new(&val.to_string(), Span::call_site());
-                    quote! { crate::data_component_impl::IntProvider::Inline(#val_lit) }
-                }
-                serde_json::Value::String(s) => {
-                    let s_lit = LitStr::new(s, Span::call_site());
-                    quote! { crate::data_component_impl::IntProvider::Id(std::borrow::Cow::Borrowed(#s_lit)) }
-                }
-                _ => quote! { crate::data_component_impl::IntProvider::Inline(0) },
-            };
-
-            let speed_multiplier_tokens = match &fuel.speed_multiplier {
-                Some(serde_json::Value::Number(n)) => {
-                    let val = n.as_f64().unwrap_or(1.0) as f32;
-                    let val_lit = LitFloat::new(&format!("{val:?}f32"), Span::call_site());
-                    quote! { crate::data_component_impl::FloatProvider::Inline(#val_lit) }
-                }
-                Some(serde_json::Value::String(s)) => {
-                    let s_lit = LitStr::new(s, Span::call_site());
-                    quote! { crate::data_component_impl::FloatProvider::Id(std::borrow::Cow::Borrowed(#s_lit)) }
-                }
-                _ => {
-                    quote! { crate::data_component_impl::FloatProvider::Id(std::borrow::Cow::Borrowed("minecraft:cooking/speed_default")) }
-                }
-            };
-
-            tokens.extend(quote! {
-                (CookingFuel, &CookingFuelImpl {
-                    burn_time: #burn_time_tokens,
-                    speed_multiplier: #speed_multiplier_tokens,
-                }),
-            });
-        }
+        self.push_compostable(tokens);
+        self.push_cooking_fuel(tokens);
         if self.waxed.is_some() {
             tokens.extend(quote! { (Waxed, &WaxedImpl), });
         }
-        if let Some(glint) = self.enchantment_glint_override {
-            let glint_lit = LitBool::new(glint, Span::call_site());
-            tokens.extend(quote! {
-                (EnchantmentGlintOverride, &EnchantmentGlintOverrideImpl { glint: #glint_lit }),
-            });
-        }
-        if self.enchantments.is_some() {
-            tokens.extend(
-                quote! { (Enchantments, &EnchantmentsImpl { enchantment: Cow::Borrowed(&[]) }), },
-            );
-        }
+        self.push_enchantment_glint_override(tokens);
+        self.push_enchantments(tokens);
         if self.entity_data.is_some() {
             tokens.extend(quote! { (EntityData, &EntityDataImpl { nbt: None }), });
         }
-        if let Some(fireworks) = &self.fireworks {
-            let flight_duration = if let serde_json::Value::Object(map) = fireworks
-                && let Some(serde_json::Value::Number(num)) = map.get("flight_duration")
-            {
-                num.as_i64().unwrap_or(1) as i32
-            } else {
-                1
-            };
-            tokens.extend(quote! {
-                (Fireworks, &FireworksImpl {
-                    flight_duration: #flight_duration,
-                    explosions: Vec::new(),
-                }),
-            });
-        }
+        self.push_fireworks(tokens);
         if self.glider.is_some() {
             tokens.extend(quote! { (Glider, &GliderImpl), });
         }
-        if let Some(instrument) = &self.instrument {
-            let inst_lit = LitStr::new(instrument, Span::call_site());
-            tokens.extend(quote! {
-                (Instrument, &InstrumentImpl {
-                    instrument: Cow::Borrowed(#inst_lit),
-                }),
-            });
-        }
-        if let Some(interact) = &self.interact_animation {
-            let anim_type = match interact.r#type.as_str() {
-                "whack" => quote! { SwingAnimationType::Whack },
-                "stab" => quote! { SwingAnimationType::Stab },
-                "none" => quote! { SwingAnimationType::None },
-                _ => quote! { SwingAnimationType::Whack },
-            };
-            let duration = interact.duration;
-            tokens.extend(quote! {
-                (
-                    InteractAnimation,
-                    &InteractAnimationImpl {
-                        animation_type: #anim_type,
-                        duration: #duration,
-                    },
-                ),
-            });
-        }
-        if let Some(model) = &self.item_model {
-            let model_lit = LitStr::new(model, Span::call_site());
-            tokens
-                .extend(quote! { (ItemModel, &ItemModelImpl { id: Cow::Borrowed(#model_lit) }), });
-        }
-        if let Some(kinetic_weapon) = &self.kinetic_weapon {
-            let contact_cooldown_ticks = LitInt::new(
-                &kinetic_weapon.contact_cooldown_ticks.to_string(),
-                Span::call_site(),
-            );
-            let delay_ticks =
-                LitInt::new(&kinetic_weapon.delay_ticks.to_string(), Span::call_site());
-            let dismount_conditions =
-                kinetic_condition_tokens(kinetic_weapon.dismount_conditions.as_ref());
-            let knockback_conditions =
-                kinetic_condition_tokens(kinetic_weapon.knockback_conditions.as_ref());
-            let damage_conditions =
-                kinetic_condition_tokens(kinetic_weapon.damage_conditions.as_ref());
-            let forward_movement = float_literal(kinetic_weapon.forward_movement);
-            let damage_multiplier = float_literal(kinetic_weapon.damage_multiplier);
-            let sound = optional_sound_tokens(kinetic_weapon.sound.as_deref());
-            let hit_sound = optional_sound_tokens(kinetic_weapon.hit_sound.as_deref());
-            tokens.extend(quote! {
-                (KineticWeapon, &KineticWeaponImpl {
-                    contact_cooldown_ticks: #contact_cooldown_ticks,
-                    delay_ticks: #delay_ticks,
-                    dismount_conditions: #dismount_conditions,
-                    knockback_conditions: #knockback_conditions,
-                    damage_conditions: #damage_conditions,
-                    forward_movement: #forward_movement,
-                    damage_multiplier: #damage_multiplier,
-                    sound: #sound,
-                    hit_sound: #hit_sound,
-                }),
-            });
-        }
+        self.push_instrument(tokens);
+        self.push_interact_animation(tokens);
+        self.push_item_model(tokens);
+        self.push_kinetic_weapon(tokens);
         if self.lore.is_some() {
             tokens.extend(quote! { (Lore, &LoreImpl { lines: Vec::new() }), });
         }
         if self.map_decorations.is_some() {
             tokens.extend(quote! { (MapDecorations, &MapDecorationsImpl), });
         }
-        if let Some(charge) = self.minimum_attack_charge {
-            let charge = float_literal(charge);
-            tokens.extend(
-                quote! { (MinimumAttackCharge, &MinimumAttackChargeImpl { charge: #charge }), },
-            );
-        }
-        if let Some(mob_vis) = &self.mob_visibility {
-            let targeting_tokens = entity_idset_tokens(&mob_vis.targeting_entity_types);
-            let visibility = float_literal(mob_vis.visibility);
-            tokens.extend(quote! {
-                (MobVisibility, &MobVisibilityImpl {
-                    targeting_entity_types: #targeting_tokens,
-                    visibility: #visibility,
-                }),
-            });
-        }
-        if let Some(amp) = self.ominous_bottle_amplifier {
-            let amp_lit = LitInt::new(&amp.to_string(), Span::call_site());
-            tokens.extend(quote! { (OminousBottleAmplifier, &OminousBottleAmplifierImpl { amplifier: #amp_lit }), });
-        }
-        if let Some(piercing_weapon) = &self.piercing_weapon {
-            let deals_knockback = LitBool::new(piercing_weapon.deals_knockback, Span::call_site());
-            let dismounts = LitBool::new(piercing_weapon.dismounts, Span::call_site());
-            let sound = optional_sound_tokens(piercing_weapon.sound.as_deref());
-            let hit_sound = optional_sound_tokens(piercing_weapon.hit_sound.as_deref());
-            tokens.extend(quote! {
-                (PiercingWeapon, &PiercingWeaponImpl {
-                    deals_knockback: #deals_knockback,
-                    dismounts: #dismounts,
-                    sound: #sound,
-                    hit_sound: #hit_sound,
-                }),
-            });
-        }
+        self.push_minimum_attack_charge(tokens);
+        self.push_mob_visibility(tokens);
+        self.push_ominous_bottle_amplifier(tokens);
+        self.push_piercing_weapon(tokens);
         if self.pot_decorations.is_some() {
             tokens.extend(quote! { (PotDecorations, &PotDecorationsImpl), });
         }
-        if self.potion_contents.is_some() {
-            tokens.extend(quote! {
-                (PotionContents, &PotionContentsImpl {
-                    potion_id: None,
-                    custom_color: None,
-                    custom_effects: Vec::new(),
-                    custom_name: None,
-                }),
-            });
-        }
-        if let Some(scale) = self.potion_duration_scale {
-            let scale_lit = LitFloat::new(&format!("{scale:?}f32"), Span::call_site());
-            tokens.extend(
-                quote! { (PotionDurationScale, &PotionDurationScaleImpl { scale: #scale_lit }), },
-            );
-        }
-        if let Some(key) = &self.provides_banner_patterns {
-            let key_lit = LitStr::new(key, Span::call_site());
-            tokens.extend(quote! {
-                (ProvidesBannerPatterns, &ProvidesBannerPatternsImpl {
-                    key: Cow::Borrowed(#key_lit),
-                }),
-            });
-        }
-        if let Some(pattern) = &self.provides_pottery_pattern {
-            let pat_lit = LitStr::new(pattern, Span::call_site());
-            tokens.extend(quote! {
-                (ProvidesPotteryPattern, &ProvidesPotteryPatternImpl {
-                    pattern: Cow::Borrowed(#pat_lit),
-                }),
-            });
-        }
-        if let Some(material) = &self.provides_trim_material {
-            let mat_lit = LitStr::new(material, Span::call_site());
-            tokens.extend(quote! {
-                (ProvidesTrimMaterial, &ProvidesTrimMaterialImpl {
-                    material: Cow::Borrowed(#mat_lit),
-                }),
-            });
-        }
-        if let Some(rarity_str) = &self.rarity {
-            let rarity_variant = match rarity_str.as_str() {
-                "uncommon" => quote! { crate::data_component_impl::Rarity::Uncommon },
-                "rare" => quote! { crate::data_component_impl::Rarity::Rare },
-                "epic" => quote! { crate::data_component_impl::Rarity::Epic },
-                _ => quote! { crate::data_component_impl::Rarity::Common },
-            };
-            tokens.extend(quote! { (Rarity, &RarityImpl { rarity: #rarity_variant }), });
-        }
+        self.push_potion_contents(tokens);
+        self.push_potion_duration_scale(tokens);
+        self.push_provides_banner_patterns(tokens);
+        self.push_provides_pottery_pattern(tokens);
+        self.push_provides_trim_material(tokens);
+        self.push_rarity(tokens);
         if self.recipes.is_some() {
             tokens.extend(quote! { (Recipes, &RecipesImpl), });
         }
         if let Some(cost) = self.repair_cost {
             tokens.extend(quote! { (RepairCost, &RepairCostImpl { cost: #cost }), });
         }
-        if let Some(repairable) = &self.repairable {
-            let mut items_tokens = TokenStream::new();
-            match &repairable.items {
-                StringOrList::String(str) => {
-                    if let Some(formatted) = str.strip_prefix('#') {
-                        items_tokens.extend(quote! {
-                            IDSet::Tag(Cow::Borrowed(#formatted))
-                        });
-                    } else {
-                        let item_name = str.strip_prefix("minecraft:").unwrap_or(str);
-                        let ident = format_ident!("{}", item_name.to_shouty_snake_case());
-                        items_tokens.extend(quote! {
-                            IDSet::IDs(Cow::Borrowed(&[&Self::#ident]))
-                        });
-                    }
-                }
-                StringOrList::List(items) => {
-                    let mut ids = TokenStream::new();
-                    for x in items {
-                        let item_name = x.strip_prefix("minecraft:").unwrap_or(x);
-                        let ident = format_ident!("{}", item_name.to_shouty_snake_case());
-                        ids.extend(quote! { &Self::#ident, });
-                    }
-                    items_tokens.extend(quote! {
-                        IDSet::IDs(Cow::Borrowed(&[#ids]))
-                    });
-                }
-            }
-            tokens.extend(quote! { (Repairable, &RepairableImpl { items: #items_tokens }), });
-        }
+        self.push_repairable(tokens);
         if self.sign_text_back.is_some() {
             tokens.extend(quote! { (SignTextBack, &SignTextBackImpl::DEFAULT), });
         }
@@ -1164,63 +376,15 @@ impl ToTokens for ItemComponents {
         if self.suspicious_stew_effects.is_some() {
             tokens.extend(quote! { (SuspiciousStewEffects, &SuspiciousStewEffectsImpl::EMPTY), });
         }
-        if let Some(swing) = &self.swing_animation {
-            let anim_type = match swing.r#type.as_str() {
-                "whack" => quote! { SwingAnimationType::Whack },
-                "stab" => quote! { SwingAnimationType::Stab },
-                "none" => quote! { SwingAnimationType::None },
-                _ => quote! { SwingAnimationType::Whack },
-            };
-            let duration = swing.duration;
-            tokens.extend(quote! {
-                (
-                    AttackAnimation,
-                    &SwingAnimationImpl {
-                        animation_type: #anim_type,
-                        duration: #duration,
-                    },
-                ),
-            });
-        }
+        self.push_swing_animation(tokens);
         if self.tooltip_display.is_some() {
             tokens.extend(quote! { (TooltipDisplay, &TooltipDisplayImpl), });
         }
-        if let Some(use_effects) = &self.use_effects {
-            let can_sprint = LitBool::new(use_effects.can_sprint, Span::call_site());
-            let interact_vibrations =
-                LitBool::new(use_effects.interact_vibrations, Span::call_site());
-            let speed_multiplier = float_literal(use_effects.speed_multiplier);
-            tokens.extend(quote! {
-                (UseEffects, &UseEffectsImpl {
-                    can_sprint: #can_sprint,
-                    interact_vibrations: #interact_vibrations,
-                    speed_multiplier: #speed_multiplier,
-                }),
-            });
-        }
-        if self.use_remainder.is_some() {
-            let remainder = self.use_remainder.as_ref().unwrap();
-            let id = LitStr::new(&remainder.id, Span::call_site());
-            tokens.extend(quote! {
-                (UseRemainder, &UseRemainderImpl {
-                    remainder: Some(Cow::Borrowed(#id)),
-                }),
-            });
-        }
-        if let Some(villager_food) = &self.villager_food {
-            let nutrition = LitInt::new(&villager_food.nutrition.to_string(), Span::call_site());
-            tokens.extend(quote! {
-                (VillagerFood, &VillagerFoodImpl {
-                    nutrition: #nutrition,
-                }),
-            });
-        }
+        self.push_use_effects(tokens);
+        self.push_use_remainder(tokens);
+        self.push_villager_food(tokens);
 
-        if self.writable_book_content.is_some() {
-            tokens.extend(
-                quote! { (WritableBookContent, &WritableBookContentImpl { pages: Vec::new() }), },
-            );
-        }
+        self.push_writable_book_content(tokens);
     }
 }
 

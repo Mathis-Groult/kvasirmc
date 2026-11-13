@@ -1,3 +1,7 @@
+mod registry;
+mod static_items;
+
+use registry::{RecipeLists, load_recipes, sort_recipes};
 use std::{collections::BTreeMap, fs};
 
 use proc_macro2::TokenStream;
@@ -537,252 +541,25 @@ impl ToTokens for RecipeCategoryTypes {
 
 /// Reads recipe JSON files from the 26.2 datapack and emits the complete recipe constants and helpers `TokenStream`.
 pub fn build() -> TokenStream {
-    let dir = std::path::Path::new("../../assets/datapack/data/minecraft/recipe");
-    let mut recipes_assets: BTreeMap<String, RecipeTypes> = BTreeMap::new();
-    let mut entries: Vec<_> = fs::read_dir(dir)
-        .expect("Missing recipe directory")
-        .flatten()
-        .filter(|e| e.path().extension().is_some_and(|ext| ext == "json"))
-        .collect();
-    entries.sort_by_key(|e| e.path());
+    let recipes_assets = load_recipes();
+    let RecipeLists {
+        crafting_recipes,
+        cooking_recipes,
+        stonecutting_recipes,
+        smithing_trim_recipes,
+        smithing_transform_recipes,
+    } = sort_recipes(recipes_assets);
 
-    for entry in entries {
-        let path = entry.path();
-        let stem = path.file_stem().unwrap().to_string_lossy().into_owned();
-        let key = format!("minecraft:{stem}");
-        let content = fs::read_to_string(&path).expect("Failed to read recipe file");
-        let recipe = serde_json::from_str::<RecipeTypes>(&content)
-            .unwrap_or_else(|e| panic!("Failed to parse recipe {}: {e}", path.display()));
-        recipes_assets.insert(key, recipe);
-    }
-
-    let mut crafting_recipes = Vec::new();
-    let mut cooking_recipes = Vec::new();
-    let mut stonecutting_recipes = Vec::new();
-    let mut smithing_trim_recipes = Vec::new();
-    let mut smithing_transform_recipes = Vec::new();
-
-    for (recipe_id, recipe) in recipes_assets {
-        match recipe {
-            RecipeTypes::Blasting(recipe) => {
-                let mut common_cooking_token = TokenStream::new();
-                recipe.to_tokens_with_id(&mut common_cooking_token, &recipe_id, 100);
-                let blasting_token = quote! {
-                    CookingRecipeType::Blasting (CookingRecipe {
-                        #common_cooking_token
-                    })
-                };
-                cooking_recipes.push(blasting_token);
-            }
-            RecipeTypes::CampfireCooking(recipe) => {
-                let mut common_cooking_token = TokenStream::new();
-                recipe.to_tokens_with_id(&mut common_cooking_token, &recipe_id, 100);
-                let campfire_token = quote! {
-                    CookingRecipeType::CampfireCooking (CookingRecipe {
-                        #common_cooking_token
-                    })
-                };
-                cooking_recipes.push(campfire_token);
-            }
-            RecipeTypes::CraftingShaped(recipe) => {
-                crafting_recipes.push(recipe.to_token_stream());
-            }
-            RecipeTypes::CraftingShapeless(recipe) => {
-                crafting_recipes.push(recipe.to_token_stream());
-            }
-            RecipeTypes::CraftingTransmute(recipe) => {
-                crafting_recipes.push(recipe.to_token_stream());
-            }
-            RecipeTypes::CraftingDecoratedPot(recipe) => {
-                crafting_recipes.push(recipe.to_token_stream());
-            }
-            RecipeTypes::Smelting(recipe) => {
-                let mut common_cooking_token = TokenStream::new();
-                recipe.to_tokens_with_id(&mut common_cooking_token, &recipe_id, 200);
-                let smelting_token = quote! {
-                    CookingRecipeType::Smelting(CookingRecipe {
-                        #common_cooking_token
-                    })
-                };
-                cooking_recipes.push(smelting_token);
-            }
-            RecipeTypes::SmithingTransform(recipe) => {
-                smithing_transform_recipes.push(recipe.to_token_stream());
-            }
-            RecipeTypes::SmithingTrim(recipe) => {
-                smithing_trim_recipes.push(recipe.to_token_stream());
-            }
-            RecipeTypes::Smoking(recipe) => {
-                let mut common_cooking_token = TokenStream::new();
-                recipe.to_tokens_with_id(&mut common_cooking_token, &recipe_id, 100);
-                let smoking_token = quote! {
-                    CookingRecipeType::Smoking(CookingRecipe{
-                        #common_cooking_token
-                    })
-                };
-                cooking_recipes.push(smoking_token);
-            }
-            RecipeTypes::Stonecutting(recipe) => {
-                stonecutting_recipes.push(recipe.to_token_stream());
-            }
-            RecipeTypes::CraftingSpecial
-            | RecipeTypes::CraftingSpecialBannerDuplicate
-            | RecipeTypes::CraftingSpecialBookCloning
-            | RecipeTypes::CraftingSpecialFireworkRocket
-            | RecipeTypes::CraftingSpecialFireworkStar
-            | RecipeTypes::CraftingSpecialFireworkStarFade
-            | RecipeTypes::CraftingSpecialMapExtending
-            | RecipeTypes::CraftingSpecialRepairItem
-            | RecipeTypes::CraftingSpecialShieldDecoration
-            | RecipeTypes::CraftingDye
-            | RecipeTypes::CraftingImbue => {}
-        }
-    }
-
+    let imports_and_crafting_recipe_types_tokens =
+        static_items::imports_and_crafting_recipe_types_tokens();
+    let cooking_recipe_kind_tokens = static_items::cooking_recipe_kind_tokens();
+    let smithing_trim_recipe_tokens = static_items::smithing_trim_recipe_tokens();
+    let get_cooking_recipe_with_ingredient_tokens =
+        static_items::get_cooking_recipe_with_ingredient_tokens();
     quote! {
-        use crate::tag::Taggable;
-        use crate::item::Item;
-        use serde::{Serialize, Deserialize};
+        #imports_and_crafting_recipe_types_tokens
 
-        #[derive(Clone, Debug, Serialize)]
-        pub enum CraftingRecipeTypes {
-            CraftingShaped {
-                category: RecipeCategoryTypes,
-                group: Option<&'static str>,
-                show_notification: bool,
-                key: &'static [(char, RecipeIngredientTypes)],
-                pattern: &'static [&'static str],
-                result: RecipeResultStruct,
-            },
-            CraftingShapeless {
-                category: RecipeCategoryTypes,
-                group: Option<&'static str>,
-                ingredients: &'static [RecipeIngredientTypes],
-                result: RecipeResultStruct,
-            },
-            CraftingTransmute {
-                category: RecipeCategoryTypes,
-                group: Option<&'static str>,
-                input: RecipeIngredientTypes,
-                material: RecipeIngredientTypes,
-                result: RecipeResultStruct,
-            },
-            CraftingDecoratedPot {
-                category: RecipeCategoryTypes,
-            },
-            CraftingSpecial,
-        }
-
-        #[allow(dead_code)]
-        #[derive(Clone, Debug, Serialize)]
-        pub struct CookingRecipe {
-            /// Vanilla-compatible recipe ID (e.g., "minecraft:iron_ingot_from_smelting_iron_ore")
-            pub recipe_id: &'static str,
-            pub category: RecipeCategoryTypes,
-            pub group: Option<&'static str>,
-            pub ingredient: RecipeIngredientTypes,
-            pub cookingtime: i32,
-            pub experience: f32,
-            pub result: RecipeResultStruct,
-        }
-
-        #[derive(Clone, Debug, Serialize)]
-        pub enum CookingRecipeType {
-            Blasting(CookingRecipe),
-            Smelting(CookingRecipe),
-            Smoking(CookingRecipe),
-            CampfireCooking(CookingRecipe),
-        }
-        #[derive(Clone, Debug, Serialize)]
-        pub enum CookingRecipeKind {
-            Blasting,
-            Smelting,
-            Smoking,
-            CampfireCooking,
-        }
-
-        impl From<&CookingRecipeType> for CookingRecipeKind {
-            fn from(recipe_type: &CookingRecipeType) -> Self {
-                match recipe_type {
-                    CookingRecipeType::Blasting(_) => Self::Blasting,
-                    CookingRecipeType::Smelting(_) => Self::Smelting,
-                    CookingRecipeType::Smoking(_) => Self::Smoking,
-                    CookingRecipeType::CampfireCooking(_) => Self::CampfireCooking,
-                }
-            }
-        }
-
-        impl From<CookingRecipeType> for CookingRecipeKind {
-            fn from(recipe_type: CookingRecipeType) -> Self {
-                match recipe_type {
-                    CookingRecipeType::Blasting(_) => Self::Blasting,
-                    CookingRecipeType::Smelting(_) => Self::Smelting,
-                    CookingRecipeType::Smoking(_) => Self::Smoking,
-                    CookingRecipeType::CampfireCooking(_) => Self::CampfireCooking,
-                }
-            }
-        }
-
-        impl CookingRecipeKind {
-            #[must_use]
-            pub const fn to_type(self, recipe: CookingRecipe) -> CookingRecipeType {
-                match self {
-                    Self::Blasting => CookingRecipeType::Blasting(recipe),
-                    Self::Smelting => CookingRecipeType::Smelting(recipe),
-                    Self::Smoking => CookingRecipeType::Smoking(recipe),
-                    Self::CampfireCooking => CookingRecipeType::CampfireCooking(recipe),
-                }
-            }
-        }
-
-        #[derive(Clone, Debug, Serialize)]
-        pub struct StonecutterRecipe {
-            pub group: Option<&'static str>,
-            pub ingredient: RecipeIngredientTypes,
-            pub result: RecipeResultStruct,
-        }
-
-        #[derive(Clone, Debug, Serialize)]
-        pub struct RecipeResultStruct {
-            pub id: &'static str,
-            pub count: u8,
-        }
-
-        #[derive(Clone, Debug, Serialize)]
-        pub enum RecipeIngredientTypes {
-            Simple(&'static str),
-            Tagged(&'static str),
-            OneOf(&'static [&'static str]),
-        }
-
-        impl RecipeIngredientTypes {
-            #[must_use]
-            pub fn match_item(&self, item: &Item) -> bool {
-                match self {
-                    Self::Simple(ingredient) => {
-                        let name = format!("minecraft:{}", item.registry_key);
-                        name == *ingredient
-                    }
-                    Self::Tagged(tag) => item
-                        .is_tagged_with(tag)
-                        .expect("Crafting recipe used invalid tag"),
-                    Self::OneOf(ingredients) => {
-                        let name = format!("minecraft:{}", item.registry_key);
-                        ingredients.contains(&name.as_str())
-                    }
-                }
-            }
-        }
-
-        #[derive(Clone, Debug, Serialize)]
-        pub enum RecipeCategoryTypes {
-            Equipment,
-            Building,
-            Restone,
-            Misc,
-            Food,
-            Blocks,
-        }
+        #cooking_recipe_kind_tokens
 
         pub static RECIPES_CRAFTING: &[CraftingRecipeTypes] = &[
             #(#crafting_recipes),*
@@ -800,114 +577,9 @@ pub fn build() -> TokenStream {
             #(#smithing_transform_recipes),*
         ];
 
-        #[derive(Clone, Debug, Serialize)]
-        pub struct SmithingTrimRecipe {
-            pub template: RecipeIngredientTypes,
-            pub base: RecipeIngredientTypes,
-            pub addition: RecipeIngredientTypes,
-            pub pattern: &'static str,
-        }
+        #smithing_trim_recipe_tokens
 
-        impl SmithingTrimRecipe {
-            #[must_use]
-            pub fn matches(&self, template: &Item, base: &Item, addition: &Item) -> bool {
-                self.template.match_item(template)
-                    && self.base.match_item(base)
-                    && self.addition.match_item(addition)
-            }
-        }
-
-        #[must_use]
-        pub fn get_smithing_trim_recipe(
-            template: &Item,
-            base: &Item,
-            addition: &Item,
-        ) -> Option<&'static SmithingTrimRecipe> {
-            RECIPES_SMITHING_TRIM
-                .iter()
-                .find(|recipe| recipe.matches(template, base, addition))
-        }
-
-        #[derive(Clone, Debug, Serialize)]
-        pub struct SmithingTransformRecipe {
-            pub template: RecipeIngredientTypes,
-            pub base: RecipeIngredientTypes,
-            pub addition: RecipeIngredientTypes,
-            pub result: RecipeResultStruct,
-        }
-
-        impl SmithingTransformRecipe {
-            #[must_use]
-            pub fn matches(&self, template: &Item, base: &Item, addition: &Item) -> bool {
-                self.template.match_item(template)
-                    && self.base.match_item(base)
-                    && self.addition.match_item(addition)
-            }
-        }
-
-        #[must_use]
-        pub fn get_smithing_transform_recipe(
-            template: &Item,
-            base: &Item,
-            addition: &Item,
-        ) -> Option<&'static SmithingTransformRecipe> {
-            RECIPES_SMITHING_TRANSFORM
-                .iter()
-                .find(|recipe| recipe.matches(template, base, addition))
-        }
-
-        /// Returns the trim material registry key for a given item, if it is a valid trim material.
-        #[must_use]
-        pub fn get_trim_material_for_item(item: &Item) -> Option<&'static str> {
-            match item.registry_key {
-                "amethyst_shard" => Some("minecraft:amethyst"),
-                "copper_ingot" => Some("minecraft:copper"),
-                "diamond" => Some("minecraft:diamond"),
-                "emerald" => Some("minecraft:emerald"),
-                "gold_ingot" => Some("minecraft:gold"),
-                "iron_ingot" => Some("minecraft:iron"),
-                "lapis_lazuli" => Some("minecraft:lapis"),
-                "netherite_ingot" => Some("minecraft:netherite"),
-                "quartz" => Some("minecraft:quartz"),
-                "redstone" => Some("minecraft:redstone"),
-                "resin_brick" | "resin_clump" => Some("minecraft:resin"),
-                _ => None,
-            }
-        }
-
-        #[must_use]
-        pub fn get_cooking_recipe_with_ingredient(ingredient: &Item, recipe_type: CookingRecipeKind) -> Option<&'static CookingRecipe> {
-            RECIPES_COOKING
-                .iter()
-                .find_map(|recipe| match (recipe, &recipe_type) {
-                    (CookingRecipeType::Blasting(cooking_recipe), CookingRecipeKind::Blasting)
-                    | (CookingRecipeType::Smelting(cooking_recipe), CookingRecipeKind::Smelting)
-                    | (CookingRecipeType::Smoking(cooking_recipe), CookingRecipeKind::Smoking)
-                    | (
-                        CookingRecipeType::CampfireCooking(cooking_recipe),
-                        CookingRecipeKind::CampfireCooking,
-                    ) => {
-                        cooking_recipe.ingredient.match_item(ingredient).then_some(cooking_recipe)
-                    }
-                    _ => None,
-                })
-        }
-
-        /// Get the experience value for a recipe by its recipe ID.
-        /// Used for calculating XP when extracting from furnace.
-        /// Recipe IDs are in vanilla format like `"minecraft:iron_ingot_from_smelting_iron_ore"`
-        #[must_use]
-        pub fn get_recipe_experience(recipe_id: &str) -> Option<f32> {
-            RECIPES_COOKING.iter().find_map(|recipe| {
-                let cooking_recipe = match recipe {
-                    CookingRecipeType::Blasting(r)
-                    | CookingRecipeType::Smelting(r)
-                    | CookingRecipeType::Smoking(r)
-                    | CookingRecipeType::CampfireCooking(r) => r,
-                };
-                (cooking_recipe.recipe_id == recipe_id).then_some(cooking_recipe.experience)
-            })
-        }
+        #get_cooking_recipe_with_ingredient_tokens
     }
 }
 

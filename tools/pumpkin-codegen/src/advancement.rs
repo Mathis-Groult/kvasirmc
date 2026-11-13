@@ -1,3 +1,5 @@
+mod conditions;
+
 use heck::ToShoutySnakeCase;
 use proc_macro2::TokenStream;
 use pumpkin_util::identifier::Identifier;
@@ -1303,501 +1305,62 @@ fn generate_condition_tokens(trigger: &str, val: &serde_json::Value) -> TokenStr
 
     match trigger {
         "minecraft:player_generates_container_loot" => {
-            let lt = val
-                .get("loot_tables")
-                .and_then(|v| v.as_str())
-                .unwrap_or("");
-            quote! { AdvancementCondition::PlayerGeneratesContainerLoot(#lt) }
+            conditions::condition_player_generates_container_loot(val)
         }
-        "minecraft:recipe_unlocked" => {
-            let r = val
-                .get("recipes")
-                .or_else(|| val.get("recipe"))
-                .and_then(|v| v.as_str())
-                .unwrap_or("");
-            quote! { AdvancementCondition::RecipeUnlocked(#r) }
-        }
-        "minecraft:recipe_crafted" => {
-            let r = val.get("recipes").and_then(|v| v.as_str()).unwrap_or("");
-            quote! { AdvancementCondition::RecipeCrafted(#r) }
-        }
-        "minecraft:inventory_changed" => {
-            let items_toks: Vec<_> = val
-                .get("items")
-                .and_then(|i| i.as_array())
-                .map_or_else(Vec::new, |arr| {
-                    arr.iter().map(generate_item_condition_tokens).collect()
-                });
-            quote! {
-                AdvancementCondition::InventoryChanged(&InventoryChangedCondition {
-                    items: &[#(#items_toks),*],
-                    slots: None,
-                })
-            }
-        }
-        "minecraft:consume_item" => {
-            let item_val = val.get("item").unwrap_or(val);
-            let item_tok = generate_item_condition_tokens(item_val);
-            quote! { AdvancementCondition::ConsumeItem(#item_tok) }
-        }
-        "minecraft:placed_block" => {
-            let mut block = val
-                .get("block")
-                .or_else(|| val.get("blocks"))
-                .and_then(|v| v.as_str());
-            if block.is_none() {
-                if let Some(loc) = val.get("location") {
-                    block = loc
-                        .get("blocks")
-                        .or_else(|| loc.get("block"))
-                        .and_then(|v| v.as_str());
-                    if block.is_none() {
-                        let loc_str = loc.to_string();
-                        if loc_str.contains("chiseled_bookshelf") {
-                            block = Some("minecraft:chiseled_bookshelf");
-                        } else if loc_str.contains("comparator") {
-                            block = Some("minecraft:comparator");
-                        } else if loc_str.contains("creaking_heart") {
-                            block = Some("minecraft:creaking_heart");
-                        } else if loc_str.contains("pale_oak_logs") {
-                            block = Some("minecraft:pale_oak_log");
-                        }
-                    }
-                }
-            }
-            let b_tok = opt_str_tokens(block);
-            quote! {
-                AdvancementCondition::PlacedBlock {
-                    block: #b_tok,
-                    item: None,
-                }
-            }
-        }
-        "minecraft:item_used_on_block" => {
-            let cond_tok = generate_item_used_on_block_condition_tokens(val);
-            quote! { AdvancementCondition::ItemUsedOnBlock(#cond_tok) }
-        }
-        "minecraft:allay_drop_item_on_block" => {
-            let cond_tok = generate_item_used_on_block_condition_tokens(val);
-            quote! { AdvancementCondition::AllayDropItemOnBlock(#cond_tok) }
-        }
-        "minecraft:entity_hurt_player" => {
-            let dmg_tok = extract_damage_condition_tokens(val);
-            quote! { AdvancementCondition::EntityHurtPlayer(#dmg_tok) }
-        }
-        "minecraft:player_hurt_entity" => {
-            let dmg_tok = extract_damage_condition_tokens(val);
-            quote! { AdvancementCondition::PlayerHurtEntity(#dmg_tok) }
-        }
-        "minecraft:enter_block" => {
-            let b = val
-                .get("blocks")
-                .or_else(|| val.get("block"))
-                .and_then(|v| v.as_str())
-                .unwrap_or("");
-            quote! { AdvancementCondition::EnterBlock(#b) }
-        }
-        "minecraft:slide_down_block" => {
-            let b = val
-                .get("blocks")
-                .or_else(|| val.get("block"))
-                .and_then(|v| v.as_str())
-                .unwrap_or("");
-            quote! { AdvancementCondition::SlideDownBlock(#b) }
-        }
-        "minecraft:filled_bucket" => {
-            let item = val
-                .get("item")
-                .and_then(|i| i.get("items"))
-                .and_then(|v| v.as_str())
-                .unwrap_or("");
-            quote! { AdvancementCondition::FilledBucket(#item) }
-        }
-        "minecraft:fishing_rod_hooked" => {
-            let item_val = val.get("item").unwrap_or(val);
-            let item_tok = generate_item_condition_tokens(item_val);
-            quote! { AdvancementCondition::FishingRodHooked(#item_tok) }
-        }
-        "minecraft:using_item" => {
-            let item_val = val.get("item").unwrap_or(val);
-            let item_tok = generate_item_condition_tokens(item_val);
-            let looking_at = val
-                .get("player")
-                .and_then(|p| p.get("predicate"))
-                .and_then(|pred| pred.get("minecraft:type_specific/player"))
-                .and_then(|p| p.get("looking_at"))
-                .and_then(|l| {
-                    l.get("minecraft:entity_type")
-                        .or_else(|| l.get("type"))
-                        .and_then(|t| t.as_str())
-                });
-            let look_tok = opt_str_tokens(looking_at);
-            quote! {
-                AdvancementCondition::UsingItem {
-                    item: #item_tok,
-                    looking_at: #look_tok,
-                }
-            }
-        }
-        "minecraft:used_totem" => {
-            let item_val = val.get("item").unwrap_or(val);
-            let item_tok = generate_item_condition_tokens(item_val);
-            quote! { AdvancementCondition::UsedTotem(#item_tok) }
-        }
-        "minecraft:changed_dimension" => {
-            let from = val.get("from").and_then(|v| v.as_str());
-            let to = val.get("to").and_then(|v| v.as_str());
-            let from_tok = opt_str_tokens(from);
-            let to_tok = opt_str_tokens(to);
-            quote! { AdvancementCondition::ChangedDimension { from: #from_tok, to: #to_tok } }
-        }
-        "minecraft:construct_beacon" => {
-            let lvl = val.get("level").and_then(|l| match l {
-                serde_json::Value::Number(n) => n.as_i64().map(|v| v as i32),
-                serde_json::Value::Object(m) => {
-                    m.get("min").and_then(|v| v.as_i64()).map(|v| v as i32)
-                }
-                _ => None,
-            });
-            let lvl_tok = opt_i32_tokens(lvl);
-            quote! { AdvancementCondition::ConstructBeacon(BeaconCondition { level_min: #lvl_tok }) }
-        }
-        "minecraft:target_hit" => {
-            let sig = val
-                .get("signal_strength")
-                .and_then(|v| v.as_i64())
-                .map(|v| v as i32);
-            let dist = val
-                .get("projectile")
-                .and_then(|p| p.get("distance"))
-                .and_then(|d| d.get("horizontal"))
-                .and_then(|h| h.get("min"))
-                .and_then(|v| v.as_f64());
-            let sig_tok = opt_i32_tokens(sig);
-            let dist_tok = opt_f64_tokens(dist);
-            quote! {
-                AdvancementCondition::TargetHit(TargetHitCondition {
-                    signal_strength: #sig_tok,
-                    distance_min: #dist_tok,
-                })
-            }
-        }
-        "minecraft:player_killed_entity" => {
-            let entity_tok = generate_entity_condition_tokens(val);
-            quote! { AdvancementCondition::PlayerKilledEntity(#entity_tok) }
-        }
-        "minecraft:tame_animal" => {
-            let entity_tok = generate_entity_condition_tokens(val);
-            quote! { AdvancementCondition::TameAnimal(#entity_tok) }
-        }
+        "minecraft:recipe_unlocked" => conditions::condition_recipe_unlocked(val),
+        "minecraft:recipe_crafted" => conditions::condition_recipe_crafted(val),
+        "minecraft:inventory_changed" => conditions::condition_inventory_changed(val),
+        "minecraft:consume_item" => conditions::condition_consume_item(val),
+        "minecraft:placed_block" => conditions::condition_placed_block(val),
+        "minecraft:item_used_on_block" => conditions::condition_item_used_on_block(val),
+        "minecraft:allay_drop_item_on_block" => conditions::condition_allay_drop_item_on_block(val),
+        "minecraft:entity_hurt_player" => conditions::condition_entity_hurt_player(val),
+        "minecraft:player_hurt_entity" => conditions::condition_player_hurt_entity(val),
+        "minecraft:enter_block" => conditions::condition_enter_block(val),
+        "minecraft:slide_down_block" => conditions::condition_slide_down_block(val),
+        "minecraft:filled_bucket" => conditions::condition_filled_bucket(val),
+        "minecraft:fishing_rod_hooked" => conditions::condition_fishing_rod_hooked(val),
+        "minecraft:using_item" => conditions::condition_using_item(val),
+        "minecraft:used_totem" => conditions::condition_used_totem(val),
+        "minecraft:changed_dimension" => conditions::condition_changed_dimension(val),
+        "minecraft:construct_beacon" => conditions::condition_construct_beacon(val),
+        "minecraft:target_hit" => conditions::condition_target_hit(val),
+        "minecraft:player_killed_entity" => conditions::condition_player_killed_entity(val),
+        "minecraft:tame_animal" => conditions::condition_tame_animal(val),
         "minecraft:thrown_item_picked_up_by_player" => {
-            let entity_tok = generate_entity_condition_tokens(val);
-            quote! { AdvancementCondition::ThrownItemPickedUpByPlayer(#entity_tok) }
+            conditions::condition_thrown_item_picked_up_by_player(val)
         }
-        "minecraft:bred_animals" => {
-            let parent_tok = val.get("parent").map(generate_entity_condition_tokens);
-            let partner_tok = val.get("partner").map(generate_entity_condition_tokens);
-            let child_tok = val.get("child").map(generate_entity_condition_tokens);
-            let p_tok = match parent_tok {
-                Some(t) => quote! { Some(#t) },
-                None => quote! { None },
-            };
-            let pr_tok = match partner_tok {
-                Some(t) => quote! { Some(#t) },
-                None => quote! { None },
-            };
-            let c_tok = match child_tok {
-                Some(t) => quote! { Some(#t) },
-                None => quote! { None },
-            };
-            quote! {
-                AdvancementCondition::BredAnimals(&BredAnimalsCondition {
-                    parent: #p_tok,
-                    partner: #pr_tok,
-                    child: #c_tok,
-                })
-            }
-        }
-        "minecraft:location" => {
-            let loc_tok = generate_location_condition_tokens(val);
-            quote! { AdvancementCondition::Location(#loc_tok) }
-        }
+        "minecraft:bred_animals" => conditions::condition_bred_animals(val),
+        "minecraft:location" => conditions::condition_location(val),
         "minecraft:enchanted_item" => quote! { AdvancementCondition::EnchantedItem },
         "minecraft:brewed_potion" => quote! { AdvancementCondition::BrewedPotion },
-        "minecraft:item_durability_changed" => {
-            let item_val = val.get("item").unwrap_or(val);
-            let item_tok = generate_item_condition_tokens(item_val);
-            let vtype = val
-                .get("player")
-                .and_then(|p| p.get("predicate"))
-                .and_then(|pred| {
-                    pred.get("minecraft:vehicle")
-                        .or_else(|| pred.get("vehicle"))
-                })
-                .and_then(|v| v.get("minecraft:entity_type").or_else(|| v.get("type")))
-                .and_then(|t| t.as_str());
-            let vt_tok = opt_str_tokens(vtype);
-            quote! {
-                AdvancementCondition::ItemDurabilityChanged {
-                    item: #item_tok,
-                    vehicle_type: #vt_tok,
-                }
-            }
-        }
-        "minecraft:levitation" => {
-            let dist = val
-                .get("distance")
-                .and_then(|d| d.get("y"))
-                .and_then(|y| y.get("min"))
-                .and_then(|v| v.as_f64());
-            let d_tok = opt_f64_tokens(dist);
-            quote! { AdvancementCondition::Levitation { distance_y_min: #d_tok } }
-        }
-        "minecraft:fall_from_height" => {
-            let dist = val
-                .get("distance")
-                .and_then(|d| d.get("y"))
-                .and_then(|y| y.get("min"))
-                .and_then(|v| v.as_f64());
-            let d_tok = opt_f64_tokens(dist);
-            quote! { AdvancementCondition::FallFromHeight { distance_y_min: #d_tok } }
-        }
-        "minecraft:fall_after_explosion" => {
-            let dist = val
-                .get("distance")
-                .and_then(|d| d.get("y"))
-                .and_then(|y| y.get("min"))
-                .and_then(|v| v.as_f64());
-            let cause = val
-                .get("cause")
-                .and_then(|c| c.get("predicate"))
-                .and_then(|p| {
-                    p.get("minecraft:entity_type")
-                        .or_else(|| p.get("entity_type"))
-                })
-                .and_then(|v| v.as_str());
-            let d_tok = opt_f64_tokens(dist);
-            let c_tok = opt_str_tokens(cause);
-            quote! {
-                AdvancementCondition::FallAfterExplosion {
-                    distance_y_min: #d_tok,
-                    cause_entity: #c_tok,
-                }
-            }
-        }
-        "minecraft:nether_travel" => {
-            let dist = val
-                .get("distance")
-                .and_then(|d| d.get("horizontal"))
-                .and_then(|h| h.get("min"))
-                .and_then(|v| v.as_f64());
-            let d_tok = opt_f64_tokens(dist);
-            quote! { AdvancementCondition::NetherTravel { distance_horizontal_min: #d_tok } }
-        }
-        "minecraft:ride_entity_in_lava" => {
-            let dist = val
-                .get("distance")
-                .and_then(|d| d.get("horizontal"))
-                .and_then(|h| h.get("min"))
-                .and_then(|v| v.as_f64());
-            let dim = val
-                .get("player")
-                .and_then(|p| p.get("predicate"))
-                .and_then(|pred| {
-                    pred.get("minecraft:location")
-                        .or_else(|| pred.get("location"))
-                })
-                .and_then(|l| l.get("dimension"))
-                .and_then(|d| d.as_str());
-            let vtype = val
-                .get("player")
-                .and_then(|p| p.get("predicate"))
-                .and_then(|pred| {
-                    pred.get("minecraft:vehicle")
-                        .or_else(|| pred.get("vehicle"))
-                })
-                .and_then(|v| v.get("minecraft:entity_type").or_else(|| v.get("type")))
-                .and_then(|t| t.as_str());
-            let d_tok = opt_f64_tokens(dist);
-            let dim_tok = opt_str_tokens(dim);
-            let vt_tok = opt_str_tokens(vtype);
-            quote! {
-                AdvancementCondition::RideEntityInLava {
-                    distance_horizontal_min: #d_tok,
-                    dimension: #dim_tok,
-                    vehicle_type: #vt_tok,
-                }
-            }
-        }
-        "minecraft:shot_crossbow" => {
-            let item_val = val.get("item").unwrap_or(val);
-            let item_tok = generate_item_condition_tokens(item_val);
-            quote! { AdvancementCondition::ShotCrossbow(#item_tok) }
-        }
+        "minecraft:item_durability_changed" => conditions::condition_item_durability_changed(val),
+        "minecraft:levitation" => conditions::condition_levitation(val),
+        "minecraft:fall_from_height" => conditions::condition_fall_from_height(val),
+        "minecraft:fall_after_explosion" => conditions::condition_fall_after_explosion(val),
+        "minecraft:nether_travel" => conditions::condition_nether_travel(val),
+        "minecraft:ride_entity_in_lava" => conditions::condition_ride_entity_in_lava(val),
+        "minecraft:shot_crossbow" => conditions::condition_shot_crossbow(val),
         "minecraft:avoid_vibration" => quote! { AdvancementCondition::AvoidVibration },
-        "minecraft:bee_nest_destroyed" => {
-            let block = val
-                .get("blocks")
-                .or_else(|| val.get("block"))
-                .and_then(|v| v.as_str());
-            let bees = val
-                .get("num_bees_inside")
-                .and_then(|v| v.as_i64())
-                .map(|v| v as i32);
-            let b_tok = opt_str_tokens(block);
-            let bees_tok = opt_i32_tokens(bees);
-            quote! {
-                AdvancementCondition::BeeNestDestroyed {
-                    block: #b_tok,
-                    num_bees_inside: #bees_tok,
-                }
-            }
-        }
-        "minecraft:channeled_lightning" => {
-            let victim = val
-                .get("victims")
-                .and_then(|v| v.as_array())
-                .and_then(|a| a.first())
-                .and_then(|e| e.get("predicate"))
-                .and_then(|p| {
-                    p.get("minecraft:entity_type")
-                        .or_else(|| p.get("entity_type"))
-                })
-                .and_then(|v| v.as_str());
-            let v_tok = opt_str_tokens(victim);
-            quote! { AdvancementCondition::ChanneledLightning { victim_type: #v_tok } }
-        }
-        "minecraft:lightning_strike" => {
-            let bystander = val
-                .get("bystander")
-                .and_then(|b| b.get("predicate"))
-                .and_then(|p| {
-                    p.get("minecraft:entity_type")
-                        .or_else(|| p.get("entity_type"))
-                })
-                .and_then(|v| v.as_str());
-            let fire = val
-                .get("lightning")
-                .and_then(|l| l.get("predicate"))
-                .and_then(|p| p.get("minecraft:type_specific/lightning"))
-                .and_then(|t| t.get("blocks_set_on_fire"))
-                .and_then(|v| v.as_i64())
-                .map(|v| v as i32);
-            let max_dist = val
-                .get("lightning")
-                .and_then(|l| l.get("predicate"))
-                .and_then(|p| p.get("minecraft:distance"))
-                .and_then(|d| d.get("absolute"))
-                .and_then(|a| a.get("max"))
-                .and_then(|v| v.as_f64());
-            let b_tok = opt_str_tokens(bystander);
-            let f_tok = opt_i32_tokens(fire);
-            let md_tok = opt_f64_tokens(max_dist);
-            quote! {
-                AdvancementCondition::LightningStrike {
-                    bystander_type: #b_tok,
-                    blocks_set_on_fire: #f_tok,
-                    distance_max: #md_tok,
-                }
-            }
-        }
+        "minecraft:bee_nest_destroyed" => conditions::condition_bee_nest_destroyed(val),
+        "minecraft:channeled_lightning" => conditions::condition_channeled_lightning(val),
+        "minecraft:lightning_strike" => conditions::condition_lightning_strike(val),
         "minecraft:kill_mob_near_sculk_catalyst" => {
             quote! { AdvancementCondition::KillMobNearSculkCatalyst }
         }
         "minecraft:hero_of_the_village" => quote! { AdvancementCondition::HeroOfTheVillage },
         "minecraft:player_interacted_with_entity" => {
-            let ent_tok = val.get("entity").map(generate_entity_condition_tokens);
-            let item_tok = val.get("item").map(generate_item_condition_tokens);
-            let player_tok = val.get("player").map(generate_entity_condition_tokens);
-            let e_tok = match ent_tok {
-                Some(t) => quote! { Some(#t) },
-                None => quote! { None },
-            };
-            let i_tok = match item_tok {
-                Some(t) => quote! { Some(#t) },
-                None => quote! { None },
-            };
-            let p_tok = match player_tok {
-                Some(t) => quote! { Some(#t) },
-                None => quote! { None },
-            };
-            quote! {
-                AdvancementCondition::PlayerInteractedWithEntity {
-                    entity: #e_tok,
-                    item: #i_tok,
-                    player: #p_tok,
-                }
-            }
+            conditions::condition_player_interacted_with_entity(val)
         }
         "minecraft:thrown_item_picked_up_by_entity" => {
-            let ent_tok = val.get("entity").map(generate_entity_condition_tokens);
-            let item_tok = val.get("item").map(generate_item_condition_tokens);
-            let player_tok = val.get("player").map(generate_entity_condition_tokens);
-            let e_tok = match ent_tok {
-                Some(t) => quote! { Some(#t) },
-                None => quote! { None },
-            };
-            let i_tok = match item_tok {
-                Some(t) => quote! { Some(#t) },
-                None => quote! { None },
-            };
-            let p_tok = match player_tok {
-                Some(t) => quote! { Some(#t) },
-                None => quote! { None },
-            };
-            quote! {
-                AdvancementCondition::ThrownItemPickedUpByEntity {
-                    entity: #e_tok,
-                    item: #i_tok,
-                    player: #p_tok,
-                }
-            }
+            conditions::condition_thrown_item_picked_up_by_entity(val)
         }
-        "minecraft:player_sheared_equipment" => {
-            let ent_tok = val.get("entity").map(generate_entity_condition_tokens);
-            let item_tok = val.get("item").map(generate_item_condition_tokens);
-            let e_tok = match ent_tok {
-                Some(t) => quote! { Some(#t) },
-                None => quote! { None },
-            };
-            let i_tok = match item_tok {
-                Some(t) => quote! { Some(#t) },
-                None => quote! { None },
-            };
-            quote! {
-                AdvancementCondition::PlayerShearedEquipment {
-                    entity: #e_tok,
-                    item: #i_tok,
-                }
-            }
-        }
-        "minecraft:started_riding" => {
-            let player_tok = val.get("player").map(generate_entity_condition_tokens);
-            let p_tok = match player_tok {
-                Some(t) => quote! { Some(#t) },
-                None => quote! { None },
-            };
-            quote! { AdvancementCondition::StartedRiding(#p_tok) }
-        }
-        "minecraft:summoned_entity" => {
-            let ent_val = val.get("entity").unwrap_or(val);
-            let ent_tok = generate_entity_condition_tokens(ent_val);
-            quote! { AdvancementCondition::SummonedEntity(#ent_tok) }
-        }
-        "minecraft:crafter_recipe_crafted" => {
-            let r = val
-                .get("recipes")
-                .or_else(|| val.get("recipe"))
-                .and_then(|v| v.as_str())
-                .unwrap_or("");
-            quote! { AdvancementCondition::CrafterRecipeCrafted(#r) }
-        }
+        "minecraft:player_sheared_equipment" => conditions::condition_player_sheared_equipment(val),
+        "minecraft:started_riding" => conditions::condition_started_riding(val),
+        "minecraft:summoned_entity" => conditions::condition_summoned_entity(val),
+        "minecraft:crafter_recipe_crafted" => conditions::condition_crafter_recipe_crafted(val),
         "minecraft:effects_changed" => quote! { AdvancementCondition::EffectsChanged },
-        "minecraft:spear_mobs" => {
-            let cnt = val.get("count").and_then(|v| v.as_i64()).map(|v| v as i32);
-            let c_tok = opt_i32_tokens(cnt);
-            quote! { AdvancementCondition::SpearMobs { count: #c_tok } }
-        }
+        "minecraft:spear_mobs" => conditions::condition_spear_mobs(val),
         "minecraft:impossible" => quote! { AdvancementCondition::Impossible },
         "minecraft:killed_by_arrow" => quote! { AdvancementCondition::KilledByArrow },
         "minecraft:slept_in_bed" => quote! { AdvancementCondition::SleptInBed },

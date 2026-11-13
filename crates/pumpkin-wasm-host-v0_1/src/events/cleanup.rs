@@ -1,3 +1,5 @@
+mod compound;
+
 use crate::pumpkin::plugin::{
     entity::Entity, event::Event, item_stack::ItemStack, player::Player, server::Server,
     text::TextComponent, world::World,
@@ -32,219 +34,65 @@ pub fn cleanup_server(state: &mut PluginHostState, server: &Resource<Server>) {
 #[allow(clippy::too_many_lines, clippy::match_same_arms)]
 pub fn cleanup_event(event: &Event, state: &mut PluginHostState) {
     match event {
-        Event::PlayerJoinEvent(data) => {
-            cleanup_player(state, &data.player);
-            cleanup_text_component(state, &data.join_message);
-        }
-        Event::PlayerLeaveEvent(data) => {
-            cleanup_player(state, &data.player);
-            cleanup_text_component(state, &data.leave_message);
-        }
-        Event::PlayerLoginEvent(data) => {
-            cleanup_player(state, &data.player);
-            cleanup_text_component(state, &data.kick_message);
-        }
-        Event::PlayerChatEvent(data) => {
-            cleanup_player(state, &data.player);
-            for res in &data.recipients {
-                cleanup_player(state, res);
-            }
-        }
-        Event::PlayerCommandSendEvent(data) => {
-            cleanup_player(state, &data.player);
-        }
-        Event::PlayerPermissionCheckEvent(data) => {
-            cleanup_player(state, &data.player);
-        }
-        Event::PlayerMoveEvent(data) => {
-            cleanup_player(state, &data.player);
-        }
-        Event::PlayerTeleportEvent(data) => {
-            cleanup_player(state, &data.player);
-        }
+        Event::PlayerJoinEvent(data) => compound::cleanup_player_join_event(state, data),
+        Event::PlayerLeaveEvent(data) => compound::cleanup_player_leave_event(state, data),
+        Event::PlayerLoginEvent(data) => compound::cleanup_player_login_event(state, data),
+        Event::PlayerChatEvent(data) => compound::cleanup_player_chat_event(state, data),
+        Event::PlayerCommandSendEvent(data) => cleanup_player(state, &data.player),
+        Event::PlayerPermissionCheckEvent(data) => cleanup_player(state, &data.player),
+        Event::PlayerMoveEvent(data) => cleanup_player(state, &data.player),
+        Event::PlayerTeleportEvent(data) => cleanup_player(state, &data.player),
         Event::PlayerChangeWorldEvent(data) => {
-            cleanup_player(state, &data.player);
-            cleanup_world(state, &data.previous_world);
-            cleanup_world(state, &data.new_world);
+            compound::cleanup_player_change_world_event(state, data);
         }
-        Event::PlayerRespawnEvent(data) => {
-            cleanup_player(state, &data.player);
-            cleanup_world(state, &data.previous_world);
-            cleanup_world(state, &data.respawned_world);
-        }
-        Event::PlayerExpChangeEvent(data) => {
-            cleanup_player(state, &data.player);
-        }
-        Event::PlayerItemHeldEvent(data) => {
-            cleanup_player(state, &data.player);
-        }
-        Event::PlayerChangedMainHandEvent(data) => {
-            cleanup_player(state, &data.player);
-        }
-        Event::PlayerGamemodeChangeEvent(data) => {
-            cleanup_player(state, &data.player);
-        }
-        Event::PlayerCustomPayloadEvent(data) => {
-            cleanup_player(state, &data.player);
-        }
-        Event::PlayerFishEvent(data) => {
-            cleanup_player(state, &data.player);
-        }
-        Event::PlayerEggThrowEvent(data) => {
-            cleanup_player(state, &data.player);
-        }
-        Event::PlayerInteractUnknownEntityEvent(data) => {
-            cleanup_player(state, &data.player);
-        }
-        Event::PlayerInteractEntityEvent(data) => {
-            cleanup_player(state, &data.player);
-        }
-        Event::PlayerInteractEvent(data) => {
-            cleanup_player(state, &data.player);
-        }
-        Event::PlayerToggleSneakEvent(data) => {
-            cleanup_player(state, &data.player);
-        }
-        Event::PlayerToggleFlightEvent(data) => {
-            cleanup_player(state, &data.player);
-        }
-        Event::PlayerToggleSprintEvent(data) => {
-            cleanup_player(state, &data.player);
-        }
-        Event::InventoryClickEvent(data) => {
-            cleanup_player(state, &data.player);
-            if let Some(res) = &data.clicked_item {
-                cleanup_item_stack(state, res);
-            }
-            if let Some(res) = &data.cursor {
-                cleanup_item_stack(state, res);
-            }
-        }
-        Event::InventoryCloseEvent(data) => {
-            cleanup_player(state, &data.player);
-        }
-        Event::BlockRedstoneEvent(data) => {
-            cleanup_world(state, &data.target_world);
-        }
-        Event::BlockBreakEvent(data) => {
-            if let Some(res) = &data.player {
-                cleanup_player(state, res);
-            }
-        }
-        Event::BlockBurnEvent(data) => {
-            cleanup_world(state, &data.target_world);
-        }
-        Event::BlockCanBuildEvent(data) => {
-            cleanup_player(state, &data.player);
-        }
-        Event::BlockGrowEvent(data) => {
-            cleanup_world(state, &data.target_world);
-        }
-        Event::BlockPlaceEvent(data) => {
-            cleanup_player(state, &data.player);
-        }
-        Event::BedrockFormResponseEvent(data) => {
-            cleanup_player(state, &data.player);
-        }
-        Event::DialogClickActionEvent(data) => {
-            cleanup_player(state, &data.player);
-        }
-        Event::DialogClearEvent(data) => {
-            cleanup_player(state, &data.player);
-        }
-        Event::DialogShowEvent(data) => {
-            cleanup_player(state, &data.player);
-            cleanup_text_component(state, &data.dialog.title);
-            for body in &data.dialog.body {
-                match body {
-                    crate::pumpkin::plugin::java_dialogs::DialogBody::PlainMessage(c) => {
-                        cleanup_text_component(state, c);
-                    }
-                    crate::pumpkin::plugin::java_dialogs::DialogBody::Item(item) => {
-                        cleanup_item_stack(state, item);
-                    }
-                }
-            }
-            for input in &data.dialog.inputs {
-                use crate::pumpkin::plugin::java_dialogs::DialogInput;
-                match input {
-                    DialogInput::Bool(b) => cleanup_text_component(state, &b.label),
-                    DialogInput::Text(t) => {
-                        cleanup_text_component(state, &t.label);
-                        cleanup_text_component(state, &t.placeholder);
-                    }
-                    DialogInput::NumberRange(n) => cleanup_text_component(state, &n.label),
-                    DialogInput::SingleOption(s) => {
-                        cleanup_text_component(state, &s.label);
-                        for opt in &s.options {
-                            cleanup_text_component(state, opt);
-                        }
-                    }
-                }
-            }
-            for button in &data.dialog.buttons {
-                cleanup_text_component(state, &button.text);
-                if let Some(tooltip) = &button.tooltip {
-                    cleanup_text_component(state, tooltip);
-                }
-            }
-            for link in &data.dialog.links {
-                if let crate::pumpkin::plugin::java_dialogs::LinkLabel::Custom(c) = &link.label {
-                    cleanup_text_component(state, c);
-                }
-            }
-            if let Some(ext_title) = &data.dialog.external_title {
-                cleanup_text_component(state, ext_title);
-            }
-        }
+        Event::PlayerRespawnEvent(data) => compound::cleanup_player_respawn_event(state, data),
+        Event::PlayerExpChangeEvent(data) => cleanup_player(state, &data.player),
+        Event::PlayerItemHeldEvent(data) => cleanup_player(state, &data.player),
+        Event::PlayerChangedMainHandEvent(data) => cleanup_player(state, &data.player),
+        Event::PlayerGamemodeChangeEvent(data) => cleanup_player(state, &data.player),
+        Event::PlayerCustomPayloadEvent(data) => cleanup_player(state, &data.player),
+        Event::PlayerFishEvent(data) => cleanup_player(state, &data.player),
+        Event::PlayerEggThrowEvent(data) => cleanup_player(state, &data.player),
+        Event::PlayerInteractUnknownEntityEvent(data) => cleanup_player(state, &data.player),
+        Event::PlayerInteractEntityEvent(data) => cleanup_player(state, &data.player),
+        Event::PlayerInteractEvent(data) => cleanup_player(state, &data.player),
+        Event::PlayerToggleSneakEvent(data) => cleanup_player(state, &data.player),
+        Event::PlayerToggleFlightEvent(data) => cleanup_player(state, &data.player),
+        Event::PlayerToggleSprintEvent(data) => cleanup_player(state, &data.player),
+        Event::InventoryClickEvent(data) => compound::cleanup_inventory_click_event(state, data),
+        Event::InventoryCloseEvent(data) => cleanup_player(state, &data.player),
+        Event::BlockRedstoneEvent(data) => cleanup_world(state, &data.target_world),
+        Event::BlockBreakEvent(data) => compound::cleanup_block_break_event(state, data),
+        Event::BlockBurnEvent(data) => cleanup_world(state, &data.target_world),
+        Event::BlockCanBuildEvent(data) => cleanup_player(state, &data.player),
+        Event::BlockGrowEvent(data) => cleanup_world(state, &data.target_world),
+        Event::BlockPlaceEvent(data) => cleanup_player(state, &data.player),
+        Event::BedrockFormResponseEvent(data) => cleanup_player(state, &data.player),
+        Event::DialogClickActionEvent(data) => cleanup_player(state, &data.player),
+        Event::DialogClearEvent(data) => cleanup_player(state, &data.player),
+        Event::DialogShowEvent(data) => compound::cleanup_dialog_show_event(state, data),
         Event::ServerCommandEvent(_) => {}
-        Event::ServerListPingEvent(data) => {
-            cleanup_text_component(state, &data.motd);
-        }
+        Event::ServerListPingEvent(data) => cleanup_text_component(state, &data.motd),
         Event::ServerLoadEvent(_) => {}
-        Event::SpawnChangeEvent(data) => {
-            cleanup_world(state, &data.target_world);
-        }
-        Event::ServerBroadcastEvent(data) => {
-            cleanup_text_component(state, &data.message);
-            cleanup_text_component(state, &data.sender);
-        }
+        Event::SpawnChangeEvent(data) => cleanup_world(state, &data.target_world),
+        Event::ServerBroadcastEvent(data) => compound::cleanup_server_broadcast_event(state, data),
         Event::ServerTickStartEvent(_) => {}
         Event::ServerTickEndEvent(_) => {}
-        Event::PacketReceivedEvent(data) => {
-            cleanup_player(state, &data.player);
-        }
-        Event::PacketSentEvent(data) => {
-            cleanup_player(state, &data.player);
-        }
-        Event::ChunkLoadEvent(data) => {
-            cleanup_world(state, &data.target_world);
-        }
-        Event::ChunkSaveEvent(data) => {
-            cleanup_world(state, &data.target_world);
-        }
-        Event::ChunkSendEvent(data) => {
-            cleanup_world(state, &data.target_world);
-        }
+        Event::PacketReceivedEvent(data) => cleanup_player(state, &data.player),
+        Event::PacketSentEvent(data) => cleanup_player(state, &data.player),
+        Event::ChunkLoadEvent(data) => cleanup_world(state, &data.target_world),
+        Event::ChunkSaveEvent(data) => cleanup_world(state, &data.target_world),
+        Event::ChunkSendEvent(data) => cleanup_world(state, &data.target_world),
         Event::EntityDamageEvent(_) => {}
         Event::EntityDeathEvent(_) => {}
-        Event::PlayerDeathEvent(data) => {
-            cleanup_player(state, &data.player);
-            cleanup_text_component(state, &data.death_message);
-        }
-        Event::EntitySpawnEvent(data) => {
-            cleanup_world(state, &data.target_world);
-        }
+        Event::PlayerDeathEvent(data) => compound::cleanup_player_death_event(state, data),
+        Event::EntitySpawnEvent(data) => cleanup_world(state, &data.target_world),
         Event::EntityCombustEvent(_) => {}
         Event::EntityRegainHealthEvent(_) => {}
         Event::EntityAirChangeEvent(_) => {}
         Event::EntityBreedEvent(_) => {}
         Event::EntityDismountEvent(_) => {}
-        Event::EntityDyeEvent(data) => {
-            if let Some(res) = &data.player {
-                cleanup_player(state, res);
-            }
-        }
+        Event::EntityDyeEvent(data) => compound::cleanup_entity_dye_event(state, data),
         Event::EntityEnterLoveModeEvent(_) => {}
         Event::EntityExplodeEvent(_) => {}
         Event::EntityMountEvent(_) => {}
@@ -252,37 +100,19 @@ pub fn cleanup_event(event: &Event, state: &mut PluginHostState) {
         Event::EntityPortalEvent(_) => {}
         Event::EntityResurrectEvent(_) => {}
         Event::EntityShootBowEvent(_) => {}
-        Event::EntityTameEvent(data) => {
-            cleanup_player(state, &data.owner);
-        }
+        Event::EntityTameEvent(data) => cleanup_player(state, &data.owner),
         Event::EntityTargetEvent(_) => {}
         Event::EntityTeleportEvent(_) => {}
         Event::EntityToggleGlideEvent(_) => {}
         Event::EntityTransformEvent(_) => {}
-        Event::PlayerItemConsumeEvent(data) => {
-            cleanup_player(state, &data.player);
-        }
-        Event::PlayerItemDamageEvent(data) => {
-            cleanup_player(state, &data.player);
-        }
-        Event::PlayerDropItemEvent(data) => {
-            cleanup_player(state, &data.player);
-        }
-        Event::PlayerBedEnterEvent(data) => {
-            cleanup_player(state, &data.player);
-        }
-        Event::PlayerBedLeaveEvent(data) => {
-            cleanup_player(state, &data.player);
-        }
-        Event::PlayerBucketEmptyEvent(data) => {
-            cleanup_player(state, &data.player);
-        }
-        Event::PlayerBucketFillEvent(data) => {
-            cleanup_player(state, &data.player);
-        }
-        Event::BlockDamageEvent(data) => {
-            cleanup_player(state, &data.player);
-        }
+        Event::PlayerItemConsumeEvent(data) => cleanup_player(state, &data.player),
+        Event::PlayerItemDamageEvent(data) => cleanup_player(state, &data.player),
+        Event::PlayerDropItemEvent(data) => cleanup_player(state, &data.player),
+        Event::PlayerBedEnterEvent(data) => cleanup_player(state, &data.player),
+        Event::PlayerBedLeaveEvent(data) => cleanup_player(state, &data.player),
+        Event::PlayerBucketEmptyEvent(data) => cleanup_player(state, &data.player),
+        Event::PlayerBucketFillEvent(data) => cleanup_player(state, &data.player),
+        Event::BlockDamageEvent(data) => cleanup_player(state, &data.player),
         Event::BlockIgniteEvent(_) => {}
         Event::BlockFromToEvent(_) => {}
         Event::BlockFormEvent(_) => {}
@@ -293,23 +123,13 @@ pub fn cleanup_event(event: &Event, state: &mut PluginHostState) {
         Event::BlockPistonExtendEvent(_) => {}
         Event::BlockPistonRetractEvent(_) => {}
         Event::NotePlayEvent(_) => {}
-        Event::SignChangeEvent(data) => {
-            cleanup_player(state, &data.player);
-        }
+        Event::SignChangeEvent(data) => cleanup_player(state, &data.player),
         Event::SpongeAbsorbEvent(_) => {}
         Event::TntPrimeEvent(_) => {}
-        Event::WeatherChangeEvent(data) => {
-            cleanup_world(state, &data.target_world);
-        }
-        Event::ThunderChangeEvent(data) => {
-            cleanup_world(state, &data.target_world);
-        }
-        Event::WorldLoadEvent(data) => {
-            cleanup_world(state, &data.target_world);
-        }
-        Event::WorldUnloadEvent(data) => {
-            cleanup_world(state, &data.target_world);
-        }
+        Event::WeatherChangeEvent(data) => cleanup_world(state, &data.target_world),
+        Event::ThunderChangeEvent(data) => cleanup_world(state, &data.target_world),
+        Event::WorldLoadEvent(data) => cleanup_world(state, &data.target_world),
+        Event::WorldUnloadEvent(data) => cleanup_world(state, &data.target_world),
         Event::AsyncStructureGenerateEvent(_) => {}
         Event::AsyncStructureSpawnEvent(_) => {}
         Event::ChunkPopulateEvent(_) => {}
@@ -321,57 +141,29 @@ pub fn cleanup_event(event: &Event, state: &mut PluginHostState) {
         Event::PortalCreateEvent(_) => {}
         Event::StructureGrowEvent(_) => {}
         Event::TimeSkipEvent(_) => {}
-        Event::WorldInitEvent(data) => {
-            cleanup_world(state, &data.target_world);
-        }
+        Event::WorldInitEvent(data) => cleanup_world(state, &data.target_world),
         Event::WorldSaveEvent(_) => {}
-        Event::InventoryOpenEvent(data) => {
-            cleanup_player(state, &data.player);
-        }
-        Event::InventoryDragEvent(data) => {
-            cleanup_player(state, &data.player);
-        }
-        Event::CraftItemEvent(data) => {
-            cleanup_player(state, &data.player);
-        }
+        Event::InventoryOpenEvent(data) => cleanup_player(state, &data.player),
+        Event::InventoryDragEvent(data) => cleanup_player(state, &data.player),
+        Event::CraftItemEvent(data) => cleanup_player(state, &data.player),
         Event::FurnaceSmeltEvent(_) => {}
         Event::BrewEvent(_) => {}
         Event::BrewingStandFuelEvent(_) => {}
         Event::FurnaceBurnEvent(_) => {}
-        Event::FurnaceExtractEvent(data) => {
-            cleanup_player(state, &data.player);
-        }
+        Event::FurnaceExtractEvent(data) => cleanup_player(state, &data.player),
         Event::FurnaceStartSmeltEvent(_) => {}
         Event::HopperInventorySearchEvent(_) => {}
-        Event::InventoryCreativeEvent(data) => {
-            cleanup_player(state, &data.player);
-        }
-        Event::InventoryInteractEvent(data) => {
-            cleanup_player(state, &data.player);
-        }
+        Event::InventoryCreativeEvent(data) => cleanup_player(state, &data.player),
+        Event::InventoryInteractEvent(data) => cleanup_player(state, &data.player),
         Event::InventoryMoveItemEvent(_) => {}
         Event::InventoryPickupItemEvent(_) => {}
-        Event::PrepareAnvilEvent(data) => {
-            cleanup_player(state, &data.player);
-        }
-        Event::PrepareGrindstoneEvent(data) => {
-            cleanup_player(state, &data.player);
-        }
-        Event::PrepareInventoryResultEvent(data) => {
-            cleanup_player(state, &data.player);
-        }
-        Event::PrepareItemCraftEvent(data) => {
-            cleanup_player(state, &data.player);
-        }
-        Event::PrepareSmithingEvent(data) => {
-            cleanup_player(state, &data.player);
-        }
-        Event::SmithItemEvent(data) => {
-            cleanup_player(state, &data.player);
-        }
-        Event::TradeSelectEvent(data) => {
-            cleanup_player(state, &data.player);
-        }
+        Event::PrepareAnvilEvent(data) => cleanup_player(state, &data.player),
+        Event::PrepareGrindstoneEvent(data) => cleanup_player(state, &data.player),
+        Event::PrepareInventoryResultEvent(data) => cleanup_player(state, &data.player),
+        Event::PrepareItemCraftEvent(data) => cleanup_player(state, &data.player),
+        Event::PrepareSmithingEvent(data) => cleanup_player(state, &data.player),
+        Event::SmithItemEvent(data) => cleanup_player(state, &data.player),
+        Event::TradeSelectEvent(data) => cleanup_player(state, &data.player),
         Event::VehicleBlockCollisionEvent(_) => {}
         Event::VehicleCollisionEvent(_) => {}
         Event::VehicleCreateEvent(_) => {}
@@ -383,126 +175,49 @@ pub fn cleanup_event(event: &Event, state: &mut PluginHostState) {
         Event::VehicleMoveEvent(_) => {}
         Event::VehicleUpdateEvent(_) => {}
         Event::PrepareItemEnchantEvent(data) => {
-            cleanup_player(state, &data.player);
-            cleanup_item_stack(state, &data.item);
+            compound::cleanup_prepare_item_enchant_event(state, data);
         }
-        Event::EnchantItemEvent(data) => {
-            cleanup_player(state, &data.player);
-            cleanup_item_stack(state, &data.item);
-        }
+        Event::EnchantItemEvent(data) => compound::cleanup_enchant_item_event(state, data),
         Event::MapInitializeEvent(_) => {}
         Event::HangingBreakEvent(_) => {}
         Event::HangingBreakByEntityEvent(_) => {}
-        Event::HangingPlaceEvent(data) => {
-            if let Some(res) = &data.player {
-                cleanup_player(state, res);
-            }
-        }
-        Event::BellResonateEvent(data) => {
-            cleanup_world(state, &data.target_world);
-        }
-        Event::BellRingEvent(data) => {
-            cleanup_world(state, &data.target_world);
-        }
-        Event::BlockBrushEvent(data) => {
-            cleanup_world(state, &data.target_world);
-            cleanup_player(state, &data.player);
-            cleanup_item_stack(state, &data.item);
-        }
-        Event::BlockCookEvent(data) => {
-            cleanup_world(state, &data.target_world);
-            cleanup_item_stack(state, &data.source);
-            cleanup_item_stack(state, &data.result);
-        }
+        Event::HangingPlaceEvent(data) => compound::cleanup_hanging_place_event(state, data),
+        Event::BellResonateEvent(data) => cleanup_world(state, &data.target_world),
+        Event::BellRingEvent(data) => cleanup_world(state, &data.target_world),
+        Event::BlockBrushEvent(data) => compound::cleanup_block_brush_event(state, data),
+        Event::BlockCookEvent(data) => compound::cleanup_block_cook_event(state, data),
         Event::BlockDamageAbortEvent(data) => {
-            cleanup_player(state, &data.player);
-            cleanup_world(state, &data.target_world);
-            cleanup_item_stack(state, &data.item_in_hand);
+            compound::cleanup_block_damage_abort_event(state, data);
         }
         Event::BlockDispenseArmorEvent(data) => {
-            cleanup_world(state, &data.target_world);
-            cleanup_item_stack(state, &data.item);
+            compound::cleanup_block_dispense_armor_event(state, data);
         }
         Event::BlockDispenseLootEvent(data) => {
-            cleanup_world(state, &data.target_world);
-            for res in &data.items {
-                cleanup_item_stack(state, res);
-            }
+            compound::cleanup_block_dispense_loot_event(state, data);
         }
-        Event::BlockDropItemEvent(data) => {
-            cleanup_world(state, &data.target_world);
-            if let Some(res) = &data.player {
-                cleanup_player(state, res);
-            }
-            for res in &data.items {
-                cleanup_item_stack(state, res);
-            }
-        }
-        Event::BlockExpEvent(data) => {
-            cleanup_world(state, &data.target_world);
-        }
-        Event::BlockFertilizeEvent(data) => {
-            cleanup_world(state, &data.target_world);
-            if let Some(res) = &data.player {
-                cleanup_player(state, res);
-            }
-        }
-        Event::BlockMultiPlaceEvent(data) => {
-            cleanup_player(state, &data.player);
-            cleanup_world(state, &data.target_world);
-        }
-        Event::BlockReceiveGameEvent(data) => {
-            cleanup_world(state, &data.target_world);
-        }
+        Event::BlockDropItemEvent(data) => compound::cleanup_block_drop_item_event(state, data),
+        Event::BlockExpEvent(data) => cleanup_world(state, &data.target_world),
+        Event::BlockFertilizeEvent(data) => compound::cleanup_block_fertilize_event(state, data),
+        Event::BlockMultiPlaceEvent(data) => compound::cleanup_block_multi_place_event(state, data),
+        Event::BlockReceiveGameEvent(data) => cleanup_world(state, &data.target_world),
         Event::BlockShearEntityEvent(data) => {
-            cleanup_world(state, &data.target_world);
-            cleanup_item_stack(state, &data.item);
+            compound::cleanup_block_shear_entity_event(state, data);
         }
-        Event::BlockSpreadEvent(data) => {
-            cleanup_world(state, &data.target_world);
-        }
-        Event::BrewingStartEvent(data) => {
-            cleanup_world(state, &data.target_world);
-        }
-        Event::CampfireStartEvent(data) => {
-            cleanup_world(state, &data.target_world);
-            cleanup_item_stack(state, &data.item);
-        }
-        Event::CauldronLevelChangeEvent(data) => {
-            cleanup_world(state, &data.target_world);
-        }
-        Event::CrafterCraftEvent(data) => {
-            cleanup_world(state, &data.target_world);
-            cleanup_item_stack(state, &data.result);
-        }
-        Event::EntityBlockFormEvent(data) => {
-            cleanup_world(state, &data.target_world);
-        }
-        Event::FluidLevelChangeEvent(data) => {
-            cleanup_world(state, &data.target_world);
-        }
-        Event::InventoryBlockStartEvent(data) => {
-            cleanup_world(state, &data.target_world);
-        }
-        Event::LeavesDecayEvent(data) => {
-            cleanup_world(state, &data.target_world);
-        }
-        Event::MoistureChangeEvent(data) => {
-            cleanup_world(state, &data.target_world);
-        }
-        Event::SculkBloomEvent(data) => {
-            cleanup_world(state, &data.target_world);
-        }
+        Event::BlockSpreadEvent(data) => cleanup_world(state, &data.target_world),
+        Event::BrewingStartEvent(data) => cleanup_world(state, &data.target_world),
+        Event::CampfireStartEvent(data) => compound::cleanup_campfire_start_event(state, data),
+        Event::CauldronLevelChangeEvent(data) => cleanup_world(state, &data.target_world),
+        Event::CrafterCraftEvent(data) => compound::cleanup_crafter_craft_event(state, data),
+        Event::EntityBlockFormEvent(data) => cleanup_world(state, &data.target_world),
+        Event::FluidLevelChangeEvent(data) => cleanup_world(state, &data.target_world),
+        Event::InventoryBlockStartEvent(data) => cleanup_world(state, &data.target_world),
+        Event::LeavesDecayEvent(data) => cleanup_world(state, &data.target_world),
+        Event::MoistureChangeEvent(data) => cleanup_world(state, &data.target_world),
+        Event::SculkBloomEvent(data) => cleanup_world(state, &data.target_world),
         Event::VaultDisplayItemEvent(data) => {
-            cleanup_world(state, &data.target_world);
-            cleanup_item_stack(state, &data.item);
+            compound::cleanup_vault_display_item_event(state, data);
         }
-        Event::CreatureSpawnEvent(data) => {
-            cleanup_world(state, &data.target_world);
-            if let Some(res) = &data.player {
-                cleanup_player(state, res);
-            }
-        }
+        Event::CreatureSpawnEvent(data) => compound::cleanup_creature_spawn_event(state, data),
         Event::EnderDragonChangePhaseEvent(_) => {}
         Event::EntityBreakDoorEvent(_) => {}
         Event::EntityChangeBlockEvent(_) => {}
@@ -525,12 +240,7 @@ pub fn cleanup_event(event: &Event, state: &mut PluginHostState) {
         Event::ItemDespawnEvent(_) => {}
         Event::ItemMergeEvent(_) => {}
         Event::ItemSpawnEvent(_) => {}
-        Event::PiglinBarterEvent(data) => {
-            cleanup_item_stack(state, &data.input_item);
-            for res in &data.outcome {
-                cleanup_item_stack(state, res);
-            }
-        }
+        Event::PiglinBarterEvent(data) => compound::cleanup_piglin_barter_event(state, data),
         Event::ProjectileHitEvent(_) => {}
         Event::ProjectileLaunchEvent(_) => {}
         Event::SheepDyeWoolEvent(_) => {}
@@ -562,146 +272,58 @@ pub fn cleanup_event(event: &Event, state: &mut PluginHostState) {
         Event::SpawnerSpawnEvent(_) => {}
         Event::TrialSpawnerSpawnEvent(_) => {}
         Event::VillagerReputationChangeEvent(_) => {}
-        Event::AsyncPlayerChatEvent(data) => {
-            cleanup_player(state, &data.player);
-            cleanup_text_component(state, &data.format);
-        }
-        Event::AsyncPlayerPreLoginEvent(data) => {
-            cleanup_text_component(state, &data.kick_message);
-        }
-        Event::PlayerAdvancementDoneEvent(data) => {
-            cleanup_player(state, &data.player);
-        }
-        Event::PlayerAnimationEvent(data) => {
-            cleanup_player(state, &data.player);
-        }
-        Event::PlayerArmorStandManipulateEvent(data) => {
-            cleanup_player(state, &data.player);
-        }
-        Event::PlayerBucketEntityEvent(data) => {
-            cleanup_player(state, &data.player);
-        }
+        Event::AsyncPlayerChatEvent(data) => compound::cleanup_async_player_chat_event(state, data),
+        Event::AsyncPlayerPreLoginEvent(data) => cleanup_text_component(state, &data.kick_message),
+        Event::PlayerAdvancementDoneEvent(data) => cleanup_player(state, &data.player),
+        Event::PlayerAnimationEvent(data) => cleanup_player(state, &data.player),
+        Event::PlayerArmorStandManipulateEvent(data) => cleanup_player(state, &data.player),
+        Event::PlayerBucketEntityEvent(data) => cleanup_player(state, &data.player),
         Event::PlayerChangedWorldEvent(data) => {
-            cleanup_player(state, &data.player);
-            cleanup_world(state, &data.from_world);
-            cleanup_world(state, &data.to_world);
+            compound::cleanup_player_changed_world_event(state, data);
         }
-        Event::PlayerChannelEvent(data) => {
-            cleanup_player(state, &data.player);
-        }
-        Event::PlayerCommandPreprocessEvent(data) => {
-            cleanup_player(state, &data.player);
-        }
-        Event::PlayerEditBookEvent(data) => {
-            cleanup_player(state, &data.player);
-        }
-        Event::PlayerElytraBoostEvent(data) => {
-            cleanup_player(state, &data.player);
-        }
-        Event::PlayerExpCooldownChangeEvent(data) => {
-            cleanup_player(state, &data.player);
-        }
+        Event::PlayerChannelEvent(data) => cleanup_player(state, &data.player),
+        Event::PlayerCommandPreprocessEvent(data) => cleanup_player(state, &data.player),
+        Event::PlayerEditBookEvent(data) => cleanup_player(state, &data.player),
+        Event::PlayerElytraBoostEvent(data) => cleanup_player(state, &data.player),
+        Event::PlayerExpCooldownChangeEvent(data) => cleanup_player(state, &data.player),
         Event::PlayerHarvestBlockEvent(data) => {
-            cleanup_player(state, &data.player);
-            for res in &data.harvested_items {
-                cleanup_item_stack(state, res);
-            }
+            compound::cleanup_player_harvest_block_event(state, data);
         }
-        Event::PlayerHideEntityEvent(data) => {
-            cleanup_player(state, &data.player);
-        }
-        Event::PlayerItemBreakEvent(data) => {
-            cleanup_player(state, &data.player);
-        }
-        Event::PlayerItemMendEvent(data) => {
-            cleanup_player(state, &data.player);
-        }
-        Event::PlayerKickEvent(data) => {
-            cleanup_player(state, &data.player);
-        }
-        Event::PlayerLeashEntityEvent(data) => {
-            cleanup_player(state, &data.player);
-        }
-        Event::PlayerLevelChangeEvent(data) => {
-            cleanup_player(state, &data.player);
-        }
-        Event::PlayerLocaleChangeEvent(data) => {
-            cleanup_player(state, &data.player);
-        }
+        Event::PlayerHideEntityEvent(data) => cleanup_player(state, &data.player),
+        Event::PlayerItemBreakEvent(data) => cleanup_player(state, &data.player),
+        Event::PlayerItemMendEvent(data) => cleanup_player(state, &data.player),
+        Event::PlayerKickEvent(data) => cleanup_player(state, &data.player),
+        Event::PlayerLeashEntityEvent(data) => cleanup_player(state, &data.player),
+        Event::PlayerLevelChangeEvent(data) => cleanup_player(state, &data.player),
+        Event::PlayerLocaleChangeEvent(data) => cleanup_player(state, &data.player),
         Event::PlayerNameEntityEvent(data) => {
-            cleanup_player(state, &data.player);
-            cleanup_text_component(state, &data.name);
+            compound::cleanup_player_name_entity_event(state, data);
         }
-        Event::PlayerOpenSignEvent(data) => {
-            cleanup_player(state, &data.player);
-        }
-        Event::PlayerPortalEvent(data) => {
-            cleanup_player(state, &data.player);
-        }
-        Event::PlayerPreLoginEvent(data) => {
-            cleanup_text_component(state, &data.kick_message);
-        }
-        Event::PlayerRiptideEvent(data) => {
-            cleanup_player(state, &data.player);
-        }
-        Event::PlayerShearEntityEvent(data) => {
-            cleanup_player(state, &data.player);
-        }
-        Event::PlayerShowEntityEvent(data) => {
-            cleanup_player(state, &data.player);
-        }
-        Event::PlayerSpawnChangeEvent(data) => {
-            cleanup_player(state, &data.player);
-        }
-        Event::PlayerStatisticIncrementEvent(data) => {
-            cleanup_player(state, &data.player);
-        }
-        Event::PlayerSwapHandsEvent(data) => {
-            cleanup_player(state, &data.player);
-        }
+        Event::PlayerOpenSignEvent(data) => cleanup_player(state, &data.player),
+        Event::PlayerPortalEvent(data) => cleanup_player(state, &data.player),
+        Event::PlayerPreLoginEvent(data) => cleanup_text_component(state, &data.kick_message),
+        Event::PlayerRiptideEvent(data) => cleanup_player(state, &data.player),
+        Event::PlayerShearEntityEvent(data) => cleanup_player(state, &data.player),
+        Event::PlayerShowEntityEvent(data) => cleanup_player(state, &data.player),
+        Event::PlayerSpawnChangeEvent(data) => cleanup_player(state, &data.player),
+        Event::PlayerStatisticIncrementEvent(data) => cleanup_player(state, &data.player),
+        Event::PlayerSwapHandsEvent(data) => cleanup_player(state, &data.player),
         Event::PlayerTakeLecternBookEvent(data) => {
-            cleanup_player(state, &data.player);
-            cleanup_item_stack(state, &data.book);
+            compound::cleanup_player_take_lectern_book_event(state, data);
         }
-        Event::PlayerUnleashEntityEvent(data) => {
-            cleanup_player(state, &data.player);
-        }
-        Event::PlayerVelocityEvent(data) => {
-            cleanup_player(state, &data.player);
-        }
-        Event::PlayerInputEvent(data) => {
-            cleanup_player(state, &data.player);
-        }
-        Event::PlayerInteractAtEntityEvent(data) => {
-            cleanup_player(state, &data.player);
-        }
-        Event::PlayerLinksSendEvent(data) => {
-            cleanup_player(state, &data.player);
-        }
-        Event::PlayerPickupArrowEvent(data) => {
-            cleanup_player(state, &data.player);
-        }
-        Event::PlayerRecipeBookClickEvent(data) => {
-            cleanup_player(state, &data.player);
-        }
-        Event::PlayerRecipeBookSettingsChangeEvent(data) => {
-            cleanup_player(state, &data.player);
-        }
-        Event::PlayerRecipeDiscoverEvent(data) => {
-            cleanup_player(state, &data.player);
-        }
-        Event::PlayerRegisterChannelEvent(data) => {
-            cleanup_player(state, &data.player);
-        }
-        Event::PlayerResourcePackStatusEvent(data) => {
-            cleanup_player(state, &data.player);
-        }
-        Event::PlayerSpawnLocationEvent(data) => {
-            cleanup_player(state, &data.player);
-        }
-        Event::PlayerUnregisterChannelEvent(data) => {
-            cleanup_player(state, &data.player);
-        }
+        Event::PlayerUnleashEntityEvent(data) => cleanup_player(state, &data.player),
+        Event::PlayerVelocityEvent(data) => cleanup_player(state, &data.player),
+        Event::PlayerInputEvent(data) => cleanup_player(state, &data.player),
+        Event::PlayerInteractAtEntityEvent(data) => cleanup_player(state, &data.player),
+        Event::PlayerLinksSendEvent(data) => cleanup_player(state, &data.player),
+        Event::PlayerPickupArrowEvent(data) => cleanup_player(state, &data.player),
+        Event::PlayerRecipeBookClickEvent(data) => cleanup_player(state, &data.player),
+        Event::PlayerRecipeBookSettingsChangeEvent(data) => cleanup_player(state, &data.player),
+        Event::PlayerRecipeDiscoverEvent(data) => cleanup_player(state, &data.player),
+        Event::PlayerRegisterChannelEvent(data) => cleanup_player(state, &data.player),
+        Event::PlayerResourcePackStatusEvent(data) => cleanup_player(state, &data.player),
+        Event::PlayerSpawnLocationEvent(data) => cleanup_player(state, &data.player),
+        Event::PlayerUnregisterChannelEvent(data) => cleanup_player(state, &data.player),
         Event::RaidFinishEvent(_) => {}
         Event::RaidSpawnWaveEvent(_) => {}
         Event::RaidStopEvent(_) => {}

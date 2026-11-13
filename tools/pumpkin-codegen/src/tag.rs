@@ -1,3 +1,7 @@
+mod registry;
+mod static_items;
+
+use registry::{TagState, collect_version_tags, load_id_maps};
 use std::{
     collections::{BTreeMap, BTreeSet, HashSet},
     fs,
@@ -294,201 +298,16 @@ pub(crate) fn build() -> TokenStream {
 
     let version_mapping = [("V_26_3", "V_26_3")];
 
-    // --- Load Global Assets ---
-    let blocks_assets: BlockAssets =
-        serde_json::from_str(&fs::read_to_string("../../assets/blocks.json").unwrap())
-            .expect("Failed to parse blocks.json");
-    let mut block_id_map: BTreeMap<String, u16> = BTreeMap::new();
-    for b in &blocks_assets.blocks {
-        block_id_map.insert(b.name.clone(), b.id.0);
-        block_id_map.insert(format!("minecraft:{}", b.name), b.id.0);
-    }
+    let maps = load_id_maps();
+    let TagState {
+        all_registry_keys,
+        latest_tag_modules,
+        latest_match_arms,
+        all_version_code,
+        ..
+    } = collect_version_tags(versions, &maps);
 
-    let items: BTreeMap<String, Item> =
-        serde_json::from_str(&fs::read_to_string("../../assets/items.json").unwrap())
-            .expect("Failed to parse items.json");
-    let mut item_id_map: BTreeMap<String, u16> = BTreeMap::new();
-    for (name, item) in &items {
-        item_id_map.insert(name.clone(), item.id);
-        item_id_map.insert(format!("minecraft:{name}"), item.id);
-    }
-
-    let fluids: Vec<Fluid> =
-        serde_json::from_str(&fs::read_to_string("../../assets/fluids.json").unwrap())
-            .expect("Failed to parse fluids.json");
-    let mut fluid_id_map: BTreeMap<String, u16> = BTreeMap::new();
-    for f in &fluids {
-        fluid_id_map.insert(f.name.clone(), f.id);
-        fluid_id_map.insert(format!("minecraft:{}", f.name), f.id);
-    }
-
-    let entities: BTreeMap<String, EntityType> =
-        serde_json::from_str(&fs::read_to_string("../../assets/entities.json").unwrap())
-            .expect("Failed to parse entities.json");
-    let mut entity_id_map: BTreeMap<String, u16> = BTreeMap::new();
-    for (name, entity) in &entities {
-        entity_id_map.insert(name.clone(), entity.id);
-        entity_id_map.insert(format!("minecraft:{name}"), entity.id);
-    }
-
-    let game_events: Vec<crate::game_event::GameEvent> =
-        serde_json::from_str(&fs::read_to_string("../../assets/game_event.json").unwrap())
-            .expect("Failed to parse game_event.json");
-    let mut game_event_id_map: BTreeMap<String, u16> = BTreeMap::new();
-    for (i, event) in game_events.iter().enumerate() {
-        let name = &event.name;
-        game_event_id_map.insert(name.clone(), i as u16);
-        game_event_id_map.insert(format!("minecraft:{name}"), i as u16);
-    }
-
-    #[derive(serde::Deserialize)]
-    struct PotionEntry {
-        id: u8,
-    }
-    let potions: BTreeMap<String, PotionEntry> =
-        serde_json::from_str(&fs::read_to_string("../../assets/potion.json").unwrap())
-            .expect("Failed to parse potion.json");
-    let mut potion_id_map: BTreeMap<String, u16> = BTreeMap::new();
-    for (name, potion) in &potions {
-        potion_id_map.insert(name.clone(), u16::from(potion.id));
-        potion_id_map.insert(format!("minecraft:{name}"), u16::from(potion.id));
-    }
-
-    const POI_TYPES: &[&str] = &[
-        "armorer",
-        "butcher",
-        "cartographer",
-        "cleric",
-        "farmer",
-        "fisherman",
-        "fletcher",
-        "leatherworker",
-        "librarian",
-        "mason",
-        "shepherd",
-        "toolsmith",
-        "weaponsmith",
-        "home",
-        "meeting",
-        "beehive",
-        "bee_nest",
-        "nether_portal",
-        "lodestone",
-        "lightning_rod",
-        "trial_spawner",
-        "vault",
-    ];
-    let mut poi_id_map: BTreeMap<String, u16> = BTreeMap::new();
-    for (i, &name) in POI_TYPES.iter().enumerate() {
-        poi_id_map.insert(name.to_string(), i as u16);
-        poi_id_map.insert(format!("minecraft:{name}"), i as u16);
-    }
-
-    let mut datapack_id_maps: BTreeMap<String, BTreeMap<String, u16>> = BTreeMap::new();
-    let mut all_registry_keys = HashSet::new();
-
-    let mut latest_tag_modules = Vec::new();
-    let mut latest_match_arms = Vec::new();
-    let mut all_version_code = Vec::new();
     let mut version_fn_match_arms = Vec::new();
-
-    for (ver_folder, ver_ident_str) in versions {
-        let datapack_data_dir = std::path::Path::new("../../assets/datapack/data");
-        let datapack_base = datapack_data_dir.join("minecraft");
-
-        let tags = load_datapack_tags(&datapack_data_dir);
-        let is_latest = ver_folder == "26_3";
-
-        let mut ver_cat_match_arms = Vec::new();
-        let fn_name = format_ident!("get_tags_{}", ver_ident_str);
-
-        for (key, tag_map) in tags {
-            all_registry_keys.insert(key.clone());
-            let key_pascal = format_ident!("{}", key.to_pascal_case());
-            let dict_name = if is_latest {
-                format_ident!("{}_TAGS", key.to_pascal_case().to_uppercase())
-            } else {
-                format_ident!(
-                    "TAGS_{}_{}",
-                    ver_ident_str,
-                    key.replace(['/', '.', '-'], "_").to_uppercase()
-                )
-            };
-
-            let mut tag_entries = Vec::new();
-            let mut tag_map_entries = Vec::new();
-
-            if !datapack_id_maps.contains_key(&key) {
-                let dir = std::path::Path::new("../../assets/datapack/data/minecraft").join(&key);
-                if dir.is_dir() {
-                    datapack_id_maps.insert(key.clone(), load_datapack_registry_ids(&dir));
-                }
-            }
-
-            for (tag_name, values) in tag_map {
-                let ids: Vec<u16> = values
-                    .iter()
-                    .filter_map(|v| match key.as_str() {
-                        "block" => block_id_map.get(v).copied(),
-                        "item" => item_id_map.get(v).copied(),
-                        "fluid" => fluid_id_map.get(v).copied(),
-                        "entity_type" => entity_id_map.get(v).copied(),
-                        "game_event" => game_event_id_map.get(v).copied(),
-                        "potion" => potion_id_map.get(v).copied(),
-                        "point_of_interest_type" => poi_id_map.get(v).copied(),
-                        _ => datapack_id_maps.get(&key).and_then(|m| m.get(v).copied()),
-                    })
-                    .collect();
-
-                let tag_const_name = format_ident!(
-                    "{}",
-                    tag_name.replace([':', '/', '.', '-'], "_").to_uppercase()
-                );
-
-                if is_latest {
-                    tag_entries.push(quote! {
-                        pub const #tag_const_name: Tag = (&[#(#values),*], &[#(#ids),*]);
-                    });
-                    tag_map_entries.push(quote! { #tag_name => &#key_pascal::#tag_const_name });
-                } else {
-                    tag_map_entries.push(quote! { #tag_name => &(&[#(#values),*], &[#(#ids),*]) });
-                }
-            }
-
-            if is_latest {
-                latest_tag_modules.push(quote! {
-                    #[allow(non_snake_case)]
-                    pub mod #key_pascal {
-                        use super::Tag;
-                        #(#tag_entries)*
-                    }
-                    static #dict_name: phf::Map<&'static str, &'static Tag> = phf::phf_map! {
-                        #(#tag_map_entries),*
-                    };
-                });
-                latest_match_arms.push(quote! { RegistryKey::#key_pascal => &#dict_name });
-            } else {
-                all_version_code.push(quote! {
-                    static #dict_name: phf::Map<&'static str, &'static Tag> = phf::phf_map! {
-                        #(#tag_map_entries),*
-                    };
-                });
-                ver_cat_match_arms.push(quote! { RegistryKey::#key_pascal => Some(&#dict_name) });
-            }
-        }
-
-        if !is_latest {
-            all_version_code.push(quote! {
-                #[allow(non_snake_case, unreachable_patterns)]
-                const fn #fn_name(key: RegistryKey) -> Option<&'static phf::Map<&'static str, &'static Tag>> {
-                    match key {
-                        #(#ver_cat_match_arms,)*
-                        _ => None,
-                    }
-                }
-            });
-        }
-    }
 
     for (ver_variant, ver_ident_str) in version_mapping {
         let ver_ident = format_ident!("{ver_variant}");
@@ -511,6 +330,7 @@ pub(crate) fn build() -> TokenStream {
     }
     .to_token_stream();
 
+    let get_tag_values_tokens = static_items::get_tag_values_tokens();
     quote! {
         use pumpkin_util::version::JavaMinecraftVersion;
 
@@ -529,69 +349,6 @@ pub(crate) fn build() -> TokenStream {
             }
         }
 
-        #[must_use]
-        pub fn get_tag_values(tag_category: RegistryKey, tag: &str) -> Option<&'static [&'static str]> {
-            get_latest_map(tag_category).get(tag).map(|t| t.0)
-        }
-
-        #[must_use]
-        pub fn get_tag_ids(tag_category: RegistryKey, tag: &str) -> Option<&'static [u16]> {
-            get_latest_map(tag_category).get(tag).map(|t| t.1)
-        }
-
-        #[must_use]
-        pub const fn get_registry_key_tags(version: JavaMinecraftVersion, tag_category: RegistryKey) -> Option<&'static phf::Map<&'static str, &'static Tag>> {
-            if !tag_category.is_valid_for_version(version) {
-                return None;
-            }
-            Some(get_latest_map(tag_category))
-        }
-
-
-        pub trait Taggable {
-            fn tag_key() -> RegistryKey;
-            fn registry_key(&self) -> &str;
-            fn registry_id(&self) -> u16;
-
-            #[must_use]
-            fn is_tagged_with(&self, tag: &str) -> Option<bool> {
-                let tag = tag.strip_prefix('#').unwrap_or(tag);
-                let items = get_tag_ids(Self::tag_key(), tag).or_else(|| {
-                    if !tag.contains(':') {
-                        let mut full = String::with_capacity(10 + tag.len());
-                        full.push_str("minecraft:");
-                        full.push_str(tag);
-                        get_tag_ids(Self::tag_key(), &full)
-                    } else if let Some(stripped) = tag.strip_prefix("minecraft:") {
-                        get_tag_ids(Self::tag_key(), stripped)
-                    } else {
-                        None
-                    }
-                })?;
-                Some(items.contains(&self.registry_id()))
-            }
-
-            #[must_use]
-            fn has_tag(&self, tag: &'static Tag) -> bool {
-                tag.1.contains(&self.registry_id())
-            }
-
-            #[must_use]
-            fn get_tag_values(tag: &str) -> Option<&'static [&'static str]> {
-                let tag = tag.strip_prefix('#').unwrap_or(tag);
-                get_tag_values(Self::tag_key(), tag).or_else(|| {
-                    if !tag.contains(':') {
-                        let mut full = String::with_capacity(10 + tag.len());
-                        full.push_str("minecraft:");
-                        full.push_str(tag);
-                        get_tag_values(Self::tag_key(), &full)
-                    } else if let Some(stripped) = tag.strip_prefix("minecraft:") {
-                        get_tag_values(Self::tag_key(), stripped)
-                    } else {
-                        None
-                    }
-                })
-            }
-        }
+        #get_tag_values_tokens
     }
 }

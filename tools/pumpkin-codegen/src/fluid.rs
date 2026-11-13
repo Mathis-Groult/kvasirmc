@@ -1,6 +1,12 @@
+mod registry;
+mod static_items;
+
 use heck::{ToShoutySnakeCase, ToUpperCamelCase};
 use proc_macro2::{Span, TokenStream};
 use quote::{ToTokens, format_ident, quote};
+use registry::{
+    FluidTables, partial_state_tokens, property_group_tokens, push_fluid, state_id_arm_tokens,
+};
 use serde::Deserialize;
 use std::{
     collections::{BTreeMap, HashSet},
@@ -393,371 +399,46 @@ pub fn build() -> TokenStream {
             Err(e) => panic!("Failed to parse fluids.json: {e}"),
         };
 
-    let mut constants = TokenStream::new();
-    let mut id_matches = Vec::new();
-    let mut type_from_name = TokenStream::new();
-    let mut type_from_raw_id_arms = TokenStream::new();
-    let mut fluid_from_state_id = TokenStream::new();
-
-    // Collect from_state_id arms to sort by range width (narrower first)
-    struct StateIdArm {
-        start: u16,
-        end: u16,
-        const_name: String,
-    }
-    let mut state_id_arms: Vec<StateIdArm> = Vec::new();
-
-    let mut fluid_properties_from_state_and_name = TokenStream::new();
-    let mut fluid_properties_from_props_and_name = TokenStream::new();
-
-    // Used to create property `enum`s.
-    let mut property_enums: BTreeMap<String, PropertyStruct> = BTreeMap::new();
-    // Property implementation for a fluid.
-    let mut fluid_properties: Vec<FluidPropertyStruct> = Vec::new();
-    // Mapping of a collection of property names -> fluids that have these properties.
-    let mut property_collection_map: BTreeMap<Vec<String>, PropertyCollectionData> =
-        BTreeMap::new();
-    // Validator that we have no `enum` collisions.
-    let mut enum_to_values: BTreeMap<String, Vec<String>> = BTreeMap::new();
-
-    // Collect unique fluid states to create partial states
-    let mut unique_states = Vec::new();
-    let mut optimized_fluids: Vec<(String, FluidStateRef)> = Vec::new();
-
+    let mut tables = FluidTables::default();
     for fluid in fluids {
-        let id_name = LitStr::new(&fluid.name, Span::call_site());
-        let const_ident = format_ident!("{}", fluid.name.to_shouty_snake_case());
-        let state_id_start = fluid
-            .states
-            .iter()
-            .map(|state| state.block_state_id.0)
-            .min()
-            .unwrap();
-        let state_id_end = fluid
-            .states
-            .iter()
-            .map(|state| state.block_state_id.0)
-            .max()
-            .unwrap();
-
-        let id_lit = LitInt::new(&fluid.id.to_string(), Span::call_site());
-        let mut properties = TokenStream::new();
-        if fluid.properties.is_empty() {
-            properties.extend(quote!(None));
-        } else {
-            let internal_properties = fluid.properties.iter().map(|property| {
-                let key = LitStr::new(&property.name, Span::call_site());
-                let values = property
-                    .values
-                    .iter()
-                    .map(|value| LitStr::new(value, Span::call_site()));
-
-                quote! {
-                    (#key, &[
-                        #(#values),*
-                    ])
-                }
-            });
-            properties.extend(quote! {
-                Some(&[
-                    #(#internal_properties),*
-                ])
-            });
-        }
-
-        for (idx, state) in fluid.states.iter().enumerate() {
-            // Check if this state is already in `unique_states` by comparing key fields
-            let already_exists = unique_states.iter().any(|s: &FluidState| {
-                s.height == state.height
-                    && s.level == state.level
-                    && s.is_empty == state.is_empty
-                    && s.blast_resistance == state.blast_resistance
-                    && s.is_still == state.is_still
-            });
-            if !already_exists {
-                unique_states.push(state.clone());
-            }
-            // Create a reference to the state
-            let state_idx = unique_states
-                .iter()
-                .position(|s| {
-                    s.height == state.height
-                        && s.level == state.level
-                        && s.is_empty == state.is_empty
-                        && s.blast_resistance == state.blast_resistance
-                        && s.is_still == state.is_still
-                })
-                .unwrap() as u16;
-            optimized_fluids.push((
-                fluid.name.clone(),
-                FluidStateRef {
-                    id: idx as u16,
-                    state_idx,
-                },
-            ));
-        }
-        state_id_arms.push(StateIdArm {
-            start: state_id_start,
-            end: state_id_end,
-            const_name: const_fluid_name_from_fluid_name(&fluid.name),
-        });
-
-        type_from_name.extend(quote! {
-            #id_name => Some(&Self::#const_ident),
-        });
-
-        type_from_raw_id_arms.extend(quote! {
-            #id_lit => Some(&Self::#const_ident),
-        });
-
-        let fluid_states = fluid.states.iter().map(|state| {
-            let height = state.height;
-            let level = state.level;
-            let is_empty = state.is_empty;
-            let blast_resistance = state.blast_resistance;
-            let block_state_id = state.block_state_id;
-            let is_still = state.is_still;
-            // Derive these values based on existing fields
-            let is_source = is_still; // Level 0 and still means it's a source
-            let falling = false; // Default to false - we'll handle falling in the fluid behavior code
-
-            quote! {
-                FluidState {
-                    height: #height,
-                    level: #level,
-                    is_empty: #is_empty,
-                    blast_resistance: #blast_resistance,
-                    block_state_id: #block_state_id,
-                    is_still: #is_still,
-                    is_source: #is_source,
-                    falling: #falling,
-                }
-            }
-        });
-        let state_id = fluid.default_state_index;
-        let flow_speed = fluid.flow_speed;
-        let flow_distance = fluid.flow_distance;
-        let can_convert_to_source = fluid.can_convert_to_source;
-
-        id_matches.push(quote! {
-            #id_name => Some(#id_lit),
-        });
-
-        constants.extend(quote! {
-            pub const #const_ident: Fluid = Fluid {
-                id: #id_lit,
-                name: #id_name,
-                properties: #properties,
-                states: &[#(#fluid_states),*],
-                default_state_index: #state_id,
-                flow_speed: #flow_speed,
-                flow_distance: #flow_distance,
-                can_convert_to_source: #can_convert_to_source,
-            };
-        });
-
-        let mut property_collection = HashSet::new();
-        let mut property_mapping = Vec::new();
-        for property in &fluid.properties {
-            property_collection.insert(property.name.clone());
-
-            // Get mapped property `enum` name
-            let renamed_property = property.name.to_upper_camel_case();
-
-            let expected_values = enum_to_values
-                .entry(renamed_property.clone())
-                .or_insert_with(|| property.values.clone());
-
-            assert_eq!(
-                expected_values, &property.values,
-                "Enum overlap for '{}' ({:?} vs {:?})",
-                property.name, property.values, expected_values
-            );
-
-            property_mapping.push(PropertyVariantMapping {
-                original_name: property.name.clone(),
-                property_enum: renamed_property.clone(),
-            });
-
-            // If this property doesn't have an `enum` yet, make one.
-            let _ = property_enums
-                .entry(renamed_property.clone())
-                .or_insert_with(|| PropertyStruct {
-                    name: renamed_property,
-                    values: property.values.clone(),
-                });
-        }
-
-        if !property_collection.is_empty() {
-            let mut property_collection = Vec::from_iter(property_collection);
-            property_collection.sort();
-            property_collection_map
-                .entry(property_collection)
-                .or_insert_with(|| PropertyCollectionData::from_mappings(property_mapping))
-                .add_fluid_name(fluid.name.clone());
-        }
+        push_fluid(fluid, &mut tables);
     }
+    let FluidTables {
+        constants,
+        id_matches,
+        type_from_name,
+        type_from_raw_id_arms,
+        state_id_arms,
+        property_enums,
+        property_collection_map,
+        unique_states,
+        ..
+    } = tables;
 
-    let unique_fluid_states = unique_states.iter().map(|state| {
-        let height = state.height;
-        let level = state.level;
-        let is_empty = state.is_empty;
-        let blast_resistance = state.blast_resistance;
-        let block_state_id = state.block_state_id;
-        let is_still = state.is_still;
-        let is_source = is_still;
-        let falling = false;
-        quote! {
-            PartialFluidState {
-                height: #height,
-                level: #level,
-                is_empty: #is_empty,
-                blast_resistance: #blast_resistance,
-                block_state_id: #block_state_id,
-                is_still: #is_still,
-                is_source: #is_source,
-                falling: #falling,
-            }
-        }
-    });
-
-    // Narrower ranges first so still fluids match before their flowing variant
-    state_id_arms.sort_by_key(|arm| arm.end - arm.start);
-    for arm in &state_id_arms {
-        let start = LitInt::new(&arm.start.to_string(), Span::call_site());
-        let end = LitInt::new(&arm.end.to_string(), Span::call_site());
-        let const_ident = format_ident!("{}", arm.const_name);
-        fluid_from_state_id.extend(quote! {
-            #start..=#end => Some(&Fluid::#const_ident),
-        });
-    }
-
-    for property_group in property_collection_map.into_values() {
-        for fluid_name in &property_group.fluid_names {
-            let const_fluid_name = Ident::new(
-                &const_fluid_name_from_fluid_name(fluid_name),
-                Span::call_site(),
-            );
-            let property_name = Ident::new(
-                &property_group_name_from_derived_name(&property_group.derive_name()),
-                Span::call_site(),
-            );
-
-            fluid_properties_from_state_and_name.extend(quote! {
-                #fluid_name => Box::new(#property_name::from_state_id(id, &Fluid::#const_fluid_name)),
-            });
-
-            fluid_properties_from_props_and_name.extend(quote! {
-                #fluid_name => Box::new(#property_name::from_props(props, &Fluid::#const_fluid_name)),
-            });
-        }
-
-        fluid_properties.push(FluidPropertyStruct {
-            data: property_group,
-        });
-    }
+    let unique_fluid_states = partial_state_tokens(&unique_states);
+    let fluid_from_state_id = state_id_arm_tokens(state_id_arms);
+    let (
+        fluid_properties_from_state_and_name,
+        fluid_properties_from_props_and_name,
+        fluid_properties,
+    ) = property_group_tokens(property_collection_map);
 
     let fluid_props = fluid_properties.iter().map(ToTokens::to_token_stream);
     let properties = property_enums.values().map(ToTokens::to_token_stream);
 
+    let imports_and_partial_fluid_state_tokens =
+        static_items::imports_and_partial_fluid_state_tokens();
+    let enum_variants_tokens = static_items::enum_variants_tokens();
+    let same_fluid_type_tokens = static_items::same_fluid_type_tokens();
+    let to_resource_location_tokens = static_items::to_resource_location_tokens();
     quote! {
-        use std::hash::{Hash, Hasher};
-        use crate::tag::{Taggable, RegistryKey};
-        use crate::BlockStateId;
-        use pumpkin_util::resource_location::{FromResourceLocation, ResourceLocation, ToResourceLocation};
-
-        #[derive(Clone)]
-        pub struct PartialFluidState {
-            pub height: f32,
-            pub level: i16,
-            pub is_empty: bool,
-            pub blast_resistance: f32,
-            pub block_state_id: BlockStateId,
-            pub is_still: bool,
-            pub is_source: bool,
-            pub falling: bool,
-        }
-
-        #[derive(Clone)]
-        pub struct FluidState {
-            pub height: f32,
-            pub level: i16,
-            pub is_empty: bool,
-            pub blast_resistance: f32,
-            pub block_state_id: BlockStateId,
-            pub is_still: bool,
-            pub is_source: bool,
-            pub falling: bool,
-        }
-
-        #[derive(Clone)]
-        pub struct FluidStateRef {
-            pub id: u16,
-            pub state_idx: u16,
-        }
-
-        #[derive(Clone)]
-        pub struct Fluid {
-            pub id: u16,
-            pub name: &'static str,
-            pub properties: Option<&'static [(&'static str, &'static [&'static str])]>,
-            pub states: &'static [FluidState],
-            pub default_state_index: u16,
-            pub flow_speed: u32,
-            pub flow_distance: u32,
-            pub can_convert_to_source: bool,
-        }
-
-        impl Hash for Fluid {
-            fn hash<H: Hasher>(&self, state: &mut H) {
-                self.id.hash(state);
-            }
-        }
-
-        impl PartialEq for Fluid {
-            fn eq(&self, other: &Self) -> bool {
-                self.id == other.id
-            }
-        }
-
-        impl Eq for Fluid {}
+        #imports_and_partial_fluid_state_tokens
 
         pub const FLUID_STATES: &[PartialFluidState] = &[
             #(#unique_fluid_states),*
         ];
 
-        pub trait EnumVariants {
-            fn variant_count() -> u16;
-            fn to_index(&self) -> u16;
-            fn from_index(index: u16) -> Self;
-            fn to_value(&self) -> &str;
-            fn from_value(value: &str) -> Self;
-        }
-
-        pub trait FluidProperties where Self: 'static {
-            // Convert properties to an index (`0` to `N-1`).
-            fn to_index(&self) -> u16;
-            // Convert an index back to properties.
-            fn from_index(index: u16) -> Self where Self: Sized;
-
-            // Convert properties to a state id.
-            fn to_state_id(&self, fluid: &Fluid) -> BlockStateId;
-            // Convert a state id back to properties.
-            fn from_state_id(id: BlockStateId, fluid: &Fluid) -> Self where Self: Sized;
-            // Get the default properties.
-            fn default(fluid: &Fluid) -> Self where Self: Sized;
-
-            // Convert properties to a `Vec` of `(name, value)`
-            fn to_props(&self) -> Vec<(String, String)>;
-
-            // Convert properties to a fluid state, and add them onto the default state.
-            fn from_props(props: Vec<(String, String)>, fluid: &Fluid) -> Self where Self: Sized;
-        }
-
-        pub fn get_fluid(registry_id: &str) -> Option<&'static Fluid> {
-           let key = registry_id.strip_prefix("minecraft:").unwrap_or(registry_id);
-           Fluid::from_registry_key(key)
-        }
+        #enum_variants_tokens
 
         impl Fluid {
             #constants
@@ -784,7 +465,6 @@ pub fn build() -> TokenStream {
                 }
             }
 
-
             pub fn ident_to_fluid_id(name: &str) -> Option<u8> {
                 match name {
                     #(#id_matches)*
@@ -810,96 +490,10 @@ pub fn build() -> TokenStream {
                 }
             }
 
-            pub fn same_fluid_type(a: u16, b: u16) -> bool {
-                a == b
-                    || (a == 1 && b == 2)
-                    || (a == 2 && b == 1)
-                    || (a == 3 && b == 4)
-                    || (a == 4 && b == 3)
-            }
-            pub fn matches_type(&self, other: &Fluid) -> bool {
-                Self::same_fluid_type(self.id, other.id)
-            }
-            pub fn to_flowing(&self) -> &'static Fluid {
-                match self.id {
-                    2 => &Fluid::FLOWING_WATER,
-                    4 => &Fluid::FLOWING_LAVA,
-                    _ => Fluid::from_id(self.id).unwrap_or(&Fluid::EMPTY),
-                }
-            }
-
-            // Added helper methods for fluid behavior
-            pub fn is_source(&self, state_id: BlockStateId) -> bool {
-                let idx = (state_id.as_u16() as usize) % self.states.len();
-                self.states[idx].is_source
-            }
-
-            pub fn is_falling(&self, state_id: BlockStateId) -> bool {
-                let idx = (state_id.as_u16() as usize) % self.states.len();
-                self.states[idx].falling
-            }
-
-            pub fn get_level(&self, state_id: BlockStateId) -> i16 {
-                let idx = (state_id.as_u16() as usize) % self.states.len();
-                self.states[idx].level
-            }
-
-            pub fn get_height(&self, state_id: BlockStateId) -> f32 {
-                let idx = (state_id.as_u16() as usize) % self.states.len();
-                self.states[idx].height
-            }
+            #same_fluid_type_tokens
         }
 
-        impl ToResourceLocation for &'static Fluid {
-            fn to_resource_location(&self) -> ResourceLocation {
-                format!("minecraft:{}", self.name)
-            }
-        }
-
-        impl FromResourceLocation for &'static Fluid {
-            fn from_resource_location(resource_location: &ResourceLocation) -> Option<Self> {
-                Fluid::from_registry_key(resource_location.strip_prefix("minecraft:").unwrap_or(resource_location))
-            }
-        }
-
-        impl FluidStateRef {
-            pub fn get_state(&self) -> FluidState {
-                let partial_state = &FLUID_STATES[self.state_idx as usize];
-                FluidState {
-                    height: partial_state.height,
-                    level: partial_state.level,
-                    is_empty: partial_state.is_empty,
-                    blast_resistance: partial_state.blast_resistance,
-                    block_state_id: partial_state.block_state_id,
-                    is_still: partial_state.is_still,
-                    is_source: partial_state.is_source,
-                    falling: partial_state.falling,
-                }
-            }
-        }
-
-        impl Taggable for Fluid {
-            #[inline]
-            fn tag_key() -> RegistryKey {
-                RegistryKey::Fluid
-            }
-
-            #[inline]
-            fn registry_key(&self) -> &str {
-                self.name
-            }
-
-            #[inline]
-            fn registry_id(&self) -> u16 {
-                self.id
-            }
-        }
-
-        // Added FluidLevel enum and required constants
-        pub const FLUID_LEVEL_SOURCE: i32 = 0;
-        pub const FLUID_LEVEL_FLOWING_MAX: i32 = 8;
-        pub const FLUID_MIN_HEIGHT: f32 = 0.0;
-        pub const FLUID_MAX_HEIGHT: f32 = 1.0;
+        #to_resource_location_tokens
 
         #(#properties)*
 

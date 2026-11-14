@@ -100,13 +100,44 @@ pub(super) struct MansionGrid {
 }
 
 impl MansionGrid {
-    #[expect(
-        clippy::too_many_lines,
-        reason = "ports Vanilla's seeded base-floor layout"
-    )]
     pub(super) fn new(random: &mut RandomGenerator) -> Self {
         let entrance_x = 7;
         let entrance_y = 4;
+        let base = Self::base_floor(random, entrance_x, entrance_y);
+
+        let mut floor_rooms = std::array::from_fn(|_| SimpleGrid::new(BLOCKED));
+        Self::identify_rooms(random, &base, &mut floor_rooms[0]);
+        Self::identify_rooms(random, &base, &mut floor_rooms[1]);
+        floor_rooms[0].set_rect(
+            entrance_x + 1,
+            entrance_y,
+            entrance_x + 1,
+            entrance_y + 1,
+            ROOM_CORRIDOR_FLAG,
+        );
+        floor_rooms[1].set_rect(
+            entrance_x + 1,
+            entrance_y,
+            entrance_x + 1,
+            entrance_y + 1,
+            ROOM_CORRIDOR_FLAG,
+        );
+
+        let mut mansion = Self {
+            base,
+            third_floor: SimpleGrid::new(BLOCKED),
+            floor_rooms,
+            entrance_x,
+            entrance_y,
+        };
+        mansion.setup_third_floor(random);
+        Self::identify_rooms(random, &mansion.third_floor, &mut mansion.floor_rooms[2]);
+        mansion
+    }
+
+    /// The ground and second floor plan: the entrance hall, its corridors grown at random, then
+    /// trimmed.
+    fn base_floor(random: &mut RandomGenerator, entrance_x: i32, entrance_y: i32) -> SimpleGrid {
         let mut base = SimpleGrid::new(BLOCKED);
         base.set_rect(
             entrance_x,
@@ -181,35 +212,7 @@ impl MansionGrid {
             3,
         );
         while Self::clean_edges(&mut base) {}
-
-        let mut floor_rooms = std::array::from_fn(|_| SimpleGrid::new(BLOCKED));
-        Self::identify_rooms(random, &base, &mut floor_rooms[0]);
-        Self::identify_rooms(random, &base, &mut floor_rooms[1]);
-        floor_rooms[0].set_rect(
-            entrance_x + 1,
-            entrance_y,
-            entrance_x + 1,
-            entrance_y + 1,
-            ROOM_CORRIDOR_FLAG,
-        );
-        floor_rooms[1].set_rect(
-            entrance_x + 1,
-            entrance_y,
-            entrance_x + 1,
-            entrance_y + 1,
-            ROOM_CORRIDOR_FLAG,
-        );
-
-        let mut mansion = Self {
-            base,
-            third_floor: SimpleGrid::new(BLOCKED),
-            floor_rooms,
-            entrance_x,
-            entrance_y,
-        };
-        mansion.setup_third_floor(random);
-        Self::identify_rooms(random, &mansion.third_floor, &mut mansion.floor_rooms[2]);
-        mansion
+        base
     }
 
     pub(super) fn is_house(grid: &SimpleGrid, x: i32, y: i32) -> bool {
@@ -421,51 +424,7 @@ impl MansionGrid {
             if room_grid.get(x, y) != 0 {
                 continue;
             }
-            let (mut x0, mut x1, mut y0, mut y1) = (x, x, y, y);
-            let mut room_type = ROOM_1X1;
-            if room_grid.get(x + 1, y) == 0
-                && room_grid.get(x, y + 1) == 0
-                && room_grid.get(x + 1, y + 1) == 0
-                && from_grid.get(x + 1, y) == ROOM
-                && from_grid.get(x, y + 1) == ROOM
-                && from_grid.get(x + 1, y + 1) == ROOM
-            {
-                x1 += 1;
-                y1 += 1;
-                room_type = ROOM_2X2;
-            } else if room_grid.get(x - 1, y) == 0
-                && room_grid.get(x, y + 1) == 0
-                && room_grid.get(x - 1, y + 1) == 0
-                && from_grid.get(x - 1, y) == ROOM
-                && from_grid.get(x, y + 1) == ROOM
-                && from_grid.get(x - 1, y + 1) == ROOM
-            {
-                x0 -= 1;
-                y1 += 1;
-                room_type = ROOM_2X2;
-            } else if room_grid.get(x - 1, y) == 0
-                && room_grid.get(x, y - 1) == 0
-                && room_grid.get(x - 1, y - 1) == 0
-                && from_grid.get(x - 1, y) == ROOM
-                && from_grid.get(x, y - 1) == ROOM
-                && from_grid.get(x - 1, y - 1) == ROOM
-            {
-                x0 -= 1;
-                y0 -= 1;
-                room_type = ROOM_2X2;
-            } else if room_grid.get(x + 1, y) == 0 && from_grid.get(x + 1, y) == ROOM {
-                x1 += 1;
-                room_type = ROOM_1X2;
-            } else if room_grid.get(x, y + 1) == 0 && from_grid.get(x, y + 1) == ROOM {
-                y1 += 1;
-                room_type = ROOM_1X2;
-            } else if room_grid.get(x - 1, y) == 0 && from_grid.get(x - 1, y) == ROOM {
-                x0 -= 1;
-                room_type = ROOM_1X2;
-            } else if room_grid.get(x, y - 1) == 0 && from_grid.get(x, y - 1) == ROOM {
-                y0 -= 1;
-                room_type = ROOM_1X2;
-            }
+            let (x0, x1, y0, y1, room_type) = Self::room_extent(from_grid, room_grid, x, y);
 
             let mut door_x = if random.next_bool() { x0 } else { x1 };
             let mut door_y = if random.next_bool() { y0 } else { y1 };
@@ -499,6 +458,62 @@ impl MansionGrid {
             }
             room_id += 1;
         }
+    }
+
+    /// The cells (x0, x1, y0, y1) and type of the room grown from the free room cell (x, y): a 2x2
+    /// room when one fits, else a 1x2 one, else 1x1.
+    fn room_extent(
+        from_grid: &SimpleGrid,
+        room_grid: &SimpleGrid,
+        x: i32,
+        y: i32,
+    ) -> (i32, i32, i32, i32, i32) {
+        let (mut x0, mut x1, mut y0, mut y1) = (x, x, y, y);
+        let mut room_type = ROOM_1X1;
+        if room_grid.get(x + 1, y) == 0
+            && room_grid.get(x, y + 1) == 0
+            && room_grid.get(x + 1, y + 1) == 0
+            && from_grid.get(x + 1, y) == ROOM
+            && from_grid.get(x, y + 1) == ROOM
+            && from_grid.get(x + 1, y + 1) == ROOM
+        {
+            x1 += 1;
+            y1 += 1;
+            room_type = ROOM_2X2;
+        } else if room_grid.get(x - 1, y) == 0
+            && room_grid.get(x, y + 1) == 0
+            && room_grid.get(x - 1, y + 1) == 0
+            && from_grid.get(x - 1, y) == ROOM
+            && from_grid.get(x, y + 1) == ROOM
+            && from_grid.get(x - 1, y + 1) == ROOM
+        {
+            x0 -= 1;
+            y1 += 1;
+            room_type = ROOM_2X2;
+        } else if room_grid.get(x - 1, y) == 0
+            && room_grid.get(x, y - 1) == 0
+            && room_grid.get(x - 1, y - 1) == 0
+            && from_grid.get(x - 1, y) == ROOM
+            && from_grid.get(x, y - 1) == ROOM
+            && from_grid.get(x - 1, y - 1) == ROOM
+        {
+            x0 -= 1;
+            y0 -= 1;
+            room_type = ROOM_2X2;
+        } else if room_grid.get(x + 1, y) == 0 && from_grid.get(x + 1, y) == ROOM {
+            x1 += 1;
+            room_type = ROOM_1X2;
+        } else if room_grid.get(x, y + 1) == 0 && from_grid.get(x, y + 1) == ROOM {
+            y1 += 1;
+            room_type = ROOM_1X2;
+        } else if room_grid.get(x - 1, y) == 0 && from_grid.get(x - 1, y) == ROOM {
+            x0 -= 1;
+            room_type = ROOM_1X2;
+        } else if room_grid.get(x, y - 1) == 0 && from_grid.get(x, y - 1) == ROOM {
+            y0 -= 1;
+            room_type = ROOM_1X2;
+        }
+        (x0, x1, y0, y1, room_type)
     }
 }
 

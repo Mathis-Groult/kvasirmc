@@ -14,6 +14,8 @@ use super::{
     offset, relative,
 };
 
+mod roof;
+
 pub(super) struct PieceDescriptor {
     pub(super) template: String,
     pub(super) position: Vector3<i32>,
@@ -191,6 +193,32 @@ impl<'a> MansionPiecePlacer<'a> {
             end_y,
         );
 
+        self.add_third_floor_walls(&ground, rotation, mansion);
+
+        self.create_roof(
+            offset(origin, 0, 16, 0),
+            rotation,
+            &mansion.base,
+            Some(&mansion.third_floor),
+        );
+        self.create_roof(
+            offset(origin, 0, 27, 0),
+            rotation,
+            &mansion.third_floor,
+            None,
+        );
+
+        self.add_floor_rooms(origin, rotation, mansion);
+    }
+
+    /// The outer walls of the third floor, traversed from its first house cell (in row order,
+    /// east to west).
+    fn add_third_floor_walls(
+        &mut self,
+        ground: &PlacementData,
+        rotation: Rotation,
+        mansion: &MansionGrid,
+    ) {
         let mut third = PlacementData {
             position: offset(ground.position, 0, 19, 0),
             rotation: ground.rotation,
@@ -224,20 +252,10 @@ impl<'a> MansionPiecePlacer<'a> {
                 break 'find_start;
             }
         }
+    }
 
-        self.create_roof(
-            offset(origin, 0, 16, 0),
-            rotation,
-            &mansion.base,
-            Some(&mansion.third_floor),
-        );
-        self.create_roof(
-            offset(origin, 0, 27, 0),
-            rotation,
-            &mansion.third_floor,
-            None,
-        );
-
+    /// The corridors and rooms of the three floors.
+    fn add_floor_rooms(&mut self, origin: Vector3<i32>, rotation: Rotation, mansion: &MansionGrid) {
         for floor in 0..3 {
             let floor_origin = offset(origin, 0, 8 * floor as i32 + i32::from(floor == 2) * 3, 0);
             let rooms = &mansion.floor_rooms[floor];
@@ -252,7 +270,7 @@ impl<'a> MansionPiecePlacer<'a> {
                 FloorRooms::Upper
             };
             self.add_corridors(floor, floor_origin, rotation, rooms, grid);
-            self.add_rooms(
+            self.add_rooms(FloorPlan {
                 floor,
                 floor_origin,
                 rotation,
@@ -260,7 +278,7 @@ impl<'a> MansionPiecePlacer<'a> {
                 rooms,
                 grid,
                 room_collection,
-            );
+            });
         }
     }
 
@@ -343,27 +361,16 @@ impl<'a> MansionPiecePlacer<'a> {
         }
     }
 
-    #[expect(clippy::too_many_arguments, clippy::too_many_lines)]
-    fn add_rooms(
-        &mut self,
-        floor: usize,
-        floor_origin: Vector3<i32>,
-        rotation: Rotation,
-        mansion: &MansionGrid,
-        rooms: &SimpleGrid,
-        grid: &SimpleGrid,
-        room_collection: FloorRooms,
-    ) {
-        let wall = if floor == 0 {
-            "indoors_wall_1"
-        } else {
-            "indoors_wall_2"
-        };
-        let door = if floor == 0 {
-            "indoors_door_1"
-        } else {
-            "indoors_door_2"
-        };
+    fn add_rooms(&mut self, plan: FloorPlan<'_>) {
+        let FloorPlan {
+            floor,
+            floor_origin,
+            rotation,
+            mansion,
+            rooms,
+            grid,
+            room_collection,
+        } = plan;
         for y in 0..grid.height() {
             for x in 0..grid.width() {
                 let third_floor_start = floor == 2 && grid.get(x, y) == START_ROOM;
@@ -375,24 +382,7 @@ impl<'a> MansionPiecePlacer<'a> {
                 let room_id = room_data & ROOM_ID_MASK;
                 let corridor_start =
                     third_floor_start && room_data & ROOM_CORRIDOR_FLAG == ROOM_CORRIDOR_FLAG;
-                let door_directions = if room_data & ROOM_DOOR_FLAG == ROOM_DOOR_FLAG {
-                    Direction::HORIZONTAL
-                        .into_iter()
-                        .filter(|direction| {
-                            grid.get(x + direction.step_x(), y + direction.step_z()) == CORRIDOR
-                        })
-                        .collect::<Vec<_>>()
-                } else {
-                    Vec::new()
-                };
-                let door_direction = if door_directions.is_empty() {
-                    (room_data & ROOM_ORIGIN_FLAG == ROOM_ORIGIN_FLAG).then_some(Direction::Up)
-                } else {
-                    Some(
-                        door_directions
-                            [self.random.next_bounded_i32(door_directions.len() as i32) as usize],
-                    )
-                };
+                let door_direction = self.door_direction(grid, x, y, room_data);
 
                 let mut room_position = relative(
                     floor_origin,
@@ -404,65 +394,17 @@ impl<'a> MansionPiecePlacer<'a> {
                     rotation.rotate(Direction::East),
                     -1 + (x - self.start_x) * 8,
                 );
-
-                if MansionGrid::is_house(grid, x - 1, y)
-                    && !mansion.is_room_id(x - 1, y, floor, room_id)
-                {
-                    self.add(
-                        if door_direction == Some(Direction::West) {
-                            door
-                        } else {
-                            wall
-                        },
+                self.add_room_walls(
+                    plan,
+                    RoomCell {
+                        x,
+                        y,
+                        room_id,
                         room_position,
-                        rotation,
-                    );
-                }
-                if grid.get(x + 1, y) == CORRIDOR && !corridor_start {
-                    self.add(
-                        if door_direction == Some(Direction::East) {
-                            door
-                        } else {
-                            wall
-                        },
-                        relative(room_position, rotation.rotate(Direction::East), 8),
-                        rotation,
-                    );
-                }
-                if MansionGrid::is_house(grid, x, y + 1)
-                    && !mansion.is_room_id(x, y + 1, floor, room_id)
-                {
-                    let position = relative(
-                        relative(room_position, rotation.rotate(Direction::South), 7),
-                        rotation.rotate(Direction::East),
-                        7,
-                    );
-                    self.add(
-                        if door_direction == Some(Direction::South) {
-                            door
-                        } else {
-                            wall
-                        },
-                        position,
-                        rotation.then(Rotation::Clockwise90),
-                    );
-                }
-                if grid.get(x, y - 1) == CORRIDOR && !corridor_start {
-                    let position = relative(
-                        relative(room_position, rotation.rotate(Direction::North), 1),
-                        rotation.rotate(Direction::East),
-                        7,
-                    );
-                    self.add(
-                        if door_direction == Some(Direction::North) {
-                            door
-                        } else {
-                            wall
-                        },
-                        position,
-                        rotation.then(Rotation::Clockwise90),
-                    );
-                }
+                        door_direction,
+                        corridor_start,
+                    },
+                );
 
                 match (room_type, door_direction) {
                     (ROOM_1X1, direction) => {
@@ -504,6 +446,119 @@ impl<'a> MansionPiecePlacer<'a> {
                     _ => {}
                 }
             }
+        }
+    }
+
+    /// The side of a room cell that gets the door: one of the sides opening onto a corridor, at
+    /// random, when the cell carries the door flag; `Up` for the origin cell of a room without one.
+    fn door_direction(
+        &mut self,
+        grid: &SimpleGrid,
+        x: i32,
+        y: i32,
+        room_data: i32,
+    ) -> Option<Direction> {
+        let door_directions = if room_data & ROOM_DOOR_FLAG == ROOM_DOOR_FLAG {
+            Direction::HORIZONTAL
+                .into_iter()
+                .filter(|direction| {
+                    grid.get(x + direction.step_x(), y + direction.step_z()) == CORRIDOR
+                })
+                .collect::<Vec<_>>()
+        } else {
+            Vec::new()
+        };
+        if door_directions.is_empty() {
+            (room_data & ROOM_ORIGIN_FLAG == ROOM_ORIGIN_FLAG).then_some(Direction::Up)
+        } else {
+            Some(
+                door_directions
+                    [self.random.next_bounded_i32(door_directions.len() as i32) as usize],
+            )
+        }
+    }
+
+    /// The inner walls and doors around one room cell, on the sides where another room or a
+    /// corridor is.
+    fn add_room_walls(&mut self, plan: FloorPlan<'_>, cell: RoomCell) {
+        let FloorPlan {
+            floor,
+            rotation,
+            mansion,
+            grid,
+            ..
+        } = plan;
+        let RoomCell {
+            x,
+            y,
+            room_id,
+            room_position,
+            door_direction,
+            corridor_start,
+        } = cell;
+        let wall = if floor == 0 {
+            "indoors_wall_1"
+        } else {
+            "indoors_wall_2"
+        };
+        let door = if floor == 0 {
+            "indoors_door_1"
+        } else {
+            "indoors_door_2"
+        };
+        if MansionGrid::is_house(grid, x - 1, y) && !mansion.is_room_id(x - 1, y, floor, room_id) {
+            self.add(
+                if door_direction == Some(Direction::West) {
+                    door
+                } else {
+                    wall
+                },
+                room_position,
+                rotation,
+            );
+        }
+        if grid.get(x + 1, y) == CORRIDOR && !corridor_start {
+            self.add(
+                if door_direction == Some(Direction::East) {
+                    door
+                } else {
+                    wall
+                },
+                relative(room_position, rotation.rotate(Direction::East), 8),
+                rotation,
+            );
+        }
+        if MansionGrid::is_house(grid, x, y + 1) && !mansion.is_room_id(x, y + 1, floor, room_id) {
+            let position = relative(
+                relative(room_position, rotation.rotate(Direction::South), 7),
+                rotation.rotate(Direction::East),
+                7,
+            );
+            self.add(
+                if door_direction == Some(Direction::South) {
+                    door
+                } else {
+                    wall
+                },
+                position,
+                rotation.then(Rotation::Clockwise90),
+            );
+        }
+        if grid.get(x, y - 1) == CORRIDOR && !corridor_start {
+            let position = relative(
+                relative(room_position, rotation.rotate(Direction::North), 1),
+                rotation.rotate(Direction::East),
+                7,
+            );
+            self.add(
+                if door_direction == Some(Direction::North) {
+                    door
+                } else {
+                    wall
+                },
+                position,
+                rotation.then(Rotation::Clockwise90),
+            );
         }
     }
 
@@ -581,242 +636,6 @@ impl<'a> MansionPiecePlacer<'a> {
 }
 
 impl MansionPiecePlacer<'_> {
-    fn roof_position(
-        &self,
-        origin: Vector3<i32>,
-        rotation: Rotation,
-        x: i32,
-        y: i32,
-    ) -> Vector3<i32> {
-        let position = relative(
-            origin,
-            rotation.rotate(Direction::South),
-            8 + (y - self.start_y) * 8,
-        );
-        relative(
-            position,
-            rotation.rotate(Direction::East),
-            (x - self.start_x) * 8,
-        )
-    }
-
-    #[expect(clippy::too_many_lines)]
-    fn create_roof(
-        &mut self,
-        origin: Vector3<i32>,
-        rotation: Rotation,
-        grid: &SimpleGrid,
-        above: Option<&SimpleGrid>,
-    ) {
-        for y in 0..grid.height() {
-            for x in 0..grid.width() {
-                let position = self.roof_position(origin, rotation, x, y);
-                let covered = above.is_some_and(|above| MansionGrid::is_house(above, x, y));
-                if !MansionGrid::is_house(grid, x, y) || covered {
-                    continue;
-                }
-                self.add("roof", offset(position, 0, 3, 0), rotation);
-                if !MansionGrid::is_house(grid, x + 1, y) {
-                    self.add(
-                        "roof_front",
-                        relative(position, rotation.rotate(Direction::East), 6),
-                        rotation,
-                    );
-                }
-                if !MansionGrid::is_house(grid, x - 1, y) {
-                    let position = relative(
-                        relative(position, rotation.rotate(Direction::East), 0),
-                        rotation.rotate(Direction::South),
-                        7,
-                    );
-                    self.add("roof_front", position, rotation.then(Rotation::Rotate180));
-                }
-                if !MansionGrid::is_house(grid, x, y - 1) {
-                    self.add(
-                        "roof_front",
-                        relative(position, rotation.rotate(Direction::West), 1),
-                        rotation.then(Rotation::CounterClockwise90),
-                    );
-                }
-                if !MansionGrid::is_house(grid, x, y + 1) {
-                    let position = relative(
-                        relative(position, rotation.rotate(Direction::East), 6),
-                        rotation.rotate(Direction::South),
-                        6,
-                    );
-                    self.add("roof_front", position, rotation.then(Rotation::Clockwise90));
-                }
-            }
-        }
-
-        if let Some(above) = above {
-            for y in 0..grid.height() {
-                for x in 0..grid.width() {
-                    let position = self.roof_position(origin, rotation, x, y);
-                    if !MansionGrid::is_house(grid, x, y) || !MansionGrid::is_house(above, x, y) {
-                        continue;
-                    }
-                    if !MansionGrid::is_house(grid, x + 1, y) {
-                        self.add(
-                            "small_wall",
-                            relative(position, rotation.rotate(Direction::East), 7),
-                            rotation,
-                        );
-                    }
-                    if !MansionGrid::is_house(grid, x - 1, y) {
-                        let wall = relative(
-                            relative(position, rotation.rotate(Direction::West), 1),
-                            rotation.rotate(Direction::South),
-                            6,
-                        );
-                        self.add("small_wall", wall, rotation.then(Rotation::Rotate180));
-                    }
-                    if !MansionGrid::is_house(grid, x, y - 1) {
-                        let wall = relative(
-                            relative(position, rotation.rotate(Direction::West), 0),
-                            rotation.rotate(Direction::North),
-                            1,
-                        );
-                        self.add(
-                            "small_wall",
-                            wall,
-                            rotation.then(Rotation::CounterClockwise90),
-                        );
-                    }
-                    if !MansionGrid::is_house(grid, x, y + 1) {
-                        let wall = relative(
-                            relative(position, rotation.rotate(Direction::East), 6),
-                            rotation.rotate(Direction::South),
-                            7,
-                        );
-                        self.add("small_wall", wall, rotation.then(Rotation::Clockwise90));
-                    }
-                    if !MansionGrid::is_house(grid, x + 1, y) {
-                        if !MansionGrid::is_house(grid, x, y - 1) {
-                            let corner = relative(
-                                relative(position, rotation.rotate(Direction::East), 7),
-                                rotation.rotate(Direction::North),
-                                2,
-                            );
-                            self.add("small_wall_corner", corner, rotation);
-                        }
-                        if !MansionGrid::is_house(grid, x, y + 1) {
-                            let corner = relative(
-                                relative(position, rotation.rotate(Direction::East), 8),
-                                rotation.rotate(Direction::South),
-                                7,
-                            );
-                            self.add(
-                                "small_wall_corner",
-                                corner,
-                                rotation.then(Rotation::Clockwise90),
-                            );
-                        }
-                    }
-                    if !MansionGrid::is_house(grid, x - 1, y) {
-                        if !MansionGrid::is_house(grid, x, y - 1) {
-                            let corner = relative(
-                                relative(position, rotation.rotate(Direction::West), 2),
-                                rotation.rotate(Direction::North),
-                                1,
-                            );
-                            self.add(
-                                "small_wall_corner",
-                                corner,
-                                rotation.then(Rotation::CounterClockwise90),
-                            );
-                        }
-                        if !MansionGrid::is_house(grid, x, y + 1) {
-                            let corner = relative(
-                                relative(position, rotation.rotate(Direction::West), 1),
-                                rotation.rotate(Direction::South),
-                                8,
-                            );
-                            self.add(
-                                "small_wall_corner",
-                                corner,
-                                rotation.then(Rotation::Rotate180),
-                            );
-                        }
-                    }
-                }
-            }
-        }
-
-        for y in 0..grid.height() {
-            for x in 0..grid.width() {
-                let position = self.roof_position(origin, rotation, x, y);
-                let covered = above.is_some_and(|above| MansionGrid::is_house(above, x, y));
-                if !MansionGrid::is_house(grid, x, y) || covered {
-                    continue;
-                }
-                if !MansionGrid::is_house(grid, x + 1, y) {
-                    let east = relative(position, rotation.rotate(Direction::East), 6);
-                    if !MansionGrid::is_house(grid, x, y + 1) {
-                        self.add(
-                            "roof_corner",
-                            relative(east, rotation.rotate(Direction::South), 6),
-                            rotation,
-                        );
-                    } else if MansionGrid::is_house(grid, x + 1, y + 1) {
-                        self.add(
-                            "roof_inner_corner",
-                            relative(east, rotation.rotate(Direction::South), 5),
-                            rotation,
-                        );
-                    }
-                    if !MansionGrid::is_house(grid, x, y - 1) {
-                        self.add(
-                            "roof_corner",
-                            east,
-                            rotation.then(Rotation::CounterClockwise90),
-                        );
-                    } else if MansionGrid::is_house(grid, x + 1, y - 1) {
-                        let corner = relative(
-                            relative(position, rotation.rotate(Direction::East), 9),
-                            rotation.rotate(Direction::North),
-                            2,
-                        );
-                        self.add(
-                            "roof_inner_corner",
-                            corner,
-                            rotation.then(Rotation::Clockwise90),
-                        );
-                    }
-                }
-                if !MansionGrid::is_house(grid, x - 1, y) {
-                    if !MansionGrid::is_house(grid, x, y + 1) {
-                        self.add(
-                            "roof_corner",
-                            relative(position, rotation.rotate(Direction::South), 6),
-                            rotation.then(Rotation::Clockwise90),
-                        );
-                    } else if MansionGrid::is_house(grid, x - 1, y + 1) {
-                        let corner = relative(
-                            relative(position, rotation.rotate(Direction::South), 8),
-                            rotation.rotate(Direction::West),
-                            3,
-                        );
-                        self.add(
-                            "roof_inner_corner",
-                            corner,
-                            rotation.then(Rotation::CounterClockwise90),
-                        );
-                    }
-                    if !MansionGrid::is_house(grid, x, y - 1) {
-                        self.add("roof_corner", position, rotation.then(Rotation::Rotate180));
-                    } else if MansionGrid::is_house(grid, x - 1, y - 1) {
-                        self.add(
-                            "roof_inner_corner",
-                            relative(position, rotation.rotate(Direction::South), 1),
-                            rotation.then(Rotation::Rotate180),
-                        );
-                    }
-                }
-            }
-        }
-    }
-
     fn add_room_1x1(
         &mut self,
         room_position: Vector3<i32>,
@@ -847,7 +666,6 @@ impl MansionPiecePlacer<'_> {
         );
     }
 
-    #[expect(clippy::too_many_lines)]
     fn add_room_1x2(
         &mut self,
         room_position: Vector3<i32>,
@@ -857,6 +675,35 @@ impl MansionPiecePlacer<'_> {
         rooms: FloorRooms,
         stairs: bool,
     ) {
+        if !self.add_side_room_1x2(
+            room_position,
+            rotation,
+            room_direction,
+            door_direction,
+            rooms,
+            stairs,
+        ) {
+            self.add_front_room_1x2(
+                room_position,
+                rotation,
+                room_direction,
+                door_direction,
+                rooms,
+                stairs,
+            );
+        }
+    }
+
+    /// A 1x2 room whose door is on one of its long sides; returns false for other door sides.
+    fn add_side_room_1x2(
+        &mut self,
+        room_position: Vector3<i32>,
+        rotation: Rotation,
+        room_direction: Direction,
+        door_direction: Direction,
+        rooms: FloorRooms,
+        stairs: bool,
+    ) -> bool {
         let east = rotation.rotate(Direction::East);
         let south = rotation.rotate(Direction::South);
         match (door_direction, room_direction) {
@@ -928,6 +775,24 @@ impl MansionPiecePlacer<'_> {
                     TemplateMirror::None,
                 );
             }
+            _ => return false,
+        }
+        true
+    }
+
+    /// A 1x2 room whose door is on one of its short ends, or a secret one (door `Up`).
+    fn add_front_room_1x2(
+        &mut self,
+        room_position: Vector3<i32>,
+        rotation: Rotation,
+        room_direction: Direction,
+        door_direction: Direction,
+        rooms: FloorRooms,
+        stairs: bool,
+    ) {
+        let east = rotation.rotate(Direction::East);
+        let south = rotation.rotate(Direction::South);
+        match (door_direction, room_direction) {
             (Direction::South, Direction::North) => {
                 let position = relative(
                     relative(room_position, east, 1),
@@ -1036,6 +901,29 @@ impl MansionPiecePlacer<'_> {
             rotation,
         );
     }
+}
+
+/// What placing the rooms of one floor needs.
+#[derive(Clone, Copy)]
+struct FloorPlan<'a> {
+    floor: usize,
+    floor_origin: Vector3<i32>,
+    rotation: Rotation,
+    mansion: &'a MansionGrid,
+    rooms: &'a SimpleGrid,
+    grid: &'a SimpleGrid,
+    room_collection: FloorRooms,
+}
+
+/// One cell of a room, with where its walls go.
+#[derive(Clone, Copy)]
+struct RoomCell {
+    x: i32,
+    y: i32,
+    room_id: i32,
+    room_position: Vector3<i32>,
+    door_direction: Option<Direction>,
+    corridor_start: bool,
 }
 
 #[cfg(test)]

@@ -7,7 +7,7 @@ pub mod dumps;
 #[cfg(test)]
 pub mod feature_golden;
 #[cfg(test)]
-pub mod mineshaft_golden;
+pub mod structure_golden;
 #[cfg(test)]
 pub mod piece_golden;
 #[cfg(test)]

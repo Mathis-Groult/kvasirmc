@@ -70,7 +70,6 @@ impl StructurePieceBase for PrisonHallPiece {
         &mut self.piece.piece
     }
 
-    #[expect(clippy::too_many_lines)]
     fn place(
         &mut self,
         chunk: &mut ProtoChunk,
@@ -105,6 +104,22 @@ impl StructurePieceBase for PrisonHallPiece {
 
         // 3. Exit (Forward/Z=10) - Using fill_with_outline (cant_replace_air = false)
         inner.fill_with_outline(chunk, &box_limit, false, 1, 1, 10, 3, 3, 10, air, air);
+
+        self.place_cell_walls(chunk, random, box_limit);
+        self.place_bars_and_doors(chunk, box_limit);
+    }
+}
+
+impl PrisonHallPiece {
+    /// The stone brick walls between the cells.
+    fn place_cell_walls(
+        &self,
+        chunk: &mut ProtoChunk,
+        random: &mut RandomGenerator,
+        box_limit: BlockBox,
+    ) {
+        let randomizer = StoneBrickRandomizer;
+        let inner = &self.piece.piece;
 
         // 4. Cell Stone Separators (X=4)
         // Note: Java passes 'false' for cant_replace_air here
@@ -160,6 +175,11 @@ impl StructurePieceBase for PrisonHallPiece {
             random,
             &box_limit,
         );
+    }
+
+    /// The iron bars in front of the cells and their iron doors.
+    fn place_bars_and_doors(&self, chunk: &mut ProtoChunk, box_limit: BlockBox) {
+        let inner = &self.piece.piece;
 
         // 5. Iron Bars with Directional Properties
         let mut props = OakFenceLikeProperties::default(&Block::IRON_BARS);

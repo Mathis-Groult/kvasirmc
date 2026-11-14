@@ -104,7 +104,6 @@ impl StructurePieceBase for FiveWayCrossingPiece {
         &mut self.piece.piece
     }
 
-    #[allow(clippy::too_many_lines)]
     fn place(
         &mut self,
         chunk: &mut ProtoChunk,
@@ -117,7 +116,6 @@ impl StructurePieceBase for FiveWayCrossingPiece {
         let box_limit = *chunk_box;
         let p = &self.piece;
         let inner = &p.piece;
-        let air = Block::AIR.default_state;
 
         inner.fill_outline_random(
             0,
@@ -135,6 +133,18 @@ impl StructurePieceBase for FiveWayCrossingPiece {
 
         p.generate_entrance(chunk, &box_limit, self.piece.entry_door, 4, 3, 0);
 
+        self.place_exits(chunk, box_limit);
+        self.place_inner_walls(chunk, random, box_limit);
+        self.place_slabs_and_torch(chunk, random, box_limit);
+    }
+}
+
+impl FiveWayCrossingPiece {
+    /// Opens the side exits that lead somewhere, and the forward one.
+    fn place_exits(&self, chunk: &mut ProtoChunk, box_limit: BlockBox) {
+        let inner = &self.piece.piece;
+        let air = Block::AIR.default_state;
+
         if self.lower_left_exists {
             inner.fill_with_outline(chunk, &box_limit, false, 0, 3, 1, 0, 5, 3, air, air);
         }
@@ -149,6 +159,17 @@ impl StructurePieceBase for FiveWayCrossingPiece {
         }
 
         inner.fill_with_outline(chunk, &box_limit, false, 5, 1, 10, 7, 3, 10, air, air);
+    }
+
+    /// The stone brick floors and walls inside the crossing.
+    fn place_inner_walls(
+        &self,
+        chunk: &mut ProtoChunk,
+        random: &mut RandomGenerator,
+        box_limit: BlockBox,
+    ) {
+        let randomizer = StoneBrickRandomizer;
+        let inner = &self.piece.piece;
 
         inner.fill_outline_random(
             1,
@@ -215,6 +236,17 @@ impl StructurePieceBase for FiveWayCrossingPiece {
             random,
             &box_limit,
         );
+    }
+
+    /// The slab steps and platforms, and the wall torch.
+    fn place_slabs_and_torch(
+        &self,
+        chunk: &mut ProtoChunk,
+        random: &mut RandomGenerator,
+        box_limit: BlockBox,
+    ) {
+        let randomizer = StoneBrickRandomizer;
+        let inner = &self.piece.piece;
 
         let slab = Block::SMOOTH_STONE_SLAB.default_state;
 

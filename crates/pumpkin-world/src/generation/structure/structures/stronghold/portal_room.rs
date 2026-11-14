@@ -74,7 +74,6 @@ impl StructurePieceBase for PortalRoomPiece {
         &mut self.piece.piece
     }
 
-    #[allow(clippy::too_many_lines)]
     fn place(
         &mut self,
         chunk: &mut ProtoChunk,
@@ -83,8 +82,26 @@ impl StructurePieceBase for PortalRoomPiece {
         _seed: i64,
         chunk_box: &BlockBox,
     ) {
-        let randomizer = StoneBrickRandomizer;
         let box_limit = *chunk_box;
+
+        self.place_shell(chunk, random, box_limit);
+        self.place_lava_pools(chunk, random, box_limit);
+        self.place_iron_bars(chunk, box_limit);
+        self.place_stairs(chunk, random, box_limit);
+        self.place_portal_frames(chunk, random, box_limit);
+        self.place_spawner(chunk, box_limit);
+    }
+}
+
+impl PortalRoomPiece {
+    /// The stone brick shell, the grated entrance and the upper walkways.
+    fn place_shell(
+        &self,
+        chunk: &mut ProtoChunk,
+        random: &mut RandomGenerator,
+        box_limit: BlockBox,
+    ) {
+        let randomizer = StoneBrickRandomizer;
         let p = &self.piece;
         let inner = &p.piece;
 
@@ -159,6 +176,17 @@ impl StructurePieceBase for PortalRoomPiece {
             random,
             &box_limit,
         );
+    }
+
+    /// The two side lava pools and the one under the portal, with their stone brick borders.
+    fn place_lava_pools(
+        &self,
+        chunk: &mut ProtoChunk,
+        random: &mut RandomGenerator,
+        box_limit: BlockBox,
+    ) {
+        let randomizer = StoneBrickRandomizer;
+        let inner = &self.piece.piece;
 
         // 4. Lava Pools
         // Side Stone Brick borders
@@ -210,6 +238,11 @@ impl StructurePieceBase for PortalRoomPiece {
         );
         // Center Lava
         inner.fill_with_outline(chunk, &box_limit, false, 4, 1, 9, 6, 1, 11, lava, lava);
+    }
+
+    /// The iron bar windows along the side and back walls.
+    fn place_iron_bars(&self, chunk: &mut ProtoChunk, box_limit: BlockBox) {
+        let inner = &self.piece.piece;
 
         // 5. Iron Bars
         let mut props = OakFenceLikeProperties::default(&Block::IRON_BARS);
@@ -236,6 +269,17 @@ impl StructurePieceBase for PortalRoomPiece {
         for j in (2..9).step_by(2) {
             inner.fill_with_outline(chunk, &box_limit, false, j, 3, 15, j, 4, 15, bar_we, bar_we);
         }
+    }
+
+    /// The stairs up to the portal and the stone brick under them.
+    fn place_stairs(
+        &self,
+        chunk: &mut ProtoChunk,
+        random: &mut RandomGenerator,
+        box_limit: BlockBox,
+    ) {
+        let randomizer = StoneBrickRandomizer;
+        let inner = &self.piece.piece;
 
         // 6. Stairs Platform (Stone Brick backing)
         inner.fill_outline_random(
@@ -288,6 +332,16 @@ impl StructurePieceBase for PortalRoomPiece {
             inner.add_block(chunk, stairs_n, k, 2, 5, &box_limit);
             inner.add_block(chunk, stairs_n, k, 3, 6, &box_limit);
         }
+    }
+
+    /// The twelve end portal frames, each with an eye at random, and the portal when all have one.
+    fn place_portal_frames(
+        &self,
+        chunk: &mut ProtoChunk,
+        random: &mut RandomGenerator,
+        box_limit: BlockBox,
+    ) {
+        let inner = &self.piece.piece;
 
         // 7. End Portal Frames
         // Pre-calculate properties for base directions
@@ -336,6 +390,11 @@ impl StructurePieceBase for PortalRoomPiece {
             let portal = Block::END_PORTAL.default_state;
             inner.fill_with_outline(chunk, &box_limit, false, 4, 3, 9, 6, 3, 11, portal, portal);
         }
+    }
+
+    /// The silverfish spawner, placed once: in the first chunk that contains its position.
+    fn place_spawner(&mut self, chunk: &mut ProtoChunk, box_limit: BlockBox) {
+        let inner = &self.piece.piece;
 
         // 8. Spawner (Silverfish)
         if !self.spawner_placed {

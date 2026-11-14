@@ -41,6 +41,8 @@ pub(super) enum Terrain {
     Hilly,
     /// Nothing at all.
     Empty,
+    /// The stone of `Hilly` under water up to y = 62, for the structures that sit on the sea floor.
+    Seabed,
 }
 
 impl Terrain {
@@ -49,7 +51,7 @@ impl Terrain {
     fn top(self, x: i32, z: i32) -> Option<i32> {
         match self {
             Self::Flat => Some(62),
-            Self::Hilly => Some(58 + (x * 7 + z * 13).rem_euclid(9)),
+            Self::Hilly | Self::Seabed => Some(58 + (x * 7 + z * 13).rem_euclid(9)),
             Self::Empty => None,
         }
     }
@@ -64,6 +66,11 @@ pub(super) fn fill_terrain(chunk: &mut ProtoChunk, terrain: Terrain) {
             if let Some(top) = terrain.top(x, z) {
                 for y in i32::from(chunk.bottom_y())..=top {
                     chunk.set_block_state(x, y, z, stone);
+                }
+                if matches!(terrain, Terrain::Seabed) {
+                    for y in top + 1..=62 {
+                        chunk.set_block_state(x, y, z, Block::WATER.default_state);
+                    }
                 }
             }
         }

@@ -1,0 +1,108 @@
+ocean_ruin warm seed=1 chunk=(0,0) start=Vector3 { x: 8, y: 64, z: 8 } pieces=6
+  piece OceanTemple None (-15,90,-15)..(0,105,0)
+  piece OceanTemple None (-4,90,-23)..(2,96,-18)
+  piece OceanTemple None (-15,90,-27)..(-9,96,-22)
+  piece OceanTemple None (2,90,-14)..(7,96,-8)
+  piece OceanTemple None (-34,90,2)..(-29,96,8)
+  piece OceanTemple None (-28,90,-13)..(-23,96,-7)
+  chunk=(-3,-2) solid=32795 hash=db97141f6755ec94 be=0:cbf29ce484222325
+  chunk=(-3,-1) solid=32797 hash=646235767ca20f2c be=0:cbf29ce484222325
+  chunk=(-3,0) solid=32796 hash=6415de890806ab0a be=5:e53878a917ff2f41
+  chunk=(-2,-2) solid=32798 hash=e8cc5353c4c9cba5 be=0:cbf29ce484222325
+  chunk=(-2,-1) solid=32796 hash=c78789215c3f643a be=6:24a1205bcc66db26
+  chunk=(-2,0) solid=32800 hash=f549e7418e0ad2c2 be=5:98dd3858a06889ce
+  chunk=(-1,-2) solid=32801 hash=33d88c8f226661dc be=12:c02e83ecdcdcca3a se=1:{PersistenceRequired:Byte(1),Pos:[Double(-10.5),Double(60.0),Double(-24.5),],id:String("minecraft:drowned"),}
+  chunk=(-1,-1) solid=32805 hash=63b683c8fc3909c1 be=6:51c6ffadeb1dda08 se=4:{PersistenceRequired:Byte(1),Pos:[Double(-4.5),Double(60.0),Double(-4.5),],id:String("minecraft:drowned"),}{PersistenceRequired:Byte(1),Pos:[Double(-6.5),Double(60.0),Double(-8.5),],id:String("minecraft:drowned"),}{PersistenceRequired:Byte(1),Pos:[Double(-9.5),Double(60.0),Double(-11.5),],id:String("minecraft:drowned"),}{PersistenceRequired:Byte(1),Pos:[Double(-10.5),Double(60.0),Double(-3.5),],id:String("minecraft:drowned"),}
+  chunk=(-1,0) solid=32797 hash=fcde362e431df89c be=2:9f2282d983a8d1da
+  chunk=(0,-2) solid=32808 hash=077af25823bd6726 be=3:c0eebec5722d46e5 se=2:{PersistenceRequired:Byte(1),Pos:[Double(0.5),Double(64.0),Double(-20.5),],id:String("minecraft:drowned"),}{PersistenceRequired:Byte(1),Pos:[Double(0.5),Double(64.0),Double(-19.5),],id:String("minecraft:drowned"),}
+  chunk=(0,-1) solid=32800 hash=63893865e4504207 be=9:96abe4d61fd7b105 se=1:{PersistenceRequired:Byte(1),Pos:[Double(4.5),Double(60.0),Double(-11.5),],id:String("minecraft:drowned"),}
+  chunk=(0,0) solid=32796 hash=cee7ff9a1e91d5f5 be=0:cbf29ce484222325
+ocean_ruin warm seed=2 chunk=(3,-2) start=Vector3 { x: 56, y: 64, z: -24 } pieces=6
+  piece OceanTemple None (33,90,-47)..(48,105,-32)
+  piece OceanTemple None (16,90,-35)..(21,96,-29)
+  piece OceanTemple None (19,90,-43)..(25,96,-38)
+  piece OceanTemple None (47,90,-58)..(53,96,-53)
+  piece OceanTemple None (29,90,-26)..(35,96,-21)
+  piece OceanTemple None (34,90,-59)..(39,96,-53)
+  chunk=(1,-4) solid=32796 hash=cee7ff9a1e91d5f5 be=0:cbf29ce484222325
+  chunk=(1,-3) solid=32822 hash=07331b46224aea4b be=11:8eb79a073fc5cfe6
+  chunk=(1,-2) solid=32804 hash=9cb754fdf9842b12 be=11:63e1a7d7ce0ba0ca
+  chunk=(2,-4) solid=32812 hash=91d344593f8286ee be=6:082a4d8dc7fa2f5e se=2:{PersistenceRequired:Byte(1),Pos:[Double(36.5),Double(63.0),Double(-56.5),],id:String("minecraft:drowned"),}{PersistenceRequired:Byte(1),Pos:[Double(37.5),Double(63.0),Double(-56.5),],id:String("minecraft:drowned"),}
+  chunk=(2,-3) solid=32833 hash=1846d16f0b1f0e10 be=6:9e150c0a3ae96316 se=2:{PersistenceRequired:Byte(1),Pos:[Double(44.5),Double(60.0),Double(-36.5),],id:String("minecraft:drowned"),}{PersistenceRequired:Byte(1),Pos:[Double(38.5),Double(60.0),Double(-39.5),],id:String("minecraft:drowned"),}
+  chunk=(2,-2) solid=32798 hash=59a372a5aa89c63b be=8:6284c6e7a4669a3d se=1:{PersistenceRequired:Byte(1),Pos:[Double(33.5),Double(60.0),Double(-23.5),],id:String("minecraft:drowned"),}
+  chunk=(3,-4) solid=32802 hash=44fef9dc0becec6b be=6:771a9c5ff66de0d8 se=1:{PersistenceRequired:Byte(1),Pos:[Double(50.5),Double(61.0),Double(-56.5),],id:String("minecraft:drowned"),}
+  chunk=(3,-3) solid=32796 hash=7c2e22a22aa15f2d be=2:41c35661d16df7bc
+  chunk=(3,-2) solid=32798 hash=a51bdd2e2664e96d be=0:cbf29ce484222325
+ocean_ruin warm seed=3 chunk=(-5,4) start=Vector3 { x: -72, y: 64, z: 72 } pieces=1
+  piece OceanTemple None (-85,90,58)..(-80,96,64)
+  chunk=(-6,3) solid=32817 hash=b7a0d069ed0deeb1 be=6:d7038f15e4dd9c66
+  chunk=(-6,4) solid=32796 hash=b50b017e2c7aae3d be=2:cf6308092d301210
+  chunk=(-5,3) solid=32801 hash=b504661103ca9fe8 be=0:cbf29ce484222325
+  chunk=(-5,4) solid=32796 hash=620f1e9bda1266c5 be=0:cbf29ce484222325
+ocean_ruin cold seed=1 chunk=(0,0) start=Vector3 { x: 8, y: 64, z: 8 } pieces=18
+  piece OceanTemple None (-15,90,-15)..(0,105,0)
+  piece OceanTemple None (-15,90,-15)..(0,105,0)
+  piece OceanTemple None (-15,90,-15)..(0,105,0)
+  piece OceanTemple None (-4,90,-23)..(2,96,-18)
+  piece OceanTemple None (-4,90,-23)..(2,96,-18)
+  piece OceanTemple None (-4,90,-23)..(2,96,-18)
+  piece OceanTemple None (-15,90,-27)..(-9,96,-22)
+  piece OceanTemple None (-15,90,-27)..(-9,96,-22)
+  piece OceanTemple None (-15,90,-27)..(-9,96,-22)
+  piece OceanTemple None (2,90,-14)..(7,96,-8)
+  piece OceanTemple None (2,90,-14)..(7,96,-8)
+  piece OceanTemple None (2,90,-14)..(7,96,-8)
+  piece OceanTemple None (-34,90,2)..(-29,96,8)
+  piece OceanTemple None (-34,90,2)..(-29,96,8)
+  piece OceanTemple None (-34,90,2)..(-29,96,8)
+  piece OceanTemple None (-28,90,-13)..(-23,96,-7)
+  piece OceanTemple None (-28,90,-13)..(-23,96,-7)
+  piece OceanTemple None (-28,90,-13)..(-23,96,-7)
+  chunk=(-3,-2) solid=32795 hash=db97141f6755ec94 be=0:cbf29ce484222325
+  chunk=(-3,-1) solid=32797 hash=646235767ca20f2c be=0:cbf29ce484222325
+  chunk=(-3,0) solid=32804 hash=7e8f1ddd13d7db8e be=10:1aaa41d2fd34399e
+  chunk=(-2,-2) solid=32798 hash=e8cc5353c4c9cba5 be=0:cbf29ce484222325
+  chunk=(-2,-1) solid=32803 hash=f5f22b9ac5fcafdc be=18:f403dc5c5e3d0194 se=2:{PersistenceRequired:Byte(1),Pos:[Double(-25.5),Double(60.0),Double(-9.5),],id:String("minecraft:drowned"),}{PersistenceRequired:Byte(1),Pos:[Double(-25.5),Double(60.0),Double(-10.5),],id:String("minecraft:drowned"),}
+  chunk=(-2,0) solid=32821 hash=430b9e815c1a9663 be=18:1120f61feee530a3 se=5:{PersistenceRequired:Byte(1),Pos:[Double(-30.5),Double(60.0),Double(5.5),],id:String("minecraft:drowned"),}{PersistenceRequired:Byte(1),Pos:[Double(-29.5),Double(65.0),Double(4.5),],id:String("minecraft:drowned"),}{PersistenceRequired:Byte(1),Pos:[Double(-31.5),Double(65.0),Double(7.5),],id:String("minecraft:drowned"),}{PersistenceRequired:Byte(1),Pos:[Double(-31.5),Double(65.0),Double(4.5),],id:String("minecraft:drowned"),}{PersistenceRequired:Byte(1),Pos:[Double(-30.5),Double(65.0),Double(6.5),],id:String("minecraft:drowned"),}
+  chunk=(-1,-2) solid=32803 hash=714f1f3acc3cf726 be=26:cc25ab398161fd16 se=2:{PersistenceRequired:Byte(1),Pos:[Double(-2.5),Double(60.0),Double(-20.5),],id:String("minecraft:drowned"),}{PersistenceRequired:Byte(1),Pos:[Double(-11.5),Double(60.0),Double(-23.5),],id:String("minecraft:drowned"),}
+  chunk=(-1,-1) solid=32891 hash=cf4284a205428ae7 be=18:4802d2c2512a55d5 se=5:{PersistenceRequired:Byte(1),Pos:[Double(-9.5),Double(60.0),Double(-7.5),],id:String("minecraft:drowned"),}{PersistenceRequired:Byte(1),Pos:[Double(-8.5),Double(60.0),Double(-6.5),],id:String("minecraft:drowned"),}{PersistenceRequired:Byte(1),Pos:[Double(-11.5),Double(60.0),Double(-8.5),],id:String("minecraft:drowned"),}{PersistenceRequired:Byte(1),Pos:[Double(-3.5),Double(60.0),Double(-4.5),],id:String("minecraft:drowned"),}{PersistenceRequired:Byte(1),Pos:[Double(-8.5),Double(60.0),Double(-5.5),],id:String("minecraft:drowned"),}
+  chunk=(-1,0) solid=32797 hash=6aec2f3e85d44682 be=7:00a7b49323377a76
+  chunk=(0,-2) solid=32805 hash=025922ce40e751fc be=13:6cb62aef6949b434 se=1:{PersistenceRequired:Byte(1),Pos:[Double(0.5),Double(63.0),Double(-19.5),],id:String("minecraft:drowned"),}
+  chunk=(0,-1) solid=32802 hash=59a07fde448363f4 be=22:082d46d893f5d14a se=1:{PersistenceRequired:Byte(1),Pos:[Double(5.5),Double(60.0),Double(-10.5),],id:String("minecraft:drowned"),}
+  chunk=(0,0) solid=32796 hash=cee7ff9a1e91d5f5 be=0:cbf29ce484222325
+ocean_ruin cold seed=2 chunk=(3,-2) start=Vector3 { x: 56, y: 64, z: -24 } pieces=18
+  piece OceanTemple None (33,90,-47)..(48,105,-32)
+  piece OceanTemple None (33,90,-47)..(48,105,-32)
+  piece OceanTemple None (33,90,-47)..(48,105,-32)
+  piece OceanTemple None (16,90,-35)..(21,96,-29)
+  piece OceanTemple None (16,90,-35)..(21,96,-29)
+  piece OceanTemple None (16,90,-35)..(21,96,-29)
+  piece OceanTemple None (19,90,-43)..(25,96,-38)
+  piece OceanTemple None (19,90,-43)..(25,96,-38)
+  piece OceanTemple None (19,90,-43)..(25,96,-38)
+  piece OceanTemple None (47,90,-58)..(53,96,-53)
+  piece OceanTemple None (47,90,-58)..(53,96,-53)
+  piece OceanTemple None (47,90,-58)..(53,96,-53)
+  piece OceanTemple None (29,90,-26)..(35,96,-21)
+  piece OceanTemple None (29,90,-26)..(35,96,-21)
+  piece OceanTemple None (29,90,-26)..(35,96,-21)
+  piece OceanTemple None (34,90,-59)..(39,96,-53)
+  piece OceanTemple None (34,90,-59)..(39,96,-53)
+  piece OceanTemple None (34,90,-59)..(39,96,-53)
+  chunk=(1,-4) solid=32796 hash=cee7ff9a1e91d5f5 be=0:cbf29ce484222325
+  chunk=(1,-3) solid=32806 hash=74ff23cfb46d23cf be=28:7042ff66cb5a1652 se=1:{PersistenceRequired:Byte(1),Pos:[Double(23.5),Double(60.0),Double(-41.5),],id:String("minecraft:drowned"),}
+  chunk=(1,-2) solid=32815 hash=9d9ec897f2e65fac be=30:864c379a25733132 se=4:{PersistenceRequired:Byte(1),Pos:[Double(19.5),Double(60.0),Double(-31.5),],id:String("minecraft:drowned"),}{PersistenceRequired:Byte(1),Pos:[Double(19.5),Double(60.0),Double(-30.5),],id:String("minecraft:drowned"),}{PersistenceRequired:Byte(1),Pos:[Double(30.5),Double(62.0),Double(-23.5),],id:String("minecraft:drowned"),}{PersistenceRequired:Byte(1),Pos:[Double(30.5),Double(62.0),Double(-21.5),],id:String("minecraft:drowned"),}
+  chunk=(2,-4) solid=32797 hash=b4e8eda3dbe9e287 be=19:551fe230773ee8b6 se=2:{PersistenceRequired:Byte(1),Pos:[Double(36.5),Double(62.0),Double(-53.5),],id:String("minecraft:drowned"),}{PersistenceRequired:Byte(1),Pos:[Double(37.5),Double(62.0),Double(-56.5),],id:String("minecraft:drowned"),}
+  chunk=(2,-3) solid=32798 hash=8d6cea6b728a83d6 be=18:4771c58fd00aedeb se=5:{PersistenceRequired:Byte(1),Pos:[Double(45.5),Double(60.0),Double(-39.5),],id:String("minecraft:drowned"),}{PersistenceRequired:Byte(1),Pos:[Double(38.5),Double(60.0),Double(-40.5),],id:String("minecraft:drowned"),}{PersistenceRequired:Byte(1),Pos:[Double(46.5),Double(60.0),Double(-35.5),],id:String("minecraft:drowned"),}{PersistenceRequired:Byte(1),Pos:[Double(41.5),Double(60.0),Double(-39.5),],id:String("minecraft:drowned"),}{PersistenceRequired:Byte(1),Pos:[Double(37.5),Double(60.0),Double(-41.5),],id:String("minecraft:drowned"),}
+  chunk=(2,-2) solid=32799 hash=f768c76016d99c72 be=20:f3498d3e21b0ed46
+  chunk=(3,-4) solid=32807 hash=834d4678d527fd30 be=18:030e19f2cc43f96f se=2:{PersistenceRequired:Byte(1),Pos:[Double(49.5),Double(60.0),Double(-55.5),],id:String("minecraft:drowned"),}{PersistenceRequired:Byte(1),Pos:[Double(49.5),Double(60.0),Double(-53.5),],id:String("minecraft:drowned"),}
+  chunk=(3,-3) solid=32796 hash=ba70e2d3b46cfeec be=8:620691d7493d8892
+  chunk=(3,-2) solid=32798 hash=a51bdd2e2664e96d be=0:cbf29ce484222325
+ocean_ruin cold seed=3 chunk=(-5,4) start=Vector3 { x: -72, y: 64, z: 72 } pieces=3
+  piece OceanTemple None (-85,90,58)..(-80,96,64)
+  piece OceanTemple None (-85,90,58)..(-80,96,64)
+  piece OceanTemple None (-85,90,58)..(-80,96,64)
+  chunk=(-6,3) solid=32799 hash=54e001ad979aae8f be=17:3660499a97e47c41 se=1:{PersistenceRequired:Byte(1),Pos:[Double(-80.5),Double(60.0),Double(62.5),],id:String("minecraft:drowned"),}
+  chunk=(-6,4) solid=32796 hash=2488822b4ec2438c be=4:e0547048efd3a765
+  chunk=(-5,3) solid=32801 hash=bac18ed8c93986a0 be=1:87391c789324271f
+  chunk=(-5,4) solid=32796 hash=620f1e9bda1266c5 be=0:cbf29ce484222325

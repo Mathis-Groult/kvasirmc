@@ -1,0 +1,24 @@
+shipwreck ocean seed=1 chunk=(0,0) start=Vector3 { x: 8, y: 63, z: 8 } pieces=1
+  piece Shipwreck None (0,90,7)..(8,98,30)
+  chunk=(0,0) solid=32868 hash=3f1337d842efeaa4 be=0:cbf29ce484222325
+  chunk=(0,1) solid=33032 hash=73ab9373056c56eb be=1:3128544e2d78e883
+shipwreck ocean seed=2 chunk=(3,-2) start=Vector3 { x: 56, y: 63, z: -24 } pieces=1
+  piece Shipwreck None (48,90,-23)..(56,98,-2)
+  chunk=(3,-2) solid=32862 hash=53ffc2a8469e2c39 be=1:9e04f201d8169bc7
+  chunk=(3,-1) solid=33017 hash=72d531f0b102900a be=1:0689a2985af6f552
+shipwreck ocean seed=3 chunk=(-5,4) start=Vector3 { x: -72, y: 63, z: 72 } pieces=1
+  piece Shipwreck None (-80,90,67)..(-72,110,94)
+  chunk=(-5,4) solid=33181 hash=b705ea43c2e445e9 be=2:cf7cb7d2170595ef
+  chunk=(-5,5) solid=33078 hash=006dcb2b5c850116 be=1:9bef06d0b739c491
+shipwreck beached seed=1 chunk=(0,0) start=Vector3 { x: 8, y: 63, z: 8 } pieces=1
+  piece Shipwreck None (0,90,15)..(8,98,30)
+  chunk=(0,0) solid=32518 hash=7aa2af5bc0481a8b be=0:cbf29ce484222325
+  chunk=(0,1) solid=32668 hash=2892ff11f47d3849 be=2:5f395eaf8b14bcc3
+shipwreck beached seed=2 chunk=(3,-2) start=Vector3 { x: 56, y: 63, z: -24 } pieces=1
+  piece Shipwreck None (48,90,-25)..(56,98,-2)
+  chunk=(3,-2) solid=32519 hash=9d8fc6567aebaca5 be=0:cbf29ce484222325
+  chunk=(3,-1) solid=32611 hash=74a0192e87fa3ec9 be=1:0b052752cd15951d
+shipwreck beached seed=3 chunk=(-5,4) start=Vector3 { x: -72, y: 63, z: 72 } pieces=1
+  piece Shipwreck None (-80,90,67)..(-72,98,94)
+  chunk=(-5,4) solid=32629 hash=292881556aa9e394 be=2:708e550901fef6dc
+  chunk=(-5,5) solid=32544 hash=82772024ae69a2c9 be=1:1630c69a5b2f9991

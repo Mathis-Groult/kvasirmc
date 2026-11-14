@@ -20,9 +20,10 @@ use crate::generation::{
     get_world_gen,
     proto_chunk::ProtoChunk,
     structure::structures::{
-        HeightSampler, StructureGenerator, StructureGeneratorContext, mansion::MansionGenerator,
-        mineshaft::MineshaftGenerator, nether_fortress::NetherFortressGenerator,
-        stronghold::StrongholdGenerator,
+        HeightSampler, StructureGenerator, StructureGeneratorContext, igloo::IglooGenerator,
+        mansion::MansionGenerator, mineshaft::MineshaftGenerator,
+        nether_fortress::NetherFortressGenerator, ocean_ruin::OceanRuinGenerator,
+        shipwreck::ShipwreckGenerator, stronghold::StrongholdGenerator,
     },
 };
 
@@ -43,7 +44,7 @@ fn record_structure(
     world_gen: &crate::generation::generator::WorldGenerator,
     (header, generator): (&str, &dyn StructureGenerator),
     (seed, chunk_x, chunk_z): (u64, i32, i32),
-    height_sampler: Option<&mut dyn HeightSampler>,
+    (terrain, height_sampler): (Terrain, Option<&mut dyn HeightSampler>),
 ) -> Result<(), Box<dyn std::error::Error>> {
     let context = StructureGeneratorContext {
         seed: seed as i64,
@@ -82,7 +83,7 @@ fn record_structure(
     for x in (bounds.min.x >> 4)..=(bounds.max.x >> 4) {
         for z in (bounds.min.z >> 4)..=(bounds.max.z >> 4) {
             let mut chunk = ProtoChunk::new(x, z, world_gen);
-            fill_terrain(&mut chunk, Terrain::Flat);
+            fill_terrain(&mut chunk, terrain);
             let chunk_seed = seed ^ ((x as u64) << 32) ^ (z as u32 as u64);
             let mut random = RandomGenerator::Xoroshiro(Xoroshiro::from_seed(chunk_seed));
             collector.generate_in_chunk(&mut chunk, &TestBlockRegistry, &mut random, seed as i64);
@@ -134,7 +135,7 @@ fn mineshafts_lay_out_and_place_the_same_blocks() -> Result<(), Box<dyn std::err
             &world_gen,
             (&header, &generator),
             (seed, chunk_x, chunk_z),
-            None,
+            (Terrain::Flat, None),
         )?;
     }
     check_golden("mineshafts", &now)
@@ -153,7 +154,7 @@ fn strongholds_lay_out_and_place_the_same_blocks() -> Result<(), Box<dyn std::er
             &world_gen,
             ("stronghold", &StrongholdGenerator),
             start,
-            None,
+            (Terrain::Flat, None),
         )?;
     }
     check_golden("strongholds", &now)
@@ -169,7 +170,7 @@ fn nether_fortresses_lay_out_and_place_the_same_blocks() -> Result<(), Box<dyn s
             &world_gen,
             ("nether_fortress", &NetherFortressGenerator),
             start,
-            None,
+            (Terrain::Flat, None),
         )?;
     }
     check_golden("nether_fortresses", &now)
@@ -194,8 +195,71 @@ fn mansions_lay_out_and_place_the_same_blocks() -> Result<(), Box<dyn std::error
             &world_gen,
             ("mansion", &MansionGenerator),
             start,
-            Some(&mut FlatGround),
+            (Terrain::Flat, Some(&mut FlatGround)),
         )?;
     }
     check_golden("mansions", &now)
+}
+
+/// Records the structures that `generator` starts at each of `starts` over `terrain`.
+fn record_starts(
+    header: &str,
+    generator: &dyn StructureGenerator,
+    terrain: Terrain,
+    starts: &[(u64, i32, i32)],
+) -> Result<String, Box<dyn std::error::Error>> {
+    let world_gen = overworld();
+    let mut now = String::new();
+    for &start in starts {
+        record_structure(
+            &mut now,
+            &world_gen,
+            (header, generator),
+            start,
+            (terrain, Some(&mut FlatGround)),
+        )?;
+    }
+    Ok(now)
+}
+
+#[test]
+fn ocean_ruins_lay_out_and_place_the_same_blocks() -> Result<(), Box<dyn std::error::Error>> {
+    let mut now = record_starts(
+        "ocean_ruin warm",
+        &OceanRuinGenerator { is_warm: true },
+        Terrain::Seabed,
+        &STARTS,
+    )?;
+    now += &record_starts(
+        "ocean_ruin cold",
+        &OceanRuinGenerator { is_warm: false },
+        Terrain::Seabed,
+        &STARTS,
+    )?;
+    check_golden("ocean_ruins", &now)
+}
+
+#[test]
+fn shipwrecks_lay_out_and_place_the_same_blocks() -> Result<(), Box<dyn std::error::Error>> {
+    let mut now = record_starts(
+        "shipwreck ocean",
+        &ShipwreckGenerator { is_beached: false },
+        Terrain::Seabed,
+        &STARTS,
+    )?;
+    now += &record_starts(
+        "shipwreck beached",
+        &ShipwreckGenerator { is_beached: true },
+        Terrain::Flat,
+        &STARTS,
+    )?;
+    check_golden("shipwrecks", &now)
+}
+
+#[test]
+fn igloos_lay_out_and_place_the_same_blocks() -> Result<(), Box<dyn std::error::Error>> {
+    // About half of the igloos have a basement: eight seeds give both kinds.
+    let starts: Vec<_> = (1..=8).map(|seed| (seed, 0, 0)).collect();
+    let now = record_starts("igloo", &IglooGenerator, Terrain::Flat, &starts)?;
+    check_golden("igloos", &now)
 }

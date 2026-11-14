@@ -7,13 +7,13 @@ pub mod dumps;
 #[cfg(test)]
 pub mod feature_golden;
 #[cfg(test)]
-pub mod structure_golden;
-#[cfg(test)]
 pub mod piece_golden;
 #[cfg(test)]
 pub mod resume;
 #[cfg(test)]
 pub mod stage_parity;
+#[cfg(test)]
+pub mod structure_golden;
 #[cfg(test)]
 pub mod structure_starts;
 

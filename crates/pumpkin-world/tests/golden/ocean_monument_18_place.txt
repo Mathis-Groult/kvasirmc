@@ -1,0 +1,600 @@
+North/Flat/1 chunk=(0,0) solid=32512 hash=376e45d73033732c box=(8,39,8)..(65,61,65) be=0:cbf29ce484222325
+North/Flat/1 chunk=(0,1) solid=32512 hash=ba91df4c4cd8f60b box=(8,39,8)..(65,61,65) be=0:cbf29ce484222325
+North/Flat/1 chunk=(0,2) solid=32512 hash=bff0e94defc17859 box=(8,39,8)..(65,61,65) be=0:cbf29ce484222325
+North/Flat/1 chunk=(0,3) solid=32512 hash=e3bc293aa04ca5e0 box=(8,39,8)..(65,61,65) be=0:cbf29ce484222325
+North/Flat/1 chunk=(0,4) solid=32512 hash=3e7f3b72fa00b065 box=(8,39,8)..(65,61,65) be=0:cbf29ce484222325
+North/Flat/1 chunk=(1,0) solid=32512 hash=cc54f60b11249518 box=(8,39,8)..(65,61,65) be=0:cbf29ce484222325
+North/Flat/1 chunk=(1,1) solid=32512 hash=9213e92fed11b8bc box=(8,39,8)..(65,61,65) be=0:cbf29ce484222325
+North/Flat/1 chunk=(1,2) solid=32512 hash=70a9f3d6dd4e823e box=(8,39,8)..(65,61,65) be=0:cbf29ce484222325
+North/Flat/1 chunk=(1,3) solid=32512 hash=402f82dce641752f box=(8,39,8)..(65,61,65) be=0:cbf29ce484222325 se=1:{Health:Float(80.0),Motion:[Double(0.0),Double(0.0),Double(0.0),],PersistenceRequired:Byte(1),Pos:[Double(20.5),Double(42.0),Double(48.5),],Rotation:[Float(0.0),Float(0.0),],id:String("minecraft:elder_guardian"),}
+North/Flat/1 chunk=(1,4) solid=32512 hash=0d8d8f00e4cee0a5 box=(8,39,8)..(65,61,65) be=0:cbf29ce484222325
+North/Flat/1 chunk=(2,0) solid=32512 hash=be43d4e58998527b box=(8,39,8)..(65,61,65) be=0:cbf29ce484222325
+North/Flat/1 chunk=(2,1) solid=32512 hash=65d8f84f284298d4 box=(8,39,8)..(65,61,65) be=0:cbf29ce484222325
+North/Flat/1 chunk=(2,2) solid=32512 hash=b6bf9cf63b8d43e0 box=(8,39,8)..(65,61,65) be=0:cbf29ce484222325 se=1:{Health:Float(80.0),Motion:[Double(0.0),Double(0.0),Double(0.0),],PersistenceRequired:Byte(1),Pos:[Double(36.5),Double(53.0),Double(37.5),],Rotation:[Float(0.0),Float(0.0),],id:String("minecraft:elder_guardian"),}
+North/Flat/1 chunk=(2,3) solid=32512 hash=3bb618a301b5e433 box=(8,39,8)..(65,61,65) be=0:cbf29ce484222325
+North/Flat/1 chunk=(2,4) solid=32512 hash=127f77751ea0e33d box=(8,39,8)..(65,61,65) be=0:cbf29ce484222325
+North/Flat/1 chunk=(3,0) solid=32512 hash=b369f891595194fb box=(8,39,8)..(65,61,65) be=0:cbf29ce484222325
+North/Flat/1 chunk=(3,1) solid=32512 hash=85a6136908e0941b box=(8,39,8)..(65,61,65) be=0:cbf29ce484222325
+North/Flat/1 chunk=(3,2) solid=32512 hash=d1f8fdd475e82030 box=(8,39,8)..(65,61,65) be=0:cbf29ce484222325
+North/Flat/1 chunk=(3,3) solid=32512 hash=45a945d720d9c00b box=(8,39,8)..(65,61,65) be=0:cbf29ce484222325 se=1:{Health:Float(80.0),Motion:[Double(0.0),Double(0.0),Double(0.0),],PersistenceRequired:Byte(1),Pos:[Double(53.5),Double(45.0),Double(51.5),],Rotation:[Float(0.0),Float(0.0),],id:String("minecraft:elder_guardian"),}
+North/Flat/1 chunk=(3,4) solid=32512 hash=3abcb796e3246225 box=(8,39,8)..(65,61,65) be=0:cbf29ce484222325
+North/Flat/1 chunk=(4,0) solid=32512 hash=869cce89670d4605 box=(8,39,8)..(65,61,65) be=0:cbf29ce484222325
+North/Flat/1 chunk=(4,1) solid=32512 hash=610ccc716c25ede5 box=(8,39,8)..(65,61,65) be=0:cbf29ce484222325
+North/Flat/1 chunk=(4,2) solid=32512 hash=8caa6e92bccf8de5 box=(8,39,8)..(65,61,65) be=0:cbf29ce484222325
+North/Flat/1 chunk=(4,3) solid=32512 hash=8b406094f33772b5 box=(8,39,8)..(65,61,65) be=0:cbf29ce484222325
+North/Flat/1 chunk=(4,4) solid=32512 hash=b361386de9948dc5 box=(8,39,8)..(65,61,65) be=0:cbf29ce484222325
+North/Flat/987654321 chunk=(0,0) solid=32512 hash=376e45d73033732c box=(8,39,8)..(65,61,65) be=0:cbf29ce484222325
+North/Flat/987654321 chunk=(0,1) solid=32512 hash=ba91df4c4cd8f60b box=(8,39,8)..(65,61,65) be=0:cbf29ce484222325
+North/Flat/987654321 chunk=(0,2) solid=32512 hash=bff0e94defc17859 box=(8,39,8)..(65,61,65) be=0:cbf29ce484222325
+North/Flat/987654321 chunk=(0,3) solid=32512 hash=e3bc293aa04ca5e0 box=(8,39,8)..(65,61,65) be=0:cbf29ce484222325
+North/Flat/987654321 chunk=(0,4) solid=32512 hash=3e7f3b72fa00b065 box=(8,39,8)..(65,61,65) be=0:cbf29ce484222325
+North/Flat/987654321 chunk=(1,0) solid=32512 hash=1cf235b5cbb7f6b4 box=(8,39,8)..(65,61,65) be=0:cbf29ce484222325
+North/Flat/987654321 chunk=(1,1) solid=32512 hash=e75d27c46dd45857 box=(8,39,8)..(65,61,65) be=0:cbf29ce484222325
+North/Flat/987654321 chunk=(1,2) solid=32512 hash=df92692a06eb9c4d box=(8,39,8)..(65,61,65) be=0:cbf29ce484222325
+North/Flat/987654321 chunk=(1,3) solid=32512 hash=402f82dce641752f box=(8,39,8)..(65,61,65) be=0:cbf29ce484222325 se=1:{Health:Float(80.0),Motion:[Double(0.0),Double(0.0),Double(0.0),],PersistenceRequired:Byte(1),Pos:[Double(20.5),Double(42.0),Double(48.5),],Rotation:[Float(0.0),Float(0.0),],id:String("minecraft:elder_guardian"),}
+North/Flat/987654321 chunk=(1,4) solid=32512 hash=0d8d8f00e4cee0a5 box=(8,39,8)..(65,61,65) be=0:cbf29ce484222325
+North/Flat/987654321 chunk=(2,0) solid=32512 hash=be43d4e58998527b box=(8,39,8)..(65,61,65) be=0:cbf29ce484222325
+North/Flat/987654321 chunk=(2,1) solid=32512 hash=3addf48600257fac box=(8,39,8)..(65,61,65) be=0:cbf29ce484222325
+North/Flat/987654321 chunk=(2,2) solid=32512 hash=f222954092518bd4 box=(8,39,8)..(65,61,65) be=0:cbf29ce484222325 se=1:{Health:Float(80.0),Motion:[Double(0.0),Double(0.0),Double(0.0),],PersistenceRequired:Byte(1),Pos:[Double(36.5),Double(53.0),Double(37.5),],Rotation:[Float(0.0),Float(0.0),],id:String("minecraft:elder_guardian"),}
+North/Flat/987654321 chunk=(2,3) solid=32512 hash=3bb618a301b5e433 box=(8,39,8)..(65,61,65) be=0:cbf29ce484222325
+North/Flat/987654321 chunk=(2,4) solid=32512 hash=127f77751ea0e33d box=(8,39,8)..(65,61,65) be=0:cbf29ce484222325
+North/Flat/987654321 chunk=(3,0) solid=32512 hash=b369f891595194fb box=(8,39,8)..(65,61,65) be=0:cbf29ce484222325
+North/Flat/987654321 chunk=(3,1) solid=32512 hash=27f0308fb057e75b box=(8,39,8)..(65,61,65) be=0:cbf29ce484222325
+North/Flat/987654321 chunk=(3,2) solid=32512 hash=d1f8fdd475e82030 box=(8,39,8)..(65,61,65) be=0:cbf29ce484222325
+North/Flat/987654321 chunk=(3,3) solid=32512 hash=45a945d720d9c00b box=(8,39,8)..(65,61,65) be=0:cbf29ce484222325 se=1:{Health:Float(80.0),Motion:[Double(0.0),Double(0.0),Double(0.0),],PersistenceRequired:Byte(1),Pos:[Double(53.5),Double(45.0),Double(51.5),],Rotation:[Float(0.0),Float(0.0),],id:String("minecraft:elder_guardian"),}
+North/Flat/987654321 chunk=(3,4) solid=32512 hash=3abcb796e3246225 box=(8,39,8)..(65,61,65) be=0:cbf29ce484222325
+North/Flat/987654321 chunk=(4,0) solid=32512 hash=869cce89670d4605 box=(8,39,8)..(65,61,65) be=0:cbf29ce484222325
+North/Flat/987654321 chunk=(4,1) solid=32512 hash=610ccc716c25ede5 box=(8,39,8)..(65,61,65) be=0:cbf29ce484222325
+North/Flat/987654321 chunk=(4,2) solid=32512 hash=8caa6e92bccf8de5 box=(8,39,8)..(65,61,65) be=0:cbf29ce484222325
+North/Flat/987654321 chunk=(4,3) solid=32512 hash=8b406094f33772b5 box=(8,39,8)..(65,61,65) be=0:cbf29ce484222325
+North/Flat/987654321 chunk=(4,4) solid=32512 hash=b361386de9948dc5 box=(8,39,8)..(65,61,65) be=0:cbf29ce484222325
+North/Hilly/1 chunk=(0,0) solid=32643 hash=a0afac4de182a735 box=(8,39,8)..(65,61,65) be=0:cbf29ce484222325
+North/Hilly/1 chunk=(0,1) solid=32646 hash=8c7de71f5323ed63 box=(8,39,8)..(65,61,65) be=0:cbf29ce484222325
+North/Hilly/1 chunk=(0,2) solid=32641 hash=8f5d7ea1a8e2a608 box=(8,39,8)..(65,61,65) be=0:cbf29ce484222325
+North/Hilly/1 chunk=(0,3) solid=32644 hash=b1320901f45410b8 box=(8,39,8)..(65,61,65) be=0:cbf29ce484222325
+North/Hilly/1 chunk=(0,4) solid=32601 hash=4d9884ad0e80677c box=(8,39,8)..(65,61,65) be=0:cbf29ce484222325
+North/Hilly/1 chunk=(1,0) solid=32627 hash=0aeeb3206977e309 box=(8,39,8)..(65,61,65) be=0:cbf29ce484222325
+North/Hilly/1 chunk=(1,1) solid=32598 hash=a89ee207e2d9203c box=(8,39,8)..(65,61,65) be=0:cbf29ce484222325
+North/Hilly/1 chunk=(1,2) solid=32596 hash=9658a43cfe5219ee box=(8,39,8)..(65,61,65) be=0:cbf29ce484222325
+North/Hilly/1 chunk=(1,3) solid=32597 hash=c857aee77c5782c6 box=(8,39,8)..(65,61,65) be=0:cbf29ce484222325 se=1:{Health:Float(80.0),Motion:[Double(0.0),Double(0.0),Double(0.0),],PersistenceRequired:Byte(1),Pos:[Double(20.5),Double(42.0),Double(48.5),],Rotation:[Float(0.0),Float(0.0),],id:String("minecraft:elder_guardian"),}
+North/Hilly/1 chunk=(1,4) solid=32613 hash=4f17c72cf4ed92d4 box=(8,39,8)..(65,61,65) be=0:cbf29ce484222325
+North/Hilly/1 chunk=(2,0) solid=32636 hash=66ee4737758f35db box=(8,39,8)..(65,61,65) be=0:cbf29ce484222325
+North/Hilly/1 chunk=(2,1) solid=32597 hash=6e2d50d35591ff3d box=(8,39,8)..(65,61,65) be=0:cbf29ce484222325
+North/Hilly/1 chunk=(2,2) solid=32598 hash=4499a07a6ccffe60 box=(8,39,8)..(65,61,65) be=0:cbf29ce484222325 se=1:{Health:Float(80.0),Motion:[Double(0.0),Double(0.0),Double(0.0),],PersistenceRequired:Byte(1),Pos:[Double(36.5),Double(53.0),Double(37.5),],Rotation:[Float(0.0),Float(0.0),],id:String("minecraft:elder_guardian"),}
+North/Hilly/1 chunk=(2,3) solid=32597 hash=571bb800c0d6b522 box=(8,39,8)..(65,61,65) be=0:cbf29ce484222325
+North/Hilly/1 chunk=(2,4) solid=32613 hash=05cbb9b8dbf29934 box=(8,39,8)..(65,61,65) be=0:cbf29ce484222325
+North/Hilly/1 chunk=(3,0) solid=32632 hash=9063e87fc9e0bacb box=(8,39,8)..(65,61,65) be=0:cbf29ce484222325
+North/Hilly/1 chunk=(3,1) solid=32597 hash=e8a33a02fb86710a box=(8,39,8)..(65,61,65) be=0:cbf29ce484222325
+North/Hilly/1 chunk=(3,2) solid=32598 hash=e883f6ac6baf87b0 box=(8,39,8)..(65,61,65) be=0:cbf29ce484222325
+North/Hilly/1 chunk=(3,3) solid=32596 hash=1ffa9570ffd6285b box=(8,39,8)..(65,61,65) be=0:cbf29ce484222325 se=1:{Health:Float(80.0),Motion:[Double(0.0),Double(0.0),Double(0.0),],PersistenceRequired:Byte(1),Pos:[Double(53.5),Double(45.0),Double(51.5),],Rotation:[Float(0.0),Float(0.0),],id:String("minecraft:elder_guardian"),}
+North/Hilly/1 chunk=(3,4) solid=32610 hash=04069f5bdcfffc2d box=(8,39,8)..(65,61,65) be=0:cbf29ce484222325
+North/Hilly/1 chunk=(4,0) solid=32594 hash=5a0a7e16127121b5 box=(8,39,8)..(65,61,65) be=0:cbf29ce484222325
+North/Hilly/1 chunk=(4,1) solid=32599 hash=0301d391020444bc box=(8,39,8)..(65,61,65) be=0:cbf29ce484222325
+North/Hilly/1 chunk=(4,2) solid=32599 hash=bb694df77df70f0c box=(8,39,8)..(65,61,65) be=0:cbf29ce484222325
+North/Hilly/1 chunk=(4,3) solid=32600 hash=1251ff336ae9f8cd box=(8,39,8)..(65,61,65) be=0:cbf29ce484222325
+North/Hilly/1 chunk=(4,4) solid=32562 hash=12493a315cfd1b6d box=(8,39,8)..(65,61,65) be=0:cbf29ce484222325
+North/Hilly/987654321 chunk=(0,0) solid=32643 hash=a0afac4de182a735 box=(8,39,8)..(65,61,65) be=0:cbf29ce484222325
+North/Hilly/987654321 chunk=(0,1) solid=32646 hash=8c7de71f5323ed63 box=(8,39,8)..(65,61,65) be=0:cbf29ce484222325
+North/Hilly/987654321 chunk=(0,2) solid=32641 hash=8f5d7ea1a8e2a608 box=(8,39,8)..(65,61,65) be=0:cbf29ce484222325
+North/Hilly/987654321 chunk=(0,3) solid=32644 hash=b1320901f45410b8 box=(8,39,8)..(65,61,65) be=0:cbf29ce484222325
+North/Hilly/987654321 chunk=(0,4) solid=32601 hash=4d9884ad0e80677c box=(8,39,8)..(65,61,65) be=0:cbf29ce484222325
+North/Hilly/987654321 chunk=(1,0) solid=32627 hash=40dbe2386ccb3325 box=(8,39,8)..(65,61,65) be=0:cbf29ce484222325
+North/Hilly/987654321 chunk=(1,1) solid=32598 hash=d0d22eec780cf0d7 box=(8,39,8)..(65,61,65) be=0:cbf29ce484222325
+North/Hilly/987654321 chunk=(1,2) solid=32596 hash=b9e3b8c3e5e8049d box=(8,39,8)..(65,61,65) be=0:cbf29ce484222325
+North/Hilly/987654321 chunk=(1,3) solid=32597 hash=c857aee77c5782c6 box=(8,39,8)..(65,61,65) be=0:cbf29ce484222325 se=1:{Health:Float(80.0),Motion:[Double(0.0),Double(0.0),Double(0.0),],PersistenceRequired:Byte(1),Pos:[Double(20.5),Double(42.0),Double(48.5),],Rotation:[Float(0.0),Float(0.0),],id:String("minecraft:elder_guardian"),}
+North/Hilly/987654321 chunk=(1,4) solid=32613 hash=4f17c72cf4ed92d4 box=(8,39,8)..(65,61,65) be=0:cbf29ce484222325
+North/Hilly/987654321 chunk=(2,0) solid=32636 hash=66ee4737758f35db box=(8,39,8)..(65,61,65) be=0:cbf29ce484222325
+North/Hilly/987654321 chunk=(2,1) solid=32597 hash=43324d0a2d74e615 box=(8,39,8)..(65,61,65) be=0:cbf29ce484222325
+North/Hilly/987654321 chunk=(2,2) solid=32598 hash=7ffc98c4c3944654 box=(8,39,8)..(65,61,65) be=0:cbf29ce484222325 se=1:{Health:Float(80.0),Motion:[Double(0.0),Double(0.0),Double(0.0),],PersistenceRequired:Byte(1),Pos:[Double(36.5),Double(53.0),Double(37.5),],Rotation:[Float(0.0),Float(0.0),],id:String("minecraft:elder_guardian"),}
+North/Hilly/987654321 chunk=(2,3) solid=32597 hash=571bb800c0d6b522 box=(8,39,8)..(65,61,65) be=0:cbf29ce484222325
+North/Hilly/987654321 chunk=(2,4) solid=32613 hash=05cbb9b8dbf29934 box=(8,39,8)..(65,61,65) be=0:cbf29ce484222325
+North/Hilly/987654321 chunk=(3,0) solid=32632 hash=9063e87fc9e0bacb box=(8,39,8)..(65,61,65) be=0:cbf29ce484222325
+North/Hilly/987654321 chunk=(3,1) solid=32597 hash=8aed5729a2fdc44a box=(8,39,8)..(65,61,65) be=0:cbf29ce484222325
+North/Hilly/987654321 chunk=(3,2) solid=32598 hash=e883f6ac6baf87b0 box=(8,39,8)..(65,61,65) be=0:cbf29ce484222325
+North/Hilly/987654321 chunk=(3,3) solid=32596 hash=1ffa9570ffd6285b box=(8,39,8)..(65,61,65) be=0:cbf29ce484222325 se=1:{Health:Float(80.0),Motion:[Double(0.0),Double(0.0),Double(0.0),],PersistenceRequired:Byte(1),Pos:[Double(53.5),Double(45.0),Double(51.5),],Rotation:[Float(0.0),Float(0.0),],id:String("minecraft:elder_guardian"),}
+North/Hilly/987654321 chunk=(3,4) solid=32610 hash=04069f5bdcfffc2d box=(8,39,8)..(65,61,65) be=0:cbf29ce484222325
+North/Hilly/987654321 chunk=(4,0) solid=32594 hash=5a0a7e16127121b5 box=(8,39,8)..(65,61,65) be=0:cbf29ce484222325
+North/Hilly/987654321 chunk=(4,1) solid=32599 hash=0301d391020444bc box=(8,39,8)..(65,61,65) be=0:cbf29ce484222325
+North/Hilly/987654321 chunk=(4,2) solid=32599 hash=bb694df77df70f0c box=(8,39,8)..(65,61,65) be=0:cbf29ce484222325
+North/Hilly/987654321 chunk=(4,3) solid=32600 hash=1251ff336ae9f8cd box=(8,39,8)..(65,61,65) be=0:cbf29ce484222325
+North/Hilly/987654321 chunk=(4,4) solid=32562 hash=12493a315cfd1b6d box=(8,39,8)..(65,61,65) be=0:cbf29ce484222325
+North/Empty/1 chunk=(0,0) solid=5212 hash=729b3c41d1a7848c box=(8,39,8)..(65,61,65) be=0:cbf29ce484222325
+North/Empty/1 chunk=(0,1) solid=7904 hash=ea45ae0772746d8b box=(8,39,8)..(65,61,65) be=0:cbf29ce484222325
+North/Empty/1 chunk=(0,2) solid=7904 hash=34cf1ed3639aa4d9 box=(8,39,8)..(65,61,65) be=0:cbf29ce484222325
+North/Empty/1 chunk=(0,3) solid=7096 hash=ecdb3e32858cd780 box=(8,39,8)..(65,61,65) be=0:cbf29ce484222325
+North/Empty/1 chunk=(0,4) solid=2652 hash=58b15b5f85314065 box=(8,39,8)..(65,61,65) be=0:cbf29ce484222325
+North/Empty/1 chunk=(1,0) solid=7904 hash=40d671d8f6b5ba98 box=(8,39,8)..(65,61,65) be=0:cbf29ce484222325
+North/Empty/1 chunk=(1,1) solid=6144 hash=93118323550bc4bc box=(8,39,8)..(65,61,65) be=0:cbf29ce484222325
+North/Empty/1 chunk=(1,2) solid=6144 hash=71a78dca45488e3e box=(8,39,8)..(65,61,65) be=0:cbf29ce484222325
+North/Empty/1 chunk=(1,3) solid=7760 hash=0df25b8ef842c86f box=(8,39,8)..(65,61,65) be=0:cbf29ce484222325 se=1:{Health:Float(80.0),Motion:[Double(0.0),Double(0.0),Double(0.0),],PersistenceRequired:Byte(1),Pos:[Double(20.5),Double(42.0),Double(48.5),],Rotation:[Float(0.0),Float(0.0),],id:String("minecraft:elder_guardian"),}
+North/Empty/1 chunk=(1,4) solid=3984 hash=56e65e3ade4947e5 box=(8,39,8)..(65,61,65) be=0:cbf29ce484222325
+North/Empty/1 chunk=(2,0) solid=7904 hash=490c2d17b0b8bf4b box=(8,39,8)..(65,61,65) be=0:cbf29ce484222325
+North/Empty/1 chunk=(2,1) solid=6144 hash=66d69242903ca4d4 box=(8,39,8)..(65,61,65) be=0:cbf29ce484222325
+North/Empty/1 chunk=(2,2) solid=6144 hash=b7bd36e9a3874fe0 box=(8,39,8)..(65,61,65) be=0:cbf29ce484222325 se=1:{Health:Float(80.0),Motion:[Double(0.0),Double(0.0),Double(0.0),],PersistenceRequired:Byte(1),Pos:[Double(36.5),Double(53.0),Double(37.5),],Rotation:[Float(0.0),Float(0.0),],id:String("minecraft:elder_guardian"),}
+North/Empty/1 chunk=(2,3) solid=6952 hash=b1dc9b913dcb8453 box=(8,39,8)..(65,61,65) be=0:cbf29ce484222325
+North/Empty/1 chunk=(2,4) solid=3176 hash=a7e67b7cec5994fd box=(8,39,8)..(65,61,65) be=0:cbf29ce484222325
+North/Empty/1 chunk=(3,0) solid=7096 hash=db04f5f45fdadacb box=(8,39,8)..(65,61,65) be=0:cbf29ce484222325
+North/Empty/1 chunk=(3,1) solid=7760 hash=f669af6d4db44cdb box=(8,39,8)..(65,61,65) be=0:cbf29ce484222325
+North/Empty/1 chunk=(3,2) solid=7760 hash=6b00ec04a5df2a70 box=(8,39,8)..(65,61,65) be=0:cbf29ce484222325
+North/Empty/1 chunk=(3,3) solid=8164 hash=a0832fb38fb7ed3b box=(8,39,8)..(65,61,65) be=0:cbf29ce484222325 se=1:{Health:Float(80.0),Motion:[Double(0.0),Double(0.0),Double(0.0),],PersistenceRequired:Byte(1),Pos:[Double(53.5),Double(45.0),Double(51.5),],Rotation:[Float(0.0),Float(0.0),],id:String("minecraft:elder_guardian"),}
+North/Empty/1 chunk=(3,4) solid=3580 hash=408a46408f1ebae5 box=(8,39,8)..(65,61,65) be=0:cbf29ce484222325
+North/Empty/1 chunk=(4,0) solid=2652 hash=1baad28f72c8bcb5 box=(8,39,8)..(65,61,65) be=0:cbf29ce484222325
+North/Empty/1 chunk=(4,1) solid=3984 hash=c4b5a31f51b6a4a5 box=(8,39,8)..(65,61,65) be=0:cbf29ce484222325
+North/Empty/1 chunk=(4,2) solid=3984 hash=0efdbdce3cf910a5 box=(8,39,8)..(65,61,65) be=0:cbf29ce484222325
+North/Empty/1 chunk=(4,3) solid=3580 hash=64b70a5e5be5c905 box=(8,39,8)..(65,61,65) be=0:cbf29ce484222325
+North/Empty/1 chunk=(4,4) solid=1360 hash=176ef0e25cc34a45 box=(8,39,8)..(65,61,65) be=0:cbf29ce484222325
+North/Empty/987654321 chunk=(0,0) solid=5212 hash=729b3c41d1a7848c box=(8,39,8)..(65,61,65) be=0:cbf29ce484222325
+North/Empty/987654321 chunk=(0,1) solid=7904 hash=ea45ae0772746d8b box=(8,39,8)..(65,61,65) be=0:cbf29ce484222325
+North/Empty/987654321 chunk=(0,2) solid=7904 hash=34cf1ed3639aa4d9 box=(8,39,8)..(65,61,65) be=0:cbf29ce484222325
+North/Empty/987654321 chunk=(0,3) solid=7096 hash=ecdb3e32858cd780 box=(8,39,8)..(65,61,65) be=0:cbf29ce484222325
+North/Empty/987654321 chunk=(0,4) solid=2652 hash=58b15b5f85314065 box=(8,39,8)..(65,61,65) be=0:cbf29ce484222325
+North/Empty/987654321 chunk=(1,0) solid=7904 hash=017fa426e15d8894 box=(8,39,8)..(65,61,65) be=0:cbf29ce484222325
+North/Empty/987654321 chunk=(1,1) solid=6144 hash=e85ac1b7d5ce6457 box=(8,39,8)..(65,61,65) be=0:cbf29ce484222325
+North/Empty/987654321 chunk=(1,2) solid=6144 hash=e090031d6ee5a84d box=(8,39,8)..(65,61,65) be=0:cbf29ce484222325
+North/Empty/987654321 chunk=(1,3) solid=7760 hash=0df25b8ef842c86f box=(8,39,8)..(65,61,65) be=0:cbf29ce484222325 se=1:{Health:Float(80.0),Motion:[Double(0.0),Double(0.0),Double(0.0),],PersistenceRequired:Byte(1),Pos:[Double(20.5),Double(42.0),Double(48.5),],Rotation:[Float(0.0),Float(0.0),],id:String("minecraft:elder_guardian"),}
+North/Empty/987654321 chunk=(1,4) solid=3984 hash=56e65e3ade4947e5 box=(8,39,8)..(65,61,65) be=0:cbf29ce484222325
+North/Empty/987654321 chunk=(2,0) solid=7904 hash=490c2d17b0b8bf4b box=(8,39,8)..(65,61,65) be=0:cbf29ce484222325
+North/Empty/987654321 chunk=(2,1) solid=6144 hash=3bdb8e79681f8bac box=(8,39,8)..(65,61,65) be=0:cbf29ce484222325
+North/Empty/987654321 chunk=(2,2) solid=6144 hash=f3202f33fa4b97d4 box=(8,39,8)..(65,61,65) be=0:cbf29ce484222325 se=1:{Health:Float(80.0),Motion:[Double(0.0),Double(0.0),Double(0.0),],PersistenceRequired:Byte(1),Pos:[Double(36.5),Double(53.0),Double(37.5),],Rotation:[Float(0.0),Float(0.0),],id:String("minecraft:elder_guardian"),}
+North/Empty/987654321 chunk=(2,3) solid=6952 hash=b1dc9b913dcb8453 box=(8,39,8)..(65,61,65) be=0:cbf29ce484222325
+North/Empty/987654321 chunk=(2,4) solid=3176 hash=a7e67b7cec5994fd box=(8,39,8)..(65,61,65) be=0:cbf29ce484222325
+North/Empty/987654321 chunk=(3,0) solid=7096 hash=db04f5f45fdadacb box=(8,39,8)..(65,61,65) be=0:cbf29ce484222325
+North/Empty/987654321 chunk=(3,1) solid=7760 hash=5946282837fbff1b box=(8,39,8)..(65,61,65) be=0:cbf29ce484222325
+North/Empty/987654321 chunk=(3,2) solid=7760 hash=6b00ec04a5df2a70 box=(8,39,8)..(65,61,65) be=0:cbf29ce484222325
+North/Empty/987654321 chunk=(3,3) solid=8164 hash=a0832fb38fb7ed3b box=(8,39,8)..(65,61,65) be=0:cbf29ce484222325 se=1:{Health:Float(80.0),Motion:[Double(0.0),Double(0.0),Double(0.0),],PersistenceRequired:Byte(1),Pos:[Double(53.5),Double(45.0),Double(51.5),],Rotation:[Float(0.0),Float(0.0),],id:String("minecraft:elder_guardian"),}
+North/Empty/987654321 chunk=(3,4) solid=3580 hash=408a46408f1ebae5 box=(8,39,8)..(65,61,65) be=0:cbf29ce484222325
+North/Empty/987654321 chunk=(4,0) solid=2652 hash=1baad28f72c8bcb5 box=(8,39,8)..(65,61,65) be=0:cbf29ce484222325
+North/Empty/987654321 chunk=(4,1) solid=3984 hash=c4b5a31f51b6a4a5 box=(8,39,8)..(65,61,65) be=0:cbf29ce484222325
+North/Empty/987654321 chunk=(4,2) solid=3984 hash=0efdbdce3cf910a5 box=(8,39,8)..(65,61,65) be=0:cbf29ce484222325
+North/Empty/987654321 chunk=(4,3) solid=3580 hash=64b70a5e5be5c905 box=(8,39,8)..(65,61,65) be=0:cbf29ce484222325
+North/Empty/987654321 chunk=(4,4) solid=1360 hash=176ef0e25cc34a45 box=(8,39,8)..(65,61,65) be=0:cbf29ce484222325
+South/Flat/1 chunk=(0,0) solid=32512 hash=870d4dcae7188be3 box=(8,39,8)..(65,61,65) be=0:cbf29ce484222325
+South/Flat/1 chunk=(0,1) solid=32512 hash=8153a731684e8e04 box=(8,39,8)..(65,61,65) be=0:cbf29ce484222325
+South/Flat/1 chunk=(0,2) solid=32512 hash=f875f06ba91cd20b box=(8,39,8)..(65,61,65) be=0:cbf29ce484222325
+South/Flat/1 chunk=(0,3) solid=32512 hash=787e85a34e24dde2 box=(8,39,8)..(65,61,65) be=0:cbf29ce484222325
+South/Flat/1 chunk=(0,4) solid=32512 hash=3e7f3b72fa00b065 box=(8,39,8)..(65,61,65) be=0:cbf29ce484222325
+South/Flat/1 chunk=(1,0) solid=32512 hash=9f675013f2f141fc box=(8,39,8)..(65,61,65) be=0:cbf29ce484222325
+South/Flat/1 chunk=(1,1) solid=32512 hash=f5a582a90e4223ac box=(8,39,8)..(65,61,65) be=0:cbf29ce484222325 se=1:{Health:Float(80.0),Motion:[Double(0.0),Double(0.0),Double(0.0),],PersistenceRequired:Byte(1),Pos:[Double(20.5),Double(42.0),Double(25.5),],Rotation:[Float(0.0),Float(0.0),],id:String("minecraft:elder_guardian"),}
+South/Flat/1 chunk=(1,2) solid=32512 hash=37c22c4e4ec962a9 box=(8,39,8)..(65,61,65) be=0:cbf29ce484222325
+South/Flat/1 chunk=(1,3) solid=32512 hash=a93db9195c840ccc box=(8,39,8)..(65,61,65) be=0:cbf29ce484222325
+South/Flat/1 chunk=(1,4) solid=32512 hash=0d8d8f00e4cee0a5 box=(8,39,8)..(65,61,65) be=0:cbf29ce484222325
+South/Flat/1 chunk=(2,0) solid=32512 hash=50bc6275d6992639 box=(8,39,8)..(65,61,65) be=0:cbf29ce484222325
+South/Flat/1 chunk=(2,1) solid=32512 hash=75cdaa1b539f8872 box=(8,39,8)..(65,61,65) be=0:cbf29ce484222325
+South/Flat/1 chunk=(2,2) solid=32512 hash=fde9fb19e5ce667d box=(8,39,8)..(65,61,65) be=0:cbf29ce484222325 se=1:{Health:Float(80.0),Motion:[Double(0.0),Double(0.0),Double(0.0),],PersistenceRequired:Byte(1),Pos:[Double(36.5),Double(53.0),Double(36.5),],Rotation:[Float(0.0),Float(0.0),],id:String("minecraft:elder_guardian"),}
+South/Flat/1 chunk=(2,3) solid=32512 hash=910d9f846a7cefb5 box=(8,39,8)..(65,61,65) be=0:cbf29ce484222325
+South/Flat/1 chunk=(2,4) solid=32512 hash=7ade06f92430e0a5 box=(8,39,8)..(65,61,65) be=0:cbf29ce484222325
+South/Flat/1 chunk=(3,0) solid=32512 hash=7cfb298cdca74392 box=(8,39,8)..(65,61,65) be=0:cbf29ce484222325
+South/Flat/1 chunk=(3,1) solid=32512 hash=53799ddbf2aa1095 box=(8,39,8)..(65,61,65) be=0:cbf29ce484222325 se=1:{Health:Float(80.0),Motion:[Double(0.0),Double(0.0),Double(0.0),],PersistenceRequired:Byte(1),Pos:[Double(53.5),Double(45.0),Double(22.5),],Rotation:[Float(0.0),Float(0.0),],id:String("minecraft:elder_guardian"),}
+South/Flat/1 chunk=(3,2) solid=32512 hash=488bb03664469047 box=(8,39,8)..(65,61,65) be=0:cbf29ce484222325
+South/Flat/1 chunk=(3,3) solid=32512 hash=77689532d44aa43b box=(8,39,8)..(65,61,65) be=0:cbf29ce484222325
+South/Flat/1 chunk=(3,4) solid=32512 hash=3abcb796e3246225 box=(8,39,8)..(65,61,65) be=0:cbf29ce484222325
+South/Flat/1 chunk=(4,0) solid=32512 hash=869cce89670d4605 box=(8,39,8)..(65,61,65) be=0:cbf29ce484222325
+South/Flat/1 chunk=(4,1) solid=32512 hash=610ccc716c25ede5 box=(8,39,8)..(65,61,65) be=0:cbf29ce484222325
+South/Flat/1 chunk=(4,2) solid=32512 hash=8caa6e92bccf8de5 box=(8,39,8)..(65,61,65) be=0:cbf29ce484222325
+South/Flat/1 chunk=(4,3) solid=32512 hash=8b406094f33772b5 box=(8,39,8)..(65,61,65) be=0:cbf29ce484222325
+South/Flat/1 chunk=(4,4) solid=32512 hash=b361386de9948dc5 box=(8,39,8)..(65,61,65) be=0:cbf29ce484222325
+South/Flat/987654321 chunk=(0,0) solid=32512 hash=870d4dcae7188be3 box=(8,39,8)..(65,61,65) be=0:cbf29ce484222325
+South/Flat/987654321 chunk=(0,1) solid=32512 hash=8153a731684e8e04 box=(8,39,8)..(65,61,65) be=0:cbf29ce484222325
+South/Flat/987654321 chunk=(0,2) solid=32512 hash=f875f06ba91cd20b box=(8,39,8)..(65,61,65) be=0:cbf29ce484222325
+South/Flat/987654321 chunk=(0,3) solid=32512 hash=787e85a34e24dde2 box=(8,39,8)..(65,61,65) be=0:cbf29ce484222325
+South/Flat/987654321 chunk=(0,4) solid=32512 hash=3e7f3b72fa00b065 box=(8,39,8)..(65,61,65) be=0:cbf29ce484222325
+South/Flat/987654321 chunk=(1,0) solid=32512 hash=9f675013f2f141fc box=(8,39,8)..(65,61,65) be=0:cbf29ce484222325
+South/Flat/987654321 chunk=(1,1) solid=32512 hash=f5a582a90e4223ac box=(8,39,8)..(65,61,65) be=0:cbf29ce484222325 se=1:{Health:Float(80.0),Motion:[Double(0.0),Double(0.0),Double(0.0),],PersistenceRequired:Byte(1),Pos:[Double(20.5),Double(42.0),Double(25.5),],Rotation:[Float(0.0),Float(0.0),],id:String("minecraft:elder_guardian"),}
+South/Flat/987654321 chunk=(1,2) solid=32512 hash=9c93fd411953061d box=(8,39,8)..(65,61,65) be=0:cbf29ce484222325
+South/Flat/987654321 chunk=(1,3) solid=32512 hash=cd114b1178291634 box=(8,39,8)..(65,61,65) be=0:cbf29ce484222325
+South/Flat/987654321 chunk=(1,4) solid=32512 hash=0d8d8f00e4cee0a5 box=(8,39,8)..(65,61,65) be=0:cbf29ce484222325
+South/Flat/987654321 chunk=(2,0) solid=32512 hash=50bc6275d6992639 box=(8,39,8)..(65,61,65) be=0:cbf29ce484222325
+South/Flat/987654321 chunk=(2,1) solid=32512 hash=4f0dc4158d01c0f5 box=(8,39,8)..(65,61,65) be=0:cbf29ce484222325
+South/Flat/987654321 chunk=(2,2) solid=32512 hash=56615c931453afe1 box=(8,39,8)..(65,61,65) be=0:cbf29ce484222325 se=1:{Health:Float(80.0),Motion:[Double(0.0),Double(0.0),Double(0.0),],PersistenceRequired:Byte(1),Pos:[Double(36.5),Double(53.0),Double(36.5),],Rotation:[Float(0.0),Float(0.0),],id:String("minecraft:elder_guardian"),}
+South/Flat/987654321 chunk=(2,3) solid=32512 hash=910d9f846a7cefb5 box=(8,39,8)..(65,61,65) be=0:cbf29ce484222325
+South/Flat/987654321 chunk=(2,4) solid=32512 hash=7ade06f92430e0a5 box=(8,39,8)..(65,61,65) be=0:cbf29ce484222325
+South/Flat/987654321 chunk=(3,0) solid=32512 hash=7cfb298cdca74392 box=(8,39,8)..(65,61,65) be=0:cbf29ce484222325
+South/Flat/987654321 chunk=(3,1) solid=32512 hash=53799ddbf2aa1095 box=(8,39,8)..(65,61,65) be=0:cbf29ce484222325 se=1:{Health:Float(80.0),Motion:[Double(0.0),Double(0.0),Double(0.0),],PersistenceRequired:Byte(1),Pos:[Double(53.5),Double(45.0),Double(22.5),],Rotation:[Float(0.0),Float(0.0),],id:String("minecraft:elder_guardian"),}
+South/Flat/987654321 chunk=(3,2) solid=32512 hash=488bb03664469047 box=(8,39,8)..(65,61,65) be=0:cbf29ce484222325
+South/Flat/987654321 chunk=(3,3) solid=32512 hash=77689532d44aa43b box=(8,39,8)..(65,61,65) be=0:cbf29ce484222325
+South/Flat/987654321 chunk=(3,4) solid=32512 hash=3abcb796e3246225 box=(8,39,8)..(65,61,65) be=0:cbf29ce484222325
+South/Flat/987654321 chunk=(4,0) solid=32512 hash=869cce89670d4605 box=(8,39,8)..(65,61,65) be=0:cbf29ce484222325
+South/Flat/987654321 chunk=(4,1) solid=32512 hash=610ccc716c25ede5 box=(8,39,8)..(65,61,65) be=0:cbf29ce484222325
+South/Flat/987654321 chunk=(4,2) solid=32512 hash=8caa6e92bccf8de5 box=(8,39,8)..(65,61,65) be=0:cbf29ce484222325
+South/Flat/987654321 chunk=(4,3) solid=32512 hash=8b406094f33772b5 box=(8,39,8)..(65,61,65) be=0:cbf29ce484222325
+South/Flat/987654321 chunk=(4,4) solid=32512 hash=b361386de9948dc5 box=(8,39,8)..(65,61,65) be=0:cbf29ce484222325
+South/Hilly/1 chunk=(0,0) solid=32649 hash=977778858cd0efda box=(8,39,8)..(65,61,65) be=0:cbf29ce484222325
+South/Hilly/1 chunk=(0,1) solid=32646 hash=bf5befef442828ac box=(8,39,8)..(65,61,65) be=0:cbf29ce484222325
+South/Hilly/1 chunk=(0,2) solid=32641 hash=4722d2c5012bf7ba box=(8,39,8)..(65,61,65) be=0:cbf29ce484222325
+South/Hilly/1 chunk=(0,3) solid=32644 hash=59a2ef638e7c9aba box=(8,39,8)..(65,61,65) be=0:cbf29ce484222325
+South/Hilly/1 chunk=(0,4) solid=32596 hash=39ccf8a931b8c91d box=(8,39,8)..(65,61,65) be=0:cbf29ce484222325
+South/Hilly/1 chunk=(1,0) solid=32639 hash=9760da706835080d box=(8,39,8)..(65,61,65) be=0:cbf29ce484222325
+South/Hilly/1 chunk=(1,1) solid=32598 hash=0c307b8104098b2c box=(8,39,8)..(65,61,65) be=0:cbf29ce484222325 se=1:{Health:Float(80.0),Motion:[Double(0.0),Double(0.0),Double(0.0),],PersistenceRequired:Byte(1),Pos:[Double(20.5),Double(42.0),Double(25.5),],Rotation:[Float(0.0),Float(0.0),],id:String("minecraft:elder_guardian"),}
+South/Hilly/1 chunk=(1,2) solid=32596 hash=12137be82dc5caf9 box=(8,39,8)..(65,61,65) be=0:cbf29ce484222325
+South/Hilly/1 chunk=(1,3) solid=32597 hash=21158d0ec66dff35 box=(8,39,8)..(65,61,65) be=0:cbf29ce484222325
+South/Hilly/1 chunk=(1,4) solid=32599 hash=940ed43dd339b1e4 box=(8,39,8)..(65,61,65) be=0:cbf29ce484222325
+South/Hilly/1 chunk=(2,0) solid=32650 hash=68c27b5124aa9539 box=(8,39,8)..(65,61,65) be=0:cbf29ce484222325
+South/Hilly/1 chunk=(2,1) solid=32597 hash=7e22029f80eeeedb box=(8,39,8)..(65,61,65) be=0:cbf29ce484222325
+South/Hilly/1 chunk=(2,2) solid=32598 hash=700ff795b48babfd box=(8,39,8)..(65,61,65) be=0:cbf29ce484222325 se=1:{Health:Float(80.0),Motion:[Double(0.0),Double(0.0),Double(0.0),],PersistenceRequired:Byte(1),Pos:[Double(36.5),Double(53.0),Double(36.5),],Rotation:[Float(0.0),Float(0.0),],id:String("minecraft:elder_guardian"),}
+South/Hilly/1 chunk=(2,3) solid=32597 hash=ac733ee2299dc0a4 box=(8,39,8)..(65,61,65) be=0:cbf29ce484222325
+South/Hilly/1 chunk=(2,4) solid=32601 hash=25e35f74197edbac box=(8,39,8)..(65,61,65) be=0:cbf29ce484222325
+South/Hilly/1 chunk=(3,0) solid=32642 hash=dcdec1162c2528f2 box=(8,39,8)..(65,61,65) be=0:cbf29ce484222325
+South/Hilly/1 chunk=(3,1) solid=32597 hash=b676c475e54fed84 box=(8,39,8)..(65,61,65) be=0:cbf29ce484222325 se=1:{Health:Float(80.0),Motion:[Double(0.0),Double(0.0),Double(0.0),],PersistenceRequired:Byte(1),Pos:[Double(53.5),Double(45.0),Double(22.5),],Rotation:[Float(0.0),Float(0.0),],id:String("minecraft:elder_guardian"),}
+South/Hilly/1 chunk=(3,2) solid=32598 hash=3200b75e6e7f28c7 box=(8,39,8)..(65,61,65) be=0:cbf29ce484222325
+South/Hilly/1 chunk=(3,3) solid=32596 hash=51b9e4ccb3470c8b box=(8,39,8)..(65,61,65) be=0:cbf29ce484222325
+South/Hilly/1 chunk=(3,4) solid=32598 hash=63a518e0b7e34f2d box=(8,39,8)..(65,61,65) be=0:cbf29ce484222325
+South/Hilly/1 chunk=(4,0) solid=32598 hash=a970706a626ba7a5 box=(8,39,8)..(65,61,65) be=0:cbf29ce484222325
+South/Hilly/1 chunk=(4,1) solid=32599 hash=0301d391020444bc box=(8,39,8)..(65,61,65) be=0:cbf29ce484222325
+South/Hilly/1 chunk=(4,2) solid=32599 hash=bb694df77df70f0c box=(8,39,8)..(65,61,65) be=0:cbf29ce484222325
+South/Hilly/1 chunk=(4,3) solid=32600 hash=1251ff336ae9f8cd box=(8,39,8)..(65,61,65) be=0:cbf29ce484222325
+South/Hilly/1 chunk=(4,4) solid=32558 hash=60f801472fec7e8d box=(8,39,8)..(65,61,65) be=0:cbf29ce484222325
+South/Hilly/987654321 chunk=(0,0) solid=32649 hash=977778858cd0efda box=(8,39,8)..(65,61,65) be=0:cbf29ce484222325
+South/Hilly/987654321 chunk=(0,1) solid=32646 hash=bf5befef442828ac box=(8,39,8)..(65,61,65) be=0:cbf29ce484222325
+South/Hilly/987654321 chunk=(0,2) solid=32641 hash=4722d2c5012bf7ba box=(8,39,8)..(65,61,65) be=0:cbf29ce484222325
+South/Hilly/987654321 chunk=(0,3) solid=32644 hash=59a2ef638e7c9aba box=(8,39,8)..(65,61,65) be=0:cbf29ce484222325
+South/Hilly/987654321 chunk=(0,4) solid=32596 hash=39ccf8a931b8c91d box=(8,39,8)..(65,61,65) be=0:cbf29ce484222325
+South/Hilly/987654321 chunk=(1,0) solid=32639 hash=9760da706835080d box=(8,39,8)..(65,61,65) be=0:cbf29ce484222325
+South/Hilly/987654321 chunk=(1,1) solid=32598 hash=0c307b8104098b2c box=(8,39,8)..(65,61,65) be=0:cbf29ce484222325 se=1:{Health:Float(80.0),Motion:[Double(0.0),Double(0.0),Double(0.0),],PersistenceRequired:Byte(1),Pos:[Double(20.5),Double(42.0),Double(25.5),],Rotation:[Float(0.0),Float(0.0),],id:String("minecraft:elder_guardian"),}
+South/Hilly/987654321 chunk=(1,2) solid=32596 hash=76e54cdaf84f6e6d box=(8,39,8)..(65,61,65) be=0:cbf29ce484222325
+South/Hilly/987654321 chunk=(1,3) solid=32597 hash=44e91f06e213089d box=(8,39,8)..(65,61,65) be=0:cbf29ce484222325
+South/Hilly/987654321 chunk=(1,4) solid=32599 hash=940ed43dd339b1e4 box=(8,39,8)..(65,61,65) be=0:cbf29ce484222325
+South/Hilly/987654321 chunk=(2,0) solid=32650 hash=68c27b5124aa9539 box=(8,39,8)..(65,61,65) be=0:cbf29ce484222325
+South/Hilly/987654321 chunk=(2,1) solid=32597 hash=46b96b915fb25a8c box=(8,39,8)..(65,61,65) be=0:cbf29ce484222325
+South/Hilly/987654321 chunk=(2,2) solid=32598 hash=c887590ee310f561 box=(8,39,8)..(65,61,65) be=0:cbf29ce484222325 se=1:{Health:Float(80.0),Motion:[Double(0.0),Double(0.0),Double(0.0),],PersistenceRequired:Byte(1),Pos:[Double(36.5),Double(53.0),Double(36.5),],Rotation:[Float(0.0),Float(0.0),],id:String("minecraft:elder_guardian"),}
+South/Hilly/987654321 chunk=(2,3) solid=32597 hash=ac733ee2299dc0a4 box=(8,39,8)..(65,61,65) be=0:cbf29ce484222325
+South/Hilly/987654321 chunk=(2,4) solid=32601 hash=25e35f74197edbac box=(8,39,8)..(65,61,65) be=0:cbf29ce484222325
+South/Hilly/987654321 chunk=(3,0) solid=32642 hash=dcdec1162c2528f2 box=(8,39,8)..(65,61,65) be=0:cbf29ce484222325
+South/Hilly/987654321 chunk=(3,1) solid=32597 hash=b676c475e54fed84 box=(8,39,8)..(65,61,65) be=0:cbf29ce484222325 se=1:{Health:Float(80.0),Motion:[Double(0.0),Double(0.0),Double(0.0),],PersistenceRequired:Byte(1),Pos:[Double(53.5),Double(45.0),Double(22.5),],Rotation:[Float(0.0),Float(0.0),],id:String("minecraft:elder_guardian"),}
+South/Hilly/987654321 chunk=(3,2) solid=32598 hash=3200b75e6e7f28c7 box=(8,39,8)..(65,61,65) be=0:cbf29ce484222325
+South/Hilly/987654321 chunk=(3,3) solid=32596 hash=51b9e4ccb3470c8b box=(8,39,8)..(65,61,65) be=0:cbf29ce484222325
+South/Hilly/987654321 chunk=(3,4) solid=32598 hash=63a518e0b7e34f2d box=(8,39,8)..(65,61,65) be=0:cbf29ce484222325
+South/Hilly/987654321 chunk=(4,0) solid=32598 hash=a970706a626ba7a5 box=(8,39,8)..(65,61,65) be=0:cbf29ce484222325
+South/Hilly/987654321 chunk=(4,1) solid=32599 hash=0301d391020444bc box=(8,39,8)..(65,61,65) be=0:cbf29ce484222325
+South/Hilly/987654321 chunk=(4,2) solid=32599 hash=bb694df77df70f0c box=(8,39,8)..(65,61,65) be=0:cbf29ce484222325
+South/Hilly/987654321 chunk=(4,3) solid=32600 hash=1251ff336ae9f8cd box=(8,39,8)..(65,61,65) be=0:cbf29ce484222325
+South/Hilly/987654321 chunk=(4,4) solid=32558 hash=60f801472fec7e8d box=(8,39,8)..(65,61,65) be=0:cbf29ce484222325
+South/Empty/1 chunk=(0,0) solid=5212 hash=41793645d2c9c243 box=(8,39,8)..(65,61,65) be=0:cbf29ce484222325
+South/Empty/1 chunk=(0,1) solid=7904 hash=f227dfb59006df04 box=(8,39,8)..(65,61,65) be=0:cbf29ce484222325
+South/Empty/1 chunk=(0,2) solid=7904 hash=88b9163d27bba38b box=(8,39,8)..(65,61,65) be=0:cbf29ce484222325
+South/Empty/1 chunk=(0,3) solid=7096 hash=33f0399040fba0c2 box=(8,39,8)..(65,61,65) be=0:cbf29ce484222325
+South/Empty/1 chunk=(0,4) solid=2652 hash=58b15b5f85314065 box=(8,39,8)..(65,61,65) be=0:cbf29ce484222325
+South/Empty/1 chunk=(1,0) solid=7904 hash=8f8c53c428584dcc box=(8,39,8)..(65,61,65) be=0:cbf29ce484222325
+South/Empty/1 chunk=(1,1) solid=6144 hash=f6a31c9c763c2fac box=(8,39,8)..(65,61,65) be=0:cbf29ce484222325 se=1:{Health:Float(80.0),Motion:[Double(0.0),Double(0.0),Double(0.0),],PersistenceRequired:Byte(1),Pos:[Double(20.5),Double(42.0),Double(25.5),],Rotation:[Float(0.0),Float(0.0),],id:String("minecraft:elder_guardian"),}
+South/Empty/1 chunk=(1,2) solid=6144 hash=38bfc641b6c36ea9 box=(8,39,8)..(65,61,65) be=0:cbf29ce484222325
+South/Empty/1 chunk=(1,3) solid=7760 hash=481629bfa42b5a0c box=(8,39,8)..(65,61,65) be=0:cbf29ce484222325
+South/Empty/1 chunk=(1,4) solid=3984 hash=56e65e3ade4947e5 box=(8,39,8)..(65,61,65) be=0:cbf29ce484222325
+South/Empty/1 chunk=(2,0) solid=6288 hash=afa0178d00c8e675 box=(8,39,8)..(65,61,65) be=0:cbf29ce484222325
+South/Empty/1 chunk=(2,1) solid=6144 hash=76cb440ebb999472 box=(8,39,8)..(65,61,65) be=0:cbf29ce484222325
+South/Empty/1 chunk=(2,2) solid=6144 hash=fee7950d4dc8727d box=(8,39,8)..(65,61,65) be=0:cbf29ce484222325 se=1:{Health:Float(80.0),Motion:[Double(0.0),Double(0.0),Double(0.0),],PersistenceRequired:Byte(1),Pos:[Double(36.5),Double(53.0),Double(36.5),],Rotation:[Float(0.0),Float(0.0),],id:String("minecraft:elder_guardian"),}
+South/Empty/1 chunk=(2,3) solid=7760 hash=a74b376cec4ed0f5 box=(8,39,8)..(65,61,65) be=0:cbf29ce484222325
+South/Empty/1 chunk=(2,4) solid=3984 hash=07064be414f9a465 box=(8,39,8)..(65,61,65) be=0:cbf29ce484222325
+South/Empty/1 chunk=(3,0) solid=7096 hash=25a80d3c2b881892 box=(8,39,8)..(65,61,65) be=0:cbf29ce484222325
+South/Empty/1 chunk=(3,1) solid=7760 hash=51868db28dea4455 box=(8,39,8)..(65,61,65) be=0:cbf29ce484222325 se=1:{Health:Float(80.0),Motion:[Double(0.0),Double(0.0),Double(0.0),],PersistenceRequired:Byte(1),Pos:[Double(53.5),Double(45.0),Double(22.5),],Rotation:[Float(0.0),Float(0.0),],id:String("minecraft:elder_guardian"),}
+South/Empty/1 chunk=(3,2) solid=7760 hash=86660e67632e9b87 box=(8,39,8)..(65,61,65) be=0:cbf29ce484222325
+South/Empty/1 chunk=(3,3) solid=8164 hash=02a1558067776e2b box=(8,39,8)..(65,61,65) be=0:cbf29ce484222325
+South/Empty/1 chunk=(3,4) solid=3580 hash=408a46408f1ebae5 box=(8,39,8)..(65,61,65) be=0:cbf29ce484222325
+South/Empty/1 chunk=(4,0) solid=2652 hash=1baad28f72c8bcb5 box=(8,39,8)..(65,61,65) be=0:cbf29ce484222325
+South/Empty/1 chunk=(4,1) solid=3984 hash=c4b5a31f51b6a4a5 box=(8,39,8)..(65,61,65) be=0:cbf29ce484222325
+South/Empty/1 chunk=(4,2) solid=3984 hash=0efdbdce3cf910a5 box=(8,39,8)..(65,61,65) be=0:cbf29ce484222325
+South/Empty/1 chunk=(4,3) solid=3580 hash=64b70a5e5be5c905 box=(8,39,8)..(65,61,65) be=0:cbf29ce484222325
+South/Empty/1 chunk=(4,4) solid=1360 hash=176ef0e25cc34a45 box=(8,39,8)..(65,61,65) be=0:cbf29ce484222325
+South/Empty/987654321 chunk=(0,0) solid=5212 hash=41793645d2c9c243 box=(8,39,8)..(65,61,65) be=0:cbf29ce484222325
+South/Empty/987654321 chunk=(0,1) solid=7904 hash=f227dfb59006df04 box=(8,39,8)..(65,61,65) be=0:cbf29ce484222325
+South/Empty/987654321 chunk=(0,2) solid=7904 hash=88b9163d27bba38b box=(8,39,8)..(65,61,65) be=0:cbf29ce484222325
+South/Empty/987654321 chunk=(0,3) solid=7096 hash=33f0399040fba0c2 box=(8,39,8)..(65,61,65) be=0:cbf29ce484222325
+South/Empty/987654321 chunk=(0,4) solid=2652 hash=58b15b5f85314065 box=(8,39,8)..(65,61,65) be=0:cbf29ce484222325
+South/Empty/987654321 chunk=(1,0) solid=7904 hash=8f8c53c428584dcc box=(8,39,8)..(65,61,65) be=0:cbf29ce484222325
+South/Empty/987654321 chunk=(1,1) solid=6144 hash=f6a31c9c763c2fac box=(8,39,8)..(65,61,65) be=0:cbf29ce484222325 se=1:{Health:Float(80.0),Motion:[Double(0.0),Double(0.0),Double(0.0),],PersistenceRequired:Byte(1),Pos:[Double(20.5),Double(42.0),Double(25.5),],Rotation:[Float(0.0),Float(0.0),],id:String("minecraft:elder_guardian"),}
+South/Empty/987654321 chunk=(1,2) solid=6144 hash=9d919734814d121d box=(8,39,8)..(65,61,65) be=0:cbf29ce484222325
+South/Empty/987654321 chunk=(1,3) solid=7760 hash=5e44aa22f7f5e174 box=(8,39,8)..(65,61,65) be=0:cbf29ce484222325
+South/Empty/987654321 chunk=(1,4) solid=3984 hash=56e65e3ade4947e5 box=(8,39,8)..(65,61,65) be=0:cbf29ce484222325
+South/Empty/987654321 chunk=(2,0) solid=6288 hash=afa0178d00c8e675 box=(8,39,8)..(65,61,65) be=0:cbf29ce484222325
+South/Empty/987654321 chunk=(2,1) solid=6144 hash=500b5e08f4fbccf5 box=(8,39,8)..(65,61,65) be=0:cbf29ce484222325
+South/Empty/987654321 chunk=(2,2) solid=6144 hash=575ef6867c4dbbe1 box=(8,39,8)..(65,61,65) be=0:cbf29ce484222325 se=1:{Health:Float(80.0),Motion:[Double(0.0),Double(0.0),Double(0.0),],PersistenceRequired:Byte(1),Pos:[Double(36.5),Double(53.0),Double(36.5),],Rotation:[Float(0.0),Float(0.0),],id:String("minecraft:elder_guardian"),}
+South/Empty/987654321 chunk=(2,3) solid=7760 hash=a74b376cec4ed0f5 box=(8,39,8)..(65,61,65) be=0:cbf29ce484222325
+South/Empty/987654321 chunk=(2,4) solid=3984 hash=07064be414f9a465 box=(8,39,8)..(65,61,65) be=0:cbf29ce484222325
+South/Empty/987654321 chunk=(3,0) solid=7096 hash=25a80d3c2b881892 box=(8,39,8)..(65,61,65) be=0:cbf29ce484222325
+South/Empty/987654321 chunk=(3,1) solid=7760 hash=51868db28dea4455 box=(8,39,8)..(65,61,65) be=0:cbf29ce484222325 se=1:{Health:Float(80.0),Motion:[Double(0.0),Double(0.0),Double(0.0),],PersistenceRequired:Byte(1),Pos:[Double(53.5),Double(45.0),Double(22.5),],Rotation:[Float(0.0),Float(0.0),],id:String("minecraft:elder_guardian"),}
+South/Empty/987654321 chunk=(3,2) solid=7760 hash=86660e67632e9b87 box=(8,39,8)..(65,61,65) be=0:cbf29ce484222325
+South/Empty/987654321 chunk=(3,3) solid=8164 hash=02a1558067776e2b box=(8,39,8)..(65,61,65) be=0:cbf29ce484222325
+South/Empty/987654321 chunk=(3,4) solid=3580 hash=408a46408f1ebae5 box=(8,39,8)..(65,61,65) be=0:cbf29ce484222325
+South/Empty/987654321 chunk=(4,0) solid=2652 hash=1baad28f72c8bcb5 box=(8,39,8)..(65,61,65) be=0:cbf29ce484222325
+South/Empty/987654321 chunk=(4,1) solid=3984 hash=c4b5a31f51b6a4a5 box=(8,39,8)..(65,61,65) be=0:cbf29ce484222325
+South/Empty/987654321 chunk=(4,2) solid=3984 hash=0efdbdce3cf910a5 box=(8,39,8)..(65,61,65) be=0:cbf29ce484222325
+South/Empty/987654321 chunk=(4,3) solid=3580 hash=64b70a5e5be5c905 box=(8,39,8)..(65,61,65) be=0:cbf29ce484222325
+South/Empty/987654321 chunk=(4,4) solid=1360 hash=176ef0e25cc34a45 box=(8,39,8)..(65,61,65) be=0:cbf29ce484222325
+East/Flat/1 chunk=(0,0) solid=32512 hash=870d4dcae7188be3 box=(8,39,8)..(65,61,65) be=0:cbf29ce484222325
+East/Flat/1 chunk=(0,1) solid=32512 hash=8fff4c383130a834 box=(8,39,8)..(65,61,65) be=0:cbf29ce484222325
+East/Flat/1 chunk=(0,2) solid=32512 hash=a413d0e7006e9edd box=(8,39,8)..(65,61,65) be=0:cbf29ce484222325
+East/Flat/1 chunk=(0,3) solid=32512 hash=77482f691fcbdbf2 box=(8,39,8)..(65,61,65) be=0:cbf29ce484222325
+East/Flat/1 chunk=(0,4) solid=32512 hash=3e7f3b72fa00b065 box=(8,39,8)..(65,61,65) be=0:cbf29ce484222325
+East/Flat/1 chunk=(1,0) solid=32512 hash=3d54d696cc4419c8 box=(8,39,8)..(65,61,65) be=0:cbf29ce484222325
+East/Flat/1 chunk=(1,1) solid=32512 hash=ed9dc6ac5ca249ac box=(8,39,8)..(65,61,65) be=0:cbf29ce484222325 se=1:{Health:Float(80.0),Motion:[Double(0.0),Double(0.0),Double(0.0),],PersistenceRequired:Byte(1),Pos:[Double(25.5),Double(42.0),Double(20.5),],Rotation:[Float(0.0),Float(0.0),],id:String("minecraft:elder_guardian"),}
+East/Flat/1 chunk=(1,2) solid=32512 hash=1bc1081fc05c1892 box=(8,39,8)..(65,61,65) be=0:cbf29ce484222325
+East/Flat/1 chunk=(1,3) solid=32512 hash=5365bedd88cf62c9 box=(8,39,8)..(65,61,65) be=0:cbf29ce484222325 se=1:{Health:Float(80.0),Motion:[Double(0.0),Double(0.0),Double(0.0),],PersistenceRequired:Byte(1),Pos:[Double(22.5),Double(45.0),Double(53.5),],Rotation:[Float(0.0),Float(0.0),],id:String("minecraft:elder_guardian"),}
+East/Flat/1 chunk=(1,4) solid=32512 hash=0d8d8f00e4cee0a5 box=(8,39,8)..(65,61,65) be=0:cbf29ce484222325
+East/Flat/1 chunk=(2,0) solid=32512 hash=8fc8cb988cb839fb box=(8,39,8)..(65,61,65) be=0:cbf29ce484222325
+East/Flat/1 chunk=(2,1) solid=32512 hash=647386f87845c14a box=(8,39,8)..(65,61,65) be=0:cbf29ce484222325
+East/Flat/1 chunk=(2,2) solid=32512 hash=661180ea8b43362d box=(8,39,8)..(65,61,65) be=0:cbf29ce484222325 se=1:{Health:Float(80.0),Motion:[Double(0.0),Double(0.0),Double(0.0),],PersistenceRequired:Byte(1),Pos:[Double(36.5),Double(53.0),Double(36.5),],Rotation:[Float(0.0),Float(0.0),],id:String("minecraft:elder_guardian"),}
+East/Flat/1 chunk=(2,3) solid=32512 hash=337920183e7ac173 box=(8,39,8)..(65,61,65) be=0:cbf29ce484222325
+East/Flat/1 chunk=(2,4) solid=32512 hash=7ade06f92430e0a5 box=(8,39,8)..(65,61,65) be=0:cbf29ce484222325
+East/Flat/1 chunk=(3,0) solid=32512 hash=dc5497d214d3ad52 box=(8,39,8)..(65,61,65) be=0:cbf29ce484222325
+East/Flat/1 chunk=(3,1) solid=32512 hash=fcba484d6409b954 box=(8,39,8)..(65,61,65) be=0:cbf29ce484222325
+East/Flat/1 chunk=(3,2) solid=32512 hash=4a37adf24732596d box=(8,39,8)..(65,61,65) be=0:cbf29ce484222325
+East/Flat/1 chunk=(3,3) solid=32512 hash=4dde2575b31fbdbb box=(8,39,8)..(65,61,65) be=0:cbf29ce484222325
+East/Flat/1 chunk=(3,4) solid=32512 hash=3abcb796e3246225 box=(8,39,8)..(65,61,65) be=0:cbf29ce484222325
+East/Flat/1 chunk=(4,0) solid=32512 hash=869cce89670d4605 box=(8,39,8)..(65,61,65) be=0:cbf29ce484222325
+East/Flat/1 chunk=(4,1) solid=32512 hash=610ccc716c25ede5 box=(8,39,8)..(65,61,65) be=0:cbf29ce484222325
+East/Flat/1 chunk=(4,2) solid=32512 hash=8caa6e92bccf8de5 box=(8,39,8)..(65,61,65) be=0:cbf29ce484222325
+East/Flat/1 chunk=(4,3) solid=32512 hash=8b406094f33772b5 box=(8,39,8)..(65,61,65) be=0:cbf29ce484222325
+East/Flat/1 chunk=(4,4) solid=32512 hash=b361386de9948dc5 box=(8,39,8)..(65,61,65) be=0:cbf29ce484222325
+East/Flat/987654321 chunk=(0,0) solid=32512 hash=870d4dcae7188be3 box=(8,39,8)..(65,61,65) be=0:cbf29ce484222325
+East/Flat/987654321 chunk=(0,1) solid=32512 hash=8fff4c383130a834 box=(8,39,8)..(65,61,65) be=0:cbf29ce484222325
+East/Flat/987654321 chunk=(0,2) solid=32512 hash=a413d0e7006e9edd box=(8,39,8)..(65,61,65) be=0:cbf29ce484222325
+East/Flat/987654321 chunk=(0,3) solid=32512 hash=77482f691fcbdbf2 box=(8,39,8)..(65,61,65) be=0:cbf29ce484222325
+East/Flat/987654321 chunk=(0,4) solid=32512 hash=3e7f3b72fa00b065 box=(8,39,8)..(65,61,65) be=0:cbf29ce484222325
+East/Flat/987654321 chunk=(1,0) solid=32512 hash=3d54d696cc4419c8 box=(8,39,8)..(65,61,65) be=0:cbf29ce484222325
+East/Flat/987654321 chunk=(1,1) solid=32512 hash=ed9dc6ac5ca249ac box=(8,39,8)..(65,61,65) be=0:cbf29ce484222325 se=1:{Health:Float(80.0),Motion:[Double(0.0),Double(0.0),Double(0.0),],PersistenceRequired:Byte(1),Pos:[Double(25.5),Double(42.0),Double(20.5),],Rotation:[Float(0.0),Float(0.0),],id:String("minecraft:elder_guardian"),}
+East/Flat/987654321 chunk=(1,2) solid=32512 hash=0dd70a0a1c4d29e9 box=(8,39,8)..(65,61,65) be=0:cbf29ce484222325
+East/Flat/987654321 chunk=(1,3) solid=32512 hash=5365bedd88cf62c9 box=(8,39,8)..(65,61,65) be=0:cbf29ce484222325 se=1:{Health:Float(80.0),Motion:[Double(0.0),Double(0.0),Double(0.0),],PersistenceRequired:Byte(1),Pos:[Double(22.5),Double(45.0),Double(53.5),],Rotation:[Float(0.0),Float(0.0),],id:String("minecraft:elder_guardian"),}
+East/Flat/987654321 chunk=(1,4) solid=32512 hash=0d8d8f00e4cee0a5 box=(8,39,8)..(65,61,65) be=0:cbf29ce484222325
+East/Flat/987654321 chunk=(2,0) solid=32512 hash=8fc8cb988cb839fb box=(8,39,8)..(65,61,65) be=0:cbf29ce484222325
+East/Flat/987654321 chunk=(2,1) solid=32512 hash=b99bb514c851ac76 box=(8,39,8)..(65,61,65) be=0:cbf29ce484222325
+East/Flat/987654321 chunk=(2,2) solid=32512 hash=688ba6d091d47bd5 box=(8,39,8)..(65,61,65) be=0:cbf29ce484222325 se=1:{Health:Float(80.0),Motion:[Double(0.0),Double(0.0),Double(0.0),],PersistenceRequired:Byte(1),Pos:[Double(36.5),Double(53.0),Double(36.5),],Rotation:[Float(0.0),Float(0.0),],id:String("minecraft:elder_guardian"),}
+East/Flat/987654321 chunk=(2,3) solid=32512 hash=337920183e7ac173 box=(8,39,8)..(65,61,65) be=0:cbf29ce484222325
+East/Flat/987654321 chunk=(2,4) solid=32512 hash=7ade06f92430e0a5 box=(8,39,8)..(65,61,65) be=0:cbf29ce484222325
+East/Flat/987654321 chunk=(3,0) solid=32512 hash=dc5497d214d3ad52 box=(8,39,8)..(65,61,65) be=0:cbf29ce484222325
+East/Flat/987654321 chunk=(3,1) solid=32512 hash=afeef20fb739569c box=(8,39,8)..(65,61,65) be=0:cbf29ce484222325
+East/Flat/987654321 chunk=(3,2) solid=32512 hash=4a37adf24732596d box=(8,39,8)..(65,61,65) be=0:cbf29ce484222325
+East/Flat/987654321 chunk=(3,3) solid=32512 hash=688b62954505c0ab box=(8,39,8)..(65,61,65) be=0:cbf29ce484222325
+East/Flat/987654321 chunk=(3,4) solid=32512 hash=3abcb796e3246225 box=(8,39,8)..(65,61,65) be=0:cbf29ce484222325
+East/Flat/987654321 chunk=(4,0) solid=32512 hash=869cce89670d4605 box=(8,39,8)..(65,61,65) be=0:cbf29ce484222325
+East/Flat/987654321 chunk=(4,1) solid=32512 hash=610ccc716c25ede5 box=(8,39,8)..(65,61,65) be=0:cbf29ce484222325
+East/Flat/987654321 chunk=(4,2) solid=32512 hash=8caa6e92bccf8de5 box=(8,39,8)..(65,61,65) be=0:cbf29ce484222325
+East/Flat/987654321 chunk=(4,3) solid=32512 hash=8b406094f33772b5 box=(8,39,8)..(65,61,65) be=0:cbf29ce484222325
+East/Flat/987654321 chunk=(4,4) solid=32512 hash=b361386de9948dc5 box=(8,39,8)..(65,61,65) be=0:cbf29ce484222325
+East/Hilly/1 chunk=(0,0) solid=32649 hash=977778858cd0efda box=(8,39,8)..(65,61,65) be=0:cbf29ce484222325
+East/Hilly/1 chunk=(0,1) solid=32646 hash=9968d39c0e2d1cdc box=(8,39,8)..(65,61,65) be=0:cbf29ce484222325
+East/Hilly/1 chunk=(0,2) solid=32641 hash=d9ee897b816bdd8c box=(8,39,8)..(65,61,65) be=0:cbf29ce484222325
+East/Hilly/1 chunk=(0,3) solid=32644 hash=da0f84493b4a5aca box=(8,39,8)..(65,61,65) be=0:cbf29ce484222325
+East/Hilly/1 chunk=(0,4) solid=32596 hash=39ccf8a931b8c91d box=(8,39,8)..(65,61,65) be=0:cbf29ce484222325
+East/Hilly/1 chunk=(1,0) solid=32639 hash=f0eb90b9860adf19 box=(8,39,8)..(65,61,65) be=0:cbf29ce484222325
+East/Hilly/1 chunk=(1,1) solid=32598 hash=0428bf845269b12c box=(8,39,8)..(65,61,65) be=0:cbf29ce484222325 se=1:{Health:Float(80.0),Motion:[Double(0.0),Double(0.0),Double(0.0),],PersistenceRequired:Byte(1),Pos:[Double(25.5),Double(42.0),Double(20.5),],Rotation:[Float(0.0),Float(0.0),],id:String("minecraft:elder_guardian"),}
+East/Hilly/1 chunk=(1,2) solid=32596 hash=416fb885e15fb042 box=(8,39,8)..(65,61,65) be=0:cbf29ce484222325
+East/Hilly/1 chunk=(1,3) solid=32597 hash=db8deae81ee57060 box=(8,39,8)..(65,61,65) be=0:cbf29ce484222325 se=1:{Health:Float(80.0),Motion:[Double(0.0),Double(0.0),Double(0.0),],PersistenceRequired:Byte(1),Pos:[Double(22.5),Double(45.0),Double(53.5),],Rotation:[Float(0.0),Float(0.0),],id:String("minecraft:elder_guardian"),}
+East/Hilly/1 chunk=(1,4) solid=32599 hash=940ed43dd339b1e4 box=(8,39,8)..(65,61,65) be=0:cbf29ce484222325
+East/Hilly/1 chunk=(2,0) solid=32650 hash=1ed516ad67fa5f3b box=(8,39,8)..(65,61,65) be=0:cbf29ce484222325
+East/Hilly/1 chunk=(2,1) solid=32597 hash=6cc7df7ca59527b3 box=(8,39,8)..(65,61,65) be=0:cbf29ce484222325
+East/Hilly/1 chunk=(2,2) solid=32598 hash=d8377d665a007bad box=(8,39,8)..(65,61,65) be=0:cbf29ce484222325 se=1:{Health:Float(80.0),Motion:[Double(0.0),Double(0.0),Double(0.0),],PersistenceRequired:Byte(1),Pos:[Double(36.5),Double(53.0),Double(36.5),],Rotation:[Float(0.0),Float(0.0),],id:String("minecraft:elder_guardian"),}
+East/Hilly/1 chunk=(2,3) solid=32597 hash=4edebf75fd9b9262 box=(8,39,8)..(65,61,65) be=0:cbf29ce484222325
+East/Hilly/1 chunk=(2,4) solid=32601 hash=25e35f74197edbac box=(8,39,8)..(65,61,65) be=0:cbf29ce484222325
+East/Hilly/1 chunk=(3,0) solid=32642 hash=3dfdccd80a2493b2 box=(8,39,8)..(65,61,65) be=0:cbf29ce484222325
+East/Hilly/1 chunk=(3,1) solid=32597 hash=99bd21b37163dc65 box=(8,39,8)..(65,61,65) be=0:cbf29ce484222325
+East/Hilly/1 chunk=(3,2) solid=32598 hash=33acb51a516af1ed box=(8,39,8)..(65,61,65) be=0:cbf29ce484222325
+East/Hilly/1 chunk=(3,3) solid=32596 hash=282f750f921c260b box=(8,39,8)..(65,61,65) be=0:cbf29ce484222325
+East/Hilly/1 chunk=(3,4) solid=32598 hash=63a518e0b7e34f2d box=(8,39,8)..(65,61,65) be=0:cbf29ce484222325
+East/Hilly/1 chunk=(4,0) solid=32598 hash=a970706a626ba7a5 box=(8,39,8)..(65,61,65) be=0:cbf29ce484222325
+East/Hilly/1 chunk=(4,1) solid=32599 hash=0301d391020444bc box=(8,39,8)..(65,61,65) be=0:cbf29ce484222325
+East/Hilly/1 chunk=(4,2) solid=32599 hash=bb694df77df70f0c box=(8,39,8)..(65,61,65) be=0:cbf29ce484222325
+East/Hilly/1 chunk=(4,3) solid=32600 hash=1251ff336ae9f8cd box=(8,39,8)..(65,61,65) be=0:cbf29ce484222325
+East/Hilly/1 chunk=(4,4) solid=32558 hash=60f801472fec7e8d box=(8,39,8)..(65,61,65) be=0:cbf29ce484222325
+East/Hilly/987654321 chunk=(0,0) solid=32649 hash=977778858cd0efda box=(8,39,8)..(65,61,65) be=0:cbf29ce484222325
+East/Hilly/987654321 chunk=(0,1) solid=32646 hash=9968d39c0e2d1cdc box=(8,39,8)..(65,61,65) be=0:cbf29ce484222325
+East/Hilly/987654321 chunk=(0,2) solid=32641 hash=d9ee897b816bdd8c box=(8,39,8)..(65,61,65) be=0:cbf29ce484222325
+East/Hilly/987654321 chunk=(0,3) solid=32644 hash=da0f84493b4a5aca box=(8,39,8)..(65,61,65) be=0:cbf29ce484222325
+East/Hilly/987654321 chunk=(0,4) solid=32596 hash=39ccf8a931b8c91d box=(8,39,8)..(65,61,65) be=0:cbf29ce484222325
+East/Hilly/987654321 chunk=(1,0) solid=32639 hash=f0eb90b9860adf19 box=(8,39,8)..(65,61,65) be=0:cbf29ce484222325
+East/Hilly/987654321 chunk=(1,1) solid=32598 hash=0428bf845269b12c box=(8,39,8)..(65,61,65) be=0:cbf29ce484222325 se=1:{Health:Float(80.0),Motion:[Double(0.0),Double(0.0),Double(0.0),],PersistenceRequired:Byte(1),Pos:[Double(25.5),Double(42.0),Double(20.5),],Rotation:[Float(0.0),Float(0.0),],id:String("minecraft:elder_guardian"),}
+East/Hilly/987654321 chunk=(1,2) solid=32596 hash=e82859a3fb499239 box=(8,39,8)..(65,61,65) be=0:cbf29ce484222325
+East/Hilly/987654321 chunk=(1,3) solid=32597 hash=db8deae81ee57060 box=(8,39,8)..(65,61,65) be=0:cbf29ce484222325 se=1:{Health:Float(80.0),Motion:[Double(0.0),Double(0.0),Double(0.0),],PersistenceRequired:Byte(1),Pos:[Double(22.5),Double(45.0),Double(53.5),],Rotation:[Float(0.0),Float(0.0),],id:String("minecraft:elder_guardian"),}
+East/Hilly/987654321 chunk=(1,4) solid=32599 hash=940ed43dd339b1e4 box=(8,39,8)..(65,61,65) be=0:cbf29ce484222325
+East/Hilly/987654321 chunk=(2,0) solid=32650 hash=1ed516ad67fa5f3b box=(8,39,8)..(65,61,65) be=0:cbf29ce484222325
+East/Hilly/987654321 chunk=(2,1) solid=32597 hash=c1f00d98f5a112df box=(8,39,8)..(65,61,65) be=0:cbf29ce484222325
+East/Hilly/987654321 chunk=(2,2) solid=32598 hash=dab1a34c6091c155 box=(8,39,8)..(65,61,65) be=0:cbf29ce484222325 se=1:{Health:Float(80.0),Motion:[Double(0.0),Double(0.0),Double(0.0),],PersistenceRequired:Byte(1),Pos:[Double(36.5),Double(53.0),Double(36.5),],Rotation:[Float(0.0),Float(0.0),],id:String("minecraft:elder_guardian"),}
+East/Hilly/987654321 chunk=(2,3) solid=32597 hash=4edebf75fd9b9262 box=(8,39,8)..(65,61,65) be=0:cbf29ce484222325
+East/Hilly/987654321 chunk=(2,4) solid=32601 hash=25e35f74197edbac box=(8,39,8)..(65,61,65) be=0:cbf29ce484222325
+East/Hilly/987654321 chunk=(3,0) solid=32642 hash=3dfdccd80a2493b2 box=(8,39,8)..(65,61,65) be=0:cbf29ce484222325
+East/Hilly/987654321 chunk=(3,1) solid=32597 hash=4cf1cb75c49379ad box=(8,39,8)..(65,61,65) be=0:cbf29ce484222325
+East/Hilly/987654321 chunk=(3,2) solid=32598 hash=33acb51a516af1ed box=(8,39,8)..(65,61,65) be=0:cbf29ce484222325
+East/Hilly/987654321 chunk=(3,3) solid=32596 hash=42dcb22f240228fb box=(8,39,8)..(65,61,65) be=0:cbf29ce484222325
+East/Hilly/987654321 chunk=(3,4) solid=32598 hash=63a518e0b7e34f2d box=(8,39,8)..(65,61,65) be=0:cbf29ce484222325
+East/Hilly/987654321 chunk=(4,0) solid=32598 hash=a970706a626ba7a5 box=(8,39,8)..(65,61,65) be=0:cbf29ce484222325
+East/Hilly/987654321 chunk=(4,1) solid=32599 hash=0301d391020444bc box=(8,39,8)..(65,61,65) be=0:cbf29ce484222325
+East/Hilly/987654321 chunk=(4,2) solid=32599 hash=bb694df77df70f0c box=(8,39,8)..(65,61,65) be=0:cbf29ce484222325
+East/Hilly/987654321 chunk=(4,3) solid=32600 hash=1251ff336ae9f8cd box=(8,39,8)..(65,61,65) be=0:cbf29ce484222325
+East/Hilly/987654321 chunk=(4,4) solid=32558 hash=60f801472fec7e8d box=(8,39,8)..(65,61,65) be=0:cbf29ce484222325
+East/Empty/1 chunk=(0,0) solid=5212 hash=41793645d2c9c243 box=(8,39,8)..(65,61,65) be=0:cbf29ce484222325
+East/Empty/1 chunk=(0,1) solid=7904 hash=69fcc435ea1c8934 box=(8,39,8)..(65,61,65) be=0:cbf29ce484222325
+East/Empty/1 chunk=(0,2) solid=6288 hash=3864cc819a2ecd1d box=(8,39,8)..(65,61,65) be=0:cbf29ce484222325
+East/Empty/1 chunk=(0,3) solid=7096 hash=f8080c2f7b4a3252 box=(8,39,8)..(65,61,65) be=0:cbf29ce484222325
+East/Empty/1 chunk=(0,4) solid=2652 hash=58b15b5f85314065 box=(8,39,8)..(65,61,65) be=0:cbf29ce484222325
+East/Empty/1 chunk=(1,0) solid=7904 hash=23347cee2fc7aa80 box=(8,39,8)..(65,61,65) be=0:cbf29ce484222325
+East/Empty/1 chunk=(1,1) solid=6144 hash=ee9b609fc49c55ac box=(8,39,8)..(65,61,65) be=0:cbf29ce484222325 se=1:{Health:Float(80.0),Motion:[Double(0.0),Double(0.0),Double(0.0),],PersistenceRequired:Byte(1),Pos:[Double(25.5),Double(42.0),Double(20.5),],Rotation:[Float(0.0),Float(0.0),],id:String("minecraft:elder_guardian"),}
+East/Empty/1 chunk=(1,2) solid=6144 hash=1cbea21328562492 box=(8,39,8)..(65,61,65) be=0:cbf29ce484222325
+East/Empty/1 chunk=(1,3) solid=7760 hash=227bb2d6db74ce09 box=(8,39,8)..(65,61,65) be=0:cbf29ce484222325 se=1:{Health:Float(80.0),Motion:[Double(0.0),Double(0.0),Double(0.0),],PersistenceRequired:Byte(1),Pos:[Double(22.5),Double(45.0),Double(53.5),],Rotation:[Float(0.0),Float(0.0),],id:String("minecraft:elder_guardian"),}
+East/Empty/1 chunk=(1,4) solid=3984 hash=56e65e3ade4947e5 box=(8,39,8)..(65,61,65) be=0:cbf29ce484222325
+East/Empty/1 chunk=(2,0) solid=7904 hash=a470c02661fce36b box=(8,39,8)..(65,61,65) be=0:cbf29ce484222325
+East/Empty/1 chunk=(2,1) solid=6144 hash=657120ebe03fcd4a box=(8,39,8)..(65,61,65) be=0:cbf29ce484222325
+East/Empty/1 chunk=(2,2) solid=6144 hash=670f1addf33d422d box=(8,39,8)..(65,61,65) be=0:cbf29ce484222325 se=1:{Health:Float(80.0),Motion:[Double(0.0),Double(0.0),Double(0.0),],PersistenceRequired:Byte(1),Pos:[Double(36.5),Double(53.0),Double(36.5),],Rotation:[Float(0.0),Float(0.0),],id:String("minecraft:elder_guardian"),}
+East/Empty/1 chunk=(2,3) solid=7760 hash=5029a04428eac733 box=(8,39,8)..(65,61,65) be=0:cbf29ce484222325
+East/Empty/1 chunk=(2,4) solid=3984 hash=07064be414f9a465 box=(8,39,8)..(65,61,65) be=0:cbf29ce484222325
+East/Empty/1 chunk=(3,0) solid=7096 hash=186826a9c73cb172 box=(8,39,8)..(65,61,65) be=0:cbf29ce484222325
+East/Empty/1 chunk=(3,1) solid=7760 hash=ee9ac329a236d814 box=(8,39,8)..(65,61,65) be=0:cbf29ce484222325
+East/Empty/1 chunk=(3,2) solid=7760 hash=3b53146427774e2d box=(8,39,8)..(65,61,65) be=0:cbf29ce484222325
+East/Empty/1 chunk=(3,3) solid=8164 hash=b4a6040b38acf86b box=(8,39,8)..(65,61,65) be=0:cbf29ce484222325
+East/Empty/1 chunk=(3,4) solid=3580 hash=408a46408f1ebae5 box=(8,39,8)..(65,61,65) be=0:cbf29ce484222325
+East/Empty/1 chunk=(4,0) solid=2652 hash=1baad28f72c8bcb5 box=(8,39,8)..(65,61,65) be=0:cbf29ce484222325
+East/Empty/1 chunk=(4,1) solid=3984 hash=c4b5a31f51b6a4a5 box=(8,39,8)..(65,61,65) be=0:cbf29ce484222325
+East/Empty/1 chunk=(4,2) solid=3984 hash=0efdbdce3cf910a5 box=(8,39,8)..(65,61,65) be=0:cbf29ce484222325
+East/Empty/1 chunk=(4,3) solid=3580 hash=64b70a5e5be5c905 box=(8,39,8)..(65,61,65) be=0:cbf29ce484222325
+East/Empty/1 chunk=(4,4) solid=1360 hash=176ef0e25cc34a45 box=(8,39,8)..(65,61,65) be=0:cbf29ce484222325
+East/Empty/987654321 chunk=(0,0) solid=5212 hash=41793645d2c9c243 box=(8,39,8)..(65,61,65) be=0:cbf29ce484222325
+East/Empty/987654321 chunk=(0,1) solid=7904 hash=69fcc435ea1c8934 box=(8,39,8)..(65,61,65) be=0:cbf29ce484222325
+East/Empty/987654321 chunk=(0,2) solid=6288 hash=3864cc819a2ecd1d box=(8,39,8)..(65,61,65) be=0:cbf29ce484222325
+East/Empty/987654321 chunk=(0,3) solid=7096 hash=f8080c2f7b4a3252 box=(8,39,8)..(65,61,65) be=0:cbf29ce484222325
+East/Empty/987654321 chunk=(0,4) solid=2652 hash=58b15b5f85314065 box=(8,39,8)..(65,61,65) be=0:cbf29ce484222325
+East/Empty/987654321 chunk=(1,0) solid=7904 hash=23347cee2fc7aa80 box=(8,39,8)..(65,61,65) be=0:cbf29ce484222325
+East/Empty/987654321 chunk=(1,1) solid=6144 hash=ee9b609fc49c55ac box=(8,39,8)..(65,61,65) be=0:cbf29ce484222325 se=1:{Health:Float(80.0),Motion:[Double(0.0),Double(0.0),Double(0.0),],PersistenceRequired:Byte(1),Pos:[Double(25.5),Double(42.0),Double(20.5),],Rotation:[Float(0.0),Float(0.0),],id:String("minecraft:elder_guardian"),}
+East/Empty/987654321 chunk=(1,2) solid=6144 hash=0ed4a3fd844735e9 box=(8,39,8)..(65,61,65) be=0:cbf29ce484222325
+East/Empty/987654321 chunk=(1,3) solid=7760 hash=227bb2d6db74ce09 box=(8,39,8)..(65,61,65) be=0:cbf29ce484222325 se=1:{Health:Float(80.0),Motion:[Double(0.0),Double(0.0),Double(0.0),],PersistenceRequired:Byte(1),Pos:[Double(22.5),Double(45.0),Double(53.5),],Rotation:[Float(0.0),Float(0.0),],id:String("minecraft:elder_guardian"),}
+East/Empty/987654321 chunk=(1,4) solid=3984 hash=56e65e3ade4947e5 box=(8,39,8)..(65,61,65) be=0:cbf29ce484222325
+East/Empty/987654321 chunk=(2,0) solid=7904 hash=a470c02661fce36b box=(8,39,8)..(65,61,65) be=0:cbf29ce484222325
+East/Empty/987654321 chunk=(2,1) solid=6144 hash=ba994f08304bb876 box=(8,39,8)..(65,61,65) be=0:cbf29ce484222325
+East/Empty/987654321 chunk=(2,2) solid=6144 hash=698940c3f9ce87d5 box=(8,39,8)..(65,61,65) be=0:cbf29ce484222325 se=1:{Health:Float(80.0),Motion:[Double(0.0),Double(0.0),Double(0.0),],PersistenceRequired:Byte(1),Pos:[Double(36.5),Double(53.0),Double(36.5),],Rotation:[Float(0.0),Float(0.0),],id:String("minecraft:elder_guardian"),}
+East/Empty/987654321 chunk=(2,3) solid=7760 hash=5029a04428eac733 box=(8,39,8)..(65,61,65) be=0:cbf29ce484222325
+East/Empty/987654321 chunk=(2,4) solid=3984 hash=07064be414f9a465 box=(8,39,8)..(65,61,65) be=0:cbf29ce484222325
+East/Empty/987654321 chunk=(3,0) solid=7096 hash=186826a9c73cb172 box=(8,39,8)..(65,61,65) be=0:cbf29ce484222325
+East/Empty/987654321 chunk=(3,1) solid=7760 hash=b5ac2e4b5ccee75c box=(8,39,8)..(65,61,65) be=0:cbf29ce484222325
+East/Empty/987654321 chunk=(3,2) solid=7760 hash=3b53146427774e2d box=(8,39,8)..(65,61,65) be=0:cbf29ce484222325
+East/Empty/987654321 chunk=(3,3) solid=8164 hash=05ef441f1c43fedb box=(8,39,8)..(65,61,65) be=0:cbf29ce484222325
+East/Empty/987654321 chunk=(3,4) solid=3580 hash=408a46408f1ebae5 box=(8,39,8)..(65,61,65) be=0:cbf29ce484222325
+East/Empty/987654321 chunk=(4,0) solid=2652 hash=1baad28f72c8bcb5 box=(8,39,8)..(65,61,65) be=0:cbf29ce484222325
+East/Empty/987654321 chunk=(4,1) solid=3984 hash=c4b5a31f51b6a4a5 box=(8,39,8)..(65,61,65) be=0:cbf29ce484222325
+East/Empty/987654321 chunk=(4,2) solid=3984 hash=0efdbdce3cf910a5 box=(8,39,8)..(65,61,65) be=0:cbf29ce484222325
+East/Empty/987654321 chunk=(4,3) solid=3580 hash=64b70a5e5be5c905 box=(8,39,8)..(65,61,65) be=0:cbf29ce484222325
+East/Empty/987654321 chunk=(4,4) solid=1360 hash=176ef0e25cc34a45 box=(8,39,8)..(65,61,65) be=0:cbf29ce484222325
+West/Flat/1 chunk=(0,0) solid=32512 hash=1485d242eee6cd8c box=(8,39,8)..(65,61,65) be=0:cbf29ce484222325
+West/Flat/1 chunk=(0,1) solid=32512 hash=2bbc9bd7e0b1c3a0 box=(8,39,8)..(65,61,65) be=0:cbf29ce484222325
+West/Flat/1 chunk=(0,2) solid=32512 hash=72147f25de67054b box=(8,39,8)..(65,61,65) be=0:cbf29ce484222325
+West/Flat/1 chunk=(0,3) solid=32512 hash=9d42c0a70d238f3b box=(8,39,8)..(65,61,65) be=0:cbf29ce484222325
+West/Flat/1 chunk=(0,4) solid=32512 hash=3e7f3b72fa00b065 box=(8,39,8)..(65,61,65) be=0:cbf29ce484222325
+West/Flat/1 chunk=(1,0) solid=32512 hash=e49f168954dd7dfb box=(8,39,8)..(65,61,65) be=0:cbf29ce484222325
+West/Flat/1 chunk=(1,1) solid=32512 hash=f926d324130b3138 box=(8,39,8)..(65,61,65) be=0:cbf29ce484222325
+West/Flat/1 chunk=(1,2) solid=32512 hash=955199bd1c2ad073 box=(8,39,8)..(65,61,65) be=0:cbf29ce484222325
+West/Flat/1 chunk=(1,3) solid=32512 hash=97b136d39ec401cb box=(8,39,8)..(65,61,65) be=0:cbf29ce484222325
+West/Flat/1 chunk=(1,4) solid=32512 hash=0d8d8f00e4cee0a5 box=(8,39,8)..(65,61,65) be=0:cbf29ce484222325
+West/Flat/1 chunk=(2,0) solid=32512 hash=da6ae109c7078b75 box=(8,39,8)..(65,61,65) be=0:cbf29ce484222325
+West/Flat/1 chunk=(2,1) solid=32512 hash=3dfd7154228c1be5 box=(8,39,8)..(65,61,65) be=0:cbf29ce484222325
+West/Flat/1 chunk=(2,2) solid=32512 hash=4378af70a50be440 box=(8,39,8)..(65,61,65) be=0:cbf29ce484222325 se=1:{Health:Float(80.0),Motion:[Double(0.0),Double(0.0),Double(0.0),],PersistenceRequired:Byte(1),Pos:[Double(37.5),Double(53.0),Double(36.5),],Rotation:[Float(0.0),Float(0.0),],id:String("minecraft:elder_guardian"),}
+West/Flat/1 chunk=(2,3) solid=32512 hash=8c901016ff2753d8 box=(8,39,8)..(65,61,65) be=0:cbf29ce484222325
+West/Flat/1 chunk=(2,4) solid=32512 hash=7ade06f92430e0a5 box=(8,39,8)..(65,61,65) be=0:cbf29ce484222325
+West/Flat/1 chunk=(3,0) solid=32512 hash=c442d5743394084c box=(8,39,8)..(65,61,65) be=0:cbf29ce484222325
+West/Flat/1 chunk=(3,1) solid=32512 hash=dad21fa3ae00e6bb box=(8,39,8)..(65,61,65) be=0:cbf29ce484222325 se=1:{Health:Float(80.0),Motion:[Double(0.0),Double(0.0),Double(0.0),],PersistenceRequired:Byte(1),Pos:[Double(48.5),Double(42.0),Double(20.5),],Rotation:[Float(0.0),Float(0.0),],id:String("minecraft:elder_guardian"),}
+West/Flat/1 chunk=(3,2) solid=32512 hash=2a8280b0220f649b box=(8,39,8)..(65,61,65) be=0:cbf29ce484222325
+West/Flat/1 chunk=(3,3) solid=32512 hash=218e2c81f4f3dd9b box=(8,39,8)..(65,61,65) be=0:cbf29ce484222325 se=1:{Health:Float(80.0),Motion:[Double(0.0),Double(0.0),Double(0.0),],PersistenceRequired:Byte(1),Pos:[Double(51.5),Double(45.0),Double(53.5),],Rotation:[Float(0.0),Float(0.0),],id:String("minecraft:elder_guardian"),}
+West/Flat/1 chunk=(3,4) solid=32512 hash=3abcb796e3246225 box=(8,39,8)..(65,61,65) be=0:cbf29ce484222325
+West/Flat/1 chunk=(4,0) solid=32512 hash=869cce89670d4605 box=(8,39,8)..(65,61,65) be=0:cbf29ce484222325
+West/Flat/1 chunk=(4,1) solid=32512 hash=610ccc716c25ede5 box=(8,39,8)..(65,61,65) be=0:cbf29ce484222325
+West/Flat/1 chunk=(4,2) solid=32512 hash=13e5108ef07e24c5 box=(8,39,8)..(65,61,65) be=0:cbf29ce484222325
+West/Flat/1 chunk=(4,3) solid=32512 hash=8b406094f33772b5 box=(8,39,8)..(65,61,65) be=0:cbf29ce484222325
+West/Flat/1 chunk=(4,4) solid=32512 hash=b361386de9948dc5 box=(8,39,8)..(65,61,65) be=0:cbf29ce484222325
+West/Flat/987654321 chunk=(0,0) solid=32512 hash=1485d242eee6cd8c box=(8,39,8)..(65,61,65) be=0:cbf29ce484222325
+West/Flat/987654321 chunk=(0,1) solid=32512 hash=956bffb6ab947368 box=(8,39,8)..(65,61,65) be=0:cbf29ce484222325
+West/Flat/987654321 chunk=(0,2) solid=32512 hash=72147f25de67054b box=(8,39,8)..(65,61,65) be=0:cbf29ce484222325
+West/Flat/987654321 chunk=(0,3) solid=32512 hash=c2f1df625242db13 box=(8,39,8)..(65,61,65) be=0:cbf29ce484222325
+West/Flat/987654321 chunk=(0,4) solid=32512 hash=3e7f3b72fa00b065 box=(8,39,8)..(65,61,65) be=0:cbf29ce484222325
+West/Flat/987654321 chunk=(1,0) solid=32512 hash=e49f168954dd7dfb box=(8,39,8)..(65,61,65) be=0:cbf29ce484222325
+West/Flat/987654321 chunk=(1,1) solid=32512 hash=b81221f60c14ba3f box=(8,39,8)..(65,61,65) be=0:cbf29ce484222325
+West/Flat/987654321 chunk=(1,2) solid=32512 hash=8fd54d5ce7ec8e7b box=(8,39,8)..(65,61,65) be=0:cbf29ce484222325
+West/Flat/987654321 chunk=(1,3) solid=32512 hash=97b136d39ec401cb box=(8,39,8)..(65,61,65) be=0:cbf29ce484222325
+West/Flat/987654321 chunk=(1,4) solid=32512 hash=0d8d8f00e4cee0a5 box=(8,39,8)..(65,61,65) be=0:cbf29ce484222325
+West/Flat/987654321 chunk=(2,0) solid=32512 hash=da6ae109c7078b75 box=(8,39,8)..(65,61,65) be=0:cbf29ce484222325
+West/Flat/987654321 chunk=(2,1) solid=32512 hash=e3197204cfbf6952 box=(8,39,8)..(65,61,65) be=0:cbf29ce484222325
+West/Flat/987654321 chunk=(2,2) solid=32512 hash=ba03be99218d36f4 box=(8,39,8)..(65,61,65) be=0:cbf29ce484222325 se=1:{Health:Float(80.0),Motion:[Double(0.0),Double(0.0),Double(0.0),],PersistenceRequired:Byte(1),Pos:[Double(37.5),Double(53.0),Double(36.5),],Rotation:[Float(0.0),Float(0.0),],id:String("minecraft:elder_guardian"),}
+West/Flat/987654321 chunk=(2,3) solid=32512 hash=8c901016ff2753d8 box=(8,39,8)..(65,61,65) be=0:cbf29ce484222325
+West/Flat/987654321 chunk=(2,4) solid=32512 hash=7ade06f92430e0a5 box=(8,39,8)..(65,61,65) be=0:cbf29ce484222325
+West/Flat/987654321 chunk=(3,0) solid=32512 hash=c442d5743394084c box=(8,39,8)..(65,61,65) be=0:cbf29ce484222325
+West/Flat/987654321 chunk=(3,1) solid=32512 hash=dad21fa3ae00e6bb box=(8,39,8)..(65,61,65) be=0:cbf29ce484222325 se=1:{Health:Float(80.0),Motion:[Double(0.0),Double(0.0),Double(0.0),],PersistenceRequired:Byte(1),Pos:[Double(48.5),Double(42.0),Double(20.5),],Rotation:[Float(0.0),Float(0.0),],id:String("minecraft:elder_guardian"),}
+West/Flat/987654321 chunk=(3,2) solid=32512 hash=2a8280b0220f649b box=(8,39,8)..(65,61,65) be=0:cbf29ce484222325
+West/Flat/987654321 chunk=(3,3) solid=32512 hash=218e2c81f4f3dd9b box=(8,39,8)..(65,61,65) be=0:cbf29ce484222325 se=1:{Health:Float(80.0),Motion:[Double(0.0),Double(0.0),Double(0.0),],PersistenceRequired:Byte(1),Pos:[Double(51.5),Double(45.0),Double(53.5),],Rotation:[Float(0.0),Float(0.0),],id:String("minecraft:elder_guardian"),}
+West/Flat/987654321 chunk=(3,4) solid=32512 hash=3abcb796e3246225 box=(8,39,8)..(65,61,65) be=0:cbf29ce484222325
+West/Flat/987654321 chunk=(4,0) solid=32512 hash=869cce89670d4605 box=(8,39,8)..(65,61,65) be=0:cbf29ce484222325
+West/Flat/987654321 chunk=(4,1) solid=32512 hash=610ccc716c25ede5 box=(8,39,8)..(65,61,65) be=0:cbf29ce484222325
+West/Flat/987654321 chunk=(4,2) solid=32512 hash=13e5108ef07e24c5 box=(8,39,8)..(65,61,65) be=0:cbf29ce484222325
+West/Flat/987654321 chunk=(4,3) solid=32512 hash=8b406094f33772b5 box=(8,39,8)..(65,61,65) be=0:cbf29ce484222325
+West/Flat/987654321 chunk=(4,4) solid=32512 hash=b361386de9948dc5 box=(8,39,8)..(65,61,65) be=0:cbf29ce484222325
+West/Hilly/1 chunk=(0,0) solid=32643 hash=25d1b14152f570d5 box=(8,39,8)..(65,61,65) be=0:cbf29ce484222325
+West/Hilly/1 chunk=(0,1) solid=32634 hash=8951ee37fb632ef0 box=(8,39,8)..(65,61,65) be=0:cbf29ce484222325
+West/Hilly/1 chunk=(0,2) solid=32629 hash=4fd8a204806b6872 box=(8,39,8)..(65,61,65) be=0:cbf29ce484222325
+West/Hilly/1 chunk=(0,3) solid=32632 hash=1b8651755a1d202b box=(8,39,8)..(65,61,65) be=0:cbf29ce484222325
+West/Hilly/1 chunk=(0,4) solid=32592 hash=ffe6b625827c491d box=(8,39,8)..(65,61,65) be=0:cbf29ce484222325
+West/Hilly/1 chunk=(1,0) solid=32639 hash=8198be60751d3b2a box=(8,39,8)..(65,61,65) be=0:cbf29ce484222325
+West/Hilly/1 chunk=(1,1) solid=32598 hash=0fb1cbfc08d298b8 box=(8,39,8)..(65,61,65) be=0:cbf29ce484222325
+West/Hilly/1 chunk=(1,2) solid=32596 hash=6fa2e956fb2738c3 box=(8,39,8)..(65,61,65) be=0:cbf29ce484222325
+West/Hilly/1 chunk=(1,3) solid=32597 hash=1fd962de34da0f62 box=(8,39,8)..(65,61,65) be=0:cbf29ce484222325
+West/Hilly/1 chunk=(1,4) solid=32599 hash=940ed43dd339b1e4 box=(8,39,8)..(65,61,65) be=0:cbf29ce484222325
+West/Hilly/1 chunk=(2,0) solid=32650 hash=d772bdd380208335 box=(8,39,8)..(65,61,65) be=0:cbf29ce484222325
+West/Hilly/1 chunk=(2,1) solid=32597 hash=35a918cff53cb57c box=(8,39,8)..(65,61,65) be=0:cbf29ce484222325
+West/Hilly/1 chunk=(2,2) solid=32598 hash=d152b2f4d64e9ec0 box=(8,39,8)..(65,61,65) be=0:cbf29ce484222325 se=1:{Health:Float(80.0),Motion:[Double(0.0),Double(0.0),Double(0.0),],PersistenceRequired:Byte(1),Pos:[Double(37.5),Double(53.0),Double(36.5),],Rotation:[Float(0.0),Float(0.0),],id:String("minecraft:elder_guardian"),}
+West/Hilly/1 chunk=(2,3) solid=32597 hash=712a70b9400682e9 box=(8,39,8)..(65,61,65) be=0:cbf29ce484222325
+West/Hilly/1 chunk=(2,4) solid=32601 hash=25e35f74197edbac box=(8,39,8)..(65,61,65) be=0:cbf29ce484222325
+West/Hilly/1 chunk=(3,0) solid=32642 hash=287e5259607b432c box=(8,39,8)..(65,61,65) be=0:cbf29ce484222325
+West/Hilly/1 chunk=(3,1) solid=32597 hash=3dcf463da0a6c3aa box=(8,39,8)..(65,61,65) be=0:cbf29ce484222325 se=1:{Health:Float(80.0),Motion:[Double(0.0),Double(0.0),Double(0.0),],PersistenceRequired:Byte(1),Pos:[Double(48.5),Double(42.0),Double(20.5),],Rotation:[Float(0.0),Float(0.0),],id:String("minecraft:elder_guardian"),}
+West/Hilly/1 chunk=(3,2) solid=32598 hash=13f787d82c47fd1b box=(8,39,8)..(65,61,65) be=0:cbf29ce484222325
+West/Hilly/1 chunk=(3,3) solid=32596 hash=fbdf7c1bd3f045eb box=(8,39,8)..(65,61,65) be=0:cbf29ce484222325 se=1:{Health:Float(80.0),Motion:[Double(0.0),Double(0.0),Double(0.0),],PersistenceRequired:Byte(1),Pos:[Double(51.5),Double(45.0),Double(53.5),],Rotation:[Float(0.0),Float(0.0),],id:String("minecraft:elder_guardian"),}
+West/Hilly/1 chunk=(3,4) solid=32598 hash=63a518e0b7e34f2d box=(8,39,8)..(65,61,65) be=0:cbf29ce484222325
+West/Hilly/1 chunk=(4,0) solid=32605 hash=ce7d6a80695b0e54 box=(8,39,8)..(65,61,65) be=0:cbf29ce484222325
+West/Hilly/1 chunk=(4,1) solid=32612 hash=7f8b424c5ac67ad5 box=(8,39,8)..(65,61,65) be=0:cbf29ce484222325
+West/Hilly/1 chunk=(4,2) solid=32611 hash=f33cba39d74360b4 box=(8,39,8)..(65,61,65) be=0:cbf29ce484222325
+West/Hilly/1 chunk=(4,3) solid=32612 hash=501c462957dbf895 box=(8,39,8)..(65,61,65) be=0:cbf29ce484222325
+West/Hilly/1 chunk=(4,4) solid=32562 hash=d3a919db896ffe8d box=(8,39,8)..(65,61,65) be=0:cbf29ce484222325
+West/Hilly/987654321 chunk=(0,0) solid=32643 hash=25d1b14152f570d5 box=(8,39,8)..(65,61,65) be=0:cbf29ce484222325
+West/Hilly/987654321 chunk=(0,1) solid=32634 hash=ab3bdc38fabe68b8 box=(8,39,8)..(65,61,65) be=0:cbf29ce484222325
+West/Hilly/987654321 chunk=(0,2) solid=32629 hash=4fd8a204806b6872 box=(8,39,8)..(65,61,65) be=0:cbf29ce484222325
+West/Hilly/987654321 chunk=(0,3) solid=32632 hash=d23fca9f439e9a03 box=(8,39,8)..(65,61,65) be=0:cbf29ce484222325
+West/Hilly/987654321 chunk=(0,4) solid=32592 hash=ffe6b625827c491d box=(8,39,8)..(65,61,65) be=0:cbf29ce484222325
+West/Hilly/987654321 chunk=(1,0) solid=32639 hash=8198be60751d3b2a box=(8,39,8)..(65,61,65) be=0:cbf29ce484222325
+West/Hilly/987654321 chunk=(1,1) solid=32598 hash=a187291e164d52bf box=(8,39,8)..(65,61,65) be=0:cbf29ce484222325
+West/Hilly/987654321 chunk=(1,2) solid=32596 hash=6a269cf6c6e8f6cb box=(8,39,8)..(65,61,65) be=0:cbf29ce484222325
+West/Hilly/987654321 chunk=(1,3) solid=32597 hash=1fd962de34da0f62 box=(8,39,8)..(65,61,65) be=0:cbf29ce484222325
+West/Hilly/987654321 chunk=(1,4) solid=32599 hash=940ed43dd339b1e4 box=(8,39,8)..(65,61,65) be=0:cbf29ce484222325
+West/Hilly/987654321 chunk=(2,0) solid=32650 hash=d772bdd380208335 box=(8,39,8)..(65,61,65) be=0:cbf29ce484222325
+West/Hilly/987654321 chunk=(2,1) solid=32597 hash=eb6dca88fd0ecfbb box=(8,39,8)..(65,61,65) be=0:cbf29ce484222325
+West/Hilly/987654321 chunk=(2,2) solid=32598 hash=47ddc21d52cff174 box=(8,39,8)..(65,61,65) be=0:cbf29ce484222325 se=1:{Health:Float(80.0),Motion:[Double(0.0),Double(0.0),Double(0.0),],PersistenceRequired:Byte(1),Pos:[Double(37.5),Double(53.0),Double(36.5),],Rotation:[Float(0.0),Float(0.0),],id:String("minecraft:elder_guardian"),}
+West/Hilly/987654321 chunk=(2,3) solid=32597 hash=712a70b9400682e9 box=(8,39,8)..(65,61,65) be=0:cbf29ce484222325
+West/Hilly/987654321 chunk=(2,4) solid=32601 hash=25e35f74197edbac box=(8,39,8)..(65,61,65) be=0:cbf29ce484222325
+West/Hilly/987654321 chunk=(3,0) solid=32642 hash=287e5259607b432c box=(8,39,8)..(65,61,65) be=0:cbf29ce484222325
+West/Hilly/987654321 chunk=(3,1) solid=32597 hash=3dcf463da0a6c3aa box=(8,39,8)..(65,61,65) be=0:cbf29ce484222325 se=1:{Health:Float(80.0),Motion:[Double(0.0),Double(0.0),Double(0.0),],PersistenceRequired:Byte(1),Pos:[Double(48.5),Double(42.0),Double(20.5),],Rotation:[Float(0.0),Float(0.0),],id:String("minecraft:elder_guardian"),}
+West/Hilly/987654321 chunk=(3,2) solid=32598 hash=13f787d82c47fd1b box=(8,39,8)..(65,61,65) be=0:cbf29ce484222325
+West/Hilly/987654321 chunk=(3,3) solid=32596 hash=fbdf7c1bd3f045eb box=(8,39,8)..(65,61,65) be=0:cbf29ce484222325 se=1:{Health:Float(80.0),Motion:[Double(0.0),Double(0.0),Double(0.0),],PersistenceRequired:Byte(1),Pos:[Double(51.5),Double(45.0),Double(53.5),],Rotation:[Float(0.0),Float(0.0),],id:String("minecraft:elder_guardian"),}
+West/Hilly/987654321 chunk=(3,4) solid=32598 hash=63a518e0b7e34f2d box=(8,39,8)..(65,61,65) be=0:cbf29ce484222325
+West/Hilly/987654321 chunk=(4,0) solid=32605 hash=ce7d6a80695b0e54 box=(8,39,8)..(65,61,65) be=0:cbf29ce484222325
+West/Hilly/987654321 chunk=(4,1) solid=32612 hash=7f8b424c5ac67ad5 box=(8,39,8)..(65,61,65) be=0:cbf29ce484222325
+West/Hilly/987654321 chunk=(4,2) solid=32611 hash=f33cba39d74360b4 box=(8,39,8)..(65,61,65) be=0:cbf29ce484222325
+West/Hilly/987654321 chunk=(4,3) solid=32612 hash=501c462957dbf895 box=(8,39,8)..(65,61,65) be=0:cbf29ce484222325
+West/Hilly/987654321 chunk=(4,4) solid=32562 hash=d3a919db896ffe8d box=(8,39,8)..(65,61,65) be=0:cbf29ce484222325
+West/Empty/1 chunk=(0,0) solid=5212 hash=feca28f3ffa5aedc box=(8,39,8)..(65,61,65) be=0:cbf29ce484222325
+West/Empty/1 chunk=(0,1) solid=7904 hash=2f5f99550fa8c120 box=(8,39,8)..(65,61,65) be=0:cbf29ce484222325
+West/Empty/1 chunk=(0,2) solid=7904 hash=a525e45b384a67cb box=(8,39,8)..(65,61,65) be=0:cbf29ce484222325
+West/Empty/1 chunk=(0,3) solid=7096 hash=c336d1ebde171c1b box=(8,39,8)..(65,61,65) be=0:cbf29ce484222325
+West/Empty/1 chunk=(0,4) solid=2652 hash=58b15b5f85314065 box=(8,39,8)..(65,61,65) be=0:cbf29ce484222325
+West/Empty/1 chunk=(1,0) solid=7904 hash=16aee1d7e0be656b box=(8,39,8)..(65,61,65) be=0:cbf29ce484222325
+West/Empty/1 chunk=(1,1) solid=6144 hash=fa246d177b053d38 box=(8,39,8)..(65,61,65) be=0:cbf29ce484222325
+West/Empty/1 chunk=(1,2) solid=6144 hash=964f33b08424dc73 box=(8,39,8)..(65,61,65) be=0:cbf29ce484222325
+West/Empty/1 chunk=(1,3) solid=7760 hash=0a9b656838d3210b box=(8,39,8)..(65,61,65) be=0:cbf29ce484222325
+West/Empty/1 chunk=(1,4) solid=3984 hash=56e65e3ade4947e5 box=(8,39,8)..(65,61,65) be=0:cbf29ce484222325
+West/Empty/1 chunk=(2,0) solid=7904 hash=0d1dcc82b9b2d269 box=(8,39,8)..(65,61,65) be=0:cbf29ce484222325
+West/Empty/1 chunk=(2,1) solid=6144 hash=3efb0b478a8627e5 box=(8,39,8)..(65,61,65) be=0:cbf29ce484222325
+West/Empty/1 chunk=(2,2) solid=6144 hash=447649640d05f040 box=(8,39,8)..(65,61,65) be=0:cbf29ce484222325 se=1:{Health:Float(80.0),Motion:[Double(0.0),Double(0.0),Double(0.0),],PersistenceRequired:Byte(1),Pos:[Double(37.5),Double(53.0),Double(36.5),],Rotation:[Float(0.0),Float(0.0),],id:String("minecraft:elder_guardian"),}
+West/Empty/1 chunk=(2,3) solid=7760 hash=6c961362b83bb898 box=(8,39,8)..(65,61,65) be=0:cbf29ce484222325
+West/Empty/1 chunk=(2,4) solid=3984 hash=07064be414f9a465 box=(8,39,8)..(65,61,65) be=0:cbf29ce484222325
+West/Empty/1 chunk=(3,0) solid=7096 hash=27fa103c6bd81b50 box=(8,39,8)..(65,61,65) be=0:cbf29ce484222325
+West/Empty/1 chunk=(3,1) solid=7760 hash=81705a94b055987b box=(8,39,8)..(65,61,65) be=0:cbf29ce484222325 se=1:{Health:Float(80.0),Motion:[Double(0.0),Double(0.0),Double(0.0),],PersistenceRequired:Byte(1),Pos:[Double(48.5),Double(42.0),Double(20.5),],Rotation:[Float(0.0),Float(0.0),],id:String("minecraft:elder_guardian"),}
+West/Empty/1 chunk=(3,2) solid=6952 hash=27117dd4722b823b box=(8,39,8)..(65,61,65) be=0:cbf29ce484222325
+West/Empty/1 chunk=(3,3) solid=8164 hash=6a4c184e09e5844b box=(8,39,8)..(65,61,65) be=0:cbf29ce484222325 se=1:{Health:Float(80.0),Motion:[Double(0.0),Double(0.0),Double(0.0),],PersistenceRequired:Byte(1),Pos:[Double(51.5),Double(45.0),Double(53.5),],Rotation:[Float(0.0),Float(0.0),],id:String("minecraft:elder_guardian"),}
+West/Empty/1 chunk=(3,4) solid=3580 hash=408a46408f1ebae5 box=(8,39,8)..(65,61,65) be=0:cbf29ce484222325
+West/Empty/1 chunk=(4,0) solid=2652 hash=1baad28f72c8bcb5 box=(8,39,8)..(65,61,65) be=0:cbf29ce484222325
+West/Empty/1 chunk=(4,1) solid=3984 hash=c4b5a31f51b6a4a5 box=(8,39,8)..(65,61,65) be=0:cbf29ce484222325
+West/Empty/1 chunk=(4,2) solid=3176 hash=7b8bd600402ff7a5 box=(8,39,8)..(65,61,65) be=0:cbf29ce484222325
+West/Empty/1 chunk=(4,3) solid=3580 hash=64b70a5e5be5c905 box=(8,39,8)..(65,61,65) be=0:cbf29ce484222325
+West/Empty/1 chunk=(4,4) solid=1360 hash=176ef0e25cc34a45 box=(8,39,8)..(65,61,65) be=0:cbf29ce484222325
+West/Empty/987654321 chunk=(0,0) solid=5212 hash=feca28f3ffa5aedc box=(8,39,8)..(65,61,65) be=0:cbf29ce484222325
+West/Empty/987654321 chunk=(0,1) solid=7904 hash=2eca2b95475907e8 box=(8,39,8)..(65,61,65) be=0:cbf29ce484222325
+West/Empty/987654321 chunk=(0,2) solid=7904 hash=a525e45b384a67cb box=(8,39,8)..(65,61,65) be=0:cbf29ce484222325
+West/Empty/987654321 chunk=(0,3) solid=7096 hash=d0453962458856f3 box=(8,39,8)..(65,61,65) be=0:cbf29ce484222325
+West/Empty/987654321 chunk=(0,4) solid=2652 hash=58b15b5f85314065 box=(8,39,8)..(65,61,65) be=0:cbf29ce484222325
+West/Empty/987654321 chunk=(1,0) solid=7904 hash=16aee1d7e0be656b box=(8,39,8)..(65,61,65) be=0:cbf29ce484222325
+West/Empty/987654321 chunk=(1,1) solid=6144 hash=b90fbbe9740ec63f box=(8,39,8)..(65,61,65) be=0:cbf29ce484222325
+West/Empty/987654321 chunk=(1,2) solid=6144 hash=90d2e7504fe69a7b box=(8,39,8)..(65,61,65) be=0:cbf29ce484222325
+West/Empty/987654321 chunk=(1,3) solid=7760 hash=0a9b656838d3210b box=(8,39,8)..(65,61,65) be=0:cbf29ce484222325
+West/Empty/987654321 chunk=(1,4) solid=3984 hash=56e65e3ade4947e5 box=(8,39,8)..(65,61,65) be=0:cbf29ce484222325
+West/Empty/987654321 chunk=(2,0) solid=7904 hash=0d1dcc82b9b2d269 box=(8,39,8)..(65,61,65) be=0:cbf29ce484222325
+West/Empty/987654321 chunk=(2,1) solid=6144 hash=e4170bf837b97552 box=(8,39,8)..(65,61,65) be=0:cbf29ce484222325
+West/Empty/987654321 chunk=(2,2) solid=6144 hash=bb01588c898742f4 box=(8,39,8)..(65,61,65) be=0:cbf29ce484222325 se=1:{Health:Float(80.0),Motion:[Double(0.0),Double(0.0),Double(0.0),],PersistenceRequired:Byte(1),Pos:[Double(37.5),Double(53.0),Double(36.5),],Rotation:[Float(0.0),Float(0.0),],id:String("minecraft:elder_guardian"),}
+West/Empty/987654321 chunk=(2,3) solid=7760 hash=6c961362b83bb898 box=(8,39,8)..(65,61,65) be=0:cbf29ce484222325
+West/Empty/987654321 chunk=(2,4) solid=3984 hash=07064be414f9a465 box=(8,39,8)..(65,61,65) be=0:cbf29ce484222325
+West/Empty/987654321 chunk=(3,0) solid=7096 hash=27fa103c6bd81b50 box=(8,39,8)..(65,61,65) be=0:cbf29ce484222325
+West/Empty/987654321 chunk=(3,1) solid=7760 hash=81705a94b055987b box=(8,39,8)..(65,61,65) be=0:cbf29ce484222325 se=1:{Health:Float(80.0),Motion:[Double(0.0),Double(0.0),Double(0.0),],PersistenceRequired:Byte(1),Pos:[Double(48.5),Double(42.0),Double(20.5),],Rotation:[Float(0.0),Float(0.0),],id:String("minecraft:elder_guardian"),}
+West/Empty/987654321 chunk=(3,2) solid=6952 hash=27117dd4722b823b box=(8,39,8)..(65,61,65) be=0:cbf29ce484222325
+West/Empty/987654321 chunk=(3,3) solid=8164 hash=6a4c184e09e5844b box=(8,39,8)..(65,61,65) be=0:cbf29ce484222325 se=1:{Health:Float(80.0),Motion:[Double(0.0),Double(0.0),Double(0.0),],PersistenceRequired:Byte(1),Pos:[Double(51.5),Double(45.0),Double(53.5),],Rotation:[Float(0.0),Float(0.0),],id:String("minecraft:elder_guardian"),}
+West/Empty/987654321 chunk=(3,4) solid=3580 hash=408a46408f1ebae5 box=(8,39,8)..(65,61,65) be=0:cbf29ce484222325
+West/Empty/987654321 chunk=(4,0) solid=2652 hash=1baad28f72c8bcb5 box=(8,39,8)..(65,61,65) be=0:cbf29ce484222325
+West/Empty/987654321 chunk=(4,1) solid=3984 hash=c4b5a31f51b6a4a5 box=(8,39,8)..(65,61,65) be=0:cbf29ce484222325
+West/Empty/987654321 chunk=(4,2) solid=3176 hash=7b8bd600402ff7a5 box=(8,39,8)..(65,61,65) be=0:cbf29ce484222325
+West/Empty/987654321 chunk=(4,3) solid=3580 hash=64b70a5e5be5c905 box=(8,39,8)..(65,61,65) be=0:cbf29ce484222325
+West/Empty/987654321 chunk=(4,4) solid=1360 hash=176ef0e25cc34a45 box=(8,39,8)..(65,61,65) be=0:cbf29ce484222325

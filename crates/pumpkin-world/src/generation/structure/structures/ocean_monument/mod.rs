@@ -650,4 +650,35 @@ mod tests {
             assert_eq!(gold_blocks, 8);
         }
     }
+
+    /// The monuments the golden places: two construction seeds whose layouts together hold every
+    /// room kind (double XY rooms are rare: 3 of the first 60 seeds have one).
+    const GOLDEN_SEEDS: [u64; 2] = [18, 47];
+
+    fn golden_building(seed: u64, direction: BlockDirection) -> MonumentBuilding {
+        let mut random = RandomGenerator::Legacy(LegacyRand::from_seed(seed));
+        MonumentBuilding::new(&mut random, 8, 8, direction, 63)
+    }
+
+    #[test]
+    fn monuments_place_the_same_blocks() -> Result<(), Box<dyn std::error::Error>> {
+        for seed in GOLDEN_SEEDS {
+            crate::generation::proto_chunk_test::piece_golden::check(
+                &format!("ocean_monument_{seed}_place"),
+                |facing| Box::new(golden_building(seed, facing)),
+            )?;
+        }
+        Ok(())
+    }
+
+    #[test]
+    fn monument_golden_layouts_hold_every_room_kind() {
+        let mut kinds = std::collections::BTreeSet::new();
+        for seed in GOLDEN_SEEDS {
+            for child in golden_building(seed, BlockDirection::North).children {
+                kinds.insert(format!("{:?}", child.piece.piece.r#type));
+            }
+        }
+        assert_eq!(kinds.len(), 11, "{kinds:?}");
+    }
 }

@@ -2,7 +2,7 @@ use pumpkin_util::{math::block_box::BlockBox, random::RandomGenerator};
 
 use crate::ProtoChunk;
 
-use super::{BASE_BLACK, BASE_GRAY, BASE_LIGHT, LAMP, MonumentBuilding};
+use super::{BASE_BLACK, BASE_GRAY, BASE_LIGHT, LAMP, MonumentBuilding, MonumentPiece};
 
 impl MonumentBuilding {
     pub(super) fn place_building(
@@ -111,74 +111,7 @@ impl MonumentBuilding {
         }
         p.fill(chunk, chunk_box, x, 0, 0, x + 24, 0, 20, BASE_GRAY);
         p.water(chunk, chunk_box, self.sea_level, x, 1, 0, x + 24, 10, 20);
-        for i in 0..4 {
-            p.fill(
-                chunk,
-                chunk_box,
-                x + i,
-                i + 1,
-                i,
-                x + i,
-                i + 1,
-                20,
-                BASE_LIGHT,
-            );
-            p.fill(
-                chunk,
-                chunk_box,
-                x + i + 7,
-                i + 5,
-                i + 7,
-                x + i + 7,
-                i + 5,
-                20,
-                BASE_LIGHT,
-            );
-            p.fill(
-                chunk,
-                chunk_box,
-                x + 17 - i,
-                i + 5,
-                i + 7,
-                x + 17 - i,
-                i + 5,
-                20,
-                BASE_LIGHT,
-            );
-            p.fill(
-                chunk,
-                chunk_box,
-                x + 24 - i,
-                i + 1,
-                i,
-                x + 24 - i,
-                i + 1,
-                20,
-                BASE_LIGHT,
-            );
-            p.fill(
-                chunk,
-                chunk_box,
-                x + i + 1,
-                i + 1,
-                i,
-                x + 23 - i,
-                i + 1,
-                i,
-                BASE_LIGHT,
-            );
-            p.fill(
-                chunk,
-                chunk_box,
-                x + i + 8,
-                i + 5,
-                i + 7,
-                x + 16 - i,
-                i + 5,
-                i + 7,
-                BASE_LIGHT,
-            );
-        }
+        place_wing_steps(p, chunk, chunk_box, x);
         p.fill(chunk, chunk_box, x + 4, 4, 4, x + 6, 4, 20, BASE_GRAY);
         p.fill(chunk, chunk_box, x + 7, 4, 4, x + 17, 4, 6, BASE_GRAY);
         p.fill(chunk, chunk_box, x + 18, 4, 4, x + 20, 4, 20, BASE_GRAY);
@@ -582,5 +515,77 @@ impl MonumentBuilding {
                 p.block(chunk, chunk_box, x, 13, 38, BASE_LIGHT);
             }
         }
+    }
+}
+
+/// The stepped outer walls and the two inner terraces of a wing, four steps each.
+fn place_wing_steps(p: &MonumentPiece, chunk: &mut ProtoChunk, chunk_box: &BlockBox, x: i32) {
+    for i in 0..4 {
+        p.fill(
+            chunk,
+            chunk_box,
+            x + i,
+            i + 1,
+            i,
+            x + i,
+            i + 1,
+            20,
+            BASE_LIGHT,
+        );
+        p.fill(
+            chunk,
+            chunk_box,
+            x + i + 7,
+            i + 5,
+            i + 7,
+            x + i + 7,
+            i + 5,
+            20,
+            BASE_LIGHT,
+        );
+        p.fill(
+            chunk,
+            chunk_box,
+            x + 17 - i,
+            i + 5,
+            i + 7,
+            x + 17 - i,
+            i + 5,
+            20,
+            BASE_LIGHT,
+        );
+        p.fill(
+            chunk,
+            chunk_box,
+            x + 24 - i,
+            i + 1,
+            i,
+            x + 24 - i,
+            i + 1,
+            20,
+            BASE_LIGHT,
+        );
+        p.fill(
+            chunk,
+            chunk_box,
+            x + i + 1,
+            i + 1,
+            i,
+            x + 23 - i,
+            i + 1,
+            i,
+            BASE_LIGHT,
+        );
+        p.fill(
+            chunk,
+            chunk_box,
+            x + i + 8,
+            i + 5,
+            i + 7,
+            x + 16 - i,
+            i + 5,
+            i + 7,
+            BASE_LIGHT,
+        );
     }
 }

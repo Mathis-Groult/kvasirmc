@@ -45,60 +45,14 @@ pub(super) struct RoomGraph {
 }
 
 impl RoomGraph {
-    #[expect(clippy::too_many_lines)]
     pub fn generate(random: &mut RandomGenerator) -> (Self, Vec<usize>) {
         let mut graph = Self {
             rooms: Vec::with_capacity(49),
             source: 0,
             core: 0,
         };
-        let mut grid = [None; GRID_SIZE];
-        for y in 0..=1 {
-            for z in 0..4 {
-                for x in 0..5 {
-                    let index = room_index(x, y, z);
-                    grid[index as usize] = Some(graph.push(index));
-                }
-            }
-        }
-        for z in 0..2 {
-            for x in 1..4 {
-                let index = room_index(x, 2, z);
-                grid[index as usize] = Some(graph.push(index));
-            }
-        }
-        if let Some(src) = grid[SOURCE_INDEX as usize] {
-            graph.source = src;
-        }
-
-        for x in 0..5 {
-            for z in 0..5 {
-                for y in 0..3 {
-                    let index = room_index(x, y, z);
-                    let Some(room) = grid[index as usize] else {
-                        continue;
-                    };
-                    for direction in DIRECTIONS {
-                        let step = direction.to_vector();
-                        let nx = x + step.x;
-                        let ny = y + step.y;
-                        let nz = z + step.z;
-                        if !(0..5).contains(&nx) || !(0..3).contains(&ny) || !(0..5).contains(&nz) {
-                            continue;
-                        }
-                        let Some(neighbor) = grid[room_index(nx, ny, nz) as usize] else {
-                            continue;
-                        };
-                        let connection_direction = if nz == z {
-                            direction
-                        } else {
-                            direction.opposite()
-                        };
-                        graph.connect(room, connection_direction, neighbor);
-                    }
-                }
-            }
-        }
+        let grid = Self::push_grid_rooms(&mut graph);
+        Self::connect_grid(&mut graph, &grid);
 
         let roof = graph.push(1003);
         let left_wing = graph.push(1001);
@@ -135,7 +89,71 @@ impl RoomGraph {
 
         let mut order = grid.into_iter().flatten().collect::<Vec<_>>();
         shuffle(&mut order, random);
-        for &room in &order {
+        Self::close_random_openings(&mut graph, &order, random);
+        order.extend([roof, left_wing, right_wing]);
+        (graph, order)
+    }
+
+    /// Pushes the 46 rooms of the three-level grid, returns the grid of their indexes and marks
+    /// the entry room as the source.
+    fn push_grid_rooms(graph: &mut Self) -> [Option<usize>; GRID_SIZE] {
+        let mut grid = [None; GRID_SIZE];
+        for y in 0..=1 {
+            for z in 0..4 {
+                for x in 0..5 {
+                    let index = room_index(x, y, z);
+                    grid[index as usize] = Some(graph.push(index));
+                }
+            }
+        }
+        for z in 0..2 {
+            for x in 1..4 {
+                let index = room_index(x, 2, z);
+                grid[index as usize] = Some(graph.push(index));
+            }
+        }
+        if let Some(src) = grid[SOURCE_INDEX as usize] {
+            graph.source = src;
+        }
+        grid
+    }
+
+    /// Connects every grid room with its neighbours in the six directions.
+    fn connect_grid(graph: &mut Self, grid: &[Option<usize>; GRID_SIZE]) {
+        for x in 0..5 {
+            for z in 0..5 {
+                for y in 0..3 {
+                    let index = room_index(x, y, z);
+                    let Some(room) = grid[index as usize] else {
+                        continue;
+                    };
+                    for direction in DIRECTIONS {
+                        let step = direction.to_vector();
+                        let nx = x + step.x;
+                        let ny = y + step.y;
+                        let nz = z + step.z;
+                        if !(0..5).contains(&nx) || !(0..3).contains(&ny) || !(0..5).contains(&nz) {
+                            continue;
+                        }
+                        let Some(neighbor) = grid[room_index(nx, ny, nz) as usize] else {
+                            continue;
+                        };
+                        let connection_direction = if nz == z {
+                            direction
+                        } else {
+                            direction.opposite()
+                        };
+                        graph.connect(room, connection_direction, neighbor);
+                    }
+                }
+            }
+        }
+    }
+
+    /// Closes up to two openings of each room in `order`, at random, keeping every room linked to
+    /// the source.
+    fn close_random_openings(graph: &mut Self, order: &[usize], random: &mut RandomGenerator) {
+        for &room in order {
             let mut closed = 0;
             for _ in 0..5 {
                 if closed == 2 {
@@ -159,8 +177,6 @@ impl RoomGraph {
                 }
             }
         }
-        order.extend([roof, left_wing, right_wing]);
-        (graph, order)
     }
 
     fn push(&mut self, index: i32) -> usize {

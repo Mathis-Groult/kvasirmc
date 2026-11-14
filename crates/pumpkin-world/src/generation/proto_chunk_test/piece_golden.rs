@@ -34,7 +34,7 @@ const FACINGS: [BlockDirection; 4] = [
 
 /// The ground the piece is placed on.
 #[derive(Clone, Copy, Debug)]
-enum Terrain {
+pub(super) enum Terrain {
     /// Stone up to y = 62 everywhere.
     Flat,
     /// Stone whose top varies between y = 58 and y = 66 from column to column.
@@ -55,7 +55,7 @@ impl Terrain {
     }
 }
 
-fn fill_terrain(chunk: &mut ProtoChunk, terrain: Terrain) {
+pub(super) fn fill_terrain(chunk: &mut ProtoChunk, terrain: Terrain) {
     let stone = Block::STONE.default_state;
     for local_x in 0..16 {
         for local_z in 0..16 {
@@ -76,7 +76,7 @@ fn fill_terrain(chunk: &mut ProtoChunk, terrain: Terrain) {
 
 /// FNV-1a over the state ids of every block of the chunk, with the number of blocks that are not
 /// air.
-fn fingerprint(chunk: &ProtoChunk) -> (usize, u64) {
+pub(super) fn fingerprint(chunk: &ProtoChunk) -> (usize, u64) {
     let air = Block::AIR.default_state.id;
     let mut hash: u64 = 0xcbf2_9ce4_8422_2325;
     let mut solid = 0;
@@ -95,7 +95,7 @@ fn fingerprint(chunk: &ProtoChunk) -> (usize, u64) {
 }
 
 /// The number of block entities the chunk holds and an FNV-1a hash of their NBT, keys sorted.
-fn block_entities(chunk: &ProtoChunk) -> (usize, u64) {
+pub(super) fn block_entities(chunk: &ProtoChunk) -> (usize, u64) {
     let mut text = String::new();
     for nbt in &chunk.pending_block_entities {
         compound_text(nbt, &mut text);
@@ -109,7 +109,7 @@ fn block_entities(chunk: &ProtoChunk) -> (usize, u64) {
 
 /// Structure entities (mobs the piece spawns) and scheduled fluid ticks, written only when the
 /// piece made any, so the lines of pieces without them keep their earlier form.
-fn write_spawns_and_ticks(out: &mut String, chunk: &mut ProtoChunk) -> std::fmt::Result {
+pub(super) fn write_spawns_and_ticks(out: &mut String, chunk: &mut ProtoChunk) -> std::fmt::Result {
     let spawned = chunk.take_pending_structure_entities();
     if !spawned.is_empty() {
         let mut text = String::new();

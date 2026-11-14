@@ -210,3 +210,21 @@ impl StructurePieceBase for PrisonHallPiece {
         inner.add_block(chunk, door_top, 4, 2, 8, &box_limit);
     }
 }
+
+#[cfg(test)]
+mod place_golden {
+    use super::*;
+    use crate::generation::proto_chunk_test::piece_golden;
+
+    #[test]
+    fn prison_hall_places_the_same_blocks() -> Result<(), Box<dyn std::error::Error>> {
+        piece_golden::check("stronghold_prison_hall_place", |facing| {
+            let bounding_box = BlockBox::rotated(8, 64, 8, -1, -1, 0, 9, 5, 11, &facing);
+            let mut piece =
+                StrongholdPiece::new(StructurePieceType::StrongholdPrisonHall, 0, bounding_box);
+            piece.piece.set_facing(Some(facing));
+            piece.entry_door = piece_golden::stronghold_door(facing);
+            Box::new(PrisonHallPiece { piece })
+        })
+    }
+}

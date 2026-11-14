@@ -347,6 +347,36 @@ impl StructurePieceBase for LibraryPiece {
 }
 
 #[cfg(test)]
+mod place_golden {
+    use super::*;
+    use crate::generation::proto_chunk_test::piece_golden;
+
+    fn library(facing: BlockDirection, height: i32) -> Box<dyn StructurePieceBase> {
+        let bounding_box = BlockBox::rotated(8, 64, 8, -4, -1, 0, 14, height, 15, &facing);
+        let mut piece =
+            StrongholdPiece::new(StructurePieceType::StrongholdLibrary, 0, bounding_box);
+        piece.piece.set_facing(Some(facing));
+        piece.entry_door = piece_golden::stronghold_door(facing);
+        let tall = bounding_box.get_block_count_y() > 6;
+        Box::new(LibraryPiece { piece, tall })
+    }
+
+    #[test]
+    fn tall_library_places_the_same_blocks() -> Result<(), Box<dyn std::error::Error>> {
+        piece_golden::check("stronghold_library_tall_place", |facing| {
+            library(facing, 11)
+        })
+    }
+
+    #[test]
+    fn short_library_places_the_same_blocks() -> Result<(), Box<dyn std::error::Error>> {
+        piece_golden::check("stronghold_library_short_place", |facing| {
+            library(facing, 6)
+        })
+    }
+}
+
+#[cfg(test)]
 mod tests {
     use super::*;
     use crate::generation::get_world_gen;

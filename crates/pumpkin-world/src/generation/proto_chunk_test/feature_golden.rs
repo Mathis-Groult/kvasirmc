@@ -231,7 +231,7 @@ fn nbt_text(tag: &NbtTag, text: &mut String) {
     }
 }
 
-fn compound_text(compound: &NbtCompound, text: &mut String) {
+pub(super) fn compound_text(compound: &NbtCompound, text: &mut String) {
     let mut keys: Vec<&str> = compound.child_tags.keys().map(AsRef::as_ref).collect();
     keys.sort_unstable();
     text.push('{');

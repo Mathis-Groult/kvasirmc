@@ -263,3 +263,40 @@ impl StructurePieceBase for FiveWayCrossingPiece {
         inner.add_block(chunk, torch, 6, 5, 6, &box_limit);
     }
 }
+
+#[cfg(test)]
+mod place_golden {
+    use super::*;
+    use crate::generation::proto_chunk_test::piece_golden;
+
+    #[test]
+    fn five_way_crossings_place_the_same_blocks() -> Result<(), Box<dyn std::error::Error>> {
+        // Exits as (lower left, upper left, lower right, upper right).
+        let variants = [
+            ("all", [true; 4]),
+            ("none", [false; 4]),
+            ("lower_left_upper_right", [true, false, false, true]),
+            ("upper_left_lower_right", [false, true, true, false]),
+        ];
+        for (name, exits) in variants {
+            piece_golden::check(&format!("stronghold_five_way_{name}_place"), |facing| {
+                let bounding_box = BlockBox::rotated(8, 64, 8, -4, -3, 0, 10, 9, 11, &facing);
+                let mut piece = StrongholdPiece::new(
+                    StructurePieceType::StrongholdFiveWayCrossing,
+                    0,
+                    bounding_box,
+                );
+                piece.piece.set_facing(Some(facing));
+                piece.entry_door = piece_golden::stronghold_door(facing);
+                Box::new(FiveWayCrossingPiece {
+                    piece,
+                    lower_left_exists: exits[0],
+                    upper_left_exists: exits[1],
+                    lower_right_exists: exits[2],
+                    upper_right_exists: exits[3],
+                })
+            })?;
+        }
+        Ok(())
+    }
+}

@@ -361,3 +361,24 @@ impl StructurePieceBase for PortalRoomPiece {
         }
     }
 }
+
+#[cfg(test)]
+mod place_golden {
+    use super::*;
+    use crate::generation::proto_chunk_test::piece_golden;
+
+    #[test]
+    fn portal_room_places_the_same_blocks() -> Result<(), Box<dyn std::error::Error>> {
+        piece_golden::check("stronghold_portal_room_place", |facing| {
+            let bounding_box = BlockBox::rotated(8, 64, 8, -4, -1, 0, 11, 8, 16, &facing);
+            let mut piece =
+                StrongholdPiece::new(StructurePieceType::StrongholdPortalRoom, 0, bounding_box);
+            piece.piece.set_facing(Some(facing));
+            piece.entry_door = piece_golden::stronghold_door(facing);
+            Box::new(PortalRoomPiece {
+                piece,
+                spawner_placed: false,
+            })
+        })
+    }
+}

@@ -16,10 +16,13 @@ use pumpkin_util::{
     world_seed::Seed,
 };
 
-use super::stage_parity::TestBlockRegistry;
+use super::{feature_golden::compound_text, stage_parity::TestBlockRegistry};
 use crate::generation::{
-    get_world_gen, positions::chunk_pos::start_block_x, positions::chunk_pos::start_block_z,
-    proto_chunk::ProtoChunk, structure::structures::StructurePieceBase,
+    get_world_gen,
+    positions::chunk_pos::start_block_x,
+    positions::chunk_pos::start_block_z,
+    proto_chunk::ProtoChunk,
+    structure::structures::{StructurePieceBase, stronghold::EntranceType},
 };
 
 const FACINGS: [BlockDirection; 4] = [
@@ -87,6 +90,19 @@ fn fingerprint(chunk: &ProtoChunk) -> (usize, u64) {
     (solid, hash)
 }
 
+/// The number of block entities the chunk holds and an FNV-1a hash of their NBT, keys sorted.
+fn block_entities(chunk: &ProtoChunk) -> (usize, u64) {
+    let mut text = String::new();
+    for nbt in &chunk.pending_block_entities {
+        compound_text(nbt, &mut text);
+    }
+    let mut hash: u64 = 0xcbf2_9ce4_8422_2325;
+    for byte in text.bytes() {
+        hash = (hash ^ u64::from(byte)).wrapping_mul(0x0100_0000_01b3);
+    }
+    (chunk.pending_block_entities.len(), hash)
+}
+
 /// The chunk coordinates the bounding box of `piece` touches.
 fn touched_chunks(piece: &dyn StructurePieceBase) -> Vec<(i32, i32)> {
     let bounds = piece.get_structure_piece().bounding_box;
@@ -130,14 +146,25 @@ fn place_everywhere(
         );
         piece.place(&mut chunk, &registry, &mut random, seed, &chunk_box);
         let (solid, hash) = fingerprint(&chunk);
+        let (entities, entity_hash) = block_entities(&chunk);
         let bounds = piece.get_structure_piece().bounding_box;
         writeln!(
             out,
-            "{label} chunk=({chunk_x},{chunk_z}) solid={solid} hash={hash:016x} box=({},{},{})..({},{},{})",
+            "{label} chunk=({chunk_x},{chunk_z}) solid={solid} hash={hash:016x} box=({},{},{})..({},{},{}) be={entities}:{entity_hash:016x}",
             bounds.min.x, bounds.min.y, bounds.min.z, bounds.max.x, bounds.max.y, bounds.max.z
         )?;
     }
     Ok(out)
+}
+
+/// A different stronghold entrance for each facing, so every entrance shape is placed.
+pub(crate) const fn stronghold_door(facing: BlockDirection) -> EntranceType {
+    match facing {
+        BlockDirection::North => EntranceType::Opening,
+        BlockDirection::South => EntranceType::WoodDoor,
+        BlockDirection::East => EntranceType::Grates,
+        _ => EntranceType::IronDoor,
+    }
 }
 
 /// Places the pieces `make` builds for every facing, terrain and seed, and compares the result with

@@ -261,3 +261,31 @@ impl StructurePieceBase for SquareRoomPiece {
         }
     }
 }
+
+#[cfg(test)]
+mod place_golden {
+    use super::*;
+    use crate::generation::proto_chunk_test::piece_golden;
+
+    #[test]
+    fn square_rooms_place_the_same_blocks() -> Result<(), Box<dyn std::error::Error>> {
+        // Types 3 and 4 have no decoration; 3 stands for both.
+        for room_type in 0..=3 {
+            piece_golden::check(
+                &format!("stronghold_square_room_{room_type}_place"),
+                |facing| {
+                    let bounding_box = BlockBox::rotated(8, 64, 8, -4, -1, 0, 11, 7, 11, &facing);
+                    let mut piece = StrongholdPiece::new(
+                        StructurePieceType::StrongholdSquareRoom,
+                        0,
+                        bounding_box,
+                    );
+                    piece.piece.set_facing(Some(facing));
+                    piece.entry_door = piece_golden::stronghold_door(facing);
+                    Box::new(SquareRoomPiece { piece, room_type })
+                },
+            )?;
+        }
+        Ok(())
+    }
+}

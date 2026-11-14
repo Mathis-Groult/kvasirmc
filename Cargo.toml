@@ -22,7 +22,6 @@ members = [
     "crates/pumpkin-wasm-host",
     "crates/pumpkin-wasm-host-common",
     "crates/pumpkin-wasm-host-v0_1",
-    "crates/pumpkin-wasm-host-v0_2",
     "crates/pumpkin-world",
     "crates/kvasir-pregen",
     "crates/kvasir-pregen-driver",
@@ -156,9 +155,6 @@ codegen-units = 16
 [profile.release.package.pumpkin-wasm-host-v0_1]
 codegen-units = 16
 
-[profile.release.package.pumpkin-wasm-host-v0_2]
-codegen-units = 16
-
 # KvasirMC: for A/B measurements. Same optimisation level as release, but no LTO and parallel code
 # generation, so a one-line change rebuilds in minutes instead of 35-45. Compare only builds made
 # with the same profile; confirm a result once with the release profile.
@@ -242,7 +238,6 @@ pumpkin-util = { path = "crates/pumpkin-util", default-features = false }
 pumpkin-wasm-host = { path = "crates/pumpkin-wasm-host", default-features = false }
 pumpkin-wasm-host-common = { path = "crates/pumpkin-wasm-host-common", default-features = false }
 pumpkin-wasm-host-v0_1 = { path = "crates/pumpkin-wasm-host-v0_1", default-features = false }
-pumpkin-wasm-host-v0_2 = { path = "crates/pumpkin-wasm-host-v0_2", default-features = false }
 pumpkin-world = { path = "crates/pumpkin-world", default-features = false }
 quote = { version = "1.0", default-features = false, features = ["proc-macro"] }
 rand = { version = "0.10.3", default-features = false, features = ["std", "std_rng", "thread_rng"] }

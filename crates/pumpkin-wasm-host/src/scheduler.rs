@@ -7,8 +7,6 @@ use pumpkin_wasm_host_common::{
 };
 
 use crate::runtime::guest_exports;
-#[cfg(not(feature = "v0_2"))]
-use crate::runtime::v0_2_disabled;
 
 /// Runs the plugin tasks that are due on this tick.
 pub fn tick(scheduler: &TaskScheduler, server: &Arc<Server>) {
@@ -50,27 +48,6 @@ fn run_task(server: &Arc<Server>, task: &ScheduledTask) {
                             });
                             result
                         }
-                        #[cfg(feature = "v0_2")]
-                        PluginApiVersion::V0_2 => {
-                            let instance =
-                                guest_exports::<pumpkin_wasm_host_v0_2::Plugin>(&plugin_instance)?;
-                            let (server_resource, server_rep) = guest.with(|mut store| {
-                                let resource = store.data_mut().add(server_clone)?;
-                                let rep = resource.rep();
-                                Ok::<_, wasmtime::Error>((resource, rep))
-                            })?;
-                            let result = guest
-                                .call(instance.func_handle_task(), (handler_id, server_resource))
-                                .await;
-                            guest.with(|mut store| {
-                                let _ = store.data_mut().resource_table.delete::<Arc<Server>>(
-                                    wasmtime::component::Resource::new_own(server_rep),
-                                );
-                            });
-                            result
-                        }
-                        #[cfg(not(feature = "v0_2"))]
-                        PluginApiVersion::V0_2 => Err(v0_2_disabled()),
                     }
                 })
             })

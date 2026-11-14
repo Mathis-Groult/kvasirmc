@@ -101,7 +101,6 @@ mod trim_material;
 mod trim_pattern;
 mod version;
 mod villager;
-mod wit;
 mod wolf_variant;
 mod world_event;
 
@@ -234,12 +233,7 @@ pub fn main() {
     // If any arguments are given, treat them as file-stem filters.
     // e.g. `cargo run -- chest_loot` only regenerates chest_loot.rs.
     let filters: Vec<String> = std::env::args().skip(1).collect();
-    if filters.iter().any(|f| f == "wit") {
-        wit::v0_2::main();
-        return;
-    }
     let build_functions: Vec<_> = if filters.is_empty() {
-        wit::v0_2::main();
         sdk::main();
         build_functions
     } else {

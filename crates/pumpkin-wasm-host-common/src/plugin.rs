@@ -97,7 +97,6 @@ fn is_wasi_p3_import(name: &str) -> bool {
 #[derive(Copy, Clone)]
 pub enum PluginApiVersion {
     V0_1,
-    V0_2,
 }
 
 pub struct WasmPlugin {

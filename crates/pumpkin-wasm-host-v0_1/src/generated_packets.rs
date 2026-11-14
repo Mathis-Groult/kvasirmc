@@ -1303,7 +1303,7 @@ pub fn deserialize_java_serverbound_packet(
             use pumpkin_protocol::ServerPacket;
             let p = <pumpkin_protocol::java::server::play::SDebugSubscriptionRequest as pumpkin_protocol::ServerPacket>::read(&mut payload, &version).ok()?;
             // The v0.1 record keeps one `sample-type`: the first requested id, -1 for none
-            // (the packet carries a set since 26.3; v0.2 exposes the whole list).
+            // (the packet carries a set since 26.3).
             Some(ServerboundPacket::SDebugSubscriptionRequest(
                 crate::pumpkin::plugin::java_packets::SDebugSubscriptionRequest {
                     sample_type: p.subscriptions.first().map_or(-1, |id| id.0),

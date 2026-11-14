@@ -19,7 +19,10 @@ use crate::{
             StructureGenerator, StructureGeneratorContext, StructurePiece, StructurePieceBase,
             StructurePiecesCollector, StructurePosition, WorldPortalExt,
         },
-        template::{BlockStateResolver, StructurePlaceSettings, StructureTemplate, get_template},
+        template::{
+            BlockStateResolver, StructurePlaceSettings, StructureTemplate,
+            add_template_block_entity, get_template, waterlogged_in_water,
+        },
     },
 };
 
@@ -404,35 +407,9 @@ impl OceanRuinPiece {
 
         new_y
     }
-}
 
-impl StructurePieceBase for OceanRuinPiece {
-    fn as_any(&self) -> &dyn std::any::Any {
-        self
-    }
-
-    fn get_structure_piece(&self) -> &StructurePiece {
-        &self.piece
-    }
-
-    fn get_structure_piece_mut(&mut self) -> &mut StructurePiece {
-        &mut self.piece
-    }
-
-    fn translate(&mut self, x: i32, y: i32, z: i32) {
-        self.piece.translate(x, y, z);
-        self.template_position += Vector3::new(x, y, z);
-    }
-
-    #[allow(clippy::too_many_lines)]
-    fn place(
-        &mut self,
-        chunk: &mut ProtoChunk,
-        _block_registry: &dyn WorldPortalExt,
-        random: &mut RandomGenerator,
-        _seed: i64,
-        chunk_box: &BlockBox,
-    ) {
+    /// Drops the ruin onto the sea floor under its corner and returns its new box.
+    fn settle_on_floor(&mut self, chunk: &ProtoChunk) -> BlockBox {
         let height = chunk.get_top_y(
             &HeightMap::OceanFloorWg,
             self.template_position.x,
@@ -455,7 +432,117 @@ impl StructurePieceBase for OceanRuinPiece {
         self.piece.bounding_box = self
             .template
             .get_bounding_box(&place_settings, self.template_position);
-        let box_limit = self.piece.bounding_box;
+        self.piece.bounding_box
+    }
+
+    /// A data structure block: a loot chest, or a drowned that spawns with the ruin.
+    fn place_data_marker(
+        &self,
+        chunk: &mut ProtoChunk,
+        nbt: &NbtCompound,
+        world_pos: Vector3<i32>,
+    ) {
+        let mode = nbt.get_string("mode").unwrap_or("");
+        if mode == "DATA" {
+            let metadata = nbt.get_string("metadata").unwrap_or("");
+            if metadata == "chest" {
+                let is_water = chunk.get_block_state(&world_pos).to_block_id() == Block::WATER.id;
+                let mut props = ChestLikeProperties::default(&Block::CHEST);
+                props.facing = HorizontalFacing::North;
+                props.waterlogged = is_water;
+                let chest_state = BlockState::from_id(props.to_state_id(&Block::CHEST));
+                chunk.set_block_state(world_pos.x, world_pos.y, world_pos.z, chest_state);
+
+                let mut chest_nbt = NbtCompound::new();
+                chest_nbt.put_string("id", "minecraft:chest".to_string());
+                chest_nbt.put_int("x", world_pos.x);
+                chest_nbt.put_int("y", world_pos.y);
+                chest_nbt.put_int("z", world_pos.z);
+                let loot_table = if self.is_large {
+                    "minecraft:chests/underwater_ruin_big"
+                } else {
+                    "minecraft:chests/underwater_ruin_small"
+                };
+                chest_nbt.put_string("LootTable", loot_table.to_string());
+                let mut rng =
+                    LegacyRand::from_seed(
+                        hash_block_pos(world_pos.x, world_pos.y, world_pos.z) as u64
+                    );
+                chest_nbt.put_long("LootTableSeed", rng.next_i64());
+                chunk.add_block_entity(chest_nbt);
+            } else if metadata == "drowned" {
+                let mut entity_nbt = NbtCompound::new();
+                entity_nbt.put_string("id", "minecraft:drowned".to_string());
+                entity_nbt.put_list(
+                    "Pos",
+                    vec![
+                        (f64::from(world_pos.x) + 0.5).into(),
+                        f64::from(world_pos.y).into(),
+                        (f64::from(world_pos.z) + 0.5).into(),
+                    ],
+                );
+                entity_nbt.put_bool("PersistenceRequired", true);
+                chunk.add_structure_entity(entity_nbt);
+
+                let replacement = if world_pos.y > chunk.get_sea_level() {
+                    Block::AIR.default_state
+                } else {
+                    Block::WATER.default_state
+                };
+                chunk.set_block_state(world_pos.x, world_pos.y, world_pos.z, replacement);
+            }
+        }
+    }
+}
+
+/// A suspicious sand or gravel block with its archaeology loot table.
+fn place_suspicious_block(
+    chunk: &mut ProtoChunk,
+    world_pos: Vector3<i32>,
+    state: &BlockState,
+    loot_table: &str,
+) {
+    chunk.set_block_state(world_pos.x, world_pos.y, world_pos.z, state);
+
+    let mut nbt = NbtCompound::new();
+    nbt.put_string("id", "minecraft:brushable_block".to_string());
+    nbt.put_int("x", world_pos.x);
+    nbt.put_int("y", world_pos.y);
+    nbt.put_int("z", world_pos.z);
+    nbt.put_string("LootTable", loot_table.to_string());
+    let mut rng =
+        LegacyRand::from_seed(hash_block_pos(world_pos.x, world_pos.y, world_pos.z) as u64);
+    nbt.put_long("LootTableSeed", rng.next_i64());
+    chunk.add_block_entity(nbt);
+}
+
+impl StructurePieceBase for OceanRuinPiece {
+    fn as_any(&self) -> &dyn std::any::Any {
+        self
+    }
+
+    fn get_structure_piece(&self) -> &StructurePiece {
+        &self.piece
+    }
+
+    fn get_structure_piece_mut(&mut self) -> &mut StructurePiece {
+        &mut self.piece
+    }
+
+    fn translate(&mut self, x: i32, y: i32, z: i32) {
+        self.piece.translate(x, y, z);
+        self.template_position += Vector3::new(x, y, z);
+    }
+
+    fn place(
+        &mut self,
+        chunk: &mut ProtoChunk,
+        _block_registry: &dyn WorldPortalExt,
+        random: &mut RandomGenerator,
+        _seed: i64,
+        chunk_box: &BlockBox,
+    ) {
+        let box_limit = self.settle_on_floor(chunk);
 
         let mut suspicious_count = 0;
 
@@ -482,69 +569,7 @@ impl StructurePieceBase for OceanRuinPiece {
 
             if palette_entry.name == "minecraft:structure_block" {
                 if let Some(nbt) = &block.nbt {
-                    let mode = nbt.get_string("mode").unwrap_or("");
-                    if mode == "DATA" {
-                        let metadata = nbt.get_string("metadata").unwrap_or("");
-                        if metadata == "chest" {
-                            let is_water =
-                                chunk.get_block_state(&world_pos).to_block_id() == Block::WATER.id;
-                            let mut props = ChestLikeProperties::default(&Block::CHEST);
-                            props.facing = HorizontalFacing::North;
-                            props.waterlogged = is_water;
-                            let chest_state = BlockState::from_id(props.to_state_id(&Block::CHEST));
-                            chunk.set_block_state(
-                                world_pos.x,
-                                world_pos.y,
-                                world_pos.z,
-                                chest_state,
-                            );
-
-                            let mut chest_nbt = NbtCompound::new();
-                            chest_nbt.put_string("id", "minecraft:chest".to_string());
-                            chest_nbt.put_int("x", world_pos.x);
-                            chest_nbt.put_int("y", world_pos.y);
-                            chest_nbt.put_int("z", world_pos.z);
-                            let loot_table = if self.is_large {
-                                "minecraft:chests/underwater_ruin_big"
-                            } else {
-                                "minecraft:chests/underwater_ruin_small"
-                            };
-                            chest_nbt.put_string("LootTable", loot_table.to_string());
-                            let mut rng = LegacyRand::from_seed(hash_block_pos(
-                                world_pos.x,
-                                world_pos.y,
-                                world_pos.z,
-                            )
-                                as u64);
-                            chest_nbt.put_long("LootTableSeed", rng.next_i64());
-                            chunk.add_block_entity(chest_nbt);
-                        } else if metadata == "drowned" {
-                            let mut entity_nbt = NbtCompound::new();
-                            entity_nbt.put_string("id", "minecraft:drowned".to_string());
-                            entity_nbt.put_list(
-                                "Pos",
-                                vec![
-                                    (f64::from(world_pos.x) + 0.5).into(),
-                                    f64::from(world_pos.y).into(),
-                                    (f64::from(world_pos.z) + 0.5).into(),
-                                ],
-                            );
-                            entity_nbt.put_bool("PersistenceRequired", true);
-                            chunk.add_structure_entity(entity_nbt);
-
-                            let replacement = if world_pos.y > chunk.get_sea_level() {
-                                Block::AIR.default_state
-                            } else {
-                                Block::WATER.default_state
-                            };
-                            chunk.set_block_state(
-                                world_pos.x,
-                                world_pos.y,
-                                world_pos.z,
-                                replacement,
-                            );
-                        }
-                    }
+                    self.place_data_marker(chunk, nbt, world_pos);
                 }
                 continue;
             }
@@ -563,28 +588,12 @@ impl StructurePieceBase for OceanRuinPiece {
                 && random.next_f32() < 0.45
             {
                 suspicious_count += 1;
-                chunk.set_block_state(
-                    world_pos.x,
-                    world_pos.y,
-                    world_pos.z,
+                place_suspicious_block(
+                    chunk,
+                    world_pos,
                     Block::SUSPICIOUS_SAND.default_state,
+                    "minecraft:archaeology/ocean_ruin_warm",
                 );
-
-                let mut nbt = NbtCompound::new();
-                nbt.put_string("id", "minecraft:brushable_block".to_string());
-                nbt.put_int("x", world_pos.x);
-                nbt.put_int("y", world_pos.y);
-                nbt.put_int("z", world_pos.z);
-                nbt.put_string(
-                    "LootTable",
-                    "minecraft:archaeology/ocean_ruin_warm".to_string(),
-                );
-                let mut rng =
-                    LegacyRand::from_seed(
-                        hash_block_pos(world_pos.x, world_pos.y, world_pos.z) as u64
-                    );
-                nbt.put_long("LootTableSeed", rng.next_i64());
-                chunk.add_block_entity(nbt);
                 continue;
             } else if !self.is_warm
                 && palette_entry.name == "minecraft:gravel"
@@ -592,28 +601,12 @@ impl StructurePieceBase for OceanRuinPiece {
                 && random.next_f32() < 0.45
             {
                 suspicious_count += 1;
-                chunk.set_block_state(
-                    world_pos.x,
-                    world_pos.y,
-                    world_pos.z,
+                place_suspicious_block(
+                    chunk,
+                    world_pos,
                     Block::SUSPICIOUS_GRAVEL.default_state,
+                    "minecraft:archaeology/ocean_ruin_cold",
                 );
-
-                let mut nbt = NbtCompound::new();
-                nbt.put_string("id", "minecraft:brushable_block".to_string());
-                nbt.put_int("x", world_pos.x);
-                nbt.put_int("y", world_pos.y);
-                nbt.put_int("z", world_pos.z);
-                nbt.put_string(
-                    "LootTable",
-                    "minecraft:archaeology/ocean_ruin_cold".to_string(),
-                );
-                let mut rng =
-                    LegacyRand::from_seed(
-                        hash_block_pos(world_pos.x, world_pos.y, world_pos.z) as u64
-                    );
-                nbt.put_long("LootTableSeed", rng.next_i64());
-                chunk.add_block_entity(nbt);
                 continue;
             }
 
@@ -623,61 +616,11 @@ impl StructurePieceBase for OceanRuinPiece {
                 continue;
             };
 
-            if chunk.get_block_state(&world_pos).to_block_id() == Block::WATER.id {
-                let mut modified_entry = palette_entry.clone();
-                if let Some(waterlogged) =
-                    modified_entry.properties.iter_mut().find_map(|p| match p {
-                        pumpkin_data::Property::Waterlogged(w) => Some(w),
-                        _ => None,
-                    })
-                {
-                    *waterlogged = true;
-                    if let Some(waterlogged_state) =
-                        BlockStateResolver::resolve(&modified_entry, self.rotation, Mirror::None)
-                    {
-                        state = waterlogged_state;
-                    }
-                }
-            }
+            state = waterlogged_in_water(chunk, world_pos, palette_entry, self.rotation, state);
 
             chunk.set_block_state(world_pos.x, world_pos.y, world_pos.z, state);
 
-            let final_block = Block::from_id(state.id.to_block_id());
-            let block_entity_id =
-                crate::generation::structure::template::get_block_entity_id(final_block.name);
-            if block.nbt.is_some() || block_entity_id.is_some() {
-                let fallback_id = block_entity_id.unwrap_or(final_block.name);
-                let mut placed_nbt = NbtCompound::new();
-
-                placed_nbt.put_string("id", fallback_id.to_string());
-                placed_nbt.put_int("x", world_pos.x);
-                placed_nbt.put_int("y", world_pos.y);
-                placed_nbt.put_int("z", world_pos.z);
-
-                if let Some(template_nbt) = &block.nbt {
-                    for (key, value) in &template_nbt.child_tags {
-                        if key.as_ref() != "x"
-                            && key.as_ref() != "y"
-                            && key.as_ref() != "z"
-                            && key.as_ref() != "id"
-                        {
-                            placed_nbt.child_tags.insert(key.clone(), value.clone());
-                        }
-                    }
-                }
-
-                if placed_nbt.get_string("LootTable").is_some()
-                    && placed_nbt.get_long("LootTableSeed").is_none()
-                {
-                    let mut rng =
-                        LegacyRand::from_seed(
-                            hash_block_pos(world_pos.x, world_pos.y, world_pos.z) as u64,
-                        );
-                    placed_nbt.put_long("LootTableSeed", rng.next_i64());
-                }
-
-                chunk.add_block_entity(placed_nbt);
-            }
+            add_template_block_entity(chunk, world_pos, state, block.nbt.as_ref());
         }
     }
 }

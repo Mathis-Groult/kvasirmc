@@ -17,7 +17,8 @@ use crate::{
                 StructurePiecesCollector, StructurePosition, WorldPortalExt,
             },
             template::{
-                BlockStateResolver, StructurePlaceSettings, StructureTemplate, get_template,
+                BlockStateResolver, StructurePlaceSettings, StructureTemplate,
+                add_template_block_entity, get_template,
                 processor::{IgnoredBlock, ProcessorContext, StructureProcessor},
             },
         },
@@ -168,7 +169,6 @@ impl IglooPiece {
         }
     }
 
-    #[expect(clippy::too_many_lines)]
     fn place_blocks(
         &self,
         chunk: &mut ProtoChunk,
@@ -204,25 +204,7 @@ impl IglooPiece {
             if palette_entry.name == "minecraft:structure_block"
                 && let Some(nbt) = &block.nbt
             {
-                let mode = nbt.get_string("mode").unwrap_or("");
-                let metadata = nbt.get_string("metadata").unwrap_or("");
-                if mode == "DATA" && metadata == "chest" {
-                    chunk.set_block_state(
-                        world_pos.x,
-                        world_pos.y,
-                        world_pos.z,
-                        Block::AIR.default_state,
-                    );
-                    let below_pos = world_pos - Vector3::new(0, 1, 0);
-                    let mut chest_nbt = pumpkin_nbt::compound::NbtCompound::new();
-                    chest_nbt.put_string("id", "minecraft:chest".to_string());
-                    chest_nbt.put_int("x", below_pos.x);
-                    chest_nbt.put_int("y", below_pos.y);
-                    chest_nbt.put_int("z", below_pos.z);
-                    chest_nbt.put_string("LootTable", "minecraft:chests/igloo_chest".to_string());
-                    chest_nbt.put_long("LootTableSeed", random.next_i64());
-                    chunk.add_block_entity(chest_nbt);
-                }
+                place_chest_marker(chunk, nbt, world_pos, random);
                 continue;
             }
 
@@ -256,42 +238,7 @@ impl IglooPiece {
 
             chunk.set_block_state(world_pos.x, world_pos.y, world_pos.z, final_state);
 
-            let final_block = Block::from_id(final_state.id.to_block_id());
-            let block_entity_id =
-                crate::generation::structure::template::get_block_entity_id(final_block.name);
-            if block_entity_nbt.is_some() || block_entity_id.is_some() {
-                let fallback_id = block_entity_id.unwrap_or(final_block.name);
-                let mut placed_nbt = pumpkin_nbt::compound::NbtCompound::new();
-
-                placed_nbt.put_string("id", fallback_id.to_string());
-                placed_nbt.put_int("x", world_pos.x);
-                placed_nbt.put_int("y", world_pos.y);
-                placed_nbt.put_int("z", world_pos.z);
-
-                if let Some(template_nbt) = &block_entity_nbt {
-                    for (key, value) in &template_nbt.child_tags {
-                        if key.as_ref() != "x"
-                            && key.as_ref() != "y"
-                            && key.as_ref() != "z"
-                            && key.as_ref() != "id"
-                        {
-                            placed_nbt.child_tags.insert(key.clone(), value.clone());
-                        }
-                    }
-                }
-
-                if placed_nbt.get_string("LootTable").is_some()
-                    && placed_nbt.get_long("LootTableSeed").is_none()
-                {
-                    let mut rng =
-                        LegacyRand::from_seed(
-                            hash_block_pos(world_pos.x, world_pos.y, world_pos.z) as u64,
-                        );
-                    placed_nbt.put_long("LootTableSeed", rng.next_i64());
-                }
-
-                chunk.add_block_entity(placed_nbt);
-            }
+            add_template_block_entity(chunk, world_pos, final_state, block_entity_nbt.as_ref());
         }
 
         crate::generation::structure::template::place_template_entities(
@@ -363,6 +310,35 @@ impl StructurePieceBase for IglooPiece {
         }
 
         self.template_position = old_template_pos;
+    }
+}
+
+/// A data structure block marking the basement chest: the marker becomes air and the chest under
+/// it gets the igloo loot table.
+fn place_chest_marker(
+    chunk: &mut ProtoChunk,
+    nbt: &pumpkin_nbt::compound::NbtCompound,
+    world_pos: Vector3<i32>,
+    random: &mut RandomGenerator,
+) {
+    let mode = nbt.get_string("mode").unwrap_or("");
+    let metadata = nbt.get_string("metadata").unwrap_or("");
+    if mode == "DATA" && metadata == "chest" {
+        chunk.set_block_state(
+            world_pos.x,
+            world_pos.y,
+            world_pos.z,
+            Block::AIR.default_state,
+        );
+        let below_pos = world_pos - Vector3::new(0, 1, 0);
+        let mut chest_nbt = pumpkin_nbt::compound::NbtCompound::new();
+        chest_nbt.put_string("id", "minecraft:chest".to_string());
+        chest_nbt.put_int("x", below_pos.x);
+        chest_nbt.put_int("y", below_pos.y);
+        chest_nbt.put_int("z", below_pos.z);
+        chest_nbt.put_string("LootTable", "minecraft:chests/igloo_chest".to_string());
+        chest_nbt.put_long("LootTableSeed", random.next_i64());
+        chunk.add_block_entity(chest_nbt);
     }
 }
 

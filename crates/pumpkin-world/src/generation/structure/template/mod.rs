@@ -30,9 +30,9 @@ pub mod processor;
 mod structure_template;
 mod template_piece;
 
-use pumpkin_data::BlockStateId;
 use pumpkin_data::Mirror;
 use pumpkin_data::Rotation;
+use pumpkin_data::BlockStateId;
 use pumpkin_nbt::{compound::NbtCompound, tag::NbtTag};
 use pumpkin_util::math::vector3::Vector3;
 use pumpkin_util::random::{RandomImpl, hash_block_pos, legacy_rand::LegacyRand};
@@ -314,6 +314,76 @@ pub(crate) fn place_template_entities(
 
         chunk.add_structure_entity(nbt);
     }
+}
+
+/// Adds the block entity of a template block placed at `world_pos` as `state`: the template's
+/// NBT without its position and id, or a bare one for blocks that always have a block entity. A
+/// loot table without a seed gets the one derived from the position.
+pub(crate) fn add_template_block_entity(
+    chunk: &mut ProtoChunk,
+    world_pos: Vector3<i32>,
+    state: &BlockState,
+    template_nbt: Option<&NbtCompound>,
+) {
+    let final_block = pumpkin_data::Block::from_id(state.id.to_block_id());
+    let block_entity_id = get_block_entity_id(final_block.name);
+    if template_nbt.is_some() || block_entity_id.is_some() {
+        let fallback_id = block_entity_id.unwrap_or(final_block.name);
+        let mut placed_nbt = NbtCompound::new();
+
+        placed_nbt.put_string("id", fallback_id.to_string());
+        placed_nbt.put_int("x", world_pos.x);
+        placed_nbt.put_int("y", world_pos.y);
+        placed_nbt.put_int("z", world_pos.z);
+
+        if let Some(template_nbt) = template_nbt {
+            for (key, value) in &template_nbt.child_tags {
+                if key.as_ref() != "x"
+                    && key.as_ref() != "y"
+                    && key.as_ref() != "z"
+                    && key.as_ref() != "id"
+                {
+                    placed_nbt.child_tags.insert(key.clone(), value.clone());
+                }
+            }
+        }
+
+        if placed_nbt.get_string("LootTable").is_some()
+            && placed_nbt.get_long("LootTableSeed").is_none()
+        {
+            let mut rng =
+                LegacyRand::from_seed(hash_block_pos(world_pos.x, world_pos.y, world_pos.z) as u64);
+            placed_nbt.put_long("LootTableSeed", rng.next_i64());
+        }
+
+        chunk.add_block_entity(placed_nbt);
+    }
+}
+
+/// `state`, waterlogged when it can be and the block at `world_pos` is water.
+pub(crate) fn waterlogged_in_water(
+    chunk: &ProtoChunk,
+    world_pos: Vector3<i32>,
+    palette_entry: &PaletteEntry,
+    rotation: Rotation,
+    state: &'static BlockState,
+) -> &'static BlockState {
+    let mut state = state;
+    if chunk.get_block_state(&world_pos).to_block_id() == pumpkin_data::Block::WATER.id {
+        let mut modified_entry = palette_entry.clone();
+        if let Some(waterlogged) = modified_entry.properties.iter_mut().find_map(|p| match p {
+            pumpkin_data::Property::Waterlogged(w) => Some(w),
+            _ => None,
+        }) {
+            *waterlogged = true;
+            if let Some(waterlogged_state) =
+                BlockStateResolver::resolve(&modified_entry, rotation, Mirror::None)
+            {
+                state = waterlogged_state;
+            }
+        }
+    }
+    state
 }
 
 /// Returns the block entity ID for blocks that require one, or None if not needed.

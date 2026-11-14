@@ -20,8 +20,9 @@ use crate::generation::{
     get_world_gen,
     proto_chunk::ProtoChunk,
     structure::structures::{
-        StructureGenerator, StructureGeneratorContext, mineshaft::MineshaftGenerator,
-        nether_fortress::NetherFortressGenerator, stronghold::StrongholdGenerator,
+        HeightSampler, StructureGenerator, StructureGeneratorContext, mansion::MansionGenerator,
+        mineshaft::MineshaftGenerator, nether_fortress::NetherFortressGenerator,
+        stronghold::StrongholdGenerator,
     },
 };
 
@@ -42,6 +43,7 @@ fn record_structure(
     world_gen: &crate::generation::generator::WorldGenerator,
     (header, generator): (&str, &dyn StructureGenerator),
     (seed, chunk_x, chunk_z): (u64, i32, i32),
+    height_sampler: Option<&mut dyn HeightSampler>,
 ) -> Result<(), Box<dyn std::error::Error>> {
     let context = StructureGeneratorContext {
         seed: seed as i64,
@@ -51,7 +53,7 @@ fn record_structure(
         sea_level: 63,
         min_y: -64,
         height: 384,
-        height_sampler: None,
+        height_sampler,
         structure_key: None,
     };
     let position = generator
@@ -132,6 +134,7 @@ fn mineshafts_lay_out_and_place_the_same_blocks() -> Result<(), Box<dyn std::err
             &world_gen,
             (&header, &generator),
             (seed, chunk_x, chunk_z),
+            None,
         )?;
     }
     check_golden("mineshafts", &now)
@@ -150,6 +153,7 @@ fn strongholds_lay_out_and_place_the_same_blocks() -> Result<(), Box<dyn std::er
             &world_gen,
             ("stronghold", &StrongholdGenerator),
             start,
+            None,
         )?;
     }
     check_golden("strongholds", &now)
@@ -165,7 +169,33 @@ fn nether_fortresses_lay_out_and_place_the_same_blocks() -> Result<(), Box<dyn s
             &world_gen,
             ("nether_fortress", &NetherFortressGenerator),
             start,
+            None,
         )?;
     }
     check_golden("nether_fortresses", &now)
+}
+
+/// The surface the test terrain has everywhere: the block above the stone of `Terrain::Flat`.
+struct FlatGround;
+
+impl HeightSampler for FlatGround {
+    fn estimate_height(&mut self, _block_x: i32, _block_z: i32) -> i32 {
+        63
+    }
+}
+
+#[test]
+fn mansions_lay_out_and_place_the_same_blocks() -> Result<(), Box<dyn std::error::Error>> {
+    let world_gen = overworld();
+    let mut now = String::new();
+    for start in STARTS {
+        record_structure(
+            &mut now,
+            &world_gen,
+            ("mansion", &MansionGenerator),
+            start,
+            Some(&mut FlatGround),
+        )?;
+    }
+    check_golden("mansions", &now)
 }

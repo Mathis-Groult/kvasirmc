@@ -292,7 +292,6 @@ impl DesertPyramidPiece {
         self.place_sand(chunk, bb, x, y + 1, z + 4, potential_positions);
     }
 
-    #[expect(clippy::too_many_lines)]
     fn add_cellar_room(
         &self,
         chunk: &mut ProtoChunk,
@@ -305,162 +304,9 @@ impl DesertPyramidPiece {
         let chiseled = Block::CHISELED_SANDSTONE.default_state;
         let orange = Block::ORANGE_TERRACOTTA.default_state;
         let blue = Block::BLUE_TERRACOTTA.default_state;
-        self.piece.fill_with_outline(
-            chunk,
-            bb,
-            true,
-            x - 3,
-            y + 1,
-            z - 3,
-            x - 3,
-            y + 1,
-            z + 2,
-            cut,
-            cut,
-        );
-        self.piece.fill_with_outline(
-            chunk,
-            bb,
-            true,
-            x + 3,
-            y + 1,
-            z - 3,
-            x + 3,
-            y + 1,
-            z + 2,
-            cut,
-            cut,
-        );
-        self.piece.fill_with_outline(
-            chunk,
-            bb,
-            true,
-            x - 3,
-            y + 1,
-            z - 3,
-            x + 3,
-            y + 1,
-            z - 2,
-            cut,
-            cut,
-        );
-        self.piece.fill_with_outline(
-            chunk,
-            bb,
-            true,
-            x - 3,
-            y + 1,
-            z + 3,
-            x + 3,
-            y + 1,
-            z + 3,
-            cut,
-            cut,
-        );
-        self.piece.fill_with_outline(
-            chunk,
-            bb,
-            true,
-            x - 3,
-            y + 2,
-            z - 3,
-            x - 3,
-            y + 2,
-            z + 2,
-            chiseled,
-            chiseled,
-        );
-        self.piece.fill_with_outline(
-            chunk,
-            bb,
-            true,
-            x + 3,
-            y + 2,
-            z - 3,
-            x + 3,
-            y + 2,
-            z + 2,
-            chiseled,
-            chiseled,
-        );
-        self.piece.fill_with_outline(
-            chunk,
-            bb,
-            true,
-            x - 3,
-            y + 2,
-            z - 3,
-            x + 3,
-            y + 2,
-            z - 2,
-            chiseled,
-            chiseled,
-        );
-        self.piece.fill_with_outline(
-            chunk,
-            bb,
-            true,
-            x - 3,
-            y + 2,
-            z + 3,
-            x + 3,
-            y + 2,
-            z + 3,
-            chiseled,
-            chiseled,
-        );
-        self.piece.fill_with_outline(
-            chunk,
-            bb,
-            true,
-            x - 3,
-            -1,
-            z - 3,
-            x - 3,
-            -1,
-            z + 2,
-            cut,
-            cut,
-        );
-        self.piece.fill_with_outline(
-            chunk,
-            bb,
-            true,
-            x + 3,
-            -1,
-            z - 3,
-            x + 3,
-            -1,
-            z + 2,
-            cut,
-            cut,
-        );
-        self.piece.fill_with_outline(
-            chunk,
-            bb,
-            true,
-            x - 3,
-            -1,
-            z - 3,
-            x + 3,
-            -1,
-            z - 2,
-            cut,
-            cut,
-        );
-        self.piece.fill_with_outline(
-            chunk,
-            bb,
-            true,
-            x - 3,
-            -1,
-            z + 3,
-            x + 3,
-            -1,
-            z + 3,
-            cut,
-            cut,
-        );
+        self.fill_cellar_ring(chunk, bb, x, y + 1, z, cut);
+        self.fill_cellar_ring(chunk, bb, x, y + 2, z, chiseled);
+        self.fill_cellar_ring(chunk, bb, x, -1, z, cut);
 
         self.place_sand_box(
             chunk,
@@ -515,6 +361,71 @@ impl DesertPyramidPiece {
         self.place_sand(chunk, bb, x, y + 2, z - 3, potential_positions);
         self.piece.add_block(chunk, cut, x, y + 1, z - 4, bb);
         self.piece.add_block(chunk, chiseled, x, -2, z - 4, bb);
+    }
+
+    /// One ring of the cellar wall at height `y`: the west and east sides, then the north and
+    /// south ones (each a `fill_with_outline` that keeps air).
+    fn fill_cellar_ring(
+        &self,
+        chunk: &mut ProtoChunk,
+        bb: &BlockBox,
+        x: i32,
+        y: i32,
+        z: i32,
+        state: &'static BlockState,
+    ) {
+        self.piece.fill_with_outline(
+            chunk,
+            bb,
+            true,
+            x - 3,
+            y,
+            z - 3,
+            x - 3,
+            y,
+            z + 2,
+            state,
+            state,
+        );
+        self.piece.fill_with_outline(
+            chunk,
+            bb,
+            true,
+            x + 3,
+            y,
+            z - 3,
+            x + 3,
+            y,
+            z + 2,
+            state,
+            state,
+        );
+        self.piece.fill_with_outline(
+            chunk,
+            bb,
+            true,
+            x - 3,
+            y,
+            z - 3,
+            x + 3,
+            y,
+            z - 2,
+            state,
+            state,
+        );
+        self.piece.fill_with_outline(
+            chunk,
+            bb,
+            true,
+            x - 3,
+            y,
+            z + 3,
+            x + 3,
+            y,
+            z + 3,
+            state,
+            state,
+        );
     }
 }
 

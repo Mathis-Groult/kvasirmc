@@ -30,6 +30,7 @@ pub mod corridor_nether_warts_room;
 pub mod corridor_right_turn;
 pub mod corridor_stairs;
 pub mod small_corridor;
+mod tower;
 
 /// Great reference: <https://minecraft.wiki/w/Nether_fortress>
 #[derive(Deserialize)]

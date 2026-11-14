@@ -11,7 +11,7 @@ use crate::{
         piece::StructurePieceType,
         structures::{
             StructurePiece, StructurePieceBase, StructurePiecesCollector, WorldPortalExt,
-            nether_fortress::NetherFortressPiece,
+            nether_fortress::{NetherFortressPiece, tower},
         },
     },
 };
@@ -59,7 +59,6 @@ impl StructurePieceBase for CorridorExitPiece {
         &mut self.piece.piece
     }
 
-    #[allow(clippy::too_many_lines)]
     fn place(
         &mut self,
         chunk: &mut ProtoChunk,
@@ -81,23 +80,8 @@ impl StructurePieceBase for CorridorExitPiece {
             props.south = south;
             pumpkin_data::BlockState::from_id(props.to_state_id(&Block::NETHER_BRICK_FENCE))
         };
-        let f_ew = fence(true, true, false, false);
-        let f_ns = fence(false, false, true, true);
 
-        // Main shell
-        p.fill_with_outline(chunk, &bb, false, 0, 3, 0, 12, 4, 12, nb, nb);
-        p.fill_with_outline(chunk, &bb, false, 0, 5, 0, 12, 13, 12, air, air);
-
-        // Outer walls
-        p.fill_with_outline(chunk, &bb, false, 0, 5, 0, 1, 12, 12, nb, nb);
-        p.fill_with_outline(chunk, &bb, false, 11, 5, 0, 12, 12, 12, nb, nb);
-        p.fill_with_outline(chunk, &bb, false, 2, 5, 11, 4, 12, 12, nb, nb);
-        p.fill_with_outline(chunk, &bb, false, 8, 5, 11, 10, 12, 12, nb, nb);
-        p.fill_with_outline(chunk, &bb, false, 5, 9, 11, 7, 12, 12, nb, nb);
-        p.fill_with_outline(chunk, &bb, false, 2, 5, 0, 4, 12, 1, nb, nb);
-        p.fill_with_outline(chunk, &bb, false, 8, 5, 0, 10, 12, 1, nb, nb);
-        p.fill_with_outline(chunk, &bb, false, 5, 9, 0, 7, 12, 1, nb, nb);
-        p.fill_with_outline(chunk, &bb, false, 2, 11, 2, 10, 12, 10, nb, nb);
+        tower::place_shell(p, chunk, bb);
 
         // Gate arch fence
         p.fill_with_outline(
@@ -113,32 +97,7 @@ impl StructurePieceBase for CorridorExitPiece {
             Block::NETHER_BRICK_FENCE.default_state,
             Block::NETHER_BRICK_FENCE.default_state,
         );
-
-        // Battlement fences and corner blocks along top
-        let mut i = 1i32;
-        while i <= 11 {
-            p.fill_with_outline(chunk, &bb, false, i, 10, 0, i, 11, 0, f_ew, f_ew);
-            p.fill_with_outline(chunk, &bb, false, i, 10, 12, i, 11, 12, f_ew, f_ew);
-            p.fill_with_outline(chunk, &bb, false, 0, 10, i, 0, 11, i, f_ns, f_ns);
-            p.fill_with_outline(chunk, &bb, false, 12, 10, i, 12, 11, i, f_ns, f_ns);
-            p.add_block(chunk, nb, i, 13, 0, &bb);
-            p.add_block(chunk, nb, i, 13, 12, &bb);
-            p.add_block(chunk, nb, 0, 13, i, &bb);
-            p.add_block(chunk, nb, 12, 13, i, &bb);
-            if i != 11 {
-                p.add_block(chunk, f_ew, i + 1, 13, 0, &bb);
-                p.add_block(chunk, f_ew, i + 1, 13, 12, &bb);
-                p.add_block(chunk, f_ns, 0, 13, i + 1, &bb);
-                p.add_block(chunk, f_ns, 12, 13, i + 1, &bb);
-            }
-            i += 2;
-        }
-
-        // Corner fence pieces
-        p.add_block(chunk, fence(false, true, true, false), 0, 13, 0, &bb);
-        p.add_block(chunk, fence(false, true, false, true), 0, 13, 12, &bb);
-        p.add_block(chunk, fence(true, false, false, true), 12, 13, 12, &bb);
-        p.add_block(chunk, fence(true, false, true, false), 12, 13, 0, &bb);
+        tower::place_battlements(p, chunk, bb, fence);
 
         // Interior buttress fences
         let mut i = 3i32;
@@ -171,27 +130,7 @@ impl StructurePieceBase for CorridorExitPiece {
             );
             i += 2;
         }
-
-        // Exterior bridge supports
-        p.fill_with_outline(chunk, &bb, false, 4, 2, 0, 8, 2, 12, nb, nb);
-        p.fill_with_outline(chunk, &bb, false, 0, 2, 4, 12, 2, 8, nb, nb);
-        p.fill_with_outline(chunk, &bb, false, 4, 0, 0, 8, 1, 3, nb, nb);
-        p.fill_with_outline(chunk, &bb, false, 4, 0, 9, 8, 1, 12, nb, nb);
-        p.fill_with_outline(chunk, &bb, false, 0, 0, 4, 3, 1, 8, nb, nb);
-        p.fill_with_outline(chunk, &bb, false, 9, 0, 4, 12, 1, 8, nb, nb);
-
-        for i in 4..=8i32 {
-            for j in 0..=2i32 {
-                p.fill_downwards(chunk, nb, i, -1, j, &bb);
-                p.fill_downwards(chunk, nb, i, -1, 12 - j, &bb);
-            }
-        }
-        for i in 0..=2i32 {
-            for j in 4..=8i32 {
-                p.fill_downwards(chunk, nb, i, -1, j, &bb);
-                p.fill_downwards(chunk, nb, 12 - i, -1, j, &bb);
-            }
-        }
+        tower::place_support_legs(p, chunk, bb);
 
         // Central lava well
         p.fill_with_outline(chunk, &bb, false, 5, 5, 5, 7, 5, 7, nb, nb);

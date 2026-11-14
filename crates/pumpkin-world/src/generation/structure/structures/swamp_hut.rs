@@ -121,129 +121,118 @@ impl SwampHutPiece {
             }
         }
     }
-}
 
-impl StructurePieceBase for SwampHutPiece {
-    fn as_any(&self) -> &dyn std::any::Any {
-        self
+    /// The spruce plank floor, porch, walls and ceiling.
+    fn place_floor_and_walls(
+        p: &super::StructurePiece,
+        chunk: &mut ProtoChunk,
+        box_limit: BlockBox,
+    ) {
+        let spruce_planks = Block::SPRUCE_PLANKS.default_state;
+
+        p.fill_with_outline(
+            chunk,
+            &box_limit,
+            false,
+            1,
+            1,
+            1,
+            5,
+            1,
+            7,
+            spruce_planks,
+            spruce_planks,
+        );
+        p.fill_with_outline(
+            chunk,
+            &box_limit,
+            false,
+            1,
+            4,
+            2,
+            5,
+            4,
+            7,
+            spruce_planks,
+            spruce_planks,
+        );
+        p.fill_with_outline(
+            chunk,
+            &box_limit,
+            false,
+            2,
+            1,
+            0,
+            4,
+            1,
+            0,
+            spruce_planks,
+            spruce_planks,
+        );
+
+        p.fill_with_outline(
+            chunk,
+            &box_limit,
+            false,
+            2,
+            2,
+            2,
+            3,
+            3,
+            2,
+            spruce_planks,
+            spruce_planks,
+        );
+        p.fill_with_outline(
+            chunk,
+            &box_limit,
+            false,
+            1,
+            2,
+            3,
+            1,
+            3,
+            6,
+            spruce_planks,
+            spruce_planks,
+        );
+        p.fill_with_outline(
+            chunk,
+            &box_limit,
+            false,
+            5,
+            2,
+            3,
+            5,
+            3,
+            6,
+            spruce_planks,
+            spruce_planks,
+        );
+        p.fill_with_outline(
+            chunk,
+            &box_limit,
+            false,
+            2,
+            2,
+            7,
+            4,
+            3,
+            7,
+            spruce_planks,
+            spruce_planks,
+        );
     }
 
-    #[allow(clippy::too_many_lines)]
-    fn place(
-        &mut self,
+    /// The oak log corner posts, the window gaps, the flower pot, crafting table, cauldron and porch fences.
+    fn place_posts_and_furniture(
+        p: &super::StructurePiece,
         chunk: &mut ProtoChunk,
-        block_registry: &dyn WorldPortalExt,
-        _random: &mut RandomGenerator,
-        _seed: i64,
-        chunk_box: &BlockBox,
+        box_limit: BlockBox,
     ) {
-        if !self
-            .shiftable_structure_piece
-            .adjust_to_average_height(chunk)
-        {
-            return;
-        }
-
-        let box_limit = *chunk_box;
-        let p = &self.shiftable_structure_piece.piece;
-
-        let spruce_planks = Block::SPRUCE_PLANKS.default_state;
         let oak_log = Block::OAK_LOG.default_state;
         let oak_fence = Block::OAK_FENCE.default_state;
         let air = Block::AIR.default_state;
-
-        p.fill_with_outline(
-            chunk,
-            &box_limit,
-            false,
-            1,
-            1,
-            1,
-            5,
-            1,
-            7,
-            spruce_planks,
-            spruce_planks,
-        );
-        p.fill_with_outline(
-            chunk,
-            &box_limit,
-            false,
-            1,
-            4,
-            2,
-            5,
-            4,
-            7,
-            spruce_planks,
-            spruce_planks,
-        );
-        p.fill_with_outline(
-            chunk,
-            &box_limit,
-            false,
-            2,
-            1,
-            0,
-            4,
-            1,
-            0,
-            spruce_planks,
-            spruce_planks,
-        );
-
-        p.fill_with_outline(
-            chunk,
-            &box_limit,
-            false,
-            2,
-            2,
-            2,
-            3,
-            3,
-            2,
-            spruce_planks,
-            spruce_planks,
-        );
-        p.fill_with_outline(
-            chunk,
-            &box_limit,
-            false,
-            1,
-            2,
-            3,
-            1,
-            3,
-            6,
-            spruce_planks,
-            spruce_planks,
-        );
-        p.fill_with_outline(
-            chunk,
-            &box_limit,
-            false,
-            5,
-            2,
-            3,
-            5,
-            3,
-            6,
-            spruce_planks,
-            spruce_planks,
-        );
-        p.fill_with_outline(
-            chunk,
-            &box_limit,
-            false,
-            2,
-            2,
-            7,
-            4,
-            3,
-            7,
-            spruce_planks,
-            spruce_planks,
-        );
 
         p.fill_with_outline(chunk, &box_limit, false, 1, 0, 2, 1, 3, 2, oak_log, oak_log);
         p.fill_with_outline(chunk, &box_limit, false, 5, 0, 2, 5, 3, 2, oak_log, oak_log);
@@ -274,7 +263,15 @@ impl StructurePieceBase for SwampHutPiece {
         p.add_block(chunk, Block::CAULDRON.default_state, 4, 2, 6, &box_limit);
         p.add_block(chunk, oak_fence, 1, 2, 1, &box_limit);
         p.add_block(chunk, oak_fence, 5, 2, 1, &box_limit);
+    }
 
+    /// The spruce stair roof with its four corner stairs.
+    fn place_roof(
+        p: &super::StructurePiece,
+        chunk: &mut ProtoChunk,
+        block_registry: &dyn WorldPortalExt,
+        box_limit: BlockBox,
+    ) {
         let stairs_n = Self::spruce_stairs(HorizontalFacing::North, StairsShape::Straight);
         let stairs_e = Self::spruce_stairs(HorizontalFacing::East, StairsShape::Straight);
         let stairs_w = Self::spruce_stairs(HorizontalFacing::West, StairsShape::Straight);
@@ -329,6 +326,37 @@ impl StructurePieceBase for SwampHutPiece {
             8,
             &box_limit,
         );
+    }
+}
+
+impl StructurePieceBase for SwampHutPiece {
+    fn as_any(&self) -> &dyn std::any::Any {
+        self
+    }
+
+    fn place(
+        &mut self,
+        chunk: &mut ProtoChunk,
+        block_registry: &dyn WorldPortalExt,
+        _random: &mut RandomGenerator,
+        _seed: i64,
+        chunk_box: &BlockBox,
+    ) {
+        if !self
+            .shiftable_structure_piece
+            .adjust_to_average_height(chunk)
+        {
+            return;
+        }
+
+        let box_limit = *chunk_box;
+        let p = &self.shiftable_structure_piece.piece;
+
+        let oak_log = Block::OAK_LOG.default_state;
+
+        Self::place_floor_and_walls(p, chunk, box_limit);
+        Self::place_posts_and_furniture(p, chunk, box_limit);
+        Self::place_roof(p, chunk, block_registry, box_limit);
 
         for i in [2, 7] {
             for j in [1, 5] {

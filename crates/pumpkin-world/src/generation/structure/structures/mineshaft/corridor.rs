@@ -24,7 +24,7 @@ use crate::{
     },
 };
 
-use super::{MineshaftType, generate_and_add_piece, is_falling_block, is_in_invalid_location};
+use super::{Children, MineshaftType, is_falling_block, is_in_invalid_location};
 
 pub struct MineShaftCorridor {
     pub piece: StructurePiece,
@@ -96,7 +96,6 @@ impl MineShaftCorridor {
         None
     }
 
-    #[expect(clippy::too_many_lines)]
     pub(super) fn add_corridor_children(
         bb: &BlockBox,
         depth: u32,
@@ -108,227 +107,75 @@ impl MineShaftCorridor {
     ) {
         let end_selection = random.next_bounded_i32(4);
         let rand_y = bb.min.y - 1 + random.next_bounded_i32(3);
+        let mut children = Children {
+            start_piece_box,
+            shaft_type,
+            depth,
+            collector,
+            random,
+        };
 
         match orientation {
             BlockDirection::North => {
                 if end_selection <= 1 {
-                    generate_and_add_piece(
-                        start_piece_box,
-                        collector,
-                        random,
-                        bb.min.x,
-                        rand_y,
-                        bb.min.z - 1,
-                        orientation,
-                        depth,
-                        shaft_type,
-                    );
+                    children.add(bb.min.x, rand_y, bb.min.z - 1, orientation);
                 } else if end_selection == 2 {
-                    generate_and_add_piece(
-                        start_piece_box,
-                        collector,
-                        random,
-                        bb.min.x - 1,
-                        rand_y,
-                        bb.min.z,
-                        BlockDirection::West,
-                        depth,
-                        shaft_type,
-                    );
+                    children.add(bb.min.x - 1, rand_y, bb.min.z, BlockDirection::West);
                 } else {
-                    generate_and_add_piece(
-                        start_piece_box,
-                        collector,
-                        random,
-                        bb.max.x + 1,
-                        rand_y,
-                        bb.min.z,
-                        BlockDirection::East,
-                        depth,
-                        shaft_type,
-                    );
+                    children.add(bb.max.x + 1, rand_y, bb.min.z, BlockDirection::East);
                 }
             }
             BlockDirection::South => {
                 if end_selection <= 1 {
-                    generate_and_add_piece(
-                        start_piece_box,
-                        collector,
-                        random,
-                        bb.min.x,
-                        rand_y,
-                        bb.max.z + 1,
-                        orientation,
-                        depth,
-                        shaft_type,
-                    );
+                    children.add(bb.min.x, rand_y, bb.max.z + 1, orientation);
                 } else if end_selection == 2 {
-                    generate_and_add_piece(
-                        start_piece_box,
-                        collector,
-                        random,
-                        bb.min.x - 1,
-                        rand_y,
-                        bb.max.z - 3,
-                        BlockDirection::West,
-                        depth,
-                        shaft_type,
-                    );
+                    children.add(bb.min.x - 1, rand_y, bb.max.z - 3, BlockDirection::West);
                 } else {
-                    generate_and_add_piece(
-                        start_piece_box,
-                        collector,
-                        random,
-                        bb.max.x + 1,
-                        rand_y,
-                        bb.max.z - 3,
-                        BlockDirection::East,
-                        depth,
-                        shaft_type,
-                    );
+                    children.add(bb.max.x + 1, rand_y, bb.max.z - 3, BlockDirection::East);
                 }
             }
             BlockDirection::West => {
                 if end_selection <= 1 {
-                    generate_and_add_piece(
-                        start_piece_box,
-                        collector,
-                        random,
-                        bb.min.x - 1,
-                        rand_y,
-                        bb.min.z,
-                        orientation,
-                        depth,
-                        shaft_type,
-                    );
+                    children.add(bb.min.x - 1, rand_y, bb.min.z, orientation);
                 } else if end_selection == 2 {
-                    generate_and_add_piece(
-                        start_piece_box,
-                        collector,
-                        random,
-                        bb.min.x,
-                        rand_y,
-                        bb.min.z - 1,
-                        BlockDirection::North,
-                        depth,
-                        shaft_type,
-                    );
+                    children.add(bb.min.x, rand_y, bb.min.z - 1, BlockDirection::North);
                 } else {
-                    generate_and_add_piece(
-                        start_piece_box,
-                        collector,
-                        random,
-                        bb.min.x,
-                        rand_y,
-                        bb.max.z + 1,
-                        BlockDirection::South,
-                        depth,
-                        shaft_type,
-                    );
+                    children.add(bb.min.x, rand_y, bb.max.z + 1, BlockDirection::South);
                 }
             }
             BlockDirection::East => {
                 if end_selection <= 1 {
-                    generate_and_add_piece(
-                        start_piece_box,
-                        collector,
-                        random,
-                        bb.max.x + 1,
-                        rand_y,
-                        bb.min.z,
-                        orientation,
-                        depth,
-                        shaft_type,
-                    );
+                    children.add(bb.max.x + 1, rand_y, bb.min.z, orientation);
                 } else if end_selection == 2 {
-                    generate_and_add_piece(
-                        start_piece_box,
-                        collector,
-                        random,
-                        bb.max.x - 3,
-                        rand_y,
-                        bb.min.z - 1,
-                        BlockDirection::North,
-                        depth,
-                        shaft_type,
-                    );
+                    children.add(bb.max.x - 3, rand_y, bb.min.z - 1, BlockDirection::North);
                 } else {
-                    generate_and_add_piece(
-                        start_piece_box,
-                        collector,
-                        random,
-                        bb.max.x - 3,
-                        rand_y,
-                        bb.max.z + 1,
-                        BlockDirection::South,
-                        depth,
-                        shaft_type,
-                    );
+                    children.add(bb.max.x - 3, rand_y, bb.max.z + 1, BlockDirection::South);
                 }
             }
             _ => {}
         }
 
         if depth < 8 {
+            children.depth = depth + 1;
             if orientation != BlockDirection::North && orientation != BlockDirection::South {
                 let mut x = bb.min.x + 3;
                 while x + 3 <= bb.max.x {
-                    let sel = random.next_bounded_i32(5);
+                    let sel = children.random.next_bounded_i32(5);
                     if sel == 0 {
-                        generate_and_add_piece(
-                            start_piece_box,
-                            collector,
-                            random,
-                            x,
-                            bb.min.y,
-                            bb.min.z - 1,
-                            BlockDirection::North,
-                            depth + 1,
-                            shaft_type,
-                        );
+                        children.add(x, bb.min.y, bb.min.z - 1, BlockDirection::North);
                     } else if sel == 1 {
-                        generate_and_add_piece(
-                            start_piece_box,
-                            collector,
-                            random,
-                            x,
-                            bb.min.y,
-                            bb.max.z + 1,
-                            BlockDirection::South,
-                            depth + 1,
-                            shaft_type,
-                        );
+                        children.add(x, bb.min.y, bb.max.z + 1, BlockDirection::South);
                     }
                     x += 5;
                 }
             } else {
                 let mut z = bb.min.z + 3;
                 while z + 3 <= bb.max.z {
-                    let sel = random.next_bounded_i32(5);
+                    let sel = children.random.next_bounded_i32(5);
                     if sel == 0 {
-                        generate_and_add_piece(
-                            start_piece_box,
-                            collector,
-                            random,
-                            bb.min.x - 1,
-                            bb.min.y,
-                            z,
-                            BlockDirection::West,
-                            depth + 1,
-                            shaft_type,
-                        );
+                        children.add(bb.min.x - 1, bb.min.y, z, BlockDirection::West);
                     } else if sel == 1 {
-                        generate_and_add_piece(
-                            start_piece_box,
-                            collector,
-                            random,
-                            bb.max.x + 1,
-                            bb.min.y,
-                            z,
-                            BlockDirection::East,
-                            depth + 1,
-                            shaft_type,
-                        );
+                        children.add(bb.max.x + 1, bb.min.y, z, BlockDirection::East);
                     }
                     z += 5;
                 }
@@ -676,7 +523,6 @@ impl StructurePieceBase for MineShaftCorridor {
         &mut self.piece
     }
 
-    #[allow(clippy::too_many_lines)]
     fn place(
         &mut self,
         chunk: &mut ProtoChunk,
@@ -693,37 +539,7 @@ impl StructurePieceBase for MineShaftCorridor {
         let length = self.num_sections * 5 - 1;
         let planks = self.shaft_type.planks();
 
-        self.piece
-            .fill(chunk, chunk_box, 0, 0, 0, 2, 1, length, air);
-
-        for y in 2..=2 {
-            for x in 0..=2 {
-                for z in 0..=length {
-                    if random.next_f32() <= 0.8 {
-                        self.piece.add_block(chunk, air, x, y, z, chunk_box);
-                    }
-                }
-            }
-        }
-
-        if self.spider_corridor {
-            for y in 0..=1 {
-                for x in 0..=2 {
-                    for z in 0..=length {
-                        if random.next_f32() <= 0.6 && self.is_interior(chunk, x, y, z, chunk_box) {
-                            self.piece.add_block(
-                                chunk,
-                                Block::COBWEB.default_state,
-                                x,
-                                y,
-                                z,
-                                chunk_box,
-                            );
-                        }
-                    }
-                }
-            }
-        }
+        self.clear_tunnel(chunk, random, chunk_box, length, air);
 
         for section in 0..self.num_sections {
             let z = 2 + section * 5;
@@ -760,35 +576,103 @@ impl StructurePieceBase for MineShaftCorridor {
                 );
             }
 
-            if self.spider_corridor && !self.has_placed_spider {
-                let spawner_z = z - 1 + random.next_bounded_i32(3);
-                let spawner_pos = self.piece.offset_pos(1, 0, spawner_z);
-                if chunk_box.contains_pos(&spawner_pos)
-                    && self.is_interior(chunk, 1, 0, spawner_z, chunk_box)
-                {
-                    self.has_placed_spider = true;
-                    chunk.set_block_state(
-                        spawner_pos.x,
-                        spawner_pos.y,
-                        spawner_pos.z,
-                        Block::SPAWNER.default_state,
-                    );
+            self.maybe_place_spider_spawner(chunk, chunk_box, random, z);
+        }
 
-                    let mut nbt = NbtCompound::new();
-                    nbt.put_string("id", "minecraft:mob_spawner".to_string());
-                    nbt.put_int("x", spawner_pos.x);
-                    nbt.put_int("y", spawner_pos.y);
-                    nbt.put_int("z", spawner_pos.z);
-                    let mut spawn_data = NbtCompound::new();
-                    let mut entity = NbtCompound::new();
-                    entity.put_string("id", "minecraft:cave_spider".to_string());
-                    spawn_data.put_compound("entity", entity);
-                    nbt.put_compound("SpawnData", spawn_data);
-                    chunk.add_block_entity(nbt);
+        self.place_floor_and_rails(chunk, random, chunk_box, length, planks);
+    }
+}
+
+impl MineShaftCorridor {
+    /// Clears the tunnel (its top row only in part, at random) and hangs the cobwebs of a spider
+    /// corridor.
+    fn clear_tunnel(
+        &self,
+        chunk: &mut ProtoChunk,
+        random: &mut RandomGenerator,
+        chunk_box: &BlockBox,
+        length: i32,
+        air: &'static BlockState,
+    ) {
+        self.piece
+            .fill(chunk, chunk_box, 0, 0, 0, 2, 1, length, air);
+
+        for y in 2..=2 {
+            for x in 0..=2 {
+                for z in 0..=length {
+                    if random.next_f32() <= 0.8 {
+                        self.piece.add_block(chunk, air, x, y, z, chunk_box);
+                    }
                 }
             }
         }
 
+        if self.spider_corridor {
+            for y in 0..=1 {
+                for x in 0..=2 {
+                    for z in 0..=length {
+                        if random.next_f32() <= 0.6 && self.is_interior(chunk, x, y, z, chunk_box) {
+                            self.piece.add_block(
+                                chunk,
+                                Block::COBWEB.default_state,
+                                x,
+                                y,
+                                z,
+                                chunk_box,
+                            );
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    /// The cave spider spawner of a spider corridor, placed once, near support `z`.
+    fn maybe_place_spider_spawner(
+        &mut self,
+        chunk: &mut ProtoChunk,
+        chunk_box: &BlockBox,
+        random: &mut RandomGenerator,
+        z: i32,
+    ) {
+        if self.spider_corridor && !self.has_placed_spider {
+            let spawner_z = z - 1 + random.next_bounded_i32(3);
+            let spawner_pos = self.piece.offset_pos(1, 0, spawner_z);
+            if chunk_box.contains_pos(&spawner_pos)
+                && self.is_interior(chunk, 1, 0, spawner_z, chunk_box)
+            {
+                self.has_placed_spider = true;
+                chunk.set_block_state(
+                    spawner_pos.x,
+                    spawner_pos.y,
+                    spawner_pos.z,
+                    Block::SPAWNER.default_state,
+                );
+
+                let mut nbt = NbtCompound::new();
+                nbt.put_string("id", "minecraft:mob_spawner".to_string());
+                nbt.put_int("x", spawner_pos.x);
+                nbt.put_int("y", spawner_pos.y);
+                nbt.put_int("z", spawner_pos.z);
+                let mut spawn_data = NbtCompound::new();
+                let mut entity = NbtCompound::new();
+                entity.put_string("id", "minecraft:cave_spider".to_string());
+                spawn_data.put_compound("entity", entity);
+                nbt.put_compound("SpawnData", spawn_data);
+                chunk.add_block_entity(nbt);
+            }
+        }
+    }
+
+    /// The plank floor under the tunnel, the double supports at its ends and the rails.
+    fn place_floor_and_rails(
+        &self,
+        chunk: &mut ProtoChunk,
+        random: &mut RandomGenerator,
+        chunk_box: &BlockBox,
+        length: i32,
+        planks: &'static BlockState,
+    ) {
         for x in 0..=2 {
             for z2 in 0..=length {
                 self.set_planks_block(chunk, chunk_box, planks, x, -1, z2);

@@ -19,7 +19,7 @@ use crate::{
     },
 };
 
-use super::{MineshaftType, generate_and_add_piece, is_in_invalid_location};
+use super::{Children, MineshaftType, is_in_invalid_location};
 
 pub struct MineShaftRoom {
     pub piece: StructurePiece,
@@ -47,7 +47,6 @@ impl MineShaftRoom {
         }
     }
 
-    #[expect(clippy::too_many_lines)]
     pub(super) fn add_room_children(
         start_piece_box: &BlockBox,
         shaft_type: MineshaftType,
@@ -65,149 +64,15 @@ impl MineShaftRoom {
         let x_span = start_piece_box.max.x - start_piece_box.min.x + 1;
         let z_span = start_piece_box.max.z - start_piece_box.min.z + 1;
 
-        let mut pos = 0;
-        while pos < x_span {
-            pos += random.next_bounded_i32(x_span);
-            if pos + 3 > x_span {
-                break;
-            }
-            let child_x = start_piece_box.min.x + pos;
-            let child_y = start_piece_box.min.y + random.next_bounded_i32(height_space) + 1;
-            let child_z = start_piece_box.min.z - 1;
-
-            if let Some(child_box) = generate_and_add_piece(
-                start_piece_box,
-                collector,
-                random,
-                child_x,
-                child_y,
-                child_z,
-                BlockDirection::North,
-                depth,
-                shaft_type,
-            ) {
-                child_entrance_boxes
-                    .lock()
-                    .unwrap_or_else(std::sync::PoisonError::into_inner)
-                    .push(BlockBox::new(
-                        child_box.min.x,
-                        child_box.min.y,
-                        start_piece_box.min.z,
-                        child_box.max.x,
-                        child_box.max.y,
-                        start_piece_box.min.z + 1,
-                    ));
-            }
-            pos += 4;
-        }
-
-        pos = 0;
-        while pos < x_span {
-            pos += random.next_bounded_i32(x_span);
-            if pos + 3 > x_span {
-                break;
-            }
-            let child_x = start_piece_box.min.x + pos;
-            let child_y = start_piece_box.min.y + random.next_bounded_i32(height_space) + 1;
-            let child_z = start_piece_box.max.z + 1;
-
-            if let Some(child_box) = generate_and_add_piece(
-                start_piece_box,
-                collector,
-                random,
-                child_x,
-                child_y,
-                child_z,
-                BlockDirection::South,
-                depth,
-                shaft_type,
-            ) {
-                child_entrance_boxes
-                    .lock()
-                    .unwrap_or_else(std::sync::PoisonError::into_inner)
-                    .push(BlockBox::new(
-                        child_box.min.x,
-                        child_box.min.y,
-                        start_piece_box.max.z - 1,
-                        child_box.max.x,
-                        child_box.max.y,
-                        start_piece_box.max.z,
-                    ));
-            }
-            pos += 4;
-        }
-
-        pos = 0;
-        while pos < z_span {
-            pos += random.next_bounded_i32(z_span);
-            if pos + 3 > z_span {
-                break;
-            }
-            let child_x = start_piece_box.min.x - 1;
-            let child_y = start_piece_box.min.y + random.next_bounded_i32(height_space) + 1;
-            let child_z = start_piece_box.min.z + pos;
-
-            if let Some(child_box) = generate_and_add_piece(
-                start_piece_box,
-                collector,
-                random,
-                child_x,
-                child_y,
-                child_z,
-                BlockDirection::West,
-                depth,
-                shaft_type,
-            ) {
-                child_entrance_boxes
-                    .lock()
-                    .unwrap_or_else(std::sync::PoisonError::into_inner)
-                    .push(BlockBox::new(
-                        start_piece_box.min.x,
-                        child_box.min.y,
-                        child_box.min.z,
-                        start_piece_box.min.x + 1,
-                        child_box.max.y,
-                        child_box.max.z,
-                    ));
-            }
-            pos += 4;
-        }
-
-        pos = 0;
-        while pos < z_span {
-            pos += random.next_bounded_i32(z_span);
-            if pos + 3 > z_span {
-                break;
-            }
-            let child_x = start_piece_box.max.x + 1;
-            let child_y = start_piece_box.min.y + random.next_bounded_i32(height_space) + 1;
-            let child_z = start_piece_box.min.z + pos;
-
-            if let Some(child_box) = generate_and_add_piece(
-                start_piece_box,
-                collector,
-                random,
-                child_x,
-                child_y,
-                child_z,
-                BlockDirection::East,
-                depth,
-                shaft_type,
-            ) {
-                child_entrance_boxes
-                    .lock()
-                    .unwrap_or_else(std::sync::PoisonError::into_inner)
-                    .push(BlockBox::new(
-                        start_piece_box.max.x - 1,
-                        child_box.min.y,
-                        child_box.min.z,
-                        start_piece_box.max.x,
-                        child_box.max.y,
-                        child_box.max.z,
-                    ));
-            }
-            pos += 4;
-        }
+        let mut children = Children {
+            start_piece_box,
+            shaft_type,
+            depth,
+            collector,
+            random,
+        };
+        add_north_south_exits(&mut children, height_space, x_span, child_entrance_boxes);
+        add_west_east_exits(&mut children, height_space, z_span, child_entrance_boxes);
     }
 }
 
@@ -298,5 +163,129 @@ impl StructurePieceBase for MineShaftRoom {
                 }
             }
         }
+    }
+}
+
+/// Corridors leaving the start room through its north and south walls, each with the opening it
+/// cuts into the wall.
+fn add_north_south_exits(
+    children: &mut Children,
+    height_space: i32,
+    x_span: i32,
+    child_entrance_boxes: &Arc<Mutex<Vec<BlockBox>>>,
+) {
+    let start_piece_box = children.start_piece_box;
+    let mut pos = 0;
+    while pos < x_span {
+        pos += children.random.next_bounded_i32(x_span);
+        if pos + 3 > x_span {
+            break;
+        }
+        let child_x = start_piece_box.min.x + pos;
+        let child_y = start_piece_box.min.y + children.random.next_bounded_i32(height_space) + 1;
+        let child_z = start_piece_box.min.z - 1;
+
+        if let Some(child_box) = children.add(child_x, child_y, child_z, BlockDirection::North) {
+            child_entrance_boxes
+                .lock()
+                .unwrap_or_else(std::sync::PoisonError::into_inner)
+                .push(BlockBox::new(
+                    child_box.min.x,
+                    child_box.min.y,
+                    start_piece_box.min.z,
+                    child_box.max.x,
+                    child_box.max.y,
+                    start_piece_box.min.z + 1,
+                ));
+        }
+        pos += 4;
+    }
+
+    pos = 0;
+    while pos < x_span {
+        pos += children.random.next_bounded_i32(x_span);
+        if pos + 3 > x_span {
+            break;
+        }
+        let child_x = start_piece_box.min.x + pos;
+        let child_y = start_piece_box.min.y + children.random.next_bounded_i32(height_space) + 1;
+        let child_z = start_piece_box.max.z + 1;
+
+        if let Some(child_box) = children.add(child_x, child_y, child_z, BlockDirection::South) {
+            child_entrance_boxes
+                .lock()
+                .unwrap_or_else(std::sync::PoisonError::into_inner)
+                .push(BlockBox::new(
+                    child_box.min.x,
+                    child_box.min.y,
+                    start_piece_box.max.z - 1,
+                    child_box.max.x,
+                    child_box.max.y,
+                    start_piece_box.max.z,
+                ));
+        }
+        pos += 4;
+    }
+}
+
+/// Corridors leaving the start room through its west and east walls, like
+/// [`add_north_south_exits`].
+fn add_west_east_exits(
+    children: &mut Children,
+    height_space: i32,
+    z_span: i32,
+    child_entrance_boxes: &Arc<Mutex<Vec<BlockBox>>>,
+) {
+    let start_piece_box = children.start_piece_box;
+    let mut pos = 0;
+    while pos < z_span {
+        pos += children.random.next_bounded_i32(z_span);
+        if pos + 3 > z_span {
+            break;
+        }
+        let child_x = start_piece_box.min.x - 1;
+        let child_y = start_piece_box.min.y + children.random.next_bounded_i32(height_space) + 1;
+        let child_z = start_piece_box.min.z + pos;
+
+        if let Some(child_box) = children.add(child_x, child_y, child_z, BlockDirection::West) {
+            child_entrance_boxes
+                .lock()
+                .unwrap_or_else(std::sync::PoisonError::into_inner)
+                .push(BlockBox::new(
+                    start_piece_box.min.x,
+                    child_box.min.y,
+                    child_box.min.z,
+                    start_piece_box.min.x + 1,
+                    child_box.max.y,
+                    child_box.max.z,
+                ));
+        }
+        pos += 4;
+    }
+
+    pos = 0;
+    while pos < z_span {
+        pos += children.random.next_bounded_i32(z_span);
+        if pos + 3 > z_span {
+            break;
+        }
+        let child_x = start_piece_box.max.x + 1;
+        let child_y = start_piece_box.min.y + children.random.next_bounded_i32(height_space) + 1;
+        let child_z = start_piece_box.min.z + pos;
+
+        if let Some(child_box) = children.add(child_x, child_y, child_z, BlockDirection::East) {
+            child_entrance_boxes
+                .lock()
+                .unwrap_or_else(std::sync::PoisonError::into_inner)
+                .push(BlockBox::new(
+                    start_piece_box.max.x - 1,
+                    child_box.min.y,
+                    child_box.min.z,
+                    start_piece_box.max.x,
+                    child_box.max.y,
+                    child_box.max.z,
+                ));
+        }
+        pos += 4;
     }
 }

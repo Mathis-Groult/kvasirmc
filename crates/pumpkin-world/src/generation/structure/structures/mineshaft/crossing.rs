@@ -1,6 +1,6 @@
 //! Mineshaft crossings: one- or two-floor junctions of four corridors.
 
-use pumpkin_data::Block;
+use pumpkin_data::{Block, BlockState};
 use pumpkin_util::{
     BlockDirection,
     math::{block_box::BlockBox, vector3::Vector3},
@@ -17,7 +17,7 @@ use crate::{
     },
 };
 
-use super::{MineshaftType, generate_and_add_piece, is_in_invalid_location};
+use super::{Children, MineshaftType, is_in_invalid_location};
 
 pub struct MineShaftCrossing {
     pub piece: StructurePiece,
@@ -76,7 +76,7 @@ impl MineShaftCrossing {
             .then_some(box_cand)
     }
 
-    #[expect(clippy::too_many_arguments, clippy::too_many_lines)]
+    #[expect(clippy::too_many_arguments)]
     pub(super) fn add_crossing_children(
         bb: &BlockBox,
         depth: u32,
@@ -88,202 +88,69 @@ impl MineShaftCrossing {
         random: &mut RandomGenerator,
     ) {
         let dir = direction.unwrap_or(BlockDirection::North);
+        let mut children = Children {
+            start_piece_box,
+            shaft_type,
+            depth,
+            collector,
+            random,
+        };
 
         match dir {
             BlockDirection::North => {
-                generate_and_add_piece(
-                    start_piece_box,
-                    collector,
-                    random,
-                    bb.min.x + 1,
-                    bb.min.y,
-                    bb.min.z - 1,
-                    BlockDirection::North,
-                    depth,
-                    shaft_type,
-                );
-                generate_and_add_piece(
-                    start_piece_box,
-                    collector,
-                    random,
-                    bb.min.x - 1,
-                    bb.min.y,
-                    bb.min.z + 1,
-                    BlockDirection::West,
-                    depth,
-                    shaft_type,
-                );
-                generate_and_add_piece(
-                    start_piece_box,
-                    collector,
-                    random,
-                    bb.max.x + 1,
-                    bb.min.y,
-                    bb.min.z + 1,
-                    BlockDirection::East,
-                    depth,
-                    shaft_type,
-                );
+                children.add(bb.min.x + 1, bb.min.y, bb.min.z - 1, BlockDirection::North);
+                children.add(bb.min.x - 1, bb.min.y, bb.min.z + 1, BlockDirection::West);
+                children.add(bb.max.x + 1, bb.min.y, bb.min.z + 1, BlockDirection::East);
             }
             BlockDirection::South => {
-                generate_and_add_piece(
-                    start_piece_box,
-                    collector,
-                    random,
-                    bb.min.x + 1,
-                    bb.min.y,
-                    bb.max.z + 1,
-                    BlockDirection::South,
-                    depth,
-                    shaft_type,
-                );
-                generate_and_add_piece(
-                    start_piece_box,
-                    collector,
-                    random,
-                    bb.min.x - 1,
-                    bb.min.y,
-                    bb.min.z + 1,
-                    BlockDirection::West,
-                    depth,
-                    shaft_type,
-                );
-                generate_and_add_piece(
-                    start_piece_box,
-                    collector,
-                    random,
-                    bb.max.x + 1,
-                    bb.min.y,
-                    bb.min.z + 1,
-                    BlockDirection::East,
-                    depth,
-                    shaft_type,
-                );
+                children.add(bb.min.x + 1, bb.min.y, bb.max.z + 1, BlockDirection::South);
+                children.add(bb.min.x - 1, bb.min.y, bb.min.z + 1, BlockDirection::West);
+                children.add(bb.max.x + 1, bb.min.y, bb.min.z + 1, BlockDirection::East);
             }
             BlockDirection::West => {
-                generate_and_add_piece(
-                    start_piece_box,
-                    collector,
-                    random,
-                    bb.min.x + 1,
-                    bb.min.y,
-                    bb.min.z - 1,
-                    BlockDirection::North,
-                    depth,
-                    shaft_type,
-                );
-                generate_and_add_piece(
-                    start_piece_box,
-                    collector,
-                    random,
-                    bb.min.x + 1,
-                    bb.min.y,
-                    bb.max.z + 1,
-                    BlockDirection::South,
-                    depth,
-                    shaft_type,
-                );
-                generate_and_add_piece(
-                    start_piece_box,
-                    collector,
-                    random,
-                    bb.min.x - 1,
-                    bb.min.y,
-                    bb.min.z + 1,
-                    BlockDirection::West,
-                    depth,
-                    shaft_type,
-                );
+                children.add(bb.min.x + 1, bb.min.y, bb.min.z - 1, BlockDirection::North);
+                children.add(bb.min.x + 1, bb.min.y, bb.max.z + 1, BlockDirection::South);
+                children.add(bb.min.x - 1, bb.min.y, bb.min.z + 1, BlockDirection::West);
             }
             BlockDirection::East => {
-                generate_and_add_piece(
-                    start_piece_box,
-                    collector,
-                    random,
-                    bb.min.x + 1,
-                    bb.min.y,
-                    bb.min.z - 1,
-                    BlockDirection::North,
-                    depth,
-                    shaft_type,
-                );
-                generate_and_add_piece(
-                    start_piece_box,
-                    collector,
-                    random,
-                    bb.min.x + 1,
-                    bb.min.y,
-                    bb.max.z + 1,
-                    BlockDirection::South,
-                    depth,
-                    shaft_type,
-                );
-                generate_and_add_piece(
-                    start_piece_box,
-                    collector,
-                    random,
-                    bb.max.x + 1,
-                    bb.min.y,
-                    bb.min.z + 1,
-                    BlockDirection::East,
-                    depth,
-                    shaft_type,
-                );
+                children.add(bb.min.x + 1, bb.min.y, bb.min.z - 1, BlockDirection::North);
+                children.add(bb.min.x + 1, bb.min.y, bb.max.z + 1, BlockDirection::South);
+                children.add(bb.max.x + 1, bb.min.y, bb.min.z + 1, BlockDirection::East);
             }
             _ => {}
         }
 
         if is_two_floored {
-            if random.next_bool() {
-                generate_and_add_piece(
-                    start_piece_box,
-                    collector,
-                    random,
+            if children.random.next_bool() {
+                children.add(
                     bb.min.x + 1,
                     bb.min.y + 4,
                     bb.min.z - 1,
                     BlockDirection::North,
-                    depth,
-                    shaft_type,
                 );
             }
-            if random.next_bool() {
-                generate_and_add_piece(
-                    start_piece_box,
-                    collector,
-                    random,
+            if children.random.next_bool() {
+                children.add(
                     bb.min.x - 1,
                     bb.min.y + 4,
                     bb.min.z + 1,
                     BlockDirection::West,
-                    depth,
-                    shaft_type,
                 );
             }
-            if random.next_bool() {
-                generate_and_add_piece(
-                    start_piece_box,
-                    collector,
-                    random,
+            if children.random.next_bool() {
+                children.add(
                     bb.max.x + 1,
                     bb.min.y + 4,
                     bb.min.z + 1,
                     BlockDirection::East,
-                    depth,
-                    shaft_type,
                 );
             }
-            if random.next_bool() {
-                generate_and_add_piece(
-                    start_piece_box,
-                    collector,
-                    random,
+            if children.random.next_bool() {
+                children.add(
                     bb.min.x + 1,
                     bb.min.y + 4,
                     bb.max.z + 1,
                     BlockDirection::South,
-                    depth,
-                    shaft_type,
                 );
             }
         }
@@ -303,7 +170,6 @@ impl StructurePieceBase for MineShaftCrossing {
         &mut self.piece
     }
 
-    #[allow(clippy::too_many_lines)]
     fn place(
         &mut self,
         chunk: &mut ProtoChunk,
@@ -321,38 +187,8 @@ impl StructurePieceBase for MineShaftCrossing {
         let bb = self.piece.bounding_box;
 
         if self.is_two_floored {
-            for y in bb.min.y..=(bb.min.y + 2) {
-                for x in (bb.min.x + 1)..bb.max.x {
-                    for z in bb.min.z..=bb.max.z {
-                        if chunk_box.contains(x, y, z) {
-                            chunk.set_block_state(x, y, z, air);
-                        }
-                    }
-                }
-                for x in bb.min.x..=bb.max.x {
-                    for z in (bb.min.z + 1)..bb.max.z {
-                        if chunk_box.contains(x, y, z) {
-                            chunk.set_block_state(x, y, z, air);
-                        }
-                    }
-                }
-            }
-            for y in (bb.max.y - 2)..=bb.max.y {
-                for x in (bb.min.x + 1)..bb.max.x {
-                    for z in bb.min.z..=bb.max.z {
-                        if chunk_box.contains(x, y, z) {
-                            chunk.set_block_state(x, y, z, air);
-                        }
-                    }
-                }
-                for x in bb.min.x..=bb.max.x {
-                    for z in (bb.min.z + 1)..bb.max.z {
-                        if chunk_box.contains(x, y, z) {
-                            chunk.set_block_state(x, y, z, air);
-                        }
-                    }
-                }
-            }
+            clear_cross(chunk, chunk_box, &bb, bb.min.y..=(bb.min.y + 2), air);
+            clear_cross(chunk, chunk_box, &bb, (bb.max.y - 2)..=bb.max.y, air);
             let mid_y = bb.min.y + 3;
             for x in (bb.min.x + 1)..bb.max.x {
                 for z in (bb.min.z + 1)..bb.max.z {
@@ -362,22 +198,7 @@ impl StructurePieceBase for MineShaftCrossing {
                 }
             }
         } else {
-            for y in bb.min.y..=bb.max.y {
-                for x in (bb.min.x + 1)..bb.max.x {
-                    for z in bb.min.z..=bb.max.z {
-                        if chunk_box.contains(x, y, z) {
-                            chunk.set_block_state(x, y, z, air);
-                        }
-                    }
-                }
-                for x in bb.min.x..=bb.max.x {
-                    for z in (bb.min.z + 1)..bb.max.z {
-                        if chunk_box.contains(x, y, z) {
-                            chunk.set_block_state(x, y, z, air);
-                        }
-                    }
-                }
-            }
+            clear_cross(chunk, chunk_box, &bb, bb.min.y..=bb.max.y, air);
         }
 
         for (cx, cz) in [
@@ -411,6 +232,33 @@ impl StructurePieceBase for MineShaftCrossing {
                     if !state.to_state().is_side_solid(BlockDirection::Up.into()) {
                         chunk.set_block_state(x, floor_y, z, planks);
                     }
+                }
+            }
+        }
+    }
+}
+
+/// Clears the plus-shaped floor plan of a crossing (the box without its four corner columns) on
+/// the rows `ys`.
+fn clear_cross(
+    chunk: &mut ProtoChunk,
+    chunk_box: &BlockBox,
+    bb: &BlockBox,
+    ys: std::ops::RangeInclusive<i32>,
+    air: &'static BlockState,
+) {
+    for y in ys {
+        for x in (bb.min.x + 1)..bb.max.x {
+            for z in bb.min.z..=bb.max.z {
+                if chunk_box.contains(x, y, z) {
+                    chunk.set_block_state(x, y, z, air);
+                }
+            }
+        }
+        for x in bb.min.x..=bb.max.x {
+            for z in (bb.min.z + 1)..bb.max.z {
+                if chunk_box.contains(x, y, z) {
+                    chunk.set_block_state(x, y, z, air);
                 }
             }
         }

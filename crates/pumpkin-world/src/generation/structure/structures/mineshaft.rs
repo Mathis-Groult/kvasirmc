@@ -275,6 +275,40 @@ fn generate_and_add_piece(
     }
 }
 
+/// The children of one mineshaft piece: the arguments of [`generate_and_add_piece`] that stay the
+/// same for all of them.
+struct Children<'a> {
+    start_piece_box: &'a BlockBox,
+    shaft_type: MineshaftType,
+    depth: u32,
+    collector: &'a mut StructurePiecesCollector,
+    random: &'a mut RandomGenerator,
+}
+
+impl Children<'_> {
+    /// Adds the piece starting at the foot position facing `direction` (with all its own children);
+    /// returns its box when one was added.
+    fn add(
+        &mut self,
+        foot_x: i32,
+        foot_y: i32,
+        foot_z: i32,
+        direction: BlockDirection,
+    ) -> Option<BlockBox> {
+        generate_and_add_piece(
+            self.start_piece_box,
+            self.collector,
+            self.random,
+            foot_x,
+            foot_y,
+            foot_z,
+            direction,
+            self.depth,
+            self.shaft_type,
+        )
+    }
+}
+
 const fn is_falling_block(block: &Block) -> bool {
     use pumpkin_data::BlockId;
     matches!(

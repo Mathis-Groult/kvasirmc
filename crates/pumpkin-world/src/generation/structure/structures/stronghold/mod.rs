@@ -264,7 +264,6 @@ impl StrongholdPiece {
         bb.min.y > 10
     }
 
-    #[allow(clippy::too_many_lines)]
     fn generate_entrance(
         &self,
         chunk: &mut ProtoChunk,
@@ -316,93 +315,102 @@ impl StrongholdPiece {
                 self.piece
                     .add_block(chunk, door_upper, x + 1, y + 1, z, box_limit);
             }
-            EntranceType::Grates => {
-                let air = Block::CAVE_AIR.default_state;
-                let mut props = OakFenceLikeProperties::default(&Block::IRON_BARS);
-
-                // North-South facing bars
-                props.west = true;
-                let bar_w = BlockState::from_id(props.to_state_id(&Block::IRON_BARS));
-                props.west = false;
-                props.east = true;
-                let bar_e = BlockState::from_id(props.to_state_id(&Block::IRON_BARS));
-                props.west = true;
-                let bar_ew = BlockState::from_id(props.to_state_id(&Block::IRON_BARS));
-
-                self.piece.add_block(chunk, air, x + 1, y, z, box_limit);
-                self.piece.add_block(chunk, air, x + 1, y + 1, z, box_limit);
-
-                // Left side (West connection)
-                self.piece.add_block(chunk, bar_w, x, y, z, box_limit);
-                self.piece.add_block(chunk, bar_w, x, y + 1, z, box_limit);
-
-                // // Top beam (Connected East-West)
-                self.piece.add_block(chunk, bar_ew, x, y + 2, z, box_limit);
-                self.piece
-                    .add_block(chunk, bar_ew, x + 1, y + 2, z, box_limit);
-                self.piece
-                    .add_block(chunk, bar_ew, x + 2, y + 2, z, box_limit);
-
-                // // Right side (East connection)
-                self.piece
-                    .add_block(chunk, bar_e, x + 2, y + 1, z, box_limit);
-                self.piece.add_block(chunk, bar_e, x + 2, y, z, box_limit);
-            }
-            EntranceType::IronDoor => {
-                let stone = Block::STONE_BRICKS.default_state;
-                let door_lower = Block::IRON_DOOR.default_state;
-                let mut door_upper = OakDoorLikeProperties::default(&Block::IRON_DOOR);
-                door_upper.half = DoubleBlockHalf::Upper;
-                let door_upper = BlockState::from_id(door_upper.to_state_id(&Block::IRON_DOOR));
-                let mut props = LeverLikeProperties::default(&Block::STONE_BUTTON);
-                props.facing = HorizontalFacing::North;
-                let button_n = BlockState::from_id(props.to_state_id(&Block::STONE_BUTTON));
-                props.facing = HorizontalFacing::South;
-                let button_s = BlockState::from_id(props.to_state_id(&Block::STONE_BUTTON));
-
-                // Frame
-                self.piece.fill_with_outline(
-                    chunk,
-                    box_limit,
-                    false,
-                    x,
-                    y,
-                    z,
-                    x,
-                    y + 2,
-                    z,
-                    stone,
-                    stone,
-                );
-                self.piece
-                    .add_block(chunk, stone, x + 1, y + 2, z, box_limit);
-                self.piece.fill_with_outline(
-                    chunk,
-                    box_limit,
-                    false,
-                    x + 2,
-                    y,
-                    z,
-                    x + 2,
-                    y + 2,
-                    z,
-                    stone,
-                    stone,
-                );
-
-                // Door
-                self.piece
-                    .add_block(chunk, door_lower, x + 1, y, z, box_limit);
-                self.piece
-                    .add_block(chunk, door_upper, x + 1, y + 1, z, box_limit);
-
-                // Buttons
-                self.piece
-                    .add_block(chunk, button_n, x + 2, y + 1, z + 1, box_limit);
-                self.piece
-                    .add_block(chunk, button_s, x + 2, y + 1, z - 1, box_limit);
-            }
+            EntranceType::Grates => self.grates_entrance(chunk, box_limit, x, y, z),
+            EntranceType::IronDoor => self.iron_door_entrance(chunk, box_limit, x, y, z),
         }
+    }
+
+    /// An opening closed by iron bars on three sides, open in the middle.
+    fn grates_entrance(
+        &self,
+        chunk: &mut ProtoChunk,
+        box_limit: &BlockBox,
+        x: i32,
+        y: i32,
+        z: i32,
+    ) {
+        let air = Block::CAVE_AIR.default_state;
+        let mut props = OakFenceLikeProperties::default(&Block::IRON_BARS);
+
+        // North-South facing bars
+        props.west = true;
+        let bar_w = BlockState::from_id(props.to_state_id(&Block::IRON_BARS));
+        props.west = false;
+        props.east = true;
+        let bar_e = BlockState::from_id(props.to_state_id(&Block::IRON_BARS));
+        props.west = true;
+        let bar_ew = BlockState::from_id(props.to_state_id(&Block::IRON_BARS));
+
+        self.piece.add_block(chunk, air, x + 1, y, z, box_limit);
+        self.piece.add_block(chunk, air, x + 1, y + 1, z, box_limit);
+
+        // Left side (West connection)
+        self.piece.add_block(chunk, bar_w, x, y, z, box_limit);
+        self.piece.add_block(chunk, bar_w, x, y + 1, z, box_limit);
+
+        // // Top beam (Connected East-West)
+        self.piece.add_block(chunk, bar_ew, x, y + 2, z, box_limit);
+        self.piece
+            .add_block(chunk, bar_ew, x + 1, y + 2, z, box_limit);
+        self.piece
+            .add_block(chunk, bar_ew, x + 2, y + 2, z, box_limit);
+
+        // // Right side (East connection)
+        self.piece
+            .add_block(chunk, bar_e, x + 2, y + 1, z, box_limit);
+        self.piece.add_block(chunk, bar_e, x + 2, y, z, box_limit);
+    }
+
+    /// A stone brick frame with an iron door and a stone button on each side.
+    fn iron_door_entrance(
+        &self,
+        chunk: &mut ProtoChunk,
+        box_limit: &BlockBox,
+        x: i32,
+        y: i32,
+        z: i32,
+    ) {
+        let stone = Block::STONE_BRICKS.default_state;
+        let door_lower = Block::IRON_DOOR.default_state;
+        let mut door_upper = OakDoorLikeProperties::default(&Block::IRON_DOOR);
+        door_upper.half = DoubleBlockHalf::Upper;
+        let door_upper = BlockState::from_id(door_upper.to_state_id(&Block::IRON_DOOR));
+        let mut props = LeverLikeProperties::default(&Block::STONE_BUTTON);
+        props.facing = HorizontalFacing::North;
+        let button_n = BlockState::from_id(props.to_state_id(&Block::STONE_BUTTON));
+        props.facing = HorizontalFacing::South;
+        let button_s = BlockState::from_id(props.to_state_id(&Block::STONE_BUTTON));
+
+        // Frame
+        self.piece
+            .fill_with_outline(chunk, box_limit, false, x, y, z, x, y + 2, z, stone, stone);
+        self.piece
+            .add_block(chunk, stone, x + 1, y + 2, z, box_limit);
+        self.piece.fill_with_outline(
+            chunk,
+            box_limit,
+            false,
+            x + 2,
+            y,
+            z,
+            x + 2,
+            y + 2,
+            z,
+            stone,
+            stone,
+        );
+
+        // Door
+        self.piece
+            .add_block(chunk, door_lower, x + 1, y, z, box_limit);
+        self.piece
+            .add_block(chunk, door_upper, x + 1, y + 1, z, box_limit);
+
+        // Buttons
+        self.piece
+            .add_block(chunk, button_n, x + 2, y + 1, z + 1, box_limit);
+        self.piece
+            .add_block(chunk, button_s, x + 2, y + 1, z - 1, box_limit);
     }
 }
 
@@ -463,7 +471,6 @@ impl StrongholdState {
     }
 }
 
-#[expect(clippy::too_many_lines)]
 fn add_children(
     child: &PendingChild,
     start_box: &BlockBox,
@@ -472,20 +479,18 @@ fn add_children(
     collector: &mut StructurePiecesCollector,
     pending_children: &mut Vec<PendingChild>,
 ) {
+    let mut growth = Growth {
+        start_box,
+        state,
+        random,
+        collector,
+        pending_children,
+    };
     match child.piece_type {
         StrongholdPieceType::ChestCorridor
         | StrongholdPieceType::PrisonHall
         | StrongholdPieceType::Stairs => {
-            generate_child_forward(
-                child,
-                start_box,
-                state,
-                random,
-                collector,
-                pending_children,
-                1,
-                1,
-            );
+            growth.forward(child, 1, 1);
         }
         StrongholdPieceType::FiveWayCrossing => {
             let mut z_off_a = 3;
@@ -497,206 +502,113 @@ fn add_children(
                 z_off_b = 8 - z_off_b;
             }
 
-            generate_child_forward(
-                child,
-                start_box,
-                state,
-                random,
-                collector,
-                pending_children,
-                5,
-                1,
-            );
+            growth.forward(child, 5, 1);
             if child.lower_left {
-                generate_child_left(
-                    child,
-                    start_box,
-                    state,
-                    random,
-                    collector,
-                    pending_children,
-                    z_off_a,
-                    1,
-                );
+                growth.left(child, z_off_a, 1);
             }
             if child.upper_left {
-                generate_child_left(
-                    child,
-                    start_box,
-                    state,
-                    random,
-                    collector,
-                    pending_children,
-                    z_off_b,
-                    7,
-                );
+                growth.left(child, z_off_b, 7);
             }
             if child.lower_right {
-                generate_child_right(
-                    child,
-                    start_box,
-                    state,
-                    random,
-                    collector,
-                    pending_children,
-                    z_off_a,
-                    1,
-                );
+                growth.right(child, z_off_a, 1);
             }
             if child.upper_right {
-                generate_child_right(
-                    child,
-                    start_box,
-                    state,
-                    random,
-                    collector,
-                    pending_children,
-                    z_off_b,
-                    7,
-                );
+                growth.right(child, z_off_b, 7);
             }
         }
         StrongholdPieceType::LeftTurn => {
             if child.orientation != BlockDirection::North
                 && child.orientation != BlockDirection::East
             {
-                generate_child_right(
-                    child,
-                    start_box,
-                    state,
-                    random,
-                    collector,
-                    pending_children,
-                    1,
-                    1,
-                );
+                growth.right(child, 1, 1);
             } else {
-                generate_child_left(
-                    child,
-                    start_box,
-                    state,
-                    random,
-                    collector,
-                    pending_children,
-                    1,
-                    1,
-                );
+                growth.left(child, 1, 1);
             }
         }
         StrongholdPieceType::Library | StrongholdPieceType::SmallCorridor => {}
         StrongholdPieceType::PortalRoom => {
-            state.has_portal_room = true;
+            growth.state.has_portal_room = true;
         }
         StrongholdPieceType::RightTurn => {
             if child.orientation != BlockDirection::North
                 && child.orientation != BlockDirection::East
             {
-                generate_child_left(
-                    child,
-                    start_box,
-                    state,
-                    random,
-                    collector,
-                    pending_children,
-                    1,
-                    1,
-                );
+                growth.left(child, 1, 1);
             } else {
-                generate_child_right(
-                    child,
-                    start_box,
-                    state,
-                    random,
-                    collector,
-                    pending_children,
-                    1,
-                    1,
-                );
+                growth.right(child, 1, 1);
             }
         }
         StrongholdPieceType::SquareRoom => {
-            generate_child_forward(
-                child,
-                start_box,
-                state,
-                random,
-                collector,
-                pending_children,
-                4,
-                1,
-            );
-            generate_child_left(
-                child,
-                start_box,
-                state,
-                random,
-                collector,
-                pending_children,
-                1,
-                4,
-            );
-            generate_child_right(
-                child,
-                start_box,
-                state,
-                random,
-                collector,
-                pending_children,
-                1,
-                4,
-            );
+            growth.forward(child, 4, 1);
+            growth.left(child, 1, 4);
+            growth.right(child, 1, 4);
         }
         StrongholdPieceType::SpiralStaircase => {
             if child.is_source {
-                state.imposed_piece = Some(StrongholdPieceType::FiveWayCrossing);
+                growth.state.imposed_piece = Some(StrongholdPieceType::FiveWayCrossing);
             }
-            generate_child_forward(
-                child,
-                start_box,
-                state,
-                random,
-                collector,
-                pending_children,
-                1,
-                1,
-            );
+            growth.forward(child, 1, 1);
         }
         StrongholdPieceType::Corridor => {
-            generate_child_forward(
-                child,
-                start_box,
-                state,
-                random,
-                collector,
-                pending_children,
-                1,
-                1,
-            );
+            growth.forward(child, 1, 1);
             if child.left_child {
-                generate_child_left(
-                    child,
-                    start_box,
-                    state,
-                    random,
-                    collector,
-                    pending_children,
-                    1,
-                    2,
-                );
+                growth.left(child, 1, 2);
             }
             if child.right_child {
-                generate_child_right(
-                    child,
-                    start_box,
-                    state,
-                    random,
-                    collector,
-                    pending_children,
-                    1,
-                    2,
-                );
+                growth.right(child, 1, 2);
             }
         }
+    }
+}
+
+/// The arguments that `generate_child_forward`, `_left` and `_right` share while one piece's
+/// children are added.
+struct Growth<'a, R: RandomImpl> {
+    start_box: &'a BlockBox,
+    state: &'a mut StrongholdState,
+    random: &'a mut R,
+    collector: &'a mut StructurePiecesCollector,
+    pending_children: &'a mut Vec<PendingChild>,
+}
+
+impl<R: RandomImpl> Growth<'_, R> {
+    fn forward(&mut self, child: &PendingChild, x_off: i32, y_off: i32) {
+        generate_child_forward(
+            child,
+            self.start_box,
+            self.state,
+            self.random,
+            self.collector,
+            self.pending_children,
+            x_off,
+            y_off,
+        );
+    }
+
+    fn left(&mut self, child: &PendingChild, y_off: i32, z_off: i32) {
+        generate_child_left(
+            child,
+            self.start_box,
+            self.state,
+            self.random,
+            self.collector,
+            self.pending_children,
+            y_off,
+            z_off,
+        );
+    }
+
+    fn right(&mut self, child: &PendingChild, y_off: i32, z_off: i32) {
+        generate_child_right(
+            child,
+            self.start_box,
+            self.state,
+            self.random,
+            self.collector,
+            self.pending_children,
+            y_off,
+            z_off,
+        );
     }
 }
 

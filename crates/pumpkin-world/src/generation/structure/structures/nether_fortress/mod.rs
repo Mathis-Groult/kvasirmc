@@ -203,7 +203,6 @@ struct FortressState {
     available_castle_pieces: Vec<PieceWeight>,
 }
 
-#[expect(clippy::too_many_lines)]
 fn add_children(
     child: &PendingChild,
     start_box: &BlockBox,
@@ -212,245 +211,116 @@ fn add_children(
     collector: &mut StructurePiecesCollector,
     pending_children: &mut Vec<PendingChild>,
 ) {
+    let mut growth = Growth {
+        start_box,
+        state,
+        random,
+        collector,
+        pending_children,
+    };
     match child.piece_type {
         NetherFortressPieceType::BridgeCrossing => {
-            generate_child_forward(
-                child,
-                start_box,
-                state,
-                random,
-                collector,
-                pending_children,
-                8,
-                3,
-                false,
-            );
-            generate_child_left(
-                child,
-                start_box,
-                state,
-                random,
-                collector,
-                pending_children,
-                3,
-                8,
-                false,
-            );
-            generate_child_right(
-                child,
-                start_box,
-                state,
-                random,
-                collector,
-                pending_children,
-                3,
-                8,
-                false,
-            );
+            growth.forward(child, 8, 3, false);
+            growth.left(child, 3, 8, false);
+            growth.right(child, 3, 8, false);
         }
         NetherFortressPieceType::Bridge => {
-            generate_child_forward(
-                child,
-                start_box,
-                state,
-                random,
-                collector,
-                pending_children,
-                1,
-                3,
-                false,
-            );
+            growth.forward(child, 1, 3, false);
         }
         NetherFortressPieceType::BridgeSmallCrossing => {
-            generate_child_forward(
-                child,
-                start_box,
-                state,
-                random,
-                collector,
-                pending_children,
-                2,
-                0,
-                false,
-            );
-            generate_child_left(
-                child,
-                start_box,
-                state,
-                random,
-                collector,
-                pending_children,
-                0,
-                2,
-                false,
-            );
-            generate_child_right(
-                child,
-                start_box,
-                state,
-                random,
-                collector,
-                pending_children,
-                0,
-                2,
-                false,
-            );
+            growth.forward(child, 2, 0, false);
+            growth.left(child, 0, 2, false);
+            growth.right(child, 0, 2, false);
         }
         NetherFortressPieceType::BridgeStairs => {
-            generate_child_right(
-                child,
-                start_box,
-                state,
-                random,
-                collector,
-                pending_children,
-                6,
-                2,
-                false,
-            );
+            growth.right(child, 6, 2, false);
         }
         NetherFortressPieceType::BridgePlatform | NetherFortressPieceType::BridgeEnd => {}
         NetherFortressPieceType::CorridorExit => {
-            generate_child_forward(
-                child,
-                start_box,
-                state,
-                random,
-                collector,
-                pending_children,
-                5,
-                3,
-                true,
-            );
+            growth.forward(child, 5, 3, true);
         }
         NetherFortressPieceType::SmallCorridor | NetherFortressPieceType::CorridorStairs => {
-            generate_child_forward(
-                child,
-                start_box,
-                state,
-                random,
-                collector,
-                pending_children,
-                1,
-                0,
-                true,
-            );
+            growth.forward(child, 1, 0, true);
         }
         NetherFortressPieceType::CorridorCrossing => {
-            generate_child_forward(
-                child,
-                start_box,
-                state,
-                random,
-                collector,
-                pending_children,
-                1,
-                0,
-                true,
-            );
-            generate_child_left(
-                child,
-                start_box,
-                state,
-                random,
-                collector,
-                pending_children,
-                0,
-                1,
-                true,
-            );
-            generate_child_right(
-                child,
-                start_box,
-                state,
-                random,
-                collector,
-                pending_children,
-                0,
-                1,
-                true,
-            );
+            growth.forward(child, 1, 0, true);
+            growth.left(child, 0, 1, true);
+            growth.right(child, 0, 1, true);
         }
         NetherFortressPieceType::CorridorRightTurn => {
-            generate_child_right(
-                child,
-                start_box,
-                state,
-                random,
-                collector,
-                pending_children,
-                0,
-                1,
-                true,
-            );
+            growth.right(child, 0, 1, true);
         }
         NetherFortressPieceType::CorridorLeftTurn => {
-            generate_child_left(
-                child,
-                start_box,
-                state,
-                random,
-                collector,
-                pending_children,
-                0,
-                1,
-                true,
-            );
+            growth.left(child, 0, 1, true);
         }
         NetherFortressPieceType::CorridorBalcony => {
             let z_off = match child.orientation {
                 BlockDirection::West | BlockDirection::North => 5,
                 _ => 1,
             };
-            let is_castle_left = random.next_bounded_i32(8) > 0;
-            generate_child_left(
-                child,
-                start_box,
-                state,
-                random,
-                collector,
-                pending_children,
-                0,
-                z_off,
-                is_castle_left,
-            );
-            let is_castle_right = random.next_bounded_i32(8) > 0;
-            generate_child_right(
-                child,
-                start_box,
-                state,
-                random,
-                collector,
-                pending_children,
-                0,
-                z_off,
-                is_castle_right,
-            );
+            let is_castle_left = growth.random.next_bounded_i32(8) > 0;
+            growth.left(child, 0, z_off, is_castle_left);
+            let is_castle_right = growth.random.next_bounded_i32(8) > 0;
+            growth.right(child, 0, z_off, is_castle_right);
         }
         NetherFortressPieceType::CorridorNetherWartsRoom => {
-            generate_child_forward(
-                child,
-                start_box,
-                state,
-                random,
-                collector,
-                pending_children,
-                5,
-                3,
-                true,
-            );
-            generate_child_forward(
-                child,
-                start_box,
-                state,
-                random,
-                collector,
-                pending_children,
-                5,
-                11,
-                true,
-            );
+            growth.forward(child, 5, 3, true);
+            growth.forward(child, 5, 11, true);
         }
+    }
+}
+
+/// The arguments that `generate_child_forward`, `_left` and `_right` share while one piece's
+/// children are added.
+struct Growth<'a, R: RandomImpl> {
+    start_box: &'a BlockBox,
+    state: &'a mut FortressState,
+    random: &'a mut R,
+    collector: &'a mut StructurePiecesCollector,
+    pending_children: &'a mut Vec<PendingChild>,
+}
+
+impl<R: RandomImpl> Growth<'_, R> {
+    fn forward(&mut self, child: &PendingChild, x_off: i32, y_off: i32, is_castle: bool) {
+        generate_child_forward(
+            child,
+            self.start_box,
+            self.state,
+            self.random,
+            self.collector,
+            self.pending_children,
+            x_off,
+            y_off,
+            is_castle,
+        );
+    }
+
+    fn left(&mut self, child: &PendingChild, y_off: i32, z_off: i32, is_castle: bool) {
+        generate_child_left(
+            child,
+            self.start_box,
+            self.state,
+            self.random,
+            self.collector,
+            self.pending_children,
+            y_off,
+            z_off,
+            is_castle,
+        );
+    }
+
+    fn right(&mut self, child: &PendingChild, y_off: i32, z_off: i32, is_castle: bool) {
+        generate_child_right(
+            child,
+            self.start_box,
+            self.state,
+            self.random,
+            self.collector,
+            self.pending_children,
+            y_off,
+            z_off,
+            is_castle,
+        );
     }
 }
 

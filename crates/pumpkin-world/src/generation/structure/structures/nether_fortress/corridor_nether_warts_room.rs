@@ -240,3 +240,23 @@ impl StructurePieceBase for CorridorNetherWartsRoomPiece {
         }
     }
 }
+
+#[cfg(test)]
+mod place_golden {
+    use super::*;
+    use crate::generation::proto_chunk_test::piece_golden;
+
+    #[test]
+    fn nether_warts_room_places_the_same_blocks() -> Result<(), Box<dyn std::error::Error>> {
+        piece_golden::check("nether_fortress_nether_warts_room_place", |facing| {
+            let bbox = BlockBox::rotated(8, 64, 8, -5, -3, 0, 13, 14, 13, &facing);
+            let mut piece = NetherFortressPiece::new(
+                StructurePieceType::NetherFortressCorridorNetherWartsRoom,
+                0,
+                bbox,
+            );
+            piece.piece.set_facing(Some(facing));
+            Box::new(CorridorNetherWartsRoomPiece { piece })
+        })
+    }
+}

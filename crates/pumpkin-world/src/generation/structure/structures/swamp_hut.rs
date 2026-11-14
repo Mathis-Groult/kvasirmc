@@ -348,3 +348,31 @@ impl StructurePieceBase for SwampHutPiece {
         &mut self.shiftable_structure_piece.piece
     }
 }
+
+#[cfg(test)]
+mod place_golden {
+    use super::*;
+    use crate::generation::proto_chunk_test::piece_golden;
+
+    #[test]
+    fn swamp_hut_places_the_same_blocks() -> Result<(), Box<dyn std::error::Error>> {
+        piece_golden::check("swamp_hut_place", |facing| {
+            let mut shiftable_structure_piece = ShiftableStructurePiece::new(
+                StructurePieceType::SwampHut,
+                8,
+                64,
+                8,
+                7,
+                7,
+                9,
+                facing.get_axis(),
+            );
+            shiftable_structure_piece.piece.set_facing(Some(facing));
+            Box::new(SwampHutPiece {
+                shiftable_structure_piece,
+                spawned_witch: false,
+                spawned_cat: false,
+            })
+        })
+    }
+}

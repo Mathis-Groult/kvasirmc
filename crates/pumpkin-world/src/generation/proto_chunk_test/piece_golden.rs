@@ -68,6 +68,10 @@ fn fill_terrain(chunk: &mut ProtoChunk, terrain: Terrain) {
             }
         }
     }
+    // Pieces that sit on the ground read the world-generation heightmaps, which
+    // `set_block_state` does not maintain.
+    chunk.flat_surface_wg_height_map = chunk.flat_surface_height_map;
+    chunk.flat_ocean_floor_wg_height_map = chunk.flat_ocean_floor_height_map;
 }
 
 /// FNV-1a over the state ids of every block of the chunk, with the number of blocks that are not
@@ -101,6 +105,28 @@ fn block_entities(chunk: &ProtoChunk) -> (usize, u64) {
         hash = (hash ^ u64::from(byte)).wrapping_mul(0x0100_0000_01b3);
     }
     (chunk.pending_block_entities.len(), hash)
+}
+
+/// Structure entities (mobs the piece spawns) and scheduled fluid ticks, written only when the
+/// piece made any, so the lines of pieces without them keep their earlier form.
+fn write_spawns_and_ticks(out: &mut String, chunk: &mut ProtoChunk) -> std::fmt::Result {
+    let spawned = chunk.take_pending_structure_entities();
+    if !spawned.is_empty() {
+        let mut text = String::new();
+        for nbt in &spawned {
+            compound_text(nbt, &mut text);
+        }
+        write!(out, " se={}:{text}", spawned.len())?;
+    }
+    for tick in &chunk.fluid_ticks {
+        let position = tick.position.0;
+        write!(
+            out,
+            " ft=({},{},{}){}",
+            position.x, position.y, position.z, tick.value.name
+        )?;
+    }
+    Ok(())
 }
 
 /// The chunk coordinates the bounding box of `piece` touches.
@@ -148,11 +174,13 @@ fn place_everywhere(
         let (solid, hash) = fingerprint(&chunk);
         let (entities, entity_hash) = block_entities(&chunk);
         let bounds = piece.get_structure_piece().bounding_box;
-        writeln!(
+        write!(
             out,
             "{label} chunk=({chunk_x},{chunk_z}) solid={solid} hash={hash:016x} box=({},{},{})..({},{},{}) be={entities}:{entity_hash:016x}",
             bounds.min.x, bounds.min.y, bounds.min.z, bounds.max.x, bounds.max.y, bounds.max.z
         )?;
+        write_spawns_and_ticks(&mut out, &mut chunk)?;
+        out.push('\n');
     }
     Ok(out)
 }

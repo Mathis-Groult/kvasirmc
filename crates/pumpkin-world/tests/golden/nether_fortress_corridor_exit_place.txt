@@ -1,0 +1,48 @@
+North/Flat/1 chunk=(0,-1) solid=32939 hash=6e7676c625f88df8 box=(3,61,-4)..(15,74,8) be=0:cbf29ce484222325
+North/Flat/1 chunk=(0,0) solid=33402 hash=b209c9d5cf34aee5 box=(3,61,-4)..(15,74,8) be=0:cbf29ce484222325 ft=(9,66,2)lava
+North/Flat/987654321 chunk=(0,-1) solid=32939 hash=6e7676c625f88df8 box=(3,61,-4)..(15,74,8) be=0:cbf29ce484222325
+North/Flat/987654321 chunk=(0,0) solid=33402 hash=b209c9d5cf34aee5 box=(3,61,-4)..(15,74,8) be=0:cbf29ce484222325 ft=(9,66,2)lava
+North/Hilly/1 chunk=(0,-1) solid=32919 hash=d1565f86365345f8 box=(3,61,-4)..(15,74,8) be=0:cbf29ce484222325
+North/Hilly/1 chunk=(0,0) solid=33348 hash=c851a03e16bc62d9 box=(3,61,-4)..(15,74,8) be=0:cbf29ce484222325 ft=(9,66,2)lava
+North/Hilly/987654321 chunk=(0,-1) solid=32919 hash=d1565f86365345f8 box=(3,61,-4)..(15,74,8) be=0:cbf29ce484222325
+North/Hilly/987654321 chunk=(0,0) solid=33348 hash=c851a03e16bc62d9 box=(3,61,-4)..(15,74,8) be=0:cbf29ce484222325 ft=(9,66,2)lava
+North/Empty/1 chunk=(0,-1) solid=2312 hash=697ba6ed48717db5 box=(3,61,-4)..(15,74,8) be=0:cbf29ce484222325
+North/Empty/1 chunk=(0,0) solid=6547 hash=6482783f8f9dd188 box=(3,61,-4)..(15,74,8) be=0:cbf29ce484222325 ft=(9,66,2)lava
+North/Empty/987654321 chunk=(0,-1) solid=2312 hash=697ba6ed48717db5 box=(3,61,-4)..(15,74,8) be=0:cbf29ce484222325
+North/Empty/987654321 chunk=(0,0) solid=6547 hash=6482783f8f9dd188 box=(3,61,-4)..(15,74,8) be=0:cbf29ce484222325 ft=(9,66,2)lava
+South/Flat/1 chunk=(0,0) solid=33311 hash=8baac69670082624 box=(3,61,8)..(15,74,20) be=0:cbf29ce484222325 ft=(9,66,14)lava
+South/Flat/1 chunk=(0,1) solid=33030 hash=e485844269f55e31 box=(3,61,8)..(15,74,20) be=0:cbf29ce484222325
+South/Flat/987654321 chunk=(0,0) solid=33311 hash=8baac69670082624 box=(3,61,8)..(15,74,20) be=0:cbf29ce484222325 ft=(9,66,14)lava
+South/Flat/987654321 chunk=(0,1) solid=33030 hash=e485844269f55e31 box=(3,61,8)..(15,74,20) be=0:cbf29ce484222325
+South/Hilly/1 chunk=(0,0) solid=33265 hash=4b7e778aef830e3c box=(3,61,8)..(15,74,20) be=0:cbf29ce484222325 ft=(9,66,14)lava
+South/Hilly/1 chunk=(0,1) solid=33009 hash=fa980860f8603354 box=(3,61,8)..(15,74,20) be=0:cbf29ce484222325
+South/Hilly/987654321 chunk=(0,0) solid=33265 hash=4b7e778aef830e3c box=(3,61,8)..(15,74,20) be=0:cbf29ce484222325 ft=(9,66,14)lava
+South/Hilly/987654321 chunk=(0,1) solid=33009 hash=fa980860f8603354 box=(3,61,8)..(15,74,20) be=0:cbf29ce484222325
+South/Empty/1 chunk=(0,0) solid=5702 hash=1f47c4a721cf26e9 box=(3,61,8)..(15,74,20) be=0:cbf29ce484222325 ft=(9,66,14)lava
+South/Empty/1 chunk=(0,1) solid=3157 hash=9e59e0fc07bf4bec box=(3,61,8)..(15,74,20) be=0:cbf29ce484222325
+South/Empty/987654321 chunk=(0,0) solid=5702 hash=1f47c4a721cf26e9 box=(3,61,8)..(15,74,20) be=0:cbf29ce484222325 ft=(9,66,14)lava
+South/Empty/987654321 chunk=(0,1) solid=3157 hash=9e59e0fc07bf4bec box=(3,61,8)..(15,74,20) be=0:cbf29ce484222325
+East/Flat/1 chunk=(0,0) solid=33311 hash=1133fbd05ab9338c box=(8,61,3)..(20,74,15) be=0:cbf29ce484222325 ft=(14,66,9)lava
+East/Flat/1 chunk=(1,0) solid=33030 hash=7bc7f1d7e88c6979 box=(8,61,3)..(20,74,15) be=0:cbf29ce484222325
+East/Flat/987654321 chunk=(0,0) solid=33311 hash=1133fbd05ab9338c box=(8,61,3)..(20,74,15) be=0:cbf29ce484222325 ft=(14,66,9)lava
+East/Flat/987654321 chunk=(1,0) solid=33030 hash=7bc7f1d7e88c6979 box=(8,61,3)..(20,74,15) be=0:cbf29ce484222325
+East/Hilly/1 chunk=(0,0) solid=33261 hash=7b63298dafe098e4 box=(8,61,3)..(20,74,15) be=0:cbf29ce484222325 ft=(14,66,9)lava
+East/Hilly/1 chunk=(1,0) solid=32999 hash=03416c9138ecd8bc box=(8,61,3)..(20,74,15) be=0:cbf29ce484222325
+East/Hilly/987654321 chunk=(0,0) solid=33261 hash=7b63298dafe098e4 box=(8,61,3)..(20,74,15) be=0:cbf29ce484222325 ft=(14,66,9)lava
+East/Hilly/987654321 chunk=(1,0) solid=32999 hash=03416c9138ecd8bc box=(8,61,3)..(20,74,15) be=0:cbf29ce484222325
+East/Empty/1 chunk=(0,0) solid=5702 hash=3d2518a45c11cf81 box=(8,61,3)..(20,74,15) be=0:cbf29ce484222325 ft=(14,66,9)lava
+East/Empty/1 chunk=(1,0) solid=3157 hash=64b9a1637372e1c4 box=(8,61,3)..(20,74,15) be=0:cbf29ce484222325
+East/Empty/987654321 chunk=(0,0) solid=5702 hash=3d2518a45c11cf81 box=(8,61,3)..(20,74,15) be=0:cbf29ce484222325 ft=(14,66,9)lava
+East/Empty/987654321 chunk=(1,0) solid=3157 hash=64b9a1637372e1c4 box=(8,61,3)..(20,74,15) be=0:cbf29ce484222325
+West/Flat/1 chunk=(-1,0) solid=32939 hash=346c3f3a6c3b68b0 box=(-4,61,3)..(8,74,15) be=0:cbf29ce484222325
+West/Flat/1 chunk=(0,0) solid=33402 hash=0849ee4edc88934d box=(-4,61,3)..(8,74,15) be=0:cbf29ce484222325 ft=(2,66,9)lava
+West/Flat/987654321 chunk=(-1,0) solid=32939 hash=346c3f3a6c3b68b0 box=(-4,61,3)..(8,74,15) be=0:cbf29ce484222325
+West/Flat/987654321 chunk=(0,0) solid=33402 hash=0849ee4edc88934d box=(-4,61,3)..(8,74,15) be=0:cbf29ce484222325 ft=(2,66,9)lava
+West/Hilly/1 chunk=(-1,0) solid=32917 hash=1b5e1e918a2dde14 box=(-4,61,3)..(8,74,15) be=0:cbf29ce484222325
+West/Hilly/1 chunk=(0,0) solid=33343 hash=30194477d8e90848 box=(-4,61,3)..(8,74,15) be=0:cbf29ce484222325 ft=(2,66,9)lava
+West/Hilly/987654321 chunk=(-1,0) solid=32917 hash=1b5e1e918a2dde14 box=(-4,61,3)..(8,74,15) be=0:cbf29ce484222325
+West/Hilly/987654321 chunk=(0,0) solid=33343 hash=30194477d8e90848 box=(-4,61,3)..(8,74,15) be=0:cbf29ce484222325 ft=(2,66,9)lava
+West/Empty/1 chunk=(-1,0) solid=2312 hash=06659b1877801ccd box=(-4,61,3)..(8,74,15) be=0:cbf29ce484222325
+West/Empty/1 chunk=(0,0) solid=6547 hash=51602a904b18e150 box=(-4,61,3)..(8,74,15) be=0:cbf29ce484222325 ft=(2,66,9)lava
+West/Empty/987654321 chunk=(-1,0) solid=2312 hash=06659b1877801ccd box=(-4,61,3)..(8,74,15) be=0:cbf29ce484222325
+West/Empty/987654321 chunk=(0,0) solid=6547 hash=51602a904b18e150 box=(-4,61,3)..(8,74,15) be=0:cbf29ce484222325 ft=(2,66,9)lava

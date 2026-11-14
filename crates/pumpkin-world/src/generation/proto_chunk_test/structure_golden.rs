@@ -23,7 +23,8 @@ use crate::generation::{
         HeightSampler, StructureGenerator, StructureGeneratorContext, igloo::IglooGenerator,
         mansion::MansionGenerator, mineshaft::MineshaftGenerator,
         nether_fortress::NetherFortressGenerator, ocean_ruin::OceanRuinGenerator,
-        shipwreck::ShipwreckGenerator, stronghold::StrongholdGenerator,
+        ruined_portal::RuinedPortalGenerator, shipwreck::ShipwreckGenerator,
+        stronghold::StrongholdGenerator,
     },
 };
 
@@ -262,4 +263,59 @@ fn igloos_lay_out_and_place_the_same_blocks() -> Result<(), Box<dyn std::error::
     let starts: Vec<_> = (1..=8).map(|seed| (seed, 0, 0)).collect();
     let now = record_starts("igloo", &IglooGenerator, Terrain::Flat, &starts)?;
     check_golden("igloos", &now)
+}
+
+/// The columns of a test terrain as the structure height sampler sees them: stone up to its top,
+/// water to y = 62 over `Seabed`, air above.
+struct TerrainColumns(Terrain);
+
+impl HeightSampler for TerrainColumns {
+    fn estimate_height(&mut self, block_x: i32, block_z: i32) -> i32 {
+        self.0.top(block_x, block_z).map_or(-64, |top| top + 1)
+    }
+
+    fn sample_column_block(
+        &mut self,
+        block_x: i32,
+        block_z: i32,
+        y: i32,
+    ) -> Option<&'static pumpkin_data::BlockState> {
+        let top = self.0.top(block_x, block_z)?;
+        Some(if y <= top {
+            pumpkin_data::Block::STONE.default_state
+        } else if matches!(self.0, Terrain::Seabed) && y <= 62 {
+            pumpkin_data::Block::WATER.default_state
+        } else {
+            pumpkin_data::Block::AIR.default_state
+        })
+    }
+}
+
+#[test]
+fn ruined_portals_lay_out_and_place_the_same_blocks() -> Result<(), Box<dyn std::error::Error>> {
+    use pumpkin_data::structures::StructureKeys;
+    let world_gen = overworld();
+    let mut now = String::new();
+    for (variant, terrain) in [
+        (StructureKeys::RuinedPortal, Terrain::Flat),
+        (StructureKeys::RuinedPortalDesert, Terrain::Flat),
+        (StructureKeys::RuinedPortalJungle, Terrain::Hilly),
+        (StructureKeys::RuinedPortalSwamp, Terrain::Seabed),
+        (StructureKeys::RuinedPortalMountain, Terrain::Hilly),
+        (StructureKeys::RuinedPortalOcean, Terrain::Seabed),
+        (StructureKeys::RuinedPortalNether, Terrain::Flat),
+    ] {
+        let header = format!("ruined_portal {variant:?} over {terrain:?}");
+        let generator = RuinedPortalGenerator { variant };
+        for seed in 1..=4 {
+            record_structure(
+                &mut now,
+                &world_gen,
+                (&header, &generator),
+                (seed, 0, 0),
+                (terrain, Some(&mut TerrainColumns(terrain))),
+            )?;
+        }
+    }
+    check_golden("ruined_portals", &now)
 }

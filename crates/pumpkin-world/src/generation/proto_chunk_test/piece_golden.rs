@@ -48,7 +48,7 @@ pub(super) enum Terrain {
 impl Terrain {
     const ALL: [Self; 3] = [Self::Flat, Self::Hilly, Self::Empty];
 
-    fn top(self, x: i32, z: i32) -> Option<i32> {
+    pub(super) fn top(self, x: i32, z: i32) -> Option<i32> {
         match self {
             Self::Flat => Some(62),
             Self::Hilly | Self::Seabed => Some(58 + (x * 7 + z * 13).rem_euclid(9)),

@@ -1,0 +1,96 @@
+ruined_portal RuinedPortal over Flat seed=1 chunk=(0,0) start=Vector3 { x: 0, y: 62, z: 0 } pieces=1
+  piece RuinedPortal None (3,62,-3)..(11,70,10)
+  chunk=(0,-1) solid=32512 hash=93363251bb923725 be=0:cbf29ce484222325
+  chunk=(0,0) solid=32628 hash=68b23c08bc8f08e2 be=1:6084147b394d9cf8
+ruined_portal RuinedPortal over Flat seed=2 chunk=(0,0) start=Vector3 { x: 0, y: 62, z: 0 } pieces=1
+  piece RuinedPortal None (0,62,0)..(5,71,5)
+  chunk=(0,0) solid=32582 hash=b26f3e1bbacfaf9b be=2:9da535366e08eae0
+ruined_portal RuinedPortal over Flat seed=3 chunk=(0,0) start=Vector3 { x: 0, y: 62, z: 0 } pieces=1
+  piece RuinedPortal None (0,62,1)..(5,71,6)
+  chunk=(0,0) solid=32582 hash=b9280259c67c8169 be=2:a20fe85e779e6a5d
+ruined_portal RuinedPortal over Flat seed=4 chunk=(0,0) start=Vector3 { x: 0, y: 62, z: 0 } pieces=1
+  piece RuinedPortal None (0,62,8)..(8,70,15)
+  chunk=(0,0) solid=32638 hash=66429e6ae7075a11 be=2:8c824cf0f5945bc2
+ruined_portal RuinedPortalDesert over Flat seed=1 chunk=(0,0) start=Vector3 { x: 0, y: 62, z: 0 } pieces=1
+  piece RuinedPortal None (1,62,-1)..(9,69,8)
+  chunk=(0,-1) solid=32512 hash=93363251bb923725 be=0:cbf29ce484222325
+  chunk=(0,0) solid=32542 hash=c38618c281df5238 be=1:75eec495fcc25508
+ruined_portal RuinedPortalDesert over Flat seed=2 chunk=(0,0) start=Vector3 { x: 0, y: 60, z: 0 } pieces=1
+  piece RuinedPortal None (0,60,1)..(8,68,8)
+  chunk=(0,0) solid=32533 hash=3e00172df8b984f1 be=2:d51d917b048f1d8b
+ruined_portal RuinedPortalDesert over Flat seed=3 chunk=(0,0) start=Vector3 { x: 0, y: 54, z: 0 } pieces=1
+  piece RuinedPortal None (-5,54,0)..(0,63,5)
+  chunk=(-1,0) solid=32511 hash=ebe1817f140a0b4a be=2:68c09fa424c79490
+  chunk=(0,0) solid=32512 hash=93363251bb923725 be=0:cbf29ce484222325
+ruined_portal RuinedPortalDesert over Flat seed=4 chunk=(0,0) start=Vector3 { x: 0, y: 57, z: 0 } pieces=1
+  piece RuinedPortal None (0,57,8)..(8,65,15)
+  chunk=(0,0) solid=32515 hash=32992aee678f7f14 be=2:8556d0d1536bdff0
+ruined_portal RuinedPortalJungle over Hilly seed=1 chunk=(0,0) start=Vector3 { x: 0, y: 61, z: 0 } pieces=1
+  piece RuinedPortal None (1,61,-1)..(9,68,8)
+  chunk=(0,-1) solid=32516 hash=fc5dcf915b6f4385 be=0:cbf29ce484222325
+  chunk=(0,0) solid=32723 hash=f111fb87f78a0449 be=1:61fdc0c8d61c44bc
+ruined_portal RuinedPortalJungle over Hilly seed=2 chunk=(0,0) start=Vector3 { x: 0, y: 61, z: 0 } pieces=1
+  piece RuinedPortal None (0,61,1)..(8,69,8)
+  chunk=(0,0) solid=32723 hash=8b14daed5d520a00 be=2:c2f96e8f1b985799
+ruined_portal RuinedPortalJungle over Hilly seed=3 chunk=(0,0) start=Vector3 { x: 0, y: 59, z: 0 } pieces=1
+  piece RuinedPortal None (-5,59,0)..(0,68,5)
+  chunk=(-1,0) solid=32613 hash=c52efb9bfae89f62 be=2:0f1a4ac656b228aa
+  chunk=(0,0) solid=32511 hash=1943576874ca14ac be=0:cbf29ce484222325
+ruined_portal RuinedPortalJungle over Hilly seed=4 chunk=(0,0) start=Vector3 { x: 0, y: 62, z: 0 } pieces=1
+  piece RuinedPortal None (0,62,8)..(8,70,15)
+  chunk=(0,0) solid=32739 hash=aa5b39c9a457d5e7 be=2:cfc19b8db6c046da
+ruined_portal RuinedPortalSwamp over Seabed seed=1 chunk=(0,0) start=Vector3 { x: 0, y: 61, z: 0 } pieces=1
+  piece RuinedPortal None (1,61,-1)..(9,68,8)
+  chunk=(0,-1) solid=32798 hash=e8cc5353c4c9cba5 be=0:cbf29ce484222325
+  chunk=(0,0) solid=32889 hash=f89b4dd8f862d9f9 be=1:61fdc0c8d61c44bc
+ruined_portal RuinedPortalSwamp over Seabed seed=2 chunk=(0,0) start=Vector3 { x: 0, y: 62, z: 0 } pieces=1
+  piece RuinedPortal None (0,62,1)..(8,70,8)
+  chunk=(0,0) solid=32916 hash=569ef0b4ce8d28ae be=2:11c22479555b4708
+ruined_portal RuinedPortalSwamp over Seabed seed=3 chunk=(0,0) start=Vector3 { x: 0, y: 59, z: 0 } pieces=1
+  piece RuinedPortal None (-5,59,0)..(0,68,5)
+  chunk=(-1,0) solid=32842 hash=6f3993497c1f20aa be=2:0f1a4ac656b228aa
+  chunk=(0,0) solid=32796 hash=cee7ff9a1e91d5f5 be=0:cbf29ce484222325
+ruined_portal RuinedPortalSwamp over Seabed seed=4 chunk=(0,0) start=Vector3 { x: 0, y: 63, z: 0 } pieces=1
+  piece RuinedPortal None (0,63,8)..(8,71,15)
+  chunk=(0,0) solid=32967 hash=51813198e4213a25 be=2:79c017accae48c60
+ruined_portal RuinedPortalMountain over Hilly seed=1 chunk=(0,0) start=Vector3 { x: 0, y: 58, z: 0 } pieces=1
+  piece RuinedPortal None (3,58,-3)..(11,66,10)
+  chunk=(0,-1) solid=32516 hash=fc5dcf915b6f4385 be=0:cbf29ce484222325
+  chunk=(0,0) solid=32533 hash=56c18a32609e9609 be=1:3525a90ec1067eae
+ruined_portal RuinedPortalMountain over Hilly seed=2 chunk=(0,0) start=Vector3 { x: 0, y: 59, z: 0 } pieces=1
+  piece RuinedPortal None (0,59,0)..(5,68,5)
+  chunk=(0,0) solid=32540 hash=37d471953517fd5b be=2:3ab8ee7133918033
+ruined_portal RuinedPortalMountain over Hilly seed=3 chunk=(0,0) start=Vector3 { x: 0, y: 59, z: 0 } pieces=1
+  piece RuinedPortal None (0,59,1)..(5,68,6)
+  chunk=(0,0) solid=32547 hash=1278db96951eee50 be=2:312111ca27393784
+ruined_portal RuinedPortalMountain over Hilly seed=4 chunk=(0,0) start=Vector3 { x: 0, y: 62, z: 0 } pieces=1
+  piece RuinedPortal None (0,62,8)..(8,70,15)
+  chunk=(0,0) solid=32638 hash=61069a642e32224f be=2:8c824cf0f5945bc2
+ruined_portal RuinedPortalOcean over Seabed seed=1 chunk=(0,0) start=Vector3 { x: 0, y: 61, z: 0 } pieces=1
+  piece RuinedPortal None (1,61,-1)..(9,68,8)
+  chunk=(0,-1) solid=32798 hash=e8cc5353c4c9cba5 be=0:cbf29ce484222325
+  chunk=(0,0) solid=32804 hash=12e0845a5d1ffb94 be=1:61fdc0c8d61c44bc
+ruined_portal RuinedPortalOcean over Seabed seed=2 chunk=(0,0) start=Vector3 { x: 0, y: 62, z: 0 } pieces=1
+  piece RuinedPortal None (0,62,1)..(8,70,8)
+  chunk=(0,0) solid=32878 hash=a1a44ce82c5e1478 be=2:11c22479555b4708
+ruined_portal RuinedPortalOcean over Seabed seed=3 chunk=(0,0) start=Vector3 { x: 0, y: 59, z: 0 } pieces=1
+  piece RuinedPortal None (-5,59,0)..(0,68,5)
+  chunk=(-1,0) solid=32810 hash=955f63a6ab6991e8 be=2:0f1a4ac656b228aa
+  chunk=(0,0) solid=32796 hash=cee7ff9a1e91d5f5 be=0:cbf29ce484222325
+ruined_portal RuinedPortalOcean over Seabed seed=4 chunk=(0,0) start=Vector3 { x: 0, y: 63, z: 0 } pieces=1
+  piece RuinedPortal None (0,63,8)..(8,71,15)
+  chunk=(0,0) solid=32932 hash=dc1f01c3586ad856 be=2:79c017accae48c60
+ruined_portal RuinedPortalNether over Flat seed=1 chunk=(0,0) start=Vector3 { x: 0, y: 28, z: 0 } pieces=1
+  piece RuinedPortal None (1,28,-1)..(9,35,8)
+  chunk=(0,-1) solid=32512 hash=93363251bb923725 be=0:cbf29ce484222325
+  chunk=(0,0) solid=32512 hash=fc8eef495fb5e71e be=1:2da987ddd29f824b
+ruined_portal RuinedPortalNether over Flat seed=2 chunk=(0,0) start=Vector3 { x: 0, y: 27, z: 0 } pieces=1
+  piece RuinedPortal None (0,27,1)..(8,35,8)
+  chunk=(0,0) solid=32512 hash=91454e8919c6e283 be=2:e11955606cf5a7a6
+ruined_portal RuinedPortalNether over Flat seed=3 chunk=(0,0) start=Vector3 { x: 0, y: 27, z: 0 } pieces=1
+  piece RuinedPortal None (-5,27,0)..(0,36,5)
+  chunk=(-1,0) solid=32511 hash=179df08e7a7050dd be=2:6d49678608a0ec04
+  chunk=(0,0) solid=32512 hash=93363251bb923725 be=0:cbf29ce484222325
+ruined_portal RuinedPortalNether over Flat seed=4 chunk=(0,0) start=Vector3 { x: 0, y: 62, z: 0 } pieces=1
+  piece RuinedPortal None (0,62,8)..(8,70,15)
+  chunk=(0,0) solid=32639 hash=a86545a62e40c10a be=2:cfc19b8db6c046da

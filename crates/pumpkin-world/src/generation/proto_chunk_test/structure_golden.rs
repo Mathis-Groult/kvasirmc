@@ -333,3 +333,46 @@ fn ruined_portals_lay_out_and_place_the_same_blocks() -> Result<(), Box<dyn std:
     }
     check_golden("ruined_portals", &now)
 }
+
+/// A structure built the way the game dispatches it: its generator chosen and configured from its
+/// data (the jigsaw structures get their start pool, size and aliases there).
+struct Dispatched(pumpkin_data::structures::StructureKeys);
+
+impl StructureGenerator for Dispatched {
+    fn get_structure_position(
+        &self,
+        context: StructureGeneratorContext<'_>,
+    ) -> Option<crate::generation::structure::structures::StructurePosition> {
+        let structure = pumpkin_data::structures::Structure::get(&self.0);
+        crate::generation::structure::generate_structure_position(&self.0, structure, context)
+    }
+}
+
+#[test]
+fn jigsaw_structures_lay_out_and_place_the_same_blocks() -> Result<(), Box<dyn std::error::Error>> {
+    use pumpkin_data::structures::StructureKeys;
+    let world_gen = overworld();
+    let mut now = String::new();
+    for key in [
+        StructureKeys::VillagePlains,
+        StructureKeys::VillageDesert,
+        StructureKeys::VillageSnowy,
+        StructureKeys::PillagerOutpost,
+        StructureKeys::BastionRemnant,
+        StructureKeys::AncientCity,
+        StructureKeys::TrailRuins,
+        StructureKeys::TrialChambers,
+    ] {
+        let header = format!("jigsaw {key:?}");
+        for start in [PORTAL_STARTS[1], PORTAL_STARTS[5]] {
+            record_structure(
+                &mut now,
+                &world_gen,
+                (&header, &Dispatched(key)),
+                start,
+                (Terrain::Flat, Some(&mut TerrainColumns(Terrain::Flat))),
+            )?;
+        }
+    }
+    check_golden("jigsaw_structures", &now)
+}

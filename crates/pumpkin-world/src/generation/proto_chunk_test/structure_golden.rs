@@ -21,10 +21,10 @@ use crate::generation::{
     proto_chunk::ProtoChunk,
     structure::structures::{
         HeightSampler, StructureGenerator, StructureGeneratorContext, igloo::IglooGenerator,
-        mansion::MansionGenerator, mineshaft::MineshaftGenerator,
-        nether_fortress::NetherFortressGenerator, ocean_ruin::OceanRuinGenerator,
-        ruined_portal::RuinedPortalGenerator, shipwreck::ShipwreckGenerator,
-        stronghold::StrongholdGenerator,
+        jigsaw::PoolElementStructurePiece, mansion::MansionGenerator,
+        mineshaft::MineshaftGenerator, nether_fortress::NetherFortressGenerator,
+        ocean_ruin::OceanRuinGenerator, ruined_portal::RuinedPortalGenerator,
+        shipwreck::ShipwreckGenerator, stronghold::StrongholdGenerator,
     },
 };
 
@@ -37,6 +37,23 @@ const CASES: [(bool, u64, i32, i32); 6] = [
     (true, 2, 3, -2),
     (true, 3, -5, 4),
 ];
+
+/// The depth, ground level and junctions of a jigsaw piece (they shape the terrain around it).
+fn write_jigsaw_links(
+    out: &mut String,
+    depth: u32,
+    piece: &PoolElementStructurePiece,
+) -> std::fmt::Result {
+    write!(out, " depth={depth} ground={}", piece.ground_level_delta)?;
+    for j in &piece.junctions {
+        write!(
+            out,
+            " j=({},{},{} dy={} {:?})",
+            j.source_x, j.source_ground_y, j.source_z, j.delta_y, j.projection
+        )?;
+    }
+    Ok(())
+}
 
 /// One structure started in chunk (`chunk_x`, `chunk_z`): a header line, a line per piece and a
 /// line per chunk of the layout.
@@ -72,13 +89,18 @@ fn record_structure(
         collector.pieces.len()
     )?;
     for piece in &collector.pieces {
+        let jigsaw = piece.as_any().downcast_ref::<PoolElementStructurePiece>();
         let piece = piece.get_structure_piece();
         let b = piece.bounding_box;
-        writeln!(
+        write!(
             out,
             "  piece {:?} {:?} ({},{},{})..({},{},{})",
             piece.r#type, piece.facing, b.min.x, b.min.y, b.min.z, b.max.x, b.max.y, b.max.z
         )?;
+        if let Some(jigsaw) = jigsaw {
+            write_jigsaw_links(out, piece.chain_length, jigsaw)?;
+        }
+        out.push('\n');
     }
     let bounds = collector.get_bounding_box();
     for x in (bounds.min.x >> 4)..=(bounds.max.x >> 4) {

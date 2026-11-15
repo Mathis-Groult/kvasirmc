@@ -319,13 +319,38 @@ impl SnbtParser<'_, '_> {
     }
 
     fn float_literal(&mut self) -> Option<NbtTag> {
-        struct FloatingPointIntermediate {
-            whole_part: String,
-            fraction_part: Option<String>,
-            exponent_part: Option<Signed<String>>,
-            type_suffix: Option<TypeSuffix>,
+        let sign = self.parse_or_revert(Self::sign).unwrap_or(Sign::Plus);
+
+        let intermediate = self.float_intermediate()?;
+
+        // Parsing the float:
+        let buffer = Self::float_text(sign, &intermediate);
+
+        match intermediate.type_suffix {
+            None | Some(TypeSuffix::Double) => match buffer.parse::<f64>() {
+                Err(_) => self.store_dynamic_error(&NUMBER_PARSE_FAILURE, "Invalid float literal"),
+                Ok(value) if value.is_finite() => {
+                    return Some(NbtTag::Double(value));
+                }
+                Ok(_) => self.store_simple_error(&INFINITY_NOT_ALLOWED),
+            },
+            Some(TypeSuffix::Float) => match buffer.parse::<f32>() {
+                Err(_) => {
+                    self.store_dynamic_error(&NUMBER_PARSE_FAILURE, "Invalid float literal");
+                }
+                Ok(value) if value.is_finite() => {
+                    return Some(NbtTag::Float(value));
+                }
+                Ok(_) => self.store_simple_error(&INFINITY_NOT_ALLOWED),
+            },
+            _ => self.store_simple_error(&EXPECTED_FLOAT_TYPE),
         }
 
+        None
+    }
+
+    /// The parts of a float literal after its sign, by the first pathway that fits.
+    fn float_intermediate(&mut self) -> Option<FloatingPointIntermediate> {
         // Paths:
         // A --- XXX.[yyy][eZZZ][suffix]
         // B --- .yyy[eZZZ][suffix]
@@ -347,9 +372,7 @@ impl SnbtParser<'_, '_> {
         // If we encounter a decimal point, we must choose path B.
         // FAIL if nether a period or a digit
 
-        let sign = self.parse_or_revert(Self::sign).unwrap_or(Sign::Plus);
-
-        let intermediate = self.parse_or_revert(|parser| {
+        self.parse_or_revert(|parser| {
             parser.reader.skip_whitespace();
             if let Some(whole_part) = parser.parse_or_revert(Self::decimal_numeral) {
                 // Must be pathway A, C, or D.
@@ -408,9 +431,12 @@ impl SnbtParser<'_, '_> {
                     None
                 }
             }
-        })?;
+        })
+    }
 
-        // Parsing the float:
+    /// The literal as text Rust's float parser reads: sign, cleaned whole part, `.fraction` and
+    /// `e` exponent.
+    fn float_text(sign: Sign, intermediate: &FloatingPointIntermediate) -> String {
         let mut buffer = String::with_capacity(
             sign.minimum_size_parsable()
                 + intermediate.whole_part.len()
@@ -435,28 +461,7 @@ impl SnbtParser<'_, '_> {
             exponent.sign.append_minimum_str_parsable(&mut buffer);
             Self::clean_and_append(&mut buffer, &exponent.value);
         }
-
-        match intermediate.type_suffix {
-            None | Some(TypeSuffix::Double) => match buffer.parse::<f64>() {
-                Err(_) => self.store_dynamic_error(&NUMBER_PARSE_FAILURE, "Invalid float literal"),
-                Ok(value) if value.is_finite() => {
-                    return Some(NbtTag::Double(value));
-                }
-                Ok(_) => self.store_simple_error(&INFINITY_NOT_ALLOWED),
-            },
-            Some(TypeSuffix::Float) => match buffer.parse::<f32>() {
-                Err(_) => {
-                    self.store_dynamic_error(&NUMBER_PARSE_FAILURE, "Invalid float literal");
-                }
-                Ok(value) if value.is_finite() => {
-                    return Some(NbtTag::Float(value));
-                }
-                Ok(_) => self.store_simple_error(&INFINITY_NOT_ALLOWED),
-            },
-            _ => self.store_simple_error(&EXPECTED_FLOAT_TYPE),
-        }
-
-        None
+        buffer
     }
 
     fn string_hex_2(&mut self) -> Option<String> {
@@ -850,4 +855,12 @@ impl SnbtParser<'_, '_> {
     pub(super) fn parse(&mut self) -> Option<NbtTag> {
         self.literal()
     }
+}
+
+/// A float literal split into its parts (see [`SnbtParser::float_intermediate`]).
+struct FloatingPointIntermediate {
+    whole_part: String,
+    fraction_part: Option<String>,
+    exponent_part: Option<Signed<String>>,
+    type_suffix: Option<TypeSuffix>,
 }

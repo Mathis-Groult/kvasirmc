@@ -309,9 +309,23 @@ impl SnbtParser<'_, '_> {
         let radix = literal.base.radix();
 
         // The error messages vary by a lot to match the error messages in Java.
-        match (signed, suffix) {
-            (true, TypeSuffix::Byte) => {
-                let integer = self.parse_int_or_error(&number, radix)?;
+        if signed {
+            self.parse_signed_integer(&number, radix, suffix)
+        } else {
+            self.parse_unsigned_integer(&number, radix, suffix)
+        }
+    }
+
+    /// A signed integer literal (`b`, `s`, `i`, `l` or `sb`..`sl`) of the suffix's type.
+    fn parse_signed_integer(
+        &mut self,
+        number: &str,
+        radix: u32,
+        suffix: TypeSuffix,
+    ) -> Option<Number> {
+        match suffix {
+            TypeSuffix::Byte => {
+                let integer = self.parse_int_or_error(number, radix)?;
 
                 integer.try_into().map_or_else(
                     |_| {
@@ -324,8 +338,8 @@ impl SnbtParser<'_, '_> {
                     |byte| Some(Number::Byte(byte)),
                 )
             }
-            (true, TypeSuffix::Short) => {
-                let integer = self.parse_int_or_error(&number, radix)?;
+            TypeSuffix::Short => {
+                let integer = self.parse_int_or_error(number, radix)?;
 
                 integer.try_into().map_or_else(
                     |_| {
@@ -338,8 +352,8 @@ impl SnbtParser<'_, '_> {
                     |short| Some(Number::Short(short)),
                 )
             }
-            (true, TypeSuffix::Int) => Some(Number::Int(self.parse_int_or_error(&number, radix)?)),
-            (true, TypeSuffix::Long) => i64::from_str_radix(&number, radix).map_or_else(
+            TypeSuffix::Int => Some(Number::Int(self.parse_int_or_error(number, radix)?)),
+            TypeSuffix::Long => i64::from_str_radix(number, radix).map_or_else(
                 |_| {
                     self.store_dynamic_error(
                         &NUMBER_PARSE_FAILURE,
@@ -349,8 +363,23 @@ impl SnbtParser<'_, '_> {
                 },
                 |long| Some(Number::Long(long)),
             ),
-            (false, TypeSuffix::Byte) => {
-                let integer = self.parse_int_or_error(&number, radix)?;
+            _ => {
+                self.store_simple_error(&EXPECTED_INTEGER_TYPE);
+                None
+            }
+        }
+    }
+
+    /// An unsigned integer literal (`ub`..`ul`), stored in the signed type of the same width.
+    fn parse_unsigned_integer(
+        &mut self,
+        number: &str,
+        radix: u32,
+        suffix: TypeSuffix,
+    ) -> Option<Number> {
+        match suffix {
+            TypeSuffix::Byte => {
+                let integer = self.parse_int_or_error(number, radix)?;
 
                 TryInto::<u8>::try_into(integer).map_or_else(
                     |_| {
@@ -363,8 +392,8 @@ impl SnbtParser<'_, '_> {
                     |byte| Some(Number::Byte(byte as i8)),
                 )
             }
-            (false, TypeSuffix::Short) => {
-                let integer = self.parse_int_or_error(&number, radix)?;
+            TypeSuffix::Short => {
+                let integer = self.parse_int_or_error(number, radix)?;
 
                 TryInto::<u16>::try_into(integer).map_or_else(
                     |_| {
@@ -377,7 +406,7 @@ impl SnbtParser<'_, '_> {
                     |short| Some(Number::Short(short as i16)),
                 )
             }
-            (false, TypeSuffix::Int) => u32::from_str_radix(&number, radix).map_or_else(
+            TypeSuffix::Int => u32::from_str_radix(number, radix).map_or_else(
                 |_| {
                     self.store_dynamic_error(
                         &NUMBER_PARSE_FAILURE,
@@ -387,7 +416,7 @@ impl SnbtParser<'_, '_> {
                 },
                 |int| Some(Number::Int(int as i32)),
             ),
-            (false, TypeSuffix::Long) => u64::from_str_radix(&number, radix).map_or_else(
+            TypeSuffix::Long => u64::from_str_radix(number, radix).map_or_else(
                 |_| {
                     self.store_dynamic_error(
                         &NUMBER_PARSE_FAILURE,

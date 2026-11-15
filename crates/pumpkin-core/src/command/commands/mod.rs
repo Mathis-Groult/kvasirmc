@@ -101,7 +101,104 @@ mod whitelist;
 pub(crate) use whitelist::kick_non_whitelisted_players;
 mod worldborder;
 
-#[allow(clippy::too_many_lines)]
+/// Every built-in command's registration, in the order the dispatcher receives them.
+const REGISTRATIONS: [Registration; 91] = [
+    say::register,
+    banlist::register,
+    difficulty::register,
+    debug::register,
+    dialog::register,
+    execute::register,
+    fillbiome::register,
+    forceload::register,
+    pregen::register,
+    tickprofile::register,
+    ride::register,
+    recipe::register,
+    reload::register,
+    help::register,
+    kill::register,
+    op::register,
+    place::register,
+    random::register,
+    list::register,
+    locate::register,
+    loot::register,
+    seed::register,
+    saveall::register,
+    saveoff::register,
+    saveon::register,
+    setidletimeout::register,
+    spreadplayers::register,
+    stop::register,
+    tag::register,
+    tick::register,
+    advancement::register,
+    data::register,
+    stopwatch::register,
+    trigger::register,
+    scoreboard::register,
+    test::register,
+    team::register,
+    teammsg::register,
+    clone::register,
+    attribute::register,
+    datapack::register,
+    function::register,
+    r#return::register,
+    schedule::register,
+    fetchprofile::register,
+    worldborder::register,
+    particle::register,
+    playsound::register,
+    fill::register,
+    clear::register,
+    pumpkin::register,
+    me::register,
+    msg::register,
+    tps::register,
+    transfer::register,
+    gamemode::register,
+    defaultgamemode::register,
+    weather::register,
+    time::register,
+    teleport::register,
+    setworldspawn::register,
+    spawnpoint::register,
+    spectate::register,
+    setblock::register,
+    give::register,
+    item::register,
+    enchant::register,
+    effect::register,
+    summon::register,
+    swing::register,
+    compute::register,
+    posteffect::register,
+    damage::register,
+    rotate::register,
+    tellraw::register,
+    title::register,
+    experience::register,
+    bossbar::register,
+    gamerule::register,
+    stopsound::register,
+    waypoint::register,
+    raid::register,
+    deop::register,
+    kick::register,
+    plugin::register,
+    plugins::register,
+    ban::register,
+    banip::register,
+    pardon::register,
+    pardonip::register,
+    whitelist::register,
+];
+
+/// Adds one command (and its permission) to the dispatcher.
+type Registration = fn(&mut CommandDispatcher, &PermissionRegistry);
+
 #[must_use]
 pub fn default_dispatcher(
     permission_manager: &PermissionManager,
@@ -113,97 +210,9 @@ pub fn default_dispatcher(
 
     let mut dispatcher = CommandDispatcher::new();
 
-    say::register(&mut dispatcher, registry);
-    banlist::register(&mut dispatcher, registry);
-    difficulty::register(&mut dispatcher, registry);
-    debug::register(&mut dispatcher, registry);
-    dialog::register(&mut dispatcher, registry);
-    execute::register(&mut dispatcher, registry);
-    fillbiome::register(&mut dispatcher, registry);
-    forceload::register(&mut dispatcher, registry);
-    pregen::register(&mut dispatcher, registry);
-    tickprofile::register(&mut dispatcher, registry);
-    ride::register(&mut dispatcher, registry);
-    recipe::register(&mut dispatcher, registry);
-    reload::register(&mut dispatcher, registry);
-    help::register(&mut dispatcher, registry);
-    kill::register(&mut dispatcher, registry);
-    op::register(&mut dispatcher, registry);
-    place::register(&mut dispatcher, registry);
-    random::register(&mut dispatcher, registry);
-    list::register(&mut dispatcher, registry);
-    locate::register(&mut dispatcher, registry);
-    loot::register(&mut dispatcher, registry);
-    seed::register(&mut dispatcher, registry);
-    saveall::register(&mut dispatcher, registry);
-    saveoff::register(&mut dispatcher, registry);
-    saveon::register(&mut dispatcher, registry);
-    setidletimeout::register(&mut dispatcher, registry);
-    spreadplayers::register(&mut dispatcher, registry);
-    stop::register(&mut dispatcher, registry);
-    tag::register(&mut dispatcher, registry);
-    tick::register(&mut dispatcher, registry);
-    advancement::register(&mut dispatcher, registry);
-    data::register(&mut dispatcher, registry);
-    stopwatch::register(&mut dispatcher, registry);
-    trigger::register(&mut dispatcher, registry);
-    scoreboard::register(&mut dispatcher, registry);
-    test::register(&mut dispatcher, registry);
-    team::register(&mut dispatcher, registry);
-    teammsg::register(&mut dispatcher, registry);
-    clone::register(&mut dispatcher, registry);
-    attribute::register(&mut dispatcher, registry);
-    datapack::register(&mut dispatcher, registry);
-    function::register(&mut dispatcher, registry);
-    r#return::register(&mut dispatcher, registry);
-    schedule::register(&mut dispatcher, registry);
-    fetchprofile::register(&mut dispatcher, registry);
-    worldborder::register(&mut dispatcher, registry);
-    particle::register(&mut dispatcher, registry);
-    playsound::register(&mut dispatcher, registry);
-    fill::register(&mut dispatcher, registry);
-    clear::register(&mut dispatcher, registry);
-    pumpkin::register(&mut dispatcher, registry);
-    me::register(&mut dispatcher, registry);
-    msg::register(&mut dispatcher, registry);
-    tps::register(&mut dispatcher, registry);
-    transfer::register(&mut dispatcher, registry);
-    gamemode::register(&mut dispatcher, registry);
-    defaultgamemode::register(&mut dispatcher, registry);
-    weather::register(&mut dispatcher, registry);
-    time::register(&mut dispatcher, registry);
-    teleport::register(&mut dispatcher, registry);
-    setworldspawn::register(&mut dispatcher, registry);
-    spawnpoint::register(&mut dispatcher, registry);
-    spectate::register(&mut dispatcher, registry);
-    setblock::register(&mut dispatcher, registry);
-    give::register(&mut dispatcher, registry);
-    item::register(&mut dispatcher, registry);
-    enchant::register(&mut dispatcher, registry);
-    effect::register(&mut dispatcher, registry);
-    summon::register(&mut dispatcher, registry);
-    swing::register(&mut dispatcher, registry);
-    compute::register(&mut dispatcher, registry);
-    posteffect::register(&mut dispatcher, registry);
-    damage::register(&mut dispatcher, registry);
-    rotate::register(&mut dispatcher, registry);
-    tellraw::register(&mut dispatcher, registry);
-    title::register(&mut dispatcher, registry);
-    experience::register(&mut dispatcher, registry);
-    bossbar::register(&mut dispatcher, registry);
-    gamerule::register(&mut dispatcher, registry);
-    stopsound::register(&mut dispatcher, registry);
-    waypoint::register(&mut dispatcher, registry);
-    raid::register(&mut dispatcher, registry);
-    deop::register(&mut dispatcher, registry);
-    kick::register(&mut dispatcher, registry);
-    plugin::register(&mut dispatcher, registry);
-    plugins::register(&mut dispatcher, registry);
-    ban::register(&mut dispatcher, registry);
-    banip::register(&mut dispatcher, registry);
-    pardon::register(&mut dispatcher, registry);
-    pardonip::register(&mut dispatcher, registry);
-    whitelist::register(&mut dispatcher, registry);
+    for register in REGISTRATIONS {
+        register(&mut dispatcher, registry);
+    }
 
     apply_command_overrides(&mut dispatcher, registry, commands_config);
 

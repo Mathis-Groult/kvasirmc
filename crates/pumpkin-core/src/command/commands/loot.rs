@@ -115,6 +115,12 @@ struct LootExecutor {
     source: Source,
 }
 
+/// The seed of one loot roll. Test builds pin it, so the `/loot` golden draws the same items in
+/// every run.
+fn loot_seed() -> i64 {
+    if cfg!(test) { 7 } else { rand::random() }
+}
+
 fn distribute_to_container(inventory: &dyn Inventory, mut stack: ItemStack) -> bool {
     let mut changed = false;
     for i in 0..inventory.size() {
@@ -387,7 +393,7 @@ impl CommandExecutor for LootExecutor {
                     tool: Some(tool_stack.unwrap_or_else(|| ItemStack::EMPTY.clone())),
                     ..Default::default()
                 };
-                let seed: i64 = rand::random();
+                let seed = loot_seed();
                 drops = crate::world::loot::generate_loot_from_handle(&loot_table, seed, &params);
             }
             Source::Loot => {
@@ -412,7 +418,7 @@ impl CommandExecutor for LootExecutor {
                     position: context.source.as_player().map(|p| p.position()),
                     ..Default::default()
                 };
-                let seed: i64 = rand::random();
+                let seed = loot_seed();
                 drops = crate::world::loot::generate_loot_from_handle(&loot_table, seed, &params);
             }
             Source::Kill => {
@@ -454,7 +460,7 @@ impl CommandExecutor for LootExecutor {
                             ),
                             ..params.clone()
                         };
-                        let seed: i64 = rand::random();
+                        let seed = loot_seed();
                         drops.extend(crate::world::loot::generate_loot_from_handle(
                             &loot_table,
                             seed,
@@ -510,7 +516,7 @@ impl CommandExecutor for LootExecutor {
                     )),
                     ..Default::default()
                 };
-                let seed: i64 = rand::random();
+                let seed = loot_seed();
                 drops = crate::world::loot::generate_loot_from_handle(&loot_table, seed, &params);
                 table_id_for_callback = Some(key.to_string());
             }
@@ -645,6 +651,9 @@ impl CommandExecutor for LootExecutor {
         }
     }
 }
+
+#[cfg(test)]
+mod golden;
 
 fn add_sources(target: Target) -> Vec<LiteralArgumentBuilder> {
     vec![

@@ -363,8 +363,10 @@ struct Dispatched(pumpkin_data::structures::StructureKeys);
 impl StructureGenerator for Dispatched {
     fn get_structure_position(
         &self,
-        context: StructureGeneratorContext<'_>,
+        mut context: StructureGeneratorContext<'_>,
     ) -> Option<crate::generation::structure::structures::StructurePosition> {
+        // The jigsaw generator reads its start height, projection and limits through the key.
+        context.structure_key = Some(self.0);
         let structure = pumpkin_data::structures::Structure::get(&self.0);
         crate::generation::structure::generate_structure_position(&self.0, structure, context)
     }

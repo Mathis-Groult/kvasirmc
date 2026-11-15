@@ -344,76 +344,74 @@ impl NbtTag {
                 Ok(Self::Double(double))
             }
             BYTE_ARRAY_ID => {
-                let len = reader.get_i32()?;
-                if len < 0 {
-                    return Err(Error::NegativeLength(len));
-                }
-
-                let len = len as usize;
-                if len > crate::MAX_ARRAY_LENGTH {
-                    return Err(Error::LargeLength(len));
-                }
+                let len = Self::read_array_length(reader)?;
                 Ok(Self::ByteArray(reader.get_byte_array(len)?.into()))
             }
             STRING_ID => Ok(Self::String(reader.get_string()?.into_owned().into())),
-            LIST_ID => {
-                let tag_type_id = reader.get_u8()?;
-                let len = reader.get_i32()?;
-                if len < 0 {
-                    return Err(Error::NegativeLength(len));
-                }
-                if tag_type_id == END_ID && len > 0 {
-                    return Err(Error::InvalidListTag(tag_type_id));
-                }
-
-                let len = len as usize;
-                if len > crate::MAX_ARRAY_LENGTH {
-                    return Err(Error::LargeLength(len));
-                }
-
-                let mut list = Vec::with_capacity(len.min(4096));
-                for _ in 0..len {
-                    let tag = Self::deserialize_data_depth(reader, tag_type_id, depth + 1)?;
-                    if tag.get_type_id() != tag_type_id {
-                        return Err(Error::InvalidListTag(tag.get_type_id()));
-                    }
-                    // Try unwrapping the tag.
-                    list.push(Self::flatten(tag));
-                }
-                Ok(Self::List(list))
-            }
+            LIST_ID => Self::deserialize_list(reader, depth),
             COMPOUND_ID => Ok(Self::Compound(NbtCompound::deserialize_content_depth(
                 reader,
                 depth + 1,
             )?)),
             INT_ARRAY_ID => {
-                let len = reader.get_i32()?;
-                if len < 0 {
-                    return Err(Error::NegativeLength(len));
-                }
-
-                let len = len as usize;
-                if len > crate::MAX_ARRAY_LENGTH {
-                    return Err(Error::LargeLength(len));
-                }
+                let len = Self::read_array_length(reader)?;
 
                 Ok(Self::IntArray(reader.get_i32_array(len)?))
             }
             LONG_ARRAY_ID => {
-                let len = reader.get_i32()?;
-                if len < 0 {
-                    return Err(Error::NegativeLength(len));
-                }
-
-                let len = len as usize;
-                if len > crate::MAX_ARRAY_LENGTH {
-                    return Err(Error::LargeLength(len));
-                }
+                let len = Self::read_array_length(reader)?;
 
                 Ok(Self::LongArray(reader.get_i64_array(len)?))
             }
             _ => Err(Error::UnknownTagId(tag_id)),
         }
+    }
+
+    /// The length of a byte, int or long array: an error when negative or over
+    /// [`crate::MAX_ARRAY_LENGTH`].
+    fn read_array_length<'a, R: NbtReadHelper<'a>>(reader: &mut R) -> Result<usize, Error> {
+        let len = reader.get_i32()?;
+        if len < 0 {
+            return Err(Error::NegativeLength(len));
+        }
+
+        let len = len as usize;
+        if len > crate::MAX_ARRAY_LENGTH {
+            return Err(Error::LargeLength(len));
+        }
+        Ok(len)
+    }
+
+    /// A list payload: element type, length, then the elements read at `depth + 1`; a list of
+    /// wrapper compounds is unwrapped element by element.
+    fn deserialize_list<'a, R: NbtReadHelper<'a>>(
+        reader: &mut R,
+        depth: usize,
+    ) -> Result<Self, Error> {
+        let tag_type_id = reader.get_u8()?;
+        let len = reader.get_i32()?;
+        if len < 0 {
+            return Err(Error::NegativeLength(len));
+        }
+        if tag_type_id == END_ID && len > 0 {
+            return Err(Error::InvalidListTag(tag_type_id));
+        }
+
+        let len = len as usize;
+        if len > crate::MAX_ARRAY_LENGTH {
+            return Err(Error::LargeLength(len));
+        }
+
+        let mut list = Vec::with_capacity(len.min(4096));
+        for _ in 0..len {
+            let tag = Self::deserialize_data_depth(reader, tag_type_id, depth + 1)?;
+            if tag.get_type_id() != tag_type_id {
+                return Err(Error::InvalidListTag(tag.get_type_id()));
+            }
+            // Try unwrapping the tag.
+            list.push(Self::flatten(tag));
+        }
+        Ok(Self::List(list))
     }
 
     /// Returns the contained byte, if this is a byte tag.

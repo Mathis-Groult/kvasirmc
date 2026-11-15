@@ -134,6 +134,9 @@ fn fill_blocks(
             let result = world.level.read_chunk_sync(&chunk_pos, |chunk| {
                 let mut updates_for_chunk = Vec::new();
                 let mut block_entities_to_remove = Vec::new();
+                // Broken only after the section lock below is released: breaking a block writes
+                // into the same sections, and taking that lock while reading it deadlocks.
+                let mut to_destroy = Vec::new();
                 let min_y_chunk = chunk.section.min_y;
 
                 {
@@ -200,13 +203,7 @@ fn fill_blocks(
                                     }
                                     FillMode::Destroy => {
                                         if current_state_id != target_state_id {
-                                            world.break_block(
-                                                &pos,
-                                                None,
-                                                BlockFlags::SKIP_DROPS
-                                                    | BlockFlags::NOTIFY_ALL
-                                                    | BlockFlags::FORCE_STATE,
-                                            );
+                                            to_destroy.push(pos);
                                         }
                                         Some(target_state_id)
                                     }
@@ -222,6 +219,14 @@ fn fill_blocks(
                             }
                         }
                     }
+                }
+
+                for pos in &to_destroy {
+                    world.break_block(
+                        pos,
+                        None,
+                        BlockFlags::SKIP_DROPS | BlockFlags::NOTIFY_ALL | BlockFlags::FORCE_STATE,
+                    );
                 }
 
                 if updates_for_chunk.is_empty() {

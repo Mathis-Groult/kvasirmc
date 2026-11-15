@@ -33,9 +33,8 @@ const LAMP: (i32, i32, i32) = (22, 61, 4);
 const CHEST: (i32, i32, i32) = (14, 61, 4);
 const GLOW: (i32, i32, i32) = (18, 62, 5);
 
-/// `{r}` is replaced by the region corners. No `destroy` case yet: `fill .. destroy` deadlocks
-/// (board card: it calls `break_block` while holding the chunk's section read lock), so those
-/// cases are appended after the fix.
+/// `{r}` is replaced by the region corners. The `destroy` cases come last: they were appended
+/// after the fix of a deadlock in that mode (card #41).
 const CASES: &[&str] = &[
     "fill {r} minecraft:glass",
     "fill {r} minecraft:stone",
@@ -66,6 +65,11 @@ const CASES: &[&str] = &[
     "fill 10 60 2 10 60 2 minecraft:stone",
     "fill 10 61 2 12 61 2 minecraft:glass keep",
     "fill 10 70 2 12 70 2 minecraft:glass keep",
+    // Appended after the deadlock fix (card #41).
+    "fill {r} minecraft:glass destroy",
+    "fill {r} minecraft:stone destroy",
+    "fill {r} minecraft:glass replace minecraft:dirt destroy",
+    "fill {r} minecraft:air destroy",
 ];
 
 fn place(world: &Arc<World>, pos: BlockPos, block: &Block) {
@@ -207,6 +211,38 @@ async fn fill_command_changes_the_same_blocks() -> TestResult {
     } else {
         assert_eq!(std::fs::read_to_string(&path)?, now);
     }
+    server.stop();
+    Ok(())
+}
+
+/// `fill .. destroy` breaks the old blocks and returns (card #41: it used to deadlock on the
+/// chunk's section lock as soon as one block differed from the target).
+#[tokio::test(flavor = "multi_thread")]
+async fn destroy_mode_returns_and_fills() -> TestResult {
+    let folder = tempfile::tempdir()?;
+    let server = test_support::server(&folder).await?;
+    let world = server.worlds.load()[0].clone();
+
+    let x0 = build_area(&world, 1);
+    let result = run(
+        &server,
+        &world,
+        x0,
+        &expand("fill {r} minecraft:glass destroy", x0),
+    );
+    assert_eq!(result, "ok 288", "destroy must return like replace");
+    for x in FROM.0..=TO.0 {
+        for y in FROM.1..=TO.1 {
+            for z in FROM.2..=TO.2 {
+                let state = world.get_block_state_id(&BlockPos::new(x0 + x, y, z));
+                assert_eq!(state, Block::GLASS.default_state.id, "at {x} {y} {z}");
+            }
+        }
+    }
+    assert!(
+        world.get_block_entity(&at(x0, CHEST)).is_none(),
+        "the chest's block entity goes with it"
+    );
     server.stop();
     Ok(())
 }

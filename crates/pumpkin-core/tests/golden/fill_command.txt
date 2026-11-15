@@ -27,3 +27,7 @@ fill 0 0 0 31 31 32 minecraft:glass -> err Too many blocks in the specified area
 fill 10 60 2 10 60 2 minecraft:stone -> ok 1; before blocks=7d20557d354eae64 be=[14,61,4:minecraft:chest] lamp=11214; after blocks=7d20557d354eae64 be=[14,61,4:minecraft:chest] lamp=11214
 fill 10 61 2 12 61 2 minecraft:glass keep -> ok 1; before blocks=7d20557d354eae64 be=[14,61,4:minecraft:chest] lamp=11214; after blocks=6842013e77ef7873 be=[14,61,4:minecraft:chest] lamp=11214
 fill 10 70 2 12 70 2 minecraft:glass keep -> ok 3; before blocks=7d20557d354eae64 be=[14,61,4:minecraft:chest] lamp=11214; after blocks=7d20557d354eae64 be=[14,61,4:minecraft:chest] lamp=11214
+fill {r} minecraft:glass destroy -> ok 288; before blocks=7d20557d354eae64 be=[14,61,4:minecraft:chest] lamp=11214; after blocks=0716e55b6b9adc60 be=[] lamp=11214
+fill {r} minecraft:stone destroy -> ok 288; before blocks=7d20557d354eae64 be=[14,61,4:minecraft:chest] lamp=11214; after blocks=33bb32e92d965c30 be=[] lamp=11214
+fill {r} minecraft:glass replace minecraft:dirt destroy -> ok 35; before blocks=7d20557d354eae64 be=[14,61,4:minecraft:chest] lamp=11214; after blocks=c21a684f5c882f89 be=[14,61,4:minecraft:chest] lamp=11214
+fill {r} minecraft:air destroy -> ok 288; before blocks=7d20557d354eae64 be=[14,61,4:minecraft:chest] lamp=11214; after blocks=67569be268fa9250 be=[] lamp=11214

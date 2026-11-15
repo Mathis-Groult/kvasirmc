@@ -5,7 +5,8 @@
 //! floor, a dirt checkerboard, a chest and glowstone inside the region, and a redstone lamp just
 //! outside it. The region crosses a chunk border. One line per case: the command (relative to the
 //! area), its result (count or error text), a hash of every block state in the region plus a
-//! one-block margin, which positions hold a block entity, and whether the lamp is lit. A case that
+//! one-block margin (z from -4 to 15 and the world's bottom layers too), which positions hold a
+//! block entity, whether the lamp is lit, and how many entities the world holds (drops). A case that
 //! does not return within the deadline is recorded as `HANG` and its thread is left behind.
 
 use std::fmt::Write;
@@ -70,6 +71,12 @@ const CASES: &[&str] = &[
     "fill {r} minecraft:stone destroy",
     "fill {r} minecraft:glass replace minecraft:dirt destroy",
     "fill {r} minecraft:air destroy",
+    // Appended after the first mutation run: the world's bottom layer, a region crossing the
+    // z = 0 chunk border (chunk z -1), and destroy across that border.
+    "fill 10 -64 2 12 -63 2 minecraft:glass",
+    "fill 10 60 -3 21 63 3 minecraft:glass",
+    "fill 10 60 -3 21 63 3 minecraft:glass destroy",
+    "fill 10 60 -3 21 63 3 minecraft:glass hollow",
 ];
 
 fn place(world: &Arc<World>, pos: BlockPos, block: &Block) {
@@ -124,8 +131,8 @@ fn record_area(world: &Arc<World>, x0: i32) -> String {
     let mut hash = 0xcbf2_9ce4_8422_2325u64;
     let mut entities = Vec::new();
     for x in FROM.0 - 1..=TO.0 + 1 {
-        for y in FROM.1 - 1..=TO.1 + 1 {
-            for z in FROM.2 - 1..=TO.2 + 1 {
+        for y in (-64..=-62).chain(FROM.1 - 1..=TO.1 + 1) {
+            for z in -4..=15 {
                 let pos = BlockPos::new(x0 + x, y, z);
                 fnv(
                     &mut hash,
@@ -138,7 +145,11 @@ fn record_area(world: &Arc<World>, x0: i32) -> String {
         }
     }
     let lamp = world.get_block_state_id(&at(x0, LAMP)).as_u16();
-    format!("blocks={hash:016x} be=[{}] lamp={lamp}", entities.join(" "))
+    let items = world.entities.load().len();
+    format!(
+        "blocks={hash:016x} be=[{}] lamp={lamp} entities={items}",
+        entities.join(" ")
+    )
 }
 
 fn run(server: &Arc<Server>, world: &Arc<World>, x0: i32, command: &str) -> String {

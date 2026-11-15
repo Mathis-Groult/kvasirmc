@@ -176,7 +176,9 @@ fn run(server: &Arc<Server>, world: &Arc<World>, x0: i32, command: &str) -> Stri
         });
     });
     receive
-        .recv_timeout(Duration::from_secs(20))
+        // Generous: the 32768-block cases take over 20 s in a debug build while the whole
+        // suite runs, and a deadlock still shows as `HANG`.
+        .recv_timeout(Duration::from_secs(120))
         .unwrap_or_else(|_| "HANG".to_owned())
 }
 

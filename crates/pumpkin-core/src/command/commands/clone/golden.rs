@@ -87,6 +87,23 @@ const CASES: &[&str] = &[
     "clone 21 63 7 10 60 2 30 60 2",
     "clone {s} 30 60 -3",
     "clone {s} 30 60 -3 replace move",
+    // Added after the mutation run: a destination just beside / just touching the source on
+    // each side (the overlap test and the destination's far corner), a source above the build
+    // limit, and moves along each axis (which sources count as inside the destination).
+    "clone {s} 10 60 -4",
+    "clone {s} 10 60 -3",
+    "clone {s} -2 60 2",
+    "clone {s} -1 60 2",
+    "clone {s} 10 56 2",
+    "clone {s} 10 57 2",
+    "clone {s} 10 63 2",
+    "clone {s} 10 60 7",
+    "clone 10 318 2 12 320 2 30 60 2",
+    "clone 14 61 4 21 63 7 2 61 4 replace move",
+    "clone {s} 10 64 2 replace move",
+    "clone {s} 10 56 2 replace move",
+    "clone {s} 10 60 8 replace move",
+    "clone {s} 10 60 -4 replace move",
 ];
 
 fn place(world: &Arc<World>, pos: BlockPos, block: &Block) {

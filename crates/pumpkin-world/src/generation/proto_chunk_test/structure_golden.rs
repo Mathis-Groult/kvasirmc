@@ -291,6 +291,20 @@ impl HeightSampler for TerrainColumns {
     }
 }
 
+/// Starts of the ruined portals: small seeds in chunk (0,0) and elsewhere, then large seeds,
+/// whose first random draws differ more (the first floats of seeds 1-4 are close, so they all
+/// pick the same setup).
+const PORTAL_STARTS: [(u64, i32, i32); 8] = [
+    (1, 0, 0),
+    (2, 3, -2),
+    (3, -5, 4),
+    (4, 7, 1),
+    (0x9E37_79B9_7F4A_7C15, 0, 0),
+    (0xD1B5_4A32_D192_ED03, -2, 6),
+    (0x8CB9_2BA7_2F3D_8DD7, 5, -3),
+    (0x2545_F491_4F6C_DD1D, -7, -7),
+];
+
 #[test]
 fn ruined_portals_lay_out_and_place_the_same_blocks() -> Result<(), Box<dyn std::error::Error>> {
     use pumpkin_data::structures::StructureKeys;
@@ -307,12 +321,12 @@ fn ruined_portals_lay_out_and_place_the_same_blocks() -> Result<(), Box<dyn std:
     ] {
         let header = format!("ruined_portal {variant:?} over {terrain:?}");
         let generator = RuinedPortalGenerator { variant };
-        for seed in 1..=4 {
+        for start in PORTAL_STARTS {
             record_structure(
                 &mut now,
                 &world_gen,
                 (&header, &generator),
-                (seed, 0, 0),
+                start,
                 (terrain, Some(&mut TerrainColumns(terrain))),
             )?;
         }

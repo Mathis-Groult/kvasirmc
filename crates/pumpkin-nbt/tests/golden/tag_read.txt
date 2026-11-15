@@ -1,0 +1,79 @@
+empty id 0: ok End at 0
+empty id 1: err Incomplete(Error { kind: UnexpectedEof, message: "failed to fill whole buffer" }) at 0
+empty id 2: err Incomplete(Error { kind: UnexpectedEof, message: "failed to fill whole buffer" }) at 0
+empty id 3: err Incomplete(Error { kind: UnexpectedEof, message: "failed to fill whole buffer" }) at 0
+empty id 4: err Incomplete(Error { kind: UnexpectedEof, message: "failed to fill whole buffer" }) at 0
+empty id 5: err Incomplete(Error { kind: UnexpectedEof, message: "failed to fill whole buffer" }) at 0
+empty id 6: err Incomplete(Error { kind: UnexpectedEof, message: "failed to fill whole buffer" }) at 0
+empty id 7: err Incomplete(Error { kind: UnexpectedEof, message: "failed to fill whole buffer" }) at 0
+empty id 8: err Incomplete(Error { kind: UnexpectedEof, message: "failed to fill whole buffer" }) at 0
+empty id 9: err Incomplete(Error { kind: UnexpectedEof, message: "failed to fill whole buffer" }) at 0
+empty id 10: ok Compound(NbtCompound { child_tags: {} }) at 0
+empty id 11: err Incomplete(Error { kind: UnexpectedEof, message: "failed to fill whole buffer" }) at 0
+empty id 12: err Incomplete(Error { kind: UnexpectedEof, message: "failed to fill whole buffer" }) at 0
+empty id 13: err UnknownTagId(13) at 0
+empty id 14: err UnknownTagId(14) at 0
+unknown 255: err UnknownTagId(255) at 0
+byte: ok Byte(-128) at 1
+short: ok Short(-32767) at 2
+short short: err Incomplete(Error { kind: UnexpectedEof, message: "failed to fill whole buffer" }) at 1
+int: ok Int(-2) at 4
+long: ok Long(-9223372036854775808) at 8
+float: ok Float(1.5) at 4
+float nan: ok Float(NaN) at 4
+double: ok Double(-0.0) at 8
+byte array -1: err NegativeLength(-1) at 4
+byte array min: err NegativeLength(-2147483648) at 4
+byte array 0: ok ByteArray([]) at 4
+byte array 3: ok ByteArray([127, 127, 127]) at 7
+byte array 3 short: err Incomplete(Custom { kind: UnexpectedEof, error: "unexpected EOF" }) at 4
+byte array limit no data: err Incomplete(Custom { kind: UnexpectedEof, error: "unexpected EOF" }) at 4
+byte array limit+1: err LargeLength(512001) at 4
+int array -1: err NegativeLength(-1) at 4
+int array min: err NegativeLength(-2147483648) at 4
+int array 0: ok IntArray([]) at 4
+int array 3: ok IntArray([2139062143, 2139062143, 2139062143]) at 16
+int array 3 short: err Incomplete(Error { kind: UnexpectedEof, message: "failed to fill whole buffer" }) at 15
+int array limit no data: err Incomplete(Error { kind: UnexpectedEof, message: "failed to fill whole buffer" }) at 4
+int array limit+1: err LargeLength(512001) at 4
+long array -1: err NegativeLength(-1) at 4
+long array min: err NegativeLength(-2147483648) at 4
+long array 0: ok LongArray([]) at 4
+long array 3: ok LongArray([9187201950435737471, 9187201950435737471, 9187201950435737471]) at 28
+long array 3 short: err Incomplete(Error { kind: UnexpectedEof, message: "failed to fill whole buffer" }) at 27
+long array limit no data: err Incomplete(Error { kind: UnexpectedEof, message: "failed to fill whole buffer" }) at 4
+long array limit+1: err LargeLength(512001) at 4
+byte array at limit: ok ByteArray([1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, .. #6351000226b5134f at 512004
+string empty: ok String("") at 2
+string abc: ok String("abc") at 5
+string short: err Incomplete(Custom { kind: UnexpectedEof, error: "unexpected EOF" }) at 2
+string cesu8 nul: ok String("\0") at 4
+string bad utf8: err Cesu8DecodingError at 4
+list end 0: ok List([]) at 5
+list end 1: err InvalidListTag(0) at 5
+list end -1: err NegativeLength(-1) at 5
+list byte 2: ok List([Byte(1), Byte(2)]) at 7
+list byte 2 short: err Incomplete(Error { kind: UnexpectedEof, message: "failed to fill whole buffer" }) at 6
+list byte -1: err NegativeLength(-1) at 5
+list byte limit+1: err LargeLength(512001) at 5
+list byte limit no data: err Incomplete(Error { kind: UnexpectedEof, message: "failed to fill whole buffer" }) at 5
+list unknown 0: ok List([]) at 5
+list unknown 1: err UnknownTagId(99) at 5
+list no length: err Incomplete(Error { kind: UnexpectedEof, message: "failed to fill whole buffer" }) at 1
+list of lists: ok List([List([Int(7)]), List([])]) at 19
+list of strings: ok List([String("x"), String("yz")]) at 12
+list of wrapper compounds: ok List([Int(5), String("w")]) at 20
+list of plain compounds: ok List([Compound(NbtCompound { child_tags: {"k": Int(5)} }), Compound(NbtCompound { child_tags: {} })]) at 15
+list of compounds with two keys:         """"(((()))),15:::BCCILN[]_abbcdddeghiiklmmnnnoooooppsstttttuuy{{}} at 18
+compound empty: ok Compound(NbtCompound { child_tags: {} }) at 1
+compound int: ok Compound(NbtCompound { child_tags: {"k": Int(9)} }) at 9
+compound unterminated: ok Compound(NbtCompound { child_tags: {"k": Int(9)} }) at 8
+compound unknown child: err UnknownTagId(77) at 4
+lists depth 511: ok List([List([List([List([List([List([List([List([List([List([List([List([List(.. #50449c0f6bcbb8bd at 2560
+compounds depth 511: err MaxDepthExceeded at 1024
+lists depth 512: ok List([List([List([List([List([List([List([List([List([List([List([List([List(.. #a931f41425401172 at 2565
+compounds depth 512: err MaxDepthExceeded at 1024
+lists depth 513: err MaxDepthExceeded at 2565
+compounds depth 513: err MaxDepthExceeded at 1024
+lists depth 514: err MaxDepthExceeded at 2565
+compounds depth 514: err MaxDepthExceeded at 1024

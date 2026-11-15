@@ -401,6 +401,9 @@ pub fn register(dispatcher: &mut CommandDispatcher, registry: &PermissionRegistr
 }
 
 #[cfg(test)]
+mod golden;
+
+#[cfg(test)]
 mod tests {
     use super::*;
 

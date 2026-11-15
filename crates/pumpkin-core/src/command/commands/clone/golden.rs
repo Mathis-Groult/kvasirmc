@@ -38,7 +38,7 @@ const TO: (i32, i32, i32) = (21, 63, 7);
 const DEST: (i32, i32, i32) = (30, 60, 2);
 const LAMP: (i32, i32, i32) = (22, 61, 4);
 const DEST_LAMP: (i32, i32, i32) = (42, 61, 4);
-const CHEST: (i32, i32, i32) = (14, 61, 4);
+pub(super) const CHEST: (i32, i32, i32) = (14, 61, 4);
 const GLOW: (i32, i32, i32) = (18, 62, 5);
 const POWER: (i32, i32, i32) = (21, 61, 4);
 
@@ -114,11 +114,11 @@ fn place(world: &Arc<World>, pos: BlockPos, block: &Block) {
     );
 }
 
-fn at(x0: i32, (x, y, z): (i32, i32, i32)) -> BlockPos {
+pub(super) fn at(x0: i32, (x, y, z): (i32, i32, i32)) -> BlockPos {
     BlockPos::new(x0 + x, y, z)
 }
 
-fn build_area(world: &Arc<World>, index: usize) -> i32 {
+pub(super) fn build_area(world: &Arc<World>, index: usize) -> i32 {
     let chunk_x = index as i32 * 4;
     for cx in chunk_x..chunk_x + 4 {
         for cz in -1..3 {
@@ -162,7 +162,11 @@ fn fnv(hash: &mut u64, bytes: &[u8]) {
 }
 
 /// A block entity's place and kind; a chest also lists its non-empty slots.
-fn describe_block_entity(world: &Arc<World>, pos: &BlockPos, (x, y, z): (i32, i32, i32)) -> String {
+pub(super) fn describe_block_entity(
+    world: &Arc<World>,
+    pos: &BlockPos,
+    (x, y, z): (i32, i32, i32),
+) -> String {
     let Some(entity) = world.get_block_entity(pos) else {
         return String::new();
     };
@@ -204,7 +208,7 @@ fn record_area(world: &Arc<World>, x0: i32) -> String {
     )
 }
 
-fn run(server: &Arc<Server>, world: &Arc<World>, x0: i32, command: &str) -> String {
+pub(super) fn run(server: &Arc<Server>, world: &Arc<World>, x0: i32, command: &str) -> String {
     let source = CommandSource::new(
         CommandSender::Console,
         world.clone(),

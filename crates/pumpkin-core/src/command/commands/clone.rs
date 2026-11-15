@@ -61,6 +61,14 @@ enum CloneMode {
     Move,
 }
 
+/// Flags for every block `/clone` writes or clears. Vanilla (`CloneCommands.clone`) first turns
+/// each destination position, and for `move` each source position, into a barrier with flags 816
+/// (skip on-place, skip block-entity side effects, suppress drops, known shape): a replaced
+/// container loses its contents without dropping them. With `NOTIFY_ALL` alone a moved chest
+/// dropped its items at the source while the copy kept them (item duplication).
+const NO_DROPS: BlockFlags =
+    BlockFlags::NOTIFY_ALL.union(BlockFlags::SKIP_BLOCK_ENTITY_REPLACED_CALLBACK);
+
 struct CloneExecutor {
     mask_mode: MaskMode,
     clone_mode: CloneMode,
@@ -196,7 +204,7 @@ impl CommandExecutor for CloneExecutor {
 
         let mut count = 0;
         for block in &blocks_to_clone {
-            world.set_block_state(&block.dest_pos, block.state_id, BlockFlags::NOTIFY_ALL);
+            world.set_block_state(&block.dest_pos, block.state_id, NO_DROPS);
 
             if let Some(nbt) = &block.block_entity_nbt {
                 let mut new_nbt = nbt.clone();
@@ -228,11 +236,7 @@ impl CommandExecutor for CloneExecutor {
         if self.clone_mode == CloneMode::Move {
             for block in &blocks_to_clone {
                 if !is_dest_pos(&block.src_pos) {
-                    world.set_block_state(
-                        &block.src_pos,
-                        BlockStateId::AIR,
-                        BlockFlags::NOTIFY_ALL,
-                    );
+                    world.set_block_state(&block.src_pos, BlockStateId::AIR, NO_DROPS);
                 }
             }
         }
@@ -252,6 +256,8 @@ impl CommandExecutor for CloneExecutor {
     }
 }
 
+#[cfg(test)]
+mod drop_tests;
 #[cfg(test)]
 mod golden;
 

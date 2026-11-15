@@ -19,6 +19,9 @@ use std::{
 
 use super::{BlockPlacer, BlockStateResolver, PaletteEntry};
 
+mod convert;
+mod process;
+
 /// Structure processors are used to dynamically transform blocks in structure templates
 /// during world generation or placement.
 ///
@@ -449,24 +452,9 @@ impl StructureProcessor {
         rng: &mut impl RandomImpl,
     ) -> Option<&'static BlockState> {
         match self {
-            Self::Rule(rules) => {
-                let world_state_id = placer.get_block_state(&world_pos);
-                let world_state = BlockState::from_id(world_state_id);
-                for rule in rules {
-                    if rule
-                        .position_predicate
-                        .test(world_pos, context.structure_start, rng)
-                        && rule.input_predicate.test(state, rng)
-                        && rule.location_predicate.test(world_state, rng)
-                    {
-                        if let Some(modifier) = &rule.block_entity_modifier {
-                            modifier.apply(nbt, world_pos, rng);
-                        }
-                        return Some(rule.output_state);
-                    }
-                }
-                Some(state)
-            }
+            Self::Rule(rules) => Some(process::apply_rules(
+                rules, placer, world_pos, state, nbt, context, rng,
+            )),
             Self::BlockRot {
                 integrity,
                 rottable_blocks,
@@ -497,21 +485,7 @@ impl StructureProcessor {
                 }
             }
             Self::BlackstoneReplace => Some(process_blackstone_replace(state)),
-            Self::JigsawReplacement => {
-                if state.id.to_block_id() == BlockId::JIGSAW {
-                    let final_state_str = nbt
-                        .as_ref()
-                        .and_then(|n| n.get_string("final_state"))
-                        .map(str::to_string);
-                    *nbt = None;
-                    let final_str = final_state_str.as_deref().unwrap_or("minecraft:air");
-                    let palette_entry = PaletteEntry::from_string(final_str);
-                    BlockStateResolver::resolve_simple(&palette_entry)
-                        .or(Some(Block::AIR.default_state))
-                } else {
-                    Some(state)
-                }
-            }
+            Self::JigsawReplacement => Some(process::replace_jigsaw(state, nbt)),
             Self::LavaSubmergedBlock => {
                 let world_state_id = placer.get_block_state(&world_pos);
                 if world_state_id.to_block_id() == BlockId::LAVA && !state.is_solid_render() {
@@ -1039,83 +1013,14 @@ fn convert_raw_pos_rule_test(raw: Option<RawPosRuleTest>) -> PosRuleTest {
     }
 }
 
-#[expect(clippy::too_many_lines)]
 fn convert_raw_processor(raw: RawProcessor) -> Option<StructureProcessor> {
     match raw {
         RawProcessor::BlockRot {
             integrity,
             rottable_blocks,
-        } => {
-            let rottable = rottable_blocks.and_then(|r| match r {
-                RawRottableBlocks::Single(s) => {
-                    if s.starts_with('#') {
-                        Some(RottableBlocks::Tag(BlockTagFilter::from_tag_str(&s)))
-                    } else {
-                        let name = s.strip_prefix("minecraft:").unwrap_or(&s);
-                        Block::from_name(name)
-                            .or_else(|| Block::from_registry_key(name))
-                            .map(|b| RottableBlocks::Block(b.id))
-                            .or_else(|| Some(RottableBlocks::Tag(BlockTagFilter::from_tag_str(&s))))
-                    }
-                }
-                RawRottableBlocks::List(list) => {
-                    let ids: Vec<BlockId> = list
-                        .into_iter()
-                        .filter_map(|s| {
-                            let name = s.strip_prefix("minecraft:").unwrap_or(&s);
-                            Block::from_name(name)
-                                .or_else(|| Block::from_registry_key(name))
-                                .map(|b| b.id)
-                        })
-                        .collect();
-                    Some(RottableBlocks::List(ids))
-                }
-            });
-            Some(StructureProcessor::BlockRot {
-                integrity,
-                rottable_blocks: rottable,
-            })
-        }
+        } => Some(convert::block_rot(integrity, rottable_blocks)),
         RawProcessor::BlockAge { mossiness } => Some(StructureProcessor::BlockAge { mossiness }),
-        RawProcessor::BlockIgnore { blocks } => {
-            let ignored: Vec<IgnoredBlock> = blocks
-                .into_iter()
-                .filter_map(|b| match b {
-                    RawBlockStateOrName::State(raw_state) => {
-                        let name = raw_state
-                            .name
-                            .strip_prefix("minecraft:")
-                            .unwrap_or(&raw_state.name);
-                        let block =
-                            Block::from_name(name).or_else(|| Block::from_registry_key(name))?;
-                        Some(IgnoredBlock {
-                            block_id: block.id,
-                            properties: if raw_state.properties.is_empty() {
-                                None
-                            } else {
-                                Some(
-                                    raw_state
-                                        .properties
-                                        .into_iter()
-                                        .filter_map(|(k, v)| Property::from_str_pair(&k, &v))
-                                        .collect(),
-                                )
-                            },
-                        })
-                    }
-                    RawBlockStateOrName::Name(name_str) => {
-                        let name = name_str.strip_prefix("minecraft:").unwrap_or(&name_str);
-                        let block =
-                            Block::from_name(name).or_else(|| Block::from_registry_key(name))?;
-                        Some(IgnoredBlock {
-                            block_id: block.id,
-                            properties: None,
-                        })
-                    }
-                })
-                .collect();
-            Some(StructureProcessor::BlockIgnore(ignored))
-        }
+        RawProcessor::BlockIgnore { blocks } => Some(convert::block_ignore(blocks)),
         RawProcessor::Gravity { heightmap, offset } => {
             let heightmap = match heightmap.as_str() {
                 "WORLD_SURFACE" => HeightmapType::WorldSurface,
@@ -1133,45 +1038,7 @@ fn convert_raw_processor(raw: RawProcessor) -> Option<StructureProcessor> {
         RawProcessor::BlackstoneReplace => Some(StructureProcessor::BlackstoneReplace),
         RawProcessor::JigsawReplacement => Some(StructureProcessor::JigsawReplacement),
         RawProcessor::LavaSubmergedBlock => Some(StructureProcessor::LavaSubmergedBlock),
-        RawProcessor::Rule { rules } => {
-            let converted_rules: Vec<ProcessorRule> = rules
-                .into_iter()
-                .filter_map(|rule| {
-                    let output_state = resolve_output_state(&rule.output_state)?;
-                    let input_predicate = convert_raw_rule_test(rule.input_predicate)?;
-                    let location_predicate = rule
-                        .location_predicate
-                        .and_then(convert_raw_rule_test)
-                        .unwrap_or(RuleTest::AlwaysTrue);
-                    let position_predicate = convert_raw_pos_rule_test(rule.position_predicate);
-                    let block_entity_modifier = rule.block_entity_modifier.map(|m| match m {
-                        RawBlockEntityModifier::AppendLoot { loot_table } => {
-                            BlockEntityModifier::AppendLoot { loot_table }
-                        }
-                        RawBlockEntityModifier::AppendStatic { data } => {
-                            if let NbtTag::Compound(compound) = json_to_nbt(data) {
-                                BlockEntityModifier::AppendStatic { data: compound }
-                            } else {
-                                BlockEntityModifier::AppendStatic {
-                                    data: NbtCompound::new(),
-                                }
-                            }
-                        }
-                        RawBlockEntityModifier::Clear => BlockEntityModifier::Clear,
-                        RawBlockEntityModifier::Passthrough => BlockEntityModifier::Passthrough,
-                    });
-
-                    Some(ProcessorRule {
-                        position_predicate,
-                        input_predicate,
-                        location_predicate,
-                        output_state,
-                        block_entity_modifier,
-                    })
-                })
-                .collect();
-            Some(StructureProcessor::Rule(converted_rules))
-        }
+        RawProcessor::Rule { rules } => Some(convert::rules(rules)),
         RawProcessor::Capped { limit, delegate } => {
             convert_raw_processor(*delegate).map(|proc| StructureProcessor::Capped {
                 limit,

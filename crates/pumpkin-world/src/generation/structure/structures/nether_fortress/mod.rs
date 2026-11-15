@@ -16,6 +16,20 @@ use crate::generation::{
     },
 };
 
+use bridge::BridgePiece;
+use bridge_end::BridgeEndPiece;
+use bridge_platform::BridgePlatformPiece;
+use bridge_small_crossing::BridgeSmallCrossingPiece;
+use bridge_stairs::BridgeStairsPiece;
+use corridor_balcony::CorridorBalconyPiece;
+use corridor_crossing::CorridorCrossingPiece;
+use corridor_exit::CorridorExitPiece;
+use corridor_left_turn::CorridorLeftTurnPiece;
+use corridor_nether_warts_room::CorridorNetherWartsRoomPiece;
+use corridor_right_turn::CorridorRightTurnPiece;
+use corridor_stairs::CorridorStairsPiece;
+use small_corridor::SmallCorridorPiece;
+
 pub mod bridge;
 pub mod bridge_crossing;
 pub mod bridge_end;
@@ -588,89 +602,46 @@ fn create_piece_and_child(
 ) -> Option<(Box<dyn StructurePieceBase>, PendingChild)> {
     let piece: Box<dyn StructurePieceBase> = match piece_type {
         NetherFortressPieceType::Bridge => {
-            bridge::BridgePiece::create(collector, random, x, y, z, orientation, depth)?
+            BridgePiece::create(collector, random, x, y, z, orientation, depth)?
         }
         NetherFortressPieceType::BridgeCrossing => {
-            bridge_crossing::BridgeCrossingPiece::create(collector, x, y, z, orientation, depth)?
+            BridgeCrossingPiece::create(collector, x, y, z, orientation, depth)?
         }
         NetherFortressPieceType::BridgeSmallCrossing => {
-            bridge_small_crossing::BridgeSmallCrossingPiece::create(
-                collector,
-                x,
-                y,
-                z,
-                orientation,
-                depth,
-            )?
+            BridgeSmallCrossingPiece::create(collector, x, y, z, orientation, depth)?
         }
         NetherFortressPieceType::BridgeStairs => {
-            bridge_stairs::BridgeStairsPiece::create(collector, x, y, z, depth, orientation)?
+            BridgeStairsPiece::create(collector, x, y, z, depth, orientation)?
         }
         NetherFortressPieceType::BridgePlatform => {
-            bridge_platform::BridgePlatformPiece::create(collector, x, y, z, depth, orientation)?
+            BridgePlatformPiece::create(collector, x, y, z, depth, orientation)?
         }
-        NetherFortressPieceType::CorridorExit => corridor_exit::CorridorExitPiece::create(
-            collector,
-            random,
-            x,
-            y,
-            z,
-            orientation,
-            depth,
-        )?,
+        NetherFortressPieceType::CorridorExit => {
+            CorridorExitPiece::create(collector, random, x, y, z, orientation, depth)?
+        }
         NetherFortressPieceType::SmallCorridor => {
-            small_corridor::SmallCorridorPiece::create(collector, x, y, z, orientation, depth)?
+            SmallCorridorPiece::create(collector, x, y, z, orientation, depth)?
         }
         NetherFortressPieceType::CorridorCrossing => {
-            corridor_crossing::CorridorCrossingPiece::create(
-                collector,
-                x,
-                y,
-                z,
-                orientation,
-                depth,
-            )?
+            CorridorCrossingPiece::create(collector, x, y, z, orientation, depth)?
         }
         NetherFortressPieceType::CorridorRightTurn => {
-            corridor_right_turn::CorridorRightTurnPiece::create(
-                collector,
-                random,
-                x,
-                y,
-                z,
-                orientation,
-                depth,
-            )?
+            CorridorRightTurnPiece::create(collector, random, x, y, z, orientation, depth)?
         }
         NetherFortressPieceType::CorridorLeftTurn => {
-            corridor_left_turn::CorridorLeftTurnPiece::create(
-                collector,
-                random,
-                x,
-                y,
-                z,
-                orientation,
-                depth,
-            )?
+            CorridorLeftTurnPiece::create(collector, random, x, y, z, orientation, depth)?
         }
         NetherFortressPieceType::CorridorStairs => {
-            corridor_stairs::CorridorStairsPiece::create(collector, x, y, z, orientation, depth)?
+            CorridorStairsPiece::create(collector, x, y, z, orientation, depth)?
         }
         NetherFortressPieceType::CorridorBalcony => {
-            corridor_balcony::CorridorBalconyPiece::create(collector, x, y, z, orientation, depth)?
+            CorridorBalconyPiece::create(collector, x, y, z, orientation, depth)?
         }
         NetherFortressPieceType::CorridorNetherWartsRoom => {
-            corridor_nether_warts_room::CorridorNetherWartsRoomPiece::create(
-                collector,
-                x,
-                y,
-                z,
-                orientation,
-                depth,
-            )?
+            CorridorNetherWartsRoomPiece::create(collector, x, y, z, orientation, depth)?
         }
         NetherFortressPieceType::BridgeEnd => {
-            bridge_end::BridgeEndPiece::create(collector, random, x, y, z, orientation, depth)?
+            BridgeEndPiece::create(collector, random, x, y, z, orientation, depth)?
         }
     };
 

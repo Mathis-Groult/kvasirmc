@@ -43,7 +43,6 @@ pub mod template;
 /// Does NOT perform biome validation — callers that require it should add
 /// their own check after calling this function.
 #[must_use]
-#[allow(clippy::too_many_lines)]
 pub fn generate_structure_position(
     key: &StructureKeys,
     structure: &Structure,
@@ -95,27 +94,9 @@ pub fn generate_structure_position(
         | StructureKeys::BastionRemnant
         | StructureKeys::PillagerOutpost
         | StructureKeys::TrailRuins
-        | StructureKeys::TrialChambers => {
-            let (Some(start_pool), Some(size)) = (structure.start_pool, structure.size) else {
-                return None;
-            };
-            let mut generator =
-                JigsawGenerator::new(start_pool, size).with_pool_aliases(structure.pool_aliases);
-            if structure.use_expansion_hack.unwrap_or(false) {
-                generator = generator.with_expansion_hack(true);
-            }
-            if let Some(start_jigsaw_name) = structure.start_jigsaw_name {
-                generator = generator.with_start_jigsaw(start_jigsaw_name);
-            }
-            generator.get_structure_position(context)
-        }
+        | StructureKeys::TrialChambers => jigsaw_structure_position(structure, context),
         StructureKeys::Shipwreck | StructureKeys::ShipwreckBeached => {
-            let generator = ShipwreckGenerator {
-                is_beached: structure
-                    .is_beached
-                    .unwrap_or(*key == StructureKeys::ShipwreckBeached),
-            };
-            generator.get_structure_position(context)
+            shipwreck_position(*key, structure, context)
         }
         StructureKeys::RuinedPortal
         | StructureKeys::RuinedPortalDesert
@@ -128,25 +109,77 @@ pub fn generate_structure_position(
             generator.get_structure_position(context)
         }
         StructureKeys::OceanRuinCold | StructureKeys::OceanRuinWarm => {
-            let generator = OceanRuinGenerator {
-                is_warm: structure
-                    .biome_temp
-                    .map_or(*key == StructureKeys::OceanRuinWarm, |t| t == "warm"),
-            };
-            generator.get_structure_position(context)
+            ocean_ruin_position(*key, structure, context)
         }
         StructureKeys::EndCity => EndCityGenerator.get_structure_position(context),
         StructureKeys::Mansion => MansionGenerator.get_structure_position(context),
         StructureKeys::Monument => OceanMonumentGenerator.get_structure_position(context),
         StructureKeys::Mineshaft | StructureKeys::MineshaftMesa => {
-            let generator = MineshaftGenerator {
-                is_mesa: structure
-                    .mineshaft_type
-                    .map_or(*key == StructureKeys::MineshaftMesa, |t| t == "mesa"),
-            };
-            generator.get_structure_position(context)
+            mineshaft_position(*key, structure, context)
         }
     }
+}
+
+/// A jigsaw structure, built from its start pool, size, pool aliases, expansion hack and start
+/// jigsaw as given in the structure data; `None` when the data has no start pool or size.
+fn jigsaw_structure_position(
+    structure: &Structure,
+    context: StructureGeneratorContext<'_>,
+) -> Option<StructurePosition> {
+    let (Some(start_pool), Some(size)) = (structure.start_pool, structure.size) else {
+        return None;
+    };
+    let mut generator =
+        JigsawGenerator::new(start_pool, size).with_pool_aliases(structure.pool_aliases);
+    if structure.use_expansion_hack.unwrap_or(false) {
+        generator = generator.with_expansion_hack(true);
+    }
+    if let Some(start_jigsaw_name) = structure.start_jigsaw_name {
+        generator = generator.with_start_jigsaw(start_jigsaw_name);
+    }
+    generator.get_structure_position(context)
+}
+
+/// A shipwreck, beached as the structure data says, else as the key says.
+fn shipwreck_position(
+    key: StructureKeys,
+    structure: &Structure,
+    context: StructureGeneratorContext<'_>,
+) -> Option<StructurePosition> {
+    let generator = ShipwreckGenerator {
+        is_beached: structure
+            .is_beached
+            .unwrap_or(key == StructureKeys::ShipwreckBeached),
+    };
+    generator.get_structure_position(context)
+}
+
+/// An ocean ruin, warm as the structure data's biome temperature says, else as the key says.
+fn ocean_ruin_position(
+    key: StructureKeys,
+    structure: &Structure,
+    context: StructureGeneratorContext<'_>,
+) -> Option<StructurePosition> {
+    let generator = OceanRuinGenerator {
+        is_warm: structure
+            .biome_temp
+            .map_or(key == StructureKeys::OceanRuinWarm, |t| t == "warm"),
+    };
+    generator.get_structure_position(context)
+}
+
+/// A mineshaft, mesa as the structure data's mineshaft type says, else as the key says.
+fn mineshaft_position(
+    key: StructureKeys,
+    structure: &Structure,
+    context: StructureGeneratorContext<'_>,
+) -> Option<StructurePosition> {
+    let generator = MineshaftGenerator {
+        is_mesa: structure
+            .mineshaft_type
+            .map_or(key == StructureKeys::MineshaftMesa, |t| t == "mesa"),
+    };
+    generator.get_structure_position(context)
 }
 
 #[must_use]

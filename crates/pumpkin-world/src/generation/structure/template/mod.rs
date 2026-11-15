@@ -30,9 +30,9 @@ pub mod processor;
 mod structure_template;
 mod template_piece;
 
+use pumpkin_data::BlockStateId;
 use pumpkin_data::Mirror;
 use pumpkin_data::Rotation;
-use pumpkin_data::BlockStateId;
 use pumpkin_nbt::{compound::NbtCompound, tag::NbtTag};
 use pumpkin_util::math::vector3::Vector3;
 use pumpkin_util::random::{RandomImpl, hash_block_pos, legacy_rand::LegacyRand};
@@ -99,7 +99,7 @@ pub fn place_template(
     );
 }
 
-#[allow(clippy::too_many_arguments, clippy::too_many_lines)]
+#[allow(clippy::too_many_arguments)]
 pub fn place_template_with_options(
     placer: &mut impl BlockPlacer,
     template: &StructureTemplate,
@@ -127,29 +127,8 @@ pub fn place_template_with_options(
             continue;
         }
 
-        let mut block_entity_nbt = block.nbt.clone();
-        let mut placed_entry = palette_entry.clone();
-
-        // Jigsaw blocks are replaced during template processing, before block entities are
-        // collected. Keeping this in the placement pipeline avoids stale jigsaw entities.
-        if !keep_jigsaws && palette_entry.name == "minecraft:jigsaw" {
-            let final_state = block_entity_nbt
-                .as_ref()
-                .and_then(|nbt| nbt.get_string("final_state"))
-                .unwrap_or("minecraft:air");
-            placed_entry = PaletteEntry::from_string(final_state);
-            block_entity_nbt = None;
-        }
-
-        // Structure void preserves the existing block, both from the palette itself and from a
-        // jigsaw final state.
-        if placed_entry.name == "minecraft:structure_void" {
-            continue;
-        }
-
-        // Resolve block state with rotation applied to directional properties
-        let Some(mut state) =
-            BlockStateResolver::resolve(&placed_entry, rotation, Mirror::default())
+        let Some((mut placed_entry, mut block_entity_nbt, mut state)) =
+            resolve_template_block(block, palette_entry, rotation, keep_jigsaws)
         else {
             continue;
         };
@@ -174,44 +153,21 @@ pub fn place_template_with_options(
 
         let world_pos = Vector3::new(wx, wy, wz);
 
-        if apply_waterlogging
-            && placer.get_block_state(&world_pos).to_block_id() == pumpkin_data::Block::WATER.id
-            && let Some(waterlogged) = placed_entry.properties.iter_mut().find_map(|p| match p {
-                pumpkin_data::Property::Waterlogged(w) => Some(w),
-                _ => None,
-            })
-        {
-            *waterlogged = true;
-            if let Some(waterlogged_state) =
-                BlockStateResolver::resolve(&placed_entry, rotation, Mirror::default())
-            {
-                state = waterlogged_state;
-            }
+        if apply_waterlogging {
+            state = waterlog_if_in_water(placer, world_pos, &mut placed_entry, rotation, state);
         }
 
         // Apply processors
-        let mut should_place = true;
-        let mut capped_idx = 0;
-        let mut rng =
-            LegacyRand::from_seed(hash_block_pos(world_pos.x, world_pos.y, world_pos.z) as u64);
-        for processor in processors {
-            let Some(processed_state) = processor.process_with_context(
-                placer,
-                world_pos,
-                state,
-                &mut block_entity_nbt,
-                &mut context,
-                &mut capped_idx,
-                &mut rng,
-            ) else {
-                should_place = false;
-                break;
-            };
-            state = processed_state;
-        }
-        if !should_place {
+        let Some(state) = run_processors(
+            placer,
+            world_pos,
+            state,
+            &mut block_entity_nbt,
+            &mut context,
+            processors,
+        ) else {
             continue;
-        }
+        };
         // Legacy pool elements ignore air after jigsaw replacement and custom processors.
         if skip_air && state.id.to_block_id() == pumpkin_data::Block::AIR.id {
             continue;
@@ -219,35 +175,139 @@ pub fn place_template_with_options(
 
         placer.set_block_state(&Vector3::new(wx, wy, wz), state);
 
-        // Create block entities for interactive blocks (furnaces, chests, etc.)
-        let final_block = pumpkin_data::Block::from_id(state.id.to_block_id());
-        let block_entity_id = get_block_entity_id(final_block.name);
-        if block_entity_nbt.is_some() || block_entity_id.is_some() {
-            let fallback_id = block_entity_id.unwrap_or(final_block.name);
-            let mut placed_nbt = NbtCompound::new();
+        add_placed_block_entity(placer, state, (wx, wy, wz), block_entity_nbt.as_ref());
+    }
+}
 
-            placed_nbt.put_string("id", fallback_id.to_string());
-            placed_nbt.put_int("x", wx);
-            placed_nbt.put_int("y", wy);
-            placed_nbt.put_int("z", wz);
+/// The palette entry, block entity NBT and rotated state a template block is placed with: a
+/// jigsaw becomes its final state without NBT unless jigsaws are kept; `None` for structure void
+/// (which keeps the existing block) and for entries that resolve to no state.
+fn resolve_template_block(
+    block: &TemplateBlock,
+    palette_entry: &PaletteEntry,
+    rotation: Rotation,
+    keep_jigsaws: bool,
+) -> Option<(PaletteEntry, Option<NbtCompound>, &'static BlockState)> {
+    let mut block_entity_nbt = block.nbt.clone();
+    let mut placed_entry = palette_entry.clone();
 
-            if let Some(template_nbt) = &block_entity_nbt {
-                for (key, value) in &template_nbt.child_tags {
-                    if key.as_ref() != "x" && key.as_ref() != "y" && key.as_ref() != "z" {
-                        placed_nbt.child_tags.insert(key.clone(), value.clone());
-                    }
+    // Jigsaw blocks are replaced during template processing, before block entities are
+    // collected. Keeping this in the placement pipeline avoids stale jigsaw entities.
+    if !keep_jigsaws && palette_entry.name == "minecraft:jigsaw" {
+        let final_state = block_entity_nbt
+            .as_ref()
+            .and_then(|nbt| nbt.get_string("final_state"))
+            .unwrap_or("minecraft:air");
+        placed_entry = PaletteEntry::from_string(final_state);
+        block_entity_nbt = None;
+    }
+
+    // Structure void preserves the existing block, both from the palette itself and from a
+    // jigsaw final state.
+    if placed_entry.name == "minecraft:structure_void" {
+        return None;
+    }
+
+    // Resolve block state with rotation applied to directional properties
+    let state = BlockStateResolver::resolve(&placed_entry, rotation, Mirror::default())?;
+    Some((placed_entry, block_entity_nbt, state))
+}
+
+/// `state` re-resolved as waterlogged when the entry can be waterlogged and the block at
+/// `world_pos` is water (the entry's flag is set either way in that case).
+fn waterlog_if_in_water(
+    placer: &impl BlockPlacer,
+    world_pos: Vector3<i32>,
+    placed_entry: &mut PaletteEntry,
+    rotation: Rotation,
+    state: &'static BlockState,
+) -> &'static BlockState {
+    let mut state = state;
+    if placer.get_block_state(&world_pos).to_block_id() == pumpkin_data::Block::WATER.id
+        && let Some(waterlogged) = placed_entry.properties.iter_mut().find_map(|p| match p {
+            pumpkin_data::Property::Waterlogged(w) => Some(w),
+            _ => None,
+        })
+    {
+        *waterlogged = true;
+        if let Some(waterlogged_state) =
+            BlockStateResolver::resolve(placed_entry, rotation, Mirror::default())
+        {
+            state = waterlogged_state;
+        }
+    }
+    state
+}
+
+/// Runs the processors over one block in order; `None` when one of them removes it.
+fn run_processors(
+    placer: &impl BlockPlacer,
+    world_pos: Vector3<i32>,
+    state: &'static BlockState,
+    block_entity_nbt: &mut Option<NbtCompound>,
+    context: &mut processor::ProcessorContext,
+    processors: &[StructureProcessor],
+) -> Option<&'static BlockState> {
+    let mut state = state;
+    let mut should_place = true;
+    let mut capped_idx = 0;
+    let mut rng =
+        LegacyRand::from_seed(hash_block_pos(world_pos.x, world_pos.y, world_pos.z) as u64);
+    for processor in processors {
+        let Some(processed_state) = processor.process_with_context(
+            placer,
+            world_pos,
+            state,
+            block_entity_nbt,
+            context,
+            &mut capped_idx,
+            &mut rng,
+        ) else {
+            should_place = false;
+            break;
+        };
+        state = processed_state;
+    }
+    should_place.then_some(state)
+}
+
+/// Adds the block entity of a block placed as `state` at `(wx, wy, wz)`: the template's NBT
+/// without its position, or a bare one for blocks that always have a block entity. A loot table
+/// without a seed gets the one derived from the position.
+fn add_placed_block_entity(
+    placer: &mut impl BlockPlacer,
+    state: &BlockState,
+    (wx, wy, wz): (i32, i32, i32),
+    block_entity_nbt: Option<&NbtCompound>,
+) {
+    // Create block entities for interactive blocks (furnaces, chests, etc.)
+    let final_block = pumpkin_data::Block::from_id(state.id.to_block_id());
+    let block_entity_id = get_block_entity_id(final_block.name);
+    if block_entity_nbt.is_some() || block_entity_id.is_some() {
+        let fallback_id = block_entity_id.unwrap_or(final_block.name);
+        let mut placed_nbt = NbtCompound::new();
+
+        placed_nbt.put_string("id", fallback_id.to_string());
+        placed_nbt.put_int("x", wx);
+        placed_nbt.put_int("y", wy);
+        placed_nbt.put_int("z", wz);
+
+        if let Some(template_nbt) = block_entity_nbt {
+            for (key, value) in &template_nbt.child_tags {
+                if key.as_ref() != "x" && key.as_ref() != "y" && key.as_ref() != "z" {
+                    placed_nbt.child_tags.insert(key.clone(), value.clone());
                 }
             }
-
-            if placed_nbt.get_string("LootTable").is_some()
-                && placed_nbt.get_long("LootTableSeed").is_none()
-            {
-                let mut random = LegacyRand::from_seed(hash_block_pos(wx, wy, wz) as u64);
-                placed_nbt.put_long("LootTableSeed", random.next_i64());
-            }
-
-            placer.add_block_entity(placed_nbt);
         }
+
+        if placed_nbt.get_string("LootTable").is_some()
+            && placed_nbt.get_long("LootTableSeed").is_none()
+        {
+            let mut random = LegacyRand::from_seed(hash_block_pos(wx, wy, wz) as u64);
+            placed_nbt.put_long("LootTableSeed", random.next_i64());
+        }
+
+        placer.add_block_entity(placed_nbt);
     }
 }
 

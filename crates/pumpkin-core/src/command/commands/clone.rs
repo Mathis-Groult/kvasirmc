@@ -1,7 +1,8 @@
 use crate::command::argument_builder::{ArgumentBuilder, argument, command, literal};
-use crate::command::argument_types::block_predicate::BlockPredicateArgumentType;
+use crate::command::argument_types::block_predicate::{BlockPredicate, BlockPredicateArgumentType};
 use crate::command::argument_types::coordinates::block_pos::BlockPosArgumentType;
 use crate::command::context::command_context::CommandContext;
+use crate::command::errors::command_syntax_error::CommandSyntaxError;
 use crate::command::errors::error_types::CommandErrorType;
 use crate::command::node::dispatcher::CommandDispatcher;
 use crate::command::node::{CommandExecutor, CommandExecutorResult};
@@ -13,6 +14,9 @@ use pumpkin_util::math::vector2::Vector2;
 use pumpkin_util::permission::{Permission, PermissionDefault, PermissionRegistry};
 use pumpkin_util::text::TextComponent;
 use pumpkin_world::world::BlockFlags;
+use std::sync::Arc;
+
+use crate::world::World;
 
 const DESCRIPTION: &str = "Clones blocks from one region to another.";
 const PERMISSION: &str = "minecraft:command.clone";
@@ -82,109 +86,177 @@ struct ClonedBlock {
     block_entity_nbt: Option<NbtCompound>,
 }
 
-impl CommandExecutor for CloneExecutor {
-    #[expect(clippy::too_many_lines)]
-    fn execute(&self, context: &CommandContext) -> CommandExecutorResult {
-        let begin = BlockPosArgumentType::get_block_pos(context, ARG_BEGIN)?;
-        let end = BlockPosArgumentType::get_block_pos(context, ARG_END)?;
-        let dest = BlockPosArgumentType::get_block_pos(context, ARG_DEST)?;
+/// A box of blocks given by its lowest and its highest corner.
+#[derive(Clone, Copy)]
+struct Region {
+    min: BlockPos,
+    max: BlockPos,
+}
 
-        let filter_block = if self.has_filter {
-            Some(BlockPredicateArgumentType::get(context, ARG_FILTER)?)
-        } else {
-            None
-        };
+impl Region {
+    const fn contains(&self, pos: &BlockPos) -> bool {
+        pos.0.x >= self.min.0.x
+            && pos.0.x <= self.max.0.x
+            && pos.0.y >= self.min.0.y
+            && pos.0.y <= self.max.0.y
+            && pos.0.z >= self.min.0.z
+            && pos.0.z <= self.max.0.z
+    }
 
-        let min_x = begin.0.x.min(end.0.x);
-        let max_x = begin.0.x.max(end.0.x);
-        let min_y = begin.0.y.min(end.0.y);
-        let max_y = begin.0.y.max(end.0.y);
-        let min_z = begin.0.z.min(end.0.z);
-        let max_z = begin.0.z.max(end.0.z);
+    /// Whether `other` shares at least one block with this box.
+    const fn overlaps(&self, other: &Self) -> bool {
+        !(other.max.0.x < self.min.0.x
+            || other.min.0.x > self.max.0.x
+            || other.max.0.y < self.min.0.y
+            || other.min.0.y > self.max.0.y
+            || other.max.0.z < self.min.0.z
+            || other.min.0.z > self.max.0.z)
+    }
 
-        let size_x = max_x - min_x + 1;
-        let size_y = max_y - min_y + 1;
-        let size_z = max_z - min_z + 1;
-
-        let volume = size_x * size_y * size_z;
-
-        if volume > 32768 {
-            return Err(TOOBIG_ERROR.create_without_context_args_slice(&[
-                TextComponent::text("32768"),
-                TextComponent::text(volume.to_string()),
-            ]));
-        }
-
-        let dest_min_x = dest.0.x;
-        let dest_min_y = dest.0.y;
-        let dest_min_z = dest.0.z;
-        let dest_max_x = dest_min_x + size_x - 1;
-        let dest_max_y = dest_min_y + size_y - 1;
-        let dest_max_z = dest_min_z + size_z - 1;
-
-        let overlap = !(dest_max_x < min_x
-            || dest_min_x > max_x
-            || dest_max_y < min_y
-            || dest_min_y > max_y
-            || dest_max_z < min_z
-            || dest_min_z > max_z);
-
-        if overlap && self.clone_mode != CloneMode::Force {
-            return Err(OVERLAP_ERROR.create_without_context());
-        }
-
-        let world = context.source.world();
-
-        let limit_check_pos_1 = BlockPos::new(min_x, min_y, min_z);
-        let limit_check_pos_2 = BlockPos::new(max_x, max_y, max_z);
-        let limit_check_pos_3 = BlockPos::new(dest_min_x, dest_min_y, dest_min_z);
-        let limit_check_pos_4 = BlockPos::new(dest_max_x, dest_max_y, dest_max_z);
-
-        if !world.is_in_build_limit(limit_check_pos_1)
-            || !world.is_in_build_limit(limit_check_pos_2)
-            || !world.is_in_build_limit(limit_check_pos_3)
-            || !world.is_in_build_limit(limit_check_pos_4)
-        {
-            return Err(OUT_OF_WORLD_ERROR.create_without_context());
-        }
-
-        for cx in (min_x >> 4)..=(max_x >> 4) {
-            for cz in (min_z >> 4)..=(max_z >> 4) {
+    /// Whether every chunk column the box touches is loaded.
+    fn chunks_loaded(&self, world: &Arc<World>) -> bool {
+        for cx in (self.min.0.x >> 4)..=(self.max.0.x >> 4) {
+            for cz in (self.min.0.z >> 4)..=(self.max.0.z >> 4) {
                 let chunk_pos = Vector2::new(cx, cz);
                 if world.level.read_chunk_sync(&chunk_pos, |_| ()).is_none() {
-                    return Err(NOT_LOADED_ERROR.create_without_context());
+                    return false;
                 }
             }
         }
+        true
+    }
+}
 
-        for cx in (dest_min_x >> 4)..=(dest_max_x >> 4) {
-            for cz in (dest_min_z >> 4)..=(dest_max_z >> 4) {
-                let chunk_pos = Vector2::new(cx, cz);
-                if world.level.read_chunk_sync(&chunk_pos, |_| ()).is_none() {
-                    return Err(NOT_LOADED_ERROR.create_without_context());
-                }
+/// The source box spanned by `begin` and `end`, and the destination box of the same size whose
+/// lowest corner is `dest`. A source of more than 32768 blocks is refused.
+fn regions(
+    begin: BlockPos,
+    end: BlockPos,
+    dest: BlockPos,
+) -> Result<(Region, Region), CommandSyntaxError> {
+    let min_x = begin.0.x.min(end.0.x);
+    let max_x = begin.0.x.max(end.0.x);
+    let min_y = begin.0.y.min(end.0.y);
+    let max_y = begin.0.y.max(end.0.y);
+    let min_z = begin.0.z.min(end.0.z);
+    let max_z = begin.0.z.max(end.0.z);
+
+    let size_x = max_x - min_x + 1;
+    let size_y = max_y - min_y + 1;
+    let size_z = max_z - min_z + 1;
+
+    let volume = size_x * size_y * size_z;
+
+    if volume > 32768 {
+        return Err(TOOBIG_ERROR.create_without_context_args_slice(&[
+            TextComponent::text("32768"),
+            TextComponent::text(volume.to_string()),
+        ]));
+    }
+
+    let source = Region {
+        min: BlockPos::new(min_x, min_y, min_z),
+        max: BlockPos::new(max_x, max_y, max_z),
+    };
+    let target = Region {
+        min: dest,
+        max: BlockPos::new(
+            dest.0.x + size_x - 1,
+            dest.0.y + size_y - 1,
+            dest.0.z + size_z - 1,
+        ),
+    };
+    Ok((source, target))
+}
+
+/// Both boxes must lie inside the build limit and in loaded chunks.
+fn check_in_world(
+    world: &Arc<World>,
+    source: &Region,
+    target: &Region,
+) -> Result<(), CommandSyntaxError> {
+    if !world.is_in_build_limit(source.min)
+        || !world.is_in_build_limit(source.max)
+        || !world.is_in_build_limit(target.min)
+        || !world.is_in_build_limit(target.max)
+    {
+        return Err(OUT_OF_WORLD_ERROR.create_without_context());
+    }
+
+    if !source.chunks_loaded(world) || !target.chunks_loaded(world) {
+        return Err(NOT_LOADED_ERROR.create_without_context());
+    }
+    Ok(())
+}
+
+/// Writes every cloned block (and its block entity) at its destination; returns how many.
+fn place_blocks(world: &Arc<World>, blocks_to_clone: &[ClonedBlock]) -> i32 {
+    let mut count = 0;
+    for block in blocks_to_clone {
+        world.set_block_state(&block.dest_pos, block.state_id, NO_DROPS);
+
+        if let Some(nbt) = &block.block_entity_nbt {
+            let mut new_nbt = nbt.clone();
+            new_nbt.put_int("x", block.dest_pos.0.x);
+            new_nbt.put_int("y", block.dest_pos.0.y);
+            new_nbt.put_int("z", block.dest_pos.0.z);
+
+            if let Some(be) = crate::block::entities::block_entity_from_nbt(&new_nbt) {
+                world.add_block_entity(be);
             }
         }
 
+        count += 1;
+    }
+    count
+}
+
+/// `move`: clears every source block that the destination did not overwrite.
+fn clear_moved_sources(world: &Arc<World>, blocks_to_clone: &[ClonedBlock], target: &Region) {
+    for block in blocks_to_clone {
+        if !target.contains(&block.src_pos) {
+            world.set_block_state(&block.src_pos, BlockStateId::AIR, NO_DROPS);
+        }
+    }
+}
+
+impl CloneExecutor {
+    /// Whether the mask mode copies a source block in this state.
+    fn should_clone(
+        &self,
+        world: &Arc<World>,
+        state_id: BlockStateId,
+        src_pos: &BlockPos,
+        filter_block: Option<&BlockPredicate>,
+    ) -> bool {
+        match self.mask_mode {
+            MaskMode::Replace => true,
+            MaskMode::Masked => !pumpkin_data::block_properties::is_air(state_id),
+            MaskMode::Filtered => filter_block
+                .is_some_and(|f| f.test(state_id, || world.get_block_entity_nbt(src_pos))),
+        }
+    }
+
+    /// Reads every source block the mask mode copies, with its block entity, in x, y, z order.
+    fn collect_blocks(
+        &self,
+        world: &Arc<World>,
+        source: &Region,
+        dest: BlockPos,
+        filter_block: Option<&BlockPredicate>,
+    ) -> Vec<ClonedBlock> {
         let mut blocks_to_clone = Vec::new();
 
-        for x in 0..size_x {
-            for y in 0..size_y {
-                for z in 0..size_z {
-                    let src_pos = BlockPos::new(min_x + x, min_y + y, min_z + z);
-                    let dest_pos = BlockPos::new(dest_min_x + x, dest_min_y + y, dest_min_z + z);
+        for x in 0..=(source.max.0.x - source.min.0.x) {
+            for y in 0..=(source.max.0.y - source.min.0.y) {
+                for z in 0..=(source.max.0.z - source.min.0.z) {
+                    let src_pos =
+                        BlockPos::new(source.min.0.x + x, source.min.0.y + y, source.min.0.z + z);
+                    let dest_pos = BlockPos::new(dest.0.x + x, dest.0.y + y, dest.0.z + z);
 
                     let state_id = world.get_block_state_id(&src_pos);
 
-                    let should_clone = match self.mask_mode {
-                        MaskMode::Replace => true,
-                        MaskMode::Masked => !pumpkin_data::block_properties::is_air(state_id),
-                        MaskMode::Filtered => filter_block.as_ref().is_some_and(|f| {
-                            f.test(state_id, || world.get_block_entity_nbt(&src_pos))
-                        }),
-                    };
-
-                    if should_clone {
+                    if self.should_clone(world, state_id, &src_pos, filter_block) {
                         let block_entity_nbt = world.get_block_entity(&src_pos).map(|be| {
                             let mut nbt = NbtCompound::new();
                             be.write_internal(&mut nbt);
@@ -201,44 +273,41 @@ impl CommandExecutor for CloneExecutor {
                 }
             }
         }
+        blocks_to_clone
+    }
+}
 
-        let mut count = 0;
-        for block in &blocks_to_clone {
-            world.set_block_state(&block.dest_pos, block.state_id, NO_DROPS);
+impl CommandExecutor for CloneExecutor {
+    fn execute(&self, context: &CommandContext) -> CommandExecutorResult {
+        let begin = BlockPosArgumentType::get_block_pos(context, ARG_BEGIN)?;
+        let end = BlockPosArgumentType::get_block_pos(context, ARG_END)?;
+        let dest = BlockPosArgumentType::get_block_pos(context, ARG_DEST)?;
 
-            if let Some(nbt) = &block.block_entity_nbt {
-                let mut new_nbt = nbt.clone();
-                new_nbt.put_int("x", block.dest_pos.0.x);
-                new_nbt.put_int("y", block.dest_pos.0.y);
-                new_nbt.put_int("z", block.dest_pos.0.z);
+        let filter_block = if self.has_filter {
+            Some(BlockPredicateArgumentType::get(context, ARG_FILTER)?)
+        } else {
+            None
+        };
 
-                if let Some(be) = crate::block::entities::block_entity_from_nbt(&new_nbt) {
-                    world.add_block_entity(be);
-                }
-            }
+        let (source, target) = regions(begin, end, dest)?;
 
-            count += 1;
+        if source.overlaps(&target) && self.clone_mode != CloneMode::Force {
+            return Err(OVERLAP_ERROR.create_without_context());
         }
+
+        let world = context.source.world();
+        check_in_world(world, &source, &target)?;
+
+        let blocks_to_clone =
+            self.collect_blocks(world, &source, target.min, filter_block.as_ref());
+        let count = place_blocks(world, &blocks_to_clone);
 
         if count == 0 {
             return Err(FAILED_ERROR.create_without_context());
         }
 
-        let is_dest_pos = |pos: &BlockPos| {
-            pos.0.x >= dest_min_x
-                && pos.0.x <= dest_max_x
-                && pos.0.y >= dest_min_y
-                && pos.0.y <= dest_max_y
-                && pos.0.z >= dest_min_z
-                && pos.0.z <= dest_max_z
-        };
-
         if self.clone_mode == CloneMode::Move {
-            for block in &blocks_to_clone {
-                if !is_dest_pos(&block.src_pos) {
-                    world.set_block_state(&block.src_pos, BlockStateId::AIR, NO_DROPS);
-                }
-            }
+            clear_moved_sources(world, &blocks_to_clone, &target);
         }
 
         world.flush_block_updates();

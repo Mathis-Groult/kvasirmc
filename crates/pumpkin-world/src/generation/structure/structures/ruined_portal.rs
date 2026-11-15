@@ -20,7 +20,7 @@ use crate::{
         },
         template::{
             BlockStateResolver, PaletteEntry, StructurePlaceSettings, StructureTemplate,
-            get_template,
+            add_template_block_entity, get_template,
             processor::{
                 IgnoredBlock, PosRuleTest, ProcessorContext, ProcessorRule, RuleTest,
                 StructureProcessor,
@@ -295,40 +295,10 @@ impl StructureGenerator for RuinedPortalGenerator {
         &self,
         mut context: StructureGeneratorContext<'_>,
     ) -> Option<StructurePosition> {
-        let setups = RuinedPortalSetup::setups_for_variant(self.variant);
-        let chosen_setup = if setups.len() > 1 {
-            let mut total = 0.0;
-            for s in setups {
-                total += s.weight;
-            }
-            let mut pick = context.random.next_f32();
-            let mut chosen = setups[0];
-            for s in setups {
-                pick -= s.weight / total;
-                if pick < 0.0 {
-                    chosen = *s;
-                    break;
-                }
-            }
-            chosen
-        } else {
-            setups[0]
-        };
+        let chosen_setup = choose_setup(self.variant, &mut context.random);
 
         let air_pocket = sample(&mut context.random, chosen_setup.air_pocket_probability);
-        let template_name = if context.random.next_f32() < 0.05 {
-            let idx = context
-                .random
-                .next_bounded_i32(STRUCTURE_LOCATION_GIANT_PORTALS.len() as i32)
-                as usize;
-            STRUCTURE_LOCATION_GIANT_PORTALS[idx]
-        } else {
-            let idx = context
-                .random
-                .next_bounded_i32(STRUCTURE_LOCATION_PORTALS.len() as i32)
-                as usize;
-            STRUCTURE_LOCATION_PORTALS[idx]
-        };
+        let template_name = choose_template(&mut context.random);
 
         let template = get_template(template_name)?;
         let rotation = Rotation::from_index(context.random.next_bounded_i32(4) as u8);
@@ -512,42 +482,7 @@ impl RuinedPortalPiece {
 
             chunk.set_block_state(world_pos.x, world_pos.y, world_pos.z, state);
 
-            let final_block = Block::from_id(state.id.to_block_id());
-            let block_entity_id =
-                crate::generation::structure::template::get_block_entity_id(final_block.name);
-            if block_entity_nbt.is_some() || block_entity_id.is_some() {
-                let fallback_id = block_entity_id.unwrap_or(final_block.name);
-                let mut placed_nbt = pumpkin_nbt::compound::NbtCompound::new();
-
-                placed_nbt.put_string("id", fallback_id.to_string());
-                placed_nbt.put_int("x", world_pos.x);
-                placed_nbt.put_int("y", world_pos.y);
-                placed_nbt.put_int("z", world_pos.z);
-
-                if let Some(template_nbt) = &block_entity_nbt {
-                    for (key, value) in &template_nbt.child_tags {
-                        if key.as_ref() != "x"
-                            && key.as_ref() != "y"
-                            && key.as_ref() != "z"
-                            && key.as_ref() != "id"
-                        {
-                            placed_nbt.child_tags.insert(key.clone(), value.clone());
-                        }
-                    }
-                }
-
-                if placed_nbt.get_string("LootTable").is_some()
-                    && placed_nbt.get_long("LootTableSeed").is_none()
-                {
-                    let mut rng =
-                        LegacyRand::from_seed(
-                            hash_block_pos(world_pos.x, world_pos.y, world_pos.z) as u64,
-                        );
-                    placed_nbt.put_long("LootTableSeed", rng.next_i64());
-                }
-
-                chunk.add_block_entity(placed_nbt);
-            }
+            add_template_block_entity(chunk, world_pos, state, block_entity_nbt.as_ref());
         }
     }
 
@@ -794,23 +729,7 @@ fn make_settings(
     pivot: Vector3<i32>,
     properties: &RuinedPortalProperties,
 ) -> StructurePlaceSettings {
-    let ignore_processor = if properties.air_pocket {
-        StructureProcessor::BlockIgnore(vec![IgnoredBlock {
-            block_id: Block::STRUCTURE_BLOCK.id,
-            properties: None,
-        }])
-    } else {
-        StructureProcessor::BlockIgnore(vec![
-            IgnoredBlock {
-                block_id: Block::STRUCTURE_BLOCK.id,
-                properties: None,
-            },
-            IgnoredBlock {
-                block_id: Block::AIR.id,
-                properties: None,
-            },
-        ])
-    };
+    let ignore_processor = ignore_processor(properties.air_pocket);
 
     let mut rules = Vec::new();
     rules.push(ProcessorRule {
@@ -824,37 +743,7 @@ fn make_settings(
         block_entity_modifier: None,
     });
 
-    let lava_rule = match vertical_placement {
-        VerticalPlacement::OnOceanFloor => ProcessorRule {
-            position_predicate: PosRuleTest::AlwaysTrue,
-            input_predicate: RuleTest::BlockMatch(Block::LAVA.id),
-            location_predicate: RuleTest::AlwaysTrue,
-            output_state: Block::MAGMA_BLOCK.default_state,
-            block_entity_modifier: None,
-        },
-        _ => {
-            if properties.cold {
-                ProcessorRule {
-                    position_predicate: PosRuleTest::AlwaysTrue,
-                    input_predicate: RuleTest::BlockMatch(Block::LAVA.id),
-                    location_predicate: RuleTest::AlwaysTrue,
-                    output_state: Block::NETHERRACK.default_state,
-                    block_entity_modifier: None,
-                }
-            } else {
-                ProcessorRule {
-                    position_predicate: PosRuleTest::AlwaysTrue,
-                    input_predicate: RuleTest::RandomBlockMatch {
-                        block: Block::LAVA.id,
-                        probability: 0.2,
-                    },
-                    location_predicate: RuleTest::AlwaysTrue,
-                    output_state: Block::MAGMA_BLOCK.default_state,
-                    block_entity_modifier: None,
-                }
-            }
-        }
-    };
+    let lava_rule = lava_rule(vertical_placement, properties.cold);
     rules.push(lava_rule);
 
     if !properties.cold {
@@ -891,4 +780,94 @@ fn make_settings(
     }
 
     settings
+}
+
+/// One of the variant's setups, drawn by weight when it has several.
+fn choose_setup(variant: StructureKeys, random: &mut RandomGenerator) -> RuinedPortalSetup {
+    let setups = RuinedPortalSetup::setups_for_variant(variant);
+    if setups.len() > 1 {
+        let mut total = 0.0;
+        for s in setups {
+            total += s.weight;
+        }
+        let mut pick = random.next_f32();
+        let mut chosen = setups[0];
+        for s in setups {
+            pick -= s.weight / total;
+            if pick < 0.0 {
+                chosen = *s;
+                break;
+            }
+        }
+        chosen
+    } else {
+        setups[0]
+    }
+}
+
+/// A giant portal template one time in twenty, else a normal one.
+fn choose_template(random: &mut RandomGenerator) -> &'static str {
+    if random.next_f32() < 0.05 {
+        let idx = random.next_bounded_i32(STRUCTURE_LOCATION_GIANT_PORTALS.len() as i32) as usize;
+        STRUCTURE_LOCATION_GIANT_PORTALS[idx]
+    } else {
+        let idx = random.next_bounded_i32(STRUCTURE_LOCATION_PORTALS.len() as i32) as usize;
+        STRUCTURE_LOCATION_PORTALS[idx]
+    }
+}
+
+/// Skips structure blocks, and air too unless the portal keeps an air pocket.
+fn ignore_processor(air_pocket: bool) -> StructureProcessor {
+    if air_pocket {
+        StructureProcessor::BlockIgnore(vec![IgnoredBlock {
+            block_id: Block::STRUCTURE_BLOCK.id,
+            properties: None,
+        }])
+    } else {
+        StructureProcessor::BlockIgnore(vec![
+            IgnoredBlock {
+                block_id: Block::STRUCTURE_BLOCK.id,
+                properties: None,
+            },
+            IgnoredBlock {
+                block_id: Block::AIR.id,
+                properties: None,
+            },
+        ])
+    }
+}
+
+/// Lava turns to magma on the ocean floor, to netherrack in cold setups, else partly to magma.
+fn lava_rule(vertical_placement: VerticalPlacement, cold: bool) -> ProcessorRule {
+    match vertical_placement {
+        VerticalPlacement::OnOceanFloor => ProcessorRule {
+            position_predicate: PosRuleTest::AlwaysTrue,
+            input_predicate: RuleTest::BlockMatch(Block::LAVA.id),
+            location_predicate: RuleTest::AlwaysTrue,
+            output_state: Block::MAGMA_BLOCK.default_state,
+            block_entity_modifier: None,
+        },
+        _ => {
+            if cold {
+                ProcessorRule {
+                    position_predicate: PosRuleTest::AlwaysTrue,
+                    input_predicate: RuleTest::BlockMatch(Block::LAVA.id),
+                    location_predicate: RuleTest::AlwaysTrue,
+                    output_state: Block::NETHERRACK.default_state,
+                    block_entity_modifier: None,
+                }
+            } else {
+                ProcessorRule {
+                    position_predicate: PosRuleTest::AlwaysTrue,
+                    input_predicate: RuleTest::RandomBlockMatch {
+                        block: Block::LAVA.id,
+                        probability: 0.2,
+                    },
+                    location_predicate: RuleTest::AlwaysTrue,
+                    output_state: Block::MAGMA_BLOCK.default_state,
+                    block_entity_modifier: None,
+                }
+            }
+        }
+    }
 }

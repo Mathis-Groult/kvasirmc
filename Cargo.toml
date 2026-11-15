@@ -175,6 +175,19 @@ strip = false
 [profile.dev]
 debug = false
 
+# KvasirMC: tests spent ~85% of their time in world generation and lighting compiled at opt-level 0
+# (loot golden: 70 s -> 6.8 s with these). Behaviour is unchanged: overflow checks and debug
+# assertions stay on. pumpkin-core, the crate we edit most, stays at 0 so its rebuild stays fast.
+# pumpkin-data is 1, not 2: its generated source is huge and 2 would slow its one-time build.
+[profile.dev.package.pumpkin-world]
+opt-level = 2
+
+[profile.dev.package.pumpkin-util]
+opt-level = 2
+
+[profile.dev.package.pumpkin-data]
+opt-level = 1
+
 [workspace.dependencies]
 tokio = { version = "1.54", default-features = false }
 syn = { version = "3.0", default-features = false, features = ["full", "parsing", "printing", "proc-macro", "clone-impls", "derive"] }

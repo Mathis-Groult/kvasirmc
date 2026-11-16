@@ -335,3 +335,6 @@ pub fn register(dispatcher: &mut CommandDispatcher, registry: &PermissionRegistr
             .then(sound_arg),
     );
 }
+
+#[cfg(test)]
+mod golden;

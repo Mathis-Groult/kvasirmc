@@ -88,16 +88,26 @@ pub fn packets(online: &mut [Online]) -> String {
 /// As [`packets`], with every occurrence of each `mask` in a packet overwritten by as many `#`
 /// before hashing (text that changes per build, such as the commit hash).
 pub fn packets_masked(online: &mut [Online], masks: &[&str]) -> String {
-    record_packets(online, masks, true)
+    record_packets(online, &|packet| mask(packet, masks), true)
 }
 
 /// As [`packets`], but only the number of packets for Bedrock players: their item packets carry
 /// a stack network id from a process-wide counter, so the bytes depend on which tests ran first.
 pub fn packets_bedrock_counted(online: &mut [Online]) -> String {
-    record_packets(online, &[], false)
+    record_packets(online, &<[u8]>::to_vec, false)
 }
 
-fn record_packets(online: &mut [Online], masks: &[&str], bedrock_bytes: bool) -> String {
+/// As [`packets`], with each packet passed through `normalise` before hashing (to blank a
+/// random field such as a sound seed).
+pub fn packets_normalised(online: &mut [Online], normalise: &dyn Fn(&[u8]) -> Vec<u8>) -> String {
+    record_packets(online, normalise, true)
+}
+
+fn record_packets(
+    online: &mut [Online],
+    normalise: &dyn Fn(&[u8]) -> Vec<u8>,
+    bedrock_bytes: bool,
+) -> String {
     let mut text = String::new();
     for who in online {
         if !bedrock_bytes && matches!(who.tap, Tap::Bedrock(_)) {
@@ -109,8 +119,8 @@ fn record_packets(online: &mut [Online], masks: &[&str], bedrock_bytes: bool) ->
             .drain()
             .iter()
             .map(|packet| {
-                let masked = mask(packet, masks);
-                format!("{}:{:016x}", masked.len(), fnv(&masked))
+                let normal = normalise(packet);
+                format!("{}:{:016x}", normal.len(), fnv(&normal))
             })
             .collect();
         let _ = write!(text, " {}[{}]", who.name, sent.join(","));

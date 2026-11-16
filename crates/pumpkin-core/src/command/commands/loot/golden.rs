@@ -10,12 +10,21 @@
 //! (count or error text), then the chest, furnace, player inventory, ender chest and zombie
 //! equipment slots that are not empty, and the item entities the case left in the area (block
 //! position and stack). A case that does not return within the deadline is recorded as `HANG`.
+//!
+//! Appended after the first mutation run (`MOB_CASES`): a tall grass plant to mine (its table
+//! checks the block above through the loot position and world, and the mined block's state),
+//! mobs spawned for one case only (cows burning or not, mobs whose drops need a player kill),
+//! loot that equips armour and weapons, and at the end of each line the attribute values of
+//! the player and the zombie before and after (they show which equipment slot an item went to).
 
 use std::fmt::Write;
 use std::sync::Arc;
+use std::sync::atomic::Ordering;
 use std::time::Duration;
 
 use pumpkin_data::Block;
+use pumpkin_data::attributes::Attributes;
+use pumpkin_data::block_properties::{DoubleBlockHalf, LargeFernProperties};
 use pumpkin_data::data_component_impl::EquipmentSlot;
 use pumpkin_data::entity::EntityType;
 use pumpkin_data::item::Item;
@@ -48,6 +57,8 @@ const GRAVEL: (i32, i32, i32) = (11, 61, 4);
 const SHORT_GRASS: (i32, i32, i32) = (12, 61, 4);
 const OAK_LOG: (i32, i32, i32) = (13, 61, 4);
 const EMPTY: (i32, i32, i32) = (14, 61, 4);
+const TALL_GRASS: (i32, i32, i32) = (15, 61, 4);
+const TALL_GRASS_TOP: (i32, i32, i32) = (15, 62, 4);
 const SPAWN: (i32, i32, i32) = (20, 62, 8);
 const PLAYER_AT: (i32, i32, i32) = (24, 61, 8);
 const ZOMBIE_AT: (i32, i32, i32) = (28, 61, 8);
@@ -125,6 +136,51 @@ const CASES: &[&str] = &[
     "loot replace entity @e[type=minecraft:cow] weapon.mainhand loot minecraft:blocks/diamond_block",
 ];
 
+/// A case with mobs spawned for it alone, beside the zombie: (entity type, burning).
+type Mobs = &'static [(&'static EntityType, bool)];
+
+const NO_MOBS: Mobs = &[];
+
+/// Cases appended after the first mutation run; `{tall}` and `{tall_top}` are the two halves of
+/// the tall grass, `{mob}` the nearest mob of the case's first type.
+const MOB_CASES: &[(&str, Mobs)] = &[
+    ("loot spawn {p} mine {tall} mainhand", NO_MOBS),
+    ("loot spawn {p} mine {tall}", NO_MOBS),
+    ("loot spawn {p} mine {tall} offhand", NO_MOBS),
+    ("loot spawn {p} mine {tall_top} mainhand", NO_MOBS),
+    ("loot spawn {p} kill {mob}", &[(&EntityType::COW, false)]),
+    ("loot spawn {p} kill {mob}", &[(&EntityType::COW, true)]),
+    (
+        "loot spawn {p} kill @e[type=minecraft:cow,distance=..30]",
+        &[(&EntityType::COW, false), (&EntityType::COW, true)],
+    ),
+    ("loot spawn {p} kill {mob}", &[(&EntityType::BLAZE, false)]),
+    ("loot spawn {p} kill {mob}", &[(&EntityType::EVOKER, false)]),
+    ("loot spawn {p} kill {mob}", &[(&EntityType::RABBIT, false)]),
+    ("loot spawn {p} kill {mob}", &[(&EntityType::WITHER_SKELETON, false)]),
+    ("loot give @s kill {mob}", &[(&EntityType::BLAZE, false)]),
+    ("loot replace entity {z} armor.feet 4 loot minecraft:blocks/diamond_block", NO_MOBS),
+    ("loot replace entity {z} armor.feet 4 loot minecraft:equipment/trial_chamber", NO_MOBS),
+    ("loot replace entity {z} weapon.mainhand loot minecraft:equipment/trial_chamber_melee", NO_MOBS),
+    ("loot replace entity @s armor.feet 4 loot minecraft:equipment/trial_chamber", NO_MOBS),
+    ("loot replace entity @s armor.feet loot minecraft:equipment/trial_chamber", NO_MOBS),
+    ("loot replace entity @s armor.legs loot minecraft:equipment/trial_chamber", NO_MOBS),
+    ("loot replace entity @s armor.chest loot minecraft:equipment/trial_chamber", NO_MOBS),
+    ("loot replace entity @s armor.head loot minecraft:equipment/trial_chamber", NO_MOBS),
+    ("loot replace entity @s hotbar.0 4 loot minecraft:equipment/trial_chamber", NO_MOBS),
+    ("loot replace entity @s hotbar.1 4 loot minecraft:equipment/trial_chamber", NO_MOBS),
+    ("loot replace entity @s weapon.mainhand loot minecraft:equipment/trial_chamber_melee", NO_MOBS),
+    ("loot replace entity @s weapon.offhand loot minecraft:equipment/trial_chamber_melee", NO_MOBS),
+    ("loot replace entity @s hotbar.1 loot minecraft:equipment/trial_chamber_melee", NO_MOBS),
+    ("loot replace entity @s armor.feet 4 loot minecraft:chests/village/village_armorer", NO_MOBS),
+    ("loot replace entity @s hotbar.1 4 loot minecraft:chests/village/village_armorer", NO_MOBS),
+    (SELECTS_SLOT_1, NO_MOBS),
+];
+
+/// The one case whose player has hotbar slot 1 selected, so the sword the table drops second
+/// lands in the main hand.
+const SELECTS_SLOT_1: &str = "loot replace entity @s hotbar.0 2 loot minecraft:equipment/trial_chamber_melee";
+
 fn at(x0: i32, (x, y, z): (i32, i32, i32)) -> BlockPos {
     BlockPos::new(x0 + x, y, z)
 }
@@ -176,6 +232,63 @@ fn build_area(world: &Arc<World>, index: usize) -> i32 {
     place(world, at(x0, SHORT_GRASS), &Block::SHORT_GRASS);
     place(world, at(x0, OAK_LOG), &Block::OAK_LOG);
     x0
+}
+
+/// A two-block tall grass on a grass block (both halves forced, no neighbour updates).
+fn place_tall_grass(world: &Arc<World>, x0: i32) {
+    let flags = BlockFlags::FORCE_STATE | BlockFlags::SKIP_BLOCK_ADDED_CALLBACK;
+    let (x, _, z) = TALL_GRASS;
+    world.set_block_state(
+        &BlockPos::new(x0 + x, 60, z),
+        Block::GRASS_BLOCK.default_state.id,
+        flags,
+    );
+    for (pos, half) in [
+        (TALL_GRASS, DoubleBlockHalf::Lower),
+        (TALL_GRASS_TOP, DoubleBlockHalf::Upper),
+    ] {
+        let state = LargeFernProperties { half }.to_state_id(&Block::TALL_GRASS);
+        world.set_block_state(&at(x0, pos), state, flags);
+    }
+}
+
+/// The case's own mobs, two blocks apart beside the zombie.
+fn add_mobs(world: &Arc<World>, x0: i32, mobs: Mobs) {
+    let (x, y, z) = ZOMBIE_AT;
+    for (index, (kind, burning)) in mobs.iter().enumerate() {
+        let mob = Arc::new(LivingEntity::new(Entity::new(
+            Arc::clone(world),
+            Vector3::new(
+                f64::from(x0 + x) + 0.5,
+                f64::from(y),
+                f64::from(z + 2 + 2 * index as i32) + 0.5,
+            ),
+            kind,
+        )));
+        if *burning {
+            mob.entity.fire_ticks.store(100, Ordering::Relaxed);
+        }
+        world.spawn_entity(mob);
+    }
+}
+
+/// Attribute values that equipment changes, for the player and the zombie.
+fn attributes_text(player: &Arc<Player>, zombie: &Arc<LivingEntity>) -> String {
+    let mut text = String::new();
+    for (who, living) in [("player", &player.living_entity), ("zombie", zombie.as_ref())] {
+        let values: Vec<String> = [
+            &Attributes::ARMOR,
+            &Attributes::ARMOR_TOUGHNESS,
+            &Attributes::ATTACK_DAMAGE,
+            &Attributes::ATTACK_SPEED,
+            &Attributes::KNOCKBACK_RESISTANCE,
+        ]
+        .iter()
+        .map(|attribute| format!("{}", living.get_attribute_value(attribute)))
+        .collect();
+        let _ = write!(text, "{who}[{}]", values.join(","));
+    }
+    text
 }
 
 /// An op player in the area: shears selected, a diamond pickaxe in the off hand, slots 1-35
@@ -233,7 +346,7 @@ fn record(world: &Arc<World>, x0: i32, player: &Arc<Player>, zombie: &Arc<Living
     let container = |pos| {
         world
             .get_block_entity(&at(x0, pos))
-            .and_then(|e| e.get_inventory())
+            .and_then(crate::block::entities::BlockEntity::get_inventory)
     };
     let chest = inventory_text(container(CHEST));
     let furnace = inventory_text(container(FURNACE));
@@ -357,6 +470,8 @@ fn expand(case: &str, x0: i32) -> String {
         .replace("{grass}", &pos(SHORT_GRASS))
         .replace("{log}", &pos(OAK_LOG))
         .replace("{z}", ZOMBIE)
+        .replace("{tall_top}", &pos(TALL_GRASS_TOP))
+        .replace("{tall}", &pos(TALL_GRASS))
 }
 
 #[tokio::test(flavor = "multi_thread")]
@@ -374,6 +489,33 @@ async fn loot_command_gives_the_same_items() -> TestResult {
         let result = run(&server, &world, &player, &expand(case, x0));
         let after = record(&world, x0, &player, &zombie);
         writeln!(now, "{case} -> {result}; before {before}; after {after}")?;
+        world.remove_player(&player, false).await;
+    }
+    for (index, (case, mobs)) in MOB_CASES.iter().enumerate() {
+        let x0 = build_area(&world, CASES.len() + index + 1);
+        place_tall_grass(&world, x0);
+        let player = add_player(&world, x0);
+        if *case == SELECTS_SLOT_1 {
+            player.inventory().set_selected_slot(1);
+        }
+        let zombie = add_zombie(&world, x0);
+        add_mobs(&world, x0, mobs);
+        let command = match mobs.first() {
+            Some((kind, _)) => case.replace(
+                "{mob}",
+                &format!("@e[type=minecraft:{},limit=1,sort=nearest]", kind.resource_name),
+            ),
+            None => (*case).to_owned(),
+        };
+        let attributes_before = attributes_text(&player, &zombie);
+        let before = record(&world, x0, &player, &zombie);
+        let result = run(&server, &world, &player, &expand(&command, x0));
+        let after = record(&world, x0, &player, &zombie);
+        let attributes_after = attributes_text(&player, &zombie);
+        writeln!(
+            now,
+            "{case} -> {result}; before {before}; after {after}; attributes {attributes_before} -> {attributes_after}"
+        )?;
         world.remove_player(&player, false).await;
     }
 

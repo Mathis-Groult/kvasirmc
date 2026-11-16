@@ -67,12 +67,17 @@ impl<'a> PistonHandler<'a> {
         if !self.try_move(self.pos_to, self.motion_direction) {
             return false;
         }
-        for i in 0..self.moved_blocks.len() {
+        // The length is read again every pass, as vanilla `resolve` does: blocks found through a
+        // branch get their own sticky neighbours checked. A fixed range left the far end of an L
+        // of slime blocks behind (card #52).
+        let mut i = 0;
+        while i < self.moved_blocks.len() {
             let block_pos = self.moved_blocks[i];
             let block = self.world.get_block(&block_pos);
             if Self::is_block_sticky(block) && !self.try_move_adjacent_block(block, &block_pos) {
                 return false;
             }
+            i += 1;
         }
         true
     }

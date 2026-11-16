@@ -16,6 +16,8 @@
 //! mobs spawned for one case only (cows burning or not, mobs whose drops need a player kill),
 //! loot that equips armour and weapons, and at the end of each line the attribute values of
 //! the player and the zombie before and after (they show which equipment slot an item went to).
+//! `SETUP_CASES` turn one biome cell into a bamboo jungle first: the fishing junk and abandoned
+//! camp tables check the biome at the loot position.
 
 use std::fmt::Write;
 use std::sync::Arc;
@@ -136,8 +138,9 @@ const CASES: &[&str] = &[
     "loot replace entity @e[type=minecraft:cow] weapon.mainhand loot minecraft:blocks/diamond_block",
 ];
 
-/// A case with mobs spawned for it alone, beside the zombie: (entity type, burning).
-type Mobs = &'static [(&'static EntityType, bool)];
+/// A case with mobs spawned for it alone, beside the zombie: (entity type, fire ticks to set;
+/// `None` leaves the new entity's own value).
+type Mobs = &'static [(&'static EntityType, Option<i32>)];
 
 const NO_MOBS: Mobs = &[];
 
@@ -148,17 +151,17 @@ const MOB_CASES: &[(&str, Mobs)] = &[
     ("loot spawn {p} mine {tall}", NO_MOBS),
     ("loot spawn {p} mine {tall} offhand", NO_MOBS),
     ("loot spawn {p} mine {tall_top} mainhand", NO_MOBS),
-    ("loot spawn {p} kill {mob}", &[(&EntityType::COW, false)]),
-    ("loot spawn {p} kill {mob}", &[(&EntityType::COW, true)]),
+    ("loot spawn {p} kill {mob}", &[(&EntityType::COW, None)]),
+    ("loot spawn {p} kill {mob}", &[(&EntityType::COW, Some(100))]),
     (
         "loot spawn {p} kill @e[type=minecraft:cow,distance=..30]",
-        &[(&EntityType::COW, false), (&EntityType::COW, true)],
+        &[(&EntityType::COW, None), (&EntityType::COW, Some(100))],
     ),
-    ("loot spawn {p} kill {mob}", &[(&EntityType::BLAZE, false)]),
-    ("loot spawn {p} kill {mob}", &[(&EntityType::EVOKER, false)]),
-    ("loot spawn {p} kill {mob}", &[(&EntityType::RABBIT, false)]),
-    ("loot spawn {p} kill {mob}", &[(&EntityType::WITHER_SKELETON, false)]),
-    ("loot give @s kill {mob}", &[(&EntityType::BLAZE, false)]),
+    ("loot spawn {p} kill {mob}", &[(&EntityType::BLAZE, None)]),
+    ("loot spawn {p} kill {mob}", &[(&EntityType::EVOKER, None)]),
+    ("loot spawn {p} kill {mob}", &[(&EntityType::RABBIT, None)]),
+    ("loot spawn {p} kill {mob}", &[(&EntityType::WITHER_SKELETON, None)]),
+    ("loot give @s kill {mob}", &[(&EntityType::BLAZE, None)]),
     ("loot replace entity {z} armor.feet 4 loot minecraft:blocks/diamond_block", NO_MOBS),
     ("loot replace entity {z} armor.feet 4 loot minecraft:equipment/trial_chamber", NO_MOBS),
     ("loot replace entity {z} weapon.mainhand loot minecraft:equipment/trial_chamber_melee", NO_MOBS),
@@ -175,6 +178,24 @@ const MOB_CASES: &[(&str, Mobs)] = &[
     ("loot replace entity @s armor.feet 4 loot minecraft:chests/village/village_armorer", NO_MOBS),
     ("loot replace entity @s hotbar.1 4 loot minecraft:chests/village/village_armorer", NO_MOBS),
     (SELECTS_SLOT_1, NO_MOBS),
+    ("loot spawn {p} kill {mob}", &[(&EntityType::COW, Some(0))]),
+    ("loot spawn {p} kill {mob}", &[(&EntityType::SHEEP, None)]),
+];
+
+/// Cases that first run a setup command in the area (its result ends the line). `{fish_at}` is a
+/// block whose biome cell alone is turned into a bamboo jungle by `{jungle_fish}`; `{jungle_player}`
+/// does the same to the cell the player stands in. Each runs once without the biome as a control.
+const SETUP_CASES: &[(&str, &str)] = &[
+    ("", "loot spawn {p} fish minecraft:gameplay/fishing/junk {fish_at}"),
+    (
+        "fillbiome {jungle_fish} minecraft:bamboo_jungle",
+        "loot spawn {p} fish minecraft:gameplay/fishing/junk {fish_at}",
+    ),
+    ("", "loot spawn {p} loot minecraft:chests/abandoned_camp_common_chest"),
+    (
+        "fillbiome {jungle_player} minecraft:bamboo_jungle",
+        "loot spawn {p} loot minecraft:chests/abandoned_camp_common_chest",
+    ),
 ];
 
 /// The one case whose player has hotbar slot 1 selected, so the sword the table drops second
@@ -255,7 +276,7 @@ fn place_tall_grass(world: &Arc<World>, x0: i32) {
 /// The case's own mobs, two blocks apart beside the zombie.
 fn add_mobs(world: &Arc<World>, x0: i32, mobs: Mobs) {
     let (x, y, z) = ZOMBIE_AT;
-    for (index, (kind, burning)) in mobs.iter().enumerate() {
+    for (index, (kind, fire_ticks)) in mobs.iter().enumerate() {
         let mob = Arc::new(LivingEntity::new(Entity::new(
             Arc::clone(world),
             Vector3::new(
@@ -265,8 +286,8 @@ fn add_mobs(world: &Arc<World>, x0: i32, mobs: Mobs) {
             ),
             kind,
         )));
-        if *burning {
-            mob.entity.fire_ticks.store(100, Ordering::Relaxed);
+        if let Some(ticks) = fire_ticks {
+            mob.entity.fire_ticks.store(*ticks, Ordering::Relaxed);
         }
         world.spawn_entity(mob);
     }
@@ -471,6 +492,9 @@ fn expand(case: &str, x0: i32) -> String {
         .replace("{log}", &pos(OAK_LOG))
         .replace("{z}", ZOMBIE)
         .replace("{tall_top}", &pos(TALL_GRASS_TOP))
+        .replace("{fish_at}", &format!("{} 64 4", x0 + 8))
+        .replace("{jungle_fish}", &format!("{} 64 4 {} 67 7", x0 + 8, x0 + 11))
+        .replace("{jungle_player}", &format!("{} 60 8 {} 63 11", x0 + 24, x0 + 27))
         .replace("{tall}", &pos(TALL_GRASS))
 }
 
@@ -491,11 +515,15 @@ async fn loot_command_gives_the_same_items() -> TestResult {
         writeln!(now, "{case} -> {result}; before {before}; after {after}")?;
         world.remove_player(&player, false).await;
     }
-    for (index, (case, mobs)) in MOB_CASES.iter().enumerate() {
+    let appended = MOB_CASES
+        .iter()
+        .map(|(case, mobs)| ("", *case, *mobs))
+        .chain(SETUP_CASES.iter().map(|(setup, case)| (*setup, *case, NO_MOBS)));
+    for (index, (setup, case, mobs)) in appended.enumerate() {
         let x0 = build_area(&world, CASES.len() + index + 1);
         place_tall_grass(&world, x0);
         let player = add_player(&world, x0);
-        if *case == SELECTS_SLOT_1 {
+        if case == SELECTS_SLOT_1 {
             player.inventory().set_selected_slot(1);
         }
         let zombie = add_zombie(&world, x0);
@@ -505,7 +533,12 @@ async fn loot_command_gives_the_same_items() -> TestResult {
                 "{mob}",
                 &format!("@e[type=minecraft:{},limit=1,sort=nearest]", kind.resource_name),
             ),
-            None => (*case).to_owned(),
+            None => case.to_owned(),
+        };
+        let setup_result = if setup.is_empty() {
+            String::new()
+        } else {
+            format!("; setup {}", run(&server, &world, &player, &expand(setup, x0)))
         };
         let attributes_before = attributes_text(&player, &zombie);
         let before = record(&world, x0, &player, &zombie);
@@ -514,7 +547,7 @@ async fn loot_command_gives_the_same_items() -> TestResult {
         let attributes_after = attributes_text(&player, &zombie);
         writeln!(
             now,
-            "{case} -> {result}; before {before}; after {after}; attributes {attributes_before} -> {attributes_after}"
+            "{case} -> {result}; before {before}; after {after}; attributes {attributes_before} -> {attributes_after}{setup_result}"
         )?;
         world.remove_player(&player, false).await;
     }

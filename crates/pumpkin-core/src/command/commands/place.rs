@@ -689,6 +689,9 @@ fn apply_delta(
     }
 }
 
+#[cfg(test)]
+mod golden;
+
 pub fn register(dispatcher: &mut CommandDispatcher, registry: &PermissionRegistry) {
     registry.register_permission_or_panic(Permission::new(
         PERMISSION,

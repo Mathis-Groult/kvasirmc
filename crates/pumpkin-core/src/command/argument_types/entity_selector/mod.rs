@@ -470,13 +470,90 @@ fn entity_actual_name(entity: &dyn EntityBase) -> String {
     }
 }
 
+/// Whether the entity's yaw or pitch lies in the bounds, wrapping around ±180.
+fn rotation_matches(bounds: &FloatDegreeBounds, f: RotationType, entity: &dyn EntityBase) -> bool {
+    let min = wrap_degrees(bounds.min().unwrap_or(0.0f32));
+    let max = wrap_degrees(bounds.max().unwrap_or(360.0f32));
+    let degrees = wrap_degrees(f.value_from_entity(entity));
+    if min > max {
+        degrees >= min || degrees <= max
+    } else {
+        degrees >= min && degrees <= max
+    }
+}
+
+/// Whether the entity is on the named team (inverted with `invert`).
+fn team_matches(expected_team: &str, invert: bool, entity: &dyn EntityBase) -> bool {
+    let actual_name = entity_actual_name(entity);
+    let world = entity.get_entity().world.load();
+    let scoreboard = world
+        .scoreboard
+        .lock()
+        .unwrap_or_else(std::sync::PoisonError::into_inner);
+    let has_team = scoreboard
+        .get_teams()
+        .iter()
+        .any(|(name, team)| name == expected_team && team.players.contains(&actual_name));
+    has_team ^ invert
+}
+
+/// Whether every listed score of the entity lies in its bounds.
+fn scores_match(scores_map: &HashMap<String, IntBounds>, entity: &dyn EntityBase) -> bool {
+    let actual_name = entity_actual_name(entity);
+    let world = entity.get_entity().world.load();
+    let scoreboard = world
+        .scoreboard
+        .lock()
+        .unwrap_or_else(std::sync::PoisonError::into_inner);
+    let entity_scores = scoreboard.get_scores().get(&actual_name);
+    for (objective, bounds) in scores_map {
+        let score_val = entity_scores
+            .and_then(|obj_map| obj_map.get(objective))
+            .map_or(0, |score| score.value.0);
+        if !bounds.matches(score_val) {
+            return false;
+        }
+    }
+    true
+}
+
+/// Whether the player has (or lacks) each listed advancement.
+fn advancements_match(advancements_map: &HashMap<String, bool>, entity: &dyn EntityBase) -> bool {
+    let Some(player) = entity.get_player() else {
+        return false;
+    };
+    for (adv_id, expected_done) in advancements_map {
+        if let Some(advancement) = Advancement::from_name(adv_id) {
+            let is_done = player.has_advancement(advancement);
+            if is_done != *expected_done {
+                return false;
+            }
+        } else {
+            return false;
+        }
+    }
+    true
+}
+
+/// Whether the named loot predicate holds for the entity (inverted with `invert`).
+fn loot_predicate_matches(predicate_id: &str, invert: bool, entity: &dyn EntityBase) -> bool {
+    let ent = entity.get_entity();
+    let world_arc = ent.world.load();
+    let params = crate::world::loot::LootContextParameters {
+        this_entity: Some(entity),
+        position: Some(ent.pos.load()),
+        world: Some(&world_arc),
+        ..Default::default()
+    };
+    crate::world::loot::evaluate_predicate(predicate_id, &params) ^ invert
+}
+
 impl EntitySelectorPredicate {
     #[must_use]
     pub const fn new_all_of(predicates: Vec<Self>) -> Self {
         Self::AllOf(predicates)
     }
 
-    #[allow(clippy::too_many_lines)]
     pub fn test(&self, entity: &dyn EntityBase) -> bool {
         match self {
             Self::IsAlive => entity.get_entity().is_alive(),
@@ -486,16 +563,7 @@ impl EntitySelectorPredicate {
             Self::ExperienceLevel(bounds) => entity
                 .get_player()
                 .is_some_and(|p| bounds.matches(p.experience_level.load(Ordering::Relaxed))),
-            Self::Rotation(bounds, f) => {
-                let min = wrap_degrees(bounds.min().unwrap_or(0.0f32));
-                let max = wrap_degrees(bounds.max().unwrap_or(360.0f32));
-                let degrees = wrap_degrees(f.value_from_entity(entity));
-                if min > max {
-                    degrees >= min || degrees <= max
-                } else {
-                    degrees >= min && degrees <= max
-                }
-            }
+            Self::Rotation(bounds, f) => rotation_matches(bounds, *f, entity),
             Self::BoundingBox(bounding_box) => entity
                 .get_entity()
                 .bounding_box
@@ -521,67 +589,16 @@ impl EntitySelectorPredicate {
                     .contains(expected_tag);
                 has_tag ^ invert
             }
-            Self::Team(expected_team, invert) => {
-                let actual_name = entity_actual_name(entity);
-                let world = entity.get_entity().world.load();
-                let scoreboard = world
-                    .scoreboard
-                    .lock()
-                    .unwrap_or_else(std::sync::PoisonError::into_inner);
-                let has_team = scoreboard.get_teams().iter().any(|(name, team)| {
-                    name == expected_team && team.players.contains(&actual_name)
-                });
-                has_team ^ invert
-            }
-            Self::Scores(scores_map) => {
-                let actual_name = entity_actual_name(entity);
-                let world = entity.get_entity().world.load();
-                let scoreboard = world
-                    .scoreboard
-                    .lock()
-                    .unwrap_or_else(std::sync::PoisonError::into_inner);
-                let entity_scores = scoreboard.get_scores().get(&actual_name);
-                for (objective, bounds) in scores_map {
-                    let score_val = entity_scores
-                        .and_then(|obj_map| obj_map.get(objective))
-                        .map_or(0, |score| score.value.0);
-                    if !bounds.matches(score_val) {
-                        return false;
-                    }
-                }
-                true
-            }
-            Self::Advancements(advancements_map) => {
-                let Some(player) = entity.get_player() else {
-                    return false;
-                };
-                for (adv_id, expected_done) in advancements_map {
-                    if let Some(advancement) = Advancement::from_name(adv_id) {
-                        let is_done = player.has_advancement(advancement);
-                        if is_done != *expected_done {
-                            return false;
-                        }
-                    } else {
-                        return false;
-                    }
-                }
-                true
-            }
+            Self::Team(expected_team, invert) => team_matches(expected_team, *invert, entity),
+            Self::Scores(scores_map) => scores_match(scores_map, entity),
+            Self::Advancements(advancements_map) => advancements_match(advancements_map, entity),
             Self::Nbt(expected_nbt, invert) => {
                 let mut actual_nbt = NbtCompound::default();
                 entity.write_nbt(&mut actual_nbt);
                 matches_nbt_compound(expected_nbt, &actual_nbt) ^ invert
             }
             Self::Predicate(predicate_id, invert) => {
-                let ent = entity.get_entity();
-                let world_arc = ent.world.load();
-                let params = crate::world::loot::LootContextParameters {
-                    this_entity: Some(entity),
-                    position: Some(ent.pos.load()),
-                    world: Some(&world_arc),
-                    ..Default::default()
-                };
-                crate::world::loot::evaluate_predicate(predicate_id, &params) ^ *invert
+                loot_predicate_matches(predicate_id, *invert, entity)
             }
             Self::AllOf(predicates) => predicates.iter().all(|predicate| predicate.test(entity)),
         }

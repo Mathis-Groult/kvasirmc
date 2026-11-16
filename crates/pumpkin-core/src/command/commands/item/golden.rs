@@ -5,7 +5,8 @@
 //! The four script players (see `script_golden`; `GoldB` has hotbar slot 3 selected) plus a
 //! zombie and a horse with fixed entity ids and UUIDs (the feedback names a single target with
 //! its UUID in the hover text). Per step the command, its result, every packet each
-//! player was sent, then every player's non-empty inventory and ender chest slots and each mob's
+//! player was sent (only their number for the Bedrock player, see `packets_bedrock_counted`),
+//! then every player's non-empty inventory and ender chest slots and each mob's
 //! non-empty equipment.
 
 use std::fmt::Write;
@@ -174,7 +175,7 @@ async fn item_command_changes_the_same_slots() -> TestResult {
     writeln!(now, "start;{}", state(&online, &mobs))?;
     for step in STEPS {
         let result = script_golden::run(&server, &source_player, step);
-        let sent = script_golden::packets(&mut online);
+        let sent = script_golden::packets_bedrock_counted(&mut online);
         writeln!(now, "{step} -> {result};{sent};{}", state(&online, &mobs))?;
     }
 

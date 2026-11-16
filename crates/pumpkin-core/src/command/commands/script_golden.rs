@@ -88,8 +88,22 @@ pub fn packets(online: &mut [Online]) -> String {
 /// As [`packets`], with every occurrence of each `mask` in a packet overwritten by as many `#`
 /// before hashing (text that changes per build, such as the commit hash).
 pub fn packets_masked(online: &mut [Online], masks: &[&str]) -> String {
+    record_packets(online, masks, true)
+}
+
+/// As [`packets`], but only the number of packets for Bedrock players: their item packets carry
+/// a stack network id from a process-wide counter, so the bytes depend on which tests ran first.
+pub fn packets_bedrock_counted(online: &mut [Online]) -> String {
+    record_packets(online, &[], false)
+}
+
+fn record_packets(online: &mut [Online], masks: &[&str], bedrock_bytes: bool) -> String {
     let mut text = String::new();
     for who in online {
+        if !bedrock_bytes && matches!(who.tap, Tap::Bedrock(_)) {
+            let _ = write!(text, " {}[{} packets]", who.name, who.tap.drain().len());
+            continue;
+        }
         let sent: Vec<String> = who
             .tap
             .drain()

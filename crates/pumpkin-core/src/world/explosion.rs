@@ -352,10 +352,13 @@ impl Explosion {
         map
     }
 
-    fn damage_entities(&self, world: &Arc<World>) {
+    /// Returns the knockback of each Java player hit (entity id, knockback), which vanilla
+    /// sends in the player's explosion packet instead of moving the player.
+    fn damage_entities(&self, world: &Arc<World>) -> Vec<(i32, Vector3<f64>)> {
+        let mut player_knockback = Vec::new();
         // Explosion is too small
         if self.power < 1.0e-5 {
-            return;
+            return player_knockback;
         }
 
         let radius = self.power as f64 * 2.0;
@@ -432,8 +435,19 @@ impl Explosion {
             {
                 continue;
             }
+            // Vanilla `ServerExplosion.hurtEntities` puts a player's knockback in its
+            // `ClientboundExplodePacket`, and the client adds it to its own motion. Adding it to
+            // the server's copy of a player's motion (which the client never reports) and
+            // sending the sum made each wind charge launch the player higher (card #60).
+            if let Some(player) = entity_base.get_player()
+                && matches!(player.client.as_ref(), crate::net::ClientPlatform::Java(_))
+            {
+                player_knockback.push((entity.entity_id, knockback));
+                continue;
+            }
             entity.add_velocity(knockback);
         }
+        player_knockback
     }
 
     fn calculate_exposure(
@@ -496,10 +510,13 @@ impl Explosion {
         visible_points as f32 / total_points as f32
     }
 
-    /// Returns the removed block count
-    pub fn explode(&self, world: &Arc<World>) -> u32 {
-        self.damage_entities(world);
+    /// Returns the number of blocks it destroyed and the knockback of each Java player hit.
+    pub fn explode(&self, world: &Arc<World>) -> (u32, Vec<(i32, Vector3<f64>)>) {
+        let player_knockback = self.damage_entities(world);
+        (self.explode_blocks(world), player_knockback)
+    }
 
+    fn explode_blocks(&self, world: &Arc<World>) -> u32 {
         match self.block_interaction {
             BlockInteraction::Keep => 0,
             BlockInteraction::TriggerBlock => {

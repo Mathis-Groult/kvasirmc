@@ -45,6 +45,8 @@ mod mob_attention;
 pub(crate) use entity_index::EntityIndex;
 pub mod entity_islands;
 pub mod explosion;
+#[cfg(test)]
+mod explosion_knockback_tests;
 pub mod game_event;
 pub mod generation_cache;
 pub mod loot;

@@ -30,12 +30,10 @@ impl JavaClient {
             .as_ref()
             .map(|p| Arc::clone(p) as Arc<dyn EntityBase>)
             .or_else(|| world.get_entity_by_id(entity_id.0));
+        // Vanilla 26.3 `handleAttack` ignores an id it does not know: the client often hits an
+        // entity the server has just removed (a falling block that landed). Kicking for it
+        // threw players out for hitting falling sand (card #61).
         let Some(target) = target else {
-            self.try_kick(&TextComponent::translate_cross(
-                translation::java::MULTIPLAYER_DISCONNECT_INVALID_ENTITY_ATTACKED,
-                translation::java::MULTIPLAYER_DISCONNECT_INVALID_ENTITY_ATTACKED,
-                [],
-            ));
             return;
         };
         if !player.can_interact_with_entity(target.as_ref(), 1.0) {

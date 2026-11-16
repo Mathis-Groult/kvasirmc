@@ -88,7 +88,7 @@ impl World {
             return;
         }
 
-        let block_count = explosion.explode(self);
+        let (block_count, player_knockback) = explosion.explode(self);
         let particle = if power < 2.0 {
             Particle::Explosion
         } else {
@@ -99,11 +99,15 @@ impl World {
             if player.position().squared_distance_to_vec(&position) > 4096.0 {
                 continue;
             }
+            let knockback = player_knockback
+                .iter()
+                .find(|(id, _)| *id == player.entity_id())
+                .map(|(_, knockback)| *knockback);
             player.try_send_client_packet(&CExplosion::new(
                 position,
                 power,
                 block_count as i32,
-                None,
+                knockback,
                 VarInt(particle as i32),
                 sound.clone(),
             ));

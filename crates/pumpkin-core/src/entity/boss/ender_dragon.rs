@@ -597,40 +597,47 @@ impl EnderDragonEntity {
             .cloned()
     }
 
-    fn handle_player_collisions(&self) {
-        let world = self.mob_entity.living_entity.entity.world.load();
-
-        let dragon_bbox = self.mob_entity.living_entity.entity.bounding_box.load();
+    /// Vanilla 26.3 `EnderDragon.knockBack`, run unless the dragon was just hurt
+    /// (`wasHurtRecently`, here the second half of the hurt cooldown): players touching it are
+    /// pushed away from its body by 4 and up by 0.2, and hurt for 5 unless it sits. Pumpkin used
+    /// `apply_knockback`, whose direction points at an attacker, so the push pulled players in
+    /// and swung them around the dragon (card #54). The wing boxes are approximated by the
+    /// dragon's whole box; creative and spectator players are left alone, as in vanilla.
+    fn handle_player_collisions(&self, sitting: bool) {
+        let living = &self.mob_entity.living_entity;
+        if living.hurt_cooldown.load(Ordering::Relaxed) > 10 {
+            return;
+        }
+        let world = living.entity.world.load();
+        let dragon_bbox = living.entity.bounding_box.load();
         let xm = f64::midpoint(dragon_bbox.min.x, dragon_bbox.max.x);
         let zm = f64::midpoint(dragon_bbox.min.z, dragon_bbox.max.z);
 
         for player in world.players.load().iter() {
-            if player
-                .living_entity
-                .entity
-                .bounding_box
-                .load()
-                .intersects(&dragon_bbox)
-            {
-                let player_pos = player.get_entity().pos.load();
-                let xd = player_pos.x - xm;
-                let zd = player_pos.z - zm;
-                let dd = (xd * xd + zd * zd).max(0.1);
-
-                player
+            if player.is_creative()
+                || player.is_spectator()
+                || !player
                     .living_entity
                     .entity
-                    .apply_knockback(4.0, xd / dd, zd / dd);
-                player.get_entity().send_velocity();
-
-                if !self
-                    .phase
-                    .lock()
-                    .unwrap_or_else(std::sync::PoisonError::into_inner)
-                    .is_sitting()
-                {
-                    player.damage(self, 5.0, DamageType::MOB_ATTACK);
-                }
+                    .bounding_box
+                    .load()
+                    .intersects(&dragon_bbox)
+            {
+                continue;
+            }
+            let entity = player.get_entity();
+            let pos = entity.pos.load();
+            let (xd, zd) = (pos.x - xm, pos.z - zm);
+            let dd = xd.mul_add(xd, zd * zd).max(0.1);
+            let velocity = entity.velocity.load();
+            entity.velocity.store(Vector3::new(
+                (xd / dd).mul_add(4.0, velocity.x),
+                velocity.y + 0.2,
+                (zd / dd).mul_add(4.0, velocity.z),
+            ));
+            entity.send_velocity();
+            if !sitting {
+                player.damage(self, 5.0, DamageType::MOB_ATTACK);
             }
         }
     }
@@ -823,8 +830,9 @@ impl EnderDragonEntity {
                 .ticks_sitting
                 .lock()
                 .unwrap_or_else(std::sync::PoisonError::into_inner) += 1;
-        } else {
-            self.handle_player_collisions();
+        }
+        self.handle_player_collisions(phase_type.is_sitting());
+        if !phase_type.is_sitting() {
             self.tick_block_breaking();
         }
 

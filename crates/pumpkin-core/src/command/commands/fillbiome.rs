@@ -9,6 +9,7 @@ use crate::command::errors::error_types::CommandErrorType;
 use crate::command::node::dispatcher::CommandDispatcher;
 use crate::command::node::{CommandExecutor, CommandExecutorResult};
 use crate::net::java::chunk_data::CChunkData;
+use crate::world::World;
 use pumpkin_data::translation;
 use pumpkin_util::PermissionLvl;
 use pumpkin_util::math::vector2::Vector2;
@@ -73,75 +74,128 @@ impl CommandExecutor for FillBiomeExecutor {
             None
         };
 
-        let mut chunk_modifications: FxHashMap<Vector2<i32>, Vec<(usize, usize, usize)>> =
-            FxHashMap::default();
-        for y in biome_min_y..=biome_max_y {
-            for z in biome_min_z..=biome_max_z {
-                for x in biome_min_x..=biome_max_x {
-                    let chunk_pos = Vector2::new(x >> 2, z >> 2);
-                    let rel_x = (x & 3) as usize;
-                    let rel_z = (z & 3) as usize;
-                    let rel_y = (y - (world.min_y >> 2)) as usize;
-                    chunk_modifications
-                        .entry(chunk_pos)
-                        .or_default()
-                        .push((rel_x, rel_y, rel_z));
-                }
-            }
-        }
+        let chunk_modifications = biome_cells_by_chunk(
+            biome_min_x,
+            biome_max_x,
+            biome_min_y,
+            biome_max_y,
+            biome_min_z,
+            biome_max_z,
+            world,
+        );
 
         let target_biome_id = target_biome.id;
         let world = context.world().clone();
 
-        let mut changed_count = 0;
-        for (chunk_pos, mods) in chunk_modifications {
-            let result = world.level.read_chunk_sync(&chunk_pos, |chunk| {
-                let mut local_count = 0;
-                let mut modified = false;
-                for &(rel_x, rel_y, rel_z) in &mods {
-                    let section_index = rel_y / 4;
-                    let scale_y = rel_y % 4;
-                    if let Some(current_id) =
-                        chunk
-                            .section
-                            .get_noise_biome(section_index, rel_x, scale_y, rel_z)
-                        && replace_biomes
-                            .as_ref()
-                            .is_none_or(|replace| replace.contains(&current_id))
-                    {
-                        chunk
-                            .section
-                            .set_relative_biome(rel_x, rel_y, rel_z, target_biome_id);
-                        local_count += 1;
-                        modified = true;
-                    }
-                }
-                (local_count, modified.then(|| chunk.clone()))
-            });
-
-            if let Some((count, Some(chunk))) = result {
-                changed_count += count;
-                world.broadcast_to_chunk_except(chunk_pos, &[], &CChunkData(&chunk));
-            }
-        }
-
-        let msg = TextComponent::translate_cross(
-            translation::java::COMMANDS_FILLBIOME_SUCCESS_COUNT,
-            translation::java::COMMANDS_FILLBIOME_SUCCESS_COUNT,
-            [
-                TextComponent::text(changed_count.to_string()),
-                TextComponent::text(min_x.to_string()),
-                TextComponent::text(min_y.to_string()),
-                TextComponent::text(min_z.to_string()),
-                TextComponent::text(max_x.to_string()),
-                TextComponent::text(max_y.to_string()),
-                TextComponent::text(max_z.to_string()),
-            ],
+        let changed_count = set_biomes(
+            &world,
+            chunk_modifications,
+            target_biome_id,
+            replace_biomes.as_deref(),
         );
+
+        let msg = success_message(changed_count, min_x, min_y, min_z, max_x, max_y, max_z);
         context.source.send_feedback(msg, true);
 
         Ok(changed_count)
     }
+}
+
+/// The biome cells (4x4x4 blocks) of the box, grouped by chunk: (x, y from the world bottom, z)
+/// inside the chunk.
+fn biome_cells_by_chunk(
+    biome_min_x: i32,
+    biome_max_x: i32,
+    biome_min_y: i32,
+    biome_max_y: i32,
+    biome_min_z: i32,
+    biome_max_z: i32,
+    world: &World,
+) -> FxHashMap<Vector2<i32>, Vec<(usize, usize, usize)>> {
+    let mut chunk_modifications: FxHashMap<Vector2<i32>, Vec<(usize, usize, usize)>> =
+        FxHashMap::default();
+    for y in biome_min_y..=biome_max_y {
+        for z in biome_min_z..=biome_max_z {
+            for x in biome_min_x..=biome_max_x {
+                let chunk_pos = Vector2::new(x >> 2, z >> 2);
+                let rel_x = (x & 3) as usize;
+                let rel_z = (z & 3) as usize;
+                let rel_y = (y - (world.min_y >> 2)) as usize;
+                chunk_modifications
+                    .entry(chunk_pos)
+                    .or_default()
+                    .push((rel_x, rel_y, rel_z));
+            }
+        }
+    }
+    chunk_modifications
+}
+
+/// Sets the cells whose biome passes the filter, sends each changed chunk to its viewers, and
+/// returns the number of cells set.
+fn set_biomes(
+    world: &World,
+    chunk_modifications: FxHashMap<Vector2<i32>, Vec<(usize, usize, usize)>>,
+    target_biome_id: u8,
+    replace_biomes: Option<&[u8]>,
+) -> i32 {
+    let mut changed_count = 0;
+    for (chunk_pos, mods) in chunk_modifications {
+        let result = world.level.read_chunk_sync(&chunk_pos, |chunk| {
+            let mut local_count = 0;
+            let mut modified = false;
+            for &(rel_x, rel_y, rel_z) in &mods {
+                let section_index = rel_y / 4;
+                let scale_y = rel_y % 4;
+                if let Some(current_id) =
+                    chunk
+                        .section
+                        .get_noise_biome(section_index, rel_x, scale_y, rel_z)
+                    && replace_biomes
+                        .as_ref()
+                        .is_none_or(|replace| replace.contains(&current_id))
+                {
+                    chunk
+                        .section
+                        .set_relative_biome(rel_x, rel_y, rel_z, target_biome_id);
+                    local_count += 1;
+                    modified = true;
+                }
+            }
+            (local_count, modified.then(|| chunk.clone()))
+        });
+
+        if let Some((count, Some(chunk))) = result {
+            changed_count += count;
+            world.broadcast_to_chunk_except(chunk_pos, &[], &CChunkData(&chunk));
+        }
+    }
+    changed_count
+}
+
+/// The feedback: cells changed and the box.
+fn success_message(
+    changed_count: i32,
+    min_x: i32,
+    min_y: i32,
+    min_z: i32,
+    max_x: i32,
+    max_y: i32,
+    max_z: i32,
+) -> TextComponent {
+    TextComponent::translate_cross(
+        translation::java::COMMANDS_FILLBIOME_SUCCESS_COUNT,
+        translation::java::COMMANDS_FILLBIOME_SUCCESS_COUNT,
+        [
+            TextComponent::text(changed_count.to_string()),
+            TextComponent::text(min_x.to_string()),
+            TextComponent::text(min_y.to_string()),
+            TextComponent::text(min_z.to_string()),
+            TextComponent::text(max_x.to_string()),
+            TextComponent::text(max_y.to_string()),
+            TextComponent::text(max_z.to_string()),
+        ],
+    )
 }
 
 pub fn register(dispatcher: &mut CommandDispatcher, registry: &PermissionRegistry) {

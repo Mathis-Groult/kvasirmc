@@ -1,3 +1,5 @@
+use std::sync::Arc;
+
 use pumpkin_data::potion::Effect;
 use pumpkin_data::translation;
 use pumpkin_util::PermissionLvl;
@@ -14,6 +16,7 @@ use crate::command::errors::error_types::CommandErrorType;
 use crate::command::node::dispatcher::CommandDispatcher;
 use crate::command::node::{CommandExecutor, CommandExecutorResult};
 use crate::entity::EntityBase;
+use crate::entity::player::Player;
 
 const DESCRIPTION: &str = "Adds or removes the status effects of players and other entities.";
 const PERMISSION: &str = "minecraft:command.effect";
@@ -158,97 +161,103 @@ impl CommandExecutor for ClearExecutor {
         };
 
         match self.0 {
-            ClearMode::SelfAll | ClearMode::TargetsAll => {
-                let mut succeeded_clears = 0;
-                for target in &targets {
-                    let has_effects = !target
-                        .living_entity
-                        .active_effects
-                        .lock()
-                        .unwrap_or_else(std::sync::PoisonError::into_inner)
-                        .is_empty();
-                    if has_effects {
-                        target.remove_all_effects();
-                        succeeded_clears += 1;
-                    }
-                }
-
-                if succeeded_clears == 0 {
-                    return Err(ERROR_CLEAR_EVERYTHING_FAILED.create_without_context());
-                }
-
-                if targets.len() == 1 {
-                    context.source.send_feedback(
-                        TextComponent::translate_cross(
-                            translation::java::COMMANDS_EFFECT_CLEAR_EVERYTHING_SUCCESS_SINGLE,
-                            translation::java::COMMANDS_EFFECT_CLEAR_EVERYTHING_SUCCESS_SINGLE,
-                            [targets[0].as_ref().get_display_name()],
-                        ),
-                        true,
-                    );
-                } else {
-                    context.source.send_feedback(
-                        TextComponent::translate_cross(
-                            translation::java::COMMANDS_EFFECT_CLEAR_EVERYTHING_SUCCESS_MULTIPLE,
-                            translation::java::COMMANDS_EFFECT_CLEAR_EVERYTHING_SUCCESS_MULTIPLE,
-                            [TextComponent::text(targets.len().to_string())],
-                        ),
-                        true,
-                    );
-                }
-                Ok(succeeded_clears)
-            }
-            ClearMode::TargetsSpecific => {
-                let effect = ResourceArgument::get_mob_effect(context, "effect")?;
-                let mut succeeded_clears = 0;
-                for target in &targets {
-                    if target.living_entity.has_effect(effect) {
-                        target.remove_effect(effect);
-                        succeeded_clears += 1;
-                    }
-                }
-
-                if succeeded_clears == 0 {
-                    return Err(ERROR_CLEAR_SPECIFIC_FAILED.create_without_context());
-                }
-
-                if targets.len() == 1 {
-                    context.source.send_feedback(
-                        TextComponent::translate_cross(
-                            translation::java::COMMANDS_EFFECT_CLEAR_SPECIFIC_SUCCESS_SINGLE,
-                            translation::java::COMMANDS_EFFECT_CLEAR_SPECIFIC_SUCCESS_SINGLE,
-                            [
-                                TextComponent::translate_cross(
-                                    effect.translation_key,
-                                    effect.translation_key,
-                                    [],
-                                ),
-                                targets[0].as_ref().get_display_name(),
-                            ],
-                        ),
-                        true,
-                    );
-                } else {
-                    context.source.send_feedback(
-                        TextComponent::translate_cross(
-                            translation::java::COMMANDS_EFFECT_CLEAR_SPECIFIC_SUCCESS_MULTIPLE,
-                            translation::java::COMMANDS_EFFECT_CLEAR_SPECIFIC_SUCCESS_MULTIPLE,
-                            [
-                                TextComponent::translate_cross(
-                                    effect.translation_key,
-                                    effect.translation_key,
-                                    [],
-                                ),
-                                TextComponent::text(targets.len().to_string()),
-                            ],
-                        ),
-                        true,
-                    );
-                }
-                Ok(succeeded_clears)
-            }
+            ClearMode::SelfAll | ClearMode::TargetsAll => clear_all_effects(context, &targets),
+            ClearMode::TargetsSpecific => clear_effect(context, &targets),
         }
     }
+}
+
+/// `effect clear [targets]`: every effect of every target.
+fn clear_all_effects(context: &CommandContext, targets: &[Arc<Player>]) -> CommandExecutorResult {
+    let mut succeeded_clears = 0;
+    for target in targets {
+        let has_effects = !target
+            .living_entity
+            .active_effects
+            .lock()
+            .unwrap_or_else(std::sync::PoisonError::into_inner)
+            .is_empty();
+        if has_effects {
+            target.remove_all_effects();
+            succeeded_clears += 1;
+        }
+    }
+
+    if succeeded_clears == 0 {
+        return Err(ERROR_CLEAR_EVERYTHING_FAILED.create_without_context());
+    }
+
+    if targets.len() == 1 {
+        context.source.send_feedback(
+            TextComponent::translate_cross(
+                translation::java::COMMANDS_EFFECT_CLEAR_EVERYTHING_SUCCESS_SINGLE,
+                translation::java::COMMANDS_EFFECT_CLEAR_EVERYTHING_SUCCESS_SINGLE,
+                [targets[0].as_ref().get_display_name()],
+            ),
+            true,
+        );
+    } else {
+        context.source.send_feedback(
+            TextComponent::translate_cross(
+                translation::java::COMMANDS_EFFECT_CLEAR_EVERYTHING_SUCCESS_MULTIPLE,
+                translation::java::COMMANDS_EFFECT_CLEAR_EVERYTHING_SUCCESS_MULTIPLE,
+                [TextComponent::text(targets.len().to_string())],
+            ),
+            true,
+        );
+    }
+    Ok(succeeded_clears)
+}
+
+/// `effect clear <targets> <effect>`: one effect.
+fn clear_effect(context: &CommandContext, targets: &[Arc<Player>]) -> CommandExecutorResult {
+    let effect = ResourceArgument::get_mob_effect(context, "effect")?;
+    let mut succeeded_clears = 0;
+    for target in targets {
+        if target.living_entity.has_effect(effect) {
+            target.remove_effect(effect);
+            succeeded_clears += 1;
+        }
+    }
+
+    if succeeded_clears == 0 {
+        return Err(ERROR_CLEAR_SPECIFIC_FAILED.create_without_context());
+    }
+
+    if targets.len() == 1 {
+        context.source.send_feedback(
+            TextComponent::translate_cross(
+                translation::java::COMMANDS_EFFECT_CLEAR_SPECIFIC_SUCCESS_SINGLE,
+                translation::java::COMMANDS_EFFECT_CLEAR_SPECIFIC_SUCCESS_SINGLE,
+                [
+                    TextComponent::translate_cross(
+                        effect.translation_key,
+                        effect.translation_key,
+                        [],
+                    ),
+                    targets[0].as_ref().get_display_name(),
+                ],
+            ),
+            true,
+        );
+    } else {
+        context.source.send_feedback(
+            TextComponent::translate_cross(
+                translation::java::COMMANDS_EFFECT_CLEAR_SPECIFIC_SUCCESS_MULTIPLE,
+                translation::java::COMMANDS_EFFECT_CLEAR_SPECIFIC_SUCCESS_MULTIPLE,
+                [
+                    TextComponent::translate_cross(
+                        effect.translation_key,
+                        effect.translation_key,
+                        [],
+                    ),
+                    TextComponent::text(targets.len().to_string()),
+                ],
+            ),
+            true,
+        );
+    }
+    Ok(succeeded_clears)
 }
 
 pub fn register(dispatcher: &mut CommandDispatcher, registry: &PermissionRegistry) {

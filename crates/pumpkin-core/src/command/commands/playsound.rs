@@ -63,17 +63,7 @@ fn play_sound(
     let seed = rand::random::<i64>();
     let mut played_for = Vec::new();
 
-    let sound_event = Sound::from_name(sound.path())
-        .or_else(|| Sound::from_name(&sound.to_string()))
-        .map_or_else(
-            || {
-                IdOr::Value(pumpkin_protocol::SoundEvent {
-                    sound_name: sound.to_string(),
-                    range: None,
-                })
-            },
-            |sound_enum| IdOr::Id(sound_enum as u16),
-        );
+    let sound_event = sound_event_of(sound);
 
     for player in players {
         if !Arc::ptr_eq(&player.world(), &world) {
@@ -81,27 +71,10 @@ fn play_sound(
         }
 
         let player_pos = player.position();
-        let delta_x = position.x - player_pos.x;
-        let delta_y = position.y - player_pos.y;
-        let delta_z = position.z - player_pos.z;
-        let dist_sq = delta_x * delta_x + delta_y * delta_y + delta_z * delta_z;
-
-        let (local_position, local_volume) = if dist_sq > max_dist_sq {
-            if min_volume <= 0.0 {
-                continue;
-            }
-
-            let distance = dist_sq.sqrt();
-            (
-                Vector3::new(
-                    player_pos.x + delta_x / distance * 2.0,
-                    player_pos.y + delta_y / distance * 2.0,
-                    player_pos.z + delta_z / distance * 2.0,
-                ),
-                min_volume,
-            )
-        } else {
-            (position, volume)
+        let Some((local_position, local_volume)) =
+            heard_at(position, player_pos, volume, min_volume, max_dist_sq)
+        else {
+            continue;
         };
 
         let packet = CSoundEffect::new(
@@ -121,6 +94,67 @@ fn play_sound(
         return Err(ERROR_TOO_FAR.create_without_context());
     }
 
+    send_success_feedback(source, sound, &played_for, count);
+
+    Ok(count as i32)
+}
+
+/// The sound to send: by id when the server knows it, else by name.
+fn sound_event_of(sound: &Identifier) -> IdOr<pumpkin_protocol::SoundEvent> {
+    Sound::from_name(sound.path())
+        .or_else(|| Sound::from_name(&sound.to_string()))
+        .map_or_else(
+            || {
+                IdOr::Value(pumpkin_protocol::SoundEvent {
+                    sound_name: sound.to_string(),
+                    range: None,
+                })
+            },
+            |sound_enum| IdOr::Id(sound_enum as u16),
+        )
+}
+
+/// Where and how loud a listener at `player_pos` hears a sound at `position`: as is within
+/// range, else from 2 blocks away in its direction at `min_volume` (`None` when that is 0).
+fn heard_at(
+    position: Vector3<f64>,
+    player_pos: Vector3<f64>,
+    volume: f32,
+    min_volume: f32,
+    max_dist_sq: f64,
+) -> Option<(Vector3<f64>, f32)> {
+    let delta_x = position.x - player_pos.x;
+    let delta_y = position.y - player_pos.y;
+    let delta_z = position.z - player_pos.z;
+    let dist_sq = delta_x * delta_x + delta_y * delta_y + delta_z * delta_z;
+
+    let (local_position, local_volume) = if dist_sq > max_dist_sq {
+        if min_volume <= 0.0 {
+            return None;
+        }
+
+        let distance = dist_sq.sqrt();
+        (
+            Vector3::new(
+                player_pos.x + delta_x / distance * 2.0,
+                player_pos.y + delta_y / distance * 2.0,
+                player_pos.z + delta_z / distance * 2.0,
+            ),
+            min_volume,
+        )
+    } else {
+        (position, volume)
+    };
+    Some((local_position, local_volume))
+}
+
+/// The feedback: the one listener by name, or the number of listeners.
+fn send_success_feedback(
+    source: &CommandSource,
+    sound: &Identifier,
+    played_for: &[Arc<Player>],
+    count: usize,
+) {
     let sound_str = sound.to_string();
     if count == 1 {
         let player_name = played_for[0].gameprofile.name.clone();
@@ -148,8 +182,6 @@ fn play_sound(
             true,
         );
     }
-
-    Ok(count as i32)
 }
 
 #[derive(Clone, Copy)]
@@ -168,7 +200,6 @@ struct PlaySoundExecutor {
 }
 
 impl CommandExecutor for PlaySoundExecutor {
-    #[allow(clippy::too_many_lines)]
     fn execute(&self, context: &CommandContext) -> CommandExecutorResult {
         let sound = IdentifierArgumentType::get(context, "sound")?;
         let caller_players = context
@@ -178,103 +209,152 @@ impl CommandExecutor for PlaySoundExecutor {
             .map_or_else(Vec::new, |p| vec![p]);
 
         match self.step {
-            PlaySoundStep::SoundOnly => play_sound(
-                &context.source,
-                &caller_players,
-                &sound,
-                SoundCategory::Master,
-                context.source.position,
-                1.0,
-                1.0,
-                0.0,
-            ),
-            PlaySoundStep::SourceOnly { source } => play_sound(
-                &context.source,
-                &caller_players,
-                &sound,
-                source,
-                context.source.position,
-                1.0,
-                1.0,
-                0.0,
-            ),
-            PlaySoundStep::WithTargets { source } => {
-                let targets = EntityArgumentType::get_players(context, "targets")?;
-                play_sound(
-                    &context.source,
-                    &targets,
-                    &sound,
-                    source,
-                    context.source.position,
-                    1.0,
-                    1.0,
-                    0.0,
-                )
+            PlaySoundStep::SoundOnly => play_sound_only(context, &sound, &caller_players),
+            PlaySoundStep::SourceOnly { source } => {
+                play_from_source(context, &sound, &caller_players, source)
             }
-            PlaySoundStep::WithPos { source } => {
-                let targets = EntityArgumentType::get_players(context, "targets")?;
-                let pos = Vec3ArgumentType::get_vector3(context, "pos")?;
-                play_sound(
-                    &context.source,
-                    &targets,
-                    &sound,
-                    source,
-                    pos,
-                    1.0,
-                    1.0,
-                    0.0,
-                )
-            }
-            PlaySoundStep::WithVolume { source } => {
-                let targets = EntityArgumentType::get_players(context, "targets")?;
-                let pos = Vec3ArgumentType::get_vector3(context, "pos")?;
-                let volume = FloatArgumentType::get(context, "volume")?;
-                play_sound(
-                    &context.source,
-                    &targets,
-                    &sound,
-                    source,
-                    pos,
-                    volume,
-                    1.0,
-                    0.0,
-                )
-            }
-            PlaySoundStep::WithPitch { source } => {
-                let targets = EntityArgumentType::get_players(context, "targets")?;
-                let pos = Vec3ArgumentType::get_vector3(context, "pos")?;
-                let volume = FloatArgumentType::get(context, "volume")?;
-                let pitch = FloatArgumentType::get(context, "pitch")?;
-                play_sound(
-                    &context.source,
-                    &targets,
-                    &sound,
-                    source,
-                    pos,
-                    volume,
-                    pitch,
-                    0.0,
-                )
-            }
+            PlaySoundStep::WithTargets { source } => play_to_targets(context, &sound, source),
+            PlaySoundStep::WithPos { source } => play_at_pos(context, &sound, source),
+            PlaySoundStep::WithVolume { source } => play_with_volume(context, &sound, source),
+            PlaySoundStep::WithPitch { source } => play_with_pitch(context, &sound, source),
             PlaySoundStep::WithMinVolume { source } => {
-                let targets = EntityArgumentType::get_players(context, "targets")?;
-                let pos = Vec3ArgumentType::get_vector3(context, "pos")?;
-                let volume = FloatArgumentType::get(context, "volume")?;
-                let pitch = FloatArgumentType::get(context, "pitch")?;
-                let min_volume = FloatArgumentType::get(context, "minVolume")?;
-                play_sound(
-                    &context.source,
-                    &targets,
-                    &sound,
-                    source,
-                    pos,
-                    volume,
-                    pitch,
-                    min_volume,
-                )
+                play_with_min_volume(context, &sound, source)
             }
         }
     }
+}
+
+/// `playsound <sound>`: to the caller, master category, from the source position.
+fn play_sound_only(
+    context: &CommandContext,
+    sound: &Identifier,
+    caller_players: &[Arc<Player>],
+) -> CommandExecutorResult {
+    play_sound(
+        &context.source,
+        caller_players,
+        sound,
+        SoundCategory::Master,
+        context.source.position,
+        1.0,
+        1.0,
+        0.0,
+    )
+}
+
+/// `playsound <sound> <source>`: to the caller, from the source position.
+fn play_from_source(
+    context: &CommandContext,
+    sound: &Identifier,
+    caller_players: &[Arc<Player>],
+    source: SoundCategory,
+) -> CommandExecutorResult {
+    play_sound(
+        &context.source,
+        caller_players,
+        sound,
+        source,
+        context.source.position,
+        1.0,
+        1.0,
+        0.0,
+    )
+}
+
+/// `playsound <sound> <source> <targets>`: from the source position.
+fn play_to_targets(
+    context: &CommandContext,
+    sound: &Identifier,
+    source: SoundCategory,
+) -> CommandExecutorResult {
+    let targets = EntityArgumentType::get_players(context, "targets")?;
+    play_sound(
+        &context.source,
+        &targets,
+        sound,
+        source,
+        context.source.position,
+        1.0,
+        1.0,
+        0.0,
+    )
+}
+
+/// `playsound <sound> <source> <targets> <pos>`.
+fn play_at_pos(
+    context: &CommandContext,
+    sound: &Identifier,
+    source: SoundCategory,
+) -> CommandExecutorResult {
+    let targets = EntityArgumentType::get_players(context, "targets")?;
+    let pos = Vec3ArgumentType::get_vector3(context, "pos")?;
+    play_sound(&context.source, &targets, sound, source, pos, 1.0, 1.0, 0.0)
+}
+
+/// `playsound ... <pos> <volume>`.
+fn play_with_volume(
+    context: &CommandContext,
+    sound: &Identifier,
+    source: SoundCategory,
+) -> CommandExecutorResult {
+    let targets = EntityArgumentType::get_players(context, "targets")?;
+    let pos = Vec3ArgumentType::get_vector3(context, "pos")?;
+    let volume = FloatArgumentType::get(context, "volume")?;
+    play_sound(
+        &context.source,
+        &targets,
+        sound,
+        source,
+        pos,
+        volume,
+        1.0,
+        0.0,
+    )
+}
+
+/// `playsound ... <volume> <pitch>`.
+fn play_with_pitch(
+    context: &CommandContext,
+    sound: &Identifier,
+    source: SoundCategory,
+) -> CommandExecutorResult {
+    let targets = EntityArgumentType::get_players(context, "targets")?;
+    let pos = Vec3ArgumentType::get_vector3(context, "pos")?;
+    let volume = FloatArgumentType::get(context, "volume")?;
+    let pitch = FloatArgumentType::get(context, "pitch")?;
+    play_sound(
+        &context.source,
+        &targets,
+        sound,
+        source,
+        pos,
+        volume,
+        pitch,
+        0.0,
+    )
+}
+
+/// `playsound ... <pitch> <minVolume>`.
+fn play_with_min_volume(
+    context: &CommandContext,
+    sound: &Identifier,
+    source: SoundCategory,
+) -> CommandExecutorResult {
+    let targets = EntityArgumentType::get_players(context, "targets")?;
+    let pos = Vec3ArgumentType::get_vector3(context, "pos")?;
+    let volume = FloatArgumentType::get(context, "volume")?;
+    let pitch = FloatArgumentType::get(context, "pitch")?;
+    let min_volume = FloatArgumentType::get(context, "minVolume")?;
+    play_sound(
+        &context.source,
+        &targets,
+        sound,
+        source,
+        pos,
+        volume,
+        pitch,
+        min_volume,
+    )
 }
 
 fn build_source_branch(name: &'static str, source: SoundCategory) -> LiteralArgumentBuilder {

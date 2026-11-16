@@ -152,7 +152,10 @@ const MOB_CASES: &[(&str, Mobs)] = &[
     ("loot spawn {p} mine {tall} offhand", NO_MOBS),
     ("loot spawn {p} mine {tall_top} mainhand", NO_MOBS),
     ("loot spawn {p} kill {mob}", &[(&EntityType::COW, None)]),
-    ("loot spawn {p} kill {mob}", &[(&EntityType::COW, Some(100))]),
+    (
+        "loot spawn {p} kill {mob}",
+        &[(&EntityType::COW, Some(100))],
+    ),
     (
         "loot spawn {p} kill @e[type=minecraft:cow,distance=..30]",
         &[(&EntityType::COW, None), (&EntityType::COW, Some(100))],
@@ -160,23 +163,71 @@ const MOB_CASES: &[(&str, Mobs)] = &[
     ("loot spawn {p} kill {mob}", &[(&EntityType::BLAZE, None)]),
     ("loot spawn {p} kill {mob}", &[(&EntityType::EVOKER, None)]),
     ("loot spawn {p} kill {mob}", &[(&EntityType::RABBIT, None)]),
-    ("loot spawn {p} kill {mob}", &[(&EntityType::WITHER_SKELETON, None)]),
+    (
+        "loot spawn {p} kill {mob}",
+        &[(&EntityType::WITHER_SKELETON, None)],
+    ),
     ("loot give @s kill {mob}", &[(&EntityType::BLAZE, None)]),
-    ("loot replace entity {z} armor.feet 4 loot minecraft:blocks/diamond_block", NO_MOBS),
-    ("loot replace entity {z} armor.feet 4 loot minecraft:equipment/trial_chamber", NO_MOBS),
-    ("loot replace entity {z} weapon.mainhand loot minecraft:equipment/trial_chamber_melee", NO_MOBS),
-    ("loot replace entity @s armor.feet 4 loot minecraft:equipment/trial_chamber", NO_MOBS),
-    ("loot replace entity @s armor.feet loot minecraft:equipment/trial_chamber", NO_MOBS),
-    ("loot replace entity @s armor.legs loot minecraft:equipment/trial_chamber", NO_MOBS),
-    ("loot replace entity @s armor.chest loot minecraft:equipment/trial_chamber", NO_MOBS),
-    ("loot replace entity @s armor.head loot minecraft:equipment/trial_chamber", NO_MOBS),
-    ("loot replace entity @s hotbar.0 4 loot minecraft:equipment/trial_chamber", NO_MOBS),
-    ("loot replace entity @s hotbar.1 4 loot minecraft:equipment/trial_chamber", NO_MOBS),
-    ("loot replace entity @s weapon.mainhand loot minecraft:equipment/trial_chamber_melee", NO_MOBS),
-    ("loot replace entity @s weapon.offhand loot minecraft:equipment/trial_chamber_melee", NO_MOBS),
-    ("loot replace entity @s hotbar.1 loot minecraft:equipment/trial_chamber_melee", NO_MOBS),
-    ("loot replace entity @s armor.feet 4 loot minecraft:chests/village/village_armorer", NO_MOBS),
-    ("loot replace entity @s hotbar.1 4 loot minecraft:chests/village/village_armorer", NO_MOBS),
+    (
+        "loot replace entity {z} armor.feet 4 loot minecraft:blocks/diamond_block",
+        NO_MOBS,
+    ),
+    (
+        "loot replace entity {z} armor.feet 4 loot minecraft:equipment/trial_chamber",
+        NO_MOBS,
+    ),
+    (
+        "loot replace entity {z} weapon.mainhand loot minecraft:equipment/trial_chamber_melee",
+        NO_MOBS,
+    ),
+    (
+        "loot replace entity @s armor.feet 4 loot minecraft:equipment/trial_chamber",
+        NO_MOBS,
+    ),
+    (
+        "loot replace entity @s armor.feet loot minecraft:equipment/trial_chamber",
+        NO_MOBS,
+    ),
+    (
+        "loot replace entity @s armor.legs loot minecraft:equipment/trial_chamber",
+        NO_MOBS,
+    ),
+    (
+        "loot replace entity @s armor.chest loot minecraft:equipment/trial_chamber",
+        NO_MOBS,
+    ),
+    (
+        "loot replace entity @s armor.head loot minecraft:equipment/trial_chamber",
+        NO_MOBS,
+    ),
+    (
+        "loot replace entity @s hotbar.0 4 loot minecraft:equipment/trial_chamber",
+        NO_MOBS,
+    ),
+    (
+        "loot replace entity @s hotbar.1 4 loot minecraft:equipment/trial_chamber",
+        NO_MOBS,
+    ),
+    (
+        "loot replace entity @s weapon.mainhand loot minecraft:equipment/trial_chamber_melee",
+        NO_MOBS,
+    ),
+    (
+        "loot replace entity @s weapon.offhand loot minecraft:equipment/trial_chamber_melee",
+        NO_MOBS,
+    ),
+    (
+        "loot replace entity @s hotbar.1 loot minecraft:equipment/trial_chamber_melee",
+        NO_MOBS,
+    ),
+    (
+        "loot replace entity @s armor.feet 4 loot minecraft:chests/village/village_armorer",
+        NO_MOBS,
+    ),
+    (
+        "loot replace entity @s hotbar.1 4 loot minecraft:chests/village/village_armorer",
+        NO_MOBS,
+    ),
     (SELECTS_SLOT_1, NO_MOBS),
     ("loot spawn {p} kill {mob}", &[(&EntityType::COW, Some(0))]),
     ("loot spawn {p} kill {mob}", &[(&EntityType::SHEEP, None)]),
@@ -186,12 +237,18 @@ const MOB_CASES: &[(&str, Mobs)] = &[
 /// block whose biome cell alone is turned into a bamboo jungle by `{jungle_fish}`; `{jungle_player}`
 /// does the same to the cell the player stands in. Each runs once without the biome as a control.
 const SETUP_CASES: &[(&str, &str)] = &[
-    ("", "loot spawn {p} fish minecraft:gameplay/fishing/junk {fish_at}"),
+    (
+        "",
+        "loot spawn {p} fish minecraft:gameplay/fishing/junk {fish_at}",
+    ),
     (
         "fillbiome {jungle_fish} minecraft:bamboo_jungle",
         "loot spawn {p} fish minecraft:gameplay/fishing/junk {fish_at}",
     ),
-    ("", "loot spawn {p} loot minecraft:chests/abandoned_camp_common_chest"),
+    (
+        "",
+        "loot spawn {p} loot minecraft:chests/abandoned_camp_common_chest",
+    ),
     (
         "fillbiome {jungle_player} minecraft:bamboo_jungle",
         "loot spawn {p} loot minecraft:chests/abandoned_camp_common_chest",
@@ -200,7 +257,8 @@ const SETUP_CASES: &[(&str, &str)] = &[
 
 /// The one case whose player has hotbar slot 1 selected, so the sword the table drops second
 /// lands in the main hand.
-const SELECTS_SLOT_1: &str = "loot replace entity @s hotbar.0 2 loot minecraft:equipment/trial_chamber_melee";
+const SELECTS_SLOT_1: &str =
+    "loot replace entity @s hotbar.0 2 loot minecraft:equipment/trial_chamber_melee";
 
 fn at(x0: i32, (x, y, z): (i32, i32, i32)) -> BlockPos {
     BlockPos::new(x0 + x, y, z)
@@ -296,7 +354,10 @@ fn add_mobs(world: &Arc<World>, x0: i32, mobs: Mobs) {
 /// Attribute values that equipment changes, for the player and the zombie.
 fn attributes_text(player: &Arc<Player>, zombie: &Arc<LivingEntity>) -> String {
     let mut text = String::new();
-    for (who, living) in [("player", &player.living_entity), ("zombie", zombie.as_ref())] {
+    for (who, living) in [
+        ("player", &player.living_entity),
+        ("zombie", zombie.as_ref()),
+    ] {
         let values: Vec<String> = [
             &Attributes::ARMOR,
             &Attributes::ARMOR_TOUGHNESS,
@@ -493,8 +554,14 @@ fn expand(case: &str, x0: i32) -> String {
         .replace("{z}", ZOMBIE)
         .replace("{tall_top}", &pos(TALL_GRASS_TOP))
         .replace("{fish_at}", &format!("{} 64 4", x0 + 8))
-        .replace("{jungle_fish}", &format!("{} 64 4 {} 67 7", x0 + 8, x0 + 11))
-        .replace("{jungle_player}", &format!("{} 60 8 {} 63 11", x0 + 24, x0 + 27))
+        .replace(
+            "{jungle_fish}",
+            &format!("{} 64 4 {} 67 7", x0 + 8, x0 + 11),
+        )
+        .replace(
+            "{jungle_player}",
+            &format!("{} 60 8 {} 63 11", x0 + 24, x0 + 27),
+        )
         .replace("{tall}", &pos(TALL_GRASS))
 }
 
@@ -518,7 +585,11 @@ async fn loot_command_gives_the_same_items() -> TestResult {
     let appended = MOB_CASES
         .iter()
         .map(|(case, mobs)| ("", *case, *mobs))
-        .chain(SETUP_CASES.iter().map(|(setup, case)| (*setup, *case, NO_MOBS)));
+        .chain(
+            SETUP_CASES
+                .iter()
+                .map(|(setup, case)| (*setup, *case, NO_MOBS)),
+        );
     for (index, (setup, case, mobs)) in appended.enumerate() {
         let x0 = build_area(&world, CASES.len() + index + 1);
         place_tall_grass(&world, x0);
@@ -531,14 +602,20 @@ async fn loot_command_gives_the_same_items() -> TestResult {
         let command = match mobs.first() {
             Some((kind, _)) => case.replace(
                 "{mob}",
-                &format!("@e[type=minecraft:{},limit=1,sort=nearest]", kind.resource_name),
+                &format!(
+                    "@e[type=minecraft:{},limit=1,sort=nearest]",
+                    kind.resource_name
+                ),
             ),
             None => case.to_owned(),
         };
         let setup_result = if setup.is_empty() {
             String::new()
         } else {
-            format!("; setup {}", run(&server, &world, &player, &expand(setup, x0)))
+            format!(
+                "; setup {}",
+                run(&server, &world, &player, &expand(setup, x0))
+            )
         };
         let attributes_before = attributes_text(&player, &zombie);
         let before = record(&world, x0, &player, &zombie);

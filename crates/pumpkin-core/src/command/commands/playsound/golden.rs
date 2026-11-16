@@ -67,6 +67,13 @@ const STEPS: &[&str] = &[
     "playsound minecraft:entity.pig.ambient block @a 0.5 64 0.5 1 3",
     "playsound minecraft:entity.pig.ambient block @a 0.5 64 0.5 1 1 2",
     "playsound minecraft:entity.pig.ambient block NoSuchPlayer",
+    // Appended after the mutation run: listeners offset in y and z too, at the range boundary
+    // and out of range with a minimum volume.
+    "playsound minecraft:block.note_block.harp block @a 6.5 70 8.5",
+    "playsound minecraft:block.note_block.harp block @a 0.5 80 0.5",
+    "playsound minecraft:block.note_block.harp block @a 0.5 64 16.5",
+    "playsound minecraft:block.note_block.harp block @a 0.5 100 30.5 1 1 0.5",
+    "playsound minecraft:block.note_block.harp block @a 300.5 64 -50.5 1 1 0.5",
 ];
 
 /// Reads a `VarInt` at `at`: its value and the index after it.

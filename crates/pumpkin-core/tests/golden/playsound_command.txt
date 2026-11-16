@@ -40,3 +40,8 @@ playsound minecraft:entity.pig.ambient block @a 0.5 64 0.5 -1 -> err Float must 
 playsound minecraft:entity.pig.ambient block @a 0.5 64 0.5 1 3 -> err Float must not be more than 2: found 3; GoldA[] GoldB[] GoldC[] GoldD[]
 playsound minecraft:entity.pig.ambient block @a 0.5 64 0.5 1 1 2 -> err Float must not be more than 1: found 2; GoldA[] GoldB[] GoldC[] GoldD[]
 playsound minecraft:entity.pig.ambient block NoSuchPlayer -> err No player was found; GoldA[] GoldB[] GoldC[] GoldD[]
+playsound minecraft:block.note_block.harp block @a 6.5 70 8.5 -> ok 2; GoldA[32:661ef822598351c9,101:5206472a9efdf8e1] GoldB[32:661ef822598351c9,178:61a3315c5eebe764] GoldC[] GoldD[69:b576e423675fc689]
+playsound minecraft:block.note_block.harp block @a 0.5 80 0.5 -> ok 1; GoldA[32:dbe354d038eb0329,103:7763add0d60003dc] GoldB[180:b20f09deecce483b] GoldC[] GoldD[67:cacaf8cabb33eb95]
+playsound minecraft:block.note_block.harp block @a 0.5 64 16.5 -> ok 1; GoldA[32:897c2bdb83e0ab29,103:7763add0d60003dc] GoldB[180:b20f09deecce483b] GoldC[] GoldD[67:cacaf8cabb33eb95]
+playsound minecraft:block.note_block.harp block @a 0.5 100 30.5 1 1 0.5 -> ok 4; GoldA[32:789c86857d8993cf,101:63593d2aa8cdf637] GoldB[32:e489e3309db98df3,178:21add94bb2806e42] GoldC[32:d8c0433f63be0615] GoldD[69:b576e423675fc689]
+playsound minecraft:block.note_block.harp block @a 300.5 64 -50.5 1 1 0.5 -> ok 4; GoldA[32:63082bb157a61f1f,101:63593d2aa8cdf637] GoldB[32:e287b38c70050ccf,178:21add94bb2806e42] GoldC[32:d9f33948e8ded05d] GoldD[69:b576e423675fc689]

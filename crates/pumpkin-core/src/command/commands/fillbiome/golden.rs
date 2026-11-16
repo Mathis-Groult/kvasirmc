@@ -50,6 +50,12 @@ const STEPS: &[&str] = &[
     "fillbiome 0 64 0 0 64 0 minecraft:desert replace minecraft:no_such_biome",
     "fillbiome 0 64 0 0 64 0 minecraft:desert replace #minecraft:no_such_tag",
     "fillbiome 0 64 0 minecraft:desert",
+    // Appended after the mutation run: one corner out of bounds, and the size limit away from
+    // the origin (cells 1..=32 on every axis).
+    "fillbiome 0 -65 0 0 64 0 minecraft:desert",
+    "fillbiome 0 64 0 0 400 0 minecraft:desert",
+    "fillbiome 4 4 4 131 131 131 minecraft:savanna",
+    "fillbiome 4 4 4 135 131 131 minecraft:savanna",
 ];
 
 /// Every loaded chunk's biome record (`ids` and hash), by position.

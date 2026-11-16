@@ -1,10 +1,7 @@
 name: Cargo Build, Test, and Linting
 
 on:
-  push:
-    branches:
-      - master
-  pull_request:
+  # KvasirMC fork: run on demand only (Actions tab -> Run workflow).
   workflow_dispatch:
     inputs:
       rust_toolchain_version:

@@ -1,122 +1,39 @@
-<div align="center">
+# KvasirMC engine
 
-# Pumpkin
+The Minecraft server engine behind KvasirMC: a hard fork of
+[Pumpkin](https://github.com/Pumpkin-MC/Pumpkin), a Minecraft server written in Rust.
+It serves one version, **Minecraft 26.3** (Java and Bedrock).
 
-[![CI](https://github.com/Pumpkin-MC/Pumpkin/actions/workflows/rust.yml/badge.svg)](https://github.com/Pumpkin-MC/Pumpkin/actions/workflows/rust.yml)
-[![Discord](https://img.shields.io/discord/1268592337445978193.svg?label=&logo=discord&logoColor=ffffff&color=7389D8&labelColor=6A7EC2)](https://discord.gg/wT8XjrjKkf)
-[![License: GPL](https://img.shields.io/badge/License-GPLv3-yellow.svg)](https://opensource.org/licenses/gpl-3-0)
+The fork starts at upstream commit `2709e8b7a` (2026-11-01). Upstream's history is kept
+below our commits; the original README is in [`docs/upstream/README.md`](docs/upstream/README.md).
+Upstream fixes are ported by hand when wanted. This repository is not affiliated with the
+Pumpkin project, and bugs found here should not be reported to it unless they are
+confirmed against upstream's own code.
 
-</div>
+## What differs from upstream
 
-[Pumpkin](https://pumpkinmc.org/) is a Minecraft server built entirely in Rust, offering a fast, efficient,
-and customizable experience. It prioritizes performance and player enjoyment while adhering to the core mechanics of the game.
-<div align="center">
+- **Restructured code.** Upstream's longest functions (up to 1,400 lines) and files over
+  3,000 lines were split into modules by concept. Every split was checked against a test
+  that records the old behaviour first (packet traces, structure and command outputs,
+  world generation), so the split preserves behaviour.
+- **Bug fixes** found by those tests, each in its own commit with a regression test:
+  server freezes (throw-all from a result slot, minecarts on activator rails,
+  `/fill ... destroy`), item creation and loss in Bedrock inventory handling, heightmap
+  corruption, missing amethyst geodes, and more.
+- **Our own crates** (`crates/kvasir-*`): mob AI level of detail, redstone dust networks
+  settled in one pass, an adaptive sequential/parallel tick, tick-phase timing,
+  resumable world pre-generation, the `.pump` chunk frame codec and a one-engine-per-world
+  lock.
+- **One plugin interface.** Only WIT `v0.1` is kept; the `v0.2` host was removed.
 
-![Pumpkin Chunk Loading](./assets/pumpkin-chunk-loading.webp)
+## Build
 
-</div>
+```sh
+cargo build --release -p pumpkin
+```
 
-## Goals
+The binary is `target/release/pumpkin`. It reads `pumpkin.toml` from its working directory.
 
-- **Performance**: Leveraging multi-threading for maximum speed and efficiency.
-- **Compatibility**: Supports the latest Java & Bedrock Minecraft server version while adhering to Vanilla game mechanics.
-- **Security**: Prioritizes security by preventing known security exploits.
-- **Flexibility**: Highly configurable, with the ability to disable unnecessary features.
-- **Extensibility**: Provides a foundation for plugin development.
+## Licence
 
-> [!IMPORTANT]
-> Pumpkin is currently under heavy development.
->
-> [See what needs to be done before the 1.0.0 Release](https://github.com/Pumpkin-MC/Pumpkin/issues/449)
-
-## Features
-
-- [x] Configuration (toml)
-- [Tracking: Protocol](https://github.com/Pumpkin-MC/Pumpkin/issues/1401)
-  - [x] Server Status/Ping
-  - [x] Encryption
-  - [x] Packet Compression
-  - [x] Java Edition
-  - [x] Bedrock Edition (W.I.P)
-  - ...
-- [Tracking: World](https://github.com/Pumpkin-MC/Pumpkin/issues/1403)
-  - [x] Player Tab-list
-  - [x] Scoreboard
-  - [x] World Loading
-  - [x] World Time
-  - [x] World Borders
-  - [x] World Saving
-  - [x] Lighting
-  - [x] Entity Spawning
-  - [x] Bossbar
-  - [x] Chunk Loading (Vanilla, Linear, Pump)
-  - [Chunk Generation](https://github.com/Pumpkin-MC/Pumpkin/issues/36)
-  - [x] Chunk Saving (Vanilla, Linear, Pump)
-  - [Redstone](https://github.com/Pumpkin-MC/Pumpkin/issues/1402)
-  - [x] Liquid Physics
-  - ...
-- [Tracking: Player](https://github.com/Pumpkin-MC/Pumpkin/issues/1405)
-  - [x] Skins
-  - [x] Teleport
-  - [x] Movement
-  - [x] Animation
-  - [x] Inventory
-  - [Combat](https://github.com/Pumpkin-MC/Pumpkin/issues/1404)
-  - [x] Experience
-  - [x] Hunger
-  - [X] Off Hand
-  - [X] Advancements (W.I.P)
-  - [x] Eating
-  - ...
-- Entities
-  - [x] Non-Living (Minecart, Eggs...) (W.I.P)
-  - [x] Entity Effects
-  - [x] Players
-  - [x] Mobs (W.I.P)
-  - [x] Animals (W.I.P)
-  - [Entity AI](https://github.com/Pumpkin-MC/Pumpkin/issues/1406)
-  - [x] Boss (W.I.P)
-  - [x] Villagers (W.I.P)
-  - [X] Entity Saving
-- Server
-  - [Plugins](https://github.com/Pumpkin-MC/Pumpkin/issues/1407)
-  - [x] Query
-  - [x] [Minecraft Server Management Protocol (MSMP)](https://minecraft.wiki/w/Minecraft_Server_Management_Protocol)
-  - [x] Inventories
-  - [x] Particles
-  - [x] Chat
-  - [Commands](https://github.com/Pumpkin-MC/Pumpkin/issues/15)
-  - [x] Permissions
-  - [x] Translations
-- Proxy
-  - [x] [BungeeCord](https://github.com/SpigotMC/BungeeCord)
-  - [x] [BungeeGuard](https://github.com/lucko/BungeeGuard)
-  - [x] [Velocity](https://github.com/PaperMC/Velocity)
-
-<!-- Check out our [Github Project](https://github.com/orgs/Pumpkin-MC/projects/3) to see current progress. -->
-
-## How to run
-
-See our [Quick Start](https://docs.pumpkinmc.org/#quick-start) guide to get Pumpkin running.
-
-## Contributions
-
-Contributions are welcome! See [CONTRIBUTING.md](CONTRIBUTING.md)
-
-## Docs
-
-Pumpkin's documentation can be found at <https://pumpkinmc.org/>
-
-## Communication
-
-Consider joining [our Discord server](https://discord.gg/wT8XjrjKkf) to stay up-to-date on events, updates, and connect with other members.
-
-## Funding
-
-If you want to fund me and help the project, check out the [Donation Page](https://pumpkinmc.org/donate/).
-
-## License & Attribution
-
-* **Pumpkin Server**: Licensed under the [GNU General Public License v3.0 (GPLv3)](LICENSE).
-* **Plugin API (`pumpkin-plugin-api` & `pumpkin-plugin-wit`)**: Dual-licensed under [MIT](crates/pumpkin-plugin-api/LICENSE-MIT) OR [Apache-2.0](crates/pumpkin-plugin-api/LICENSE-APACHE) for maximum flexibility when writing plugins.
-* **Third-Party Assets & Data**: Bedrock mappings, protocol conversion data, and Minecraft assets are subject to their respective licenses and attribution terms. See [assets/NOTICE.md](assets/NOTICE.md) for full details.
+GPL-3.0, like upstream (see [`LICENSE`](LICENSE) and [`NOTICE`](NOTICE)).

@@ -4,8 +4,7 @@ permissions:
   contents: read
 
 on:
-  push:
-  pull_request:
+  # KvasirMC fork: run on demand only (Actions tab -> Run workflow).
   workflow_dispatch:
 
 env:

@@ -1,0 +1,14 @@
+KvasirMC engine
+Copyright (C) 2026 Mathis Groult and the Pumpkin contributors
+
+This is a fork of Pumpkin (https://github.com/Pumpkin-MC/Pumpkin),
+copyright the Pumpkin contributors, licensed under the GNU General Public
+License version 3. The fork starts at upstream commit
+2709e8b7a (2026-11-01); everything before it in the history is upstream's work.
+
+All changes made in this fork, including the crates under crates/kvasir-*,
+are licensed under the same GNU General Public License version 3
+(see LICENSE).
+
+Minecraft is a trademark of Mojang Synergies AB. This project is not
+affiliated with Mojang or Microsoft.

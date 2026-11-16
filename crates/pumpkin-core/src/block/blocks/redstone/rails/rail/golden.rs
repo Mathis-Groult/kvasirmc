@@ -161,6 +161,24 @@ async fn rail_shape_is_the_same() -> TestResult {
         x += 8;
     }
 
+    // Appended after the mutation review: curves next to a raised neighbour, so the slope step
+    // must only touch straight shapes.
+    let curves: [Vec<Neighbour>; 4] = [
+        vec![(1, 0, RailShape::NorthSouth), (2, 1, RailShape::EastWest)],
+        vec![(0, 0, RailShape::NorthSouth), (3, 1, RailShape::EastWest)],
+        vec![(1, 1, RailShape::NorthSouth), (2, 0, RailShape::EastWest)],
+        vec![(0, 1, RailShape::NorthSouth), (3, 0, RailShape::EastWest)],
+    ];
+    for layout in &curves {
+        let shape = case(&world, x, layout, RailShape::NorthSouth, false);
+        writeln!(
+            now,
+            "{} default NorthSouth signal false -> {shape:?}",
+            name(layout)
+        )?;
+        x += 8;
+    }
+
     script_golden::bless_or_compare("rail_shape.txt", &now)?;
     server.stop();
     Ok(())

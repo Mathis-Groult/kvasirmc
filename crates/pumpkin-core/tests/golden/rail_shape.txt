@@ -128,3 +128,7 @@ n+0:AscendingNorth default EastWest signal false -> NorthSouth
 n+0:AscendingNorth default EastWest signal true -> NorthSouth
 locked e default NorthSouth -> NorthSouth
 locked e default EastWest -> EastWest
+s+0:NorthSouth,e+1:EastWest default NorthSouth signal false -> SouthEast
+n+0:NorthSouth,w+1:EastWest default NorthSouth signal false -> NorthWest
+s+1:NorthSouth,e+0:EastWest default NorthSouth signal false -> SouthEast
+n+1:NorthSouth,w+0:EastWest default NorthSouth signal false -> NorthWest

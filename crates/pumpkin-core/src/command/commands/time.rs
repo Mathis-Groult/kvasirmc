@@ -363,3 +363,6 @@ pub fn register(dispatcher: &mut CommandDispatcher, registry: &PermissionRegistr
 
     dispatcher.register(time_cmd);
 }
+
+#[cfg(test)]
+mod golden;

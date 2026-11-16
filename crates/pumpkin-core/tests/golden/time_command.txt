@@ -1,0 +1,70 @@
+start; time_of_day=0 world_age=0 rate=1 paused=false
+time query time -> ok 0; GoldA[82:fcd6bb8438af0980] GoldB[] GoldC[] GoldD[]; time_of_day=0 world_age=0 rate=1 paused=false
+time query gametime -> ok 0; GoldA[61:c86fea37d7625823] GoldB[] GoldC[] GoldD[]; time_of_day=0 world_age=0 rate=1 paused=false
+time query daytime -> ok 0; GoldA[52:b9b57d1109bb4a0b] GoldB[] GoldC[] GoldD[]; time_of_day=0 world_age=0 rate=1 paused=false
+time query day -> ok 0; GoldA[52:b9b57d1109bb4a0b] GoldB[] GoldC[] GoldD[]; time_of_day=0 world_age=0 rate=1 paused=false
+time set day -> ok 1000; GoldA[21:1dc91b062d76e4c5,83:a33e03fc97be9850] GoldB[21:1dc91b062d76e4c5,160:3d49c864390ed9f7] GoldC[21:1dc91b062d76e4c5] GoldD[5:bc623516aebc9949,51:6f0c7de9067d94a6]; time_of_day=1000 world_age=0 rate=1 paused=false
+time set noon -> ok 6000; GoldA[21:357235aa13cd3e02,83:d5140f20c15c52ff] GoldB[21:357235aa13cd3e02,160:15fb4172abb974e6] GoldC[21:357235aa13cd3e02] GoldD[5:bbbf6316ae328623,51:6f0c7de9067d94a6]; time_of_day=6000 world_age=0 rate=1 paused=false
+time set night -> ok 13000; GoldA[21:9e40b490f9616eeb,84:f370840b4ebe20ee] GoldB[21:9e40b490f9616eeb,161:76acc196f79b457b] GoldC[21:9e40b490f9616eeb] GoldD[6:d0f6f483c2e6aba9,51:6f0c7de9067d94a6]; time_of_day=13000 world_age=0 rate=1 paused=false
+time set midnight -> ok 18000; GoldA[22:4ea7f08979b3bcdd,84:c758e49b61e3076d] GoldB[22:4ea7f08979b3bcdd,161:fb1a80d90f6a1fce] GoldC[22:4ea7f08979b3bcdd] GoldD[6:35323982dacee7aa,51:6f0c7de9067d94a6]; time_of_day=18000 world_age=0 rate=1 paused=false
+time set 0 -> ok 0; GoldA[20:df474e1db3b9f8ee,80:24f277ca23976bde] GoldB[20:df474e1db3b9f8ee,157:4fbe6f608edb363b] GoldC[20:df474e1db3b9f8ee] GoldD[4:1a9a566cf1c0cd6b,51:6f0c7de9067d94a6]; time_of_day=0 world_age=0 rate=1 paused=false
+time set 1000 -> ok 1000; GoldA[21:1dc91b062d76e4c5,83:a33e03fc97be9850] GoldB[21:1dc91b062d76e4c5,160:3d49c864390ed9f7] GoldC[21:1dc91b062d76e4c5] GoldD[5:bc623516aebc9949,51:6f0c7de9067d94a6]; time_of_day=1000 world_age=0 rate=1 paused=false
+time set 1d -> ok 24000; GoldA[22:ec9bffd754b49bf2,84:7d32081b1bafdcc0] GoldB[22:ec9bffd754b49bf2,161:32c8d39911c2ada9] GoldC[22:ec9bffd754b49bf2] GoldD[6:4856398376120f94,51:6f0c7de9067d94a6]; time_of_day=24000 world_age=0 rate=1 paused=false
+time set 2.5d -> ok 60000; GoldA[22:09ad42121a54bfeb,84:4ce5569ac4c56d78] GoldB[22:09ad42121a54bfeb,161:e5a3e7e8ec63cb11] GoldC[22:09ad42121a54bfeb] GoldD[6:1d3ff6823b767be1,51:6f0c7de9067d94a6]; time_of_day=60000 world_age=0 rate=1 paused=false
+time set 30s -> ok 600; GoldA[21:ad481a11aaf13608,82:2d9d127137673cd6] GoldB[21:ad481a11aaf13608,159:8ee0deaadc8581df] GoldC[21:ad481a11aaf13608] GoldD[5:bb1bf716ada76d4f,51:6f0c7de9067d94a6]; time_of_day=600 world_age=0 rate=1 paused=false
+time set 100t -> ok 100; GoldA[20:bed0d92eeb2c8582,82:91385f12da7bb27f] GoldB[20:bed0d92eeb2c8582,159:5a60d7b1cdc60fb0] GoldC[20:bed0d92eeb2c8582] GoldD[5:bc470f16aea590ff,51:6f0c7de9067d94a6]; time_of_day=100 world_age=0 rate=1 paused=false
+time set -1 -> err The tick count must not be less than 0: found -1; GoldA[] GoldB[] GoldC[] GoldD[]; time_of_day=100 world_age=0 rate=1 paused=false
+time set 2147483647 -> ok 2147483647; GoldA[24:0db5a28c2c97810f,89:995abca9617137bf] GoldB[24:0db5a28c2c97810f,166:6c0d235739647a1a] GoldC[24:0db5a28c2c97810f] GoldD[8:1653ec9edb935fd5,51:6f0c7de9067d94a6]; time_of_day=2147483647 world_age=0 rate=1 paused=false
+time query time -> ok 0; GoldA[91:01e35edbb6f7121d] GoldB[] GoldC[] GoldD[]; time_of_day=2147483647 world_age=0 rate=1 paused=false
+time query daytime -> ok 11647; GoldA[56:510bbfc303ee690e] GoldB[] GoldC[] GoldD[]; time_of_day=2147483647 world_age=0 rate=1 paused=false
+time query day -> ok 89478; GoldA[56:d8cc55f089e8454d] GoldB[] GoldC[] GoldD[]; time_of_day=2147483647 world_age=0 rate=1 paused=false
+time set 1x -> err Invalid unit; GoldA[] GoldB[] GoldC[] GoldD[]; time_of_day=2147483647 world_age=0 rate=1 paused=false
+time set 500 -> ok 500; GoldA[21:17b0c07bef119c35,82:341e1267ab3e5e33] GoldB[21:17b0c07bef119c35,159:ce0f6667f81e0454] GoldC[21:17b0c07bef119c35] GoldD[5:bbda4d16ae492879,51:6f0c7de9067d94a6]; time_of_day=500 world_age=0 rate=1 paused=false
+time add 1000 -> ok 1500; GoldA[21:d88bc3e6d61b8385,83:b79f34da9703939f] GoldB[21:d88bc3e6d61b8385,160:edaf54705a0d8cfa] GoldC[21:d88bc3e6d61b8385] GoldD[5:bb371d16adbe7599,53:cd84c6084c22be98]; time_of_day=1500 world_age=0 rate=1 paused=false
+time add -500 -> ok 1000; GoldA[21:1dc91b062d76e4c5,83:a33e03fc97be9850] GoldB[21:1dc91b062d76e4c5,160:3d49c864390ed9f7] GoldC[21:1dc91b062d76e4c5] GoldD[5:bc623516aebc9949,53:cd84c6084c22be98]; time_of_day=1000 world_age=0 rate=1 paused=false
+time add 0 -> ok 1000; GoldA[21:1dc91b062d76e4c5,83:a33e03fc97be9850] GoldB[21:1dc91b062d76e4c5,160:3d49c864390ed9f7] GoldC[21:1dc91b062d76e4c5] GoldD[5:bc623516aebc9949,53:cd84c6084c22be98]; time_of_day=1000 world_age=0 rate=1 paused=false
+time add 1d -> ok 25000; GoldA[22:ee01f6d68b1e86a2,84:efa4d19db38eef59] GoldB[22:ee01f6d68b1e86a2,161:d6ef73c9dcb9208e] GoldC[22:ee01f6d68b1e86a2] GoldD[6:aae8b2828c9163f6,53:cd84c6084c22be98]; time_of_day=25000 world_age=0 rate=1 paused=false
+time query day -> ok 1; GoldA[52:b10c021104d34b60] GoldB[] GoldC[] GoldD[]; time_of_day=25000 world_age=0 rate=1 paused=false
+time add 2147483647 -> ok 25000; GoldA[24:ada9a5dc2e31705b,89:98f850213c0b14f9] GoldB[24:ada9a5dc2e31705b,166:209e4f15cbe1eba8] GoldC[24:ada9a5dc2e31705b] GoldD[8:660b2c7f0402fb6f,53:cd84c6084c22be98]; time_of_day=2147508647 world_age=0 rate=1 paused=false
+time query time -> ok 25000; GoldA[91:e1e272b12d718b93] GoldB[] GoldC[] GoldD[]; time_of_day=2147508647 world_age=0 rate=1 paused=false
+time query daytime -> ok 12647; GoldA[56:bf83eb0621bde5c5] GoldB[] GoldC[] GoldD[]; time_of_day=2147508647 world_age=0 rate=1 paused=false
+time query day -> ok 89479; GoldA[56:d022daf0850046a2] GoldB[] GoldC[] GoldD[]; time_of_day=2147508647 world_age=0 rate=1 paused=false
+time add -2147483648 -> ok 24999; GoldA[22:9b0bd84024ceaa53,84:c7dc0b4fe1be97e5] GoldB[22:9b0bd84024ceaa53,161:163f446f2dd0bfba] GoldC[22:9b0bd84024ceaa53] GoldD[6:a719dc81f96d11c4,53:cd84c6084c22be98]; time_of_day=24999 world_age=0 rate=1 paused=false
+time query time -> ok 24999; GoldA[86:e1c8a4280f9ae893] GoldB[] GoldC[] GoldD[]; time_of_day=24999 world_age=0 rate=1 paused=false
+time set 23999 -> ok 23999; GoldA[22:923c4db257dd8bf3,84:ce5eba56b7d8b02a] GoldB[22:923c4db257dd8bf3,161:64105e73ee329783] GoldC[22:923c4db257dd8bf3] GoldD[6:180c4d81a72302f7,51:6f0c7de9067d94a6]; time_of_day=23999 world_age=0 rate=1 paused=false
+time add 1 -> ok 24000; GoldA[22:ec9bffd754b49bf2,84:7d32081b1bafdcc0] GoldB[22:ec9bffd754b49bf2,161:32c8d39911c2ada9] GoldC[22:ec9bffd754b49bf2] GoldD[6:4856398376120f94,53:cd84c6084c22be98]; time_of_day=24000 world_age=0 rate=1 paused=false
+time query daytime -> ok 0; GoldA[52:b9b57d1109bb4a0b] GoldB[] GoldC[] GoldD[]; time_of_day=24000 world_age=0 rate=1 paused=false
+time query day -> ok 1; GoldA[52:b10c021104d34b60] GoldB[] GoldC[] GoldD[]; time_of_day=24000 world_age=0 rate=1 paused=false
+time pause -> ok 1; GoldA[22:774ea4b5f86029bd,70:0f2a5db8430dadcc] GoldB[22:774ea4b5f86029bd,147:9ab4f82916a7d619] GoldC[22:774ea4b5f86029bd] GoldD[6:4856398376120f94,52:82a080f1bc251550]; time_of_day=24000 world_age=0 rate=1 paused=true
+time pause -> ok 1; GoldA[22:774ea4b5f86029bd,70:0f2a5db8430dadcc] GoldB[22:774ea4b5f86029bd,147:9ab4f82916a7d619] GoldC[22:774ea4b5f86029bd] GoldD[6:4856398376120f94,52:82a080f1bc251550]; time_of_day=24000 world_age=0 rate=1 paused=true
+time query time -> ok 24000; GoldA[86:60b7d5b0abf1f7de] GoldB[] GoldC[] GoldD[]; time_of_day=24000 world_age=0 rate=1 paused=true
+time set 6000 -> ok 6000; GoldA[21:6a4a5982d8bfe4ad,83:d5140f20c15c52ff] GoldB[21:6a4a5982d8bfe4ad,160:15fb4172abb974e6] GoldC[21:6a4a5982d8bfe4ad] GoldD[5:bbbf6316ae328623,51:6f0c7de9067d94a6]; time_of_day=6000 world_age=0 rate=1 paused=true
+time add 10 -> ok 6010; GoldA[21:262db9e96532b587,83:1fea0317ce26c10e] GoldB[21:262db9e96532b587,160:21ffa5a7efc07169] GoldC[21:262db9e96532b587] GoldD[5:bbe7a316ae5444f7,53:cd84c6084c22be98]; time_of_day=6010 world_age=0 rate=1 paused=true
+time resume -> ok 1; GoldA[21:1a90a67992c390a8,71:4b043d4cd00de33c] GoldB[21:1a90a67992c390a8,148:d7fc7375f102d497] GoldC[21:1a90a67992c390a8] GoldD[5:bbe7a316ae5444f7,51:6f0c7de9067d94a6]; time_of_day=6010 world_age=0 rate=1 paused=false
+time resume -> ok 1; GoldA[21:1a90a67992c390a8,71:4b043d4cd00de33c] GoldB[21:1a90a67992c390a8,148:d7fc7375f102d497] GoldC[21:1a90a67992c390a8] GoldD[5:bbe7a316ae5444f7,51:6f0c7de9067d94a6]; time_of_day=6010 world_age=0 rate=1 paused=false
+time rate 2 -> ok 1; GoldA[21:24d8bbfef2a1d9c7,72:c4f999e76a124219] GoldB[21:24d8bbfef2a1d9c7,149:935de29530ab62b2] GoldC[21:24d8bbfef2a1d9c7] GoldD[5:bbe7a316ae5444f7,51:6f0c7de9067d94a6]; time_of_day=6010 world_age=0 rate=2 paused=false
+time rate 0.5 -> ok 1; GoldA[21:c5d326771ec43b28,74:990d4f0bf1e7dea0] GoldB[21:c5d326771ec43b28,151:3b599f3d8409e5c1] GoldC[21:c5d326771ec43b28] GoldD[5:bbe7a316ae5444f7,51:6f0c7de9067d94a6]; time_of_day=6010 world_age=0 rate=0.5 paused=false
+time rate 1000 -> ok 1; GoldA[21:3b1af9dfa1da5a51,75:be2040151b005dfb] GoldB[21:3b1af9dfa1da5a51,152:d1bea894028a796a] GoldC[21:3b1af9dfa1da5a51] GoldD[5:bbe7a316ae5444f7,51:6f0c7de9067d94a6]; time_of_day=6010 world_age=0 rate=1000 paused=false
+time rate 0.00001 -> ok 1; GoldA[21:efebb133f4896b64,78:18139292f67f8f78] GoldB[21:efebb133f4896b64,155:4ba4dc85732a0959] GoldC[21:efebb133f4896b64] GoldD[5:bbe7a316ae5444f7,51:6f0c7de9067d94a6]; time_of_day=6010 world_age=0 rate=0.00001 paused=false
+time rate 1000.5 -> err Float must not be more than 1000: found 1000.5; GoldA[] GoldB[] GoldC[] GoldD[]; time_of_day=6010 world_age=0 rate=0.00001 paused=false
+time rate 0 -> err Float must not be less than 0.00001: found 0; GoldA[] GoldB[] GoldC[] GoldD[]; time_of_day=6010 world_age=0 rate=0.00001 paused=false
+time rate 1 -> ok 1; GoldA[21:1a90a67992c390a8,72:aafd28e75b5a4618] GoldB[21:1a90a67992c390a8,149:f363368cda75a621] GoldC[21:1a90a67992c390a8] GoldD[5:bbe7a316ae5444f7,51:6f0c7de9067d94a6]; time_of_day=6010 world_age=0 rate=1 paused=false
+time of minecraft:overworld set day -> ok 1000; GoldA[21:1dc91b062d76e4c5,83:a33e03fc97be9850] GoldB[21:1dc91b062d76e4c5,160:3d49c864390ed9f7] GoldC[21:1dc91b062d76e4c5] GoldD[5:bc623516aebc9949,51:6f0c7de9067d94a6]; time_of_day=1000 world_age=0 rate=1 paused=false
+time of minecraft:overworld add 5 -> ok 1005; GoldA[21:abe918f18aa78890,83:ce8d6afcb04691a7] GoldB[21:abe918f18aa78890,160:1d646c3a8a022b22] GoldC[21:abe918f18aa78890] GoldD[5:bc843516aed97faf,53:cd84c6084c22be98]; time_of_day=1005 world_age=0 rate=1 paused=false
+time of minecraft:overworld query time -> ok 1005; GoldA[85:91dcfcfedf52e355] GoldB[] GoldC[] GoldD[]; time_of_day=1005 world_age=0 rate=1 paused=false
+time of minecraft:overworld query gametime -> ok 0; GoldA[61:c86fea37d7625823] GoldB[] GoldC[] GoldD[]; time_of_day=1005 world_age=0 rate=1 paused=false
+time of minecraft:overworld query daytime -> ok 1005; GoldA[55:fb9a4e79369823d4] GoldB[] GoldC[] GoldD[]; time_of_day=1005 world_age=0 rate=1 paused=false
+time of minecraft:overworld query day -> ok 0; GoldA[52:b9b57d1109bb4a0b] GoldB[] GoldC[] GoldD[]; time_of_day=1005 world_age=0 rate=1 paused=false
+time of minecraft:overworld pause -> ok 1; GoldA[21:b6866df1872a089f,70:0f2a5db8430dadcc] GoldB[21:b6866df1872a089f,147:9ab4f82916a7d619] GoldC[21:b6866df1872a089f] GoldD[5:bc843516aed97faf,52:82a080f1bc251550]; time_of_day=1005 world_age=0 rate=1 paused=true
+time of minecraft:overworld resume -> ok 1; GoldA[21:abe918f18aa78890,71:4b043d4cd00de33c] GoldB[21:abe918f18aa78890,148:d7fc7375f102d497] GoldC[21:abe918f18aa78890] GoldD[5:bc843516aed97faf,51:6f0c7de9067d94a6]; time_of_day=1005 world_age=0 rate=1 paused=false
+time of minecraft:overworld rate 3 -> ok 1; GoldA[21:df9030084e98d79f,72:bc501ee7652a436e] GoldB[21:df9030084e98d79f,149:33588e9d86e11f43] GoldC[21:df9030084e98d79f] GoldD[5:bc843516aed97faf,51:6f0c7de9067d94a6]; time_of_day=1005 world_age=0 rate=3 paused=false
+time of minecraft:the_end set noon -> ok 6000; GoldA[21:4140976c115115ad,81:fe9be212904f6bba] GoldB[21:4140976c115115ad,158:cfb9335c8491413d] GoldC[21:4140976c115115ad] GoldD[5:bbbf6316ae328623,51:6f0c7de9067d94a6]; time_of_day=6000 world_age=0 rate=3 paused=false
+time of minecraft:the_end query time -> ok 6000; GoldA[83:3586c88220051888] GoldB[] GoldC[] GoldD[]; time_of_day=6000 world_age=0 rate=3 paused=false
+time of minecraft:no_such_clock set day -> ok 1000; GoldA[21:6a61f38b5f00beea,87:60f80c3a2d8aa0c4] GoldB[21:6a61f38b5f00beea,164:ff46185ffb4f62db] GoldC[21:6a61f38b5f00beea] GoldD[5:bc623516aebc9949,51:6f0c7de9067d94a6]; time_of_day=1000 world_age=0 rate=3 paused=false
+time of minecraft:no_such_clock query time -> ok 1000; GoldA[89:e6f525d2632791fa] GoldB[] GoldC[] GoldD[]; time_of_day=1000 world_age=0 rate=3 paused=false
+time -> err Unknown command: time. Please check that the command exists and that you have permission to use it.; GoldA[] GoldB[] GoldC[] GoldD[]; time_of_day=1000 world_age=0 rate=3 paused=false
+time set -> err Unknown command: time. Please check that the command exists and that you have permission to use it.; GoldA[] GoldB[] GoldC[] GoldD[]; time_of_day=1000 world_age=0 rate=3 paused=false
+time add -> err Unknown command: time. Please check that the command exists and that you have permission to use it.; GoldA[] GoldB[] GoldC[] GoldD[]; time_of_day=1000 world_age=0 rate=3 paused=false
+time rate -> err Unknown command: time. Please check that the command exists and that you have permission to use it.; GoldA[] GoldB[] GoldC[] GoldD[]; time_of_day=1000 world_age=0 rate=3 paused=false
+time query -> err Unknown command: time. Please check that the command exists and that you have permission to use it.; GoldA[] GoldB[] GoldC[] GoldD[]; time_of_day=1000 world_age=0 rate=3 paused=false
+time set dusk -> err Expected float; GoldA[] GoldB[] GoldC[] GoldD[]; time_of_day=1000 world_age=0 rate=3 paused=false

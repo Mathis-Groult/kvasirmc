@@ -42,3 +42,10 @@ tick rate -> err Unknown command: tick. Please check that the command exists and
 tick sprint -> err Unknown command: tick. Please check that the command exists and that you have permission to use it.; GoldA[] GoldB[] GoldC[] GoldD[]; rate=20 nanos_per_tick=50000000 frozen=false normal=true sprinting=false stepping=false
 tick step -1 -> err The tick count must not be less than 1: found -1; GoldA[] GoldB[] GoldC[] GoldD[]; rate=20 nanos_per_tick=50000000 frozen=false normal=true sprinting=false stepping=false
 tick freeze now -> err Incorrect argument for command; GoldA[] GoldB[] GoldC[] GoldD[]; rate=20 nanos_per_tick=50000000 frozen=false normal=true sprinting=false stepping=false
+tick sprint 3 -> ok 1; GoldA[7:093e9cc8d32a0467,60:dcd34afd3deba5d6,48:36fc919fa63c0fa3] GoldB[7:093e9cc8d32a0467,137:3a494db695a883e3,125:20ad9f7618189004] GoldC[7:093e9cc8d32a0467] GoldD[61:4039f9a096c37d3a,64:0cccb39c2e463890]; rate=20 nanos_per_tick=50000000 frozen=false normal=true sprinting=true stepping=false
+!sprint-work -> ended after 3; GoldA[] GoldB[] GoldC[] GoldD[]; rate=20 nanos_per_tick=50000000 frozen=false normal=true sprinting=false stepping=false
+tick query -> ok 20; GoldA[46:a2c9c0dcbc1c5a86,81:9d2458b2f1635f86,82:dd3123f44e6d4d2a] GoldB[] GoldC[] GoldD[]; rate=20 nanos_per_tick=50000000 frozen=false normal=true sprinting=false stepping=false
+tick sprint stop -> ok 0; GoldA[97:1d8e273dfd2fec63] GoldB[] GoldC[] GoldD[]; rate=20 nanos_per_tick=50000000 frozen=false normal=true sprinting=false stepping=false
+tick sprint 1s -> ok 1; GoldA[7:093e9cc8d32a0467,61:29def6eef1a156fa,48:36fc919fa63c0fa3] GoldB[7:093e9cc8d32a0467,138:a5f594e4534c7fb1,125:20ad9f7618189004] GoldC[7:093e9cc8d32a0467] GoldD[61:4039f9a096c37d3a,64:0cccb39c2e463890]; rate=20 nanos_per_tick=50000000 frozen=false normal=true sprinting=true stepping=false
+!sprint-work -> ended after 20; GoldA[] GoldB[] GoldC[] GoldD[]; rate=20 nanos_per_tick=50000000 frozen=false normal=true sprinting=false stepping=false
+tick sprint stop -> ok 0; GoldA[97:1d8e273dfd2fec63] GoldB[] GoldC[] GoldD[]; rate=20 nanos_per_tick=50000000 frozen=false normal=true sprinting=false stepping=false

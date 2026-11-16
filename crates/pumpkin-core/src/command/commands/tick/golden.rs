@@ -4,7 +4,8 @@
 //! One server, one script run as the op Java player `GoldA` with three more players online (see
 //! `script_golden`): per step the command, its result, the packets each player was sent and the
 //! tick rate manager afterwards (rate, nanoseconds per tick, frozen, runs normally, sprinting,
-//! stepping). Nothing ticks the server, so a step or sprint stays requested.
+//! stepping). Nothing ticks the server, so a step or sprint stays requested; a `!sprint-work`
+//! step does the sprint bookkeeping of the tick loop until the sprint ends.
 
 use std::fmt::Write;
 
@@ -60,6 +61,14 @@ const STEPS: &[&str] = &[
     "tick sprint",
     "tick step -1",
     "tick freeze now",
+    // Appended after the mutation run: how many ticks a sprint lasts.
+    "tick sprint 3",
+    "!sprint-work",
+    "tick query",
+    "tick sprint stop",
+    "tick sprint 1s",
+    "!sprint-work",
+    "tick sprint stop",
 ];
 
 fn manager(server: &Server) -> String {
@@ -75,6 +84,19 @@ fn manager(server: &Server) -> String {
     )
 }
 
+/// Does the sprint bookkeeping of ticks until the sprint reports its end (at most 100 ticks),
+/// as the server's tick loop would: `ended after N` or `still sprinting`.
+fn run_sprint(server: &Server) -> String {
+    let manager = &server.tick_rate_manager;
+    for tick in 1..=100 {
+        manager.start_sprint_tick_work();
+        if manager.end_sprint_tick_work() {
+            return format!("ended after {tick}");
+        }
+    }
+    "still sprinting".to_owned()
+}
+
 #[tokio::test(flavor = "multi_thread")]
 async fn tick_command_sends_the_same_packets() -> TestResult {
     let folder = tempfile::tempdir()?;
@@ -86,6 +108,12 @@ async fn tick_command_sends_the_same_packets() -> TestResult {
     let mut now = String::new();
     writeln!(now, "start; {}", manager(&server))?;
     for step in STEPS {
+        if *step == "!sprint-work" {
+            let ticks = run_sprint(&server);
+            let sent = script_golden::packets(&mut online);
+            writeln!(now, "{step} -> {ticks};{sent}; {}", manager(&server))?;
+            continue;
+        }
         let result = script_golden::run(&server, &source_player, step);
         let sent = script_golden::packets(&mut online);
         writeln!(now, "{step} -> {result};{sent}; {}", manager(&server))?;

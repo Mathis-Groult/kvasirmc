@@ -586,6 +586,10 @@ fn seed_flat_terrain(chunk: &mut ProtoChunk, chunk_min_y: i32, surface_y: i32) {
     let ground = surface_y as i16;
     chunk.flat_surface_height_map = [ground; 256];
     chunk.flat_ocean_floor_height_map = [ground; 256];
+    // Structure pieces (igloo, swamp hut, shipwreck, ocean ruin, buried treasure) and ores read
+    // the world-generation heightmaps; left unset, they place their pieces outside the world.
+    chunk.flat_surface_wg_height_map = [ground; 256];
+    chunk.flat_ocean_floor_wg_height_map = [ground; 256];
     chunk.flat_motion_blocking_height_map = [ground; 256];
     chunk.flat_motion_blocking_no_leaves_height_map = [ground; 256];
 

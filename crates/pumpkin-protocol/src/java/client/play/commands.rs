@@ -558,3 +558,6 @@ mod argument_type_id_tests {
         assert_eq!(ArgumentType::Uuid.to_id(&v), 61);
     }
 }
+
+#[cfg(test)]
+mod golden;

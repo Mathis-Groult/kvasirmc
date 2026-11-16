@@ -1,0 +1,31 @@
+end:  | 3:1e98ea18934f250f
+byte: -5b | 64:9d8641e91fffe935
+short: 300s | 65:3c86c822f7508e7e
+int: -70000 | 31:8ef6221051c0464a
+long: 9000000000L | 72:13a77b359a092796
+float: 1.5f | 65:ff1287ad97cf6e54
+double: -0.25d | 67:dd30bc7bd89f8e16
+bytes empty: [B; ] | 64:593594a26ea925b4
+bytes one: [B; 7b] | 95:d8a96367b33a55b0
+bytes: [B; 1b, -2b, 3b] | 174:44c4e732dd0bfa57
+bytes 128: [B; 1b, 1b, 1b, 1b, 1b, 1b, 1b, 1b, 1b, 1b, 1b, 1b, 1b, 1b, 1b, 1b, 1b, 1b, 1b, 1b, 1b, 1b, 1b, 1b, 1b, 1b, 1b, 1b, 1b, 1b, 1b, 1b, 1b, 1b, 1b, 1b, 1b, 1b, 1b, ...(515 chars) | 5048:514312f5d2f954c0
+bytes 130: [B; 2b, 2b, 2b, 2b, 2b, 2b, 2b, 2b, 2b, 2b, 2b, 2b, 2b, 2b, 2b, 2b, 2b, 2b, 2b, 2b, 2b, 2b, 2b, 2b, 2b, 2b, 2b, 2b, 2b, 2b, 2b, 2b, 2b, 2b, 2b, 2b, 2b, 2b, 2b, ...(522 chars) | 5085:04be0c59f93f3b05
+string: "hello" | 33:3e6d8b0ad0b2e697
+string quotes: "say \"hi\"" | 38:98fc6dfdf66fddfc
+string empty: "" | 28:814de427d5d7fde4
+list empty: [] | 28:486502f276373ef3
+list one: [1] | 57:40e07862786a8e97
+list mixed: [1, "a", [1b, 2b]] | 264:508ca164e0f3334c
+list 128: [3s, 3s, 3s, 3s, 3s, 3s, 3s, 3s, 3s, 3s, 3s, 3s, 3s, 3s, 3s, 3s, 3s, 3s, 3s, 3s, 3s, 3s, 3s, 3s, 3s, 3s, 3s, 3s, 3s, 3s, 3s, 3s, 3s, 3s, 3s, 3s, 3s, 3s, 3s, 3s,...(512 chars) | 8984:017a804eeb6ab6b1
+list 130: [4s, 4s, 4s, 4s, 4s, 4s, 4s, 4s, 4s, 4s, 4s, 4s, 4s, 4s, 4s, 4s, 4s, 4s, 4s, 4s, 4s, 4s, 4s, 4s, 4s, 4s, 4s, 4s, 4s, 4s, 4s, 4s, 4s, 4s, 4s, 4s, 4s, 4s, 4s, 4s,...(519 chars) | 9021:f5bff31de91dbf42
+compound empty: {} | 28:73d88f203ccf99f3
+compound one: {a: 1b} | 121:9de1ea9edb4de48c
+compound sorted: {Mid: {inner: 2L}, alpha: "x", zeta: 1} | 315:5be513ecb3519188
+compound 130: {k000: 0, k001: 1, k002: 2, k003: 3, k004: 4, k005: 5, k006: 6, k007: 7, k008: 8, k009: 9, k010: 10, k011: 11, k012: 12, k013: 13, k014: 14, k015: 15, k016: 16,...(1305 chars) | 8271:744acc908ac4e348
+ints empty: [I; ] | 64:cb3fbb961c0514d3
+ints: [I; 1, -2, 3] | 156:d5fbfb46fbf7ddfc
+ints 130: [I; 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, ...(394 chars) | 4317:e7b8385e4870b628
+longs empty: [L; ] | 64:4c794c2b72ef7112
+longs: [L; 1L, -2L] | 171:2fc2a3d52049e5aa
+longs 128: [L; 6L, 6L, 6L, 6L, 6L, 6L, 6L, 6L, 6L, 6L, 6L, 6L, 6L, 6L, 6L, 6L, 6L, 6L, 6L, 6L, 6L, 6L, 6L, 6L, 6L, 6L, 6L, 6L, 6L, 6L, 6L, 6L, 6L, 6L, 6L, 6L, 6L, 6L, 6L, ...(515 chars) | 7352:772bce158745fcfe
+longs 130: [L; 6L, 6L, 6L, 6L, 6L, 6L, 6L, 6L, 6L, 6L, 6L, 6L, 6L, 6L, 6L, 6L, 6L, 6L, 6L, 6L, 6L, 6L, 6L, 6L, 6L, 6L, 6L, 6L, 6L, 6L, 6L, 6L, 6L, 6L, 6L, 6L, 6L, 6L, 6L, ...(522 chars) | 7389:150f0ecf83d18527

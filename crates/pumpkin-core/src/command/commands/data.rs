@@ -820,3 +820,6 @@ impl CommandExecutor for ModifyExecutor {
         )
     }
 }
+
+#[cfg(test)]
+mod golden;

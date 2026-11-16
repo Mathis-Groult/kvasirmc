@@ -20,13 +20,16 @@ use crate::command::argument_types::identifier::IdentifierArgumentType;
 use crate::command::argument_types::registry_id::RegistryIdArgumentType;
 use crate::command::argument_types::template::TemplateNameArgumentType;
 use crate::command::context::command_context::CommandContext;
+use crate::command::errors::command_syntax_error::CommandSyntaxError;
 use crate::command::errors::error_types::CommandErrorType;
 use crate::command::node::dispatcher::CommandDispatcher;
 use crate::command::node::{CommandExecutor, CommandExecutorResult};
 use crate::world::block_placer::WorldBlockPlacer;
 use pumpkin_world::generation::feature::configured_features::CONFIGURED_FEATURES;
 use pumpkin_world::generation::feature::placed_features::{Feature, PLACED_FEATURES};
+use pumpkin_world::generation::generator::WorldGenerator;
 use pumpkin_world::generation::structure::structures::StructureGeneratorContext;
+use pumpkin_world::generation::structure::structures::StructurePieceBase;
 use pumpkin_world::generation::structure::structures::jigsaw::{
     PoolElementStructurePiece, place_pool_element_templates,
 };
@@ -276,7 +279,19 @@ impl CommandExecutor for PlaceJigsawExecutor {
 
 struct PlaceStructureExecutor;
 
-#[allow(clippy::too_many_lines)]
+/// What `/place structure` places and where, shared by its jigsaw and legacy paths.
+#[derive(Clone, Copy)]
+struct StructureRequest<'c, 'g> {
+    context: &'c CommandContext<'c>,
+    key: StructureKeys,
+    structure: &'static Structure,
+    structure_name: &'g String,
+    block_pos: BlockPos,
+    seed: u64,
+    settings: &'static NoiseSettings,
+    world_gen: &'g WorldGenerator,
+}
+
 impl CommandExecutor for PlaceStructureExecutor {
     fn execute(&self, context: &CommandContext) -> CommandExecutorResult {
         let structure_id = context.get_argument::<Identifier>("structure")?;
@@ -294,222 +309,24 @@ impl CommandExecutor for PlaceStructureExecutor {
         });
 
         let seed = hash_block_pos(block_pos.0.x, block_pos.0.y, block_pos.0.z) as u64;
-
         let (_piece_count, placer) = {
             let world_gen = context.world().level.world_gen();
             let settings = NoiseSettings::from_dimension(world_gen.dimension());
+            let request = StructureRequest {
+                context,
+                key,
+                structure,
+                structure_name: &structure_name,
+                block_pos,
+                seed,
+                settings,
+                world_gen: &world_gen,
+            };
 
             if structure.structure_type == StructureType::Jigsaw {
-                let pool = structure.start_pool.ok_or_else(|| {
-                    STRUCTURE_INVALID
-                        .create_without_context(TextComponent::text(structure_name.clone()))
-                })?;
-                let size = structure.size.ok_or_else(|| {
-                    STRUCTURE_INVALID
-                        .create_without_context(TextComponent::text(structure_name.clone()))
-                })?;
-
-                let mut random = RandomGenerator::Legacy(LegacyRand::from_seed(seed));
-                let pool_alias_lookup =
-                    PoolAliasLookup::from_bindings(structure.pool_aliases, &mut random);
-
-                let position = JigsawPlacement::add_pieces(
-                    &mut StructureGeneratorContext {
-                        seed: seed as i64,
-                        chunk_x: block_pos.0.x >> 4,
-                        chunk_z: block_pos.0.z >> 4,
-                        random,
-                        sea_level: settings.sea_level,
-                        min_y: (settings.shape.min_y as i32).max(world_gen.dimension().min_y),
-                        height: settings
-                            .shape
-                            .height
-                            .min(world_gen.dimension().height as u16),
-                        height_sampler: None,
-                        structure_key: Some(key),
-                    },
-                    pool,
-                    structure.start_jigsaw_name,
-                    size,
-                    block_pos,
-                    structure.use_expansion_hack.unwrap_or(false),
-                    structure.project_start_to_heightmap.is_some(),
-                    &MaxDistance::new(structure.max_distance_from_center.unwrap_or(128)),
-                    DimensionPadding::ZERO,
-                    LiquidSettings::ApplyWaterlog,
-                    &pool_alias_lookup,
-                )
-                .ok_or_else(|| {
-                    JIGSAW_FAILED
-                        .create_without_context(TextComponent::text(structure_name.clone()))
-                })?;
-
-                let collector = position
-                    .collector
-                    .lock()
-                    .unwrap_or_else(std::sync::PoisonError::into_inner);
-                let piece_count = collector.pieces.len();
-
-                let mut placer = WorldBlockPlacer::new(context.world());
-                for piece in &collector.pieces {
-                    if let Some(jigsaw_piece) =
-                        piece.as_any().downcast_ref::<PoolElementStructurePiece>()
-                    {
-                        place_pool_element_templates(jigsaw_piece, &mut placer, None, false);
-                    }
-                }
-
-                (piece_count, placer)
+                place_jigsaw_structure(request)?
             } else {
-                let random = RandomGenerator::Legacy(LegacyRand::from_seed(seed));
-
-                let position = pumpkin_world::generation::structure::generate_structure_position(
-                    &key,
-                    structure,
-                    StructureGeneratorContext {
-                        seed: seed as i64,
-                        chunk_x: block_pos.0.x >> 4,
-                        chunk_z: block_pos.0.z >> 4,
-                        random,
-                        sea_level: settings.sea_level,
-                        min_y: (settings.shape.min_y as i32).max(world_gen.dimension().min_y),
-                        height: settings
-                            .shape
-                            .height
-                            .min(world_gen.dimension().height as u16),
-                        height_sampler: None,
-                        structure_key: Some(key),
-                    },
-                )
-                .ok_or_else(|| {
-                    STRUCTURE_INVALID
-                        .create_without_context(TextComponent::text(structure_name.clone()))
-                })?;
-
-                let mut collector = position
-                    .collector
-                    .lock()
-                    .unwrap_or_else(std::sync::PoisonError::into_inner);
-                let piece_count = collector.pieces.len();
-
-                let mut placer = WorldBlockPlacer::new(context.world());
-
-                for piece in &collector.pieces {
-                    if let Some(jigsaw_piece) =
-                        piece.as_any().downcast_ref::<PoolElementStructurePiece>()
-                    {
-                        place_pool_element_templates(jigsaw_piece, &mut placer, None, false);
-                    }
-                }
-
-                let has_non_jigsaw = collector.pieces.iter().any(|p| {
-                    p.as_any()
-                        .downcast_ref::<PoolElementStructurePiece>()
-                        .is_none()
-                });
-
-                if has_non_jigsaw {
-                    let reg = CommandBlockRegistry;
-
-                    let mut min_x = i32::MAX;
-                    let mut min_z = i32::MAX;
-                    let mut max_x = i32::MIN;
-                    let mut max_z = i32::MIN;
-
-                    for piece in &collector.pieces {
-                        if piece
-                            .as_any()
-                            .downcast_ref::<PoolElementStructurePiece>()
-                            .is_none()
-                        {
-                            let bb = piece.bounding_box();
-                            min_x = min_x.min(bb.min.x);
-                            min_z = min_z.min(bb.min.z);
-                            max_x = max_x.max(bb.max.x);
-                            max_z = max_z.max(bb.max.z);
-                        }
-                    }
-
-                    let start_cx = min_x >> 4;
-                    let end_cx = max_x >> 4;
-                    let start_cz = min_z >> 4;
-                    let end_cz = max_z >> 4;
-
-                    for cx in start_cx..=end_cx {
-                        for cz in start_cz..=end_cz {
-                            let mut chunk = ProtoChunk::new(cx, cz, &world_gen);
-                            let chunk_min_y = chunk.bottom_y() as i32;
-                            let chunk_height = chunk.height() as i32;
-                            let surface_y = ground_y(block_pos.0.y, chunk_min_y, chunk_height);
-
-                            // Seed heightmaps and fill below-surface with stone so
-                            // pieces that carve through solid terrain have material
-                            let ground = surface_y as i16;
-                            chunk.flat_surface_height_map = [ground; 256];
-                            chunk.flat_ocean_floor_height_map = [ground; 256];
-                            chunk.flat_motion_blocking_height_map = [ground; 256];
-                            chunk.flat_motion_blocking_no_leaves_height_map = [ground; 256];
-
-                            for x in 0..CHUNK_DIM {
-                                for z in 0..CHUNK_DIM {
-                                    for y in chunk_min_y..surface_y {
-                                        chunk.set_block_state(x, y, z, Block::STONE.default_state);
-                                    }
-                                    chunk.set_block_state(
-                                        x,
-                                        surface_y,
-                                        z,
-                                        Block::GRASS_BLOCK.default_state,
-                                    );
-                                }
-                            }
-
-                            let chunk_box = BlockBox::new(
-                                cx << 4,
-                                chunk_min_y,
-                                cz << 4,
-                                (cx << 4) + CHUNK_DIM - 1,
-                                chunk_min_y + chunk_height - 1,
-                                (cz << 4) + CHUNK_DIM - 1,
-                            );
-
-                            let snapshot =
-                                snapshot_blocks(&chunk, cx, cz, chunk_min_y, chunk_height);
-
-                            let mut rng = RandomGenerator::Legacy(LegacyRand::from_seed(
-                                chunk_population_seed(cx, cz, seed),
-                            ));
-
-                            for piece in &mut collector.pieces {
-                                if piece.bounding_box().intersects(&chunk_box) {
-                                    piece.place(
-                                        &mut chunk,
-                                        &reg,
-                                        &mut rng,
-                                        seed as i64,
-                                        &chunk_box,
-                                    );
-                                }
-                            }
-
-                            apply_delta(
-                                &chunk,
-                                &snapshot,
-                                cx,
-                                cz,
-                                chunk_min_y,
-                                chunk_height,
-                                &mut placer,
-                            );
-
-                            for nbt in chunk.pending_block_entities.drain(..) {
-                                placer.block_entity_nbts.push(nbt);
-                            }
-                        }
-                    }
-                }
-
-                (piece_count, placer)
+                place_legacy_structure(request)?
             }
         };
 
@@ -532,6 +349,253 @@ impl CommandExecutor for PlaceStructureExecutor {
         );
 
         Ok(1)
+    }
+}
+
+/// A jigsaw structure: its pieces grown from the start pool, then their templates placed.
+fn place_jigsaw_structure<'c>(
+    request: StructureRequest<'c, '_>,
+) -> Result<(usize, WorldBlockPlacer<'c>), CommandSyntaxError> {
+    let StructureRequest {
+        context,
+        key,
+        structure,
+        structure_name,
+        block_pos,
+        seed,
+        settings,
+        world_gen,
+    } = request;
+    let pool = structure.start_pool.ok_or_else(|| {
+        STRUCTURE_INVALID.create_without_context(TextComponent::text(structure_name.clone()))
+    })?;
+    let size = structure.size.ok_or_else(|| {
+        STRUCTURE_INVALID.create_without_context(TextComponent::text(structure_name.clone()))
+    })?;
+
+    let mut random = RandomGenerator::Legacy(LegacyRand::from_seed(seed));
+    let pool_alias_lookup = PoolAliasLookup::from_bindings(structure.pool_aliases, &mut random);
+
+    let position = JigsawPlacement::add_pieces(
+        &mut StructureGeneratorContext {
+            seed: seed as i64,
+            chunk_x: block_pos.0.x >> 4,
+            chunk_z: block_pos.0.z >> 4,
+            random,
+            sea_level: settings.sea_level,
+            min_y: (settings.shape.min_y as i32).max(world_gen.dimension().min_y),
+            height: settings
+                .shape
+                .height
+                .min(world_gen.dimension().height as u16),
+            height_sampler: None,
+            structure_key: Some(key),
+        },
+        pool,
+        structure.start_jigsaw_name,
+        size,
+        block_pos,
+        structure.use_expansion_hack.unwrap_or(false),
+        structure.project_start_to_heightmap.is_some(),
+        &MaxDistance::new(structure.max_distance_from_center.unwrap_or(128)),
+        DimensionPadding::ZERO,
+        LiquidSettings::ApplyWaterlog,
+        &pool_alias_lookup,
+    )
+    .ok_or_else(|| {
+        JIGSAW_FAILED.create_without_context(TextComponent::text(structure_name.clone()))
+    })?;
+
+    let collector = position
+        .collector
+        .lock()
+        .unwrap_or_else(std::sync::PoisonError::into_inner);
+    let piece_count = collector.pieces.len();
+
+    let mut placer = WorldBlockPlacer::new(context.world());
+    for piece in &collector.pieces {
+        if let Some(jigsaw_piece) = piece.as_any().downcast_ref::<PoolElementStructurePiece>() {
+            place_pool_element_templates(jigsaw_piece, &mut placer, None, false);
+        }
+    }
+
+    Ok((piece_count, placer))
+}
+
+/// A legacy structure: its pieces laid out by the structure's own generator; jigsaw pieces are
+/// placed as templates, the others chunk by chunk into synthetic terrain.
+fn place_legacy_structure<'c>(
+    request: StructureRequest<'c, '_>,
+) -> Result<(usize, WorldBlockPlacer<'c>), CommandSyntaxError> {
+    let StructureRequest {
+        context,
+        key,
+        structure,
+        structure_name,
+        block_pos,
+        seed,
+        settings,
+        world_gen,
+    } = request;
+    let random = RandomGenerator::Legacy(LegacyRand::from_seed(seed));
+
+    let position = pumpkin_world::generation::structure::generate_structure_position(
+        &key,
+        structure,
+        StructureGeneratorContext {
+            seed: seed as i64,
+            chunk_x: block_pos.0.x >> 4,
+            chunk_z: block_pos.0.z >> 4,
+            random,
+            sea_level: settings.sea_level,
+            min_y: (settings.shape.min_y as i32).max(world_gen.dimension().min_y),
+            height: settings
+                .shape
+                .height
+                .min(world_gen.dimension().height as u16),
+            height_sampler: None,
+            structure_key: Some(key),
+        },
+    )
+    .ok_or_else(|| {
+        STRUCTURE_INVALID.create_without_context(TextComponent::text(structure_name.clone()))
+    })?;
+
+    let mut collector = position
+        .collector
+        .lock()
+        .unwrap_or_else(std::sync::PoisonError::into_inner);
+    let piece_count = collector.pieces.len();
+
+    let mut placer = WorldBlockPlacer::new(context.world());
+
+    for piece in &collector.pieces {
+        if let Some(jigsaw_piece) = piece.as_any().downcast_ref::<PoolElementStructurePiece>() {
+            place_pool_element_templates(jigsaw_piece, &mut placer, None, false);
+        }
+    }
+
+    let has_non_jigsaw = collector.pieces.iter().any(|p| {
+        p.as_any()
+            .downcast_ref::<PoolElementStructurePiece>()
+            .is_none()
+    });
+
+    if has_non_jigsaw {
+        let (start_cx, end_cx, start_cz, end_cz) = non_jigsaw_chunk_span(&collector.pieces);
+        for cx in start_cx..=end_cx {
+            for cz in start_cz..=end_cz {
+                place_pieces_in_chunk(request, cx, cz, &mut collector.pieces, &mut placer);
+            }
+        }
+    }
+
+    Ok((piece_count, placer))
+}
+
+/// The chunks (first x, last x, first z, last z) that the non-jigsaw pieces cover.
+fn non_jigsaw_chunk_span(pieces: &[Box<dyn StructurePieceBase>]) -> (i32, i32, i32, i32) {
+    let mut min_x = i32::MAX;
+    let mut min_z = i32::MAX;
+    let mut max_x = i32::MIN;
+    let mut max_z = i32::MIN;
+
+    for piece in pieces {
+        if piece
+            .as_any()
+            .downcast_ref::<PoolElementStructurePiece>()
+            .is_none()
+        {
+            let bb = piece.bounding_box();
+            min_x = min_x.min(bb.min.x);
+            min_z = min_z.min(bb.min.z);
+            max_x = max_x.max(bb.max.x);
+            max_z = max_z.max(bb.max.z);
+        }
+    }
+
+    let start_cx = min_x >> 4;
+    let end_cx = max_x >> 4;
+    let start_cz = min_z >> 4;
+    let end_cz = max_z >> 4;
+
+    (start_cx, end_cx, start_cz, end_cz)
+}
+
+/// Places the pieces that reach one chunk into a synthetic copy of it and writes the difference
+/// into the world.
+fn place_pieces_in_chunk(
+    request: StructureRequest<'_, '_>,
+    cx: i32,
+    cz: i32,
+    pieces: &mut [Box<dyn StructurePieceBase>],
+    placer: &mut WorldBlockPlacer<'_>,
+) {
+    let StructureRequest {
+        block_pos,
+        seed,
+        world_gen,
+        ..
+    } = request;
+    let reg = CommandBlockRegistry;
+    let mut chunk = ProtoChunk::new(cx, cz, world_gen);
+    let chunk_min_y = chunk.bottom_y() as i32;
+    let chunk_height = chunk.height() as i32;
+    let surface_y = ground_y(block_pos.0.y, chunk_min_y, chunk_height);
+
+    seed_flat_terrain(&mut chunk, chunk_min_y, surface_y);
+
+    let chunk_box = BlockBox::new(
+        cx << 4,
+        chunk_min_y,
+        cz << 4,
+        (cx << 4) + CHUNK_DIM - 1,
+        chunk_min_y + chunk_height - 1,
+        (cz << 4) + CHUNK_DIM - 1,
+    );
+
+    let snapshot = snapshot_blocks(&chunk, cx, cz, chunk_min_y, chunk_height);
+
+    let mut rng =
+        RandomGenerator::Legacy(LegacyRand::from_seed(chunk_population_seed(cx, cz, seed)));
+
+    for piece in pieces {
+        if piece.bounding_box().intersects(&chunk_box) {
+            piece.place(&mut chunk, &reg, &mut rng, seed as i64, &chunk_box);
+        }
+    }
+
+    apply_delta(
+        &chunk,
+        &snapshot,
+        cx,
+        cz,
+        chunk_min_y,
+        chunk_height,
+        placer,
+    );
+
+    for nbt in chunk.pending_block_entities.drain(..) {
+        placer.block_entity_nbts.push(nbt);
+    }
+}
+
+/// Seeds the heightmaps and fills the chunk with stone up to a grass surface, so pieces that
+/// carve through solid terrain have material.
+fn seed_flat_terrain(chunk: &mut ProtoChunk, chunk_min_y: i32, surface_y: i32) {
+    let ground = surface_y as i16;
+    chunk.flat_surface_height_map = [ground; 256];
+    chunk.flat_ocean_floor_height_map = [ground; 256];
+    chunk.flat_motion_blocking_height_map = [ground; 256];
+    chunk.flat_motion_blocking_no_leaves_height_map = [ground; 256];
+
+    for x in 0..CHUNK_DIM {
+        for z in 0..CHUNK_DIM {
+            for y in chunk_min_y..surface_y {
+                chunk.set_block_state(x, y, z, Block::STONE.default_state);
+            }
+            chunk.set_block_state(x, surface_y, z, Block::GRASS_BLOCK.default_state);
+        }
     }
 }
 
@@ -572,23 +636,10 @@ impl CommandExecutor for PlaceFeatureExecutor {
         let chunk_height = chunk.height() as i32;
         let surface_y = ground_y(block_pos.0.y, chunk_min_y, chunk_height);
 
-        let ground = surface_y as i16;
-        chunk.flat_surface_height_map = [ground; 256];
-        chunk.flat_ocean_floor_height_map = [ground; 256];
-        chunk.flat_motion_blocking_height_map = [ground; 256];
-        chunk.flat_motion_blocking_no_leaves_height_map = [ground; 256];
-
         // Feature generation runs against a synthetic solid terrain, not the
         // live chunk. Features that depend on existing air, caves, or fluids
         // may therefore differ from normal world generation.
-        for x in 0..CHUNK_DIM {
-            for z in 0..CHUNK_DIM {
-                for y in chunk_min_y..surface_y {
-                    chunk.set_block_state(x, y, z, Block::STONE.default_state);
-                }
-                chunk.set_block_state(x, surface_y, z, Block::GRASS_BLOCK.default_state);
-            }
-        }
+        seed_flat_terrain(&mut chunk, chunk_min_y, surface_y);
 
         let snapshot = snapshot_blocks(&chunk, cx, cz, chunk_min_y, chunk_height);
 

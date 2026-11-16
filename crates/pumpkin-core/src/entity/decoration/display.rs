@@ -5,11 +5,7 @@ use std::sync::{
 
 use pumpkin_data::{damage::DamageType, item_stack::ItemStack};
 use pumpkin_nbt::{compound::NbtCompound, tag::NbtTag};
-use pumpkin_protocol::{
-    codec::{item_stack_seralizer::ItemStackSerializer, var_int::VarInt},
-    java::client::play::MetadataSerializer,
-    ser::{NetworkWriteExt, WritingError},
-};
+use pumpkin_protocol::codec::{item_stack_seralizer::ItemStackSerializer, var_int::VarInt};
 use pumpkin_util::{math::vector3::Vector3, text::TextComponent};
 
 use crate::{
@@ -17,36 +13,8 @@ use crate::{
     server::Server,
 };
 
-#[derive(Clone, Copy, Debug)]
-pub struct Vector3fSerializer(pub f32, pub f32, pub f32);
-
-impl MetadataSerializer for Vector3fSerializer {
-    fn write_metadata(
-        &self,
-        writer: &mut impl std::io::Write,
-        _version: &pumpkin_util::version::JavaMinecraftVersion,
-    ) -> Result<(), WritingError> {
-        writer.write_f32(self.0)?;
-        writer.write_f32(self.1)?;
-        writer.write_f32(self.2)
-    }
-}
-
-#[derive(Clone, Copy, Debug)]
-pub struct QuaternionfSerializer(pub f32, pub f32, pub f32, pub f32);
-
-impl MetadataSerializer for QuaternionfSerializer {
-    fn write_metadata(
-        &self,
-        writer: &mut impl std::io::Write,
-        _version: &pumpkin_util::version::JavaMinecraftVersion,
-    ) -> Result<(), WritingError> {
-        writer.write_f32(self.0)?;
-        writer.write_f32(self.1)?;
-        writer.write_f32(self.2)?;
-        writer.write_f32(self.3)
-    }
-}
+mod serializers;
+pub use serializers::{QuaternionfSerializer, Vector3fSerializer};
 
 pub struct DisplayEntity {
     pub entity: Entity,
@@ -328,28 +296,37 @@ impl DisplayEntity {
         );
     }
 
-    #[allow(clippy::too_many_lines)]
     pub fn init_display_data_tracker(&self) {
-        let view_range = *self
-            .view_range
-            .lock()
-            .unwrap_or_else(std::sync::PoisonError::into_inner);
-        let shadow_radius = *self
-            .shadow_radius
-            .lock()
-            .unwrap_or_else(std::sync::PoisonError::into_inner);
-        let shadow_strength = *self
-            .shadow_strength
-            .lock()
-            .unwrap_or_else(std::sync::PoisonError::into_inner);
-        let width = *self
-            .width
-            .lock()
-            .unwrap_or_else(std::sync::PoisonError::into_inner);
-        let height = *self
-            .height
-            .lock()
-            .unwrap_or_else(std::sync::PoisonError::into_inner);
+        self.entity.set_synced_data(
+            pumpkin_data::tracked_data::display::START_INTERPOLATION,
+            VarInt(self.interpolation_start_delta_ticks.load(Ordering::Relaxed)),
+        );
+        self.entity.set_synced_data(
+            pumpkin_data::tracked_data::display::INTERPOLATION_DURATION,
+            VarInt(self.interpolation_duration.load(Ordering::Relaxed)),
+        );
+        self.init_transformation_data();
+        self.entity.set_synced_data(
+            pumpkin_data::tracked_data::display::BILLBOARD,
+            self.billboard.load(Ordering::Relaxed),
+        );
+        self.entity.set_synced_data(
+            pumpkin_data::tracked_data::display::BRIGHTNESS,
+            VarInt(self.brightness.load(Ordering::Relaxed)),
+        );
+        self.init_shape_data();
+        self.entity.set_synced_data(
+            pumpkin_data::tracked_data::display::TELEPORT_DURATION,
+            VarInt(self.teleport_duration.load(Ordering::Relaxed)),
+        );
+        self.entity.set_synced_data(
+            pumpkin_data::tracked_data::display::GLOW_COLOR_OVERRIDE,
+            VarInt(self.glow_color_override.load(Ordering::Relaxed)),
+        );
+    }
+
+    /// Tracked translation, scale and rotations.
+    fn init_transformation_data(&self) {
         let translation = *self
             .translation
             .lock()
@@ -367,14 +344,6 @@ impl DisplayEntity {
             .lock()
             .unwrap_or_else(std::sync::PoisonError::into_inner);
 
-        self.entity.set_synced_data(
-            pumpkin_data::tracked_data::display::START_INTERPOLATION,
-            VarInt(self.interpolation_start_delta_ticks.load(Ordering::Relaxed)),
-        );
-        self.entity.set_synced_data(
-            pumpkin_data::tracked_data::display::INTERPOLATION_DURATION,
-            VarInt(self.interpolation_duration.load(Ordering::Relaxed)),
-        );
         self.entity.set_synced_data(
             pumpkin_data::tracked_data::display::TRANSLATION,
             Vector3fSerializer(translation.x, translation.y, translation.z),
@@ -401,14 +370,31 @@ impl DisplayEntity {
                 right_rotation[3],
             ),
         );
-        self.entity.set_synced_data(
-            pumpkin_data::tracked_data::display::BILLBOARD,
-            self.billboard.load(Ordering::Relaxed),
-        );
-        self.entity.set_synced_data(
-            pumpkin_data::tracked_data::display::BRIGHTNESS,
-            VarInt(self.brightness.load(Ordering::Relaxed)),
-        );
+    }
+
+    /// Tracked view range, shadow and culling box size.
+    fn init_shape_data(&self) {
+        let view_range = *self
+            .view_range
+            .lock()
+            .unwrap_or_else(std::sync::PoisonError::into_inner);
+        let shadow_radius = *self
+            .shadow_radius
+            .lock()
+            .unwrap_or_else(std::sync::PoisonError::into_inner);
+        let shadow_strength = *self
+            .shadow_strength
+            .lock()
+            .unwrap_or_else(std::sync::PoisonError::into_inner);
+        let width = *self
+            .width
+            .lock()
+            .unwrap_or_else(std::sync::PoisonError::into_inner);
+        let height = *self
+            .height
+            .lock()
+            .unwrap_or_else(std::sync::PoisonError::into_inner);
+
         self.entity
             .set_synced_data(pumpkin_data::tracked_data::display::VIEW_RANGE, view_range);
         self.entity.set_synced_data(
@@ -423,17 +409,8 @@ impl DisplayEntity {
             .set_synced_data(pumpkin_data::tracked_data::display::WIDTH, width);
         self.entity
             .set_synced_data(pumpkin_data::tracked_data::display::HEIGHT, height);
-        self.entity.set_synced_data(
-            pumpkin_data::tracked_data::display::TELEPORT_DURATION,
-            VarInt(self.teleport_duration.load(Ordering::Relaxed)),
-        );
-        self.entity.set_synced_data(
-            pumpkin_data::tracked_data::display::GLOW_COLOR_OVERRIDE,
-            VarInt(self.glow_color_override.load(Ordering::Relaxed)),
-        );
     }
 
-    #[expect(clippy::too_many_lines)]
     pub fn write_display_nbt(&self, nbt: &mut NbtCompound) {
         nbt.put_int(
             "interpolation_duration",
@@ -506,6 +483,11 @@ impl DisplayEntity {
             nbt.put_int("glow_color_override", glow_color_override);
         }
 
+        self.write_transformation(nbt);
+    }
+
+    /// The `transformation` compound: translation, scale and both rotations.
+    fn write_transformation(&self, nbt: &mut NbtCompound) {
         let mut transform = NbtCompound::new();
         let trans = *self
             .translation
@@ -552,7 +534,6 @@ impl DisplayEntity {
         nbt.put("transformation", NbtTag::Compound(transform));
     }
 
-    #[expect(clippy::too_many_lines)]
     pub fn read_display_nbt(&self, nbt: &NbtCompound) {
         if let Some(dur) = nbt.get_int("interpolation_duration") {
             self.interpolation_duration.store(dur, Ordering::Relaxed);
@@ -612,52 +593,57 @@ impl DisplayEntity {
         }
 
         if let Some(transform) = nbt.get_compound("transformation") {
-            if let Some(t_list) = transform.get_list("translation")
-                && t_list.len() >= 3
-            {
-                let x = t_list[0].extract_float().unwrap_or(0.0);
-                let y = t_list[1].extract_float().unwrap_or(0.0);
-                let z = t_list[2].extract_float().unwrap_or(0.0);
-                *self
-                    .translation
-                    .lock()
-                    .unwrap_or_else(std::sync::PoisonError::into_inner) = Vector3::new(x, y, z);
-            }
-            if let Some(s_list) = transform.get_list("scale")
-                && s_list.len() >= 3
-            {
-                let x = s_list[0].extract_float().unwrap_or(1.0);
-                let y = s_list[1].extract_float().unwrap_or(1.0);
-                let z = s_list[2].extract_float().unwrap_or(1.0);
-                *self
-                    .scale
-                    .lock()
-                    .unwrap_or_else(std::sync::PoisonError::into_inner) = Vector3::new(x, y, z);
-            }
-            if let Some(lr_list) = transform.get_list("left_rotation")
-                && lr_list.len() >= 4
-            {
-                let x = lr_list[0].extract_float().unwrap_or(0.0);
-                let y = lr_list[1].extract_float().unwrap_or(0.0);
-                let z = lr_list[2].extract_float().unwrap_or(0.0);
-                let w = lr_list[3].extract_float().unwrap_or(1.0);
-                *self
-                    .left_rotation
-                    .lock()
-                    .unwrap_or_else(std::sync::PoisonError::into_inner) = [x, y, z, w];
-            }
-            if let Some(rr_list) = transform.get_list("right_rotation")
-                && rr_list.len() >= 4
-            {
-                let x = rr_list[0].extract_float().unwrap_or(0.0);
-                let y = rr_list[1].extract_float().unwrap_or(0.0);
-                let z = rr_list[2].extract_float().unwrap_or(0.0);
-                let w = rr_list[3].extract_float().unwrap_or(1.0);
-                *self
-                    .right_rotation
-                    .lock()
-                    .unwrap_or_else(std::sync::PoisonError::into_inner) = [x, y, z, w];
-            }
+            self.read_transformation(transform);
+        }
+    }
+
+    /// Reads the decomposed transformation lists (too short ones are ignored).
+    fn read_transformation(&self, transform: &NbtCompound) {
+        if let Some(t_list) = transform.get_list("translation")
+            && t_list.len() >= 3
+        {
+            let x = t_list[0].extract_float().unwrap_or(0.0);
+            let y = t_list[1].extract_float().unwrap_or(0.0);
+            let z = t_list[2].extract_float().unwrap_or(0.0);
+            *self
+                .translation
+                .lock()
+                .unwrap_or_else(std::sync::PoisonError::into_inner) = Vector3::new(x, y, z);
+        }
+        if let Some(s_list) = transform.get_list("scale")
+            && s_list.len() >= 3
+        {
+            let x = s_list[0].extract_float().unwrap_or(1.0);
+            let y = s_list[1].extract_float().unwrap_or(1.0);
+            let z = s_list[2].extract_float().unwrap_or(1.0);
+            *self
+                .scale
+                .lock()
+                .unwrap_or_else(std::sync::PoisonError::into_inner) = Vector3::new(x, y, z);
+        }
+        if let Some(lr_list) = transform.get_list("left_rotation")
+            && lr_list.len() >= 4
+        {
+            let x = lr_list[0].extract_float().unwrap_or(0.0);
+            let y = lr_list[1].extract_float().unwrap_or(0.0);
+            let z = lr_list[2].extract_float().unwrap_or(0.0);
+            let w = lr_list[3].extract_float().unwrap_or(1.0);
+            *self
+                .left_rotation
+                .lock()
+                .unwrap_or_else(std::sync::PoisonError::into_inner) = [x, y, z, w];
+        }
+        if let Some(rr_list) = transform.get_list("right_rotation")
+            && rr_list.len() >= 4
+        {
+            let x = rr_list[0].extract_float().unwrap_or(0.0);
+            let y = rr_list[1].extract_float().unwrap_or(0.0);
+            let z = rr_list[2].extract_float().unwrap_or(0.0);
+            let w = rr_list[3].extract_float().unwrap_or(1.0);
+            *self
+                .right_rotation
+                .lock()
+                .unwrap_or_else(std::sync::PoisonError::into_inner) = [x, y, z, w];
         }
     }
 }

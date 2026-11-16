@@ -113,6 +113,15 @@ fn above_kinds() -> Vec<(&'static str, BlockStateId)> {
         ("plate", Block::STONE_PRESSURE_PLATE.default_state.id),
         ("glass", Block::GLASS.default_state.id),
         ("carpet", Block::WHITE_CARPET.default_state.id),
+        // Appended after the mutation run: single arms, so each side reads its own arm.
+        (
+            "fence_s",
+            fence([false, true, false, false], &Block::OAK_FENCE),
+        ),
+        (
+            "pane_n",
+            fence([true, false, false, false], &Block::GLASS_PANE),
+        ),
     ]
 }
 

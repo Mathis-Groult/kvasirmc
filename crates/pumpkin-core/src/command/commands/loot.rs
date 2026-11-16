@@ -1,7 +1,10 @@
+use std::sync::Arc;
+
 use pumpkin_data::data_component_impl::EquipmentSlot;
 use pumpkin_data::item_stack::ItemStack;
 use pumpkin_data::translation;
 use pumpkin_inventory::Inventory;
+use pumpkin_inventory::player::player_inventory::PlayerInventory;
 use pumpkin_inventory::screen_handler::InventoryPlayer;
 use pumpkin_protocol::codec::item_stack_seralizer::ItemStackSerializer;
 use pumpkin_protocol::java::client::play::CSetContainerSlot;
@@ -32,6 +35,8 @@ use crate::command::node::{CommandExecutor, CommandExecutorResult};
 use crate::command::suggestion::provider::{SuggestionProvider, SuggestionProviderResult};
 use crate::command::suggestion::suggestions::SuggestionsBuilder;
 use crate::entity::EntityBase;
+use crate::entity::living::LivingEntity;
+use crate::entity::player::Player;
 use crate::world::loot::LootContextParameters;
 
 const DESCRIPTION: &str =
@@ -169,7 +174,6 @@ fn get_hand_item(
     )
 }
 
-#[allow(clippy::too_many_lines)]
 fn replace_entity_slots(
     entity: &dyn EntityBase,
     start_slot: usize,
@@ -179,113 +183,152 @@ fn replace_entity_slots(
 ) {
     if let Some(player) = entity.get_player() {
         if let Some(player_arc) = player.world().get_player_by_uuid(player.gameprofile.id) {
-            for i in 0..count {
-                let mojang_slot = start_slot + i;
-                let item_stack = if i < drops.len() {
-                    drops[i].clone()
-                } else {
-                    ItemStack::EMPTY.clone()
-                };
-                if (200..=226).contains(&mojang_slot) {
-                    let ender_slot = mojang_slot - 200;
-                    if ender_slot < player.ender_chest_inventory.size() {
-                        player_arc
-                            .ender_chest_inventory
-                            .set_stack(ender_slot, item_stack.clone());
-                        used_items.push(item_stack);
-                    }
-                } else {
-                    let inventory = player.inventory();
-                    let mapped_slot = if mojang_slot == 98 {
-                        Some(inventory.get_selected_slot() as usize)
-                    } else if mojang_slot == 99 {
-                        Some(40)
-                    } else if mojang_slot == 100 {
-                        Some(36)
-                    } else if mojang_slot == 101 {
-                        Some(37)
-                    } else if mojang_slot == 102 {
-                        Some(38)
-                    } else if mojang_slot == 103 {
-                        Some(39)
-                    } else if mojang_slot <= 35 {
-                        Some(mojang_slot)
-                    } else {
-                        None
-                    };
-
-                    if let Some(slot) = mapped_slot
-                        && slot < inventory.size()
-                    {
-                        player_arc.inventory().set_stack(slot, item_stack.clone());
-                        let stack_serializer = ItemStackSerializer::from(item_stack.clone());
-                        let packet = CSetContainerSlot::new(0, 0, slot as i16, &stack_serializer);
-                        player_arc.enqueue_slot_packet(&packet, None, 0);
-
-                        let eq_slot = if slot == 36 {
-                            Some(EquipmentSlot::FEET)
-                        } else if slot == 37 {
-                            Some(EquipmentSlot::LEGS)
-                        } else if slot == 38 {
-                            Some(EquipmentSlot::CHEST)
-                        } else if slot == 39 {
-                            Some(EquipmentSlot::HEAD)
-                        } else if slot == 40 {
-                            Some(EquipmentSlot::OFF_HAND)
-                        } else if slot == inventory.get_selected_slot() as usize {
-                            Some(EquipmentSlot::MAIN_HAND)
-                        } else {
-                            None
-                        };
-
-                        if let Some(eq) = eq_slot {
-                            player
-                                .living_entity
-                                .send_equipment_changes(&[(eq, item_stack.clone())]);
-                        }
-                        used_items.push(item_stack);
-                    }
-                }
-            }
+            replace_player_slots(player, &player_arc, start_slot, count, drops, used_items);
         }
     } else if let Some(living) = entity.get_living_entity() {
-        for i in 0..count {
-            let mojang_slot = start_slot + i;
-            let item_stack = if i < drops.len() {
-                drops[i].clone()
-            } else {
-                ItemStack::EMPTY.clone()
-            };
-            let mapped_eq = if mojang_slot == 98 {
-                Some(EquipmentSlot::MAIN_HAND)
-            } else if mojang_slot == 99 {
-                Some(EquipmentSlot::OFF_HAND)
-            } else if mojang_slot == 100 {
-                Some(EquipmentSlot::FEET)
-            } else if mojang_slot == 101 {
-                Some(EquipmentSlot::LEGS)
-            } else if mojang_slot == 102 {
-                Some(EquipmentSlot::CHEST)
-            } else if mojang_slot == 103 {
-                Some(EquipmentSlot::HEAD)
-            } else if mojang_slot == 105 {
-                Some(EquipmentSlot::BODY)
-            } else if mojang_slot == 106 {
-                Some(EquipmentSlot::SADDLE)
-            } else {
-                None
-            };
+        replace_living_slots(living, start_slot, count, drops, used_items);
+    }
+}
 
-            if let Some(eq) = mapped_eq {
-                living
-                    .entity_equipment
-                    .lock()
-                    .unwrap_or_else(std::sync::PoisonError::into_inner)
-                    .put(&eq, item_stack.clone());
-                living.send_equipment_changes(&[(eq, item_stack.clone())]);
+/// Writes the drops into a player's inventory or ender chest, one Mojang slot number after the
+/// other, and tells the client about each changed slot and piece of equipment.
+fn replace_player_slots(
+    player: &Player,
+    player_arc: &Arc<Player>,
+    start_slot: usize,
+    count: usize,
+    drops: &[ItemStack],
+    used_items: &mut Vec<ItemStack>,
+) {
+    for i in 0..count {
+        let mojang_slot = start_slot + i;
+        let item_stack = if i < drops.len() {
+            drops[i].clone()
+        } else {
+            ItemStack::EMPTY.clone()
+        };
+        if (200..=226).contains(&mojang_slot) {
+            let ender_slot = mojang_slot - 200;
+            if ender_slot < player.ender_chest_inventory.size() {
+                player_arc
+                    .ender_chest_inventory
+                    .set_stack(ender_slot, item_stack.clone());
+                used_items.push(item_stack);
+            }
+        } else {
+            let inventory = player.inventory();
+            let mapped_slot = player_inventory_slot(mojang_slot, inventory);
+
+            if let Some(slot) = mapped_slot
+                && slot < inventory.size()
+            {
+                player_arc.inventory().set_stack(slot, item_stack.clone());
+                let stack_serializer = ItemStackSerializer::from(item_stack.clone());
+                let packet = CSetContainerSlot::new(0, 0, slot as i16, &stack_serializer);
+                player_arc.enqueue_slot_packet(&packet, None, 0);
+
+                let eq_slot = player_equipment_slot(slot, inventory);
+
+                if let Some(eq) = eq_slot {
+                    player
+                        .living_entity
+                        .send_equipment_changes(&[(eq, item_stack.clone())]);
+                }
                 used_items.push(item_stack);
             }
         }
+    }
+}
+
+/// The player inventory index of a Mojang slot number outside the ender chest, if it has one.
+fn player_inventory_slot(mojang_slot: usize, inventory: &PlayerInventory) -> Option<usize> {
+    if mojang_slot == 98 {
+        Some(inventory.get_selected_slot() as usize)
+    } else if mojang_slot == 99 {
+        Some(40)
+    } else if mojang_slot == 100 {
+        Some(36)
+    } else if mojang_slot == 101 {
+        Some(37)
+    } else if mojang_slot == 102 {
+        Some(38)
+    } else if mojang_slot == 103 {
+        Some(39)
+    } else if mojang_slot <= 35 {
+        Some(mojang_slot)
+    } else {
+        None
+    }
+}
+
+/// The equipment slot a player inventory index stands for, if any.
+fn player_equipment_slot(slot: usize, inventory: &PlayerInventory) -> Option<EquipmentSlot> {
+    if slot == 36 {
+        Some(EquipmentSlot::FEET)
+    } else if slot == 37 {
+        Some(EquipmentSlot::LEGS)
+    } else if slot == 38 {
+        Some(EquipmentSlot::CHEST)
+    } else if slot == 39 {
+        Some(EquipmentSlot::HEAD)
+    } else if slot == 40 {
+        Some(EquipmentSlot::OFF_HAND)
+    } else if slot == inventory.get_selected_slot() as usize {
+        Some(EquipmentSlot::MAIN_HAND)
+    } else {
+        None
+    }
+}
+
+/// Writes the drops into the equipment of a mob, one Mojang slot number after the other.
+fn replace_living_slots(
+    living: &LivingEntity,
+    start_slot: usize,
+    count: usize,
+    drops: &[ItemStack],
+    used_items: &mut Vec<ItemStack>,
+) {
+    for i in 0..count {
+        let mojang_slot = start_slot + i;
+        let item_stack = if i < drops.len() {
+            drops[i].clone()
+        } else {
+            ItemStack::EMPTY.clone()
+        };
+        let mapped_eq = living_equipment_slot(mojang_slot);
+
+        if let Some(eq) = mapped_eq {
+            living
+                .entity_equipment
+                .lock()
+                .unwrap_or_else(std::sync::PoisonError::into_inner)
+                .put(&eq, item_stack.clone());
+            living.send_equipment_changes(&[(eq, item_stack.clone())]);
+            used_items.push(item_stack);
+        }
+    }
+}
+
+/// The equipment slot of a mob that a Mojang slot number names, if any.
+const fn living_equipment_slot(mojang_slot: usize) -> Option<EquipmentSlot> {
+    if mojang_slot == 98 {
+        Some(EquipmentSlot::MAIN_HAND)
+    } else if mojang_slot == 99 {
+        Some(EquipmentSlot::OFF_HAND)
+    } else if mojang_slot == 100 {
+        Some(EquipmentSlot::FEET)
+    } else if mojang_slot == 101 {
+        Some(EquipmentSlot::LEGS)
+    } else if mojang_slot == 102 {
+        Some(EquipmentSlot::CHEST)
+    } else if mojang_slot == 103 {
+        Some(EquipmentSlot::HEAD)
+    } else if mojang_slot == 105 {
+        Some(EquipmentSlot::BODY)
+    } else if mojang_slot == 106 {
+        Some(EquipmentSlot::SADDLE)
+    } else {
+        None
     }
 }
 
@@ -352,304 +395,395 @@ fn send_callback(context: &CommandContext, drops: &[ItemStack], table_id: Option
 }
 
 impl CommandExecutor for LootExecutor {
-    #[expect(clippy::too_many_lines)]
     fn execute(&self, context: &CommandContext) -> CommandExecutorResult {
-        let mut drops = Vec::new();
-        let mut table_id_for_callback: Option<String> = None;
+        let (drops, table_id_for_callback) = self.source.drops(context)?;
+        self.target
+            .place(context, &drops, table_id_for_callback.as_deref())
+    }
+}
 
-        match self.source {
-            Source::Fish { tool } => {
-                let loot_table_str = StringArgumentType::get(context, "loot_table")?;
-                let key = if loot_table_str.contains(':') {
-                    loot_table_str.to_string()
-                } else {
-                    format!("minecraft:{loot_table_str}")
-                };
-
-                let pos = BlockPosArgumentType::get_block_pos(context, "pos")?;
-                let tool_stack = match tool {
-                    ToolSource::None => None,
-                    ToolSource::Item => Some(ItemStackArgumentType::get(context, "tool")?),
-                    ToolSource::MainHand => get_hand_item(context, true)?,
-                    ToolSource::OffHand => get_hand_item(context, false)?,
-                };
-
-                let loot_table = context
-                    .server()
-                    .datapack_manager
-                    .get_loot_table(&key)
-                    .ok_or_else(|| {
-                        ERROR_INVALID_LOOT_TABLE
-                            .create_without_context(TextComponent::text(loot_table_str.to_string()))
-                    })?;
-
-                let params = LootContextParameters {
-                    world: Some(context.world()),
-                    position: Some(Vector3::new(
-                        f64::from(pos.0.x) + 0.5,
-                        f64::from(pos.0.y) + 0.5,
-                        f64::from(pos.0.z) + 0.5,
-                    )),
-                    tool: Some(tool_stack.unwrap_or_else(|| ItemStack::EMPTY.clone())),
-                    ..Default::default()
-                };
-                let seed = loot_seed();
-                drops = crate::world::loot::generate_loot_from_handle(&loot_table, seed, &params);
-            }
-            Source::Loot => {
-                let loot_table_str = StringArgumentType::get(context, "loot_table")?;
-                let key = if loot_table_str.contains(':') {
-                    loot_table_str.to_string()
-                } else {
-                    format!("minecraft:{loot_table_str}")
-                };
-
-                let loot_table = context
-                    .server()
-                    .datapack_manager
-                    .get_loot_table(&key)
-                    .ok_or_else(|| {
-                        ERROR_INVALID_LOOT_TABLE
-                            .create_without_context(TextComponent::text(loot_table_str.to_string()))
-                    })?;
-
-                let params = LootContextParameters {
-                    world: Some(context.world()),
-                    position: context.source.as_player().map(|p| p.position()),
-                    ..Default::default()
-                };
-                let seed = loot_seed();
-                drops = crate::world::loot::generate_loot_from_handle(&loot_table, seed, &params);
-            }
-            Source::Kill => {
-                let target_entities = EntityArgumentType::get_entities(context, "target")?;
-                let killer = context.source.as_player();
-                let killer_tool = killer.as_ref().map(|p| {
-                    p.inventory()
-                        .get_stack(p.inventory().get_selected_slot() as usize)
-                });
-                let params = LootContextParameters {
-                    world: Some(context.world()),
-                    killed_by_player: Some(killer.is_some()),
-                    tool: killer_tool,
-                    position: killer.as_ref().map(|p| p.position()),
-                    ..Default::default()
-                };
-
-                let mut last_key = None;
-                for entity in &target_entities {
-                    let resource_name = entity.get_entity().entity_type.resource_name;
-                    let key = format!("minecraft:entities/{resource_name}");
-                    if let Some(loot_table) = context.server().datapack_manager.get_loot_table(&key)
-                    {
-                        let params = LootContextParameters {
-                            this_entity: Some(entity.as_ref()),
-                            killer_entity: killer
-                                .as_ref()
-                                .map(|player| player.as_ref() as &dyn crate::entity::EntityBase),
-                            direct_killer_entity: killer
-                                .as_ref()
-                                .map(|player| player.as_ref() as &dyn crate::entity::EntityBase),
-                            position: Some(entity.get_entity().pos.load()),
-                            is_on_fire: Some(
-                                entity
-                                    .get_entity()
-                                    .fire_ticks
-                                    .load(std::sync::atomic::Ordering::Relaxed)
-                                    > 0,
-                            ),
-                            ..params.clone()
-                        };
-                        let seed = loot_seed();
-                        drops.extend(crate::world::loot::generate_loot_from_handle(
-                            &loot_table,
-                            seed,
-                            &params,
-                        ));
-                        last_key = Some(key);
-                    }
-                }
-
-                if drops.is_empty() && last_key.is_none() {
-                    let display_name = target_entities.first().map_or_else(
-                        || TextComponent::text("selected entity"),
-                        |target| target.as_ref().get_display_name(),
-                    );
-                    return Err(ERROR_NO_ENTITY_LOOT_TABLE.create_without_context(display_name));
-                }
-                table_id_for_callback = last_key;
-            }
-            Source::Mine { tool } => {
-                let pos = BlockPosArgumentType::get_block_pos(context, "pos")?;
-                let world = context.world();
-                let block_state = world.get_block_state(&pos);
-                let block = world.get_block(&pos);
-                let key = block.loot_table.ok_or_else(|| {
-                    ERROR_NO_BLOCK_LOOT_TABLE
-                        .create_without_context(TextComponent::text(block.name.to_string()))
-                })?;
-
-                let loot_table = context
-                    .server()
-                    .datapack_manager
-                    .get_loot_table(key)
-                    .ok_or_else(|| {
-                        ERROR_NO_BLOCK_LOOT_TABLE
-                            .create_without_context(TextComponent::text(block.name.to_string()))
-                    })?;
-
-                let tool_stack = match tool {
-                    ToolSource::None => None,
-                    ToolSource::Item => Some(ItemStackArgumentType::get(context, "tool")?),
-                    ToolSource::MainHand => get_hand_item(context, true)?,
-                    ToolSource::OffHand => get_hand_item(context, false)?,
-                };
-
-                let params = LootContextParameters {
-                    world: Some(context.world()),
-                    block_state: Some(block_state),
-                    tool: Some(tool_stack.unwrap_or_else(|| ItemStack::EMPTY.clone())),
-                    position: Some(Vector3::new(
-                        f64::from(pos.0.x) + 0.5,
-                        f64::from(pos.0.y) + 0.5,
-                        f64::from(pos.0.z) + 0.5,
-                    )),
-                    ..Default::default()
-                };
-                let seed = loot_seed();
-                drops = crate::world::loot::generate_loot_from_handle(&loot_table, seed, &params);
-                table_id_for_callback = Some(key.to_string());
-            }
+impl Source {
+    /// The items the source rolls, and the loot table to name in the feedback (kill and mine).
+    fn drops(
+        self,
+        context: &CommandContext,
+    ) -> Result<(Vec<ItemStack>, Option<String>), CommandSyntaxError> {
+        match self {
+            Self::Fish { tool } => Ok((fish_drops(context, tool)?, None)),
+            Self::Loot => Ok((table_drops(context)?, None)),
+            Self::Kill => kill_drops(context),
+            Self::Mine { tool } => mine_drops(context, tool),
         }
+    }
+}
 
-        match self.target {
-            Target::Give => {
-                let targets = EntityArgumentType::get_players(context, "players")?;
-                let mut used_items = Vec::new();
-                for stack in &drops {
-                    for player in &targets {
-                        let mut remaining = stack.clone();
-                        player.inventory().insert_stack_anywhere(&mut remaining);
-                        if !remaining.is_empty() {
-                            player.drop_item(remaining);
-                        }
-                        used_items.push(stack.clone());
-                    }
-                }
-                send_callback(context, &used_items, table_id_for_callback.as_deref());
-                Ok(used_items.len() as i32)
-            }
-            Target::Spawn => {
-                let pos = Vec3ArgumentType::get_vector3(context, "targetPos")?;
-                let world = context.world();
-                let block_pos = BlockPos::new(
-                    pos.x.floor() as i32,
-                    pos.y.floor() as i32,
-                    pos.z.floor() as i32,
-                );
-                for stack in &drops {
-                    world.drop_stack(&block_pos, stack.clone());
-                }
-                send_callback(context, &drops, table_id_for_callback.as_deref());
-                Ok(drops.len() as i32)
-            }
-            Target::Insert => {
-                let pos = BlockPosArgumentType::get_block_pos(context, "targetPos")?;
-                let world = context.world().clone();
-                let block_entity = world.get_block_entity(&pos).ok_or_else(|| {
-                    ERROR_NOT_CONTAINER.create_without_context(
-                        TextComponent::text(pos.0.x.to_string()),
-                        TextComponent::text(pos.0.y.to_string()),
-                        TextComponent::text(pos.0.z.to_string()),
-                    )
-                })?;
-                let inventory = block_entity.get_inventory().ok_or_else(|| {
-                    ERROR_NOT_CONTAINER.create_without_context(
-                        TextComponent::text(pos.0.x.to_string()),
-                        TextComponent::text(pos.0.y.to_string()),
-                        TextComponent::text(pos.0.z.to_string()),
-                    )
-                })?;
+/// The tool a `fish` or `mine` source uses: none, the given item, or a hand of the player.
+fn held_or_given_tool(
+    context: &CommandContext,
+    tool: ToolSource,
+) -> Result<Option<ItemStack>, CommandSyntaxError> {
+    Ok(match tool {
+        ToolSource::None => None,
+        ToolSource::Item => Some(ItemStackArgumentType::get(context, "tool")?),
+        ToolSource::MainHand => get_hand_item(context, true)?,
+        ToolSource::OffHand => get_hand_item(context, false)?,
+    })
+}
 
-                let mut used_items = Vec::new();
-                for stack in &drops {
-                    if distribute_to_container(inventory.as_ref(), stack.clone()) {
-                        used_items.push(stack.clone());
-                    }
-                }
-                send_callback(context, &used_items, table_id_for_callback.as_deref());
-                Ok(used_items.len() as i32)
-            }
-            Target::ReplaceBlock { has_count } => {
-                let pos = BlockPosArgumentType::get_block_pos(context, "targetPos")?;
-                let slot = SlotArgumentType::get(context, "slot")?;
-                let count = if has_count {
-                    IntegerArgumentType::get(context, "count")? as usize
-                } else {
-                    drops.len()
-                };
+/// The centre of a block, where `fish` and `mine` roll their loot.
+fn block_centre(pos: BlockPos) -> Vector3<f64> {
+    Vector3::new(
+        f64::from(pos.0.x) + 0.5,
+        f64::from(pos.0.y) + 0.5,
+        f64::from(pos.0.z) + 0.5,
+    )
+}
 
-                let world = context.world().clone();
-                let block_entity = world.get_block_entity(&pos).ok_or_else(|| {
-                    ERROR_NOT_CONTAINER.create_without_context(
-                        TextComponent::text(pos.0.x.to_string()),
-                        TextComponent::text(pos.0.y.to_string()),
-                        TextComponent::text(pos.0.z.to_string()),
-                    )
-                })?;
-                let inventory = block_entity.get_inventory().ok_or_else(|| {
-                    ERROR_NOT_CONTAINER.create_without_context(
-                        TextComponent::text(pos.0.x.to_string()),
-                        TextComponent::text(pos.0.y.to_string()),
-                        TextComponent::text(pos.0.z.to_string()),
-                    )
-                })?;
+/// `fish <loot_table> <pos> [tool]`: the named fishing table rolled at the block.
+fn fish_drops(
+    context: &CommandContext,
+    tool: ToolSource,
+) -> Result<Vec<ItemStack>, CommandSyntaxError> {
+    let loot_table_str = StringArgumentType::get(context, "loot_table")?;
+    let key = if loot_table_str.contains(':') {
+        loot_table_str.to_string()
+    } else {
+        format!("minecraft:{loot_table_str}")
+    };
 
-                if slot >= inventory.size() {
-                    return Err(ERROR_NO_SUCH_SLOT
-                        .create_without_context(TextComponent::text(slot.to_string())));
-                }
+    let pos = BlockPosArgumentType::get_block_pos(context, "pos")?;
+    let tool_stack = held_or_given_tool(context, tool)?;
 
-                let mut used_items = Vec::new();
-                for i in 0..count {
-                    let s = slot + i;
-                    if s < inventory.size() {
-                        let to_add = if i < drops.len() {
-                            drops[i].clone()
-                        } else {
-                            ItemStack::EMPTY.clone()
-                        };
-                        inventory.set_stack(s, to_add.clone());
-                        used_items.push(to_add);
-                    }
-                }
-                send_callback(context, &used_items, table_id_for_callback.as_deref());
-                Ok(used_items.len() as i32)
-            }
-            Target::ReplaceEntity { has_count } => {
-                let entities = EntityArgumentType::get_entities(context, "entities")?;
-                let slot = SlotArgumentType::get(context, "slot")?;
-                let count = if has_count {
-                    IntegerArgumentType::get(context, "count")? as usize
-                } else {
-                    drops.len()
-                };
+    let loot_table = context
+        .server()
+        .datapack_manager
+        .get_loot_table(&key)
+        .ok_or_else(|| {
+            ERROR_INVALID_LOOT_TABLE
+                .create_without_context(TextComponent::text(loot_table_str.to_string()))
+        })?;
 
-                let mut used_items = Vec::new();
-                for target in &entities {
-                    replace_entity_slots(target.as_ref(), slot, count, &drops, &mut used_items);
-                }
+    let params = LootContextParameters {
+        world: Some(context.world()),
+        position: Some(block_centre(pos)),
+        tool: Some(tool_stack.unwrap_or_else(|| ItemStack::EMPTY.clone())),
+        ..Default::default()
+    };
+    let seed = loot_seed();
+    Ok(crate::world::loot::generate_loot_from_handle(
+        &loot_table,
+        seed,
+        &params,
+    ))
+}
 
-                if used_items.is_empty() && !entities.is_empty() {
-                    return Err(ERROR_NO_SUCH_SLOT
-                        .create_without_context(TextComponent::text(slot.to_string())));
-                }
+/// `loot <loot_table>`: the named table rolled where the player stands.
+fn table_drops(context: &CommandContext) -> Result<Vec<ItemStack>, CommandSyntaxError> {
+    let loot_table_str = StringArgumentType::get(context, "loot_table")?;
+    let key = if loot_table_str.contains(':') {
+        loot_table_str.to_string()
+    } else {
+        format!("minecraft:{loot_table_str}")
+    };
 
-                send_callback(context, &used_items, table_id_for_callback.as_deref());
-                Ok(used_items.len() as i32)
+    let loot_table = context
+        .server()
+        .datapack_manager
+        .get_loot_table(&key)
+        .ok_or_else(|| {
+            ERROR_INVALID_LOOT_TABLE
+                .create_without_context(TextComponent::text(loot_table_str.to_string()))
+        })?;
+
+    let params = LootContextParameters {
+        world: Some(context.world()),
+        position: context.source.as_player().map(|p| p.position()),
+        ..Default::default()
+    };
+    let seed = loot_seed();
+    Ok(crate::world::loot::generate_loot_from_handle(
+        &loot_table,
+        seed,
+        &params,
+    ))
+}
+
+/// `kill <targets>`: each target's entity loot table as if the player killed it.
+fn kill_drops(
+    context: &CommandContext,
+) -> Result<(Vec<ItemStack>, Option<String>), CommandSyntaxError> {
+    let mut drops = Vec::new();
+    let target_entities = EntityArgumentType::get_entities(context, "target")?;
+    let killer = context.source.as_player();
+    let killer_tool = killer.as_ref().map(|p| {
+        p.inventory()
+            .get_stack(p.inventory().get_selected_slot() as usize)
+    });
+    let params = LootContextParameters {
+        world: Some(context.world()),
+        killed_by_player: Some(killer.is_some()),
+        tool: killer_tool,
+        position: killer.as_ref().map(|p| p.position()),
+        ..Default::default()
+    };
+
+    let mut last_key = None;
+    for entity in &target_entities {
+        let resource_name = entity.get_entity().entity_type.resource_name;
+        let key = format!("minecraft:entities/{resource_name}");
+        if let Some(loot_table) = context.server().datapack_manager.get_loot_table(&key) {
+            let params = LootContextParameters {
+                this_entity: Some(entity.as_ref()),
+                killer_entity: killer
+                    .as_ref()
+                    .map(|player| player.as_ref() as &dyn crate::entity::EntityBase),
+                direct_killer_entity: killer
+                    .as_ref()
+                    .map(|player| player.as_ref() as &dyn crate::entity::EntityBase),
+                position: Some(entity.get_entity().pos.load()),
+                is_on_fire: Some(
+                    entity
+                        .get_entity()
+                        .fire_ticks
+                        .load(std::sync::atomic::Ordering::Relaxed)
+                        > 0,
+                ),
+                ..params.clone()
+            };
+            let seed = loot_seed();
+            drops.extend(crate::world::loot::generate_loot_from_handle(
+                &loot_table,
+                seed,
+                &params,
+            ));
+            last_key = Some(key);
+        }
+    }
+
+    if drops.is_empty() && last_key.is_none() {
+        let display_name = target_entities.first().map_or_else(
+            || TextComponent::text("selected entity"),
+            |target| target.as_ref().get_display_name(),
+        );
+        return Err(ERROR_NO_ENTITY_LOOT_TABLE.create_without_context(display_name));
+    }
+    Ok((drops, last_key))
+}
+
+/// `mine <pos> [tool]`: the block's loot table as if it were broken with the tool.
+fn mine_drops(
+    context: &CommandContext,
+    tool: ToolSource,
+) -> Result<(Vec<ItemStack>, Option<String>), CommandSyntaxError> {
+    let pos = BlockPosArgumentType::get_block_pos(context, "pos")?;
+    let world = context.world();
+    let block_state = world.get_block_state(&pos);
+    let block = world.get_block(&pos);
+    let key = block.loot_table.ok_or_else(|| {
+        ERROR_NO_BLOCK_LOOT_TABLE
+            .create_without_context(TextComponent::text(block.name.to_string()))
+    })?;
+
+    let loot_table = context
+        .server()
+        .datapack_manager
+        .get_loot_table(key)
+        .ok_or_else(|| {
+            ERROR_NO_BLOCK_LOOT_TABLE
+                .create_without_context(TextComponent::text(block.name.to_string()))
+        })?;
+
+    let tool_stack = held_or_given_tool(context, tool)?;
+
+    let params = LootContextParameters {
+        world: Some(context.world()),
+        block_state: Some(block_state),
+        tool: Some(tool_stack.unwrap_or_else(|| ItemStack::EMPTY.clone())),
+        position: Some(block_centre(pos)),
+        ..Default::default()
+    };
+    let seed = loot_seed();
+    let drops = crate::world::loot::generate_loot_from_handle(&loot_table, seed, &params);
+    Ok((drops, Some(key.to_string())))
+}
+
+impl Target {
+    /// Puts the drops where the command says and reports them.
+    fn place(
+        self,
+        context: &CommandContext,
+        drops: &[ItemStack],
+        table_id: Option<&str>,
+    ) -> CommandExecutorResult {
+        match self {
+            Self::Give => give(context, drops, table_id),
+            Self::Spawn => spawn(context, drops, table_id),
+            Self::Insert => insert(context, drops, table_id),
+            Self::ReplaceBlock { has_count } => replace_block(context, drops, table_id, has_count),
+            Self::ReplaceEntity { has_count } => {
+                replace_entity(context, drops, table_id, has_count)
             }
         }
     }
+}
+
+/// `give <players>`: into each player's inventory, dropping what does not fit.
+fn give(
+    context: &CommandContext,
+    drops: &[ItemStack],
+    table_id: Option<&str>,
+) -> CommandExecutorResult {
+    let targets = EntityArgumentType::get_players(context, "players")?;
+    let mut used_items = Vec::new();
+    for stack in drops {
+        for player in &targets {
+            let mut remaining = stack.clone();
+            player.inventory().insert_stack_anywhere(&mut remaining);
+            if !remaining.is_empty() {
+                player.drop_item(remaining);
+            }
+            used_items.push(stack.clone());
+        }
+    }
+    send_callback(context, &used_items, table_id);
+    Ok(used_items.len() as i32)
+}
+
+/// `spawn <pos>`: as item entities at the position.
+fn spawn(
+    context: &CommandContext,
+    drops: &[ItemStack],
+    table_id: Option<&str>,
+) -> CommandExecutorResult {
+    let pos = Vec3ArgumentType::get_vector3(context, "targetPos")?;
+    let world = context.world();
+    let block_pos = BlockPos::new(
+        pos.x.floor() as i32,
+        pos.y.floor() as i32,
+        pos.z.floor() as i32,
+    );
+    for stack in drops {
+        world.drop_stack(&block_pos, stack.clone());
+    }
+    send_callback(context, drops, table_id);
+    Ok(drops.len() as i32)
+}
+
+/// `insert <pos>`: into the container at the position, filling stacks first.
+fn insert(
+    context: &CommandContext,
+    drops: &[ItemStack],
+    table_id: Option<&str>,
+) -> CommandExecutorResult {
+    let pos = BlockPosArgumentType::get_block_pos(context, "targetPos")?;
+    let world = context.world().clone();
+    let block_entity = world.get_block_entity(&pos).ok_or_else(|| {
+        ERROR_NOT_CONTAINER.create_without_context(
+            TextComponent::text(pos.0.x.to_string()),
+            TextComponent::text(pos.0.y.to_string()),
+            TextComponent::text(pos.0.z.to_string()),
+        )
+    })?;
+    let inventory = block_entity.get_inventory().ok_or_else(|| {
+        ERROR_NOT_CONTAINER.create_without_context(
+            TextComponent::text(pos.0.x.to_string()),
+            TextComponent::text(pos.0.y.to_string()),
+            TextComponent::text(pos.0.z.to_string()),
+        )
+    })?;
+
+    let mut used_items = Vec::new();
+    for stack in drops {
+        if distribute_to_container(inventory.as_ref(), stack.clone()) {
+            used_items.push(stack.clone());
+        }
+    }
+    send_callback(context, &used_items, table_id);
+    Ok(used_items.len() as i32)
+}
+
+/// `replace block <pos> <slot> [count]`: over the container's slots from `slot` on.
+fn replace_block(
+    context: &CommandContext,
+    drops: &[ItemStack],
+    table_id: Option<&str>,
+    has_count: bool,
+) -> CommandExecutorResult {
+    let pos = BlockPosArgumentType::get_block_pos(context, "targetPos")?;
+    let slot = SlotArgumentType::get(context, "slot")?;
+    let count = if has_count {
+        IntegerArgumentType::get(context, "count")? as usize
+    } else {
+        drops.len()
+    };
+
+    let world = context.world().clone();
+    let block_entity = world.get_block_entity(&pos).ok_or_else(|| {
+        ERROR_NOT_CONTAINER.create_without_context(
+            TextComponent::text(pos.0.x.to_string()),
+            TextComponent::text(pos.0.y.to_string()),
+            TextComponent::text(pos.0.z.to_string()),
+        )
+    })?;
+    let inventory = block_entity.get_inventory().ok_or_else(|| {
+        ERROR_NOT_CONTAINER.create_without_context(
+            TextComponent::text(pos.0.x.to_string()),
+            TextComponent::text(pos.0.y.to_string()),
+            TextComponent::text(pos.0.z.to_string()),
+        )
+    })?;
+
+    if slot >= inventory.size() {
+        return Err(
+            ERROR_NO_SUCH_SLOT.create_without_context(TextComponent::text(slot.to_string()))
+        );
+    }
+
+    let mut used_items = Vec::new();
+    for i in 0..count {
+        let s = slot + i;
+        if s < inventory.size() {
+            let to_add = if i < drops.len() {
+                drops[i].clone()
+            } else {
+                ItemStack::EMPTY.clone()
+            };
+            inventory.set_stack(s, to_add.clone());
+            used_items.push(to_add);
+        }
+    }
+    send_callback(context, &used_items, table_id);
+    Ok(used_items.len() as i32)
+}
+
+/// `replace entity <targets> <slot> [count]`: over each entity's slots from `slot` on.
+fn replace_entity(
+    context: &CommandContext,
+    drops: &[ItemStack],
+    table_id: Option<&str>,
+    has_count: bool,
+) -> CommandExecutorResult {
+    let entities = EntityArgumentType::get_entities(context, "entities")?;
+    let slot = SlotArgumentType::get(context, "slot")?;
+    let count = if has_count {
+        IntegerArgumentType::get(context, "count")? as usize
+    } else {
+        drops.len()
+    };
+
+    let mut used_items = Vec::new();
+    for target in &entities {
+        replace_entity_slots(target.as_ref(), slot, count, drops, &mut used_items);
+    }
+
+    if used_items.is_empty() && !entities.is_empty() {
+        return Err(
+            ERROR_NO_SUCH_SLOT.create_without_context(TextComponent::text(slot.to_string()))
+        );
+    }
+
+    send_callback(context, &used_items, table_id);
+    Ok(used_items.len() as i32)
 }
 
 #[cfg(test)]

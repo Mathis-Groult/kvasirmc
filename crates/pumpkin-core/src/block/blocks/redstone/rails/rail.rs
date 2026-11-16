@@ -35,6 +35,34 @@ fn compute_curved_rail_shape(
     let west = Rail::find_if_unlocked(world, block_pos, HorizontalFacing::West);
     let east = Rail::find_if_unlocked(world, block_pos, HorizontalFacing::East);
 
+    let shape = flat_shape(
+        north.as_ref(),
+        south.as_ref(),
+        west.as_ref(),
+        east.as_ref(),
+        default_flat,
+        has_signal,
+    );
+
+    let final_shape = shape.unwrap_or(default_flat);
+    sloped(
+        final_shape,
+        north.as_ref(),
+        south.as_ref(),
+        east.as_ref(),
+        west.as_ref(),
+    )
+}
+
+/// The flat or curved shape toward the connectable neighbours (`None` when none decides it).
+const fn flat_shape(
+    north: Option<&Rail>,
+    south: Option<&Rail>,
+    west: Option<&Rail>,
+    east: Option<&Rail>,
+    default_flat: RailShape,
+    has_signal: bool,
+) -> Option<RailShape> {
     let n = north.is_some();
     let s = south.is_some();
     let w = west.is_some();
@@ -106,8 +134,17 @@ fn compute_curved_rail_shape(
             }
         }
     }
+    shape
+}
 
-    let mut final_shape = shape.unwrap_or(default_flat);
+/// A straight shape turned into a slope toward a neighbour one block up.
+fn sloped(
+    mut final_shape: RailShape,
+    north: Option<&Rail>,
+    south: Option<&Rail>,
+    east: Option<&Rail>,
+    west: Option<&Rail>,
+) -> RailShape {
     if final_shape == RailShape::NorthSouth {
         if north.is_some_and(|r| r.elevation == RailElevation::Up) {
             final_shape = RailShape::AscendingNorth;

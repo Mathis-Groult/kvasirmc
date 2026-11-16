@@ -206,6 +206,29 @@ async fn wall_state_is_the_same() -> TestResult {
         }
     }
 
+    // Appended after the split's mutation review: side patterns the table above lacks (a single
+    // west or south side, three sides without south or east), so each `&&` of the
+    // straight-line and cross checks matters.
+    let extra = [
+        ("w", [false, false, false, true]),
+        ("s", [false, true, false, false]),
+        ("new", [true, false, true, true]),
+        ("nsw", [true, true, false, true]),
+        ("sew", [false, true, true, true]),
+    ];
+    for (pattern, sides) in extra {
+        let wall_side = Block::COBBLESTONE_WALL.default_state.id;
+        for (above_name, above) in [
+            ("air", Block::AIR.default_state.id),
+            ("torch", Block::TORCH.default_state.id),
+            ("stone", Block::STONE.default_state.id),
+        ] {
+            let state = case(&world, x, sides, wall_side, above);
+            writeln!(now, "wall {pattern} / {above_name} -> {state}")?;
+            x += 8;
+        }
+    }
+
     script_golden::bless_or_compare("wall_state.txt", &now)?;
     server.stop();
     Ok(())

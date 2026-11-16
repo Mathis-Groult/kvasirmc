@@ -4,8 +4,8 @@
 //!
 //! One server, one script: the commands run in order and each sees the bars the earlier ones
 //! left. The source is the op Java player `GoldA`; `GoldB` (op, Java), `GoldC` (not op, Java)
-//! and `GoldD` (op, Bedrock) are online too, so the feedback to the source, the copy sent to the
-//! other ops and the boss bar packets each player gets are all visible. A step starting with
+//! and `GoldD` (op, Bedrock) are online too (`script_golden`), so the feedback to the source, the
+//! copy sent to the other ops and the boss bar packets each player gets are all visible. A step starting with
 //! `!leave` takes `GoldC` out of the world. One line per step: the command, its result (count or
 //! error text), the packets each player was sent (length and FNV hash of the encoded bytes) and
 //! every custom bar afterwards (id, title text and a hash of the whole title, value, max,
@@ -13,45 +13,12 @@
 //! right after `add` (it is random), so the packets that carry it are the same in every run.
 
 use std::fmt::Write;
-use std::sync::Arc;
-use std::time::Duration;
 
-use bytes::Bytes;
-use pumpkin_util::GameMode;
-use pumpkin_util::PermissionLvl;
-use pumpkin_util::math::vector2::Vector2;
-use pumpkin_util::math::vector3::Vector3;
-use pumpkin_util::text::TextComponent;
 use uuid::Uuid;
 
-use crate::command::{CommandSender, CommandSource};
-use crate::entity::EntityBase;
-use crate::entity::ai::test_support::{self, Identity};
-use crate::entity::player::Player;
+use crate::command::commands::script_golden::{self, TestResult, name_of};
+use crate::entity::ai::test_support;
 use crate::server::Server;
-
-type TestResult = Result<(), Box<dyn std::error::Error>>;
-
-const A: Identity = Identity {
-    name: "GoldA",
-    uuid: Uuid::from_u128(0x0b05_5ba0_0000_000a),
-    entity_id: 71_001,
-};
-const B: Identity = Identity {
-    name: "GoldB",
-    uuid: Uuid::from_u128(0x0b05_5ba0_0000_000b),
-    entity_id: 71_002,
-};
-const C: Identity = Identity {
-    name: "GoldC",
-    uuid: Uuid::from_u128(0x0b05_5ba0_0000_000c),
-    entity_id: 71_003,
-};
-const D: Identity = Identity {
-    name: "GoldD",
-    uuid: Uuid::from_u128(0x0b05_5ba0_0000_000d),
-    entity_id: 71_004,
-};
 
 const STEPS: &[&str] = &[
     // Nothing yet.
@@ -174,56 +141,6 @@ const STEPS: &[&str] = &[
     "bossbar set gold:one visible maybe",
 ];
 
-struct Online {
-    name: &'static str,
-    player: Arc<Player>,
-    tap: Tap,
-}
-
-enum Tap {
-    Java(crate::net::java::PacketTap),
-    Bedrock(crate::net::bedrock::BedrockPacketTap),
-}
-
-impl Tap {
-    fn drain(&mut self) -> Vec<Bytes> {
-        match self {
-            Self::Java(tap) => tap.drain(),
-            Self::Bedrock(tap) => tap.drain(),
-        }
-    }
-}
-
-fn fnv(bytes: &[u8]) -> u64 {
-    let mut hash = 0xcbf2_9ce4_8422_2325u64;
-    for byte in bytes {
-        hash ^= u64::from(*byte);
-        hash = hash.wrapping_mul(0x0100_0000_01b3);
-    }
-    hash
-}
-
-fn packets(online: &mut [Online]) -> String {
-    let mut text = String::new();
-    for who in online {
-        let sent: Vec<String> = who
-            .tap
-            .drain()
-            .iter()
-            .map(|packet| format!("{}:{:016x}", packet.len(), fnv(packet)))
-            .collect();
-        let _ = write!(text, " {}[{}]", who.name, sent.join(","));
-    }
-    text
-}
-
-fn name_of(uuid: &Uuid) -> String {
-    [A, B, C, D]
-        .iter()
-        .find(|who| who.uuid == *uuid)
-        .map_or_else(|| uuid.to_string(), |who| who.name.to_owned())
-}
-
 fn bars(server: &Server) -> String {
     let all = server.bossbars.lock().unwrap().get_all_bossbars();
     let mut lines: Vec<String> = all
@@ -235,7 +152,7 @@ fn bars(server: &Server) -> String {
                 "{} title={}/{:016x} value={} max={} visible={} color={} style={} flags={} health={} players=[{}]",
                 bar.namespace,
                 data.title.clone().get_text(),
-                fnv(format!("{:?}", data.title).as_bytes()),
+                script_golden::fnv(format!("{:?}", data.title).as_bytes()),
                 bar.value,
                 bar.max,
                 bar.visible,
@@ -267,73 +184,12 @@ fn pin_uuids(server: &Server, pinned: &mut Vec<String>) {
     }
 }
 
-fn run(server: &Arc<Server>, source_player: &Arc<Player>, command: &str) -> String {
-    let world = server.worlds.load()[0].clone();
-    let source = CommandSource::new(
-        CommandSender::Player(source_player.clone()),
-        world,
-        Some(source_player.clone() as Arc<dyn EntityBase>),
-        Vector3::new(0.5, 64.0, 0.5),
-        Vector2::new(0.0, 0.0),
-        A.name.to_string(),
-        TextComponent::text(A.name),
-        server.clone(),
-    );
-    let server = server.clone();
-    let command = command.to_owned();
-    let (send, receive) = std::sync::mpsc::channel();
-    std::thread::spawn(move || {
-        let dispatcher = server.command_dispatcher.load();
-        let result = dispatcher.execute_input(&command, &source);
-        let _ = send.send(match result {
-            Ok(count) => format!("ok {count}"),
-            Err(error) => format!("err {}", error.message.get_text()),
-        });
-    });
-    receive
-        .recv_timeout(Duration::from_secs(60))
-        .unwrap_or_else(|_| "HANG".to_owned())
-}
-
-async fn join(world: &Arc<crate::world::World>) -> Result<Vec<Online>, String> {
-    let mut online = Vec::new();
-    for (who, op) in [(&A, true), (&B, true), (&C, false)] {
-        let (player, tap) = test_support::java_player_as(world, GameMode::Survival, who)
-            .ok_or("a test player's client no longer owned its outgoing queue")?;
-        online.push(Online {
-            name: who.name,
-            player,
-            tap: Tap::Java(tap),
-        });
-        if op {
-            online[online.len() - 1]
-                .player
-                .permission_lvl
-                .store(PermissionLvl::Four);
-        }
-    }
-    let (player, tap) = test_support::bedrock_player_as(world, GameMode::Survival, &D).await?;
-    player.permission_lvl.store(PermissionLvl::Four);
-    online.push(Online {
-        name: D.name,
-        player,
-        tap: Tap::Bedrock(tap),
-    });
-    for who in &online {
-        world.add_player(&who.player)?;
-    }
-    for who in &mut online {
-        who.tap.drain();
-    }
-    Ok(online)
-}
-
 #[tokio::test(flavor = "multi_thread")]
 async fn bossbar_command_sends_the_same_packets() -> TestResult {
     let folder = tempfile::tempdir()?;
     let server = test_support::server(&folder).await?;
     let world = server.worlds.load()[0].clone();
-    let mut online = join(&world).await?;
+    let mut online = script_golden::join(&world).await?;
     let source_player = online[0].player.clone();
 
     let mut pinned = Vec::new();
@@ -346,26 +202,17 @@ async fn bossbar_command_sends_the_same_packets() -> TestResult {
                 .ok_or("unknown player in a leave step")?;
             let who = online.remove(index);
             world.remove_player(&who.player, false).await;
-            let left = packets(&mut online);
+            let left = script_golden::packets(&mut online);
             writeln!(now, "{step} ->{left}; bars {}", bars(&server))?;
             continue;
         }
-        let result = run(&server, &source_player, step);
+        let result = script_golden::run(&server, &source_player, step);
         pin_uuids(&server, &mut pinned);
-        let sent = packets(&mut online);
+        let sent = script_golden::packets(&mut online);
         writeln!(now, "{step} -> {result};{sent}; bars {}", bars(&server))?;
     }
 
-    let path =
-        std::path::Path::new(env!("CARGO_MANIFEST_DIR")).join("tests/golden/bossbar_command.txt");
-    if std::env::var_os("KVASIR_BLESS").is_some() {
-        std::fs::write(&path, &now)?;
-    } else {
-        assert_eq!(std::fs::read_to_string(&path)?, now);
-    }
-    for who in &online {
-        world.remove_player(&who.player, false).await;
-    }
-    server.stop();
+    script_golden::bless_or_compare("bossbar_command.txt", &now)?;
+    script_golden::finish(&server, &world, &online).await;
     Ok(())
 }

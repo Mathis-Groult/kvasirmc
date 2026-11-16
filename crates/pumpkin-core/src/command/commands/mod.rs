@@ -93,6 +93,8 @@ mod title;
 mod tps;
 mod transfer;
 #[cfg(test)]
+mod script_golden;
+#[cfg(test)]
 mod tree_golden;
 mod trigger;
 mod waypoint;

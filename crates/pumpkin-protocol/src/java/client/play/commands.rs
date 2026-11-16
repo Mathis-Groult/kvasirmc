@@ -87,6 +87,41 @@ impl ProtoNode<'_> {
         let v1_21_6 = *version >= JavaMinecraftVersion::V_1_21_6;
 
         // flags
+        let (flags, redirect_target_on_flag) = self.flags(v1_21_6);
+        write.write_u8(flags)?;
+
+        // child count + children
+        write.write_list(&self.children, |bytebuf, child| {
+            bytebuf.write_var_int(child)
+        })?;
+
+        // redirect node
+        if flags & Self::FLAG_HAS_REDIRECT != 0 {
+            write.write_var_int(&redirect_target_on_flag.into())?;
+        }
+
+        // name
+        match self.node_type {
+            ProtoNodeType::Argument { name, .. } | ProtoNodeType::Literal { name, .. } => {
+                write.write_string(name)?;
+            }
+            ProtoNodeType::Root => {}
+        }
+
+        // parser id + properties
+        if let ProtoNodeType::Argument { parser, .. } = &self.node_type {
+            parser.write_to_buffer(write, version)?;
+        }
+
+        if flags & Self::FLAG_HAS_SUGGESTION_TYPE != 0 {
+            self.write_suggestion_type(write)?;
+        }
+
+        Ok(())
+    }
+
+    /// The flags byte, and the redirect target when the flags say there is one.
+    const fn flags(&self, v1_21_6: bool) -> (u8, i32) {
         let mut redirect_target_on_flag = 0i32;
 
         let flags = match self.node_type {
@@ -135,49 +170,26 @@ impl ProtoNode<'_> {
                 n
             }
         };
-        write.write_u8(flags)?;
+        (flags, redirect_target_on_flag)
+    }
 
-        // child count + children
-        write.write_list(&self.children, |bytebuf, child| {
-            bytebuf.write_var_int(child)
-        })?;
-
-        // redirect node
-        if flags & Self::FLAG_HAS_REDIRECT != 0 {
-            write.write_var_int(&redirect_target_on_flag.into())?;
-        }
-
-        // name
-        match self.node_type {
-            ProtoNodeType::Argument { name, .. } | ProtoNodeType::Literal { name, .. } => {
-                write.write_string(name)?;
+    /// The suggestion provider of an argument node (only argument nodes have one).
+    fn write_suggestion_type(&self, write: &mut impl Write) -> Result<(), WritingError> {
+        match &self.node_type {
+            ProtoNodeType::Argument {
+                override_suggestion_type,
+                ..
+            } => {
+                // suggestion type
+                let suggestion_type = override_suggestion_type.as_ref().ok_or_else(|| {
+                    WritingError::Message("ProtoNode::FLAG_HAS_SUGGESTION_TYPE set but override_suggestion_type is None".into())
+                })?;
+                write.write_string(suggestion_type.resource_location())?;
             }
-            ProtoNodeType::Root => {}
+            _ => return Err(WritingError::Message(
+                "`ProtoNode::FLAG_HAS_SUGGESTION_TYPE` is only implemented for `ProtoNodeType::Argument`".into()
+            )),
         }
-
-        // parser id + properties
-        if let ProtoNodeType::Argument { parser, .. } = &self.node_type {
-            parser.write_to_buffer(write, version)?;
-        }
-
-        if flags & Self::FLAG_HAS_SUGGESTION_TYPE != 0 {
-            match &self.node_type {
-                ProtoNodeType::Argument {
-                    override_suggestion_type,
-                    ..
-                } => {
-                    // suggestion type
-                    let suggestion_type = override_suggestion_type.as_ref().ok_or_else(|| {
-                        WritingError::Message("ProtoNode::FLAG_HAS_SUGGESTION_TYPE set but override_suggestion_type is None".into())
-                    })?;
-                    write.write_string(suggestion_type.resource_location())?;
-                }
-                _ => return Err(WritingError::Message(
-                    "`ProtoNode::FLAG_HAS_SUGGESTION_TYPE` is only implemented for `ProtoNodeType::Argument`".into()
-                )),
-            }
-        }
-
         Ok(())
     }
 }

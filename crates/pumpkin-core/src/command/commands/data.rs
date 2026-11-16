@@ -106,97 +106,110 @@ pub fn snbt_colorful_display(tag: &NbtTag, _depth: usize) -> TextComponent {
         NbtTag::Double(value) => TextComponent::text(format!("{value}"))
             .color_named(NamedColor::Gold)
             .add_child(TextComponent::text("d").color_named(NamedColor::Red)),
-        NbtTag::ByteArray(value) => {
-            let mut content = TextComponent::text("[")
-                .add_child(TextComponent::text("B").color_named(NamedColor::Red))
-                .add_child(TextComponent::text("; "));
-
-            for (index, byte) in value.iter().take(128).enumerate() {
-                content = content
-                    .add_child(TextComponent::text(format!("{byte}")))
-                    .add_child(TextComponent::text("b").color_named(NamedColor::Red));
-                if index < value.len() - 1 {
-                    content = content.add_child(TextComponent::text(", "));
-                }
-            }
-
-            if value.len() > 128 {
-                content = content.add_child(folded);
-            }
-
-            content.add_child(TextComponent::text("]"))
-        }
+        NbtTag::ByteArray(value) => byte_array_display(value, folded),
         NbtTag::String(value) => {
             let escaped = value.replace('"', "\\\"");
             TextComponent::text(format!("\"{escaped}\"")).color_named(NamedColor::Green)
         }
-        NbtTag::List(value) => {
-            let mut content = TextComponent::text("[");
-            for (index, tag) in value.iter().take(128).enumerate() {
-                content = content.add_child(snbt_colorful_display(tag, 0));
-                if index < value.len() - 1 {
-                    content = content.add_child(TextComponent::text(", "));
-                }
-            }
-            if value.len() > 128 {
-                content = content.add_child(folded);
-            }
-            content.add_child(TextComponent::text("]"))
-        }
-        NbtTag::Compound(value) => {
-            let mut content = TextComponent::text("{");
-            let mut keys: Vec<&Box<str>> = value.child_tags.keys().collect();
-            keys.sort();
-            for (index, key) in keys.into_iter().take(128).enumerate() {
-                let tag = &value.child_tags[key];
-                content = content
-                    .add_child(
-                        TextComponent::text(format!("{key}: ")).color_named(NamedColor::Aqua),
-                    )
-                    .add_child(snbt_colorful_display(tag, 0));
-                if index < value.child_tags.len() - 1 {
-                    content = content.add_child(TextComponent::text(", "));
-                }
-            }
-            if value.child_tags.len() > 128 {
-                content = content.add_child(folded);
-            }
-            content.add_child(TextComponent::text("}"))
-        }
-        NbtTag::IntArray(value) => {
-            let mut content = TextComponent::text("[")
-                .add_child(TextComponent::text("I").color_named(NamedColor::Red))
-                .add_child(TextComponent::text("; "));
-            for (index, int) in value.iter().take(128).enumerate() {
-                content = content
-                    .add_child(TextComponent::text(format!("{int}")).color_named(NamedColor::Gold));
-                if index < value.len() - 1 {
-                    content = content.add_child(TextComponent::text(", "));
-                }
-            }
-            if value.len() > 128 {
-                content = content.add_child(folded);
-            }
-            content.add_child(TextComponent::text("]"))
-        }
-        NbtTag::LongArray(value) => {
-            let mut content = TextComponent::text("[")
-                .add_child(TextComponent::text("L").color_named(NamedColor::Red))
-                .add_child(TextComponent::text("; "));
-            for (index, long) in value.iter().take(128).enumerate() {
-                content = content
-                    .add_child(TextComponent::text(format!("{long}")).color_named(NamedColor::Gold))
-                    .add_child(TextComponent::text("L").color_named(NamedColor::Red));
-                if index < value.len() - 1 {
-                    content = content.add_child(TextComponent::text(", "));
-                }
-            }
-            if value.len() > 128 {
-                content = content.add_child(folded);
-            }
-            content.add_child(TextComponent::text("]"))
+        NbtTag::List(value) => list_display(value, folded),
+        NbtTag::Compound(value) => compound_display(value, folded),
+        NbtTag::IntArray(value) => int_array_display(value, folded),
+        NbtTag::LongArray(value) => long_array_display(value, folded),
+    }
+}
+
+/// Bytes: `[B; 1b, 2b]`, folded after 128.
+fn byte_array_display(value: &[i8], folded: TextComponent) -> TextComponent {
+    let mut content = TextComponent::text("[")
+        .add_child(TextComponent::text("B").color_named(NamedColor::Red))
+        .add_child(TextComponent::text("; "));
+
+    for (index, byte) in value.iter().take(128).enumerate() {
+        content = content
+            .add_child(TextComponent::text(format!("{byte}")))
+            .add_child(TextComponent::text("b").color_named(NamedColor::Red));
+        if index < value.len() - 1 {
+            content = content.add_child(TextComponent::text(", "));
         }
     }
+
+    if value.len() > 128 {
+        content = content.add_child(folded);
+    }
+
+    content.add_child(TextComponent::text("]"))
+}
+
+/// A list: `[a, b]`, folded after 128.
+fn list_display(value: &[NbtTag], folded: TextComponent) -> TextComponent {
+    let mut content = TextComponent::text("[");
+    for (index, tag) in value.iter().take(128).enumerate() {
+        content = content.add_child(snbt_colorful_display(tag, 0));
+        if index < value.len() - 1 {
+            content = content.add_child(TextComponent::text(", "));
+        }
+    }
+    if value.len() > 128 {
+        content = content.add_child(folded);
+    }
+    content.add_child(TextComponent::text("]"))
+}
+
+/// A compound with sorted keys: `{a: 1, b: 2}`, folded after 128 keys.
+fn compound_display(value: &NbtCompound, folded: TextComponent) -> TextComponent {
+    let mut content = TextComponent::text("{");
+    let mut keys: Vec<&Box<str>> = value.child_tags.keys().collect();
+    keys.sort();
+    for (index, key) in keys.into_iter().take(128).enumerate() {
+        let tag = &value.child_tags[key];
+        content = content
+            .add_child(TextComponent::text(format!("{key}: ")).color_named(NamedColor::Aqua))
+            .add_child(snbt_colorful_display(tag, 0));
+        if index < value.child_tags.len() - 1 {
+            content = content.add_child(TextComponent::text(", "));
+        }
+    }
+    if value.child_tags.len() > 128 {
+        content = content.add_child(folded);
+    }
+    content.add_child(TextComponent::text("}"))
+}
+
+/// Ints: `[I; 1, 2]`, folded after 128.
+fn int_array_display(value: &[i32], folded: TextComponent) -> TextComponent {
+    let mut content = TextComponent::text("[")
+        .add_child(TextComponent::text("I").color_named(NamedColor::Red))
+        .add_child(TextComponent::text("; "));
+    for (index, int) in value.iter().take(128).enumerate() {
+        content =
+            content.add_child(TextComponent::text(format!("{int}")).color_named(NamedColor::Gold));
+        if index < value.len() - 1 {
+            content = content.add_child(TextComponent::text(", "));
+        }
+    }
+    if value.len() > 128 {
+        content = content.add_child(folded);
+    }
+    content.add_child(TextComponent::text("]"))
+}
+
+/// Longs: `[L; 1L, 2L]`, folded after 128.
+fn long_array_display(value: &[i64], folded: TextComponent) -> TextComponent {
+    let mut content = TextComponent::text("[")
+        .add_child(TextComponent::text("L").color_named(NamedColor::Red))
+        .add_child(TextComponent::text("; "));
+    for (index, long) in value.iter().take(128).enumerate() {
+        content = content
+            .add_child(TextComponent::text(format!("{long}")).color_named(NamedColor::Gold))
+            .add_child(TextComponent::text("L").color_named(NamedColor::Red));
+        if index < value.len() - 1 {
+            content = content.add_child(TextComponent::text(", "));
+        }
+    }
+    if value.len() > 128 {
+        content = content.add_child(folded);
+    }
+    content.add_child(TextComponent::text("]"))
 }
 
 // ---------------- DATA ACCESSOR ABSTRACTION ----------------

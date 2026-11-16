@@ -63,7 +63,8 @@ impl FurnaceMinecart {
         let push_length_squared = push.x.mul_add(push.x, push.z * push.z);
         let velocity_length_squared = velocity.x.mul_add(velocity.x, velocity.z * velocity.z);
 
-        let mut next = if push_length_squared > 1.0e-7 {
+        let pushed = push_length_squared > 1.0e-7;
+        let mut next = if pushed {
             if push_length_squared > 1.0e-4 && velocity_length_squared > 0.001 {
                 let velocity_direction = Vector3::new(velocity.x, 0.0, velocity.z).normalize();
                 let push_length = push.length();
@@ -80,18 +81,11 @@ impl FurnaceMinecart {
             velocity.multiply(0.98, 0.0, 0.98)
         };
 
-        let in_water = entity.touching_water.load(Ordering::Relaxed);
-        if in_water {
-            next = next.multiply(0.1, 0.0, 0.1);
-        }
-        let slowdown = 0.96 * if in_water { 0.95 } else { 1.0 };
-        next = next.multiply(slowdown, 0.0, slowdown);
-
-        let max_speed = if in_water { 0.3 } else { 0.2 };
-        let speed = next.x.hypot(next.z);
-        if speed > max_speed {
-            next.x = next.x / speed * max_speed;
-            next.z = next.z / speed * max_speed;
+        // Vanilla `MinecartFurnace.applyNaturalSlowdown`: only a pushed cart loses 90% in
+        // water; the cart's own slowdown (0.96, 0.95 in water) follows in the caller, and the
+        // speed limit applies to the move (`getMaxSpeed`), not to the velocity.
+        if pushed && entity.touching_water.load(Ordering::Relaxed) {
+            next = next.multiply(0.1, 0.1, 0.1);
         }
         next
     }

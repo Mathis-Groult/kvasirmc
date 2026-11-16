@@ -616,6 +616,9 @@ impl EntitySelectorParserSuggestions {
 }
 
 #[cfg(test)]
+mod golden;
+
+#[cfg(test)]
 mod tests {
     use super::EntitySelectorParser;
     use crate::command::string_reader::StringReader;

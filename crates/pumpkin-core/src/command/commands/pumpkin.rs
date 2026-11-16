@@ -582,3 +582,6 @@ mod test {
         assert_eq!(cached, expected);
     }
 }
+
+#[cfg(test)]
+mod golden;

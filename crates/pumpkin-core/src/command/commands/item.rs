@@ -321,3 +321,6 @@ pub fn register(dispatcher: &mut CommandDispatcher, registry: &PermissionRegistr
             .then(literal("replace").then(block_node).then(entity_node)),
     );
 }
+
+#[cfg(test)]
+mod golden;

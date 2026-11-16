@@ -1,0 +1,2 @@
+pumpkin -> ok 1; GoldA[3665:645176735386d3be] GoldB[] GoldC[] GoldD[]
+pumpkin extra -> err Incorrect argument for command; GoldA[] GoldB[] GoldC[] GoldD[]

@@ -82,17 +82,46 @@ pub fn fnv(bytes: &[u8]) -> u64 {
 
 /// What each player was sent since the last call, as ` Name[len:hash,..]` per player.
 pub fn packets(online: &mut [Online]) -> String {
+    packets_masked(online, &[])
+}
+
+/// As [`packets`], with every occurrence of each `mask` in a packet overwritten by as many `#`
+/// before hashing (text that changes per build, such as the commit hash).
+pub fn packets_masked(online: &mut [Online], masks: &[&str]) -> String {
     let mut text = String::new();
     for who in online {
         let sent: Vec<String> = who
             .tap
             .drain()
             .iter()
-            .map(|packet| format!("{}:{:016x}", packet.len(), fnv(packet)))
+            .map(|packet| {
+                let masked = mask(packet, masks);
+                format!("{}:{:016x}", masked.len(), fnv(&masked))
+            })
             .collect();
         let _ = write!(text, " {}[{}]", who.name, sent.join(","));
     }
     text
+}
+
+fn mask(packet: &[u8], masks: &[&str]) -> Vec<u8> {
+    let mut bytes = packet.to_vec();
+    for mask in masks {
+        let needle = mask.as_bytes();
+        if needle.is_empty() {
+            continue;
+        }
+        let mut at = 0;
+        while at + needle.len() <= bytes.len() {
+            if bytes[at..at + needle.len()] == *needle {
+                bytes[at..at + needle.len()].fill(b'#');
+                at += needle.len();
+            } else {
+                at += 1;
+            }
+        }
+    }
+    bytes
 }
 
 /// The name of one of the four test players, or the UUID itself.

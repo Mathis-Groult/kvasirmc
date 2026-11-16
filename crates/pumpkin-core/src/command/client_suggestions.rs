@@ -409,3 +409,6 @@ const fn bedrock_param_type(arg: &ArgumentType) -> u32 {
     };
     base | arg_flags::ARG_FLAG_VALID
 }
+
+#[cfg(test)]
+mod golden;

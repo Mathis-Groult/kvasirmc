@@ -1186,3 +1186,6 @@ impl EntityBase for TextDisplayEntity {
         false
     }
 }
+
+#[cfg(test)]
+mod golden;

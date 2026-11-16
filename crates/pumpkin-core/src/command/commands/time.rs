@@ -11,6 +11,7 @@ use crate::command::argument_types::time::TimeArgumentType;
 use crate::command::context::command_context::CommandContext;
 use crate::command::node::dispatcher::CommandDispatcher;
 use crate::command::node::{CommandExecutor, CommandExecutorResult};
+use crate::world::World;
 use pumpkin_util::identifier::Identifier;
 
 const DESCRIPTION: &str = "Query or modify the world time and clocks.";
@@ -139,7 +140,6 @@ struct ActionExecutor {
 }
 
 impl CommandExecutor for ActionExecutor {
-    #[allow(clippy::too_many_lines)]
     fn execute(&self, context: &CommandContext) -> CommandExecutorResult {
         let clock_name = if self.has_clock {
             IdentifierArgumentType::get(context, "clock")
@@ -151,119 +151,139 @@ impl CommandExecutor for ActionExecutor {
         let world = context.source.world();
 
         match self.action {
-            Action::Set(preset) => {
-                let time_count = if let Some(p) = preset {
-                    p.to_ticks()
-                } else {
-                    TimeArgumentType::get(context, "time")?
-                };
-                let level_time = {
-                    let mut guard = world
-                        .level_time
-                        .lock()
-                        .unwrap_or_else(std::sync::PoisonError::into_inner);
-                    guard.set_time(time_count.into());
-                    guard.clone()
-                };
-                level_time.send_time(world);
-                context.source.send_feedback(
-                    pumpkin_macros::translate_cross!(
-                        translation::java::COMMANDS_TIME_SET_ABSOLUTE,
-                        translation::bedrock::COMMANDS_TIME_SET,
-                        TextComponent::text(clock_name),
-                        TextComponent::text(time_count.to_string())
-                    ),
-                    true,
-                );
-                Ok(time_count)
-            }
-            Action::Add => {
-                let time_count = TimeArgumentType::get(context, "time")?;
-                let (level_time, total_ticks) = {
-                    let mut guard = world
-                        .level_time
-                        .lock()
-                        .unwrap_or_else(std::sync::PoisonError::into_inner);
-                    guard.add_time(time_count.into());
-                    let total_ticks = guard.time_of_day;
-                    (guard.clone(), total_ticks)
-                };
-                level_time.send_time(world);
-                context.source.send_feedback(
-                    pumpkin_macros::translate_cross!(
-                        translation::java::COMMANDS_TIME_SET_ABSOLUTE,
-                        translation::bedrock::COMMANDS_TIME_ADDED,
-                        TextComponent::text(clock_name),
-                        TextComponent::text(total_ticks.to_string())
-                    ),
-                    true,
-                );
-                Ok(wrap_time(total_ticks))
-            }
-            Action::Pause => {
-                let level_time = {
-                    let mut guard = world
-                        .level_time
-                        .lock()
-                        .unwrap_or_else(std::sync::PoisonError::into_inner);
-                    guard.set_paused(true);
-                    guard.clone()
-                };
-                level_time.send_time(world);
-                context.source.send_feedback(
-                    pumpkin_macros::translate_cross!(
-                        translation::java::COMMANDS_TIME_PAUSE,
-                        translation::bedrock::COMMANDS_TIME_STOP,
-                        TextComponent::text(clock_name)
-                    ),
-                    true,
-                );
-                Ok(1)
-            }
-            Action::Resume => {
-                let level_time = {
-                    let mut guard = world
-                        .level_time
-                        .lock()
-                        .unwrap_or_else(std::sync::PoisonError::into_inner);
-                    guard.set_paused(false);
-                    guard.clone()
-                };
-                level_time.send_time(world);
-                context.source.send_feedback(
-                    pumpkin_macros::translate_cross!(
-                        translation::java::COMMANDS_TIME_RESUME,
-                        translation::bedrock::COMMANDS_TIME_SET,
-                        TextComponent::text(clock_name)
-                    ),
-                    true,
-                );
-                Ok(1)
-            }
-            Action::Rate => {
-                let rate = FloatArgumentType::get(context, "rate")?;
-                let level_time = {
-                    let mut guard = world
-                        .level_time
-                        .lock()
-                        .unwrap_or_else(std::sync::PoisonError::into_inner);
-                    guard.set_rate(rate);
-                    guard.clone()
-                };
-                level_time.send_time(world);
-                context.source.send_feedback(
-                    pumpkin_macros::translate_cross!(
-                        translation::java::COMMANDS_TIME_RATE,
-                        translation::bedrock::COMMANDS_TIME_SET,
-                        TextComponent::text(clock_name),
-                        TextComponent::text(rate.to_string())
-                    ),
-                    true,
-                );
-                Ok(1)
-            }
+            Action::Set(preset) => set_time(context, world, clock_name, preset),
+            Action::Add => add_time(context, world, clock_name),
+            Action::Pause => Ok(pause_time(context, world, clock_name)),
+            Action::Resume => Ok(resume_time(context, world, clock_name)),
+            Action::Rate => set_rate(context, world, clock_name),
         }
     }
+}
+
+/// `time set`: a preset or a time.
+fn set_time(
+    context: &CommandContext,
+    world: &World,
+    clock_name: String,
+    preset: Option<PresetTime>,
+) -> CommandExecutorResult {
+    let time_count = if let Some(p) = preset {
+        p.to_ticks()
+    } else {
+        TimeArgumentType::get(context, "time")?
+    };
+    let level_time = {
+        let mut guard = world
+            .level_time
+            .lock()
+            .unwrap_or_else(std::sync::PoisonError::into_inner);
+        guard.set_time(time_count.into());
+        guard.clone()
+    };
+    level_time.send_time(world);
+    context.source.send_feedback(
+        pumpkin_macros::translate_cross!(
+            translation::java::COMMANDS_TIME_SET_ABSOLUTE,
+            translation::bedrock::COMMANDS_TIME_SET,
+            TextComponent::text(clock_name),
+            TextComponent::text(time_count.to_string())
+        ),
+        true,
+    );
+    Ok(time_count)
+}
+
+/// `time add <time>`.
+fn add_time(context: &CommandContext, world: &World, clock_name: String) -> CommandExecutorResult {
+    let time_count = TimeArgumentType::get(context, "time")?;
+    let (level_time, total_ticks) = {
+        let mut guard = world
+            .level_time
+            .lock()
+            .unwrap_or_else(std::sync::PoisonError::into_inner);
+        guard.add_time(time_count.into());
+        let total_ticks = guard.time_of_day;
+        (guard.clone(), total_ticks)
+    };
+    level_time.send_time(world);
+    context.source.send_feedback(
+        pumpkin_macros::translate_cross!(
+            translation::java::COMMANDS_TIME_SET_ABSOLUTE,
+            translation::bedrock::COMMANDS_TIME_ADDED,
+            TextComponent::text(clock_name),
+            TextComponent::text(total_ticks.to_string())
+        ),
+        true,
+    );
+    Ok(wrap_time(total_ticks))
+}
+
+/// `time pause`.
+fn pause_time(context: &CommandContext, world: &World, clock_name: String) -> i32 {
+    let level_time = {
+        let mut guard = world
+            .level_time
+            .lock()
+            .unwrap_or_else(std::sync::PoisonError::into_inner);
+        guard.set_paused(true);
+        guard.clone()
+    };
+    level_time.send_time(world);
+    context.source.send_feedback(
+        pumpkin_macros::translate_cross!(
+            translation::java::COMMANDS_TIME_PAUSE,
+            translation::bedrock::COMMANDS_TIME_STOP,
+            TextComponent::text(clock_name)
+        ),
+        true,
+    );
+    1
+}
+
+/// `time resume`.
+fn resume_time(context: &CommandContext, world: &World, clock_name: String) -> i32 {
+    let level_time = {
+        let mut guard = world
+            .level_time
+            .lock()
+            .unwrap_or_else(std::sync::PoisonError::into_inner);
+        guard.set_paused(false);
+        guard.clone()
+    };
+    level_time.send_time(world);
+    context.source.send_feedback(
+        pumpkin_macros::translate_cross!(
+            translation::java::COMMANDS_TIME_RESUME,
+            translation::bedrock::COMMANDS_TIME_SET,
+            TextComponent::text(clock_name)
+        ),
+        true,
+    );
+    1
+}
+
+/// `time rate <rate>`.
+fn set_rate(context: &CommandContext, world: &World, clock_name: String) -> CommandExecutorResult {
+    let rate = FloatArgumentType::get(context, "rate")?;
+    let level_time = {
+        let mut guard = world
+            .level_time
+            .lock()
+            .unwrap_or_else(std::sync::PoisonError::into_inner);
+        guard.set_rate(rate);
+        guard.clone()
+    };
+    level_time.send_time(world);
+    context.source.send_feedback(
+        pumpkin_macros::translate_cross!(
+            translation::java::COMMANDS_TIME_RATE,
+            translation::bedrock::COMMANDS_TIME_SET,
+            TextComponent::text(clock_name),
+            TextComponent::text(rate.to_string())
+        ),
+        true,
+    );
+    Ok(1)
 }
 
 macro_rules! build_branches {

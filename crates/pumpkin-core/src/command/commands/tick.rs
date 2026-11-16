@@ -8,6 +8,7 @@ use crate::command::node::{CommandExecutor, CommandExecutorResult};
 use crate::command::suggestion::provider::{SuggestionProvider, SuggestionProviderResult};
 use crate::command::suggestion::suggestions::SuggestionsBuilder;
 use crate::server::Server;
+use crate::server::tick_rate_manager::ServerTickRateManager;
 use pumpkin_data::translation;
 use pumpkin_util::PermissionLvl;
 use pumpkin_util::permission::{Permission, PermissionDefault, PermissionRegistry};
@@ -190,10 +191,157 @@ impl TickExecutor {
         );
         rate as i32
     }
+
+    /// `tick freeze` and `tick unfreeze`.
+    fn handle_freeze(
+        source: &CommandSource,
+        manager: &ServerTickRateManager,
+        server: &Server,
+        freeze: bool,
+    ) -> i32 {
+        manager.set_frozen(server, freeze);
+        let message_key = if freeze {
+            "commands.tick.status.frozen"
+        } else {
+            "commands.tick.status.running"
+        };
+        source.send_feedback(TextComponent::translate(message_key, []), true);
+        freeze as i32
+    }
+
+    /// `tick step`: one tick.
+    fn handle_step_default(
+        source: &CommandSource,
+        manager: &ServerTickRateManager,
+        server: &Server,
+    ) -> i32 {
+        if manager.step_game_if_paused(server, 1) {
+            source.send_feedback(
+                TextComponent::translate_cross(
+                    translation::java::COMMANDS_TICK_STEP_SUCCESS,
+                    translation::java::COMMANDS_TICK_STEP_SUCCESS,
+                    [TextComponent::text("1")],
+                ),
+                true,
+            );
+            1
+        } else {
+            source.send_error(
+                TextComponent::translate_cross(
+                    translation::java::COMMANDS_TICK_STEP_FAIL,
+                    translation::java::COMMANDS_TICK_STEP_FAIL,
+                    [],
+                )
+                .color(Color::Named(NamedColor::Red)),
+            );
+            0
+        }
+    }
+
+    /// `tick step <time>`.
+    fn handle_step_timed(
+        context: &CommandContext,
+        source: &CommandSource,
+        manager: &ServerTickRateManager,
+        server: &Server,
+    ) -> CommandExecutorResult {
+        let ticks = TimeArgumentType::get(context, "time")?;
+        if manager.step_game_if_paused(server, ticks) {
+            source.send_feedback(
+                TextComponent::translate_cross(
+                    translation::java::COMMANDS_TICK_STEP_SUCCESS,
+                    translation::java::COMMANDS_TICK_STEP_SUCCESS,
+                    [TextComponent::text(ticks.to_string())],
+                ),
+                true,
+            );
+            Ok(1)
+        } else {
+            source.send_error(
+                TextComponent::translate_cross(
+                    translation::java::COMMANDS_TICK_STEP_FAIL,
+                    translation::java::COMMANDS_TICK_STEP_FAIL,
+                    [],
+                )
+                .color(Color::Named(NamedColor::Red)),
+            );
+            Ok(0)
+        }
+    }
+
+    /// `tick step stop`.
+    fn handle_step_stop(
+        source: &CommandSource,
+        manager: &ServerTickRateManager,
+        server: &Server,
+    ) -> i32 {
+        if manager.stop_stepping(server) {
+            source.send_feedback(
+                TextComponent::translate_cross(
+                    translation::java::COMMANDS_TICK_STEP_STOP_SUCCESS,
+                    translation::java::COMMANDS_TICK_STEP_STOP_SUCCESS,
+                    [],
+                ),
+                true,
+            );
+            1
+        } else {
+            source.send_error(
+                TextComponent::translate_cross(
+                    translation::java::COMMANDS_TICK_STEP_STOP_FAIL,
+                    translation::java::COMMANDS_TICK_STEP_STOP_FAIL,
+                    [],
+                )
+                .color(Color::Named(NamedColor::Red)),
+            );
+            0
+        }
+    }
+
+    /// `tick sprint <time>`.
+    fn handle_sprint_timed(
+        context: &CommandContext,
+        source: &CommandSource,
+        manager: &ServerTickRateManager,
+        server: &Server,
+    ) -> CommandExecutorResult {
+        let ticks = TimeArgumentType::get(context, "time")?;
+        manager.request_game_to_sprint(server, ticks as i64);
+        Self::send_sprint_report(source, ticks);
+        Ok(1)
+    }
+
+    /// `tick sprint stop`.
+    fn handle_sprint_stop(
+        source: &CommandSource,
+        manager: &ServerTickRateManager,
+        server: &Server,
+    ) -> i32 {
+        if manager.stop_sprinting(server) {
+            source.send_feedback(
+                TextComponent::translate_cross(
+                    translation::java::COMMANDS_TICK_SPRINT_STOP_SUCCESS,
+                    translation::java::COMMANDS_TICK_SPRINT_STOP_SUCCESS,
+                    [],
+                ),
+                true,
+            );
+            1
+        } else {
+            source.send_error(
+                TextComponent::translate_cross(
+                    translation::java::COMMANDS_TICK_SPRINT_STOP_FAIL,
+                    translation::java::COMMANDS_TICK_SPRINT_STOP_FAIL,
+                    [],
+                )
+                .color(Color::Named(NamedColor::Red)),
+            );
+            0
+        }
+    }
 }
 
 impl CommandExecutor for TickExecutor {
-    #[expect(clippy::too_many_lines)]
     fn execute(&self, context: &CommandContext) -> CommandExecutorResult {
         let manager = &context.server().tick_rate_manager;
         let source = context.source.as_ref();
@@ -204,115 +352,12 @@ impl CommandExecutor for TickExecutor {
                 let rate = FloatArgumentType::get(context, "rate")?;
                 Ok(Self::handle_set_tick_rate(source, manager, rate))
             }
-            SubCommand::Freeze(freeze) => {
-                manager.set_frozen(server, freeze);
-                let message_key = if freeze {
-                    "commands.tick.status.frozen"
-                } else {
-                    "commands.tick.status.running"
-                };
-                source.send_feedback(TextComponent::translate(message_key, []), true);
-                Ok(freeze as i32)
-            }
-            SubCommand::StepDefault => {
-                if manager.step_game_if_paused(server, 1) {
-                    source.send_feedback(
-                        TextComponent::translate_cross(
-                            translation::java::COMMANDS_TICK_STEP_SUCCESS,
-                            translation::java::COMMANDS_TICK_STEP_SUCCESS,
-                            [TextComponent::text("1")],
-                        ),
-                        true,
-                    );
-                    Ok(1)
-                } else {
-                    source.send_error(
-                        TextComponent::translate_cross(
-                            translation::java::COMMANDS_TICK_STEP_FAIL,
-                            translation::java::COMMANDS_TICK_STEP_FAIL,
-                            [],
-                        )
-                        .color(Color::Named(NamedColor::Red)),
-                    );
-                    Ok(0)
-                }
-            }
-            SubCommand::StepTimed => {
-                let ticks = TimeArgumentType::get(context, "time")?;
-                if manager.step_game_if_paused(server, ticks) {
-                    source.send_feedback(
-                        TextComponent::translate_cross(
-                            translation::java::COMMANDS_TICK_STEP_SUCCESS,
-                            translation::java::COMMANDS_TICK_STEP_SUCCESS,
-                            [TextComponent::text(ticks.to_string())],
-                        ),
-                        true,
-                    );
-                    Ok(1)
-                } else {
-                    source.send_error(
-                        TextComponent::translate_cross(
-                            translation::java::COMMANDS_TICK_STEP_FAIL,
-                            translation::java::COMMANDS_TICK_STEP_FAIL,
-                            [],
-                        )
-                        .color(Color::Named(NamedColor::Red)),
-                    );
-                    Ok(0)
-                }
-            }
-            SubCommand::StepStop => {
-                if manager.stop_stepping(server) {
-                    source.send_feedback(
-                        TextComponent::translate_cross(
-                            translation::java::COMMANDS_TICK_STEP_STOP_SUCCESS,
-                            translation::java::COMMANDS_TICK_STEP_STOP_SUCCESS,
-                            [],
-                        ),
-                        true,
-                    );
-                    Ok(1)
-                } else {
-                    source.send_error(
-                        TextComponent::translate_cross(
-                            translation::java::COMMANDS_TICK_STEP_STOP_FAIL,
-                            translation::java::COMMANDS_TICK_STEP_STOP_FAIL,
-                            [],
-                        )
-                        .color(Color::Named(NamedColor::Red)),
-                    );
-                    Ok(0)
-                }
-            }
-            SubCommand::SprintTimed => {
-                let ticks = TimeArgumentType::get(context, "time")?;
-                manager.request_game_to_sprint(server, ticks as i64);
-                Self::send_sprint_report(source, ticks);
-                Ok(1)
-            }
-            SubCommand::SprintStop => {
-                if manager.stop_sprinting(server) {
-                    source.send_feedback(
-                        TextComponent::translate_cross(
-                            translation::java::COMMANDS_TICK_SPRINT_STOP_SUCCESS,
-                            translation::java::COMMANDS_TICK_SPRINT_STOP_SUCCESS,
-                            [],
-                        ),
-                        true,
-                    );
-                    Ok(1)
-                } else {
-                    source.send_error(
-                        TextComponent::translate_cross(
-                            translation::java::COMMANDS_TICK_SPRINT_STOP_FAIL,
-                            translation::java::COMMANDS_TICK_SPRINT_STOP_FAIL,
-                            [],
-                        )
-                        .color(Color::Named(NamedColor::Red)),
-                    );
-                    Ok(0)
-                }
-            }
+            SubCommand::Freeze(freeze) => Ok(Self::handle_freeze(source, manager, server, freeze)),
+            SubCommand::StepDefault => Ok(Self::handle_step_default(source, manager, server)),
+            SubCommand::StepTimed => Self::handle_step_timed(context, source, manager, server),
+            SubCommand::StepStop => Ok(Self::handle_step_stop(source, manager, server)),
+            SubCommand::SprintTimed => Self::handle_sprint_timed(context, source, manager, server),
+            SubCommand::SprintStop => Ok(Self::handle_sprint_stop(source, manager, server)),
         }
     }
 }

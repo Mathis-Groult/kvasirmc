@@ -120,6 +120,11 @@ fn cases() -> Vec<(&'static str, NbtCompound)> {
         ),
     ]);
     list.extend(transformation_cases());
+    // Appended after the mutation run: a block light above 15 with no sky light.
+    list.push((
+        "brightness block 20 sky 0",
+        compound(vec![("brightness", brightness(Some(20), Some(0)))]),
+    ));
     list
 }
 
@@ -297,6 +302,25 @@ async fn display_entity_nbt_and_tracker_are_the_same() -> TestResult {
     for (name, nbt) in cases() {
         writeln!(now, "{name}: {}", record(&world, &nbt))?;
     }
+
+    // Appended after the mutation run: the teleport duration cannot come from NBT (see #69),
+    // so it is set directly before writing and tracking.
+    let entity = Entity::new(
+        Arc::clone(&world),
+        Vector3::new(0.5, 64.0, 0.5),
+        &EntityType::BLOCK_DISPLAY,
+    );
+    let display = DisplayEntity::new(entity);
+    display.set_teleport_duration(9);
+    let mut written = NbtCompound::new();
+    display.write_display_nbt(&mut written);
+    display.init_display_data_tracker();
+    writeln!(
+        now,
+        "teleport set to 9: wrote {} | tracked {}",
+        tag_text(&NbtTag::Compound(written)),
+        tracked_entries(&display.entity)
+    )?;
 
     script_golden::bless_or_compare("display_entity.txt", &now)?;
     server.stop();

@@ -226,7 +226,10 @@ async fn place_command_places_the_same_blocks() -> TestResult {
             pumpkin_world::chunk::ChunkData::empty_sync(probe.0, probe.1),
         );
         let hash = chunk_hash(&world, Vector2::new(probe.0, probe.1), 0).unwrap_or(0);
-        world.level.loaded_chunks.remove(&Vector2::new(probe.0, probe.1));
+        world
+            .level
+            .loaded_chunks
+            .remove(&Vector2::new(probe.0, probe.1));
         hash
     };
 

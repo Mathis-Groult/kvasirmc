@@ -1,0 +1,138 @@
+team add red -> ok 1
+team add blue -> ok 1
+team join red GoldA GoldC -> err Incorrect argument for command
+team join blue GoldB -> ok 1
+team join red @e[type=minecraft:cow] -> ok 1
+scoreboard objectives add kills dummy -> ok 1
+scoreboard objectives add deaths dummy -> ok 1
+scoreboard players set GoldA kills 5 -> ok 5
+scoreboard players set GoldB kills 12 -> ok 12
+scoreboard players set GoldB deaths 3 -> ok 3
+scoreboard players set GoldC deaths -2 -> ok -2
+scoreboard players set @e[type=minecraft:cow] kills 7 -> ok 7
+tag GoldA add alpha -> ok 1
+tag GoldB add alpha -> ok 1
+tag GoldB add beta -> ok 1
+tag @e[type=minecraft:cow] add beta -> ok 1
+gamemode creative GoldB -> ok 1
+gamemode spectator GoldD -> ok 1
+gamemode adventure GoldC -> ok 1
+xp set GoldA 3 levels -> ok 1
+xp set GoldB 30 levels -> ok 1
+tp GoldA 0.5 64 0.5 0 0 -> ok 1
+tp GoldB 3.5 64 4.5 90 -30 -> ok 1
+tp GoldC 10.5 70 -5.5 -170 60 -> ok 1
+tp GoldD -20.5 64 30.5 179 -90 -> ok 1
+advancement grant GoldB only minecraft:story/root -> ok 1
+give GoldA minecraft:stone 3 -> ok 1
+data merge entity @e[type=minecraft:zombie,limit=1] {CustomName:"Bob"} -> ok 1
+rotations GoldA=0/0 GoldB=90/-30 GoldC=-170/60 GoldD=179/-90 zombie=45/10 cow=-90/20 skeleton=359/-10 dead=0/0 pig=540/0
+@e -> [GoldA,GoldB,GoldC,GoldD,zombie,cow,skeleton,pig]
+@e[gamemode=creative] -> [GoldB]
+@e[gamemode=!creative] -> [GoldA,GoldC,GoldD]
+@e[gamemode=spectator] -> [GoldD]
+@e[gamemode=survival] -> [GoldA]
+@e[level=3] -> [GoldA]
+@e[level=..10] -> [GoldA,GoldC,GoldD]
+@e[level=10..] -> [GoldB]
+@e[level=0] -> [GoldC,GoldD]
+@e[x_rotation=-45..-15] -> []
+@e[x_rotation=60] -> []
+@e[x_rotation=..0] -> [GoldA]
+@e[y_rotation=80..100] -> []
+@e[y_rotation=170..-170] -> error CommandSyntaxError { error_type: CommandErrorType { java_translation_key: "argument.range.swapped", bedrock_translation_key: "argument.range.swapped" }, message: TextComponent(TextComponentBase { content: Translate { translate: "argument.range.swapped", bedrock_translate: Some("argument.range.swapped"), with: [] }, style: Style { color: None, bold: None, italic: None, underlined: None, strikethrough: None, obfuscated: None, insertion: None, click_event: None, hover_event: None, font: None, shadow_color: None }, extra: [] }), context: Some(CommandSyntaxErrorContext { input: "@e[y_rotation=170..-170]", cursor: 14 }) }
+@e[y_rotation=-180..-160] -> []
+@e[y_rotation=..0] -> [GoldA,pig]
+@e[y_rotation=0..] -> [GoldA,pig]
+@e[y_rotation=350..10] -> error CommandSyntaxError { error_type: CommandErrorType { java_translation_key: "argument.range.swapped", bedrock_translation_key: "argument.range.swapped" }, message: TextComponent(TextComponentBase { content: Translate { translate: "argument.range.swapped", bedrock_translate: Some("argument.range.swapped"), with: [] }, style: Style { color: None, bold: None, italic: None, underlined: None, strikethrough: None, obfuscated: None, insertion: None, click_event: None, hover_event: None, font: None, shadow_color: None }, extra: [] }), context: Some(CommandSyntaxErrorContext { input: "@e[y_rotation=350..10]", cursor: 14 }) }
+@e[x_rotation=-30] -> []
+@e[x_rotation=-30..-30] -> []
+@e[x_rotation=-29.9..] -> [GoldA,skeleton]
+@e[x_rotation=..-30.1] -> [GoldA,GoldB,GoldC,GoldD,zombie,cow,pig]
+@e[x_rotation=20..60] -> [zombie]
+@e[x_rotation=-90..-89] -> [cow]
+@e[y_rotation=90] -> []
+@e[y_rotation=-90..90] -> [GoldA,GoldB,GoldC,GoldD,zombie,cow,skeleton,pig]
+@e[y_rotation=170..190] -> []
+@e[y_rotation=-200..-160] -> []
+@e[y_rotation=179..181] -> []
+@e[y_rotation=-170..-90] -> [GoldD]
+@e[y_rotation=-1..1] -> [GoldA,pig]
+@e[y_rotation=359..361] -> [GoldA,pig]
+@e[y_rotation=90..450] -> []
+@e[x_rotation=170..190] -> [GoldC,GoldD,pig]
+@e[x_rotation=-200..-160] -> [GoldC,GoldD,pig]
+@e[x_rotation=179..181] -> [GoldD,pig]
+@e[x_rotation=-170..-90] -> [GoldC,cow]
+@e[x_rotation=350..370] -> [GoldA,skeleton]
+@e[x_rotation=-1..1] -> [GoldA,skeleton]
+@e[x_rotation=45] -> [zombie]
+@e[x_rotation=90..450] -> [GoldB]
+@e[x_rotation=0..] -> [GoldA]
+@e[x_rotation=..-90] -> [GoldA,GoldB,GoldC,GoldD,zombie,cow,pig]
+@e[distance=..5] -> [GoldA,GoldB,GoldC,GoldD,zombie,cow,skeleton,pig] distance [GoldA,GoldB,zombie,dead] box []
+@e[distance=5..] -> [GoldA,GoldB,GoldC,GoldD,zombie,cow,skeleton,pig] distance [GoldB,GoldC,GoldD,cow,skeleton,dead,pig]
+@e[distance=4..6] -> [GoldA,GoldB,GoldC,GoldD,zombie,cow,skeleton,pig] distance [GoldB,cow,dead] box []
+@e[distance=0] -> [GoldA,GoldB,GoldC,GoldD,zombie,cow,skeleton,pig] distance [GoldA] box []
+@e[x=0,y=60,z=0,dx=5,dy=10,dz=5] -> [GoldA,GoldB,GoldC,GoldD,zombie,cow,skeleton,pig] box []
+@e[x=-30,y=0,z=-30,dx=60,dy=100,dz=60] -> [GoldA,GoldB,GoldC,GoldD,zombie,cow,skeleton,pig] box [GoldA,GoldB,zombie,skeleton,dead,pig]
+@e[dx=-3,dy=-3,dz=-3] -> [GoldA,GoldB,GoldC,GoldD,zombie,cow,skeleton,pig] box []
+@e[type=minecraft:zombie] -> [zombie]
+@e[type=!minecraft:zombie] -> [GoldA,GoldB,GoldC,GoldD,cow,skeleton,pig]
+@e[type=minecraft:player] -> [GoldA,GoldB,GoldC,GoldD]
+@e[type=!minecraft:player,type=!minecraft:cow] -> [zombie,skeleton,pig]
+@e[name=GoldB] -> [GoldB]
+@e[name=!GoldB] -> [GoldA,GoldC,GoldD,zombie,cow,skeleton,pig]
+@e[name=Bob] -> [zombie]
+@e[name=zombie] -> []
+@e[name=cow] -> [cow]
+@e[name=minecraft:cow] -> error CommandSyntaxError { error_type: CommandErrorType { java_translation_key: "argument.entity.options.unterminated", bedrock_translation_key: "argument.entity.options.unterminated" }, message: TextComponent(TextComponentBase { content: Translate { translate: "argument.entity.options.unterminated", bedrock_translate: Some("argument.entity.options.unterminated"), with: [] }, style: Style { color: None, bold: None, italic: None, underlined: None, strikethrough: None, obfuscated: None, insertion: None, click_event: None, hover_event: None, font: None, shadow_color: None }, extra: [] }), context: Some(CommandSyntaxErrorContext { input: "@e[name=minecraft:cow]", cursor: 17 }) }
+@e[tag=alpha] -> [GoldA,GoldB]
+@e[tag=!alpha] -> [GoldC,GoldD,zombie,cow,skeleton,pig]
+@e[tag=alpha,tag=beta] -> [GoldB]
+@e[tag=] -> []
+@e[tag=!] -> [GoldA,GoldB,GoldC,GoldD,zombie,cow,skeleton,pig]
+@e[team=red] -> []
+@e[team=!red] -> [GoldA,GoldB,GoldC,GoldD,zombie,cow,skeleton,pig]
+@e[team=blue] -> [GoldB]
+@e[team=green] -> []
+@e[team=!blue,team=!red] -> error CommandSyntaxError { error_type: CommandErrorType { java_translation_key: "argument.entity.options.inapplicable", bedrock_translation_key: "argument.entity.options.inapplicable" }, message: TextComponent(TextComponentBase { content: Translate { translate: "argument.entity.options.inapplicable", bedrock_translate: Some("argument.entity.options.inapplicable"), with: [TextComponentBase { content: Text { text: "team" }, style: Style { color: None, bold: None, italic: None, underlined: None, strikethrough: None, obfuscated: None, insertion: None, click_event: None, hover_event: None, font: None, shadow_color: None }, extra: [] }] }, style: Style { color: None, bold: None, italic: None, underlined: None, strikethrough: None, obfuscated: None, insertion: None, click_event: None, hover_event: None, font: None, shadow_color: None }, extra: [] }), context: Some(CommandSyntaxErrorContext { input: "@e[team=!blue,team=!red]", cursor: 19 }) }
+@e[scores={kills=5}] -> []
+@e[scores={kills=6..}] -> []
+@e[scores={kills=..5}] -> [GoldA,GoldB,GoldC,GoldD,zombie,cow,skeleton,pig]
+@e[scores={kills=1..,deaths=1..}] -> []
+@e[scores={deaths=..0}] -> [GoldA,GoldB,GoldC,GoldD,zombie,cow,skeleton,pig]
+@e[scores={missing=0}] -> [GoldA,GoldB,GoldC,GoldD,zombie,cow,skeleton,pig]
+@e[scores={missing=1}] -> []
+@e[advancements={minecraft:story/root=true}] -> error CommandSyntaxError { error_type: CommandErrorType { java_translation_key: "parsing.expected", bedrock_translation_key: "parsing.expected" }, message: TextComponent(TextComponentBase { content: Translate { translate: "parsing.expected", bedrock_translate: Some("parsing.expected"), with: [TextComponentBase { content: Text { text: "=" }, style: Style { color: None, bold: None, italic: None, underlined: None, strikethrough: None, obfuscated: None, insertion: None, click_event: None, hover_event: None, font: None, shadow_color: None }, extra: [] }] }, style: Style { color: None, bold: None, italic: None, underlined: None, strikethrough: None, obfuscated: None, insertion: None, click_event: None, hover_event: None, font: None, shadow_color: None }, extra: [] }), context: Some(CommandSyntaxErrorContext { input: "@e[advancements={minecraft:story/root=true}]", cursor: 26 }) }
+@e[advancements={minecraft:story/root=false}] -> error CommandSyntaxError { error_type: CommandErrorType { java_translation_key: "parsing.expected", bedrock_translation_key: "parsing.expected" }, message: TextComponent(TextComponentBase { content: Translate { translate: "parsing.expected", bedrock_translate: Some("parsing.expected"), with: [TextComponentBase { content: Text { text: "=" }, style: Style { color: None, bold: None, italic: None, underlined: None, strikethrough: None, obfuscated: None, insertion: None, click_event: None, hover_event: None, font: None, shadow_color: None }, extra: [] }] }, style: Style { color: None, bold: None, italic: None, underlined: None, strikethrough: None, obfuscated: None, insertion: None, click_event: None, hover_event: None, font: None, shadow_color: None }, extra: [] }), context: Some(CommandSyntaxErrorContext { input: "@e[advancements={minecraft:story/root=false}]", cursor: 26 }) }
+@e[advancements={story/root=true}] -> error CommandSyntaxError { error_type: CommandErrorType { java_translation_key: "parsing.expected", bedrock_translation_key: "parsing.expected" }, message: TextComponent(TextComponentBase { content: Translate { translate: "parsing.expected", bedrock_translate: Some("parsing.expected"), with: [TextComponentBase { content: Text { text: "=" }, style: Style { color: None, bold: None, italic: None, underlined: None, strikethrough: None, obfuscated: None, insertion: None, click_event: None, hover_event: None, font: None, shadow_color: None }, extra: [] }] }, style: Style { color: None, bold: None, italic: None, underlined: None, strikethrough: None, obfuscated: None, insertion: None, click_event: None, hover_event: None, font: None, shadow_color: None }, extra: [] }), context: Some(CommandSyntaxErrorContext { input: "@e[advancements={story/root=true}]", cursor: 22 }) }
+@e[advancements={minecraft:no/such=true}] -> error CommandSyntaxError { error_type: CommandErrorType { java_translation_key: "parsing.expected", bedrock_translation_key: "parsing.expected" }, message: TextComponent(TextComponentBase { content: Translate { translate: "parsing.expected", bedrock_translate: Some("parsing.expected"), with: [TextComponentBase { content: Text { text: "=" }, style: Style { color: None, bold: None, italic: None, underlined: None, strikethrough: None, obfuscated: None, insertion: None, click_event: None, hover_event: None, font: None, shadow_color: None }, extra: [] }] }, style: Style { color: None, bold: None, italic: None, underlined: None, strikethrough: None, obfuscated: None, insertion: None, click_event: None, hover_event: None, font: None, shadow_color: None }, extra: [] }), context: Some(CommandSyntaxErrorContext { input: "@e[advancements={minecraft:no/such=true}]", cursor: 26 }) }
+@e[advancements={minecraft:no/such=false}] -> error CommandSyntaxError { error_type: CommandErrorType { java_translation_key: "parsing.expected", bedrock_translation_key: "parsing.expected" }, message: TextComponent(TextComponentBase { content: Translate { translate: "parsing.expected", bedrock_translate: Some("parsing.expected"), with: [TextComponentBase { content: Text { text: "=" }, style: Style { color: None, bold: None, italic: None, underlined: None, strikethrough: None, obfuscated: None, insertion: None, click_event: None, hover_event: None, font: None, shadow_color: None }, extra: [] }] }, style: Style { color: None, bold: None, italic: None, underlined: None, strikethrough: None, obfuscated: None, insertion: None, click_event: None, hover_event: None, font: None, shadow_color: None }, extra: [] }), context: Some(CommandSyntaxErrorContext { input: "@e[advancements={minecraft:no/such=false}]", cursor: 26 }) }
+@e[nbt={Tags:["beta"]}] -> [GoldB,cow]
+@e[nbt=!{Tags:["beta"]}] -> [GoldA,GoldC,GoldD,zombie,skeleton,pig]
+@e[nbt={Tags:["alpha","beta"]}] -> [GoldB]
+@e[nbt={Inventory:[{id:"minecraft:stone"}]}] -> [GoldA]
+@e[nbt={Inventory:[{id:"minecraft:stone",count:2}]}] -> []
+@e[nbt={NoSuchKey:1b}] -> []
+@e[nbt={}] -> [GoldA,GoldB,GoldC,GoldD,zombie,cow,skeleton,pig]
+@e[nbt={OnGround:0b}] -> [GoldA,GoldB,GoldC,GoldD,zombie,cow,skeleton,pig]
+@e[predicate=minecraft:no_such_predicate] -> []
+@e[predicate=!minecraft:no_such_predicate] -> [GoldA,GoldB,GoldC,GoldD,zombie,cow,skeleton,pig]
+@e[type=minecraft:cow,tag=beta,team=red,scores={kills=7}] -> []
+@e[type=minecraft:cow,tag=beta,team=blue] -> []
+@a -> [GoldA,GoldB,GoldC,GoldD,zombie,cow,skeleton,dead,pig]
+@p -> [GoldA,GoldB,GoldC,GoldD,zombie,cow,skeleton,dead,pig]
+@s -> [GoldA,GoldB,GoldC,GoldD,zombie,cow,skeleton,dead,pig]
+advancements minecraft:story/root=true -> []
+advancements minecraft:story/root=false -> []
+advancements story/root=true -> [GoldB]
+advancements story/root=false -> [GoldA,GoldC,GoldD]
+advancements story/mine_stone=true -> []
+advancements story/mine_stone=false -> [GoldA,GoldB,GoldC,GoldD]
+advancements minecraft:story/mine_stone=true -> []
+advancements minecraft:story/mine_stone=false -> []
+advancements minecraft:no/such=true -> []
+advancements minecraft:no/such=false -> []
+advancements root=true,mine_stone=false -> []
+advancements {} -> [GoldA,GoldB,GoldC,GoldD]

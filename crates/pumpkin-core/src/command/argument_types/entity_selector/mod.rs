@@ -587,3 +587,6 @@ impl EntitySelectorPredicate {
         }
     }
 }
+
+#[cfg(test)]
+mod predicate_golden;

@@ -53,6 +53,19 @@ fn changed_dispatcher() -> CommandDispatcher {
     dispatcher
 }
 
+/// Appended after the mutation run: a `/kill` whose plain twin `kill` exists, and a
+/// subcommand literal that itself starts with `//`.
+fn slash_dispatcher() -> CommandDispatcher {
+    let mut dispatcher = default_dispatcher(&PermissionManager::new(), &CommandsConfig::default());
+    dispatcher.register(command("/kill", "test").executes(Nothing));
+    dispatcher.register(
+        command("//tool", "test")
+            .executes(Nothing)
+            .then(literal("//sub").executes(Nothing)),
+    );
+    dispatcher
+}
+
 #[tokio::test(flavor = "multi_thread")]
 async fn commands_packet_is_the_same() -> TestResult {
     let folder = tempfile::tempdir()?;
@@ -61,11 +74,13 @@ async fn commands_packet_is_the_same() -> TestResult {
     let mut online = script_golden::join(&world).await?;
     let player = online[2].player.clone();
     let changed = changed_dispatcher();
+    let slash = slash_dispatcher();
 
     let mut now = String::new();
     for (name, dispatcher) in [
         ("server", &**server.command_dispatcher.load()),
         ("changed", &changed),
+        ("slash", &slash),
     ] {
         for level in LEVELS {
             player.permission_lvl.store(level);

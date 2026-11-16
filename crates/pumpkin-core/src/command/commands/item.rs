@@ -1,9 +1,14 @@
 use pumpkin_data::data_component_impl::EquipmentSlot;
+use pumpkin_data::item::Item;
+use pumpkin_data::item_stack::ItemStack;
 use pumpkin_data::translation;
 use pumpkin_inventory::Inventory;
+use pumpkin_inventory::player::player_inventory::PlayerInventory;
 use pumpkin_inventory::screen_handler::InventoryPlayer;
 use pumpkin_protocol::codec::item_stack_seralizer::ItemStackSerializer;
 use pumpkin_protocol::java::client::play::CSetContainerSlot;
+use std::sync::Arc;
+
 use pumpkin_util::PermissionLvl;
 use pumpkin_util::permission::{Permission, PermissionDefault, PermissionRegistry};
 use pumpkin_util::text::TextComponent;
@@ -23,6 +28,9 @@ use crate::command::context::command_context::CommandContext;
 use crate::command::errors::error_types::CommandErrorType;
 use crate::command::node::dispatcher::CommandDispatcher;
 use crate::command::node::{CommandExecutor, CommandExecutorResult};
+use crate::entity::EntityBase;
+use crate::entity::living::LivingEntity;
+use crate::entity::player::Player;
 
 const DESCRIPTION: &str = "Modifies items in block or entity inventories.";
 const PERMISSION: &str = "minecraft:command.item";
@@ -109,7 +117,6 @@ struct EntityReplaceExecutor {
 }
 
 impl CommandExecutor for EntityReplaceExecutor {
-    #[expect(clippy::too_many_lines)]
     fn execute(&self, context: &CommandContext) -> CommandExecutorResult {
         let targets = EntityArgumentType::get_entities(context, "target")?;
         let mojang_slot = SlotArgumentType::get(context, "slots")?;
@@ -127,101 +134,9 @@ impl CommandExecutor for EntityReplaceExecutor {
 
         for target in &targets {
             if let Some(player) = target.get_player() {
-                if let Some(player_arc) = player.world().get_player_by_uuid(player.gameprofile.id) {
-                    if (200..=226).contains(&mojang_slot) {
-                        let ender_slot = mojang_slot - 200;
-                        if ender_slot < player.ender_chest_inventory.size() {
-                            player_arc
-                                .ender_chest_inventory
-                                .set_stack(ender_slot, item_stack.clone());
-                            modified_count += 1;
-                        }
-                    } else {
-                        let inventory = player.inventory();
-                        let mapped_slot = if mojang_slot == 98 {
-                            Some(inventory.get_selected_slot() as usize)
-                        } else if mojang_slot == 99 {
-                            Some(40)
-                        } else if mojang_slot == 100 {
-                            Some(36)
-                        } else if mojang_slot == 101 {
-                            Some(37)
-                        } else if mojang_slot == 102 {
-                            Some(38)
-                        } else if mojang_slot == 103 {
-                            Some(39)
-                        } else if mojang_slot <= 35 {
-                            Some(mojang_slot)
-                        } else {
-                            None
-                        };
-
-                        if let Some(slot) = mapped_slot
-                            && slot < inventory.size()
-                        {
-                            player_arc.inventory().set_stack(slot, item_stack.clone());
-
-                            let stack_serializer = ItemStackSerializer::from(item_stack.clone());
-                            let packet =
-                                CSetContainerSlot::new(0, 0, slot as i16, &stack_serializer);
-                            player_arc.enqueue_slot_packet(&packet, None, 0);
-
-                            let eq_slot = if slot == 36 {
-                                Some(EquipmentSlot::FEET)
-                            } else if slot == 37 {
-                                Some(EquipmentSlot::LEGS)
-                            } else if slot == 38 {
-                                Some(EquipmentSlot::CHEST)
-                            } else if slot == 39 {
-                                Some(EquipmentSlot::HEAD)
-                            } else if slot == 40 {
-                                Some(EquipmentSlot::OFF_HAND)
-                            } else if slot == inventory.get_selected_slot() as usize {
-                                Some(EquipmentSlot::MAIN_HAND)
-                            } else {
-                                None
-                            };
-
-                            if let Some(eq) = eq_slot {
-                                player
-                                    .living_entity
-                                    .send_equipment_changes(&[(eq, item_stack.clone())]);
-                            }
-
-                            modified_count += 1;
-                        }
-                    }
-                }
+                replace_player_slot(player, mojang_slot, &item_stack, &mut modified_count);
             } else if let Some(living) = target.get_living_entity() {
-                let mapped_eq = if mojang_slot == 98 {
-                    Some(EquipmentSlot::MAIN_HAND)
-                } else if mojang_slot == 99 {
-                    Some(EquipmentSlot::OFF_HAND)
-                } else if mojang_slot == 100 {
-                    Some(EquipmentSlot::FEET)
-                } else if mojang_slot == 101 {
-                    Some(EquipmentSlot::LEGS)
-                } else if mojang_slot == 102 {
-                    Some(EquipmentSlot::CHEST)
-                } else if mojang_slot == 103 {
-                    Some(EquipmentSlot::HEAD)
-                } else if mojang_slot == 105 {
-                    Some(EquipmentSlot::BODY)
-                } else if mojang_slot == 106 {
-                    Some(EquipmentSlot::SADDLE)
-                } else {
-                    None
-                };
-
-                if let Some(eq) = mapped_eq {
-                    living
-                        .entity_equipment
-                        .lock()
-                        .unwrap_or_else(std::sync::PoisonError::into_inner)
-                        .put(&eq, item_stack.clone());
-                    living.send_equipment_changes(&[(eq, item_stack.clone())]);
-                    modified_count += 1;
-                }
+                replace_living_slot(living, mojang_slot, &item_stack, &mut modified_count);
             }
         }
 
@@ -230,43 +145,179 @@ impl CommandExecutor for EntityReplaceExecutor {
                 .create_without_context(TextComponent::text(mojang_slot.to_string())));
         }
 
-        let item_name = item.registry_key;
-        let msg = if targets.len() == 1 {
-            TextComponent::translate_cross(
-                translation::java::COMMANDS_ITEM_ENTITY_SET_SUCCESS_SINGLE,
-                translation::java::COMMANDS_ITEM_ENTITY_SET_SUCCESS_SINGLE,
-                [
-                    targets[0].as_ref().get_display_name(),
-                    TextComponent::text("[")
-                        .add_child(item.translated_name())
-                        .add_child(TextComponent::text("]"))
-                        .hover_event(HoverEvent::ShowItem {
-                            id: item_name.to_string().into(),
-                            count: Some(count),
-                            components: None,
-                        }),
-                ],
-            )
-        } else {
-            TextComponent::translate_cross(
-                translation::java::COMMANDS_ITEM_ENTITY_SET_SUCCESS_MULTIPLE,
-                translation::java::COMMANDS_ITEM_ENTITY_SET_SUCCESS_MULTIPLE,
-                [
-                    TextComponent::text(modified_count.to_string()),
-                    TextComponent::text("[")
-                        .add_child(item.translated_name())
-                        .add_child(TextComponent::text("]"))
-                        .hover_event(HoverEvent::ShowItem {
-                            id: item_name.to_string().into(),
-                            count: Some(count),
-                            components: None,
-                        }),
-                ],
-            )
-        };
+        let msg = success_message(&targets, modified_count, item, count);
         context.source.send_feedback(msg, true);
 
         Ok(modified_count)
+    }
+}
+
+/// Puts `item_stack` into a player's slot (ender chest for 200-226) and tells the clients.
+fn replace_player_slot(
+    player: &Player,
+    mojang_slot: usize,
+    item_stack: &ItemStack,
+    modified_count: &mut i32,
+) {
+    if let Some(player_arc) = player.world().get_player_by_uuid(player.gameprofile.id) {
+        if (200..=226).contains(&mojang_slot) {
+            let ender_slot = mojang_slot - 200;
+            if ender_slot < player.ender_chest_inventory.size() {
+                player_arc
+                    .ender_chest_inventory
+                    .set_stack(ender_slot, item_stack.clone());
+                *modified_count += 1;
+            }
+        } else {
+            let inventory = player.inventory();
+            let mapped_slot = player_inventory_slot(mojang_slot, inventory);
+
+            if let Some(slot) = mapped_slot
+                && slot < inventory.size()
+            {
+                player_arc.inventory().set_stack(slot, item_stack.clone());
+
+                let stack_serializer = ItemStackSerializer::from(item_stack.clone());
+                let packet = CSetContainerSlot::new(0, 0, slot as i16, &stack_serializer);
+                player_arc.enqueue_slot_packet(&packet, None, 0);
+
+                let eq_slot = player_equipment_slot(slot, inventory);
+
+                if let Some(eq) = eq_slot {
+                    player
+                        .living_entity
+                        .send_equipment_changes(&[(eq, item_stack.clone())]);
+                }
+
+                *modified_count += 1;
+            }
+        }
+    }
+}
+
+/// The player inventory slot a command slot names: hands, armour, hotbar and main inventory.
+fn player_inventory_slot(mojang_slot: usize, inventory: &PlayerInventory) -> Option<usize> {
+    if mojang_slot == 98 {
+        Some(inventory.get_selected_slot() as usize)
+    } else if mojang_slot == 99 {
+        Some(40)
+    } else if mojang_slot == 100 {
+        Some(36)
+    } else if mojang_slot == 101 {
+        Some(37)
+    } else if mojang_slot == 102 {
+        Some(38)
+    } else if mojang_slot == 103 {
+        Some(39)
+    } else if mojang_slot <= 35 {
+        Some(mojang_slot)
+    } else {
+        None
+    }
+}
+
+/// The equipment slot a player inventory slot is worn in, if any.
+fn player_equipment_slot(slot: usize, inventory: &PlayerInventory) -> Option<EquipmentSlot> {
+    if slot == 36 {
+        Some(EquipmentSlot::FEET)
+    } else if slot == 37 {
+        Some(EquipmentSlot::LEGS)
+    } else if slot == 38 {
+        Some(EquipmentSlot::CHEST)
+    } else if slot == 39 {
+        Some(EquipmentSlot::HEAD)
+    } else if slot == 40 {
+        Some(EquipmentSlot::OFF_HAND)
+    } else if slot == inventory.get_selected_slot() as usize {
+        Some(EquipmentSlot::MAIN_HAND)
+    } else {
+        None
+    }
+}
+
+/// Puts `item_stack` into a mob's equipment slot and tells the clients.
+fn replace_living_slot(
+    living: &LivingEntity,
+    mojang_slot: usize,
+    item_stack: &ItemStack,
+    modified_count: &mut i32,
+) {
+    let mapped_eq = living_equipment_slot(mojang_slot);
+
+    if let Some(eq) = mapped_eq {
+        living
+            .entity_equipment
+            .lock()
+            .unwrap_or_else(std::sync::PoisonError::into_inner)
+            .put(&eq, item_stack.clone());
+        living.send_equipment_changes(&[(eq, item_stack.clone())]);
+        *modified_count += 1;
+    }
+}
+
+/// The equipment slot a command slot names on a mob.
+const fn living_equipment_slot(mojang_slot: usize) -> Option<EquipmentSlot> {
+    if mojang_slot == 98 {
+        Some(EquipmentSlot::MAIN_HAND)
+    } else if mojang_slot == 99 {
+        Some(EquipmentSlot::OFF_HAND)
+    } else if mojang_slot == 100 {
+        Some(EquipmentSlot::FEET)
+    } else if mojang_slot == 101 {
+        Some(EquipmentSlot::LEGS)
+    } else if mojang_slot == 102 {
+        Some(EquipmentSlot::CHEST)
+    } else if mojang_slot == 103 {
+        Some(EquipmentSlot::HEAD)
+    } else if mojang_slot == 105 {
+        Some(EquipmentSlot::BODY)
+    } else if mojang_slot == 106 {
+        Some(EquipmentSlot::SADDLE)
+    } else {
+        None
+    }
+}
+
+/// The feedback: the one target by name, or the number of targets changed.
+fn success_message(
+    targets: &[Arc<dyn EntityBase>],
+    modified_count: i32,
+    item: &Item,
+    count: i32,
+) -> TextComponent {
+    let item_name = item.registry_key;
+    if targets.len() == 1 {
+        TextComponent::translate_cross(
+            translation::java::COMMANDS_ITEM_ENTITY_SET_SUCCESS_SINGLE,
+            translation::java::COMMANDS_ITEM_ENTITY_SET_SUCCESS_SINGLE,
+            [
+                targets[0].as_ref().get_display_name(),
+                TextComponent::text("[")
+                    .add_child(item.translated_name())
+                    .add_child(TextComponent::text("]"))
+                    .hover_event(HoverEvent::ShowItem {
+                        id: item_name.to_string().into(),
+                        count: Some(count),
+                        components: None,
+                    }),
+            ],
+        )
+    } else {
+        TextComponent::translate_cross(
+            translation::java::COMMANDS_ITEM_ENTITY_SET_SUCCESS_MULTIPLE,
+            translation::java::COMMANDS_ITEM_ENTITY_SET_SUCCESS_MULTIPLE,
+            [
+                TextComponent::text(modified_count.to_string()),
+                TextComponent::text("[")
+                    .add_child(item.translated_name())
+                    .add_child(TextComponent::text("]"))
+                    .hover_event(HoverEvent::ShowItem {
+                        id: item_name.to_string().into(),
+                        count: Some(count),
+                        components: None,
+                    }),
+            ],
+        )
     }
 }
 

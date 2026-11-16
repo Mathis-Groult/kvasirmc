@@ -2,7 +2,7 @@ use pumpkin_data::packet::CURRENT_MC_VERSION;
 use pumpkin_util::text::click::ClickEvent;
 use pumpkin_util::text::hover::HoverEvent;
 use pumpkin_util::text::{TextComponent, color::NamedColor};
-use pumpkin_util::translation::get_translation_text;
+use pumpkin_util::translation::{Locale, get_translation_text};
 use serde::Deserialize;
 use std::borrow::Cow;
 use std::sync::{LazyLock, Mutex};
@@ -279,143 +279,154 @@ fn fetch_sponsors_cached() -> TextComponent {
     TextComponent::text("Unable to load sponsors").color_named(NamedColor::Red)
 }
 
-#[expect(clippy::too_many_lines)]
 impl CommandExecutor for Executor {
     fn execute(&self, context: &CommandContext) -> CommandExecutorResult {
         let locale = context.source.output.get_locale();
-        let profile = if cfg!(debug_assertions) {
-            "debug"
-        } else {
-            "release"
-        };
-        let version_string = format!("{CARGO_PKG_VERSION} (Commit: {GIT_HASH}/{profile})");
         let mut msg = TextComponent::text("");
-
-        let version_translation = get_translation_text(
-            "pumpkin:commands.pumpkin.version",
-            locale,
-            vec![TextComponent::text(version_string).0],
-        );
-        msg = msg.add_child(
-            TextComponent::text(version_translation.clone())
-                .hover_event(HoverEvent::show_text(TextComponent::text(format!(
-                    "Commit: {GIT_HASH_FULL}\n\nClick to copy version\nRun /pumpkin contributors to see all contributors"
-                ))))
-                .click_event(ClickEvent::CopyToClipboard {
-                    value: Cow::from(version_translation.replace('\n', "")),
-                })
-                .color_named(NamedColor::Green),
-        );
-
-        let desc_translation =
-            get_translation_text("pumpkin:commands.pumpkin.description", locale, vec![]);
-        let desc_hover_translation =
-            get_translation_text("pumpkin:commands.pumpkin.description.hover", locale, vec![]);
-        msg = msg.add_child(
-            TextComponent::text(desc_translation.clone())
-                .click_event(ClickEvent::CopyToClipboard {
-                    value: Cow::from(desc_translation.replace('\n', "")),
-                })
-                .hover_event(HoverEvent::show_text(TextComponent::text(
-                    desc_hover_translation,
-                )))
-                .color_named(NamedColor::White),
-        );
-
-        let mc_version_translation = get_translation_text(
-            "pumpkin:commands.pumpkin.minecraft_version",
-            locale,
-            vec![
-                TextComponent::text(CURRENT_MC_VERSION.to_string()).0,
-                TextComponent::text(CURRENT_MC_VERSION.protocol_version().to_string()).0,
-            ],
-        );
-        let mc_version_hover_translation = get_translation_text(
-            "pumpkin:commands.pumpkin.minecraft_version.hover",
-            locale,
-            vec![],
-        );
-        msg = msg.add_child(
-            TextComponent::text(mc_version_translation.clone())
-                .click_event(ClickEvent::CopyToClipboard {
-                    value: Cow::from(mc_version_translation.replace('\n', "")),
-                })
-                .hover_event(HoverEvent::show_text(TextComponent::text(
-                    mc_version_hover_translation,
-                )))
-                .color_named(NamedColor::Gold),
-        );
-
-        let github_translation =
-            get_translation_text("pumpkin:commands.pumpkin.github", locale, vec![]);
-        let github_hover_translation =
-            get_translation_text("pumpkin:commands.pumpkin.github.hover", locale, vec![]);
-        msg = msg.add_child(
-            TextComponent::text(github_translation)
-                .click_event(ClickEvent::OpenUrl {
-                    url: Cow::from("https://github.com/Pumpkin-MC/Pumpkin"),
-                })
-                .hover_event(HoverEvent::show_text(TextComponent::text(
-                    github_hover_translation,
-                )))
-                .color_named(NamedColor::Blue)
-                .bold()
-                .underlined(),
-        );
-
+        msg = msg.add_child(version_text(locale));
+        msg = msg.add_child(description_text(locale));
+        msg = msg.add_child(minecraft_version_text(locale));
+        msg = msg.add_child(github_link(locale));
         msg = msg.add_child(TextComponent::text("  "));
-
-        let website_translation =
-            get_translation_text("pumpkin:commands.pumpkin.website", locale, vec![]);
-        let website_hover_translation =
-            get_translation_text("pumpkin:commands.pumpkin.website.hover", locale, vec![]);
-        msg = msg.add_child(
-            TextComponent::text(website_translation)
-                .click_event(ClickEvent::OpenUrl {
-                    url: Cow::from("https://pumpkinmc.org/"),
-                })
-                .hover_event(HoverEvent::show_text(TextComponent::text(
-                    website_hover_translation,
-                )))
-                .color_named(NamedColor::Blue)
-                .bold()
-                .underlined(),
-        );
-
+        msg = msg.add_child(website_link(locale));
         msg = msg.add_child(TextComponent::text("  "));
-
-        msg = msg.add_child(
-            TextComponent::text("[Sponsor]")
-                .click_event(ClickEvent::OpenUrl {
-                    url: Cow::from(SPONSOR_URL),
-                })
-                .hover_event(HoverEvent::show_text(TextComponent::text(format!(
-                    "Click to open {SPONSOR_URL}\nRun /pumpkin contributors to see active sponsors"
-                ))))
-                .rainbow()
-                .bold()
-                .underlined(),
-        );
-
+        msg = msg.add_child(sponsor_link());
         msg = msg.add_child(TextComponent::text("  "));
-
-        msg = msg.add_child(
-            TextComponent::text("[Contributors]")
-                .click_event(ClickEvent::RunCommand {
-                    command: Cow::from("/pumpkin contributors"),
-                })
-                .hover_event(HoverEvent::show_text(TextComponent::text(
-                    "Click to run /pumpkin contributors",
-                )))
-                .color_named(NamedColor::Yellow)
-                .bold()
-                .underlined(),
-        );
+        msg = msg.add_child(contributors_link());
 
         context.source.send_message(msg);
 
         Ok(1)
     }
+}
+
+/// The Pumpkin version and commit, click to copy.
+fn version_text(locale: Locale) -> TextComponent {
+    let profile = if cfg!(debug_assertions) {
+        "debug"
+    } else {
+        "release"
+    };
+    let version_string = format!("{CARGO_PKG_VERSION} (Commit: {GIT_HASH}/{profile})");
+
+    let version_translation = get_translation_text(
+        "pumpkin:commands.pumpkin.version",
+        locale,
+        vec![TextComponent::text(version_string).0],
+    );
+    TextComponent::text(version_translation.clone())
+        .hover_event(HoverEvent::show_text(TextComponent::text(format!(
+            "Commit: {GIT_HASH_FULL}\n\nClick to copy version\nRun /pumpkin contributors to see all contributors"
+        ))))
+        .click_event(ClickEvent::CopyToClipboard {
+            value: Cow::from(version_translation.replace('\n', "")),
+        })
+        .color_named(NamedColor::Green)
+}
+
+/// What Pumpkin is, click to copy.
+fn description_text(locale: Locale) -> TextComponent {
+    let desc_translation =
+        get_translation_text("pumpkin:commands.pumpkin.description", locale, vec![]);
+    let desc_hover_translation =
+        get_translation_text("pumpkin:commands.pumpkin.description.hover", locale, vec![]);
+    TextComponent::text(desc_translation.clone())
+        .click_event(ClickEvent::CopyToClipboard {
+            value: Cow::from(desc_translation.replace('\n', "")),
+        })
+        .hover_event(HoverEvent::show_text(TextComponent::text(
+            desc_hover_translation,
+        )))
+        .color_named(NamedColor::White)
+}
+
+/// The Minecraft version and protocol, click to copy.
+fn minecraft_version_text(locale: Locale) -> TextComponent {
+    let mc_version_translation = get_translation_text(
+        "pumpkin:commands.pumpkin.minecraft_version",
+        locale,
+        vec![
+            TextComponent::text(CURRENT_MC_VERSION.to_string()).0,
+            TextComponent::text(CURRENT_MC_VERSION.protocol_version().to_string()).0,
+        ],
+    );
+    let mc_version_hover_translation = get_translation_text(
+        "pumpkin:commands.pumpkin.minecraft_version.hover",
+        locale,
+        vec![],
+    );
+    TextComponent::text(mc_version_translation.clone())
+        .click_event(ClickEvent::CopyToClipboard {
+            value: Cow::from(mc_version_translation.replace('\n', "")),
+        })
+        .hover_event(HoverEvent::show_text(TextComponent::text(
+            mc_version_hover_translation,
+        )))
+        .color_named(NamedColor::Gold)
+}
+
+/// The GitHub link.
+fn github_link(locale: Locale) -> TextComponent {
+    let github_translation =
+        get_translation_text("pumpkin:commands.pumpkin.github", locale, vec![]);
+    let github_hover_translation =
+        get_translation_text("pumpkin:commands.pumpkin.github.hover", locale, vec![]);
+    TextComponent::text(github_translation)
+        .click_event(ClickEvent::OpenUrl {
+            url: Cow::from("https://github.com/Pumpkin-MC/Pumpkin"),
+        })
+        .hover_event(HoverEvent::show_text(TextComponent::text(
+            github_hover_translation,
+        )))
+        .color_named(NamedColor::Blue)
+        .bold()
+        .underlined()
+}
+
+/// The website link.
+fn website_link(locale: Locale) -> TextComponent {
+    let website_translation =
+        get_translation_text("pumpkin:commands.pumpkin.website", locale, vec![]);
+    let website_hover_translation =
+        get_translation_text("pumpkin:commands.pumpkin.website.hover", locale, vec![]);
+    TextComponent::text(website_translation)
+        .click_event(ClickEvent::OpenUrl {
+            url: Cow::from("https://pumpkinmc.org/"),
+        })
+        .hover_event(HoverEvent::show_text(TextComponent::text(
+            website_hover_translation,
+        )))
+        .color_named(NamedColor::Blue)
+        .bold()
+        .underlined()
+}
+
+/// The sponsor link.
+fn sponsor_link() -> TextComponent {
+    TextComponent::text("[Sponsor]")
+        .click_event(ClickEvent::OpenUrl {
+            url: Cow::from(SPONSOR_URL),
+        })
+        .hover_event(HoverEvent::show_text(TextComponent::text(format!(
+            "Click to open {SPONSOR_URL}\nRun /pumpkin contributors to see active sponsors"
+        ))))
+        .rainbow()
+        .bold()
+        .underlined()
+}
+
+/// Runs `/pumpkin contributors` on click.
+fn contributors_link() -> TextComponent {
+    TextComponent::text("[Contributors]")
+        .click_event(ClickEvent::RunCommand {
+            command: Cow::from("/pumpkin contributors"),
+        })
+        .hover_event(HoverEvent::show_text(TextComponent::text(
+            "Click to run /pumpkin contributors",
+        )))
+        .color_named(NamedColor::Yellow)
+        .bold()
+        .underlined()
 }
 
 fn format_contributors_message(

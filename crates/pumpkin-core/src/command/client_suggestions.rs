@@ -7,6 +7,7 @@ use pumpkin_protocol::{
 };
 use std::sync::Arc;
 
+use crate::command::CommandSource;
 use crate::command::node::{
     attached::{AttachedNode, NodeId},
     dispatcher::CommandDispatcher,
@@ -19,7 +20,6 @@ use pumpkin_protocol::bedrock::client::available_commands::{
 };
 use pumpkin_protocol::java::client::play::SuggestionProviders;
 
-#[allow(clippy::too_many_lines)]
 pub fn send_c_commands_packet(
     player: &Arc<Player>,
     server: &Arc<Server>,
@@ -28,43 +28,7 @@ pub fn send_c_commands_packet(
     let mut proto_nodes: Vec<ProtoNode> = Vec::with_capacity(dispatcher.tree.len());
     let source = &super::CommandSender::Player(player.clone()).into_source(server);
     for node in &dispatcher.tree {
-        let children: Box<[VarInt]> = match node {
-            AttachedNode::Root(_) => {
-                // Drop disabled commands from the root's child list so they
-                // disappear from the client's command graph (and tab-completion)
-                // entirely.
-                node.children_ref()
-                    .values()
-                    .copied()
-                    .filter(|id| {
-                        let (disabled, requirement, name) = match &dispatcher.tree[*id] {
-                            AttachedNode::Literal(child) => (
-                                dispatcher.is_disabled(&child.meta.literal_lowercase),
-                                child.owned.requirements.evaluate(source),
-                                child.meta.literal.as_ref(),
-                            ),
-                            AttachedNode::Command(child) => (
-                                dispatcher.is_disabled(&child.meta.literal_lowercase),
-                                child.owned.requirements.evaluate(source),
-                                child.meta.literal.as_ref(),
-                            ),
-                            _ => (false, true, ""),
-                        };
-                        !disabled
-                            && requirement
-                            && (!name.starts_with("//")
-                                || dispatcher.tree.get(&name[1..]).is_none())
-                    })
-                    .map(|id| VarInt((id.0.get() - 1) as i32))
-                    .collect()
-            }
-            _ => node
-                .children_ref()
-                .values()
-                .copied()
-                .map(|id| VarInt((id.0.get() - 1) as i32))
-                .collect(),
-        };
+        let children = client_children(node, dispatcher, source);
 
         let redirect_target = node
             .redirect()
@@ -73,77 +37,139 @@ pub fn send_c_commands_packet(
 
         let satisfies_requirements = node.requirements().evaluate(source);
 
-        match node {
-            AttachedNode::Root(_) => {
-                proto_nodes.push(ProtoNode {
-                    children,
-                    node_type: ProtoNodeType::Root,
-                });
-            }
-            AttachedNode::Literal(literal_attached_node) => {
-                let name = if literal_attached_node.meta.literal.starts_with("//") {
-                    &literal_attached_node.meta.literal[1..]
-                } else {
-                    &literal_attached_node.meta.literal
-                };
-                let node = ProtoNode {
-                    children,
-                    node_type: ProtoNodeType::Literal {
-                        name,
-                        is_executable: literal_attached_node.owned.command.is_some(),
-                        redirect_target,
-                        restricted: !satisfies_requirements,
-                    },
-                };
-                proto_nodes.push(node);
-            }
-            AttachedNode::Command(command_attached_node) => {
-                let name = if command_attached_node.meta.literal.starts_with("//") {
-                    &command_attached_node.meta.literal[1..]
-                } else {
-                    &command_attached_node.meta.literal
-                };
-                let node = ProtoNode {
-                    children,
-                    node_type: ProtoNodeType::Literal {
-                        name,
-                        is_executable: command_attached_node.owned.command.is_some(),
-                        redirect_target,
-                        restricted: !satisfies_requirements,
-                    },
-                };
-                proto_nodes.push(node);
-            }
-            AttachedNode::Argument(argument_attached_node) => {
-                let arg_type = &argument_attached_node.meta.argument_type;
-
-                let node = ProtoNode {
-                    children,
-                    node_type: ProtoNodeType::Argument {
-                        name: &argument_attached_node.meta.name,
-                        is_executable: argument_attached_node.owned.command.is_some(),
-                        parser: arg_type.client_side_parser(),
-                        override_suggestion_type: if argument_attached_node
-                            .meta
-                            .suggestion_provider
-                            .is_some()
-                        {
-                            Some(SuggestionProviders::AskServer)
-                        } else {
-                            arg_type.override_suggestion_providers()
-                        },
-                        redirect_target,
-                        restricted: !satisfies_requirements,
-                    },
-                };
-                proto_nodes.push(node);
-            }
-        }
+        proto_nodes.push(proto_node(
+            node,
+            children,
+            redirect_target,
+            satisfies_requirements,
+        ));
     }
 
     let root_node_index = ROOT_NODE_ID.0.get() - 1;
     let packet = CCommands::new(proto_nodes.into(), VarInt(root_node_index as i32));
     player.try_send_client_packet(&packet);
+}
+
+/// A node's children as the client sees them: the root lists only commands the source may use,
+/// that are not disabled, and not a `//` alias whose `/` twin exists.
+fn client_children(
+    node: &AttachedNode,
+    dispatcher: &CommandDispatcher,
+    source: &CommandSource,
+) -> Box<[VarInt]> {
+    match node {
+        AttachedNode::Root(_) => {
+            // Drop disabled commands from the root's child list so they
+            // disappear from the client's command graph (and tab-completion)
+            // entirely.
+            node.children_ref()
+                .values()
+                .copied()
+                .filter(|id| is_listed_root_child(dispatcher, source, *id))
+                .map(|id| VarInt((id.0.get() - 1) as i32))
+                .collect()
+        }
+        _ => node
+            .children_ref()
+            .values()
+            .copied()
+            .map(|id| VarInt((id.0.get() - 1) as i32))
+            .collect(),
+    }
+}
+
+/// Whether the root lists `id` for `source`.
+fn is_listed_root_child(
+    dispatcher: &CommandDispatcher,
+    source: &CommandSource,
+    id: NodeId,
+) -> bool {
+    let (disabled, requirement, name) = match &dispatcher.tree[id] {
+        AttachedNode::Literal(child) => (
+            dispatcher.is_disabled(&child.meta.literal_lowercase),
+            child.owned.requirements.evaluate(source),
+            child.meta.literal.as_ref(),
+        ),
+        AttachedNode::Command(child) => (
+            dispatcher.is_disabled(&child.meta.literal_lowercase),
+            child.owned.requirements.evaluate(source),
+            child.meta.literal.as_ref(),
+        ),
+        _ => (false, true, ""),
+    };
+    !disabled
+        && requirement
+        && (!name.starts_with("//") || dispatcher.tree.get(&name[1..]).is_none())
+}
+
+/// The client-side form of `node`.
+fn proto_node(
+    node: &AttachedNode,
+    children: Box<[VarInt]>,
+    redirect_target: Option<i32>,
+    satisfies_requirements: bool,
+) -> ProtoNode<'_> {
+    match node {
+        AttachedNode::Root(_) => ProtoNode {
+            children,
+            node_type: ProtoNodeType::Root,
+        },
+        AttachedNode::Literal(literal_attached_node) => {
+            let name = if literal_attached_node.meta.literal.starts_with("//") {
+                &literal_attached_node.meta.literal[1..]
+            } else {
+                &literal_attached_node.meta.literal
+            };
+            ProtoNode {
+                children,
+                node_type: ProtoNodeType::Literal {
+                    name,
+                    is_executable: literal_attached_node.owned.command.is_some(),
+                    redirect_target,
+                    restricted: !satisfies_requirements,
+                },
+            }
+        }
+        AttachedNode::Command(command_attached_node) => {
+            let name = if command_attached_node.meta.literal.starts_with("//") {
+                &command_attached_node.meta.literal[1..]
+            } else {
+                &command_attached_node.meta.literal
+            };
+            ProtoNode {
+                children,
+                node_type: ProtoNodeType::Literal {
+                    name,
+                    is_executable: command_attached_node.owned.command.is_some(),
+                    redirect_target,
+                    restricted: !satisfies_requirements,
+                },
+            }
+        }
+        AttachedNode::Argument(argument_attached_node) => {
+            let arg_type = &argument_attached_node.meta.argument_type;
+
+            ProtoNode {
+                children,
+                node_type: ProtoNodeType::Argument {
+                    name: &argument_attached_node.meta.name,
+                    is_executable: argument_attached_node.owned.command.is_some(),
+                    parser: arg_type.client_side_parser(),
+                    override_suggestion_type: if argument_attached_node
+                        .meta
+                        .suggestion_provider
+                        .is_some()
+                    {
+                        Some(SuggestionProviders::AskServer)
+                    } else {
+                        arg_type.override_suggestion_providers()
+                    },
+                    redirect_target,
+                    restricted: !satisfies_requirements,
+                },
+            }
+        }
+    }
 }
 
 struct BuilderContext<'a> {

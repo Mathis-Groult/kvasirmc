@@ -122,6 +122,10 @@ const OPTIONS: &[&str] = &[
     "bogus=1",
 ];
 
+/// Appended after the first mutation run: ranges with exactly one end at zero and the other
+/// open, which tell `n < 0` from `n <= 0`.
+const ZERO_ENDS: &[&str] = &["distance=0..", "distance=..0", "level=0..", "level=..0"];
+
 const SELECTORS: &[&str] = &["@e", "@a", "@p", "@s", "@r", "@n"];
 
 fn predicate_text(predicate: &EntitySelectorPredicate) -> String {
@@ -205,6 +209,9 @@ fn entity_selector_options_parse_the_same() -> TestResult {
         ] {
             writeln!(now, "{}", record(&format!("{selector}[{option}]")))?;
         }
+    }
+    for option in ZERO_ENDS {
+        writeln!(now, "{}", record(&format!("@e[{option}]")))?;
     }
     let path = std::path::Path::new(env!("CARGO_MANIFEST_DIR"))
         .join("tests/golden/entity_selector_options.txt");

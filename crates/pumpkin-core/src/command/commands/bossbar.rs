@@ -662,3 +662,6 @@ pub fn register(dispatcher: &mut CommandDispatcher, registry: &PermissionRegistr
             .then(set_node),
     );
 }
+
+#[cfg(test)]
+mod golden;

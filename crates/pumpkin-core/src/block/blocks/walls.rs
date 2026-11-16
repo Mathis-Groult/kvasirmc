@@ -229,3 +229,6 @@ impl From<WallShape> for WestWall {
         }
     }
 }
+
+#[cfg(test)]
+mod golden;

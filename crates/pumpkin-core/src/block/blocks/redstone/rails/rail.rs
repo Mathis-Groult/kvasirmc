@@ -218,3 +218,6 @@ impl BlockBehaviour for RailBlock {
         can_place_rail_at(args.block_accessor, args.position)
     }
 }
+
+#[cfg(test)]
+mod golden;

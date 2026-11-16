@@ -20,14 +20,16 @@ fn compound(entries: &[(&str, NbtTag)]) -> NbtTag {
     NbtTag::Compound(compound)
 }
 
-fn tags() -> Vec<(&'static str, NbtTag)> {
-    let wide_compound: Vec<(String, NbtTag)> = (0..130)
-        .map(|i| (format!("k{i:03}"), NbtTag::Int(i)))
-        .collect();
+/// A compound of `size` int entries `k000`, `k001`, ...
+fn wide_of(size: i32) -> NbtCompound {
     let mut wide = NbtCompound::new();
-    for (key, value) in &wide_compound {
-        wide.put(key, value.clone());
+    for i in 0..size {
+        wide.put(&format!("k{i:03}"), NbtTag::Int(i));
     }
+    wide
+}
+
+fn tags() -> Vec<(&'static str, NbtTag)> {
     vec![
         ("end", NbtTag::End),
         ("byte", NbtTag::Byte(-5)),
@@ -72,7 +74,7 @@ fn tags() -> Vec<(&'static str, NbtTag)> {
                 ("Mid", compound(&[("inner", NbtTag::Long(2))])),
             ]),
         ),
-        ("compound 130", NbtTag::Compound(wide)),
+        ("compound 130", NbtTag::Compound(wide_of(130))),
         ("ints empty", NbtTag::IntArray(vec![])),
         ("ints", NbtTag::IntArray(vec![1, -2, 3])),
         ("ints 130", NbtTag::IntArray(vec![5; 130])),
@@ -80,6 +82,10 @@ fn tags() -> Vec<(&'static str, NbtTag)> {
         ("longs", NbtTag::LongArray(vec![1, -2])),
         ("longs 128", NbtTag::LongArray(vec![6; 128])),
         ("longs 130", NbtTag::LongArray(vec![6; 130])),
+        // Appended after the mutation run: exactly at and one past the 128 fold.
+        ("list 129", NbtTag::List(vec![NbtTag::Short(7); 129])),
+        ("ints 128", NbtTag::IntArray(vec![8; 128])),
+        ("compound 128", NbtTag::Compound(wide_of(128))),
     ]
 }
 

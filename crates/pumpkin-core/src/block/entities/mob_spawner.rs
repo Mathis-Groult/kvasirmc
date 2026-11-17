@@ -13,6 +13,9 @@ use crate::{
     world::World,
 };
 
+#[cfg(test)]
+mod golden;
+
 pub struct MobSpawnerBlockEntity {
     pub position: BlockPos,
     pub delay: AtomicI32,

@@ -1,0 +1,74 @@
+dry zombie: call 1 fluids [] v (0.000000000, 0.000000000, 0.000000000) water 0.000000000 lava 0.000000000 touching false false fall 0.000
+dry zombie: call 2 fluids [] v (0.000000000, 0.000000000, 0.000000000) water 0.000000000 lava 0.000000000 touching false false fall 0.000
+zombie in still water: call 1 fluids ["flowing_water"] v (0.000000000, 0.000000000, 0.000000000) water 0.888888896 lava 0.000000000 touching true false fall 0.000 sound 77f00605000000c4000002000000004400000000
+zombie in still water: call 2 fluids ["flowing_water"] v (0.000000000, 0.000000000, 0.000000000) water 0.888888896 lava 0.000000000 touching true false fall 0.000
+zombie in one water cell: call 1 fluids ["flowing_water"] v (0.000000000, 0.000000000, 0.000000000) water 0.888888896 lava 0.000000000 touching true false fall 0.000 sound 77f0060500000144000002000000004400000000
+zombie in one water cell: call 2 fluids ["flowing_water"] v (0.000000000, 0.000000000, 0.000000000) water 0.888888896 lava 0.000000000 touching true false fall 0.000
+zombie in water flowing east: call 1 fluids ["flowing_water"] v (0.004500000, 0.000000000, 0.000000000) water 0.666666687 lava 0.000000000 touching true false fall 0.000 sound 77f00605000001c4000002000000004439d30598
+zombie in water flowing east: call 2 fluids ["flowing_water"] v (0.018500000, 0.000000000, 0.000000000) water 0.666666687 lava 0.000000000 touching true false fall 0.000
+zombie moving in water flowing east: call 1 fluids ["flowing_water"] v (0.214000000, 0.000000000, 0.100000000) water 0.666666687 lava 0.000000000 touching true false fall 0.000 sound 77f006050000024400000200000000443cad136b
+zombie moving in water flowing east: call 2 fluids ["flowing_water"] v (0.228000000, 0.000000000, 0.100000000) water 0.666666687 lava 0.000000000 touching true false fall 0.000
+zombie across two flows: call 1 fluids ["flowing_water"] v (0.004500000, 0.000000000, 0.000000000) water 0.666666687 lava 0.000000000 touching true false fall 0.000 sound 77f00605000002c0000002000000004439d30598
+zombie across two flows: call 2 fluids ["flowing_water"] v (0.018500000, 0.000000000, 0.000000000) water 0.666666687 lava 0.000000000 touching true false fall 0.000
+zombie in shallow water: call 1 fluids ["flowing_water"] v (0.000000000, 0.000000000, 0.000000000) water 0.111111112 lava 0.000000000 touching true false fall 0.000 sound 77f0060500000344000002000000004400000000
+zombie in shallow water: call 2 fluids ["flowing_water"] v (0.000000000, 0.000000000, 0.000000000) water 0.111111112 lava 0.000000000 touching true false fall 0.000
+zombie in falling water: call 1 fluids ["flowing_water"] v (0.000000000, 0.000000000, 0.000000000) water 1.888888896 lava 0.000000000 touching true false fall 0.000 sound 77f00605000003c4000002000000004400000000
+zombie in falling water: call 2 fluids ["flowing_water"] v (0.000000000, 0.000000000, 0.000000000) water 1.888888896 lava 0.000000000 touching true false fall 0.000
+zombie just above still water: call 1 fluids [] v (0.000000000, 0.000000000, 0.000000000) water 0.000000000 lava 0.000000000 touching false false fall 0.000
+zombie just above still water: call 2 fluids [] v (0.000000000, 0.000000000, 0.000000000) water 0.000000000 lava 0.000000000 touching false false fall 0.000
+zombie standing on still water: call 1 fluids [] v (0.000000000, 0.000000000, 0.000000000) water 0.000000000 lava 0.000000000 touching false false fall 0.000
+zombie standing on still water: call 2 fluids [] v (0.000000000, 0.000000000, 0.000000000) water 0.000000000 lava 0.000000000 touching false false fall 0.000
+zombie with water at its head: call 1 fluids ["flowing_water"] v (0.000000000, 0.000000000, 0.000000000) water 1.888888896 lava 0.000000000 touching true false fall 0.000 sound 77f0060500000544000002000000004400000000
+zombie with water at its head: call 2 fluids ["flowing_water"] v (0.000000000, 0.000000000, 0.000000000) water 1.888888896 lava 0.000000000 touching true false fall 0.000
+zombie under two layers of water: call 1 fluids ["flowing_water"] v (0.000000000, 0.000000000, 0.000000000) water 1.888888896 lava 0.000000000 touching true false fall 0.000 sound 77f00605000005c4000002000000004400000000
+zombie under two layers of water: call 2 fluids ["flowing_water"] v (0.000000000, 0.000000000, 0.000000000) water 1.888888896 lava 0.000000000 touching true false fall 0.000
+zombie in waterlogged slabs: call 1 fluids ["flowing_water"] v (0.000000000, 0.000000000, 0.000000000) water 0.888888896 lava 0.000000000 touching true false fall 0.000 sound 77f0060500000644000002000000004400000000
+zombie in waterlogged slabs: call 2 fluids ["flowing_water"] v (0.000000000, 0.000000000, 0.000000000) water 0.888888896 lava 0.000000000 touching true false fall 0.000
+zombie in lava: call 1 fluids ["flowing_lava"] v (0.000000000, 0.000000000, 0.000000000) water 0.000000000 lava 0.888888896 touching false true fall 3.000
+zombie in lava: call 2 fluids ["flowing_lava"] v (0.000000000, 0.000000000, 0.000000000) water 0.000000000 lava 0.888888896 touching false true fall 1.500
+zombie in lava, no fall: call 1 fluids ["flowing_lava"] v (0.000000000, 0.000000000, 0.000000000) water 0.000000000 lava 0.888888896 touching false true fall 0.000
+zombie in lava, no fall: call 2 fluids ["flowing_lava"] v (0.000000000, 0.000000000, 0.000000000) water 0.000000000 lava 0.888888896 touching false true fall 0.000
+zombie in lava flowing east: call 1 fluids ["flowing_lava"] v (0.004500000, 0.000000000, 0.000000000) water 0.000000000 lava 0.444444448 touching false true fall 0.000
+zombie in lava flowing east: call 2 fluids ["flowing_lava"] v (0.006833333, 0.000000000, 0.000000000) water 0.000000000 lava 0.444444448 touching false true fall 0.000
+zombie between water and lava: call 1 fluids ["flowing_water", "flowing_lava"] v (0.000000000, 0.000000000, 0.000000000) water 0.888888896 lava 0.888888896 touching true true fall 0.000 sound 77f00605000008c0000002000000004400000000
+zombie between water and lava: call 2 fluids ["flowing_water", "flowing_lava"] v (0.000000000, 0.000000000, 0.000000000) water 0.888888896 lava 0.888888896 touching true true fall 0.000
+zombie already wet: call 1 fluids ["flowing_water"] v (0.000000000, 0.000000000, 0.000000000) water 0.888888896 lava 0.000000000 touching true false fall 0.000
+zombie already wet: call 2 fluids ["flowing_water"] v (0.000000000, 0.000000000, 0.000000000) water 0.888888896 lava 0.000000000 touching true false fall 0.000
+zombie on its first tick: call 1 fluids ["flowing_water"] v (0.000000000, 0.000000000, 0.000000000) water 0.888888896 lava 0.000000000 touching true false fall 0.000
+zombie on its first tick: call 2 fluids ["flowing_water"] v (0.000000000, 0.000000000, 0.000000000) water 0.888888896 lava 0.000000000 touching true false fall 0.000
+zombie diving fast into water: call 1 fluids ["flowing_water"] v (0.000000000, -1.200000000, 0.000000000) water 0.888888896 lava 0.000000000 touching true false fall 0.000 sound 77f0060500000a4400000200000000443e75c290
+zombie diving fast into water: call 2 fluids ["flowing_water"] v (0.000000000, -1.200000000, 0.000000000) water 0.888888896 lava 0.000000000 touching true false fall 0.000
+zombie in stone: call 1 fluids [] v (0.000000000, 0.000000000, 0.000000000) water 0.000000000 lava 0.000000000 touching false false fall 0.000
+zombie in stone: call 2 fluids [] v (0.000000000, 0.000000000, 0.000000000) water 0.000000000 lava 0.000000000 touching false false fall 0.000
+zombie in shallow water flowing east: call 1 fluids ["flowing_water"] v (0.004500000, 0.000000000, 0.000000000) water 0.111111112 lava 0.000000000 touching true false fall 0.000 sound 77f0060500000b44000002000000004439d30598
+zombie in shallow water flowing east: call 2 fluids ["flowing_water"] v (0.018500000, 0.000000000, 0.000000000) water 0.111111112 lava 0.000000000 touching true false fall 0.000
+zombie in two layers flowing east: call 1 fluids ["flowing_water"] v (0.004500000, 0.000000000, 0.000000000) water 1.666666687 lava 0.000000000 touching true false fall 0.000 sound 77f0060500000bc4000002000000004439d30598
+zombie in two layers flowing east: call 2 fluids ["flowing_water"] v (0.018500000, 0.000000000, 0.000000000) water 1.666666687 lava 0.000000000 touching true false fall 0.000
+zombie drifting in water flowing east: call 1 fluids ["flowing_water"] v (0.007400000, 0.000000000, 0.002900000) water 0.666666687 lava 0.000000000 touching true false fall 0.000 sound 77f0060500000c4400000200000000443a3a5ace
+zombie drifting in water flowing east: call 2 fluids ["flowing_water"] v (0.021400000, 0.000000000, 0.002900000) water 0.666666687 lava 0.000000000 touching true false fall 0.000
+zombie drifting east past the threshold: call 1 fluids ["flowing_water"] v (0.017100000, 0.000000000, 0.000000000) water 0.666666687 lava 0.000000000 touching true false fall 0.000 sound 77f0060500000cc400000200000000443ac87883
+zombie drifting east past the threshold: call 2 fluids ["flowing_water"] v (0.031100000, 0.000000000, 0.000000000) water 0.666666687 lava 0.000000000 touching true false fall 0.000
+zombie rising slowly in water flowing east: call 1 fluids ["flowing_water"] v (0.004500000, 0.004000000, 0.000000000) water 0.666666687 lava 0.000000000 touching true false fall 0.000 sound 77f0060500000d4400000200000000443a6ac2fa
+zombie rising slowly in water flowing east: call 2 fluids ["flowing_water"] v (0.018500000, 0.004000000, 0.000000000) water 0.666666687 lava 0.000000000 touching true false fall 0.000
+zombie rising in water flowing east: call 1 fluids ["flowing_water"] v (0.014000000, 0.005000000, 0.000000000) water 0.666666687 lava 0.000000000 touching true false fall 0.000 sound 77f0060500000dc400000200000000443ad20aea
+zombie rising in water flowing east: call 2 fluids ["flowing_water"] v (0.028000000, 0.005000000, 0.000000000) water 0.666666687 lava 0.000000000 touching true false fall 0.000
+player across two flows: call 1 fluids ["flowing_water"] v (0.004500000, 0.000000000, 0.000000000) water 0.666666687 lava 0.000000000 touching true false fall 0.000 sound 77ac0a0700000e40000002000000004439d30598
+player across two flows: call 2 fluids ["flowing_water"] v (0.011500000, 0.000000000, 0.000000000) water 0.666666687 lava 0.000000000 touching true false fall 0.000
+item across two flows: call 1 fluids ["flowing_water"] v (0.004500000, 0.000000000, 0.000000000) water 0.666666687 lava 0.000000000 touching true false sound 77c4050800000ec0000002000000004439d30598
+item across two flows: call 2 fluids ["flowing_water"] v (0.018500000, 0.000000000, 0.000000000) water 0.666666687 lava 0.000000000 touching true false
+item in water flowing east: call 1 fluids ["flowing_water"] v (0.004500000, 0.000000000, 0.000000000) water 0.666666687 lava 0.000000000 touching true false sound 77c4050800000f44000002000000004439d30598
+item in water flowing east: call 2 fluids ["flowing_water"] v (0.018500000, 0.000000000, 0.000000000) water 0.666666687 lava 0.000000000 touching true false
+item in lava: call 1 fluids ["flowing_lava"] v (0.000000000, 0.000000000, 0.000000000) water 0.000000000 lava 0.888888896 touching false true
+item in lava: call 2 fluids ["flowing_lava"] v (0.000000000, 0.000000000, 0.000000000) water 0.000000000 lava 0.888888896 touching false true
+interaction in water flowing east: call 1 fluids ["flowing_water"] v (0.000000000, 0.000000000, 0.000000000) water 0.666666687 lava 0.000000000 touching true false sound 77c4050600001044000002000000004400000000
+interaction in water flowing east: call 2 fluids ["flowing_water"] v (0.000000000, 0.000000000, 0.000000000) water 0.666666687 lava 0.000000000 touching true false
+interaction between water and lava: call 1 fluids ["flowing_lava"] v (0.000000000, 0.000000000, 0.000000000) water 0.000000000 lava 0.888888896 touching false true
+interaction between water and lava: call 2 fluids ["flowing_lava"] v (0.000000000, 0.000000000, 0.000000000) water 0.000000000 lava 0.888888896 touching false true
+player in water flowing east: call 1 fluids ["flowing_water"] v (0.004500000, 0.000000000, 0.000000000) water 0.666666687 lava 0.000000000 touching true false fall 0.000 sound 77ac0a0700001144000002000000004439d30598
+player in water flowing east: call 2 fluids ["flowing_water"] v (0.018500000, 0.000000000, 0.000000000) water 0.666666687 lava 0.000000000 touching true false fall 0.000
+player in lava flowing east: call 1 fluids ["flowing_lava"] v (0.004500000, 0.000000000, 0.000000000) water 0.000000000 lava 0.444444448 touching false true fall 0.000
+player in lava flowing east: call 2 fluids ["flowing_lava"] v (0.006833333, 0.000000000, 0.000000000) water 0.000000000 lava 0.444444448 touching false true fall 0.000
+player in still water, slow: call 1 fluids ["flowing_water"] v (0.001000000, 0.000000000, 0.001000000) water 0.888888896 lava 0.000000000 touching true false fall 0.000 sound 77ac0a070000124400000200000000443904a2b3
+player in still water, slow: call 2 fluids ["flowing_water"] v (0.001000000, 0.000000000, 0.001000000) water 0.888888896 lava 0.000000000 touching true false fall 0.000
+nether zombie in lava flowing east: call 1 fluids ["flowing_lava"] v (0.004500000, 0.000000000, 0.000000000) water 0.000000000 lava 0.444444448 touching false true fall 0.000
+nether zombie in lava flowing east: call 2 fluids ["flowing_lava"] v (0.011500000, 0.000000000, 0.000000000) water 0.000000000 lava 0.444444448 touching false true fall 0.000

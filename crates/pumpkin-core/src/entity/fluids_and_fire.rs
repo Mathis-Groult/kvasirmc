@@ -14,6 +14,9 @@ use pumpkin_util::math::{position::BlockPos, vector3::Vector3};
 use std::collections::BTreeMap;
 use std::sync::atomic::Ordering::{self, Relaxed};
 
+#[cfg(test)]
+mod golden;
+
 impl Entity {
     pub fn set_air_supply(&self, mut air: i32) {
         if air == self.air_supply.load(Relaxed) {

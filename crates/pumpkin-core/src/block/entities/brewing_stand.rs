@@ -707,3 +707,6 @@ impl PropertyDelegate for BrewingStandBlockEntity {
         2
     }
 }
+
+#[cfg(test)]
+mod golden;

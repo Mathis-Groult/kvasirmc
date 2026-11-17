@@ -7,6 +7,7 @@ mod leashes;
 mod movement_physics;
 mod portals_teleport;
 mod position_facing;
+mod push;
 mod riding;
 mod saved_data;
 mod step_effects;
@@ -907,8 +908,6 @@ pub trait EntityBase: Send + Sync + std::any::Any {
 
     #[allow(clippy::too_many_lines)]
     fn push_entities(&self, dyn_self: &dyn EntityBase) -> bool {
-        let mut picked_up = false;
-        let mut pushed = false;
         let self_entity = self.get_entity();
         let entity_bb = self_entity.bounding_box.load();
 
@@ -919,108 +918,26 @@ pub trait EntityBase: Send + Sync + std::any::Any {
         let world = self_entity.world.load();
 
         let is_rideable_minecart = self_entity.entity_type.id == EntityType::MINECART.id;
-        let is_abstract_minecart = is_rideable_minecart
-            || self_entity.entity_type.id == EntityType::CHEST_MINECART.id
-            || self_entity.entity_type.id == EntityType::COMMAND_BLOCK_MINECART.id
-            || self_entity.entity_type.id == EntityType::FURNACE_MINECART.id
-            || self_entity.entity_type.id == EntityType::HOPPER_MINECART.id
-            || self_entity.entity_type.id == EntityType::SPAWNER_MINECART.id
-            || self_entity.entity_type.id == EntityType::TNT_MINECART.id;
 
-        let is_minecart_fn = |id| -> bool {
-            id == EntityType::MINECART.id
-                || id == EntityType::CHEST_MINECART.id
-                || id == EntityType::COMMAND_BLOCK_MINECART.id
-                || id == EntityType::FURNACE_MINECART.id
-                || id == EntityType::HOPPER_MINECART.id
-                || id == EntityType::SPAWNER_MINECART.id
-                || id == EntityType::TNT_MINECART.id
-        };
-
-        if is_abstract_minecart {
+        if push::is_minecart_type(self_entity.entity_type.id) {
             let is_vehicle = self.is_vehicle();
 
-            if is_rideable_minecart && !is_vehicle {
-                let pickup_bb = entity_bb.expand(0.2, 0.0, 0.2);
-                let other_entities = world.get_entities_at_box(&pickup_bb);
+            let picked_up = is_rideable_minecart
+                && !is_vehicle
+                && push::minecart_pick_up(self_entity, &world, &entity_bb);
 
-                for other in other_entities {
-                    if other.get_entity().entity_id != self_entity.entity_id {
-                        let other_type = other.get_entity().entity_type.id;
-                        let is_iron_golem = other_type == EntityType::IRON_GOLEM.id;
-                        let is_other_minecart = is_minecart_fn(other_type);
+            let push = push::MinecartPush {
+                is_rideable_minecart,
+                is_vehicle,
+            };
+            let pushed = push::minecart_push(self, dyn_self, &world, &entity_bb, push);
 
-                        if !is_iron_golem
-                            && !is_other_minecart
-                            && !other.is_passenger()
-                            && other.is_pushable()
-                            && other.get_entity().riding_cooldown.load(Relaxed) == 0
-                            && let Some(self_arc) = world.get_entity_by_id(self_entity.entity_id)
-                        {
-                            self_entity.add_passenger(self_arc, other.clone());
-                            picked_up = true;
-                            break;
-                        }
-                    }
-                }
-            }
-
-            let push_bb = entity_bb.expand(1.0e-7, 1.0e-7, 1.0e-7);
-
-            let other_entities = world.get_entities_at_box(&push_bb);
-            for other in other_entities {
-                if other.get_entity().entity_id != self_entity.entity_id {
-                    let other_type = other.get_entity().entity_type.id;
-                    let is_other_minecart = is_minecart_fn(other_type);
-                    let is_iron_golem = other_type == EntityType::IRON_GOLEM.id;
-
-                    if is_rideable_minecart {
-                        if (is_iron_golem
-                            || is_other_minecart
-                            || is_vehicle
-                            || !other.get_entity().has_vehicle())
-                            && other.is_pushable()
-                        {
-                            dyn_self.push(other.as_ref());
-                            pushed = true;
-                        }
-                    } else if !self.has_passenger(other.as_ref())
-                        && other.is_pushable()
-                        && is_other_minecart
-                    {
-                        dyn_self.push(other.as_ref());
-                        pushed = true;
-                    }
-                }
-            }
-
-            let players = world.get_players_at_box(&push_bb);
-            for player in players {
-                if player.get_entity().entity_id != self_entity.entity_id && is_rideable_minecart {
-                    dyn_self.push(player.as_ref());
-                    pushed = true;
-                    // Non-rideable minecarts (hoppers, chests) do not push players in vanilla.
-                }
-            }
+            picked_up && !pushed
         } else {
-            let other_entities = world.get_entities_at_box(&entity_bb);
-            for other in other_entities {
-                if other.get_entity().entity_id != self_entity.entity_id {
-                    dyn_self.push(other.as_ref());
-                    pushed = true;
-                }
-            }
+            push::push_overlapping(dyn_self, self_entity, &world, &entity_bb);
 
-            let players = world.get_players_at_box(&entity_bb);
-            for player in players {
-                if player.get_entity().entity_id != self_entity.entity_id {
-                    dyn_self.push(player.as_ref());
-                    pushed = true;
-                }
-            }
+            false
         }
-
-        picked_up && !pushed
     }
 
     fn on_hit(&self, _hit: crate::entity::projectile::ProjectileHit) {}

@@ -495,79 +495,10 @@ impl World {
             }
         }
 
-        let difference = to.sub(&from);
-
-        let step = difference.sign();
-
-        let delta = Vector3::new(
-            if step.x == 0 {
-                f64::MAX
-            } else {
-                (f64::from(step.x)) / difference.x
-            },
-            if step.y == 0 {
-                f64::MAX
-            } else {
-                (f64::from(step.y)) / difference.y
-            },
-            if step.z == 0 {
-                f64::MAX
-            } else {
-                (f64::from(step.z)) / difference.z
-            },
-        );
-
-        let mut next = Vector3::new(
-            delta.x
-                * (if step.x > 0 {
-                    1.0 - (from.x - from.x.floor())
-                } else {
-                    from.x - from.x.floor()
-                }),
-            delta.y
-                * (if step.y > 0 {
-                    1.0 - (from.y - from.y.floor())
-                } else {
-                    from.y - from.y.floor()
-                }),
-            delta.z
-                * (if step.z > 0 {
-                    1.0 - (from.z - from.z.floor())
-                } else {
-                    from.z - from.z.floor()
-                }),
-        );
+        let (step, delta, mut next) = ray_steps(from, to);
 
         while next.x <= 1.0 || next.y <= 1.0 || next.z <= 1.0 {
-            let block_direction = match (next.x, next.y, next.z) {
-                (x, y, z) if x < y && x < z => {
-                    block.0.x += step.x;
-                    next.x += delta.x;
-                    if step.x > 0 {
-                        BlockDirection::West
-                    } else {
-                        BlockDirection::East
-                    }
-                }
-                (_, y, z) if y < z => {
-                    block.0.y += step.y;
-                    next.y += delta.y;
-                    if step.y > 0 {
-                        BlockDirection::Down
-                    } else {
-                        BlockDirection::Up
-                    }
-                }
-                _ => {
-                    block.0.z += step.z;
-                    next.z += delta.z;
-                    if step.z > 0 {
-                        BlockDirection::North
-                    } else {
-                        BlockDirection::South
-                    }
-                }
-            };
+            let block_direction = step_to_next_block(&mut block, &mut next, step, delta);
 
             if hit_check(&block, self) {
                 let (collision, direction) = self.ray_outline_check(&block, from, to);
@@ -581,5 +512,93 @@ impl World {
         }
 
         None
+    }
+}
+
+/// The voxel walk of a ray from `from` to `to`: the step sign per axis, the fraction of the ray
+/// one block takes per axis (`f64::MAX` on an axis it does not move along), and the fraction at
+/// which it first crosses a block border per axis.
+fn ray_steps(from: Vector3<f64>, to: Vector3<f64>) -> (Vector3<i32>, Vector3<f64>, Vector3<f64>) {
+    let difference = to.sub(&from);
+
+    let step = difference.sign();
+
+    let delta = Vector3::new(
+        if step.x == 0 {
+            f64::MAX
+        } else {
+            (f64::from(step.x)) / difference.x
+        },
+        if step.y == 0 {
+            f64::MAX
+        } else {
+            (f64::from(step.y)) / difference.y
+        },
+        if step.z == 0 {
+            f64::MAX
+        } else {
+            (f64::from(step.z)) / difference.z
+        },
+    );
+
+    let next = Vector3::new(
+        delta.x
+            * (if step.x > 0 {
+                1.0 - (from.x - from.x.floor())
+            } else {
+                from.x - from.x.floor()
+            }),
+        delta.y
+            * (if step.y > 0 {
+                1.0 - (from.y - from.y.floor())
+            } else {
+                from.y - from.y.floor()
+            }),
+        delta.z
+            * (if step.z > 0 {
+                1.0 - (from.z - from.z.floor())
+            } else {
+                from.z - from.z.floor()
+            }),
+    );
+    (step, delta, next)
+}
+
+/// Moves `block` one block along the axis whose border the ray crosses first, and returns the
+/// face it enters through.
+fn step_to_next_block(
+    block: &mut BlockPos,
+    next: &mut Vector3<f64>,
+    step: Vector3<i32>,
+    delta: Vector3<f64>,
+) -> BlockDirection {
+    match (next.x, next.y, next.z) {
+        (x, y, z) if x < y && x < z => {
+            block.0.x += step.x;
+            next.x += delta.x;
+            if step.x > 0 {
+                BlockDirection::West
+            } else {
+                BlockDirection::East
+            }
+        }
+        (_, y, z) if y < z => {
+            block.0.y += step.y;
+            next.y += delta.y;
+            if step.y > 0 {
+                BlockDirection::Down
+            } else {
+                BlockDirection::Up
+            }
+        }
+        _ => {
+            block.0.z += step.z;
+            next.z += delta.z;
+            if step.z > 0 {
+                BlockDirection::North
+            } else {
+                BlockDirection::South
+            }
+        }
     }
 }

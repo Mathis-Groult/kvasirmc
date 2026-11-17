@@ -45,7 +45,6 @@ impl Entity {
             );
     }
 
-    #[expect(clippy::float_cmp)]
     pub(super) fn adjust_movement_for_collisions(
         &self,
         movement: Vector3<f64>,
@@ -75,47 +74,87 @@ impl Entity {
 
         // Y-Axis adjustment
         if movement.get_axis(Axis::Y) != 0.0 {
-            let mut max_time = 1.0;
-            let mut positions = block_positions.into_iter();
-            if let Some((mut collisions_len, mut position)) = positions.next() {
-                let mut supporting_block_pos = None;
-
-                for (i, inert_box) in collisions.iter().enumerate() {
-                    if i == collisions_len {
-                        let Some((next_len, next_pos)) = positions.next() else {
-                            break;
-                        };
-                        collisions_len = next_len;
-                        position = next_pos;
-                    }
-
-                    if let Some(collision_time) = bounding_box.calculate_collision_time(
-                        inert_box,
-                        adjusted_movement,
-                        Axis::Y,
-                        max_time,
-                    ) {
-                        max_time = collision_time;
-
-                        // If the entity is moving downwards and collides, set the supporting block position
-                        if movement.get_axis(Axis::Y) < 0.0 {
-                            supporting_block_pos = Some(position);
-                        }
-                    }
-                }
-
-                if max_time != 1.0 {
-                    self.vertical_collision.store(true, Ordering::SeqCst);
-                    let changed_component = adjusted_movement.get_axis(Axis::Y) * max_time;
-                    adjusted_movement.set_axis(Axis::Y, changed_component);
-                }
-
-                self.on_ground
-                    .store(supporting_block_pos.is_some(), Ordering::SeqCst);
-                self.supporting_block_pos.store(supporting_block_pos);
-            }
+            self.collide_vertically(
+                &bounding_box,
+                &collisions,
+                block_positions,
+                &mut adjusted_movement,
+            );
         }
 
+        let horizontal_collision = Self::collide_horizontally(
+            &bounding_box,
+            &collisions,
+            movement,
+            &mut adjusted_movement,
+        );
+
+        self.horizontal_collision
+            .store(horizontal_collision, Ordering::SeqCst);
+
+        adjusted_movement
+    }
+
+    /// Cuts the vertical part of `adjusted_movement` at the first box it hits, and records the
+    /// vertical collision, the ground and the block stood on (the last box hit while falling).
+    /// `block_positions` pairs each block with the index just past its boxes in `collisions`.
+    fn collide_vertically(
+        &self,
+        bounding_box: &BoundingBox,
+        collisions: &[BoundingBox],
+        block_positions: Vec<(usize, BlockPos)>,
+        adjusted_movement: &mut Vector3<f64>,
+    ) {
+        let movement_y = adjusted_movement.get_axis(Axis::Y);
+        let mut max_time = 1.0;
+        let mut positions = block_positions.into_iter();
+        if let Some((mut collisions_len, mut position)) = positions.next() {
+            let mut supporting_block_pos = None;
+
+            for (i, inert_box) in collisions.iter().enumerate() {
+                if i == collisions_len {
+                    let Some((next_len, next_pos)) = positions.next() else {
+                        break;
+                    };
+                    collisions_len = next_len;
+                    position = next_pos;
+                }
+
+                if let Some(collision_time) = bounding_box.calculate_collision_time(
+                    inert_box,
+                    *adjusted_movement,
+                    Axis::Y,
+                    max_time,
+                ) {
+                    max_time = collision_time;
+
+                    // If the entity is moving downwards and collides, set the supporting block position
+                    if movement_y < 0.0 {
+                        supporting_block_pos = Some(position);
+                    }
+                }
+            }
+
+            if stopped_early(max_time) {
+                self.vertical_collision.store(true, Ordering::SeqCst);
+                let changed_component = adjusted_movement.get_axis(Axis::Y) * max_time;
+                adjusted_movement.set_axis(Axis::Y, changed_component);
+            }
+
+            self.on_ground
+                .store(supporting_block_pos.is_some(), Ordering::SeqCst);
+            self.supporting_block_pos.store(supporting_block_pos);
+        }
+    }
+
+    /// Cuts each horizontal part of `adjusted_movement` (x, then z) at the first box it hits;
+    /// returns whether any was cut.
+    fn collide_horizontally(
+        bounding_box: &BoundingBox,
+        collisions: &[BoundingBox],
+        movement: Vector3<f64>,
+        adjusted_movement: &mut Vector3<f64>,
+    ) -> bool {
         let mut horizontal_collision = false;
 
         for axis in Axis::horizontal() {
@@ -125,10 +164,10 @@ impl Entity {
 
             let mut max_time = 1.0;
 
-            for inert_box in &collisions {
+            for inert_box in collisions {
                 if let Some(collision_time) = bounding_box.calculate_collision_time(
                     inert_box,
-                    adjusted_movement,
+                    *adjusted_movement,
                     axis,
                     max_time,
                 ) {
@@ -136,17 +175,14 @@ impl Entity {
                 }
             }
 
-            if max_time != 1.0 {
+            if stopped_early(max_time) {
                 let changed_component = adjusted_movement.get_axis(axis) * max_time;
                 adjusted_movement.set_axis(axis, changed_component);
                 horizontal_collision = true;
             }
         }
 
-        self.horizontal_collision
-            .store(horizontal_collision, Ordering::SeqCst);
-
-        adjusted_movement
+        horizontal_collision
     }
 
     /// Applies knockback to the entity, following vanilla Minecraft's mechanics.
@@ -778,4 +814,10 @@ impl Entity {
         }
         self.movement_multiplier.store(multiplier);
     }
+}
+
+/// Whether a sweep along one axis stopped before its full length (a collision time below 1).
+#[expect(clippy::float_cmp)]
+const fn stopped_early(max_time: f64) -> bool {
+    max_time != 1.0
 }

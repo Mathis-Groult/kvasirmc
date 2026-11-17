@@ -1,13 +1,13 @@
 awkward from water: start brew 0 fuel 0 slots [potionx1:water potionx1:water potionx1:water nether_wartx1 blaze_powderx1] ingredient - bits None dirty true comparator true state BlockStateId(11193)
 awkward from water: tick 1 brew 400 fuel 19 slots [potionx1:water potionx1:water potionx1:water nether_wartx1 -] ingredient nether_wart bits Some([true, true, true]) dirty true comparator true state BlockStateId(11186)
 awkward from water: tick 2 brew 399 fuel 19 slots [potionx1:water potionx1:water potionx1:water nether_wartx1 -] ingredient nether_wart bits Some([true, true, true]) dirty true comparator false state BlockStateId(11186)
-awkward from water: tick 401 brew 0 fuel 19 slots [potionx1:awkward potionx1:awkward potionx1:awkward - -] ingredient - bits Some([true, true, true]) dirty true comparator true state BlockStateId(11186)
+awkward from water: tick 401 brew 0 fuel 19 slots [potionx1:awkward potionx1:awkward potionx1:awkward - -] ingredient - bits Some([true, true, true]) dirty true comparator true state BlockStateId(11186) sound 77d401040000004400000204000000443f8000003f800000
 awkward from water: tick 402 brew 0 fuel 19 slots [potionx1:awkward potionx1:awkward potionx1:awkward - -] ingredient - bits Some([true, true, true]) dirty false comparator false state BlockStateId(11186)
 awkward from water: end brew 0
 two warts, second not brewable: start brew 0 fuel 0 slots [potionx1:water potionx1:water potionx1:water nether_wartx2 blaze_powderx1] ingredient - bits None dirty true comparator true state BlockStateId(11193)
 two warts, second not brewable: tick 1 brew 400 fuel 19 slots [potionx1:water potionx1:water potionx1:water nether_wartx2 -] ingredient nether_wart bits Some([true, true, true]) dirty true comparator true state BlockStateId(11186)
 two warts, second not brewable: tick 2 brew 399 fuel 19 slots [potionx1:water potionx1:water potionx1:water nether_wartx2 -] ingredient nether_wart bits Some([true, true, true]) dirty true comparator false state BlockStateId(11186)
-two warts, second not brewable: tick 401 brew 0 fuel 19 slots [potionx1:awkward potionx1:awkward potionx1:awkward nether_wartx1 -] ingredient nether_wart bits Some([true, true, true]) dirty true comparator true state BlockStateId(11186)
+two warts, second not brewable: tick 401 brew 0 fuel 19 slots [potionx1:awkward potionx1:awkward potionx1:awkward nether_wartx1 -] ingredient nether_wart bits Some([true, true, true]) dirty true comparator true state BlockStateId(11186) sound 77d40104000000c400000204000000443f8000003f800000
 two warts, second not brewable: tick 402 brew 0 fuel 19 slots [potionx1:awkward potionx1:awkward potionx1:awkward nether_wartx1 -] ingredient nether_wart bits Some([true, true, true]) dirty false comparator false state BlockStateId(11186)
 two warts, second not brewable: end brew 0
 no fuel: start brew 0 fuel 0 slots [potionx1:water potionx1:water potionx1:water nether_wartx1 -] ingredient - bits None dirty true comparator true state BlockStateId(11193)
@@ -16,7 +16,7 @@ no fuel: tick 2 brew 0 fuel 0 slots [potionx1:water potionx1:water potionx1:wate
 no fuel: end brew 0
 stored fuel only: start brew 0 fuel 1 slots [potionx1:water - - nether_wartx1 -] ingredient - bits None dirty true comparator true state BlockStateId(11193)
 stored fuel only: tick 1 brew 400 fuel 0 slots [potionx1:water - - nether_wartx1 -] ingredient nether_wart bits Some([true, false, false]) dirty true comparator false state BlockStateId(11189)
-stored fuel only: tick 401 brew 0 fuel 0 slots [potionx1:awkward - - - -] ingredient - bits Some([true, false, false]) dirty true comparator true state BlockStateId(11189)
+stored fuel only: tick 401 brew 0 fuel 0 slots [potionx1:awkward - - - -] ingredient - bits Some([true, false, false]) dirty true comparator true state BlockStateId(11189) sound 77d40104000001c400000204000000443f8000003f800000
 stored fuel only: tick 402 brew 0 fuel 0 slots [potionx1:awkward - - - -] ingredient - bits Some([true, false, false]) dirty false comparator false state BlockStateId(11189)
 stored fuel only: end brew 0
 fuel slot holds a stick: start brew 0 fuel 0 slots [potionx1:water - - nether_wartx1 stickx1] ingredient - bits None dirty true comparator true state BlockStateId(11193)
@@ -31,7 +31,7 @@ stored fuel and a fuel item: start brew 0 fuel 1 slots [potionx1:water - - nethe
 stored fuel and a fuel item: tick 1 brew 400 fuel 0 slots [potionx1:water - - nether_wartx1 blaze_powderx1] ingredient nether_wart bits Some([true, false, false]) dirty true comparator false state BlockStateId(11189)
 stored fuel and a fuel item: tick 2 brew 399 fuel 20 slots [potionx1:water - - nether_wartx1 -] ingredient nether_wart bits Some([true, false, false]) dirty true comparator true state BlockStateId(11189)
 stored fuel and a fuel item: tick 3 brew 398 fuel 20 slots [potionx1:water - - nether_wartx1 -] ingredient nether_wart bits Some([true, false, false]) dirty true comparator false state BlockStateId(11189)
-stored fuel and a fuel item: tick 401 brew 0 fuel 20 slots [potionx1:awkward - - - -] ingredient - bits Some([true, false, false]) dirty true comparator true state BlockStateId(11189)
+stored fuel and a fuel item: tick 401 brew 0 fuel 20 slots [potionx1:awkward - - - -] ingredient - bits Some([true, false, false]) dirty true comparator true state BlockStateId(11189) sound 77d401040000034400000204000000443f8000003f800000
 stored fuel and a fuel item: tick 402 brew 0 fuel 20 slots [potionx1:awkward - - - -] ingredient - bits Some([true, false, false]) dirty false comparator false state BlockStateId(11189)
 stored fuel and a fuel item: end brew 0
 ingredient removed mid-brew: start brew 0 fuel 0 slots [potionx1:water potionx1:water - nether_wartx1 blaze_powderx1] ingredient - bits None dirty true comparator true state BlockStateId(11193)
@@ -63,11 +63,11 @@ one potion removed mid-brew: tick 1 brew 400 fuel 19 slots [potionx1:water potio
 one potion removed mid-brew: tick 2 brew 399 fuel 19 slots [potionx1:water potionx1:water - nether_wartx1 -] ingredient nether_wart bits Some([true, true, false]) dirty true comparator false state BlockStateId(11187)
 one potion removed mid-brew: tick 100 brew 301 fuel 19 slots [- potionx1:water - nether_wartx1 -] ingredient nether_wart bits Some([false, true, false]) dirty true comparator true state BlockStateId(11191)
 one potion removed mid-brew: tick 101 brew 300 fuel 19 slots [- potionx1:water - nether_wartx1 -] ingredient nether_wart bits Some([false, true, false]) dirty true comparator false state BlockStateId(11191)
-one potion removed mid-brew: tick 401 brew 0 fuel 19 slots [- potionx1:awkward - - -] ingredient - bits Some([false, true, false]) dirty true comparator true state BlockStateId(11191)
+one potion removed mid-brew: tick 401 brew 0 fuel 19 slots [- potionx1:awkward - - -] ingredient - bits Some([false, true, false]) dirty true comparator true state BlockStateId(11191) sound 77d40104000005c400000204000000443f8000003f800000
 one potion removed mid-brew: tick 402 brew 0 fuel 19 slots [- potionx1:awkward - - -] ingredient - bits Some([false, true, false]) dirty false comparator false state BlockStateId(11191)
 one potion removed mid-brew: end brew 0
 brew time 1, brewable, nothing remembered: start brew 1 fuel 0 slots [potionx1:water - potionx1:water nether_wartx1 -] ingredient - bits None dirty true comparator true state BlockStateId(11193)
-brew time 1, brewable, nothing remembered: tick 1 brew 0 fuel 0 slots [potionx1:awkward - potionx1:awkward - -] ingredient - bits Some([true, false, true]) dirty true comparator true state BlockStateId(11188)
+brew time 1, brewable, nothing remembered: tick 1 brew 0 fuel 0 slots [potionx1:awkward - potionx1:awkward - -] ingredient - bits Some([true, false, true]) dirty true comparator true state BlockStateId(11188) sound 77d401040000064400000204000000443f8000003f800000
 brew time 1, brewable, nothing remembered: tick 2 brew 0 fuel 0 slots [potionx1:awkward - potionx1:awkward - -] ingredient - bits Some([true, false, true]) dirty false comparator false state BlockStateId(11188)
 brew time 1, brewable, nothing remembered: end brew 0
 brew time 1, not brewable: start brew 1 fuel 0 slots [potionx1:water - - dirtx1 -] ingredient - bits None dirty true comparator true state BlockStateId(11193)
@@ -81,7 +81,7 @@ brew time 50, brewable, nothing remembered: end brew 397
 mixed slots: start brew 0 fuel 0 slots [potionx1:water potionx1:awkward - nether_wartx3 blaze_powderx1] ingredient - bits None dirty true comparator true state BlockStateId(11193)
 mixed slots: tick 1 brew 400 fuel 19 slots [potionx1:water potionx1:awkward - nether_wartx3 -] ingredient nether_wart bits Some([true, true, false]) dirty true comparator true state BlockStateId(11187)
 mixed slots: tick 2 brew 399 fuel 19 slots [potionx1:water potionx1:awkward - nether_wartx3 -] ingredient nether_wart bits Some([true, true, false]) dirty true comparator false state BlockStateId(11187)
-mixed slots: tick 401 brew 0 fuel 19 slots [potionx1:awkward potionx1:awkward - nether_wartx2 -] ingredient nether_wart bits Some([true, true, false]) dirty true comparator true state BlockStateId(11187)
+mixed slots: tick 401 brew 0 fuel 19 slots [potionx1:awkward potionx1:awkward - nether_wartx2 -] ingredient nether_wart bits Some([true, true, false]) dirty true comparator true state BlockStateId(11187) sound 77d40104000007c400000204000000443f8000003f800000
 mixed slots: tick 402 brew 0 fuel 19 slots [potionx1:awkward potionx1:awkward - nether_wartx2 -] ingredient nether_wart bits Some([true, true, false]) dirty false comparator false state BlockStateId(11187)
 mixed slots: end brew 0
 glass bottle and gaps: start brew 0 fuel 0 slots [glass_bottlex1 - potionx1:water - -] ingredient - bits None dirty true comparator true state BlockStateId(11193)
@@ -91,19 +91,19 @@ glass bottle and gaps: end brew 0
 splash night vision: start brew 0 fuel 0 slots [potionx1:night_vision - potionx1:night_vision gunpowderx4 blaze_powderx1] ingredient - bits None dirty true comparator true state BlockStateId(11193)
 splash night vision: tick 1 brew 400 fuel 19 slots [potionx1:night_vision - potionx1:night_vision gunpowderx4 -] ingredient gunpowder bits Some([true, false, true]) dirty true comparator true state BlockStateId(11188)
 splash night vision: tick 2 brew 399 fuel 19 slots [potionx1:night_vision - potionx1:night_vision gunpowderx4 -] ingredient gunpowder bits Some([true, false, true]) dirty true comparator false state BlockStateId(11188)
-splash night vision: tick 401 brew 0 fuel 19 slots [splash_potionx1:night_vision - splash_potionx1:night_vision gunpowderx3 -] ingredient gunpowder bits Some([true, false, true]) dirty true comparator true state BlockStateId(11188)
+splash night vision: tick 401 brew 0 fuel 19 slots [splash_potionx1:night_vision - splash_potionx1:night_vision gunpowderx3 -] ingredient gunpowder bits Some([true, false, true]) dirty true comparator true state BlockStateId(11188) sound 77d40104000008c400000204000000443f8000003f800000
 splash night vision: tick 402 brew 0 fuel 19 slots [splash_potionx1:night_vision - splash_potionx1:night_vision gunpowderx3 -] ingredient gunpowder bits Some([true, false, true]) dirty false comparator false state BlockStateId(11188)
 splash night vision: end brew 0
 lingering from splash: start brew 0 fuel 0 slots [splash_potionx1:swiftness - - dragon_breathx1 blaze_powderx1] ingredient - bits None dirty true comparator true state BlockStateId(11193)
 lingering from splash: tick 1 brew 400 fuel 19 slots [splash_potionx1:swiftness - - dragon_breathx1 -] ingredient dragon_breath bits Some([true, false, false]) dirty true comparator true state BlockStateId(11189)
 lingering from splash: tick 2 brew 399 fuel 19 slots [splash_potionx1:swiftness - - dragon_breathx1 -] ingredient dragon_breath bits Some([true, false, false]) dirty true comparator false state BlockStateId(11189)
-lingering from splash: tick 401 brew 0 fuel 19 slots [lingering_potionx1:swiftness - - - -] ingredient - bits Some([true, false, false]) dirty true comparator true state BlockStateId(11189)
+lingering from splash: tick 401 brew 0 fuel 19 slots [lingering_potionx1:swiftness - - - -] ingredient - bits Some([true, false, false]) dirty true comparator true state BlockStateId(11189) sound 77d401040000094400000204000000443f8000003f800000
 lingering from splash: tick 402 brew 0 fuel 19 slots [lingering_potionx1:swiftness - - - -] ingredient - bits Some([true, false, false]) dirty false comparator false state BlockStateId(11189)
 lingering from splash: end brew 0
 custom colour kept: start brew 0 fuel 0 slots [potionx1:water#123456 - - nether_wartx1 blaze_powderx1] ingredient - bits None dirty true comparator true state BlockStateId(11193)
 custom colour kept: tick 1 brew 400 fuel 19 slots [potionx1:water#123456 - - nether_wartx1 -] ingredient nether_wart bits Some([true, false, false]) dirty true comparator true state BlockStateId(11189)
 custom colour kept: tick 2 brew 399 fuel 19 slots [potionx1:water#123456 - - nether_wartx1 -] ingredient nether_wart bits Some([true, false, false]) dirty true comparator false state BlockStateId(11189)
-custom colour kept: tick 401 brew 0 fuel 19 slots [potionx1:awkward#123456 - - - -] ingredient - bits Some([true, false, false]) dirty true comparator true state BlockStateId(11189)
+custom colour kept: tick 401 brew 0 fuel 19 slots [potionx1:awkward#123456 - - - -] ingredient - bits Some([true, false, false]) dirty true comparator true state BlockStateId(11189) sound 77d40104000009c400000204000000443f8000003f800000
 custom colour kept: tick 402 brew 0 fuel 19 slots [potionx1:awkward#123456 - - - -] ingredient - bits Some([true, false, false]) dirty false comparator false state BlockStateId(11189)
 custom colour kept: end brew 0
 stick in a bottle slot: start brew 0 fuel 0 slots [stickx1 - - nether_wartx1 blaze_powderx1] ingredient - bits None dirty true comparator true state BlockStateId(11193)
@@ -113,21 +113,21 @@ stick in a bottle slot: end brew 0
 stacked water bottles: start brew 0 fuel 0 slots [potionx3:water - - nether_wartx1 blaze_powderx1] ingredient - bits None dirty true comparator true state BlockStateId(11193)
 stacked water bottles: tick 1 brew 400 fuel 19 slots [potionx3:water - - nether_wartx1 -] ingredient nether_wart bits Some([true, false, false]) dirty true comparator true state BlockStateId(11189)
 stacked water bottles: tick 2 brew 399 fuel 19 slots [potionx3:water - - nether_wartx1 -] ingredient nether_wart bits Some([true, false, false]) dirty true comparator false state BlockStateId(11189)
-stacked water bottles: tick 401 brew 0 fuel 19 slots [potionx1:awkward - - - -] ingredient - bits Some([true, false, false]) dirty true comparator true state BlockStateId(11189)
+stacked water bottles: tick 401 brew 0 fuel 19 slots [potionx1:awkward - - - -] ingredient - bits Some([true, false, false]) dirty true comparator true state BlockStateId(11189) sound 77d4010400000ac400000204000000443f8000003f800000
 stacked water bottles: tick 402 brew 0 fuel 19 slots [potionx1:awkward - - - -] ingredient - bits Some([true, false, false]) dirty false comparator false state BlockStateId(11189)
 stacked water bottles: end brew 0
 datapack chain restarts at once: start brew 0 fuel 0 slots [potionx1:mundane - - stickx3 blaze_powderx1] ingredient - bits None dirty true comparator true state BlockStateId(11193)
 datapack chain restarts at once: tick 1 brew 400 fuel 19 slots [potionx1:mundane - - stickx3 -] ingredient stick bits Some([true, false, false]) dirty true comparator true state BlockStateId(11189)
 datapack chain restarts at once: tick 2 brew 399 fuel 19 slots [potionx1:mundane - - stickx3 -] ingredient stick bits Some([true, false, false]) dirty true comparator false state BlockStateId(11189)
-datapack chain restarts at once: tick 401 brew 400 fuel 18 slots [potionx1:thick - - stickx2 -] ingredient stick bits Some([true, false, false]) dirty true comparator true state BlockStateId(11189)
+datapack chain restarts at once: tick 401 brew 400 fuel 18 slots [potionx1:thick - - stickx2 -] ingredient stick bits Some([true, false, false]) dirty true comparator true state BlockStateId(11189) sound 77d4010400000b4400000204000000443f8000003f800000
 datapack chain restarts at once: tick 402 brew 399 fuel 18 slots [potionx1:thick - - stickx2 -] ingredient stick bits Some([true, false, false]) dirty true comparator false state BlockStateId(11189)
-datapack chain restarts at once: tick 801 brew 0 fuel 18 slots [potionx1:awkward - - stickx1 -] ingredient stick bits Some([true, false, false]) dirty true comparator true state BlockStateId(11189)
+datapack chain restarts at once: tick 801 brew 0 fuel 18 slots [potionx1:awkward - - stickx1 -] ingredient stick bits Some([true, false, false]) dirty true comparator true state BlockStateId(11189) sound 77d4010400000b4400000204000000443f8000003f800000
 datapack chain restarts at once: tick 802 brew 0 fuel 18 slots [potionx1:awkward - - stickx1 -] ingredient stick bits Some([true, false, false]) dirty false comparator false state BlockStateId(11189)
 datapack chain restarts at once: end brew 0
 datapack recipe without potions: start brew 0 fuel 0 slots [glass_bottlex1 - - applex2 blaze_powderx1] ingredient - bits None dirty true comparator true state BlockStateId(11193)
 datapack recipe without potions: tick 1 brew 400 fuel 19 slots [glass_bottlex1 - - applex2 -] ingredient apple bits Some([true, false, false]) dirty true comparator true state BlockStateId(11189)
 datapack recipe without potions: tick 2 brew 399 fuel 19 slots [glass_bottlex1 - - applex2 -] ingredient apple bits Some([true, false, false]) dirty true comparator false state BlockStateId(11189)
-datapack recipe without potions: tick 401 brew 0 fuel 19 slots [honey_bottlex1:none - - applex1 -] ingredient apple bits Some([true, false, false]) dirty true comparator true state BlockStateId(11189)
+datapack recipe without potions: tick 401 brew 0 fuel 19 slots [honey_bottlex1:none - - applex1 -] ingredient apple bits Some([true, false, false]) dirty true comparator true state BlockStateId(11189) sound 77d4010400000bc400000204000000443f8000003f800000
 datapack recipe without potions: tick 402 brew 0 fuel 19 slots [honey_bottlex1:none - - applex1 -] ingredient apple bits Some([true, false, false]) dirty false comparator false state BlockStateId(11189)
 datapack recipe without potions: end brew 0
 datapack output item unknown: start brew 0 fuel 0 slots [potionx1:water - - bonex2 blaze_powderx1] ingredient - bits None dirty true comparator true state BlockStateId(11193)
@@ -141,16 +141,45 @@ datapack output item unknown: end brew 383
 datapack output potion unknown: start brew 0 fuel 0 slots [potionx1:water - - featherx1 blaze_powderx1] ingredient - bits None dirty true comparator true state BlockStateId(11193)
 datapack output potion unknown: tick 1 brew 400 fuel 19 slots [potionx1:water - - featherx1 -] ingredient feather bits Some([true, false, false]) dirty true comparator true state BlockStateId(11189)
 datapack output potion unknown: tick 2 brew 399 fuel 19 slots [potionx1:water - - featherx1 -] ingredient feather bits Some([true, false, false]) dirty true comparator false state BlockStateId(11189)
-datapack output potion unknown: tick 401 brew 0 fuel 19 slots [potionx1:water - - - -] ingredient - bits Some([true, false, false]) dirty true comparator true state BlockStateId(11189)
+datapack output potion unknown: tick 401 brew 0 fuel 19 slots [potionx1:water - - - -] ingredient - bits Some([true, false, false]) dirty true comparator true state BlockStateId(11189) sound 77d4010400000cc400000204000000443f8000003f800000
 datapack output potion unknown: tick 402 brew 0 fuel 19 slots [potionx1:water - - - -] ingredient - bits Some([true, false, false]) dirty false comparator false state BlockStateId(11189)
 datapack output potion unknown: end brew 0
 datapack input potion differs: start brew 0 fuel 0 slots [potionx1:water - - flintx1 blaze_powderx1] ingredient - bits None dirty true comparator true state BlockStateId(11193)
 datapack input potion differs: tick 1 brew 0 fuel 20 slots [potionx1:water - - flintx1 -] ingredient - bits Some([true, false, false]) dirty true comparator true state BlockStateId(11189)
 datapack input potion differs: tick 2 brew 0 fuel 20 slots [potionx1:water - - flintx1 -] ingredient - bits Some([true, false, false]) dirty false comparator false state BlockStateId(11189)
 datapack input potion differs: end brew 0
+ingredient swapped on the finishing tick: start brew 0 fuel 0 slots [potionx1:awkward - - sugarx1 blaze_powderx1] ingredient - bits None dirty true comparator true state BlockStateId(11193)
+ingredient swapped on the finishing tick: tick 1 brew 400 fuel 19 slots [potionx1:awkward - - sugarx1 -] ingredient sugar bits Some([true, false, false]) dirty true comparator true state BlockStateId(11189)
+ingredient swapped on the finishing tick: tick 2 brew 399 fuel 19 slots [potionx1:awkward - - sugarx1 -] ingredient sugar bits Some([true, false, false]) dirty true comparator false state BlockStateId(11189)
+ingredient swapped on the finishing tick: tick 401 brew 0 fuel 19 slots [potionx1:leaping - - rabbit_footx1 -] ingredient - bits Some([true, false, false]) dirty true comparator true state BlockStateId(11189) sound 77d4010400000dc400000204000000443f8000003f800000
+ingredient swapped on the finishing tick: tick 402 brew 0 fuel 19 slots [potionx1:leaping - - rabbit_footx1 -] ingredient - bits Some([true, false, false]) dirty false comparator false state BlockStateId(11189)
+ingredient swapped on the finishing tick: end brew 0
+datapack chain without fuel left: start brew 0 fuel 1 slots [potionx1:mundane - - stickx3 -] ingredient - bits None dirty true comparator true state BlockStateId(11193)
+datapack chain without fuel left: tick 1 brew 400 fuel 0 slots [potionx1:mundane - - stickx3 -] ingredient stick bits Some([true, false, false]) dirty true comparator false state BlockStateId(11189)
+datapack chain without fuel left: tick 401 brew 0 fuel 0 slots [potionx1:thick - - stickx2 -] ingredient stick bits Some([true, false, false]) dirty true comparator true state BlockStateId(11189) sound 77d4010400000e4400000204000000443f8000003f800000
+datapack chain without fuel left: tick 402 brew 0 fuel 0 slots [potionx1:thick - - stickx2 -] ingredient stick bits Some([true, false, false]) dirty false comparator false state BlockStateId(11189)
+datapack chain without fuel left: end brew 0
+brew time 1, not brewable, bits known: start brew 1 fuel 0 slots [potionx1:water - - dirtx1 -] ingredient - bits Some([true, false, false]) dirty true comparator true state BlockStateId(11193)
+brew time 1, not brewable, bits known: tick 1 brew 0 fuel 0 slots [potionx1:water - - dirtx1 -] ingredient - bits Some([true, false, false]) dirty true comparator false state BlockStateId(11193)
+brew time 1, not brewable, bits known: tick 2 brew 0 fuel 0 slots [potionx1:water - - dirtx1 -] ingredient - bits Some([true, false, false]) dirty false comparator false state BlockStateId(11193)
+brew time 1, not brewable, bits known: end brew 0
+brew time 1, brewable, bits known: start brew 1 fuel 0 slots [potionx1:water - - nether_wartx1 -] ingredient - bits Some([true, false, false]) dirty true comparator true state BlockStateId(11193)
+brew time 1, brewable, bits known: tick 1 brew 0 fuel 0 slots [potionx1:awkward - - - -] ingredient - bits Some([true, false, false]) dirty true comparator true state BlockStateId(11193) sound 77d4010400000f4400000204000000443f8000003f800000
+brew time 1, brewable, bits known: tick 2 brew 0 fuel 0 slots [potionx1:awkward - - - -] ingredient - bits Some([true, false, false]) dirty false comparator false state BlockStateId(11193)
+brew time 1, brewable, bits known: end brew 0
+refill with nothing to brew, bits known: start brew 0 fuel 0 slots [potionx1:awkward - - dirtx1 blaze_powderx2] ingredient - bits Some([true, false, false]) dirty true comparator true state BlockStateId(11193)
+refill with nothing to brew, bits known: tick 1 brew 0 fuel 20 slots [potionx1:awkward - - dirtx1 blaze_powderx1] ingredient - bits Some([true, false, false]) dirty true comparator true state BlockStateId(11193)
+refill with nothing to brew, bits known: tick 2 brew 0 fuel 20 slots [potionx1:awkward - - dirtx1 blaze_powderx1] ingredient - bits Some([true, false, false]) dirty false comparator false state BlockStateId(11193)
+refill with nothing to brew, bits known: end brew 0
+ingredient removed mid-brew, bits known: start brew 0 fuel 0 slots [potionx1:water - - nether_wartx1 blaze_powderx1] ingredient - bits Some([true, false, false]) dirty true comparator true state BlockStateId(11193)
+ingredient removed mid-brew, bits known: tick 1 brew 400 fuel 19 slots [potionx1:water - - nether_wartx1 -] ingredient nether_wart bits Some([true, false, false]) dirty true comparator true state BlockStateId(11193)
+ingredient removed mid-brew, bits known: tick 2 brew 399 fuel 19 slots [potionx1:water - - nether_wartx1 -] ingredient nether_wart bits Some([true, false, false]) dirty true comparator false state BlockStateId(11193)
+ingredient removed mid-brew, bits known: tick 3 brew 0 fuel 19 slots [potionx1:water - - - -] ingredient nether_wart bits Some([true, false, false]) dirty true comparator true state BlockStateId(11193)
+ingredient removed mid-brew, bits known: tick 4 brew 0 fuel 19 slots [potionx1:water - - - -] ingredient nether_wart bits Some([true, false, false]) dirty false comparator false state BlockStateId(11193)
+ingredient removed mid-brew, bits known: end brew 0
 datapack input potion matches: start brew 0 fuel 0 slots [potionx1:thick - - flintx1 blaze_powderx1] ingredient - bits None dirty true comparator true state BlockStateId(11193)
 datapack input potion matches: tick 1 brew 400 fuel 19 slots [potionx1:thick - - flintx1 -] ingredient flint bits Some([true, false, false]) dirty true comparator true state BlockStateId(11189)
 datapack input potion matches: tick 2 brew 399 fuel 19 slots [potionx1:thick - - flintx1 -] ingredient flint bits Some([true, false, false]) dirty true comparator false state BlockStateId(11189)
-datapack input potion matches: tick 401 brew 0 fuel 19 slots [splash_potionx1:mundane - - - -] ingredient - bits Some([true, false, false]) dirty true comparator true state BlockStateId(11189)
+datapack input potion matches: tick 401 brew 0 fuel 19 slots [splash_potionx1:mundane - - - -] ingredient - bits Some([true, false, false]) dirty true comparator true state BlockStateId(11189) sound 77d40104000010c400000204000000443f8000003f800000
 datapack input potion matches: tick 402 brew 0 fuel 19 slots [splash_potionx1:mundane - - - -] ingredient - bits Some([true, false, false]) dirty false comparator false state BlockStateId(11189)
 datapack input potion matches: end brew 0

@@ -17,17 +17,23 @@ use pumpkin_data::Block;
 use pumpkin_data::data_component_impl::PotionContentsImpl;
 use pumpkin_data::item::Item;
 use pumpkin_data::item_stack::ItemStack;
+use pumpkin_data::packet::CURRENT_MC_VERSION;
 use pumpkin_data::potion::Potion;
 use pumpkin_inventory::Inventory;
 use pumpkin_protocol::codec::recipe::{DynamicRecipe, OwnedBrewingRecipe};
+use pumpkin_protocol::java::client::play::CSoundEffect;
+use pumpkin_protocol::packet::MultiVersionJavaPacket;
+use pumpkin_util::GameMode;
 use pumpkin_util::math::position::BlockPos;
 use pumpkin_util::math::vector2::Vector2;
+use pumpkin_util::math::vector3::Vector3;
 use pumpkin_world::world::BlockFlags;
 
 use super::BrewingStandBlockEntity;
 use crate::block::entities::BlockEntity;
 use crate::command::commands::script_golden::{self, TestResult};
 use crate::entity::ai::test_support;
+use crate::net::java::PacketTap;
 use crate::world::World;
 
 /// A slot's content in a scene.
@@ -63,6 +69,8 @@ struct Scene {
     ticks: u32,
     /// (tick, slot, new content), applied before that tick.
     changes: &'static [(u32, usize, Spec)],
+    /// The bottle bits already match the slots, so the first tick does not mark the stand dirty.
+    bits_known: bool,
 }
 
 const fn scene(name: &'static str, slots: [Spec; 5], ticks: u32) -> Scene {
@@ -73,7 +81,13 @@ const fn scene(name: &'static str, slots: [Spec; 5], ticks: u32) -> Scene {
         brew_time: 0,
         ticks,
         changes: &[],
+        bits_known: false,
     }
+}
+
+const fn with_bits_known(mut s: Scene) -> Scene {
+    s.bits_known = true;
+    s
 }
 
 const fn with_fuel(mut s: Scene, fuel: i32) -> Scene {
@@ -309,6 +323,63 @@ const SCENES: &[Scene] = &[
         [water(), E, E, plain(&Item::FLINT, 1), BLAZE],
         30,
     ),
+    with_changes(
+        scene(
+            "ingredient swapped on the finishing tick",
+            [
+                potion(&Potion::AWKWARD),
+                E,
+                E,
+                plain(&Item::SUGAR, 1),
+                BLAZE,
+            ],
+            410,
+        ),
+        &[(401, 3, Spec::Plain(&Item::RABBIT_FOOT, 2))],
+    ),
+    with_fuel(
+        scene(
+            "datapack chain without fuel left",
+            [potion(&Potion::MUNDANE), E, E, plain(&Item::STICK, 3), E],
+            820,
+        ),
+        1,
+    ),
+    with_bits_known(with_brew_time(
+        scene(
+            "brew time 1, not brewable, bits known",
+            [water(), E, E, plain(&Item::DIRT, 1), E],
+            5,
+        ),
+        1,
+    )),
+    with_bits_known(with_brew_time(
+        scene(
+            "brew time 1, brewable, bits known",
+            [water(), E, E, WART, E],
+            5,
+        ),
+        1,
+    )),
+    with_bits_known(scene(
+        "refill with nothing to brew, bits known",
+        [
+            potion(&Potion::AWKWARD),
+            E,
+            E,
+            plain(&Item::DIRT, 1),
+            plain(&Item::BLAZE_POWDER, 2),
+        ],
+        5,
+    )),
+    with_bits_known(with_changes(
+        scene(
+            "ingredient removed mid-brew, bits known",
+            [water(), E, E, WART, BLAZE],
+            5,
+        ),
+        &[(3, 3, Spec::Empty)],
+    )),
     scene(
         "datapack input potion matches",
         [potion(&Potion::THICK), E, E, plain(&Item::FLINT, 1), BLAZE],
@@ -377,6 +448,15 @@ fn datapack_recipes() -> Vec<DynamicRecipe> {
             Some("minecraft:thick"),
             "minecraft:flint",
             ("minecraft:splash_potion", Some("minecraft:mundane")),
+        ),
+        // Its input is its own reagent: only a loop that wrongly treats the ingredient slot as a
+        // bottle slot would brew it.
+        brewing(
+            "apple_self",
+            "minecraft:apple",
+            None,
+            "minecraft:apple",
+            ("minecraft:golden_apple", None),
         ),
         // The vanilla table answers water + nether wart first; this must never win.
         brewing(
@@ -462,8 +542,53 @@ fn state(stand: &BrewingStandBlockEntity, world: &World) -> (String, i32) {
     (text, stand.brew_time.load(Ordering::Relaxed))
 }
 
-fn run(out: &mut String, world: &Arc<World>, index: usize, scene: &Scene) -> std::fmt::Result {
+fn var_int(bytes: &[u8], mut at: usize) -> Option<(i32, usize)> {
+    let mut value = 0i32;
+    for shift in (0..35).step_by(7) {
+        let byte = *bytes.get(at)?;
+        at += 1;
+        value |= i32::from(byte & 0x7f) << shift;
+        if byte & 0x80 == 0 {
+            return Some((value, at));
+        }
+    }
+    None
+}
+
+/// The sound packets the listener was sent since the last call, as hex without their random
+/// seed (the last 8 bytes), each prefixed ` sound `; other packets are left out.
+fn sounds(tap: &mut PacketTap) -> String {
+    let id = CSoundEffect::to_id(CURRENT_MC_VERSION);
+    let mut text = String::new();
+    for packet in tap.drain() {
+        let first = var_int(&packet, 0);
+        let is_sound = first.is_some_and(|(value, _)| value == id)
+            || first
+                .and_then(|(_, next)| var_int(&packet, next))
+                .is_some_and(|(value, _)| value == id);
+        if is_sound && packet.len() >= 8 {
+            text.push_str(" sound ");
+            for byte in &packet[..packet.len() - 8] {
+                text = format!("{text}{byte:02x}");
+            }
+        }
+    }
+    text
+}
+
+fn run(
+    out: &mut String,
+    world: &Arc<World>,
+    listener: &mut Listener,
+    index: usize,
+    scene: &Scene,
+) -> std::fmt::Result {
     let position = BlockPos::new(index as i32 * 16 + 8, 64, 8);
+    listener
+        .player
+        .living_entity
+        .entity
+        .set_pos(Vector3::new(f64::from(position.0.x), 64.0, 8.0));
     world.set_block_state(
         &position,
         Block::BREWING_STAND.default_state.id,
@@ -475,6 +600,18 @@ fn run(out: &mut String, world: &Arc<World>, index: usize, scene: &Scene) -> std
     }
     stand.fuel.store(scene.fuel, Ordering::Relaxed);
     stand.brew_time.store(scene.brew_time, Ordering::Relaxed);
+    if scene.bits_known {
+        let bits = [0, 1, 2].map(|slot| {
+            let stack = stand.get_stack(slot);
+            !stack.is_empty()
+                && (stack.get_data_component::<PotionContentsImpl>().is_some()
+                    || stack.get_item().id == Item::GLASS_BOTTLE.id)
+        });
+        if let Ok(mut last) = stand.last_potion_count.lock() {
+            *last = Some(bits);
+        }
+    }
+    sounds(&mut listener.tap);
     let (mut last, brew_time) = state(&stand, world);
     writeln!(out, "{}: start brew {brew_time} {last}", scene.name)?;
     for tick in 1..=scene.ticks {
@@ -484,7 +621,8 @@ fn run(out: &mut String, world: &Arc<World>, index: usize, scene: &Scene) -> std
             }
         }
         stand.tick(world);
-        let (now, brew_time) = state(&stand, world);
+        let (mut now, brew_time) = state(&stand, world);
+        now.push_str(&sounds(&mut listener.tap));
         if now != last {
             writeln!(out, "{}: tick {tick} brew {brew_time} {now}", scene.name)?;
             last = now;
@@ -492,6 +630,12 @@ fn run(out: &mut String, world: &Arc<World>, index: usize, scene: &Scene) -> std
     }
     let (_, brew_time) = state(&stand, world);
     writeln!(out, "{}: end brew {brew_time}", scene.name)
+}
+
+/// A player near the scene's stand who receives its sounds.
+struct Listener {
+    player: Arc<crate::entity::player::Player>,
+    tap: PacketTap,
 }
 
 #[tokio::test(flavor = "multi_thread")]
@@ -510,10 +654,15 @@ async fn brewing_stand_tick_is_the_same() -> TestResult {
             );
         }
     }
+    let (player, tap) =
+        test_support::java_player_with_tap(&world, GameMode::Survival).ok_or("no packet tap")?;
+    world.add_player(&player)?;
+    let mut listener = Listener { player, tap };
     let mut now = String::new();
     for (index, scene) in SCENES.iter().enumerate() {
-        run(&mut now, &world, index, scene)?;
+        run(&mut now, &world, &mut listener, index, scene)?;
     }
+    world.remove_player(&listener.player, false).await;
     script_golden::bless_or_compare("brewing_stand_tick.txt", &now)?;
     server.stop();
     Ok(())

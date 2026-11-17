@@ -34,14 +34,15 @@ use crate::entity::item::ItemEntity;
 use crate::world::World;
 
 type Stacks = &'static [(usize, &'static Item, u8)];
+type Drop = (f64, f64, f64, &'static Item, u8);
 
 /// What sits in the block above the hopper.
 #[derive(Clone, Copy)]
 enum Above {
     Nothing,
     Chest(Stacks),
-    /// Slots, and whether a smelted raw iron is on record (experience to hand out).
-    Furnace(Stacks, bool),
+    /// Slots, and the smelted ingredient on record with its count (experience to hand out).
+    Furnace(Stacks, Option<(&'static Item, u32)>),
     Block(&'static Block),
 }
 
@@ -49,8 +50,8 @@ struct Scene {
     name: &'static str,
     above: Above,
     hopper: Stacks,
-    /// Item entities: (y offset from the hopper's base, item, count).
-    drops: &'static [(f64, &'static Item, u8)],
+    /// Item entities: (x, y, z offsets from the hopper's centre / base, item, count).
+    drops: &'static [Drop],
     enabled: bool,
     cooldown: i32,
     ticks: u32,
@@ -68,7 +69,7 @@ const fn scene(name: &'static str, above: Above, hopper: Stacks, ticks: u32) -> 
     }
 }
 
-const fn with_drops(mut s: Scene, drops: &'static [(f64, &'static Item, u8)]) -> Scene {
+const fn with_drops(mut s: Scene, drops: &'static [Drop]) -> Scene {
     s.drops = drops;
     s
 }
@@ -116,7 +117,7 @@ const SCENES: &[Scene] = &[
     scene("empty chest above", Above::Chest(&[]), &[], 20),
     with_drops(
         scene("empty chest above, items on it", Above::Chest(&[]), &[], 20),
-        &[(2.0, &Item::DIRT, 2)],
+        &[(0.0, 2.0, 0.0, &Item::DIRT, 2)],
     ),
     scene(
         "chest above, hopper full",
@@ -138,37 +139,40 @@ const SCENES: &[Scene] = &[
     ),
     scene(
         "furnace output with experience",
-        Above::Furnace(&[(2, &Item::IRON_INGOT, 2)], true),
+        Above::Furnace(&[(2, &Item::IRON_INGOT, 2)], Some((&Item::RAW_IRON, 3))),
         &[],
         30,
     ),
     scene(
         "furnace input and fuel only",
-        Above::Furnace(&[(0, &Item::RAW_IRON, 2), (1, &Item::COAL, 1)], false),
+        Above::Furnace(&[(0, &Item::RAW_IRON, 2), (1, &Item::COAL, 1)], None),
         &[],
         30,
     ),
     scene(
         "furnace output without experience",
-        Above::Furnace(&[(2, &Item::IRON_INGOT, 1)], false),
+        Above::Furnace(&[(2, &Item::IRON_INGOT, 1)], None),
         &[],
         20,
     ),
     with_drops(
         scene("item stack above", Above::Nothing, &[], 40),
-        &[(1.2, &Item::DIRT, 3)],
+        &[(0.0, 1.2, 0.0, &Item::DIRT, 3)],
     ),
     with_drops(
         scene("single item above", Above::Nothing, &[], 20),
-        &[(1.2, &Item::DIRT, 1)],
+        &[(0.0, 1.2, 0.0, &Item::DIRT, 1)],
     ),
     with_drops(
         scene("two stacks above", Above::Nothing, &[], 40),
-        &[(1.2, &Item::DIRT, 2), (1.5, &Item::COBBLESTONE, 2)],
+        &[
+            (0.0, 1.2, 0.0, &Item::DIRT, 2),
+            (0.0, 1.5, 0.0, &Item::COBBLESTONE, 2),
+        ],
     ),
     with_drops(
         scene("item above, hopper full", Above::Nothing, FULL_OF_STONE, 20),
-        &[(1.2, &Item::DIRT, 2)],
+        &[(0.0, 1.2, 0.0, &Item::DIRT, 2)],
     ),
     with_drops(
         scene(
@@ -177,15 +181,15 @@ const SCENES: &[Scene] = &[
             NO_ROOM_FOR_DIRT,
             20,
         ),
-        &[(1.2, &Item::DIRT, 2)],
+        &[(0.0, 1.2, 0.0, &Item::DIRT, 2)],
     ),
     with_drops(
         scene("item in the bowl", Above::Nothing, &[], 20),
-        &[(0.7, &Item::DIRT, 2)],
+        &[(0.0, 0.7, 0.0, &Item::DIRT, 2)],
     ),
     with_drops(
         scene("item high above", Above::Nothing, &[], 20),
-        &[(2.5, &Item::DIRT, 2)],
+        &[(0.0, 2.5, 0.0, &Item::DIRT, 2)],
     ),
     with_drops(
         scene(
@@ -194,7 +198,7 @@ const SCENES: &[Scene] = &[
             &[],
             20,
         ),
-        &[(1.2, &Item::DIRT, 2)],
+        &[(0.0, 1.2, 0.0, &Item::DIRT, 2)],
     ),
     with_drops(
         scene(
@@ -203,7 +207,7 @@ const SCENES: &[Scene] = &[
             &[],
             20,
         ),
-        &[(1.2, &Item::DIRT, 2)],
+        &[(0.0, 1.2, 0.0, &Item::DIRT, 2)],
     ),
     with_drops(
         scene(
@@ -212,7 +216,7 @@ const SCENES: &[Scene] = &[
             &[],
             20,
         ),
-        &[(1.2, &Item::DIRT, 2)],
+        &[(0.0, 1.2, 0.0, &Item::DIRT, 2)],
     ),
     with_drops(
         disabled(scene(
@@ -221,7 +225,7 @@ const SCENES: &[Scene] = &[
             &[],
             20,
         )),
-        &[(1.2, &Item::DIRT, 2)],
+        &[(0.0, 1.2, 0.0, &Item::DIRT, 2)],
     ),
     with_cooldown(
         scene(
@@ -231,6 +235,28 @@ const SCENES: &[Scene] = &[
             20,
         ),
         5,
+    ),
+    scene(
+        "furnace output worth one experience",
+        Above::Furnace(&[(2, &Item::GOLD_INGOT, 1)], Some((&Item::RAW_GOLD, 1))),
+        &[],
+        5,
+    ),
+    with_drops(
+        scene("item over the west half", Above::Nothing, &[], 5),
+        &[(-0.3, 1.2, 0.0, &Item::DIRT, 2)],
+    ),
+    with_drops(
+        scene("item over the east neighbour", Above::Nothing, &[], 5),
+        &[(0.8, 1.2, 0.0, &Item::DIRT, 2)],
+    ),
+    with_drops(
+        scene("item over the north half", Above::Nothing, &[], 5),
+        &[(0.0, 1.2, -0.3, &Item::DIRT, 2)],
+    ),
+    with_drops(
+        scene("item over the south neighbour", Above::Nothing, &[], 5),
+        &[(0.0, 1.2, 0.8, &Item::DIRT, 2)],
     ),
 ];
 
@@ -277,8 +303,19 @@ fn entities_text(world: &World, x0: i32) -> String {
                 format!("{}x{}", stack.get_item().registry_key, stack.item_count)
             },
         );
+        // Off-centre drops (later scenes) also show their x/z offset in sixteenths.
+        let (dx, dz) = (pos.x - f64::from(x0) - 8.5, pos.z - 8.5);
+        let offset = if dx.abs() < 1e-9 && dz.abs() < 1e-9 {
+            String::new()
+        } else {
+            format!(
+                "~{},{}",
+                (dx * 16.0).round() as i32,
+                (dz * 16.0).round() as i32
+            )
+        };
         found.push(format!(
-            "{}@{}{}",
+            "{}@{}{offset}{}",
             kind,
             (pos.y * 16.0).floor() as i32,
             if removed { "(removed)" } else { "" }
@@ -304,18 +341,18 @@ fn place_above(world: &Arc<World>, pos: BlockPos, above: Above) -> Option<Arc<dy
             world.add_block_entity(chest.clone());
             Some(chest)
         }
-        Above::Furnace(stacks, experience) => {
+        Above::Furnace(stacks, smelted) => {
             put(world, &pos, Block::FURNACE.default_state.id);
             let furnace = Arc::new(FurnaceBlockEntity::new(pos));
             for (slot, item, count) in stacks {
                 furnace.set_stack(*slot, ItemStack::new(*count, item));
             }
-            if experience
+            if let Some((ingredient, count)) = smelted
                 && let Some(recipe) =
-                    get_cooking_recipe_with_ingredient(&Item::RAW_IRON, CookingRecipeKind::Smelting)
+                    get_cooking_recipe_with_ingredient(ingredient, CookingRecipeKind::Smelting)
                 && let Ok(mut used) = furnace.recipes_used.lock()
             {
-                used.insert(recipe.recipe_id.to_string(), 3);
+                used.insert(recipe.recipe_id.to_string(), count);
             }
             world.add_block_entity(furnace.clone());
             Some(furnace)
@@ -338,8 +375,8 @@ fn run(out: &mut String, world: &Arc<World>, index: usize, scene: &Scene) -> std
         .store(scene.cooldown, Ordering::Relaxed);
     world.add_block_entity(hopper.clone());
     let source = place_above(world, position.up(), scene.above);
-    for (dy, item, count) in scene.drops {
-        let at = Vector3::new(f64::from(x0) + 8.5, 64.0 + dy, 8.5);
+    for (dx, dy, dz, item, count) in scene.drops {
+        let at = Vector3::new(f64::from(x0) + 8.5 + dx, 64.0 + dy, 8.5 + dz);
         let entity = Entity::new(world.clone(), at, &EntityType::ITEM);
         world.spawn_entity(Arc::new(ItemEntity::new(
             entity,

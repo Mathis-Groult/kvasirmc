@@ -297,3 +297,30 @@ preset cooldown: tick 18 hopper [0:dirtx2] cooldown 5 source [0:dirtx3] entities
 preset cooldown: tick 19 hopper [0:dirtx2] cooldown 4 source [0:dirtx3] entities []
 preset cooldown: tick 20 hopper [0:dirtx2] cooldown 3 source [0:dirtx3] entities []
 preset cooldown: end
+furnace output worth one experience: start hopper [] cooldown -1 source [2:gold_ingotx1] entities []
+furnace output worth one experience: tick 1 hopper [0:gold_ingotx1] cooldown 8 source [] entities [experience_orb@1024]
+furnace output worth one experience: tick 2 hopper [0:gold_ingotx1] cooldown 7 source [] entities [experience_orb@1024]
+furnace output worth one experience: tick 3 hopper [0:gold_ingotx1] cooldown 6 source [] entities [experience_orb@1024]
+furnace output worth one experience: tick 4 hopper [0:gold_ingotx1] cooldown 5 source [] entities [experience_orb@1024]
+furnace output worth one experience: tick 5 hopper [0:gold_ingotx1] cooldown 4 source [] entities [experience_orb@1024]
+furnace output worth one experience: end
+item over the west half: start hopper [] cooldown -1 source [] entities [dirtx2@1043~-5,0]
+item over the west half: tick 1 hopper [] cooldown 0 source [] entities [dirtx2@1043~-5,0]
+item over the west half: end
+item over the east neighbour: start hopper [] cooldown -1 source [] entities [dirtx2@1043~13,0]
+item over the east neighbour: tick 1 hopper [0:dirtx1] cooldown 8 source [] entities [dirtx1@1043~13,0]
+item over the east neighbour: tick 2 hopper [0:dirtx1] cooldown 7 source [] entities [dirtx1@1043~13,0]
+item over the east neighbour: tick 3 hopper [0:dirtx1] cooldown 6 source [] entities [dirtx1@1043~13,0]
+item over the east neighbour: tick 4 hopper [0:dirtx1] cooldown 5 source [] entities [dirtx1@1043~13,0]
+item over the east neighbour: tick 5 hopper [0:dirtx1] cooldown 4 source [] entities [dirtx1@1043~13,0]
+item over the east neighbour: end
+item over the north half: start hopper [] cooldown -1 source [] entities [dirtx2@1043~0,-5]
+item over the north half: tick 1 hopper [] cooldown 0 source [] entities [dirtx2@1043~0,-5]
+item over the north half: end
+item over the south neighbour: start hopper [] cooldown -1 source [] entities [dirtx2@1043~0,13]
+item over the south neighbour: tick 1 hopper [0:dirtx1] cooldown 8 source [] entities [dirtx1@1043~0,13]
+item over the south neighbour: tick 2 hopper [0:dirtx1] cooldown 7 source [] entities [dirtx1@1043~0,13]
+item over the south neighbour: tick 3 hopper [0:dirtx1] cooldown 6 source [] entities [dirtx1@1043~0,13]
+item over the south neighbour: tick 4 hopper [0:dirtx1] cooldown 5 source [] entities [dirtx1@1043~0,13]
+item over the south neighbour: tick 5 hopper [0:dirtx1] cooldown 4 source [] entities [dirtx1@1043~0,13]
+item over the south neighbour: end

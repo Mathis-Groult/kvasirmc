@@ -1,0 +1,22 @@
+Stone by nobody skip drops false at far: returned Some("stone") left air drops ["cobblestonex1"]; breaker events ["2f000007de00003200000080400000000100"] chats 0; watcher events ["2f000007de00003200000080400000000100"] chats 0
+Stone by survival skip drops false at far: returned Some("stone") left air drops ["cobblestonex1"]; breaker events [] chats 0; watcher events ["2f000007de00003600000080400000000100"] chats 0
+Stone by creative skip drops false at far: returned Some("stone") left air drops ["cobblestonex1"]; breaker events [] chats 0; watcher events ["2f000007de00003a00000080400000000100"] chats 0
+Stone by survival skip drops true at far: returned Some("stone") left air drops []; breaker events [] chats 0; watcher events ["2f000007de00003e00000080400000000100"] chats 0
+Dirt by survival skip drops false at far: returned Some("dirt") left air drops ["dirtx1"]; breaker events [] chats 0; watcher events ["2f000007de00004200000080400000000a00"] chats 0
+Glass by survival skip drops false at far: returned Some("glass") left air drops []; breaker events [] chats 0; watcher events ["2f000007de00004600000080400000029500"] chats 0
+WaterloggedSlab by survival skip drops false at far: returned Some("oak_slab") left air drops ["oak_slabx1"]; breaker events [] chats 0; watcher events ["2f000007de00004a000000804000003b4b00"] chats 0
+WaterloggedSlab by nobody skip drops true at far: returned Some("oak_slab") left air drops []; breaker events ["2f000007de00004e000000804000003b4b00"] chats 0; watcher events ["2f000007de00004e000000804000003b4b00"] chats 0
+Fire by survival skip drops false at far: returned Some("fire") left air drops []; breaker events [] chats 0; watcher events [] chats 0
+Air by survival skip drops false at far: returned None left air drops []; breaker events [] chats 0; watcher events [] chats 0
+Air by nobody skip drops false at far: returned None left air drops []; breaker events [] chats 0; watcher events [] chats 0
+FullChest by survival skip drops false at far: returned Some("chest") left air drops ["applex5", "chestx1", "diamondx2"]; breaker events [] chats 0; watcher events ["2f000007de00005e0000008040000015a800"] chats 0
+FullChest by creative skip drops true at far: returned Some("chest") left air drops ["applex5", "diamondx2"]; breaker events [] chats 0; watcher events ["2f000007de0000620000008040000015a800"] chats 0
+FullShulker by survival skip drops false at far: returned Some("shulker_box") left air drops ["shulker_boxx1"]; breaker events [] chats 0; watcher events ["2f000007de0000660000008040000041d100"] chats 0
+FullShulker by creative skip drops true at far: returned Some("shulker_box") left air drops ["shulker_boxx1"]; breaker events [] chats 0; watcher events ["2f000007de00006a0000008040000041d100"] chats 0
+FullShulker by survival skip drops true at far: returned Some("shulker_box") left air drops []; breaker events [] chats 0; watcher events ["2f000007de00006e0000008040000041d100"] chats 0
+FullShulker by nobody skip drops true at far: returned Some("shulker_box") left air drops []; breaker events ["2f000007de0000720000008040000041d100"] chats 0; watcher events ["2f000007de0000720000008040000041d100"] chats 0
+EmptyShulker by creative skip drops true at far: returned Some("shulker_box") left air drops []; breaker events [] chats 0; watcher events ["2f000007de0000760000008040000041d100"] chats 0
+Stone by survival skip drops false at spawn: returned None left stone drops []; breaker events [] chats 1; watcher events [] chats 0
+Stone by operator skip drops false at spawn: returned Some("stone") left air drops ["cobblestonex1"]; breaker events [] chats 0; watcher events ["2f000007de00000100000000400000000100"] chats 0
+Stone by nobody skip drops false at spawn: returned Some("stone") left air drops ["cobblestonex1"]; breaker events ["2f000007de00000000000000400000000100"] chats 0; watcher events ["2f000007de00000000000000400000000100"] chats 0
+Stone by survival skip drops false at past protection: returned Some("stone") left air drops ["cobblestonex1"]; breaker events [] chats 0; watcher events ["2f000007de00000440000000400000000100"] chats 0

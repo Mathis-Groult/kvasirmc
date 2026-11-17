@@ -2775,3 +2775,6 @@ mod tests {
         assert!(super::decode_skin_png(&[]).is_none());
     }
 }
+
+#[cfg(test)]
+mod nbt_golden;

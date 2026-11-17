@@ -1,0 +1,21 @@
+a bigger: a stonex30 named false age 0 delay 0 removed false reserved false; b stonex0 named false age 0 delay 0 removed true reserved false
+b bigger: a stonex0 named false age 0 delay 0 removed true reserved false; b stonex30 named false age 0 delay 0 removed false reserved false
+a bigger, from b: a stonex30 named false age 0 delay 0 removed false reserved false; b stonex0 named false age 0 delay 0 removed true reserved false
+b bigger, from b: a stonex0 named false age 0 delay 0 removed true reserved false; b stonex30 named false age 0 delay 0 removed false reserved false
+equal counts: a stonex0 named false age 0 delay 0 removed true reserved false; b stonex10 named false age 0 delay 0 removed false reserved false
+equal counts, from b: a stonex10 named false age 0 delay 0 removed false reserved false; b stonex0 named false age 0 delay 0 removed true reserved false
+exactly a full stack: a stonex0 named false age 0 delay 0 removed true reserved false; b stonex64 named false age 0 delay 0 removed false reserved false
+one over a full stack: a stonex40 named false age 0 delay 0 removed false reserved false; b stonex25 named false age 0 delay 0 removed false reserved false
+one and sixty-three: a stonex0 named false age 0 delay 0 removed true reserved false; b stonex64 named false age 0 delay 0 removed false reserved false
+different items: a stonex3 named false age 0 delay 0 removed false reserved false; b dirtx3 named false age 0 delay 0 removed false reserved false
+one named: a stonex3 named true age 0 delay 0 removed false reserved false; b stonex4 named false age 0 delay 0 removed false reserved false
+both named: a stonex0 named true age 0 delay 0 removed true reserved false; b stonex7 named true age 0 delay 0 removed false reserved false
+pearls to sixteen: a ender_pearlx16 named false age 0 delay 0 removed false reserved false; b ender_pearlx0 named false age 0 delay 0 removed true reserved false
+pearls over sixteen: a ender_pearlx10 named false age 0 delay 0 removed false reserved false; b ender_pearlx7 named false age 0 delay 0 removed false reserved false
+unstackable swords: a iron_swordx1 named false age 0 delay 0 removed false reserved false; b iron_swordx1 named false age 0 delay 0 removed false reserved false
+ages and delays, target older: a stonex30 named false age 100 delay 30 removed false reserved false; b stonex0 named false age 100 delay 30 removed true reserved false
+ages and delays, target younger: a stonex30 named false age 100 delay 30 removed false reserved false; b stonex0 named false age 300 delay 5 removed true reserved false
+a removed: a stonex20 named false age 0 delay 0 removed true reserved false; b stonex10 named false age 0 delay 0 removed false reserved false
+b removed: a stonex20 named false age 0 delay 0 removed false reserved false; b stonex10 named false age 0 delay 0 removed true reserved false
+a reserved: a stonex20 named false age 0 delay 0 removed false reserved true; b stonex10 named false age 0 delay 0 removed false reserved false
+b reserved: a stonex20 named false age 0 delay 0 removed false reserved false; b stonex10 named false age 0 delay 0 removed false reserved true

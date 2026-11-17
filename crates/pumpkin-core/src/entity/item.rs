@@ -1007,3 +1007,6 @@ mod tests {
         assert!(ItemEntity::can_be_hurt_by(&star, DamageType::LAVA));
     }
 }
+
+#[cfg(test)]
+mod merge_golden;

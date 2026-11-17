@@ -862,3 +862,6 @@ impl World {
         self.broadcast_to_chunk(chunk_pos, &packet);
     }
 }
+
+#[cfg(test)]
+mod break_golden;

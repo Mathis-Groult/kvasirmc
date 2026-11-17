@@ -1,5 +1,4 @@
 use crate::block::entities::BlockEntity;
-use crate::entity::experience_orb::ExperienceOrbEntity;
 use crate::world::World;
 use pumpkin_data::block_properties::{FacingHopper, HopperLikeProperties};
 use pumpkin_data::item_stack::ItemStack;
@@ -259,7 +258,7 @@ impl HopperBlockEntity {
         if let Some(entity) = world.get_block_entity(pos_up)
             && let Some(container) = entity.clone().get_inventory()
         {
-            return self.suck_from_container(world, &entity, &container);
+            return self.suck_from_container(&container);
         }
         self.suck_from_entities(world, pos_up)
     }
@@ -278,14 +277,10 @@ impl HopperBlockEntity {
         !search_event.cancelled
     }
 
-    /// Takes one item from the first slot of the container above that gives one, handing out a
-    /// furnace's stored experience when it came from the output slot.
-    fn suck_from_container(
-        &self,
-        world: &Arc<World>,
-        entity: &Arc<dyn BlockEntity>,
-        container: &Arc<dyn Inventory>,
-    ) -> bool {
+    /// Takes one item from the first slot of the container above that a hopper below may take
+    /// (`Inventory::can_transfer_to`). Like vanilla, a furnace's stored experience stays in the
+    /// furnace: only a player taking the result gets it.
+    fn suck_from_container(&self, container: &Arc<dyn Inventory>) -> bool {
         // TODO check WorldlyContainer
         for i in 0..container.size() {
             let mut item = container.get_stack(i);
@@ -295,17 +290,6 @@ impl HopperBlockEntity {
                 let one_item = item.split(1);
                 if Self::add_one_item(container.as_ref(), self, &one_item) {
                     container.set_stack(i, item);
-                    // If extracting from furnace output slot (index 2), drop XP as orbs
-                    let furnace_output_slot: usize = 2;
-                    if i == furnace_output_slot
-                        && let Some(experience_container) = entity.clone().to_experience_container()
-                    {
-                        let xp = experience_container.extract_experience();
-                        if xp > 0 {
-                            let pos = self.position.to_f64();
-                            ExperienceOrbEntity::spawn(world, pos, xp as u32);
-                        }
-                    }
                     return true;
                 }
             }

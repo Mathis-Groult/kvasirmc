@@ -274,6 +274,22 @@ macro_rules! impl_inventory_for_cooking {
                 Self::INVENTORY_SIZE
             }
 
+            /// Vanilla `AbstractFurnaceBlockEntity` seen from a hopper below: `SLOTS_FOR_DOWN`
+            /// = {2, 1}, the fuel slot only for `#furnace_fuel_bottom_takeable` (an empty bucket).
+            fn can_transfer_to(
+                &self,
+                _hopper_inventory: &dyn pumpkin_inventory::Inventory,
+                slot: usize,
+                stack: &pumpkin_data::item_stack::ItemStack,
+            ) -> bool {
+                slot == 2
+                    || (slot == 1
+                        && pumpkin_data::tag::Taggable::has_tag(
+                            stack.get_item(),
+                            &pumpkin_data::tag::Item::MINECRAFT_FURNACE_FUEL_BOTTOM_TAKEABLE,
+                        ))
+            }
+
             fn is_empty(&self) -> bool {
                 let items = self
                     .items

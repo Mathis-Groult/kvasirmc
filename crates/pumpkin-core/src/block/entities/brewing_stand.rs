@@ -532,6 +532,17 @@ impl pumpkin_inventory::Inventory for BrewingStandBlockEntity {
         self
     }
 
+    /// Vanilla `BrewingStandBlockEntity` seen from a hopper below: `SLOTS_FOR_DOWN` = the three
+    /// bottles and the ingredient, the ingredient slot only for a glass bottle; never the fuel.
+    fn can_transfer_to(
+        &self,
+        _hopper_inventory: &dyn Inventory,
+        slot: usize,
+        stack: &ItemStack,
+    ) -> bool {
+        slot < 3 || (slot == 3 && stack.get_item().id == Item::GLASS_BOTTLE.id)
+    }
+
     fn is_valid_slot_for(&self, slot: usize, stack: &ItemStack) -> bool {
         if stack.is_empty() {
             return true;

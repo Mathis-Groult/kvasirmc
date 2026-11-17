@@ -219,10 +219,23 @@ impl HopperBlockEntity {
         true
     }
 
-    #[allow(clippy::too_many_lines)]
     fn suck_in_items(&self, world: &Arc<World>) -> bool {
         // TODO getEntityContainer
         let pos_up = &self.position.up();
+        if !self.search_allowed(world, pos_up) {
+            return false;
+        }
+
+        if let Some(entity) = world.get_block_entity(pos_up)
+            && let Some(container) = entity.clone().get_inventory()
+        {
+            return self.suck_from_container(world, &entity, &container);
+        }
+        self.suck_from_entities(world, pos_up)
+    }
+
+    /// Fires the plugin search event; false when a plugin cancelled the search.
+    fn search_allowed(&self, world: &Arc<World>, pos_up: &BlockPos) -> bool {
         let mut search_event = crate::plugin::api::events::inventory::hopper_inventory_search::HopperInventorySearchEvent::new(
             self.position,
             *pos_up,
@@ -232,40 +245,46 @@ impl HopperBlockEntity {
                 .plugin_manager
                 .fire_blocking(&server, &mut search_event);
         }
-        if search_event.cancelled {
-            return false;
-        }
+        !search_event.cancelled
+    }
 
-        if let Some(entity) = world.get_block_entity(pos_up)
-            && let Some(container) = entity.clone().get_inventory()
-        {
-            // TODO check WorldlyContainer
-            for i in 0..container.size() {
-                let mut item = container.get_stack(i);
-                if !item.is_empty() && container.can_transfer_to(self, i, &item) {
-                    //TODO WorldlyContainer
-                    let _backup = item.clone();
-                    let one_item = item.split(1);
-                    if Self::add_one_item(container.as_ref(), self, &one_item) {
-                        container.set_stack(i, item);
-                        // If extracting from furnace output slot (index 2), drop XP as orbs
-                        let furnace_output_slot: usize = 2;
-                        if i == furnace_output_slot
-                            && let Some(experience_container) =
-                                entity.clone().to_experience_container()
-                        {
-                            let xp = experience_container.extract_experience();
-                            if xp > 0 {
-                                let pos = self.position.to_f64();
-                                ExperienceOrbEntity::spawn(world, pos, xp as u32);
-                            }
+    /// Takes one item from the first slot of the container above that gives one, handing out a
+    /// furnace's stored experience when it came from the output slot.
+    fn suck_from_container(
+        &self,
+        world: &Arc<World>,
+        entity: &Arc<dyn BlockEntity>,
+        container: &Arc<dyn Inventory>,
+    ) -> bool {
+        // TODO check WorldlyContainer
+        for i in 0..container.size() {
+            let mut item = container.get_stack(i);
+            if !item.is_empty() && container.can_transfer_to(self, i, &item) {
+                //TODO WorldlyContainer
+                let _backup = item.clone();
+                let one_item = item.split(1);
+                if Self::add_one_item(container.as_ref(), self, &one_item) {
+                    container.set_stack(i, item);
+                    // If extracting from furnace output slot (index 2), drop XP as orbs
+                    let furnace_output_slot: usize = 2;
+                    if i == furnace_output_slot
+                        && let Some(experience_container) = entity.clone().to_experience_container()
+                    {
+                        let xp = experience_container.extract_experience();
+                        if xp > 0 {
+                            let pos = self.position.to_f64();
+                            ExperienceOrbEntity::spawn(world, pos, xp as u32);
                         }
-                        return true;
                     }
+                    return true;
                 }
             }
-            return false;
         }
+        false
+    }
+
+    /// Takes one item from an item entity above, unless a solid block there stops it.
+    fn suck_from_entities(&self, world: &Arc<World>, pos_up: &BlockPos) -> bool {
         let (block, state) = world.get_block_and_state(pos_up);
         if !(state.is_solid() && block.has_tag(&tag::Block::MINECRAFT_DOES_NOT_BLOCK_HOPPERS)) {
             let pos_up_f = pos_up.to_f64();

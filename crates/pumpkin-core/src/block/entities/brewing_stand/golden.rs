@@ -385,6 +385,14 @@ const SCENES: &[Scene] = &[
         [potion(&Potion::THICK), E, E, plain(&Item::FLINT, 1), BLAZE],
         410,
     ),
+    with_fuel(
+        scene(
+            "datapack chain with one fuel left",
+            [potion(&Potion::MUNDANE), E, E, plain(&Item::STICK, 3), E],
+            820,
+        ),
+        2,
+    ),
 ];
 
 fn brewing(

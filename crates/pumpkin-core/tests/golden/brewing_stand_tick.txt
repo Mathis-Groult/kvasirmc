@@ -183,3 +183,10 @@ datapack input potion matches: tick 2 brew 399 fuel 19 slots [potionx1:thick - -
 datapack input potion matches: tick 401 brew 0 fuel 19 slots [splash_potionx1:mundane - - - -] ingredient - bits Some([true, false, false]) dirty true comparator true state BlockStateId(11189) sound 77d40104000010c400000204000000443f8000003f800000
 datapack input potion matches: tick 402 brew 0 fuel 19 slots [splash_potionx1:mundane - - - -] ingredient - bits Some([true, false, false]) dirty false comparator false state BlockStateId(11189)
 datapack input potion matches: end brew 0
+datapack chain with one fuel left: start brew 0 fuel 2 slots [potionx1:mundane - - stickx3 -] ingredient - bits None dirty true comparator true state BlockStateId(11193)
+datapack chain with one fuel left: tick 1 brew 400 fuel 1 slots [potionx1:mundane - - stickx3 -] ingredient stick bits Some([true, false, false]) dirty true comparator false state BlockStateId(11189)
+datapack chain with one fuel left: tick 401 brew 400 fuel 0 slots [potionx1:thick - - stickx2 -] ingredient stick bits Some([true, false, false]) dirty true comparator true state BlockStateId(11189) sound 77d401040000114400000204000000443f8000003f800000
+datapack chain with one fuel left: tick 402 brew 399 fuel 0 slots [potionx1:thick - - stickx2 -] ingredient stick bits Some([true, false, false]) dirty true comparator false state BlockStateId(11189)
+datapack chain with one fuel left: tick 801 brew 0 fuel 0 slots [potionx1:awkward - - stickx1 -] ingredient stick bits Some([true, false, false]) dirty true comparator true state BlockStateId(11189) sound 77d401040000114400000204000000443f8000003f800000
+datapack chain with one fuel left: tick 802 brew 0 fuel 0 slots [potionx1:awkward - - stickx1 -] ingredient stick bits Some([true, false, false]) dirty false comparator false state BlockStateId(11189)
+datapack chain with one fuel left: end brew 0

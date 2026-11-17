@@ -281,18 +281,20 @@ impl HopperBlockEntity {
     /// (`Inventory::can_transfer_to`). Like vanilla, a furnace's stored experience stays in the
     /// furnace: only a player taking the result gets it.
     fn suck_from_container(&self, container: &Arc<dyn Inventory>) -> bool {
-        // TODO check WorldlyContainer
-        for i in 0..container.size() {
-            let mut item = container.get_stack(i);
-            if !item.is_empty() && container.can_transfer_to(self, i, &item) {
-                //TODO WorldlyContainer
-                let _backup = item.clone();
-                let one_item = item.split(1);
-                if Self::add_one_item(container.as_ref(), self, &one_item) {
-                    container.set_stack(i, item);
-                    return true;
-                }
-            }
+        pumpkin_inventory::inventory::slots_pulled_from_below(container.as_ref())
+            .any(|slot| self.suck_from_slot(container, slot))
+    }
+
+    /// Takes one item from `slot` of the container above, if it may leave through the bottom.
+    fn suck_from_slot(&self, container: &Arc<dyn Inventory>, slot: usize) -> bool {
+        let mut item = container.get_stack(slot);
+        if item.is_empty() || !container.can_transfer_to(self, slot, &item) {
+            return false;
+        }
+        let one_item = item.split(1);
+        if Self::add_one_item(container.as_ref(), self, &one_item) {
+            container.set_stack(slot, item);
+            return true;
         }
         false
     }

@@ -48,18 +48,8 @@ impl HopperMinecart {
         if let Some(block_entity) = world.get_block_entity(&source_pos)
             && let Some(source) = block_entity.get_inventory()
         {
-            for slot in 0..source.size() {
-                let stack = source.get_stack(slot);
-                if stack.is_empty() || !source.can_transfer_to(inventory.as_ref(), slot, &stack) {
-                    continue;
-                }
-                let backup = stack.clone();
-                let one = source.remove_stack_specific(slot, 1);
-                if HopperBlockEntity::add_one_item(source.as_ref(), inventory.as_ref(), &one) {
-                    return;
-                }
-                source.set_stack(slot, backup);
-            }
+            let _pulled = pumpkin_inventory::inventory::slots_pulled_from_below(source.as_ref())
+                .any(|slot| self.pull_slot(&source, slot));
             return;
         }
 
@@ -71,6 +61,20 @@ impl HopperMinecart {
             return;
         }
         Self::pick_up_item_internal(&world, inventory, &cart_box);
+    }
+
+    /// Takes one item from `slot` of the container above, if it may leave through the bottom.
+    fn pull_slot(&self, source: &Arc<dyn pumpkin_inventory::Inventory>, slot: usize) -> bool {
+        let stack = source.get_stack(slot);
+        if stack.is_empty() || !source.can_transfer_to(self.inventory.as_ref(), slot, &stack) {
+            return false;
+        }
+        let one = source.remove_stack_specific(slot, 1);
+        if HopperBlockEntity::add_one_item(source.as_ref(), self.inventory.as_ref(), &one) {
+            return true;
+        }
+        source.set_stack(slot, stack);
+        false
     }
 
     fn pick_up_item_internal(

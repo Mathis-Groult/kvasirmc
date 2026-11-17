@@ -274,6 +274,11 @@ macro_rules! impl_inventory_for_cooking {
                 Self::INVENTORY_SIZE
             }
 
+            /// Vanilla `AbstractFurnaceBlockEntity.SLOTS_FOR_DOWN`: the result first, then the fuel.
+            fn slots_for_down(&self) -> Option<&'static [usize]> {
+                Some(&[2, 1])
+            }
+
             /// Vanilla `AbstractFurnaceBlockEntity` seen from a hopper below: `SLOTS_FOR_DOWN`
             /// = {2, 1}, the fuel slot only for `#furnace_fuel_bottom_takeable` (an empty bucket).
             fn can_transfer_to(

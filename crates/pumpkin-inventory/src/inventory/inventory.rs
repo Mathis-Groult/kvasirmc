@@ -94,7 +94,27 @@ pub trait Inventory: Send + Sync + Clearable {
         true
     }
 
+    /// The slots a hopper below pulls from, in the order it asks them (vanilla
+    /// `WorldlyContainer.getSlotsForFace(Direction.DOWN)`).
+    ///
+    /// `None` means every slot from 0 up, as for a plain container.
+    fn slots_for_down(&self) -> Option<&'static [usize]> {
+        None
+    }
+
     fn as_any(&self) -> &dyn Any;
+}
+
+/// The slots a hopper below `inventory` pulls from, in the order it asks them: the
+/// [`Inventory::slots_for_down`] list, or every slot from 0 up.
+pub fn slots_pulled_from_below(inventory: &dyn Inventory) -> impl Iterator<Item = usize> + '_ {
+    let listed = inventory.slots_for_down();
+    let every = listed.is_none().then(|| 0..inventory.size());
+    listed
+        .into_iter()
+        .flatten()
+        .copied()
+        .chain(every.into_iter().flatten())
 }
 
 pub trait Clearable {

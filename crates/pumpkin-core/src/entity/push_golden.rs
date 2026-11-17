@@ -313,7 +313,12 @@ const SCENES: &[Scene] = &[
         "rolling chest cart near a player",
         Kind::ChestCart,
         NEAR_PLAYER,
-    )),
+    )), // Appended after the second mutation run: the other minecart kinds next to a zombie (only
+    // the minecart path keeps them from pushing non-minecarts).
+    scene("furnace cart near a zombie", Kind::FurnaceCart, NEAR_ZOMBIE),
+    scene("tnt cart near a zombie", Kind::TntCart, NEAR_ZOMBIE),
+    scene("spawner cart near a zombie", Kind::SpawnerCart, NEAR_ZOMBIE),
+    scene("command cart near a zombie", Kind::CommandCart, NEAR_ZOMBIE),
 ];
 
 fn spawn(

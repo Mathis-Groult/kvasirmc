@@ -135,6 +135,10 @@ const RAYS: &[Ray] = &[
     ((5.5, 1.5, 5.5), (3.5, 1.5, 3.5)),
     ((3.5, 1.5, 5.5), (5.5, 1.5, 3.5)),
     ((5.5, 1.5, 3.5), (3.5, 1.5, 5.5)),
+    // Appended after the second mutation run: x/y and y/z corner ties that stay exact (both
+    // axes rising from the same fraction).
+    ((3.5, 1.5, 4.5), (5.5, 3.5, 4.5)),
+    ((4.5, 1.5, 3.5), (4.5, 3.5, 5.5)),
 ];
 
 /// A fixed pseudo-random ray inside the area.

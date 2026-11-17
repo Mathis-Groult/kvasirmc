@@ -46,3 +46,7 @@ cart picking up, near a golem riding a zombie: returned false; 0: v (0.000000, 0
 ridden cart near a zombie riding a zombie: returned false; 0: v (0.000000, 0.000000, 0.000000) riders ["1"]; 1: v (0.000000, 0.000000, 0.000000) riders []; 2: v (-0.011859, 0.000000, 0.003953) riders []; 3: v (0.000000, 0.000000, 0.000000) riders ["2"]
 rolling cart near a player: returned false; 0: v (0.052566, 0.000000, -0.015811) riders []; 1: v (0.011859, 0.000000, 0.003953) riders []
 rolling chest cart near a player: returned false; 0: v (0.100000, 0.000000, 0.000000) riders []; 1: v (0.000000, 0.000000, 0.000000) riders []
+furnace cart near a zombie: returned false; 0: v (0.000000, 0.000000, 0.000000) riders []; 1: v (0.000000, 0.000000, 0.000000) riders []
+tnt cart near a zombie: returned false; 0: v (0.000000, 0.000000, 0.000000) riders []; 1: v (0.000000, 0.000000, 0.000000) riders []
+spawner cart near a zombie: returned false; 0: v (0.000000, 0.000000, 0.000000) riders []; 1: v (0.000000, 0.000000, 0.000000) riders []
+command cart near a zombie: returned false; 0: v (0.000000, 0.000000, 0.000000) riders []; 1: v (0.000000, 0.000000, 0.000000) riders []

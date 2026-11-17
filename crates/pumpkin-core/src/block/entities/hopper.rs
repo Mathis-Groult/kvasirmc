@@ -557,6 +557,9 @@ impl Clearable for HopperBlockEntity {
 }
 
 #[cfg(test)]
+mod golden;
+
+#[cfg(test)]
 mod tests {
     use super::*;
     use pumpkin_data::{Block, item::Item};

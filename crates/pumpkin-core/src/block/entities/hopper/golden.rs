@@ -429,3 +429,55 @@ async fn hopper_suck_is_the_same() -> TestResult {
     server.stop();
     Ok(())
 }
+
+/// Whether the scene's hopper took anything within its ticks.
+async fn took_something(name: &str) -> Result<bool, Box<dyn std::error::Error>> {
+    let folder = tempfile::tempdir()?;
+    let server = test_support::server(&folder).await?;
+    let world = server.worlds.load()[0].clone();
+    for cx in -1..=SCENES.len() as i32 {
+        for cz in -1..=1 {
+            world.level.loaded_chunks.insert(
+                Vector2::new(cx, cz),
+                pumpkin_world::chunk::ChunkData::empty_sync(cx, cz),
+            );
+        }
+    }
+    let (index, scene) = SCENES
+        .iter()
+        .enumerate()
+        .find(|(_, scene)| scene.name == name)
+        .ok_or("no such scene")?;
+    let mut out = String::new();
+    run(&mut out, &world, index, scene)?;
+    server.stop();
+    Ok(out
+        .lines()
+        .any(|line| line.contains(" tick ") && line.contains("hopper [0:")))
+}
+
+/// Vanilla 26.3 `HopperBlockEntity.suckInItems` + `Hopper.SUCK_AABB` (#71): item entities are
+/// searched in `Block.column(16, 11, 32)` over the hopper (from inside its bowl to the top of
+/// the block above, exactly over the hopper), unless the block above is a full collision block
+/// outside `#does_not_block_hoppers`.
+#[tokio::test(flavor = "multi_thread")]
+async fn hopper_picks_up_items_where_vanilla_does() -> TestResult {
+    for (name, expected) in [
+        ("item in the bowl", true),
+        ("stone above, item in it", false),
+        ("beehive above, item in it", true),
+        ("slab above, item on it", true),
+        ("item over the west half", true),
+        ("item over the north half", true),
+        ("item over the east neighbour", false),
+        ("item over the south neighbour", false),
+        ("item high above", false),
+        ("item stack above", true),
+    ] {
+        let took = took_something(name).await?;
+        if took != expected {
+            return Err(format!("{name}: took {took}, vanilla {expected}").into());
+        }
+    }
+    Ok(())
+}

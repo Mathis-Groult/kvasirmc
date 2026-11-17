@@ -1,0 +1,75 @@
+water flat: spread [North=BlockStateId(90 = "water") South=BlockStateId(90 = "water") West=BlockStateId(90 = "water") East=BlockStateId(90 = "water")] distances North:1000 South:1000 West:1000 East:1000
+water hole east 1: spread [East=BlockStateId(90 = "water")] distances North:3 South:3 West:1000 East:1
+water hole north 2: spread [North=BlockStateId(90 = "water")] distances North:2 South:1000 West:4 East:4
+water hole west 4: spread [West=BlockStateId(90 = "water")] distances North:1000 South:1000 West:4 East:1000
+water hole south 5: spread [North=BlockStateId(90 = "water") South=BlockStateId(90 = "water") West=BlockStateId(90 = "water") East=BlockStateId(90 = "water")] distances North:1000 South:1000 West:1000 East:1000
+water two holes same distance: spread [North=BlockStateId(90 = "water") South=BlockStateId(90 = "water")] distances North:2 South:2 West:4 East:4
+water diagonal hole: spread [North=BlockStateId(90 = "water") East=BlockStateId(90 = "water")] distances North:4 South:1000 West:1000 East:4
+water hole behind a wall: spread [North=BlockStateId(90 = "water") South=BlockStateId(90 = "water")] distances North:4 South:4 West:1000 East:2
+water wall with a gap: spread [North=BlockStateId(90 = "water") South=BlockStateId(90 = "water") West=BlockStateId(90 = "water")] distances North:1000 South:1000 West:1000 East:2
+water source in the way: spread [North=BlockStateId(90 = "water") South=BlockStateId(90 = "water")] distances North:4 South:4 West:1000 East:2
+water corridor: spread [East=BlockStateId(90 = "water")] distances North:1000 South:1000 West:1000 East:4
+water walled in: spread [] distances North:1000 South:1000 West:1000 East:1000
+water maze: spread [West=BlockStateId(90 = "water") East=BlockStateId(90 = "water")] distances North:1000 South:1000 West:1000 East:1000
+water holes all around: spread [North=BlockStateId(90 = "water") South=BlockStateId(90 = "water") West=BlockStateId(90 = "water") East=BlockStateId(90 = "water")] distances North:1 South:1 West:1 East:1
+water hole west 3: spread [West=BlockStateId(90 = "water")] distances North:1000 South:1000 West:3 East:1000
+water hole east 6: spread [North=BlockStateId(90 = "water") South=BlockStateId(90 = "water") West=BlockStateId(90 = "water") East=BlockStateId(90 = "water")] distances North:1000 South:1000 West:1000 East:1000
+water flowing neighbours: spread [South=BlockStateId(90 = "water") West=BlockStateId(90 = "water") East=BlockStateId(90 = "water")] distances North:1000 South:1000 West:1000 East:1000
+water flowing neighbours before holes: spread [South=BlockStateId(90 = "water") West=BlockStateId(90 = "water") East=BlockStateId(90 = "water")] distances North:2 South:2 West:2 East:2
+water blockers: spread [South=BlockStateId(90 = "water") West=BlockStateId(90 = "water")] distances North:1000 South:1000 West:1000 East:1000
+water blockers before holes: spread [South=BlockStateId(90 = "water") West=BlockStateId(90 = "water")] distances North:2 South:2 West:2 East:2
+water other fluid: spread [East=BlockStateId(90 = "water")] distances North:4 South:4 West:1000 East:2
+water path through flowing and falling: spread [North=BlockStateId(90 = "water") South=BlockStateId(90 = "water") West=BlockStateId(90 = "water") East=BlockStateId(90 = "water")] distances North:3 South:3 West:3 East:3
+water fluid floors: spread [North=BlockStateId(90 = "water") West=BlockStateId(90 = "water")] distances North:1 South:3 West:1 East:2
+water path blocked by a waterlogged slab: spread [West=BlockStateId(90 = "water") East=BlockStateId(89 = "water")] distances North:1000 South:1000 West:1000 East:1000
+water open field one far hole: spread [North=BlockStateId(90 = "water") South=BlockStateId(90 = "water") West=BlockStateId(90 = "water") East=BlockStateId(90 = "water")] distances North:1000 South:1000 West:1000 East:1000
+lava flat: spread [North=BlockStateId(107 = "lava") South=BlockStateId(107 = "lava") West=BlockStateId(107 = "lava") East=BlockStateId(107 = "lava")] distances North:1000 South:1000 West:1000 East:1000
+lava hole east 1: spread [East=BlockStateId(107 = "lava")] distances North:3 South:3 West:1000 East:1
+lava hole north 2: spread [North=BlockStateId(107 = "lava")] distances North:2 South:1000 West:1000 East:1000
+lava hole west 4: spread [North=BlockStateId(107 = "lava") South=BlockStateId(107 = "lava") West=BlockStateId(107 = "lava") East=BlockStateId(107 = "lava")] distances North:1000 South:1000 West:1000 East:1000
+lava hole south 5: spread [North=BlockStateId(107 = "lava") South=BlockStateId(107 = "lava") West=BlockStateId(107 = "lava") East=BlockStateId(107 = "lava")] distances North:1000 South:1000 West:1000 East:1000
+lava two holes same distance: spread [North=BlockStateId(107 = "lava") South=BlockStateId(107 = "lava")] distances North:2 South:2 West:1000 East:1000
+lava diagonal hole: spread [North=BlockStateId(107 = "lava") South=BlockStateId(107 = "lava") West=BlockStateId(107 = "lava") East=BlockStateId(107 = "lava")] distances North:1000 South:1000 West:1000 East:1000
+lava hole behind a wall: spread [North=BlockStateId(107 = "lava") South=BlockStateId(107 = "lava") West=BlockStateId(107 = "lava")] distances North:1000 South:1000 West:1000 East:2
+lava wall with a gap: spread [North=BlockStateId(107 = "lava") South=BlockStateId(107 = "lava") West=BlockStateId(107 = "lava")] distances North:1000 South:1000 West:1000 East:2
+lava source in the way: spread [North=BlockStateId(107 = "lava") South=BlockStateId(107 = "lava") West=BlockStateId(107 = "lava")] distances North:1000 South:1000 West:1000 East:2
+lava corridor: spread [West=BlockStateId(107 = "lava") East=BlockStateId(107 = "lava")] distances North:1000 South:1000 West:1000 East:1000
+lava walled in: spread [] distances North:1000 South:1000 West:1000 East:1000
+lava maze: spread [West=BlockStateId(107 = "lava") East=BlockStateId(107 = "lava")] distances North:1000 South:1000 West:1000 East:1000
+lava holes all around: spread [North=BlockStateId(107 = "lava") South=BlockStateId(107 = "lava") West=BlockStateId(107 = "lava") East=BlockStateId(107 = "lava")] distances North:1 South:1 West:1 East:1
+lava hole west 3: spread [West=BlockStateId(107 = "lava")] distances North:1000 South:1000 West:3 East:1000
+lava hole east 6: spread [North=BlockStateId(107 = "lava") South=BlockStateId(107 = "lava") West=BlockStateId(107 = "lava") East=BlockStateId(107 = "lava")] distances North:1000 South:1000 West:1000 East:1000
+lava flowing neighbours: spread [South=BlockStateId(107 = "lava") West=BlockStateId(107 = "lava") East=BlockStateId(107 = "lava")] distances North:1000 South:1000 West:1000 East:1000
+lava flowing neighbours before holes: spread [South=BlockStateId(107 = "lava") West=BlockStateId(107 = "lava") East=BlockStateId(107 = "lava")] distances North:2 South:2 West:2 East:2
+lava blockers: spread [] distances North:1000 South:1000 West:1000 East:1000
+lava blockers before holes: spread [] distances North:2 South:2 West:2 East:2
+lava other fluid: spread [East=BlockStateId(107 = "lava")] distances North:1000 South:1000 West:1000 East:2
+lava path through flowing and falling: spread [North=BlockStateId(107 = "lava") South=BlockStateId(107 = "lava") West=BlockStateId(107 = "lava") East=BlockStateId(107 = "lava")] distances North:3 South:3 West:3 East:3
+lava fluid floors: spread [North=BlockStateId(107 = "lava") West=BlockStateId(107 = "lava")] distances North:1 South:3 West:1 East:2
+lava path blocked by a waterlogged slab: spread [West=BlockStateId(107 = "lava") East=BlockStateId(107 = "lava")] distances North:1000 South:1000 West:1000 East:1000
+lava open field one far hole: spread [North=BlockStateId(107 = "lava") South=BlockStateId(107 = "lava") West=BlockStateId(107 = "lava") East=BlockStateId(107 = "lava")] distances North:1000 South:1000 West:1000 East:1000
+nether lava flat: spread [North=BlockStateId(106 = "lava") South=BlockStateId(106 = "lava") West=BlockStateId(106 = "lava") East=BlockStateId(106 = "lava")] distances North:1000 South:1000 West:1000 East:1000
+nether lava hole east 1: spread [East=BlockStateId(106 = "lava")] distances North:3 South:3 West:5 East:1
+nether lava hole north 2: spread [North=BlockStateId(106 = "lava")] distances North:2 South:1000 West:4 East:4
+nether lava hole west 4: spread [West=BlockStateId(106 = "lava")] distances North:1000 South:1000 West:4 East:1000
+nether lava hole south 5: spread [South=BlockStateId(106 = "lava")] distances North:1000 South:5 West:1000 East:1000
+nether lava two holes same distance: spread [North=BlockStateId(106 = "lava") South=BlockStateId(106 = "lava")] distances North:2 South:2 West:4 East:4
+nether lava diagonal hole: spread [North=BlockStateId(106 = "lava") East=BlockStateId(106 = "lava")] distances North:4 South:1000 West:1000 East:4
+nether lava hole behind a wall: spread [North=BlockStateId(106 = "lava") South=BlockStateId(106 = "lava")] distances North:4 South:4 West:1000 East:2
+nether lava wall with a gap: spread [North=BlockStateId(106 = "lava") South=BlockStateId(106 = "lava") West=BlockStateId(106 = "lava")] distances North:1000 South:1000 West:1000 East:2
+nether lava source in the way: spread [North=BlockStateId(106 = "lava") South=BlockStateId(106 = "lava")] distances North:4 South:4 West:1000 East:2
+nether lava corridor: spread [East=BlockStateId(106 = "lava")] distances North:1000 South:1000 West:1000 East:4
+nether lava walled in: spread [] distances North:1000 South:1000 West:1000 East:1000
+nether lava maze: spread [West=BlockStateId(106 = "lava") East=BlockStateId(106 = "lava")] distances North:1000 South:1000 West:1000 East:1000
+nether lava holes all around: spread [North=BlockStateId(106 = "lava") South=BlockStateId(106 = "lava") West=BlockStateId(106 = "lava") East=BlockStateId(106 = "lava")] distances North:1 South:1 West:1 East:1
+nether lava hole west 3: spread [West=BlockStateId(106 = "lava")] distances North:5 South:5 West:3 East:1000
+nether lava hole east 6: spread [North=BlockStateId(106 = "lava") South=BlockStateId(106 = "lava") West=BlockStateId(106 = "lava") East=BlockStateId(106 = "lava")] distances North:1000 South:1000 West:1000 East:1000
+nether lava flowing neighbours: spread [South=BlockStateId(106 = "lava") West=BlockStateId(106 = "lava") East=BlockStateId(106 = "lava")] distances North:1000 South:1000 West:1000 East:1000
+nether lava flowing neighbours before holes: spread [South=BlockStateId(106 = "lava") West=BlockStateId(106 = "lava") East=BlockStateId(106 = "lava")] distances North:2 South:2 West:2 East:2
+nether lava blockers: spread [] distances North:1000 South:1000 West:1000 East:1000
+nether lava blockers before holes: spread [] distances North:2 South:2 West:2 East:2
+nether lava other fluid: spread [East=BlockStateId(106 = "lava")] distances North:4 South:4 West:1000 East:2
+nether lava path through flowing and falling: spread [North=BlockStateId(106 = "lava") South=BlockStateId(106 = "lava") West=BlockStateId(106 = "lava") East=BlockStateId(106 = "lava")] distances North:3 South:3 West:3 East:3
+nether lava fluid floors: spread [North=BlockStateId(106 = "lava") West=BlockStateId(106 = "lava")] distances North:1 South:3 West:1 East:2
+nether lava path blocked by a waterlogged slab: spread [West=BlockStateId(106 = "lava") East=BlockStateId(106 = "lava")] distances North:1000 South:1000 West:1000 East:1000
+nether lava open field one far hole: spread [North=BlockStateId(106 = "lava") South=BlockStateId(106 = "lava") West=BlockStateId(106 = "lava") East=BlockStateId(106 = "lava")] distances North:1000 South:1000 West:1000 East:1000

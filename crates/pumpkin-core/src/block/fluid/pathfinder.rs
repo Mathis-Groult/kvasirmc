@@ -216,3 +216,6 @@ pub fn get_in_flow_down_distance_iterative<T: FlowingFluid + Sync + ?Sized>(
 
     1000
 }
+
+#[cfg(test)]
+mod golden;

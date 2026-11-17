@@ -17,6 +17,19 @@ use std::sync::atomic::Ordering::{self, Relaxed};
 #[cfg(test)]
 mod golden;
 
+/// What the fluid blocks an entity overlaps hold, per kind (index 0 water, 1 lava).
+struct FluidScan {
+    /// The fluids touched, by id (water sorts before lava).
+    fluids: BTreeMap<u16, &'static Fluid>,
+    /// Summed current of the cells that push the entity.
+    push: [Vector3<f64>; 2],
+    /// Cells summed into `push`.
+    count: [usize; 2],
+    in_fluid: [bool; 2],
+    /// Highest fluid surface above the entity's feet.
+    height: [f64; 2],
+}
+
 impl Entity {
     pub fn set_air_supply(&self, mut air: i32) {
         if air == self.air_supply.load(Relaxed) {
@@ -64,26 +77,34 @@ impl Entity {
     /// Vanilla `Entity.updateFluidInteraction`: fluid flags and current push only, without the
     /// fluid's `entityInside` effects. Returns the fluids the entity is in.
     pub(super) fn update_fluid_interaction(&self, caller: &dyn EntityBase) -> Vec<&'static Fluid> {
-        let is_pushed = caller.is_pushed_by_fluids();
-        let mut fluids = BTreeMap::new();
+        let scan = self.scan_fluids(caller.is_pushed_by_fluids());
 
-        let water_push = Vector3::default();
+        let world = self.world.load();
 
-        let water_n = 0;
+        let lava_speed = lava_push_speed(world.dimension.fast_lava);
 
-        let lava_push = Vector3::default();
+        self.push_by_fluid(WATER_PUSH_SPEED, scan.push[0], scan.count[0]);
 
-        let lava_n = 0;
+        self.push_by_fluid(lava_speed, scan.push[1], scan.count[1]);
 
-        let mut fluid_push = [water_push, lava_push];
+        self.update_water_contact(caller, scan.height[0], scan.in_fluid[0]);
 
-        let mut fluid_n = [water_n, lava_n];
+        self.update_lava_contact(caller, scan.height[1], scan.in_fluid[1]);
 
-        let mut in_fluid = [false, false];
+        // BTreeMap auto-sorts water before lava as in vanilla
+        scan.fluids.into_values().collect()
+    }
 
-        // The maximum fluid height found
-
-        let mut fluid_height: [f64; 2] = [0.0, 0.0];
+    /// Reads every fluid block the entity's box overlaps: the fluids touched, and per kind
+    /// (water, lava) the summed current, the cells counted, contact and the highest surface.
+    fn scan_fluids(&self, is_pushed: bool) -> FluidScan {
+        let mut scan = FluidScan {
+            fluids: BTreeMap::new(),
+            push: [Vector3::default(), Vector3::default()],
+            count: [0, 0],
+            in_fluid: [false, false],
+            height: [0.0, 0.0],
+        };
 
         let entity_box = self.bounding_box.load();
         let bounding_box = entity_box.expand(-0.001, -0.001, -0.001);
@@ -111,43 +132,37 @@ impl Entity {
                                 fluid.id == Fluid::FLOWING_LAVA.id || fluid.id == Fluid::LAVA.id,
                             );
 
-                            fluid_height[i] = fluid_height[i].max(marginal_height);
+                            scan.height[i] = scan.height[i].max(marginal_height);
 
-                            in_fluid[i] = true;
+                            scan.in_fluid[i] = true;
 
                             if !is_pushed {
-                                fluids.insert(fluid.id, fluid);
+                                scan.fluids.insert(fluid.id, fluid);
 
                                 continue;
                             }
 
                             let mut fluid_velo = world.get_fluid_velocity(pos, fluid, &state);
 
-                            if fluid_height[i] < 0.4 {
-                                fluid_velo = fluid_velo * fluid_height[i];
+                            if scan.height[i] < 0.4 {
+                                fluid_velo = fluid_velo * scan.height[i];
                             }
 
-                            fluid_push[i] += fluid_velo;
+                            scan.push[i] += fluid_velo;
 
-                            fluid_n[i] += 1;
+                            scan.count[i] += 1;
 
-                            fluids.insert(fluid.id, fluid);
+                            scan.fluids.insert(fluid.id, fluid);
                         }
                     }
                 }
             }
         }
+        scan
+    }
 
-        let lava_speed = lava_push_speed(world.dimension.fast_lava);
-
-        self.push_by_fluid(WATER_PUSH_SPEED, fluid_push[0], fluid_n[0]);
-
-        self.push_by_fluid(lava_speed, fluid_push[1], fluid_n[1]);
-
-        let water_height = fluid_height[0];
-
-        let in_water = in_fluid[0];
-
+    /// Water contact: no fall distance in water, a splash on entering it, and the stored state.
+    fn update_water_contact(&self, caller: &dyn EntityBase, water_height: f64, in_water: bool) {
         if in_water {
             if let Some(living) = caller.get_living_entity() {
                 living.fall_distance.store(0.0);
@@ -163,11 +178,10 @@ impl Entity {
         self.water_height.store(water_height);
 
         self.touching_water.store(in_water, Ordering::SeqCst);
+    }
 
-        let lava_height = fluid_height[1];
-
-        let in_lava = in_fluid[1];
-
+    /// Lava contact: the fall distance halves in lava, and the stored state.
+    fn update_lava_contact(&self, caller: &dyn EntityBase, lava_height: f64, in_lava: bool) {
         if in_lava && let Some(living) = caller.get_living_entity() {
             let halved_fall = living.fall_distance.load() / 2.0;
 
@@ -179,9 +193,6 @@ impl Entity {
         self.lava_height.store(lava_height);
 
         self.touching_lava.store(in_lava, Ordering::SeqCst);
-
-        // BTreeMap auto-sorts water before lava as in vanilla
-        fluids.into_values().collect()
     }
 
     pub(super) fn push_by_fluid(&self, speed: f64, mut push: Vector3<f64>, n: usize) {

@@ -75,6 +75,15 @@ impl MobSpawnerBlockEntity {
     }
 }
 
+/// What one spawn attempt of a spawner's batch did.
+enum SpawnAttempt {
+    /// The spot was not free.
+    Blocked,
+    /// A plugin cancelled the spawn.
+    Cancelled,
+    Spawned,
+}
+
 impl MobSpawnerBlockEntity {
     fn update_spawns(&self, world: &Arc<World>) {
         let min_delay = self.min_delay;
@@ -94,6 +103,87 @@ impl MobSpawnerBlockEntity {
     pub fn set_entity_type(&self, entity_type: &'static EntityType) {
         self.entity_type.store(Some(entity_type));
     }
+
+    /// Whether any player stands within the required range of the spawner's centre.
+    fn player_nearby(&self, world: &World, center: &Vector3<f64>) -> bool {
+        let max_player_dist_sq = (self.required_player_range as f64).powi(2);
+        world.players.load().iter().any(|p| {
+            p.get_entity().pos.load().squared_distance_to_vec(center) <= max_player_dist_sq
+        })
+    }
+
+    /// The mobs of the spawned type near the spawner, counted against its cap.
+    fn nearby_count(
+        &self,
+        world: &World,
+        entity_type: &EntityType,
+        center: &Vector3<f64>,
+    ) -> usize {
+        let search_radius_horiz = (self.spawn_range * 2) as f64;
+        let search_radius_vert = 4.0;
+        world
+            .entities
+            .load()
+            .iter()
+            .filter(|e| {
+                let ent = e.get_entity();
+                if ent.entity_type.id != entity_type.id {
+                    return false;
+                }
+                let pos = ent.pos.load();
+                (pos.x - center.x).abs() <= search_radius_horiz
+                    && (pos.z - center.z).abs() <= search_radius_horiz
+                    && (pos.y - center.y).abs() <= search_radius_vert
+            })
+            .count()
+    }
+
+    /// One attempt of the batch: a random free spot within the spawn range gets a new mob.
+    fn try_spawn(&self, world: &Arc<World>, entity_type: &'static EntityType) -> SpawnAttempt {
+        let spawn_range = self.spawn_range;
+        let pos = self.position.0;
+
+        let spawn_pos = Vector3::new(
+            pos.x as f64
+                + (rand::random::<f64>() - rand::random::<f64>()) * spawn_range as f64
+                + 0.5,
+            (pos.y + rand::random_range(0..3) - 1) as f64,
+            pos.z as f64
+                + (rand::random::<f64>() - rand::random::<f64>()) * spawn_range as f64
+                + 0.5,
+        );
+        if !world.is_space_empty(entity_type.get_spawn_bounding_box(
+            spawn_pos.x,
+            spawn_pos.y,
+            spawn_pos.z,
+        )) {
+            return SpawnAttempt::Blocked;
+        }
+        let entity =
+            crate::entity::r#type::from_type(entity_type, spawn_pos, world, uuid::Uuid::new_v4());
+        let yaw = rand::random::<f32>() * 360.0;
+        entity.get_entity().set_rotation(yaw, 0.0);
+
+        let mut event = crate::plugin::api::events::entity::spawner_spawn::SpawnerSpawnEvent::new(
+            entity.get_entity().entity_id,
+            self.position,
+        );
+        if let Some(server) = world.server.upgrade() {
+            server.plugin_manager.fire_blocking(&server, &mut event);
+        }
+        if event.cancelled {
+            // Count a cancelled spawn as a completed attempt so the
+            // spawner goes on its normal cooldown instead of retrying
+            // every tick for as long as a plugin keeps cancelling.
+            return SpawnAttempt::Cancelled;
+        }
+
+        // TODO: support SpawnData NBT (`entity` tag, custom_spawn_rules, equipment).
+        finalize_spawn(&entity, world, None);
+        world.spawn_entity(entity);
+        world.sync_world_event(WorldEvent::ParticlesMobblockSpawn, self.position, 0);
+        SpawnAttempt::Spawned
+    }
 }
 
 impl BlockEntity for MobSpawnerBlockEntity {
@@ -108,12 +198,7 @@ impl BlockEntity for MobSpawnerBlockEntity {
     fn tick(&self, world: &Arc<World>) {
         if let Some(entity_type) = &self.entity_type.load() {
             let center = self.position.to_centered_f64();
-            let max_player_dist_sq = (self.required_player_range as f64).powi(2);
-            let player_nearby = world.players.load().iter().any(|p| {
-                p.get_entity().pos.load().squared_distance_to_vec(&center) <= max_player_dist_sq
-            });
-
-            if !player_nearby {
+            if !self.player_nearby(world, &center) {
                 return;
             }
 
@@ -126,81 +211,19 @@ impl BlockEntity for MobSpawnerBlockEntity {
                 return;
             }
 
-            let search_radius_horiz = (self.spawn_range * 2) as f64;
-            let search_radius_vert = 4.0;
-            let nearby_count = world
-                .entities
-                .load()
-                .iter()
-                .filter(|e| {
-                    let ent = e.get_entity();
-                    if ent.entity_type.id != entity_type.id {
-                        return false;
-                    }
-                    let pos = ent.pos.load();
-                    (pos.x - center.x).abs() <= search_radius_horiz
-                        && (pos.z - center.z).abs() <= search_radius_horiz
-                        && (pos.y - center.y).abs() <= search_radius_vert
-                })
-                .count();
-
-            if nearby_count as i32 >= self.max_nearby_entities {
+            if self.nearby_count(world, entity_type, &center) as i32 >= self.max_nearby_entities {
                 self.update_spawns(world);
                 return;
             }
 
-            let spawn_range = self.spawn_range;
             let mut spawned_any = false;
             let mut cancelled_any = false;
             for _ in 0..self.spawn_count {
-                let pos = self.position.0;
-
-                let spawn_pos = Vector3::new(
-                    pos.x as f64
-                        + (rand::random::<f64>() - rand::random::<f64>()) * spawn_range as f64
-                        + 0.5,
-                    (pos.y + rand::random_range(0..3) - 1) as f64,
-                    pos.z as f64
-                        + (rand::random::<f64>() - rand::random::<f64>()) * spawn_range as f64
-                        + 0.5,
-                );
-                if !world.is_space_empty(entity_type.get_spawn_bounding_box(
-                    spawn_pos.x,
-                    spawn_pos.y,
-                    spawn_pos.z,
-                )) {
-                    continue;
+                match self.try_spawn(world, entity_type) {
+                    SpawnAttempt::Blocked => {}
+                    SpawnAttempt::Cancelled => cancelled_any = true,
+                    SpawnAttempt::Spawned => spawned_any = true,
                 }
-                let entity = crate::entity::r#type::from_type(
-                    entity_type,
-                    spawn_pos,
-                    world,
-                    uuid::Uuid::new_v4(),
-                );
-                let yaw = rand::random::<f32>() * 360.0;
-                entity.get_entity().set_rotation(yaw, 0.0);
-
-                let mut event =
-                    crate::plugin::api::events::entity::spawner_spawn::SpawnerSpawnEvent::new(
-                        entity.get_entity().entity_id,
-                        self.position,
-                    );
-                if let Some(server) = world.server.upgrade() {
-                    server.plugin_manager.fire_blocking(&server, &mut event);
-                }
-                if event.cancelled {
-                    // Count a cancelled spawn as a completed attempt so the
-                    // spawner goes on its normal cooldown instead of retrying
-                    // every tick for as long as a plugin keeps cancelling.
-                    cancelled_any = true;
-                    continue;
-                }
-
-                // TODO: support SpawnData NBT (`entity` tag, custom_spawn_rules, equipment).
-                finalize_spawn(&entity, world, None);
-                world.spawn_entity(entity);
-                world.sync_world_event(WorldEvent::ParticlesMobblockSpawn, self.position, 0);
-                spawned_any = true;
             }
             if spawned_any || cancelled_any {
                 self.update_spawns(world);

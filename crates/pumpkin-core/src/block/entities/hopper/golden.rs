@@ -25,6 +25,7 @@ use pumpkin_world::world::BlockFlags;
 
 use super::HopperBlockEntity;
 use crate::block::entities::BlockEntity;
+use crate::block::entities::brewing_stand::BrewingStandBlockEntity;
 use crate::block::entities::chest::ChestBlockEntity;
 use crate::block::entities::furnace::FurnaceBlockEntity;
 use crate::command::commands::script_golden::{self, TestResult};
@@ -44,6 +45,8 @@ enum Above {
     /// Slots, and the smelted ingredient on record with its count (experience to hand out).
     Furnace(Stacks, Option<(&'static Item, u32)>),
     Block(&'static Block),
+    /// A brewing stand with these slots (0-2 bottles, 3 ingredient, 4 fuel).
+    BrewingStand(Stacks),
 }
 
 struct Scene {
@@ -258,6 +261,28 @@ const SCENES: &[Scene] = &[
         scene("item over the south neighbour", Above::Nothing, &[], 5),
         &[(0.0, 1.2, 0.8, &Item::DIRT, 2)],
     ),
+    scene(
+        "furnace fuel slot holds a bucket",
+        Above::Furnace(&[(1, &Item::BUCKET, 1)], None),
+        &[],
+        5,
+    ),
+    scene(
+        "brewing stand above",
+        Above::BrewingStand(&[
+            (0, &Item::GLASS_BOTTLE, 1),
+            (3, &Item::NETHER_WART, 2),
+            (4, &Item::BLAZE_POWDER, 2),
+        ]),
+        &[],
+        30,
+    ),
+    scene(
+        "brewing stand with a bottle as ingredient",
+        Above::BrewingStand(&[(3, &Item::GLASS_BOTTLE, 1), (4, &Item::BLAZE_POWDER, 1)]),
+        &[],
+        5,
+    ),
 ];
 
 fn put(world: &Arc<World>, pos: &BlockPos, state: BlockStateId) {
@@ -340,6 +365,15 @@ fn place_above(world: &Arc<World>, pos: BlockPos, above: Above) -> Option<Arc<dy
             }
             world.add_block_entity(chest.clone());
             Some(chest)
+        }
+        Above::BrewingStand(stacks) => {
+            put(world, &pos, Block::BREWING_STAND.default_state.id);
+            let stand = Arc::new(BrewingStandBlockEntity::new(pos));
+            for (slot, item, count) in stacks {
+                stand.set_stack(*slot, ItemStack::new(*count, item));
+            }
+            world.add_block_entity(stand.clone());
+            Some(stand)
         }
         Above::Furnace(stacks, smelted) => {
             put(world, &pos, Block::FURNACE.default_state.id);
@@ -477,6 +511,65 @@ async fn hopper_picks_up_items_where_vanilla_does() -> TestResult {
         let took = took_something(name).await?;
         if took != expected {
             return Err(format!("{name}: took {took}, vanilla {expected}").into());
+        }
+    }
+    Ok(())
+}
+
+/// The source's slots (as recorded) once the scene has run.
+async fn source_after(name: &str) -> Result<String, Box<dyn std::error::Error>> {
+    let folder = tempfile::tempdir()?;
+    let server = test_support::server(&folder).await?;
+    let world = server.worlds.load()[0].clone();
+    for cx in -1..=SCENES.len() as i32 {
+        for cz in -1..=1 {
+            world.level.loaded_chunks.insert(
+                Vector2::new(cx, cz),
+                pumpkin_world::chunk::ChunkData::empty_sync(cx, cz),
+            );
+        }
+    }
+    let (index, scene) = SCENES
+        .iter()
+        .enumerate()
+        .find(|(_, scene)| scene.name == name)
+        .ok_or("no such scene")?;
+    let mut out = String::new();
+    run(&mut out, &world, index, scene)?;
+    server.stop();
+    let last = out
+        .lines()
+        .rev()
+        .find(|line| line.contains(" source ["))
+        .ok_or("no state line")?;
+    Ok(last.to_string())
+}
+
+/// Vanilla 26.3 `AbstractFurnaceBlockEntity` / `BrewingStandBlockEntity` seen from a hopper below
+/// (#72): furnace `SLOTS_FOR_DOWN` = {2, 1}, the fuel slot only for
+/// `#furnace_fuel_bottom_takeable`, and pulling the result hands out no experience; brewing
+/// stand `SLOTS_FOR_DOWN` = {0, 1, 2, 3}, the ingredient slot only for a glass bottle.
+#[tokio::test(flavor = "multi_thread")]
+async fn hopper_takes_from_furnaces_and_stands_like_vanilla() -> TestResult {
+    for (name, must) in [
+        (
+            "furnace input and fuel only",
+            "source [0:raw_ironx2 1:coalx1]",
+        ),
+        ("furnace output with experience", "entities []"),
+        ("furnace fuel slot holds a bucket", "hopper [0:bucketx1]"),
+        (
+            "brewing stand above",
+            "source [3:nether_wartx2 4:blaze_powderx2]",
+        ),
+        (
+            "brewing stand with a bottle as ingredient",
+            "hopper [0:glass_bottlex1]",
+        ),
+    ] {
+        let last = source_after(name).await?;
+        if !last.contains(must) {
+            return Err(format!("{name}: {last}").into());
         }
     }
     Ok(())

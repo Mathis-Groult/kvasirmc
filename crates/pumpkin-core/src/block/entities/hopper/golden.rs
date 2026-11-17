@@ -283,6 +283,12 @@ const SCENES: &[Scene] = &[
         &[],
         5,
     ),
+    scene(
+        "furnace result and a bucket in the fuel slot",
+        Above::Furnace(&[(1, &Item::BUCKET, 1), (2, &Item::IRON_INGOT, 2)], None),
+        &[],
+        5,
+    ),
 ];
 
 fn put(world: &Arc<World>, pos: &BlockPos, state: BlockStateId) {
@@ -565,6 +571,10 @@ async fn hopper_takes_from_furnaces_and_stands_like_vanilla() -> TestResult {
         (
             "brewing stand with a bottle as ingredient",
             "hopper [0:glass_bottlex1]",
+        ),
+        (
+            "furnace result and a bucket in the fuel slot",
+            "hopper [0:iron_ingotx1]",
         ),
     ] {
         let last = source_after(name).await?;

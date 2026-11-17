@@ -340,3 +340,10 @@ brewing stand with a bottle as ingredient: tick 3 hopper [0:glass_bottlex1] cool
 brewing stand with a bottle as ingredient: tick 4 hopper [0:glass_bottlex1] cooldown 5 source [4:blaze_powderx1] entities []
 brewing stand with a bottle as ingredient: tick 5 hopper [0:glass_bottlex1] cooldown 4 source [4:blaze_powderx1] entities []
 brewing stand with a bottle as ingredient: end
+furnace result and a bucket in the fuel slot: start hopper [] cooldown -1 source [1:bucketx1 2:iron_ingotx2] entities []
+furnace result and a bucket in the fuel slot: tick 1 hopper [0:bucketx1] cooldown 8 source [2:iron_ingotx2] entities []
+furnace result and a bucket in the fuel slot: tick 2 hopper [0:bucketx1] cooldown 7 source [2:iron_ingotx2] entities []
+furnace result and a bucket in the fuel slot: tick 3 hopper [0:bucketx1] cooldown 6 source [2:iron_ingotx2] entities []
+furnace result and a bucket in the fuel slot: tick 4 hopper [0:bucketx1] cooldown 5 source [2:iron_ingotx2] entities []
+furnace result and a bucket in the fuel slot: tick 5 hopper [0:bucketx1] cooldown 4 source [2:iron_ingotx2] entities []
+furnace result and a bucket in the fuel slot: end

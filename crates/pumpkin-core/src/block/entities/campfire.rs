@@ -311,3 +311,6 @@ impl CampfireBlockEntity {
         world.spawn_entity(Arc::new(ItemEntity::new(entity, stack)));
     }
 }
+
+#[cfg(test)]
+mod golden;

@@ -167,6 +167,11 @@ const SCENES: &[Scene] = &[
         [Some(beef(4, 600)), None, None, None],
         5,
     ))),
+    lit(
+        "preset total of one",
+        [Some(beef(0, 1)), None, None, None],
+        3,
+    ),
 ];
 
 fn campfire_state(soul: bool, lit: bool) -> BlockStateId {

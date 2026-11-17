@@ -15,6 +15,9 @@ use pumpkin_util::math::vector3::Axis;
 use pumpkin_util::math::{boundingbox::BoundingBox, position::BlockPos, vector3::Vector3};
 use std::sync::atomic::Ordering::{self, Relaxed};
 
+#[cfg(test)]
+mod golden;
+
 impl Entity {
     pub fn add_velocity(&self, velocity: Vector3<f64>) {
         self.set_velocity(self.velocity.load() + velocity);

@@ -7,6 +7,9 @@ use pumpkin_data::{BlockDirection, BlockState};
 use pumpkin_util::math::{boundingbox::BoundingBox, position::BlockPos, vector3::Vector3};
 use std::sync::Arc;
 
+#[cfg(test)]
+mod golden;
+
 impl World {
     // FlowingFluid.isSolidFace()
     pub(super) fn is_solid_face(

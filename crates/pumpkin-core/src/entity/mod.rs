@@ -99,6 +99,8 @@ pub use lightning::LightningBoltEntity;
 
 pub(crate) mod combat;
 pub mod predicate;
+#[cfg(test)]
+mod push_golden;
 
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
 pub enum DelayedLeash {

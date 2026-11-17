@@ -40,6 +40,36 @@ pub fn to_offset(facing: &FacingHopper) -> Vector3<i32> {
     .into()
 }
 
+/// Vanilla `Hopper.SUCK_AABB` placed on the hopper at `position`: `Block.column(16, 11, 32)`,
+/// from inside the hopper's bowl (y + 11/16) to the top of the block above, exactly over it.
+fn suck_box(position: BlockPos) -> pumpkin_util::math::boundingbox::BoundingBox {
+    let corner = Vector3::new(
+        f64::from(position.0.x),
+        f64::from(position.0.y),
+        f64::from(position.0.z),
+    );
+    pumpkin_util::math::boundingbox::BoundingBox::new(
+        corner.add_raw(0.0, 11.0 / 16.0, 0.0),
+        corner.add_raw(1.0, 2.0, 1.0),
+    )
+}
+
+/// Vanilla `BlockState.isCollisionShapeFullBlock`: the collision shape is the whole block.
+fn fills_its_block(state: &pumpkin_data::BlockState) -> bool {
+    let mut shapes = state.get_block_collision_shapes();
+    match (shapes.next(), shapes.next()) {
+        (Some(shape), None) => {
+            shape.min.x <= 0.0
+                && shape.min.y <= 0.0
+                && shape.min.z <= 0.0
+                && shape.max.x >= 1.0
+                && shape.max.y >= 1.0
+                && shape.max.z >= 1.0
+        }
+        _ => false,
+    }
+}
+
 /// Properties of one state snapshot, `None` for any other block. `from_state_id` parses whatever
 /// it is handed, so only the block id can reject a replacement state.
 fn hopper_properties(block: BlockId, state_id: BlockStateId) -> Option<HopperLikeProperties> {
@@ -286,12 +316,9 @@ impl HopperBlockEntity {
     /// Takes one item from an item entity above, unless a solid block there stops it.
     fn suck_from_entities(&self, world: &Arc<World>, pos_up: &BlockPos) -> bool {
         let (block, state) = world.get_block_and_state(pos_up);
-        if !(state.is_solid() && block.has_tag(&tag::Block::MINECRAFT_DOES_NOT_BLOCK_HOPPERS)) {
-            let pos_up_f = pos_up.to_f64();
-            let search_box = pumpkin_util::math::boundingbox::BoundingBox::new(
-                pos_up_f,
-                pos_up_f.add_raw(1.0, 1.0, 1.0),
-            );
+        // Vanilla: a full collision block above stops the search, unless it is a hive.
+        if !fills_its_block(state) || block.has_tag(&tag::Block::MINECRAFT_DOES_NOT_BLOCK_HOPPERS) {
+            let search_box = suck_box(self.position);
             let entities = world.get_entities_at_box(&search_box);
             for entity_base in entities {
                 if let Some(item_entity) = entity_base.get_item_entity() {

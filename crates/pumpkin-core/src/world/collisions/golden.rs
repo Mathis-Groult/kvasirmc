@@ -117,6 +117,24 @@ const RAYS: &[Ray] = &[
     ((4.0, 1.5, 3.0), (4.0, 1.5, 6.0)),
     ((5.0, 2.0, 5.0), (3.0, 0.0, 3.0)),
     ((0.5, 0.5, 0.5), (15.5, 0.5, 15.5)),
+    // Appended after the first mutation run: rays starting in cave_air on a block border of an
+    // axis they do not move along.
+    ((9.0, 2.5, 9.5), (9.0, 2.5, 12.0)),
+    ((9.5, 2.0, 9.5), (9.5, 2.0, 12.0)),
+    ((9.5, 2.5, 9.0), (12.0, 2.5, 9.0)),
+    // Rays entering cave_air (no outline: the face comes from the walk) from the other sides.
+    ((11.5, 2.5, 9.5), (8.0, 2.5, 9.5)),
+    ((9.5, 2.5, 11.5), (9.5, 2.5, 8.0)),
+    ((9.5, 1.5, 9.5), (9.5, 3.5, 9.5)),
+    // Rays through a block corner exactly (ties between two axes), next to stone (4, 1, 4).
+    ((3.5, 2.5, 4.5), (5.5, 0.5, 4.5)),
+    ((5.5, 2.5, 4.5), (3.5, 0.5, 4.5)),
+    ((4.5, 2.5, 3.5), (4.5, 0.5, 5.5)),
+    ((4.5, 2.5, 5.5), (4.5, 0.5, 3.5)),
+    ((3.5, 1.5, 3.5), (5.5, 1.5, 5.5)),
+    ((5.5, 1.5, 5.5), (3.5, 1.5, 3.5)),
+    ((3.5, 1.5, 5.5), (5.5, 1.5, 3.5)),
+    ((5.5, 1.5, 3.5), (3.5, 1.5, 5.5)),
 ];
 
 /// A fixed pseudo-random ray inside the area.

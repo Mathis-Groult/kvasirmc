@@ -14,6 +14,8 @@ open air: (-0.3, -0.5, -0.3) -> (-0.300000000, -0.500000000, -0.300000000) groun
 open air: (1.2, -0.2, 0) -> (1.200000000, -0.200000000, 0.000000000) ground false vertical false horizontal false support none
 open air: (0.2, 0.6, -0.2) -> (0.200000000, 0.600000000, -0.200000000) ground false vertical false horizontal false support none
 open air: (0.05, -0.08, 1) -> (0.050000000, -0.080000000, 1.000000000) ground false vertical false horizontal false support none
+open air: (0, 1, 0) -> (0.000000000, 1.000000000, 0.000000000) ground false vertical false horizontal false support none
+open air: (0, -1, 0) -> (0.000000000, -1.000000000, 0.000000000) ground false vertical false horizontal false support none
 on a floor: (0, 0, 0) -> (0.000000000, 0.000000000, 0.000000000) ground true vertical false horizontal true support (-24, -128, -8)
 on a floor: (0, -0.08, 0) -> (0.000000000, 0.000000000, 0.000000000) ground true vertical true horizontal false support (0, -1, 0)
 on a floor: (0, -0.5, 0) -> (0.000000000, 0.000000000, 0.000000000) ground true vertical true horizontal false support (0, -1, 0)
@@ -30,6 +32,8 @@ on a floor: (-0.3, -0.5, -0.3) -> (-0.300000000, 0.000000000, -0.300000000) grou
 on a floor: (1.2, -0.2, 0) -> (1.200000000, 0.000000000, 0.000000000) ground true vertical true horizontal false support (0, -1, 0)
 on a floor: (0.2, 0.6, -0.2) -> (0.200000000, 0.600000000, -0.200000000) ground false vertical false horizontal false support none
 on a floor: (0.05, -0.08, 1) -> (0.050000000, 0.000000000, 1.000000000) ground true vertical true horizontal false support (0, -1, 0)
+on a floor: (0, 1, 0) -> (0.000000000, 1.000000000, 0.000000000) ground false vertical false horizontal false support none
+on a floor: (0, -1, 0) -> (0.000000000, 0.000000000, 0.000000000) ground true vertical true horizontal false support (0, -1, 0)
 above a floor: (0, 0, 0) -> (0.000000000, 0.000000000, 0.000000000) ground true vertical false horizontal true support (-40, -128, -8)
 above a floor: (0, -0.08, 0) -> (0.000000000, -0.080000000, 0.000000000) ground false vertical false horizontal false support none
 above a floor: (0, -0.5, 0) -> (0.000000000, -0.300000000, 0.000000000) ground true vertical true horizontal false support (0, -1, 0)
@@ -46,6 +50,8 @@ above a floor: (-0.3, -0.5, -0.3) -> (-0.300000000, -0.300000000, -0.300000000) 
 above a floor: (1.2, -0.2, 0) -> (1.200000000, -0.200000000, 0.000000000) ground false vertical false horizontal false support none
 above a floor: (0.2, 0.6, -0.2) -> (0.200000000, 0.600000000, -0.200000000) ground false vertical false horizontal false support none
 above a floor: (0.05, -0.08, 1) -> (0.050000000, -0.080000000, 1.000000000) ground false vertical false horizontal false support none
+above a floor: (0, 1, 0) -> (0.000000000, 1.000000000, 0.000000000) ground false vertical false horizontal false support none
+above a floor: (0, -1, 0) -> (0.000000000, -0.300000000, 0.000000000) ground true vertical true horizontal false support (0, -1, 0)
 on the floor's edge: (0, 0, 0) -> (0.000000000, 0.000000000, 0.000000000) ground true vertical false horizontal true support (-56, -128, -8)
 on the floor's edge: (0, -0.08, 0) -> (0.000000000, 0.000000000, 0.000000000) ground true vertical true horizontal false support (1, -1, 0)
 on the floor's edge: (0, -0.5, 0) -> (0.000000000, 0.000000000, 0.000000000) ground true vertical true horizontal false support (1, -1, 0)
@@ -62,6 +68,8 @@ on the floor's edge: (-0.3, -0.5, -0.3) -> (-0.300000000, 0.000000000, -0.300000
 on the floor's edge: (1.2, -0.2, 0) -> (1.200000000, 0.000000000, 0.000000000) ground true vertical true horizontal false support (1, -1, 0)
 on the floor's edge: (0.2, 0.6, -0.2) -> (0.200000000, 0.600000000, -0.200000000) ground false vertical false horizontal false support none
 on the floor's edge: (0.05, -0.08, 1) -> (0.050000000, 0.000000000, 1.000000000) ground true vertical true horizontal false support (1, -1, 0)
+on the floor's edge: (0, 1, 0) -> (0.000000000, 1.000000000, 0.000000000) ground false vertical false horizontal false support none
+on the floor's edge: (0, -1, 0) -> (0.000000000, 0.000000000, 0.000000000) ground true vertical true horizontal false support (1, -1, 0)
 next to an east wall: (0, 0, 0) -> (0.000000000, 0.000000000, 0.000000000) ground true vertical false horizontal true support (-72, -128, -8)
 next to an east wall: (0, -0.08, 0) -> (0.000000000, -0.080000000, 0.000000000) ground false vertical false horizontal false support none
 next to an east wall: (0, -0.5, 0) -> (0.000000000, -0.500000000, 0.000000000) ground false vertical false horizontal false support none
@@ -78,6 +86,8 @@ next to an east wall: (-0.3, -0.5, -0.3) -> (-0.300000000, -0.500000000, -0.3000
 next to an east wall: (1.2, -0.2, 0) -> (0.099999988, -0.200000000, 0.000000000) ground false vertical false horizontal true support none
 next to an east wall: (0.2, 0.6, -0.2) -> (0.099999988, 0.600000000, -0.200000000) ground false vertical false horizontal true support none
 next to an east wall: (0.05, -0.08, 1) -> (0.050000000, -0.080000000, 1.000000000) ground false vertical false horizontal false support none
+next to an east wall: (0, 1, 0) -> (0.000000000, 1.000000000, 0.000000000) ground false vertical false horizontal false support none
+next to an east wall: (0, -1, 0) -> (0.000000000, -1.000000000, 0.000000000) ground false vertical false horizontal false support none
 touching an east wall: (0, 0, 0) -> (0.000000000, 0.000000000, 0.000000000) ground true vertical false horizontal true support (-88, -128, -8)
 touching an east wall: (0, -0.08, 0) -> (0.000000000, -0.080000000, 0.000000000) ground false vertical false horizontal false support none
 touching an east wall: (0, -0.5, 0) -> (0.000000000, -0.500000000, 0.000000000) ground false vertical false horizontal false support none
@@ -94,6 +104,8 @@ touching an east wall: (-0.3, -0.5, -0.3) -> (-0.300000000, -0.500000000, -0.300
 touching an east wall: (1.2, -0.2, 0) -> (1.200000000, -0.200000000, 0.000000000) ground false vertical false horizontal false support none
 touching an east wall: (0.2, 0.6, -0.2) -> (0.200000000, 0.600000000, -0.200000000) ground false vertical false horizontal false support none
 touching an east wall: (0.05, -0.08, 1) -> (0.050000000, -0.080000000, 1.000000000) ground false vertical false horizontal false support none
+touching an east wall: (0, 1, 0) -> (0.000000000, 1.000000000, 0.000000000) ground false vertical false horizontal false support none
+touching an east wall: (0, -1, 0) -> (0.000000000, -1.000000000, 0.000000000) ground false vertical false horizontal false support none
 next to a north wall: (0, 0, 0) -> (0.000000000, 0.000000000, 0.000000000) ground true vertical false horizontal true support (-104, -128, -8)
 next to a north wall: (0, -0.08, 0) -> (0.000000000, -0.080000000, 0.000000000) ground false vertical false horizontal false support none
 next to a north wall: (0, -0.5, 0) -> (0.000000000, -0.500000000, 0.000000000) ground false vertical false horizontal false support none
@@ -110,6 +122,8 @@ next to a north wall: (-0.3, -0.5, -0.3) -> (-0.300000000, -0.500000000, -0.0999
 next to a north wall: (1.2, -0.2, 0) -> (1.200000000, -0.200000000, 0.000000000) ground false vertical false horizontal false support none
 next to a north wall: (0.2, 0.6, -0.2) -> (0.200000000, 0.600000000, -0.099999988) ground false vertical false horizontal true support none
 next to a north wall: (0.05, -0.08, 1) -> (0.050000000, -0.080000000, 1.000000000) ground false vertical false horizontal false support none
+next to a north wall: (0, 1, 0) -> (0.000000000, 1.000000000, 0.000000000) ground false vertical false horizontal false support none
+next to a north wall: (0, -1, 0) -> (0.000000000, -1.000000000, 0.000000000) ground false vertical false horizontal false support none
 in a corner: (0, 0, 0) -> (0.000000000, 0.000000000, 0.000000000) ground true vertical false horizontal true support (-120, -128, -8)
 in a corner: (0, -0.08, 0) -> (0.000000000, 0.000000000, 0.000000000) ground true vertical true horizontal false support (0, -1, 0)
 in a corner: (0, -0.5, 0) -> (0.000000000, 0.000000000, 0.000000000) ground true vertical true horizontal false support (0, -1, 0)
@@ -126,6 +140,8 @@ in a corner: (-0.3, -0.5, -0.3) -> (-0.300000000, 0.000000000, -0.300000000) gro
 in a corner: (1.2, -0.2, 0) -> (0.199999988, 0.000000000, 0.000000000) ground true vertical true horizontal true support (0, -1, 0)
 in a corner: (0.2, 0.6, -0.2) -> (0.199999988, 0.600000000, -0.200000000) ground false vertical false horizontal true support none
 in a corner: (0.05, -0.08, 1) -> (0.050000000, 0.000000000, 0.199999988) ground true vertical true horizontal true support (0, -1, 0)
+in a corner: (0, 1, 0) -> (0.000000000, 1.000000000, 0.000000000) ground false vertical false horizontal false support none
+in a corner: (0, -1, 0) -> (0.000000000, 0.000000000, 0.000000000) ground true vertical true horizontal false support (0, -1, 0)
 under a ceiling: (0, 0, 0) -> (0.000000000, 0.000000000, 0.000000000) ground true vertical false horizontal true support (-136, -128, -8)
 under a ceiling: (0, -0.08, 0) -> (0.000000000, 0.000000000, 0.000000000) ground true vertical true horizontal false support (0, -1, 0)
 under a ceiling: (0, -0.5, 0) -> (0.000000000, 0.000000000, 0.000000000) ground true vertical true horizontal false support (0, -1, 0)
@@ -142,6 +158,8 @@ under a ceiling: (-0.3, -0.5, -0.3) -> (-0.300000000, 0.000000000, -0.300000000)
 under a ceiling: (1.2, -0.2, 0) -> (1.200000000, 0.000000000, 0.000000000) ground true vertical true horizontal false support (0, -1, 0)
 under a ceiling: (0.2, 0.6, -0.2) -> (0.200000000, 0.049999952, -0.200000000) ground false vertical true horizontal false support none
 under a ceiling: (0.05, -0.08, 1) -> (0.050000000, 0.000000000, 1.000000000) ground true vertical true horizontal false support (0, -1, 0)
+under a ceiling: (0, 1, 0) -> (0.000000000, 0.049999952, 0.000000000) ground false vertical true horizontal false support none
+under a ceiling: (0, -1, 0) -> (0.000000000, 0.000000000, 0.000000000) ground true vertical true horizontal false support (0, -1, 0)
 above a slab: (0, 0, 0) -> (0.000000000, 0.000000000, 0.000000000) ground true vertical false horizontal true support (-152, -128, -8)
 above a slab: (0, -0.08, 0) -> (0.000000000, -0.080000000, 0.000000000) ground false vertical false horizontal false support none
 above a slab: (0, -0.5, 0) -> (0.000000000, -0.300000000, 0.000000000) ground true vertical true horizontal false support (0, -1, 0)
@@ -158,6 +176,8 @@ above a slab: (-0.3, -0.5, -0.3) -> (-0.300000000, -0.300000000, -0.300000000) g
 above a slab: (1.2, -0.2, 0) -> (1.200000000, -0.200000000, 0.000000000) ground false vertical false horizontal false support none
 above a slab: (0.2, 0.6, -0.2) -> (0.200000000, 0.600000000, -0.200000000) ground false vertical false horizontal false support none
 above a slab: (0.05, -0.08, 1) -> (0.050000000, -0.080000000, 1.000000000) ground false vertical false horizontal false support none
+above a slab: (0, 1, 0) -> (0.000000000, 1.000000000, 0.000000000) ground false vertical false horizontal false support none
+above a slab: (0, -1, 0) -> (0.000000000, -0.300000000, 0.000000000) ground true vertical true horizontal false support (0, -1, 0)
 next to a fence: (0, 0, 0) -> (0.000000000, 0.000000000, 0.000000000) ground true vertical false horizontal true support (-168, -128, -8)
 next to a fence: (0, -0.08, 0) -> (0.000000000, 0.000000000, 0.000000000) ground true vertical true horizontal false support (0, -1, 0)
 next to a fence: (0, -0.5, 0) -> (0.000000000, 0.000000000, 0.000000000) ground true vertical true horizontal false support (0, -1, 0)
@@ -174,6 +194,8 @@ next to a fence: (-0.3, -0.5, -0.3) -> (-0.300000000, 0.000000000, -0.300000000)
 next to a fence: (1.2, -0.2, 0) -> (0.574999988, 0.000000000, 0.000000000) ground true vertical true horizontal true support (0, -1, 0)
 next to a fence: (0.2, 0.6, -0.2) -> (0.200000000, 0.600000000, -0.200000000) ground false vertical false horizontal false support none
 next to a fence: (0.05, -0.08, 1) -> (0.050000000, 0.000000000, 1.000000000) ground true vertical true horizontal false support (0, -1, 0)
+next to a fence: (0, 1, 0) -> (0.000000000, 1.000000000, 0.000000000) ground false vertical false horizontal false support none
+next to a fence: (0, -1, 0) -> (0.000000000, 0.000000000, 0.000000000) ground true vertical true horizontal false support (0, -1, 0)
 over a gap: (0, 0, 0) -> (0.000000000, 0.000000000, 0.000000000) ground true vertical false horizontal true support (-184, -128, -8)
 over a gap: (0, -0.08, 0) -> (0.000000000, -0.080000000, 0.000000000) ground false vertical false horizontal false support none
 over a gap: (0, -0.5, 0) -> (0.000000000, -0.500000000, 0.000000000) ground false vertical false horizontal false support none
@@ -190,6 +212,8 @@ over a gap: (-0.3, -0.5, -0.3) -> (-0.199999988, -0.500000000, -0.300000000) gro
 over a gap: (1.2, -0.2, 0) -> (0.199999988, -0.200000000, 0.000000000) ground false vertical false horizontal true support none
 over a gap: (0.2, 0.6, -0.2) -> (0.200000000, 0.600000000, -0.200000000) ground false vertical false horizontal false support none
 over a gap: (0.05, -0.08, 1) -> (0.050000000, -0.080000000, 1.000000000) ground false vertical false horizontal false support none
+over a gap: (0, 1, 0) -> (0.000000000, 1.000000000, 0.000000000) ground false vertical false horizontal false support none
+over a gap: (0, -1, 0) -> (0.000000000, -1.000000000, 0.000000000) ground false vertical false horizontal false support none
 astride a gap: (0, 0, 0) -> (0.000000000, 0.000000000, 0.000000000) ground true vertical false horizontal true support (-200, -128, -8)
 astride a gap: (0, -0.08, 0) -> (0.000000000, 0.000000000, 0.000000000) ground true vertical true horizontal false support (-1, -1, 0)
 astride a gap: (0, -0.5, 0) -> (0.000000000, 0.000000000, 0.000000000) ground true vertical true horizontal false support (-1, -1, 0)
@@ -206,6 +230,8 @@ astride a gap: (-0.3, -0.5, -0.3) -> (-0.300000000, 0.000000000, -0.300000000) g
 astride a gap: (1.2, -0.2, 0) -> (1.200000000, 0.000000000, 0.000000000) ground true vertical true horizontal false support (-1, -1, 0)
 astride a gap: (0.2, 0.6, -0.2) -> (0.200000000, 0.600000000, -0.200000000) ground false vertical false horizontal false support none
 astride a gap: (0.05, -0.08, 1) -> (0.050000000, 0.000000000, 1.000000000) ground true vertical true horizontal false support (-1, -1, 0)
+astride a gap: (0, 1, 0) -> (0.000000000, 1.000000000, 0.000000000) ground false vertical false horizontal false support none
+astride a gap: (0, -1, 0) -> (0.000000000, 0.000000000, 0.000000000) ground true vertical true horizontal false support (-1, -1, 0)
 next to stairs: (0, 0, 0) -> (0.000000000, 0.000000000, 0.000000000) ground true vertical false horizontal true support (-216, -128, -8)
 next to stairs: (0, -0.08, 0) -> (0.000000000, 0.000000000, 0.000000000) ground true vertical true horizontal false support (0, -1, 0)
 next to stairs: (0, -0.5, 0) -> (0.000000000, 0.000000000, 0.000000000) ground true vertical true horizontal false support (0, -1, 0)
@@ -222,6 +248,8 @@ next to stairs: (-0.3, -0.5, -0.3) -> (-0.300000000, 0.000000000, -0.300000000) 
 next to stairs: (1.2, -0.2, 0) -> (0.199999988, 0.000000000, 0.000000000) ground true vertical true horizontal true support (0, -1, 0)
 next to stairs: (0.2, 0.6, -0.2) -> (0.199999988, 0.600000000, -0.200000000) ground false vertical false horizontal true support none
 next to stairs: (0.05, -0.08, 1) -> (0.050000000, 0.000000000, 1.000000000) ground true vertical true horizontal false support (0, -1, 0)
+next to stairs: (0, 1, 0) -> (0.000000000, 1.000000000, 0.000000000) ground false vertical false horizontal false support none
+next to stairs: (0, -1, 0) -> (0.000000000, 0.000000000, 0.000000000) ground true vertical true horizontal false support (0, -1, 0)
 above two floors: (0, 0, 0) -> (0.000000000, 0.000000000, 0.000000000) ground true vertical false horizontal true support (-232, -128, -8)
 above two floors: (0, -0.08, 0) -> (0.000000000, -0.080000000, 0.000000000) ground false vertical false horizontal false support none
 above two floors: (0, -0.5, 0) -> (0.000000000, -0.500000000, 0.000000000) ground false vertical false horizontal false support none
@@ -238,3 +266,5 @@ above two floors: (-0.3, -0.5, -0.3) -> (-0.300000000, -0.500000000, -0.30000000
 above two floors: (1.2, -0.2, 0) -> (1.200000000, -0.200000000, 0.000000000) ground false vertical false horizontal false support none
 above two floors: (0.2, 0.6, -0.2) -> (0.200000000, 0.600000000, -0.200000000) ground false vertical false horizontal false support none
 above two floors: (0.05, -0.08, 1) -> (0.050000000, -0.080000000, 1.000000000) ground false vertical false horizontal false support none
+above two floors: (0, 1, 0) -> (0.000000000, 1.000000000, 0.000000000) ground false vertical false horizontal false support none
+above two floors: (0, -1, 0) -> (0.000000000, -0.500000000, 0.000000000) ground true vertical true horizontal false support (0, -1, 0)

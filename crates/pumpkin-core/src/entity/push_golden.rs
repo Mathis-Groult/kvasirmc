@@ -34,6 +34,11 @@ enum Kind {
     Cart,
     ChestCart,
     HopperCart,
+    FurnaceCart,
+    TntCart,
+    SpawnerCart,
+    CommandCart,
+    DeadZombie,
     Item,
     Player,
     Creative,
@@ -52,6 +57,9 @@ struct Scene {
     seated: Option<(usize, usize)>,
     /// Riding cooldown given to every other.
     cooldown: i32,
+    /// The subject's velocity during the call (a minecart pushes another minecart only while
+    /// moving along its facing, yaw 0 = +x).
+    velocity: (f64, f64, f64),
 }
 
 const fn scene(name: &'static str, subject: Kind, others: &'static [Other]) -> Scene {
@@ -62,7 +70,13 @@ const fn scene(name: &'static str, subject: Kind, others: &'static [Other]) -> S
         rider: None,
         seated: None,
         cooldown: 0,
+        velocity: (0.0, 0.0, 0.0),
     }
+}
+
+const fn rolling(mut scene: Scene) -> Scene {
+    scene.velocity = (0.1, 0.0, 0.0);
+    scene
 }
 
 const fn ridden(mut scene: Scene, rider: usize) -> Scene {
@@ -97,6 +111,37 @@ const ON_TOP: &[Other] = &[(Kind::Zombie, 0.0, 0.0, 0.0)];
 const PICKUP_EDGE: &[Other] = &[(Kind::Zombie, 0.98, 0.0, 0.0)];
 const PICKUP_OUT: &[Other] = &[(Kind::Zombie, 1.0, 0.0, 0.0)];
 const ZOMBIE_AND_CART: &[Other] = &[(Kind::Zombie, 0.3, 0.0, 0.1), (Kind::Cart, -0.3, 0.0, 0.1)];
+const EVERY_CART: &[Other] = &[
+    (Kind::Cart, 0.3, 0.0, 0.1),
+    (Kind::FurnaceCart, -0.3, 0.0, 0.1),
+    (Kind::TntCart, 0.3, 0.0, -0.1),
+    (Kind::SpawnerCart, -0.3, 0.0, -0.1),
+    (Kind::CommandCart, 0.1, 0.0, 0.3),
+    (Kind::HopperCart, 0.1, 0.0, -0.3),
+    (Kind::ChestCart, 0.2, 0.0, 0.2),
+];
+const PICKUP_EDGE_SOUTH: &[Other] = &[(Kind::Zombie, 0.0, 0.0, 0.98)];
+const ZOMBIE_ABOVE: &[Other] = &[(Kind::Zombie, 0.0, 0.8, 0.0)];
+const TOUCHING_EAST: &[Other] = &[(Kind::Zombie, 0.790_000_021_457_672_1, 0.0, 0.0)];
+const TOUCHING_SOUTH: &[Other] = &[(Kind::Zombie, 0.0, 0.0, 0.790_000_021_457_672_1)];
+const TOUCHING_ABOVE: &[Other] = &[(Kind::Zombie, 0.1, 0.699_999_988_079_071, 0.0)];
+/// Zombie 0 is picked up; 1 rides 2, far away, so only its kind decides whether it is pushed.
+const PICKED_AND_RIDING_CART: &[Other] = &[
+    (Kind::Zombie, 0.3, 0.0, 0.1),
+    (Kind::Cart, -0.3, 0.0, 0.1),
+    (Kind::Zombie, 3.0, 0.0, 0.0),
+];
+const PICKED_AND_RIDING_GOLEM: &[Other] = &[
+    (Kind::Zombie, 0.3, 0.0, 0.1),
+    (Kind::Golem, -0.3, 0.0, 0.1),
+    (Kind::Zombie, 3.0, 0.0, 0.0),
+];
+const RIDER_AND_RIDING_ZOMBIE: &[Other] = &[
+    (Kind::Zombie, 0.0, 0.0, 0.0),
+    (Kind::Zombie, -0.3, 0.0, 0.1),
+    (Kind::Zombie, 3.0, 0.0, 0.0),
+];
+const PASSENGER_CART: &[Other] = &[(Kind::Cart, 0.3, 0.0, 0.1), (Kind::Cart, -0.3, 0.0, 0.1)];
 const TWO_ZOMBIES: &[Other] = &[
     (Kind::Zombie, 0.3, 0.0, 0.1),
     (Kind::Zombie, -0.3, 0.0, 0.1),
@@ -163,6 +208,112 @@ const SCENES: &[Scene] = &[
         0,
     ),
     scene("chest cart near an item", Kind::ChestCart, NEAR_ITEM),
+    // Appended after the first mutation run: a subject that cannot be pushed, every minecart
+    // kind as subject and as neighbour, moving minecarts (the only ones that push minecarts),
+    // the pickup reach on z and above, boxes touching exactly, and neighbours riding something.
+    scene("dead zombie near a zombie", Kind::DeadZombie, NEAR_ZOMBIE),
+    rolling(scene(
+        "rolling cart near every cart",
+        Kind::Cart,
+        EVERY_CART,
+    )),
+    rolling(scene(
+        "rolling chest cart near every cart",
+        Kind::ChestCart,
+        EVERY_CART,
+    )),
+    rolling(scene(
+        "rolling hopper cart near a cart",
+        Kind::HopperCart,
+        NEAR_CART,
+    )),
+    rolling(scene(
+        "rolling furnace cart near a cart",
+        Kind::FurnaceCart,
+        NEAR_CART,
+    )),
+    rolling(scene(
+        "rolling tnt cart near a cart",
+        Kind::TntCart,
+        NEAR_CART,
+    )),
+    rolling(scene(
+        "rolling spawner cart near a cart",
+        Kind::SpawnerCart,
+        NEAR_CART,
+    )),
+    rolling(scene(
+        "rolling command cart near a cart",
+        Kind::CommandCart,
+        NEAR_CART,
+    )),
+    rolling(scene(
+        "rolling hopper cart near a zombie",
+        Kind::HopperCart,
+        NEAR_ZOMBIE,
+    )),
+    rolling(ridden(
+        scene(
+            "rolling chest cart near its cart passenger",
+            Kind::ChestCart,
+            PASSENGER_CART,
+        ),
+        0,
+    )),
+    scene(
+        "cart with a zombie at the south pickup edge",
+        Kind::Cart,
+        PICKUP_EDGE_SOUTH,
+    ),
+    scene("cart with a zombie just above", Kind::Cart, ZOMBIE_ABOVE),
+    cooling(
+        scene("cart touching a zombie east", Kind::Cart, TOUCHING_EAST),
+        5,
+    ),
+    cooling(
+        scene("cart touching a zombie south", Kind::Cart, TOUCHING_SOUTH),
+        5,
+    ),
+    cooling(
+        scene("cart touching a zombie above", Kind::Cart, TOUCHING_ABOVE),
+        5,
+    ),
+    seated(
+        scene(
+            "cart picking up, near a cart riding a zombie",
+            Kind::Cart,
+            PICKED_AND_RIDING_CART,
+        ),
+        1,
+        2,
+    ),
+    seated(
+        scene(
+            "cart picking up, near a golem riding a zombie",
+            Kind::Cart,
+            PICKED_AND_RIDING_GOLEM,
+        ),
+        1,
+        2,
+    ),
+    seated(
+        ridden(
+            scene(
+                "ridden cart near a zombie riding a zombie",
+                Kind::Cart,
+                RIDER_AND_RIDING_ZOMBIE,
+            ),
+            0,
+        ),
+        1,
+        2,
+    ),
+    rolling(scene("rolling cart near a player", Kind::Cart, NEAR_PLAYER)),
+    rolling(scene(
+        "rolling chest cart near a player",
+        Kind::ChestCart,
+        NEAR_PLAYER,
+    )),
 ];
 
 fn spawn(
@@ -182,10 +333,25 @@ fn spawn(
             at,
             &EntityType::IRON_GOLEM,
         ))),
-        Kind::Cart | Kind::ChestCart | Kind::HopperCart => {
+        Kind::DeadZombie => {
+            let zombie = LivingEntity::new(Entity::new(world.clone(), at, &EntityType::ZOMBIE));
+            zombie.health.store(0.0);
+            Arc::new(zombie)
+        }
+        Kind::Cart
+        | Kind::ChestCart
+        | Kind::HopperCart
+        | Kind::FurnaceCart
+        | Kind::TntCart
+        | Kind::SpawnerCart
+        | Kind::CommandCart => {
             let entity_type = match kind {
                 Kind::Cart => &EntityType::MINECART,
                 Kind::ChestCart => &EntityType::CHEST_MINECART,
+                Kind::FurnaceCart => &EntityType::FURNACE_MINECART,
+                Kind::TntCart => &EntityType::TNT_MINECART,
+                Kind::SpawnerCart => &EntityType::SPAWNER_MINECART,
+                Kind::CommandCart => &EntityType::COMMAND_BLOCK_MINECART,
                 _ => &EntityType::HOPPER_MINECART,
             };
             Arc::new(MinecartEntity::new(Entity::new(
@@ -265,6 +431,11 @@ async fn run(out: &mut String, world: &Arc<World>, index: usize, scene: &Scene) 
     for entity in &all {
         entity.get_entity().velocity.store(Vector3::default());
     }
+    let (vx, vy, vz) = scene.velocity;
+    subject
+        .get_entity()
+        .velocity
+        .store(Vector3::new(vx, vy, vz));
     let result = subject.push_entities(subject.as_ref());
     let states: Vec<String> = all
         .iter()

@@ -156,6 +156,9 @@ const MOVES: &[(f64, f64, f64)] = &[
     (1.2, -0.2, 0.0),
     (0.2, 0.6, -0.2),
     (0.05, -0.08, 1.0),
+    // Appended after the first mutation run: exactly one block up and down.
+    (0.0, 1.0, 0.0),
+    (0.0, -1.0, 0.0),
 ];
 
 fn put(world: &Arc<World>, pos: &BlockPos, state: BlockStateId) {

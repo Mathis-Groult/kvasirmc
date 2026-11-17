@@ -108,6 +108,10 @@ pub fn get_spread<T: FlowingFluid + Sync + ?Sized>(
     (result, result_count)
 }
 
+/// Size of the breadth-first queue of [`get_in_flow_down_distance_iterative`]; nodes found
+/// when it is full are dropped.
+const MAX_QUEUE_SIZE: usize = 64;
+
 /// Performs iterative BFS search to find the shortest distance to a downward flow opportunity.
 ///
 /// Uses stack-allocated array for zero heap allocations. Searches up to `get_max_flow_distance`
@@ -122,8 +126,6 @@ pub fn get_in_flow_down_distance_iterative<T: FlowingFluid + Sync + ?Sized>(
     start_pos: BlockPos,
     initial_exclude_dir: BlockDirection,
 ) -> i32 {
-    const MAX_QUEUE_SIZE: usize = 64;
-
     let mut queue: [PathNode; MAX_QUEUE_SIZE] = [PathNode {
         pos: BlockPos::new(0, 0, 0),
         distance: 0,
@@ -159,13 +161,10 @@ pub fn get_in_flow_down_distance_iterative<T: FlowingFluid + Sync + ?Sized>(
             continue;
         }
 
-        if let Some(bit_idx) = get_bit_index(node.pos) {
-            let word_idx = bit_idx / 64;
-            let bit_pos = bit_idx % 64;
-            if (visited_bitset[word_idx] & (1u64 << bit_pos)) != 0 {
-                continue;
-            }
-            visited_bitset[word_idx] |= 1u64 << bit_pos;
+        if let Some(bit_idx) = get_bit_index(node.pos)
+            && !mark_visited(&mut visited_bitset, bit_idx)
+        {
+            continue;
         }
 
         // Check for hole (downward flow opportunity)
@@ -176,45 +175,70 @@ pub fn get_in_flow_down_distance_iterative<T: FlowingFluid + Sync + ?Sized>(
             return node.distance;
         }
 
-        for direction in [
-            BlockDirection::North,
-            BlockDirection::South,
-            BlockDirection::West,
-            BlockDirection::East,
-        ] {
-            if direction == node.exclude_dir {
-                continue;
-            }
-
-            let next_pos = node.pos.offset(direction.to_offset());
-
-            let next_state = world.get_block_state(&next_pos);
-            let next_block = Block::from_state_id(next_state.id);
-            if !physics::can_be_replaced(next_state, next_block, fluid) {
-                continue;
-            }
-
-            // Source blocks (including waterlogged) block horizontal pathfinding
-            let next_state_id = world.get_block_state_id(&next_pos);
-            if fluid_impl
-                .get_effective_props(fluid, next_state_id)
-                .is_some_and(|p| p.level == Level::L8 && p.falling == Falling::False)
-            {
-                continue;
-            }
-
-            if queue_end < MAX_QUEUE_SIZE {
-                queue[queue_end] = PathNode {
-                    pos: next_pos,
-                    distance: node.distance + 1,
-                    exclude_dir: direction.opposite(),
-                };
-                queue_end += 1;
-            }
-        }
+        queue_end = push_neighbours(fluid_impl, world, fluid, node, &mut queue, queue_end);
     }
 
     1000
+}
+
+/// Marks `bit_idx` as visited; false when it already was.
+const fn mark_visited(visited_bitset: &mut [u64; 4], bit_idx: usize) -> bool {
+    let word_idx = bit_idx / 64;
+    let bit_pos = bit_idx % 64;
+    if (visited_bitset[word_idx] & (1u64 << bit_pos)) != 0 {
+        return false;
+    }
+    visited_bitset[word_idx] |= 1u64 << bit_pos;
+    true
+}
+
+/// Queues the neighbours of `node` the fluid can enter (all but the one it came from) while
+/// the queue has room, and returns the new end of the queue.
+fn push_neighbours<T: FlowingFluid + Sync + ?Sized>(
+    fluid_impl: &T,
+    world: &Arc<World>,
+    fluid: &Fluid,
+    node: PathNode,
+    queue: &mut [PathNode; MAX_QUEUE_SIZE],
+    mut queue_end: usize,
+) -> usize {
+    for direction in [
+        BlockDirection::North,
+        BlockDirection::South,
+        BlockDirection::West,
+        BlockDirection::East,
+    ] {
+        if direction == node.exclude_dir {
+            continue;
+        }
+
+        let next_pos = node.pos.offset(direction.to_offset());
+
+        let next_state = world.get_block_state(&next_pos);
+        let next_block = Block::from_state_id(next_state.id);
+        if !physics::can_be_replaced(next_state, next_block, fluid) {
+            continue;
+        }
+
+        // Source blocks (including waterlogged) block horizontal pathfinding
+        let next_state_id = world.get_block_state_id(&next_pos);
+        if fluid_impl
+            .get_effective_props(fluid, next_state_id)
+            .is_some_and(|p| p.level == Level::L8 && p.falling == Falling::False)
+        {
+            continue;
+        }
+
+        if queue_end < MAX_QUEUE_SIZE {
+            queue[queue_end] = PathNode {
+                pos: next_pos,
+                distance: node.distance + 1,
+                exclude_dir: direction.opposite(),
+            };
+            queue_end += 1;
+        }
+    }
+    queue_end
 }
 
 #[cfg(test)]

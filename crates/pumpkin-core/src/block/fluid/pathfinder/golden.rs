@@ -2,12 +2,13 @@
 //! with `KVASIR_BLESS=1`), made before `get_in_flow_down_distance_iterative` was split.
 //!
 //! Each case is an ASCII map laid on a stone floor in its own area of empty chunks: `C` the fluid
-//! source being spread, `#` a stone wall, `S` another source of the same fluid, `7` / `1` the same
-//! fluid flowing at level 7 / 1, `F` falling flowing fluid, `Z` a falling source, `o` a source of
-//! the other fluid, `W` a waterlogged slab, `D` a door, `g` short grass, `c` a carpet, `.` open
-//! floor; floor cells: `H` a hole (air), `B` a source of the same fluid, `K` a falling source. Per
-//! case: the spread directions `get_spread` returns with their new state ids, and the down-flow
-//! distance seen from each side. Lava runs in the overworld (reach 3) and the nether (reach 5).
+//! source being spread, `#` a stone wall, `S` another source of the same fluid, `7` / `6` / `5` /
+//! `1` the same fluid flowing at that level, `F` falling flowing fluid, `Z` a falling source, `o` a
+//! source of the other fluid, `W` a waterlogged slab, `D` a door, `g` short grass, `c` a carpet,
+//! `.` open floor; floor cells: `H` a hole (air), `B` a source of the same fluid, `K` a falling
+//! source. Per case: the spread directions `get_spread` returns with their new state ids, and the
+//! down-flow distance seen from each side. Lava runs in the overworld (reach 3) and the nether
+//! (reach 5).
 
 use std::fmt::Write;
 use std::sync::Arc;
@@ -486,6 +487,258 @@ const MAPS: &[(&str, [&str; 13])] = &[
             ".............",
         ],
     ),
+    (
+        "corridor through S",
+        [
+            "#############",
+            "#############",
+            "#############",
+            "#############",
+            "#############",
+            "#############",
+            "######C.SH###",
+            "#############",
+            "#############",
+            "#############",
+            "#############",
+            "#############",
+            "#############",
+        ],
+    ),
+    (
+        "corridor through 7",
+        [
+            "#############",
+            "#############",
+            "#############",
+            "#############",
+            "#############",
+            "#############",
+            "######C.7H###",
+            "#############",
+            "#############",
+            "#############",
+            "#############",
+            "#############",
+            "#############",
+        ],
+    ),
+    (
+        "corridor through F",
+        [
+            "#############",
+            "#############",
+            "#############",
+            "#############",
+            "#############",
+            "#############",
+            "######C.FH###",
+            "#############",
+            "#############",
+            "#############",
+            "#############",
+            "#############",
+            "#############",
+        ],
+    ),
+    (
+        "corridor through Z",
+        [
+            "#############",
+            "#############",
+            "#############",
+            "#############",
+            "#############",
+            "#############",
+            "######C.ZH###",
+            "#############",
+            "#############",
+            "#############",
+            "#############",
+            "#############",
+            "#############",
+        ],
+    ),
+    (
+        "lower flowing neighbours",
+        [
+            ".............",
+            ".............",
+            ".............",
+            ".............",
+            ".............",
+            "......6......",
+            ".....6C5.....",
+            "......5......",
+            ".............",
+            ".............",
+            ".............",
+            ".............",
+            ".............",
+        ],
+    ),
+    (
+        "hole at +2,+3",
+        [
+            ".............",
+            ".............",
+            ".............",
+            ".............",
+            ".............",
+            ".............",
+            "......C......",
+            ".............",
+            ".............",
+            "........H....",
+            ".............",
+            ".............",
+            ".............",
+        ],
+    ),
+    (
+        "hole at +3,+2",
+        [
+            ".............",
+            ".............",
+            ".............",
+            ".............",
+            ".............",
+            ".............",
+            "......C......",
+            ".............",
+            ".........H...",
+            ".............",
+            ".............",
+            ".............",
+            ".............",
+        ],
+    ),
+    (
+        "hole at +1,+4",
+        [
+            ".............",
+            ".............",
+            ".............",
+            ".............",
+            ".............",
+            ".............",
+            "......C......",
+            ".............",
+            ".............",
+            ".............",
+            ".......H.....",
+            ".............",
+            ".............",
+        ],
+    ),
+    (
+        "hole at +4,+1",
+        [
+            ".............",
+            ".............",
+            ".............",
+            ".............",
+            ".............",
+            ".............",
+            "......C......",
+            "..........H..",
+            ".............",
+            ".............",
+            ".............",
+            ".............",
+            ".............",
+        ],
+    ),
+    (
+        "hole at -2,+3",
+        [
+            ".............",
+            ".............",
+            ".............",
+            ".............",
+            ".............",
+            ".............",
+            "......C......",
+            ".............",
+            ".............",
+            "....H........",
+            ".............",
+            ".............",
+            ".............",
+        ],
+    ),
+    (
+        "hole at -3,-2",
+        [
+            ".............",
+            ".............",
+            ".............",
+            ".............",
+            "...H.........",
+            ".............",
+            "......C......",
+            ".............",
+            ".............",
+            ".............",
+            ".............",
+            ".............",
+            ".............",
+        ],
+    ),
+    (
+        "hole at +2,+2",
+        [
+            ".............",
+            ".............",
+            ".............",
+            ".............",
+            ".............",
+            ".............",
+            "......C......",
+            ".............",
+            "........H....",
+            ".............",
+            ".............",
+            ".............",
+            ".............",
+        ],
+    ),
+    (
+        "hole at +1,+3",
+        [
+            ".............",
+            ".............",
+            ".............",
+            ".............",
+            ".............",
+            ".............",
+            "......C......",
+            ".............",
+            ".............",
+            ".......H.....",
+            ".............",
+            ".............",
+            ".............",
+        ],
+    ),
+    (
+        "hole at -3,+1",
+        [
+            ".............",
+            ".............",
+            ".............",
+            ".............",
+            ".............",
+            ".............",
+            "......C......",
+            "...H.........",
+            ".............",
+            ".............",
+            ".............",
+            ".............",
+            ".............",
+        ],
+    ),
 ];
 
 fn put(world: &Arc<World>, pos: &BlockPos, state: BlockStateId) {
@@ -501,6 +754,8 @@ struct Cells {
     source: BlockStateId,
     flowing_7: BlockStateId,
     flowing_1: BlockStateId,
+    flowing_6: BlockStateId,
+    flowing_5: BlockStateId,
     falling: BlockStateId,
     falling_source: BlockStateId,
     other: BlockStateId,
@@ -520,6 +775,12 @@ impl Cells {
                 .to_state_id(fluid),
             flowing_1: fluid_impl
                 .get_flowing(fluid, Level::L1, false)
+                .to_state_id(fluid),
+            flowing_6: fluid_impl
+                .get_flowing(fluid, Level::L6, false)
+                .to_state_id(fluid),
+            flowing_5: fluid_impl
+                .get_flowing(fluid, Level::L5, false)
                 .to_state_id(fluid),
             falling: fluid_impl
                 .get_flowing(fluid, Level::L7, true)
@@ -543,6 +804,8 @@ impl Cells {
             '#' => Block::STONE.default_state.id,
             'S' | 'C' => self.source,
             '7' => self.flowing_7,
+            '6' => self.flowing_6,
+            '5' => self.flowing_5,
             '1' => self.flowing_1,
             'F' => self.falling,
             'Z' => self.falling_source,

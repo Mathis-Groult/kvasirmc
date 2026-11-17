@@ -126,6 +126,10 @@ const MIXED: [&str; 5] = ["SSLLL", "SSLLL", "SSLLL", "SSLLL", "SSLLL"];
 const SLABS: [&str; 5] = ["WWWWW", "WWWWW", "WWWWW", "WWWWW", "WWWWW"];
 const STONE: [&str; 5] = ["#####", "#####", "#####", "#####", "#####"];
 const SHALLOW_EAST: [&str; 5] = ["321..", "321..", "321..", "321..", "321.."];
+const EAST_COLUMN: [&str; 5] = ["...S.", "...S.", "...S.", "...S.", "...S."];
+const WEST_COLUMN: [&str; 5] = [".S...", ".S...", ".S...", ".S...", ".S..."];
+const SOUTH_ROW: [&str; 5] = [".....", ".....", ".....", "SSSSS", "....."];
+const NORTH_ROW: [&str; 5] = [".....", "SSSSS", ".....", ".....", "....."];
 
 const SCENES: &[Scene] = &[
     scene("dry zombie", &[(0, DRY)], Subject::Zombie),
@@ -347,6 +351,119 @@ const SCENES: &[Scene] = &[
         0.001,
         0.0,
         0.001,
+    ),
+    // Appended after the first mutation run: box edges exactly on a block border, the shallow
+    // scaling and the lava cell count seen by a moving player, a fall distance that halves to
+    // exactly 1, and velocities on the small-velocity thresholds.
+    at(
+        scene(
+            "zombie touching water to the east",
+            &[(0, EAST_COLUMN)],
+            Subject::Zombie,
+        ),
+        0.7,
+        0.0,
+        0.5,
+    ),
+    at(
+        scene(
+            "zombie touching water to the west",
+            &[(0, WEST_COLUMN)],
+            Subject::Zombie,
+        ),
+        0.3,
+        0.0,
+        0.5,
+    ),
+    at(
+        scene(
+            "zombie touching water to the south",
+            &[(0, SOUTH_ROW)],
+            Subject::Zombie,
+        ),
+        0.5,
+        0.0,
+        0.7,
+    ),
+    at(
+        scene(
+            "zombie touching water to the north",
+            &[(0, NORTH_ROW)],
+            Subject::Zombie,
+        ),
+        0.5,
+        0.0,
+        0.3,
+    ),
+    at(
+        scene(
+            "zombie with its head touching water",
+            &[(0, DRY), (1, DRY), (2, ALL_S)],
+            Subject::Zombie,
+        ),
+        0.5,
+        0.05,
+        0.5,
+    ),
+    scene("zombie on falling water", &[(-1, FALLS)], Subject::Zombie),
+    moving(
+        scene(
+            "player moving in shallow water flowing east",
+            &[(0, SHALLOW_EAST)],
+            Subject::Player,
+        ),
+        0.1,
+        0.0,
+        0.0,
+    ),
+    moving(
+        at(
+            scene(
+                "player moving across two lava flows",
+                &[(0, LAVA_EAST)],
+                Subject::Player,
+            ),
+            0.0,
+            0.0,
+            0.5,
+        ),
+        0.1,
+        0.0,
+        0.0,
+    ),
+    falling(
+        scene("zombie in lava, fall two", &[(0, ALL_L)], Subject::Zombie),
+        2.0,
+    ),
+    moving(
+        scene(
+            "zombie drifting east at the threshold",
+            &[(0, EAST_FLOW)],
+            Subject::Zombie,
+        ),
+        0.003,
+        0.0,
+        0.0,
+    ),
+    moving(
+        scene(
+            "zombie drifting south at the threshold",
+            &[(0, EAST_FLOW)],
+            Subject::Zombie,
+        ),
+        0.0,
+        0.0,
+        0.003,
+    ),
+    moving(
+        scene(
+            "zombie drifting south past the threshold",
+            &[(0, EAST_FLOW)],
+            Subject::Zombie,
+        ),
+        0.0,
+        0.0,
+        0.004,
     ),
 ];
 

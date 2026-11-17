@@ -75,3 +75,5 @@ zombies at range two edges, cap one: tick 2 delay reset-1 spawned []
 zombies at range two edges, cap one: tick 3 delay reset-2 spawned []
 600 spawns: tick 1 delay reset in min..max spawned 600 mobs, x mean 0.5+0 sd as expected, z mean 0.5+0 sd as expected, layers ["many", "many", "many"] packet 2f000007d400013200000080400000000000 x600 packet 0700013200000080400100f201 x1
 600 spawns in range two: tick 1 delay reset in min..max spawned 600 mobs, x mean 0.5+0 sd as expected, z mean 0.5+0 sd as expected, layers ["many", "many", "many"] packet 2f000007d400013e00000080400000000000 x600 packet 0700013e00000080400100f201 x1
+fifty resets: 50 resets, inside true, wide true
+600 spawns, angles: tick 1 delay reset in min..max spawned 600 mobs, x mean 0.5+0 sd as expected, z mean 0.5+0 sd as expected, layers ["many", "many", "many"], yaw mean 2 quarter turns, yaw spread uniform true, pitch zero true, spawn bonus true packet 2f000007d400015600000080400000000000 x600 packet 0700015600000080400100f201 x1

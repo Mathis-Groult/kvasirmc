@@ -60,6 +60,10 @@ struct Scene {
     stone: bool,
     ticks: usize,
     stats: bool,
+    /// Adds the mean of the yaw, the pitch and the follow-range spawn bonus to the stats line.
+    angles: bool,
+    /// Resets the delay this many times (delay -1, one tick each) and records their spread.
+    resets: usize,
 }
 
 const fn scene(name: &'static str, delay: i32) -> Scene {
@@ -78,6 +82,8 @@ const fn scene(name: &'static str, delay: i32) -> Scene {
         stone: false,
         ticks: 3,
         stats: false,
+        angles: false,
+        resets: 0,
     }
 }
 
@@ -111,6 +117,17 @@ const fn walled(mut scene: Scene) -> Scene {
 
 const fn without_entity(mut scene: Scene) -> Scene {
     scene.entity = None;
+    scene
+}
+
+const fn with_angles(mut scene: Scene) -> Scene {
+    scene.angles = true;
+    scene
+}
+
+const fn many_resets(mut scene: Scene, resets: usize) -> Scene {
+    scene.resets = resets;
+    scene.ticks = 0;
     scene
 }
 
@@ -196,6 +213,15 @@ const SCENES: &[Scene] = &[
     ),
     statistics(spawning(scene("600 spawns", 0), 600, 4, 1000)),
     statistics(spawning(scene("600 spawns in range two", 0), 600, 2, 1000)),
+    // Appended after the first mutation run: the spread of reset delays, and the yaw, pitch
+    // and spawn finalisation (follow-range bonus) of spawned mobs.
+    many_resets(scene("fifty resets", -1), 50),
+    with_angles(statistics(spawning(
+        scene("600 spawns, angles", 0),
+        600,
+        4,
+        1000,
+    ))),
 ];
 
 fn put(world: &Arc<World>, pos: &BlockPos, state: BlockStateId) {
@@ -428,7 +454,11 @@ fn run(
         put(world, &pos, Block::AIR.default_state.id);
         let mobs = spawned(world, pos, scene.crowd.len());
         let mobs_text = if scene.stats {
-            stats_text(&mobs, pos, scene.spawn_range)
+            let mut text = stats_text(&mobs, pos, scene.spawn_range);
+            if scene.angles {
+                text.push_str(&angles_text(&mobs));
+            }
+            text
         } else {
             let list: Vec<String> = mobs
                 .iter()
@@ -444,6 +474,64 @@ fn run(
             events(tap)
         );
     }
+    if scene.resets > 0 {
+        let _ = writeln!(
+            out,
+            "{}: {}",
+            scene.name,
+            resets_text(&entity, world, scene)
+        );
+    }
+}
+
+/// The spread of many reset delays: all inside `min..max`, and wider than half of it.
+fn resets_text(entity: &MobSpawnerBlockEntity, world: &Arc<World>, scene: &Scene) -> String {
+    let mut delays = Vec::new();
+    for _ in 0..scene.resets {
+        entity.delay.store(-1, Ordering::Relaxed);
+        entity.tick(world);
+        delays.push(entity.delay.load(Ordering::Relaxed));
+    }
+    let inside = delays
+        .iter()
+        .all(|delay| (scene.min_delay..scene.max_delay).contains(delay));
+    let low = delays.iter().min().copied().unwrap_or_default();
+    let high = delays.iter().max().copied().unwrap_or_default();
+    let wide = high - low > (scene.max_delay - scene.min_delay) / 2;
+    format!("{} resets, inside {inside}, wide {wide}", delays.len())
+}
+
+/// Yaw mean (in quarter turns) and spread, pitches, and the follow-range spawn bonus.
+fn angles_text(mobs: &[Arc<dyn EntityBase>]) -> String {
+    let n = mobs.len() as f64;
+    let yaws: Vec<f64> = mobs
+        .iter()
+        .map(|mob| f64::from(mob.get_entity().yaw.load()))
+        .collect();
+    let mean = yaws.iter().sum::<f64>() / n;
+    let sd = (yaws.iter().map(|v| (v - mean).powi(2)).sum::<f64>() / n).sqrt();
+    let level = mobs.iter().all(|mob| mob.get_entity().pitch.load() == 0.0);
+    let bonus = mobs.iter().all(|mob| {
+        mob.get_living_entity().is_some_and(|living| {
+            living
+                .attributes
+                .read()
+                .unwrap_or_else(std::sync::PoisonError::into_inner)
+                .values()
+                .any(|attribute| {
+                    attribute
+                        .modifiers
+                        .iter()
+                        .any(|modifier| modifier.id == "minecraft:random_spawn_bonus")
+                })
+        })
+    });
+    format!(
+        ", yaw mean {} quarter turns, yaw spread uniform {}, pitch zero {level}, spawn bonus {bonus}",
+        (mean / 90.0).round() as i64,
+        // A uniform yaw over 0..360 has a standard deviation of 360 / sqrt(12) = 103.9.
+        (sd - 103.9).abs() < 15.0,
+    )
 }
 
 #[tokio::test(flavor = "multi_thread")]

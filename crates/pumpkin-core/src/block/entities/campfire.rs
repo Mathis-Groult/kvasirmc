@@ -7,7 +7,7 @@ use pumpkin_data::block_properties::CampfireLikeProperties;
 use pumpkin_data::entity::EntityType;
 use pumpkin_data::item::Item;
 use pumpkin_data::item_stack::ItemStack;
-use pumpkin_data::recipes::{CookingRecipeKind, get_cooking_recipe_with_ingredient};
+use pumpkin_data::recipes::{CookingRecipe, CookingRecipeKind, get_cooking_recipe_with_ingredient};
 use pumpkin_nbt::compound::NbtCompound;
 use pumpkin_nbt::tag::NbtTag;
 use pumpkin_util::math::position::BlockPos;
@@ -104,88 +104,9 @@ impl BlockEntity for CampfireBlockEntity {
         let mut completed = false;
 
         for slot in 0..Self::SLOT_COUNT {
-            let stack = self.items[slot]
-                .lock()
-                .unwrap_or_else(std::sync::PoisonError::into_inner)
-                .clone();
-            if stack.is_empty() {
-                continue;
-            }
-
-            let Some(recipe) =
-                get_cooking_recipe_with_ingredient(stack.item, CookingRecipeKind::CampfireCooking)
-            else {
-                continue;
-            };
-
-            let total = {
-                let mut total = self.cooking_total_times[slot]
-                    .lock()
-                    .unwrap_or_else(std::sync::PoisonError::into_inner);
-                if *total <= 0 {
-                    let mut cooking_time = recipe.cookingtime;
-                    if let Some(server) = world.server.upgrade() {
-                        let mut event = crate::plugin::api::events::block::campfire_start::CampfireStartEvent::new(
-                            self.position,
-                            world.clone(),
-                            stack.clone(),
-                            slot as u8,
-                            cooking_time,
-                        );
-                        server.plugin_manager.fire_blocking(&server, &mut event);
-                        if event.cancelled {
-                            continue;
-                        }
-                        cooking_time = event.cooking_time;
-                    }
-                    *total = cooking_time;
-                }
-                *total
-            };
-
-            let finished = {
-                let mut progress = self.cooking_times[slot]
-                    .lock()
-                    .unwrap_or_else(std::sync::PoisonError::into_inner);
-                *progress += 1;
-                changed = true;
-                *progress >= total
-            };
-
-            if !finished {
-                continue;
-            }
-
-            let Some(result_item) = Item::from_registry_key(recipe.result.id) else {
-                continue;
-            };
-
-            let mut result = ItemStack::new(recipe.result.count, result_item);
-            if let Some(server) = world.server.upgrade() {
-                let mut event = crate::plugin::api::events::block::block_cook::BlockCookEvent::new(
-                    self.position,
-                    world.clone(),
-                    stack.clone(),
-                    result.clone(),
-                );
-                server.plugin_manager.fire_blocking(&server, &mut event);
-                if event.cancelled {
-                    continue;
-                }
-                result = event.result;
-            }
-            Self::spawn_cooked_item(world, self.position, result);
-
-            *self.items[slot]
-                .lock()
-                .unwrap_or_else(std::sync::PoisonError::into_inner) = ItemStack::EMPTY.clone();
-            *self.cooking_times[slot]
-                .lock()
-                .unwrap_or_else(std::sync::PoisonError::into_inner) = 0;
-            *self.cooking_total_times[slot]
-                .lock()
-                .unwrap_or_else(std::sync::PoisonError::into_inner) = 0;
-            completed = true;
+            let (slot_changed, slot_completed) = self.cook_slot(world, slot);
+            changed |= slot_changed;
+            completed |= slot_completed;
         }
 
         if completed {
@@ -277,6 +198,116 @@ impl CampfireBlockEntity {
             })
             .collect();
         nbt.put("CookingTotalTimes", NbtTag::IntArray(cooking_total_times));
+    }
+
+    /// One slot's cooking step: (progress changed, item finished).
+    fn cook_slot(&self, world: &Arc<World>, slot: usize) -> (bool, bool) {
+        let stack = self.items[slot]
+            .lock()
+            .unwrap_or_else(std::sync::PoisonError::into_inner)
+            .clone();
+        if stack.is_empty() {
+            return (false, false);
+        }
+
+        let Some(recipe) =
+            get_cooking_recipe_with_ingredient(stack.item, CookingRecipeKind::CampfireCooking)
+        else {
+            return (false, false);
+        };
+
+        let Some(total) = self.total_cooking_time(world, slot, &stack, recipe) else {
+            return (false, false);
+        };
+
+        let finished = {
+            let mut progress = self.cooking_times[slot]
+                .lock()
+                .unwrap_or_else(std::sync::PoisonError::into_inner);
+            *progress += 1;
+            *progress >= total
+        };
+
+        if !finished {
+            return (true, false);
+        }
+
+        (true, self.finish_cooking(world, slot, &stack, recipe))
+    }
+
+    /// The slot's total cooking time, taken from the recipe (through the plugin start event) the
+    /// first time; `None` when a plugin cancelled the start.
+    fn total_cooking_time(
+        &self,
+        world: &Arc<World>,
+        slot: usize,
+        stack: &ItemStack,
+        recipe: &CookingRecipe,
+    ) -> Option<i32> {
+        let mut total = self.cooking_total_times[slot]
+            .lock()
+            .unwrap_or_else(std::sync::PoisonError::into_inner);
+        if *total <= 0 {
+            let mut cooking_time = recipe.cookingtime;
+            if let Some(server) = world.server.upgrade() {
+                let mut event =
+                    crate::plugin::api::events::block::campfire_start::CampfireStartEvent::new(
+                        self.position,
+                        world.clone(),
+                        stack.clone(),
+                        slot as u8,
+                        cooking_time,
+                    );
+                server.plugin_manager.fire_blocking(&server, &mut event);
+                if event.cancelled {
+                    return None;
+                }
+                cooking_time = event.cooking_time;
+            }
+            *total = cooking_time;
+        }
+        Some(*total)
+    }
+
+    /// Drops the cooked result (through the plugin cook event) and empties the slot; false when
+    /// the result item is unknown or a plugin cancelled the cook.
+    fn finish_cooking(
+        &self,
+        world: &Arc<World>,
+        slot: usize,
+        stack: &ItemStack,
+        recipe: &CookingRecipe,
+    ) -> bool {
+        let Some(result_item) = Item::from_registry_key(recipe.result.id) else {
+            return false;
+        };
+
+        let mut result = ItemStack::new(recipe.result.count, result_item);
+        if let Some(server) = world.server.upgrade() {
+            let mut event = crate::plugin::api::events::block::block_cook::BlockCookEvent::new(
+                self.position,
+                world.clone(),
+                stack.clone(),
+                result.clone(),
+            );
+            server.plugin_manager.fire_blocking(&server, &mut event);
+            if event.cancelled {
+                return false;
+            }
+            result = event.result;
+        }
+        Self::spawn_cooked_item(world, self.position, result);
+
+        *self.items[slot]
+            .lock()
+            .unwrap_or_else(std::sync::PoisonError::into_inner) = ItemStack::EMPTY.clone();
+        *self.cooking_times[slot]
+            .lock()
+            .unwrap_or_else(std::sync::PoisonError::into_inner) = 0;
+        *self.cooking_total_times[slot]
+            .lock()
+            .unwrap_or_else(std::sync::PoisonError::into_inner) = 0;
+        true
     }
 
     fn cool_down(&self) -> bool {

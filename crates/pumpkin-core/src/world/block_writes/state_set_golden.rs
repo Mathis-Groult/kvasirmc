@@ -354,6 +354,19 @@ fn dot_dust_under_raised_dust(world: &Arc<World>, pos: BlockPos) {
     );
 }
 
+/// The same blocks, the dot dust written LAST: written first, `prepare` of the raised dust
+/// reshapes it into a wire going up east (5862), which hides the old state's sides.
+fn dot_dust_put_after_raised_dust(world: &Arc<World>, pos: BlockPos) {
+    floor(world, pos);
+    put(world, pos.east(), Block::STONE.default_state.id);
+    put(
+        world,
+        pos.east().up(),
+        wire(EastRedstone::None, WestRedstone::Side),
+    );
+    put(world, pos, Block::REDSTONE_WIRE.default_state.id);
+}
+
 /// The POI entry saved to disk at `pos` (type and free tickets).
 fn saved_poi(world: &World, pos: BlockPos) -> String {
     let mut storage = world
@@ -703,6 +716,12 @@ fn probe_scenes() -> Vec<Scene> {
         wide(
             "air on dot dust under raised dust connected to it, listeners only",
             dot_dust_under_raised_dust,
+            air,
+            BlockFlags::NOTIFY_LISTENERS,
+        ),
+        wide(
+            "air on dot dust written after the raised dust, listeners only",
+            dot_dust_put_after_raised_dust,
             air,
             BlockFlags::NOTIFY_LISTENERS,
         ),

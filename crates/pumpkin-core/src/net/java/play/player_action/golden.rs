@@ -99,6 +99,8 @@ struct Scene {
     /// Appended: the watcher stands two blocks in front of the breaker, whose last attack was
     /// long ago.
     jab_target: bool,
+    /// Appended: the breaker stands on the ground (in the air, mining is five times slower).
+    grounded: bool,
     /// Appended scenes end their line with the state id, whether the action counted as player
     /// activity, the entities nearby and the watcher's health.
     extra: bool,
@@ -118,6 +120,7 @@ const SCENE: Scene = Scene {
     margin: false,
     drawn: false,
     jab_target: false,
+    grounded: false,
     extra: false,
 };
 
@@ -133,6 +136,7 @@ fn scenes() -> Vec<Scene> {
     let mut scenes = dig_scenes();
     scenes.extend(other_scenes());
     scenes.extend(widened_scenes());
+    scenes.extend(widened_scenes_late());
     scenes
 }
 
@@ -353,6 +357,12 @@ fn widened_scenes() -> Vec<Scene> {
             ..wide("spear jab at the watcher as spectator", &[SPEAR_JAB])
         },
         wide("change destroy direction, activity", &[CHANGE_DIRECTION]),
+    ]
+}
+
+/// Scenes appended in the second and third widenings.
+fn widened_scenes_late() -> Vec<Scene> {
+    vec![
         Scene {
             kind: Kind::DoorLower,
             gamemode: GameMode::Creative,
@@ -363,6 +373,25 @@ fn widened_scenes() -> Vec<Scene> {
             held: Some((&Item::SHEARS, 1)),
             ..wide(
                 "start on leaves with shears (instant, tool damage)",
+                &[STARTED],
+            )
+        },
+        Scene {
+            kind: Kind::Leaves,
+            held: Some((&Item::SHEARS, 1)),
+            grounded: true,
+            ..wide(
+                "start on leaves with shears, on the ground (instant)",
+                &[STARTED],
+            )
+        },
+        Scene {
+            kind: Kind::Dirt,
+            held: Some((&Item::IRON_SHOVEL, 1)),
+            efficient: true,
+            grounded: true,
+            ..wide(
+                "start on dirt with an efficiency V shovel, on the ground (instant)",
                 &[STARTED],
             )
         },
@@ -554,6 +583,49 @@ fn place(player: &Player, at: Vector3<f64>, pos: BlockPos) {
     ));
 }
 
+/// Gives the breaker the scene's items, item in use, ground, attack and activity state.
+fn equip(breaker: &Player, scene: &Scene) {
+    let inventory = breaker.inventory();
+    if let Some((item, count)) = scene.held {
+        let mut stack = ItemStack::new(count, item);
+        if scene.efficient {
+            stack.add_enchantment(&Enchantment::EFFICIENCY, 5);
+        }
+        inventory.set_stack_in_hand(Hand::Right, stack);
+    }
+    if let Some((item, count)) = scene.offhand {
+        inventory.set_stack_in_hand(Hand::Left, ItemStack::new(count, item));
+    }
+    if let Some(item) = scene.using {
+        breaker
+            .living_entity
+            .set_active_hand(Hand::Right, ItemStack::new(1, item), 72_000);
+    }
+    if scene.drawn {
+        inventory.insert_stack_anywhere(&mut ItemStack::new(16, &Item::ARROW));
+        breaker
+            .living_entity
+            .item_use_time
+            .store(72_000 - 25, Ordering::Relaxed);
+    }
+    if scene.grounded {
+        breaker
+            .living_entity
+            .entity
+            .on_ground
+            .store(true, Ordering::Relaxed);
+    }
+    if scene.jab_target {
+        breaker.last_attacked_ticks.store(100, Ordering::Relaxed);
+    }
+    if scene.extra {
+        breaker.tick_counter.store(37, Ordering::Relaxed);
+        if let Some(long_ago) = Instant::now().checked_sub(Duration::from_secs(600)) {
+            breaker.last_action_time.store(long_ago);
+        }
+    }
+}
+
 fn run(
     server: &Arc<Server>,
     world: &Arc<World>,
@@ -593,38 +665,7 @@ fn run(
     breaker
         .client_loaded
         .store(!scene.unloaded, Ordering::Relaxed);
-    let inventory = breaker.inventory();
-    if let Some((item, count)) = scene.held {
-        let mut stack = ItemStack::new(count, item);
-        if scene.efficient {
-            stack.add_enchantment(&Enchantment::EFFICIENCY, 5);
-        }
-        inventory.set_stack_in_hand(Hand::Right, stack);
-    }
-    if let Some((item, count)) = scene.offhand {
-        inventory.set_stack_in_hand(Hand::Left, ItemStack::new(count, item));
-    }
-    if let Some(item) = scene.using {
-        breaker
-            .living_entity
-            .set_active_hand(Hand::Right, ItemStack::new(1, item), 72_000);
-    }
-    if scene.drawn {
-        inventory.insert_stack_anywhere(&mut ItemStack::new(16, &Item::ARROW));
-        breaker
-            .living_entity
-            .item_use_time
-            .store(72_000 - 25, Ordering::Relaxed);
-    }
-    if scene.jab_target {
-        breaker.last_attacked_ticks.store(100, Ordering::Relaxed);
-    }
-    if scene.extra {
-        breaker.tick_counter.store(37, Ordering::Relaxed);
-        if let Some(long_ago) = Instant::now().checked_sub(Duration::from_secs(600)) {
-            breaker.last_action_time.store(long_ago);
-        }
-    }
+    equip(&breaker, scene);
     world.add_player(&breaker)?;
     world.add_player(&watcher)?;
     let client = java(&breaker).ok_or("the breaker is not a Java player")?;

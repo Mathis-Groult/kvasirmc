@@ -1,6 +1,8 @@
 //! Strength and Weakness reach a player's melee damage once, through the `ATTACK_DAMAGE`
 //! attribute their effects modify (vanilla 26.3 `Player.attack` reads only
-//! `getAttributeValue(ATTACK_DAMAGE)`; card #82).
+//! `getAttributeValue(ATTACK_DAMAGE)`; card #82), and a hit that would deal no damage does not
+//! land (vanilla hits only when the scaled base damage or the enchantment bonus is above zero;
+//! card #81).
 
 use std::sync::Arc;
 use std::sync::atomic::Ordering;
@@ -21,12 +23,13 @@ use crate::entity::{Entity, EntityBase};
 
 type TestResult = Result<(), Box<dyn std::error::Error>>;
 
-/// The damage a fully charged hit on the ground deals to a fresh zombie.
-async fn hit_damage(
+/// What a fully charged hit on the ground did to a fresh zombie: its health, its hurt
+/// cooldown, and the attacker's exhaustion.
+async fn hit(
     held: Option<&'static Item>,
     effect: &'static StatusEffect,
     amplifier: u8,
-) -> Result<f32, Box<dyn std::error::Error>> {
+) -> Result<(f32, i32, f32), Box<dyn std::error::Error>> {
     let folder = tempfile::tempdir()?;
     let server = test_support::server(&folder).await?;
     let world = server.worlds.load()[0].clone();
@@ -72,13 +75,25 @@ async fn hit_damage(
     )));
     world.spawn_entity(zombie.clone());
     attacker.attack(&zombie);
-    let health = zombie
+    let living = zombie
         .get_living_entity()
-        .ok_or("the zombie is not living")?
-        .health
-        .load();
+        .ok_or("the zombie is not living")?;
+    let outcome = (
+        living.health.load(),
+        living.hurt_cooldown.load(Ordering::Relaxed),
+        attacker.hunger_manager.exhaustion.load(),
+    );
     server.stop();
-    Ok(20.0 - health)
+    Ok(outcome)
+}
+
+/// The damage a fully charged hit on the ground deals to a fresh zombie.
+async fn hit_damage(
+    held: Option<&'static Item>,
+    effect: &'static StatusEffect,
+    amplifier: u8,
+) -> Result<f32, Box<dyn std::error::Error>> {
+    Ok(20.0 - hit(held, effect, amplifier).await?.0)
 }
 
 #[tokio::test(flavor = "multi_thread")]
@@ -93,5 +108,14 @@ async fn weakness_one_takes_four_from_a_diamond_sword() -> TestResult {
         (hit_damage(Some(&Item::DIAMOND_SWORD), &StatusEffect::WEAKNESS, 0).await? - 3.0).abs()
             < 1e-4
     );
+    Ok(())
+}
+
+#[tokio::test(flavor = "multi_thread")]
+async fn a_fist_with_weakness_does_not_land() -> TestResult {
+    let (health, hurt_cooldown, exhaustion) = hit(None, &StatusEffect::WEAKNESS, 0).await?;
+    assert!((health - 20.0).abs() < 1e-4);
+    assert_eq!(hurt_cooldown, 0);
+    assert!(exhaustion.abs() < 1e-6);
     Ok(())
 }

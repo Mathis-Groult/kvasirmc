@@ -43,6 +43,16 @@ async fn stats_after_break(
     held: Option<&'static Item>,
     block: &'static Block,
 ) -> Result<(i32, i32), Box<dyn std::error::Error>> {
+    stats_after_break_as(platform, GameMode::Survival, held, block).await
+}
+
+/// As [`stats_after_break`], for a `gamemode` player.
+async fn stats_after_break_as(
+    platform: Platform,
+    gamemode: GameMode,
+    held: Option<&'static Item>,
+    block: &'static Block,
+) -> Result<(i32, i32), Box<dyn std::error::Error>> {
     let folder = tempfile::tempdir()?;
     let server = test_support::server(&folder).await?;
     let world = server.worlds.load()[0].clone();
@@ -64,12 +74,12 @@ async fn stats_after_break(
     );
     let player = match platform {
         Platform::Java => {
-            test_support::java_player_as(&world, GameMode::Survival, &DIGGER)
+            test_support::java_player_as(&world, gamemode, &DIGGER)
                 .ok_or("no Java packet tap")?
                 .0
         }
         Platform::Bedrock => {
-            test_support::bedrock_player_as(&world, GameMode::Survival, &DIGGER)
+            test_support::bedrock_player_as(&world, gamemode, &DIGGER)
                 .await?
                 .0
         }
@@ -195,5 +205,31 @@ async fn java_stone_with_a_pickaxe_counts_both() -> TestResult {
         stats_after_break(Platform::Java, Some(&Item::IRON_PICKAXE), &Block::STONE).await?,
         (1, 1)
     );
+    Ok(())
+}
+
+#[tokio::test(flavor = "multi_thread")]
+async fn java_creative_with_a_pickaxe_counts_nothing() -> TestResult {
+    let stats = stats_after_break_as(
+        Platform::Java,
+        GameMode::Creative,
+        Some(&Item::IRON_PICKAXE),
+        &Block::STONE,
+    )
+    .await?;
+    assert_eq!(stats, (0, 0));
+    Ok(())
+}
+
+#[tokio::test(flavor = "multi_thread")]
+async fn bedrock_creative_with_a_pickaxe_counts_nothing() -> TestResult {
+    let stats = stats_after_break_as(
+        Platform::Bedrock,
+        GameMode::Creative,
+        Some(&Item::IRON_PICKAXE),
+        &Block::STONE,
+    )
+    .await?;
+    assert_eq!(stats, (0, 0));
     Ok(())
 }

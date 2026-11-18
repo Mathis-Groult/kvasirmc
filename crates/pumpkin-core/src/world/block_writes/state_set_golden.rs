@@ -14,7 +14,8 @@ use std::sync::Arc;
 
 use pumpkin_data::block_properties::{
     ChestLikeProperties, ChestType, ComparatorLikeProperties, ComposterLikeProperties,
-    HorizontalFacing, RedstoneOreLikeProperties, RedstoneWireLikeProperties,
+    EastRedstone, HorizontalFacing, RedstoneOreLikeProperties, RedstoneWireLikeProperties,
+    WestRedstone,
 };
 use pumpkin_data::fluid::Fluid;
 use pumpkin_data::item::Item;
@@ -24,6 +25,7 @@ use pumpkin_inventory::Inventory;
 use pumpkin_util::math::position::BlockPos;
 use pumpkin_util::math::vector2::Vector2;
 use pumpkin_world::chunk::format::LightContainer;
+use pumpkin_world::poi::PoiRegion;
 use pumpkin_world::world::BlockFlags;
 
 use crate::block::entities::chest::ChestBlockEntity;
@@ -42,6 +44,14 @@ struct Scene {
     /// Appended after the first mutation run: the chunks get light sections, and the line also
     /// lists every non-air state and scheduled tick in the box around the position.
     wide: bool,
+    /// Appended after the second mutation run: extra text at the end of a wide line.
+    probe: Probe,
+}
+
+type Probe = fn(&World, BlockPos) -> String;
+
+const fn no_probe(_world: &World, _pos: BlockPos) -> String {
+    String::new()
 }
 
 const ALL: BlockFlags = BlockFlags::NOTIFY_ALL;
@@ -262,6 +272,103 @@ fn composter_behind_stone(world: &Arc<World>, pos: BlockPos) {
     }
 }
 
+/// A nether portal block with its portal POI.
+fn on_nether_portal(world: &Arc<World>, pos: BlockPos) {
+    floor(world, pos);
+    put(world, pos, Block::NETHER_PORTAL.default_state.id);
+    world
+        .portal_poi
+        .lock()
+        .unwrap_or_else(std::sync::PoisonError::into_inner)
+        .add_portal(pos);
+}
+
+/// Comparators two blocks away behind stone, each reading through the stone towards `pos`.
+fn composter_behind_stone_facing_it(world: &Arc<World>, pos: BlockPos) {
+    floor(world, pos);
+    put(world, pos, composter(0));
+    for (side, far, facing) in [
+        (pos.east(), pos.east().east(), HorizontalFacing::West),
+        (pos.west(), pos.west().west(), HorizontalFacing::East),
+    ] {
+        put(world, side, Block::STONE.default_state.id);
+        put(world, far.down(), Block::STONE.default_state.id);
+        put(world, far, comparator(facing));
+    }
+}
+
+fn wire(east: EastRedstone, west: WestRedstone) -> BlockStateId {
+    let mut wire = RedstoneWireLikeProperties::default(&Block::REDSTONE_WIRE);
+    wire.east = east;
+    wire.west = west;
+    wire.to_state_id(&Block::REDSTONE_WIRE)
+}
+
+/// Dust going up the east stone: only `prepare` reaches the raised dust diagonally.
+fn dust_up_east() -> BlockStateId {
+    wire(EastRedstone::Up, WestRedstone::None)
+}
+
+/// Raised dust on the east stone, with unpowered TNT east of it beside a redstone block:
+/// only a neighbour update (not a shape update) of the raised dust primes the TNT. The wire's
+/// own placed callback would update the raised dust's neighbours too, so the scene skips it.
+fn raised_dust_by_tnt(world: &Arc<World>, pos: BlockPos) {
+    floor(world, pos);
+    put(world, pos.east(), Block::STONE.default_state.id);
+    put(
+        world,
+        pos.east().up(),
+        Block::REDSTONE_WIRE.default_state.id,
+    );
+    put(world, pos.east().east(), Block::STONE.default_state.id);
+    put(world, pos.east().east().up(), Block::TNT.default_state.id);
+    put(
+        world,
+        pos.east().east().east().up(),
+        Block::REDSTONE_BLOCK.default_state.id,
+    );
+}
+
+/// Dust going up the east stone to raised dust that connects back down to it.
+fn dust_up_to_raised_dust(world: &Arc<World>, pos: BlockPos) {
+    floor(world, pos);
+    put(world, pos, dust_up_east());
+    put(world, pos.east(), Block::STONE.default_state.id);
+    put(
+        world,
+        pos.east().up(),
+        wire(EastRedstone::None, WestRedstone::Side),
+    );
+}
+
+/// The POI entry saved to disk at `pos` (type and free tickets).
+fn saved_poi(world: &World, pos: BlockPos) -> String {
+    let mut storage = world
+        .portal_poi
+        .lock()
+        .unwrap_or_else(std::sync::PoisonError::into_inner);
+    if storage.save_all().is_err() {
+        return " saved poi: save failed".to_string();
+    }
+    drop(storage);
+    let region = (pos.0.x >> 9, pos.0.z >> 9);
+    let path = world
+        .level
+        .level_folder
+        .poi_folder
+        .join(format!("r.{}.{}.mca", region.0, region.1));
+    let Ok(region) = PoiRegion::load(&path) else {
+        return " saved poi: no region".to_string();
+    };
+    let entries: Vec<String> = region
+        .get_all()
+        .iter()
+        .filter(|entry| entry.pos() == pos)
+        .map(|entry| format!("{} tickets {}", entry.poi_type, entry.free_tickets))
+        .collect();
+    format!(" saved poi {entries:?}")
+}
+
 fn red_shulker_box() -> BlockStateId {
     Block::RED_SHULKER_BOX.default_state.id
 }
@@ -290,6 +397,7 @@ const fn scene(
         new_state,
         flags,
         wide: false,
+        probe: no_probe,
     }
 }
 
@@ -305,6 +413,24 @@ const fn wide(
         new_state,
         flags,
         wide: true,
+        probe: no_probe,
+    }
+}
+
+const fn probed(
+    name: &'static str,
+    setup: Setup,
+    new_state: fn() -> BlockStateId,
+    flags: BlockFlags,
+    probe: Probe,
+) -> Scene {
+    Scene {
+        name,
+        setup,
+        new_state,
+        flags,
+        wide: true,
+        probe,
     }
 }
 
@@ -317,6 +443,7 @@ fn scenes() -> Vec<Scene> {
     scenes.extend(neighbour_scenes());
     scenes.extend(wide_block_scenes());
     scenes.extend(wide_neighbour_scenes());
+    scenes.extend(probe_scenes());
     scenes
 }
 
@@ -514,6 +641,49 @@ fn wide_neighbour_scenes() -> Vec<Scene> {
     ]
 }
 
+fn probe_scenes() -> Vec<Scene> {
+    let skip_added = with(ALL, BlockFlags::SKIP_BLOCK_ADDED_CALLBACK);
+    vec![
+        wide(
+            "barrel on stone with a stray chest entity, no added callback",
+            on_stone_with_stray_chest,
+            barrel,
+            skip_added,
+        ),
+        wide(
+            "red shulker box on a shulker box, no added callback",
+            on_shulker_box,
+            red_shulker_box,
+            skip_added,
+        ),
+        wide(
+            "air on a nether portal, moved",
+            on_nether_portal,
+            air,
+            with(BlockFlags::NOTIFY_LISTENERS, BlockFlags::MOVED),
+        ),
+        wide(
+            "composter filled, comparators behind stone facing it",
+            composter_behind_stone_facing_it,
+            composter_three,
+            ALL,
+        ),
+        wide(
+            "dust up the stone to raised dust by tnt, no added callback",
+            raised_dust_by_tnt,
+            dust_up_east,
+            skip_added,
+        ),
+        wide(
+            "air on dust going up to raised dust",
+            dust_up_to_raised_dust,
+            air,
+            ALL,
+        ),
+        probed("lectern on air, saved", on_air, lectern, ALL, saved_poi),
+    ]
+}
+
 /// Every non-air state and scheduled tick in x/z -2..=2, y -1..=2 around `pos`.
 fn box_text(world: &World, pos: BlockPos) -> String {
     let mut text = String::new();
@@ -658,7 +828,12 @@ fn record(out: &mut String, world: &World, scene: &Scene, pos: BlockPos, returne
     );
     if scene.wide {
         out.pop();
-        let _ = writeln!(out, " box{}", box_text(world, pos));
+        let _ = writeln!(
+            out,
+            " box{}{}",
+            box_text(world, pos),
+            (scene.probe)(world, pos)
+        );
     }
 }
 

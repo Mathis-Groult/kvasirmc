@@ -4,6 +4,9 @@
 #[allow(clippy::wildcard_imports)]
 use super::*;
 
+#[cfg(test)]
+mod sleep_tests;
+
 impl VillagerEntity {
     /// Counts the unhappy and trade-sound timers down.
     pub(super) fn tick_counters(&self) {

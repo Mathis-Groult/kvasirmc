@@ -2,6 +2,8 @@
 use super::*;
 
 mod digging;
+#[cfg(test)]
+mod mining_rules_tests;
 
 impl BedrockClient {
     #[expect(clippy::match_same_arms)]

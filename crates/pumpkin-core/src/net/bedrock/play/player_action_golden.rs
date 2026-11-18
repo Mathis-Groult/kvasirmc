@@ -65,6 +65,8 @@ enum Kind {
     RedstoneOre,
     /// Appended: the lower half of an oak door (the upper half above it).
     DoorLower,
+    /// Appended (second widening).
+    Ice,
 }
 
 #[derive(Clone, Copy)]
@@ -170,6 +172,18 @@ fn scenes() -> Vec<Scene> {
     scenes.extend(other_scenes());
     scenes.extend(widened_scenes());
     scenes.extend(widened_scenes_more());
+    scenes.push(Scene {
+        kind: Kind::Ice,
+        held: PICKAXE,
+        ..scene(
+            "ice with a pickaxe: start, 20 ticks, predict (melts)",
+            &[
+                Act(A::StartDestroyBlock),
+                Ticks(20),
+                Act(A::PredictDestroyBlock),
+            ],
+        )
+    });
     scenes
 }
 
@@ -793,6 +807,7 @@ fn lay(world: &Arc<World>, pos: BlockPos, kind: Kind) {
         Kind::Leaves => Block::OAK_LEAVES.default_state.id,
         Kind::RedstoneOre => Block::REDSTONE_ORE.default_state.id,
         Kind::DoorLower => door_half(DoubleBlockHalf::Lower),
+        Kind::Ice => Block::ICE.default_state.id,
     };
     for x in -3..=9 {
         for z in -3..=9 {

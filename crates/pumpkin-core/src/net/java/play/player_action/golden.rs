@@ -11,13 +11,16 @@
 //! breaker and the watcher (length and FNV-1a of the bytes).
 //! Not covered: plugins cancelling the interact, damage or abort events (none is loaded).
 
+use std::fmt::Write;
 use std::num::NonZero;
 use std::sync::Arc;
 use std::sync::atomic::Ordering;
+use std::time::{Duration, Instant};
 
+use pumpkin_data::block_properties::TntLikeProperties;
 use pumpkin_data::item::Item;
 use pumpkin_data::item_stack::ItemStack;
-use pumpkin_data::{Block, BlockStateId};
+use pumpkin_data::{Block, BlockStateId, Enchantment};
 use pumpkin_protocol::codec::var_int::VarInt;
 use pumpkin_protocol::java::server::play::SPlayerAction;
 use pumpkin_util::math::position::BlockPos;
@@ -65,6 +68,10 @@ enum Kind {
     Stone,
     Air,
     Torch,
+    Dirt,
+    RedstoneOre,
+    UnstableTnt,
+    Ice,
 }
 
 #[derive(Clone, Copy)]
@@ -81,6 +88,18 @@ struct Scene {
     /// The breaker stands eight blocks away (out of reach).
     far: bool,
     actions: &'static [i32],
+    /// Appended: the held item has Efficiency V.
+    efficient: bool,
+    /// Appended: the breaker stands just inside reach only with the 1.0 margin.
+    margin: bool,
+    /// Appended: the bow in use was drawn for 25 ticks and arrows are in the inventory.
+    drawn: bool,
+    /// Appended: the watcher stands two blocks in front of the breaker, whose last attack was
+    /// long ago.
+    jab_target: bool,
+    /// Appended scenes end their line with the state id, whether the action counted as player
+    /// activity, the entities nearby and the watcher's health.
+    extra: bool,
 }
 
 const SCENE: Scene = Scene {
@@ -93,6 +112,11 @@ const SCENE: Scene = Scene {
     unloaded: false,
     far: false,
     actions: &[STARTED],
+    efficient: false,
+    margin: false,
+    drawn: false,
+    jab_target: false,
+    extra: false,
 };
 
 const fn scene(name: &'static str, actions: &'static [i32]) -> Scene {
@@ -106,6 +130,7 @@ const fn scene(name: &'static str, actions: &'static [i32]) -> Scene {
 fn scenes() -> Vec<Scene> {
     let mut scenes = dig_scenes();
     scenes.extend(other_scenes());
+    scenes.extend(widened_scenes());
     scenes
 }
 
@@ -226,6 +251,109 @@ fn other_scenes() -> Vec<Scene> {
     ]
 }
 
+const WIDE: Scene = Scene {
+    extra: true,
+    ..SCENE
+};
+
+const fn wide(name: &'static str, actions: &'static [i32]) -> Scene {
+    Scene {
+        name,
+        actions,
+        ..WIDE
+    }
+}
+
+fn widened_scenes() -> Vec<Scene> {
+    vec![
+        Scene {
+            held: Some((&Item::IRON_SWORD, 1)),
+            ..wide("start on stone with a sword in survival", &[STARTED])
+        },
+        Scene {
+            gamemode: GameMode::Creative,
+            held: PICKAXE,
+            ..wide("start in creative with a pickaxe", &[STARTED])
+        },
+        Scene {
+            gamemode: GameMode::Creative,
+            held: Some((&Item::COPPER_SPEAR, 1)),
+            ..wide("start in creative with a spear", &[STARTED])
+        },
+        Scene {
+            held: Some((&Item::DEBUG_STICK, 1)),
+            ..wide("start with a debug stick in survival", &[STARTED])
+        },
+        Scene {
+            kind: Kind::RedstoneOre,
+            held: PICKAXE,
+            ..wide("start on redstone ore with a pickaxe", &[STARTED])
+        },
+        Scene {
+            kind: Kind::Dirt,
+            held: Some((&Item::IRON_SHOVEL, 1)),
+            ..wide("start on dirt with a shovel", &[STARTED])
+        },
+        Scene {
+            kind: Kind::Dirt,
+            held: Some((&Item::IRON_SHOVEL, 1)),
+            efficient: true,
+            ..wide(
+                "start on dirt with an efficiency V shovel (instant)",
+                &[STARTED],
+            )
+        },
+        Scene {
+            kind: Kind::UnstableTnt,
+            ..wide("start on unstable tnt (instant)", &[STARTED])
+        },
+        Scene {
+            margin: true,
+            ..wide("start just inside the reach margin", &[STARTED])
+        },
+        Scene {
+            margin: true,
+            ..wide(
+                "start then cancel just inside the reach margin",
+                &[STARTED, CANCELLED],
+            )
+        },
+        Scene {
+            margin: true,
+            held: PICKAXE,
+            ..wide("finish just inside the reach margin", &[FINISHED])
+        },
+        Scene {
+            gamemode: GameMode::Creative,
+            held: PICKAXE,
+            ..wide("finish in creative with a pickaxe", &[FINISHED])
+        },
+        Scene {
+            kind: Kind::Ice,
+            held: PICKAXE,
+            ..wide("finish on ice with a pickaxe", &[FINISHED])
+        },
+        Scene {
+            held: Some((&Item::BOW, 1)),
+            using: Some(&Item::BOW),
+            drawn: true,
+            ..wide("release a drawn bow with arrows", &[RELEASE])
+        },
+        Scene {
+            held: Some((&Item::COPPER_SPEAR, 1)),
+            jab_target: true,
+            ..wide("spear jab at the watcher", &[SPEAR_JAB])
+        },
+        Scene {
+            gamemode: GameMode::Spectator,
+            held: Some((&Item::COPPER_SPEAR, 1)),
+            jab_target: true,
+            ..wide("spear jab at the watcher as spectator", &[SPEAR_JAB])
+        },
+        wide("change destroy direction, activity", &[CHANGE_DIRECTION]),
+    ]
+}
+
 const fn position_of(index: usize) -> BlockPos {
     BlockPos::new(index as i32 * 16 + 200, 64, 8)
 }
@@ -243,6 +371,10 @@ fn lay(world: &Arc<World>, pos: BlockPos, kind: Kind) {
         Kind::Stone => Block::STONE.default_state.id,
         Kind::Air => Block::AIR.default_state.id,
         Kind::Torch => Block::TORCH.default_state.id,
+        Kind::Dirt => Block::DIRT.default_state.id,
+        Kind::RedstoneOre => Block::REDSTONE_ORE.default_state.id,
+        Kind::UnstableTnt => TntLikeProperties { unstable: true }.to_state_id(&Block::TNT),
+        Kind::Ice => Block::ICE.default_state.id,
     };
     for x in -3..=9 {
         for z in -3..=3 {
@@ -270,6 +402,30 @@ fn packets(tap: &mut PacketTap) -> String {
         .join(" ")
 }
 
+/// Packet ids whose bytes are random like in vanilla: Add Entity (UUID, TNT and arrow
+/// velocity) and the two sound packets (seed).
+const RANDOM_PACKETS: [u8; 3] = [1, 118, 119];
+
+/// Like [`packets`], for appended scenes: random packets show their id instead of a hash.
+fn packets_masked(tap: &mut PacketTap) -> String {
+    tap.drain()
+        .iter()
+        .map(|p| match p.first() {
+            Some(id) if RANDOM_PACKETS.contains(id) => format!("{}:id{id}", p.len()),
+            _ => format!("{}:{:08x}", p.len(), fnv(p) as u32),
+        })
+        .collect::<Vec<_>>()
+        .join(" ")
+}
+
+fn tap_text(tap: &mut PacketTap, masked: bool) -> String {
+    if masked {
+        packets_masked(tap)
+    } else {
+        packets(tap)
+    }
+}
+
 /// Items (name x count, sorted) lying within six blocks of `pos`.
 fn items_near(world: &World, pos: BlockPos) -> Vec<String> {
     let mut found: Vec<String> = world
@@ -293,6 +449,22 @@ fn items_near(world: &World, pos: BlockPos) -> Vec<String> {
         })
         .collect();
     found.sort();
+    found
+}
+
+/// Non-player entities (type, sorted) within six blocks of `pos`.
+fn entities_near(world: &World, pos: BlockPos) -> Vec<&'static str> {
+    let mut found: Vec<&'static str> = world
+        .entities
+        .load()
+        .iter()
+        .filter(|entity| {
+            let at = entity.get_entity().pos.load();
+            (at.x - f64::from(pos.0.x)).abs() < 6.0 && (at.z - f64::from(pos.0.z)).abs() < 6.0
+        })
+        .map(|entity| entity.get_entity().entity_type.resource_name)
+        .collect();
+    found.sort_unstable();
     found
 }
 
@@ -370,7 +542,13 @@ fn run(
     let (watcher, mut watcher_tap) =
         test_support::java_player_as(world, GameMode::Survival, &WATCHER)
             .ok_or("no Java packet tap")?;
-    let away = if scene.far { 8.0 } else { 2.0 };
+    let away = if scene.far {
+        8.0
+    } else if scene.margin {
+        5.5
+    } else {
+        2.0
+    };
     place(
         &breaker,
         Vector3::new(
@@ -380,17 +558,22 @@ fn run(
         ),
         pos,
     );
-    place(
-        &watcher,
-        Vector3::new(f64::from(pos.0.x) + 3.5, 64.0, f64::from(pos.0.z) + 0.5),
-        pos,
-    );
+    let watcher_at = if scene.jab_target {
+        Vector3::new(f64::from(pos.0.x) + 0.5, 64.0, f64::from(pos.0.z) + 4.5)
+    } else {
+        Vector3::new(f64::from(pos.0.x) + 3.5, 64.0, f64::from(pos.0.z) + 0.5)
+    };
+    place(&watcher, watcher_at, pos);
     breaker
         .client_loaded
         .store(!scene.unloaded, Ordering::Relaxed);
     let inventory = breaker.inventory();
     if let Some((item, count)) = scene.held {
-        inventory.set_stack_in_hand(Hand::Right, ItemStack::new(count, item));
+        let mut stack = ItemStack::new(count, item);
+        if scene.efficient {
+            stack.add_enchantment(&Enchantment::EFFICIENCY, 5);
+        }
+        inventory.set_stack_in_hand(Hand::Right, stack);
     }
     if let Some((item, count)) = scene.offhand {
         inventory.set_stack_in_hand(Hand::Left, ItemStack::new(count, item));
@@ -399,6 +582,22 @@ fn run(
         breaker
             .living_entity
             .set_active_hand(Hand::Right, ItemStack::new(1, item), 72_000);
+    }
+    if scene.drawn {
+        inventory.insert_stack_anywhere(&mut ItemStack::new(16, &Item::ARROW));
+        breaker
+            .living_entity
+            .item_use_time
+            .store(72_000 - 25, Ordering::Relaxed);
+    }
+    if scene.jab_target {
+        breaker.last_attacked_ticks.store(100, Ordering::Relaxed);
+    }
+    if scene.extra {
+        breaker.tick_counter.store(37, Ordering::Relaxed);
+        if let Some(long_ago) = Instant::now().checked_sub(Duration::from_secs(600)) {
+            breaker.last_action_time.store(long_ago);
+        }
     }
     world.add_player(&breaker)?;
     world.add_player(&watcher)?;
@@ -414,15 +613,26 @@ fn run(
         };
         client.handle_player_action(&breaker, &packet, server);
     }
-    let line = format!(
-        "{}: left {} items {:?} {} | breaker [{}] | watcher [{}]\n",
+    let mut line = format!(
+        "{}: left {} items {:?} {} | breaker [{}] | watcher [{}]",
         scene.name,
         world.get_block(&pos).name,
         items_near(world, pos),
         breaker_text(&breaker, block),
-        packets(&mut breaker_tap),
-        packets(&mut watcher_tap),
+        tap_text(&mut breaker_tap, scene.extra),
+        tap_text(&mut watcher_tap, scene.extra),
     );
+    if scene.extra {
+        let _ = write!(
+            line,
+            " | state {} acted {} entities {:?} watcher health {}",
+            world.get_block_state_id(&pos).as_u16(),
+            breaker.last_action_time.load().elapsed() < Duration::from_secs(300),
+            entities_near(world, pos),
+            watcher.living_entity.health.load(),
+        );
+    }
+    line.push('\n');
     Ok(line)
 }
 

@@ -179,6 +179,16 @@ debug = false
 # (loot golden: 70 s -> 6.8 s with these). Behaviour is unchanged: overflow checks and debug
 # assertions stay on. pumpkin-core, the crate we edit most, stays at 0 so its rebuild stays fast.
 # pumpkin-data is 1, not 2: its generated source is huge and 2 would slow its one-time build.
+# KvasirMC: crates.io dependencies are never edited here, so they are built optimised once. Profiling
+# the slow goldens put 30-50 % of their time in dependency and pumpkin-nbt code compiled at
+# opt-level 0 (SipHash, uuid, crc32fast, generic iterators shared into pumpkin-core). pumpkin-nbt is
+# edited rarely. Overflow checks and debug assertions stay on.
+[profile.dev.package."*"]
+opt-level = 2
+
+[profile.dev.package.pumpkin-nbt]
+opt-level = 2
+
 [profile.dev.package.pumpkin-world]
 opt-level = 2
 

@@ -4,6 +4,7 @@
 #[allow(clippy::wildcard_imports)]
 use super::*;
 use crate::entity::Entity;
+use crate::net::ClientPlatform;
 use crate::world::World;
 use pumpkin_data::{Block, BlockState};
 
@@ -26,6 +27,16 @@ impl BedrockClient {
                 != location
         {
             player.stop_mining();
+        }
+
+        // As Java and vanilla: a spectator, an adventure player without a matching `can_break`
+        // and a creative player holding a sword break nothing; the client gets the block back.
+        if player.cannot_mine(server, block) {
+            if let ClientPlatform::Bedrock(client) = player.client.as_ref() {
+                let runtime_id = pumpkin_data::BlockState::to_be_network_id(state.id);
+                client.try_enqueue_client_packet(&CUpdateBlock::new(location, runtime_id));
+            }
+            return;
         }
 
         if player.gamemode.load() == GameMode::Creative {

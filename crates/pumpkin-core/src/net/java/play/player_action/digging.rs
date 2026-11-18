@@ -30,7 +30,7 @@ impl JavaClient {
             return;
         }
 
-        if cannot_mine(player, server, block) {
+        if player.cannot_mine(server, block) {
             player.try_send_client_packet(&CBlockUpdate::new(
                 position,
                 VarInt(i32::from(state.id.as_u16())),
@@ -256,23 +256,6 @@ impl JavaClient {
 
         self.update_sequence(player_action.sequence.0);
     }
-}
-
-/// Whether the held item, game mode or adventure rules forbid mining `block`.
-fn cannot_mine(player: &Player, server: &Server, block: &'static Block) -> bool {
-    let inventory = player.inventory();
-    let held = inventory.held_item();
-    let gamemode = player.gamemode.load();
-    !server.item_registry.can_mine(held.item, player)
-        || gamemode == GameMode::Spectator
-        || (gamemode == GameMode::Creative
-            && held
-                .get_data_component::<pumpkin_data::data_component_impl::ToolImpl>()
-                .is_some_and(|t| !t.can_destroy_blocks_in_creative))
-        || (gamemode == GameMode::Adventure
-            && !held
-                .get_data_component::<pumpkin_data::data_component_impl::CanBreakImpl>()
-                .is_some_and(|c| c.matches_block(block)))
 }
 
 /// Starts mining a block that takes more than one tick: the stage and speed the tick uses.

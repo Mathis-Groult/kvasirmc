@@ -5,6 +5,7 @@ use super::Player;
 use crate::block;
 use crate::entity::attributes::{Modifier, ModifierOperation};
 use crate::net::ClientPlatform;
+use crate::server::Server;
 use crate::world::{BlockBreakingProgress, World};
 use core::f32;
 use pumpkin_data::attributes::Attributes;
@@ -200,6 +201,24 @@ impl Player {
             y: entity_pos.y + eye_height,
             z: entity_pos.z,
         }) < d * d
+    }
+
+    /// Whether the held item, game mode or adventure rules forbid mining `block` (Java and
+    /// Bedrock digging both ask).
+    pub(crate) fn cannot_mine(&self, server: &Server, block: &'static Block) -> bool {
+        let inventory = self.inventory();
+        let held = inventory.held_item();
+        let gamemode = self.gamemode.load();
+        !server.item_registry.can_mine(held.item, self)
+            || gamemode == GameMode::Spectator
+            || (gamemode == GameMode::Creative
+                && held
+                    .get_data_component::<pumpkin_data::data_component_impl::ToolImpl>()
+                    .is_some_and(|t| !t.can_destroy_blocks_in_creative))
+            || (gamemode == GameMode::Adventure
+                && !held
+                    .get_data_component::<pumpkin_data::data_component_impl::CanBreakImpl>()
+                    .is_some_and(|c| c.matches_block(block)))
     }
 
     pub fn can_harvest(&self, state: &BlockState, block: &'static Block) -> bool {

@@ -10,6 +10,7 @@ use crate::world::{BlockBreakingProgress, World};
 use core::f32;
 use pumpkin_data::attributes::Attributes;
 use pumpkin_data::effect::StatusEffect;
+use pumpkin_data::item::Item;
 use pumpkin_data::{Block, BlockState, Enchantment};
 use pumpkin_util::GameMode;
 use pumpkin_util::math::{boundingbox::BoundingBox, position::BlockPos, vector3::Vector3};
@@ -222,6 +223,40 @@ impl Player {
                 && !held
                     .get_data_component::<pumpkin_data::data_component_impl::CanBreakImpl>()
                     .is_some_and(|c| c.matches_block(block)))
+    }
+
+    /// The held item when it is a tool: vanilla `Item.mineBlock` returns true (and the `Used`
+    /// statistic counts) only for a stack with a tool component. Read before the break wears it.
+    pub(crate) fn held_tool(&self) -> Option<&'static Item> {
+        let held = self.inventory().held_item();
+        held.get_data_component::<pumpkin_data::data_component_impl::ToolImpl>()
+            .is_some()
+            .then_some(held.item)
+    }
+
+    /// The statistics vanilla awards for a block this player broke: `Used` for a held tool
+    /// (`ItemStack.mineBlock`), `Mined` only when the block was harvested (`Block.playerDestroy`
+    /// runs only with the right tool for drops).
+    pub(crate) fn award_block_break_stats(
+        &self,
+        tool: Option<&'static Item>,
+        block: &'static Block,
+        harvested: bool,
+    ) {
+        if let Some(tool) = tool {
+            self.increment_stat(
+                super::statistics::StatisticCategory::Used,
+                i32::from(tool.id),
+                1,
+            );
+        }
+        if harvested {
+            self.increment_stat(
+                super::statistics::StatisticCategory::Mined,
+                i32::from(block.id.as_u16()),
+                1,
+            );
+        }
     }
 
     pub fn can_harvest(&self, state: &BlockState, block: &'static Block) -> bool {

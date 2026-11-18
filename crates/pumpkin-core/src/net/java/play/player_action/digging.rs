@@ -158,13 +158,12 @@ impl JavaClient {
             server
                 .block_registry
                 .broken(world, block, player, &position, server, broken_state);
+            let tool = player.held_tool();
             player.apply_tool_damage_for_block_break(broken_state);
             if can_harvest {
                 player.add_exhaustion(MINE_BLOCK_EXHAUSTION);
             }
-            let item_id = player.inventory().held_item().item.id;
-            player.increment_stat(StatisticCategory::Used, item_id as i32, 1);
-            player.increment_stat(StatisticCategory::Mined, block.id.as_u16() as i32, 1);
+            player.award_block_break_stats(tool, block, can_harvest);
         }
         self.sync_block_state_to_client(world, position);
     }
@@ -243,13 +242,12 @@ impl JavaClient {
                 .block_registry
                 .broken(&world, block, player, &location, server, state);
 
+            let tool = player.held_tool();
             player.apply_tool_damage_for_block_break(state);
             if block_drop {
                 player.add_exhaustion(MINE_BLOCK_EXHAUSTION);
             }
-            let item_id = player.inventory().held_item().item.id;
-            player.increment_stat(StatisticCategory::Used, item_id as i32, 1);
-            player.increment_stat(StatisticCategory::Mined, block.id.as_u16() as i32, 1);
+            player.award_block_break_stats(tool, block, block_drop);
         }
 
         self.sync_block_state_to_client(&world, location);

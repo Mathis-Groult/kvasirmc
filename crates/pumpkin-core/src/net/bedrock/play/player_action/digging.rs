@@ -114,21 +114,12 @@ impl BedrockClient {
             server
                 .block_registry
                 .broken(world, block, player, &location, server, broken_state);
+            let tool = player.held_tool();
             player.apply_tool_damage_for_block_break(broken_state);
             if can_harvest {
                 player.add_exhaustion(MINE_BLOCK_EXHAUSTION);
             }
-            let item_id = player.inventory().held_item().item.id;
-            player.increment_stat(
-                pumpkin_data::statistic::StatisticCategory::Used,
-                item_id as i32,
-                1,
-            );
-            player.increment_stat(
-                pumpkin_data::statistic::StatisticCategory::Mined,
-                block.id.as_u16() as i32,
-                1,
-            );
+            player.award_block_break_stats(tool, block, can_harvest);
         }
     }
 
@@ -225,21 +216,12 @@ impl BedrockClient {
                     server
                         .block_registry
                         .broken(&world, block, player, &location, server, state);
+                    let tool = player.held_tool();
                     player.apply_tool_damage_for_block_break(state);
                     if can_harvest {
                         player.add_exhaustion(MINE_BLOCK_EXHAUSTION);
                     }
-                    let item_id = player.inventory().held_item().item.id;
-                    player.increment_stat(
-                        pumpkin_data::statistic::StatisticCategory::Used,
-                        item_id as i32,
-                        1,
-                    );
-                    player.increment_stat(
-                        pumpkin_data::statistic::StatisticCategory::Mined,
-                        block.id.as_u16() as i32,
-                        1,
-                    );
+                    player.award_block_break_stats(tool, block, can_harvest);
                 }
             } else {
                 let runtime_id = pumpkin_data::BlockState::to_be_network_id(state.id);

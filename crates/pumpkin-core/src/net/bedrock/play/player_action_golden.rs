@@ -880,7 +880,8 @@ fn watcher_sent(sent: &[bytes::Bytes]) -> String {
 }
 
 /// Items (name x count, sorted) and other non-player entities lying within six blocks of `pos`.
-fn around(world: &World, pos: BlockPos) -> Vec<String> {
+/// With `random_count`, items show their name only (redstone ore drops four or five).
+fn around(world: &World, pos: BlockPos, random_count: bool) -> Vec<String> {
     let mut found: Vec<String> = world
         .entities
         .load()
@@ -898,7 +899,11 @@ fn around(world: &World, pos: BlockPos) -> Vec<String> {
                         .lock()
                         .unwrap_or_else(std::sync::PoisonError::into_inner)
                         .clone();
-                    format!("{}x{}", stack.item.registry_key, stack.item_count)
+                    if random_count {
+                        stack.item.registry_key.to_string()
+                    } else {
+                        format!("{}x{}", stack.item.registry_key, stack.item_count)
+                    }
                 },
             )
         })
@@ -1151,7 +1156,7 @@ async fn run(
         world.get_block(&pos).name,
         world.get_block(&pos.east()).name,
         extra_text(world, &breaker, pos, scene),
-        around(world, pos),
+        around(world, pos, matches!(scene.kind, Kind::RedstoneOre)),
         mining_text(&breaker, block),
         body_text(&breaker),
         breaker_sent(&sent),

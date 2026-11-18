@@ -700,6 +700,12 @@ fn probe_scenes() -> Vec<Scene> {
             air,
             ALL,
         ),
+        wide(
+            "air on dot dust under raised dust connected to it, listeners only",
+            dot_dust_under_raised_dust,
+            air,
+            BlockFlags::NOTIFY_LISTENERS,
+        ),
     ]
 }
 

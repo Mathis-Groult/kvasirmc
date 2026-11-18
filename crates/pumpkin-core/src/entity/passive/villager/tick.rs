@@ -192,7 +192,8 @@ impl VillagerEntity {
         // Handle Sleeping/Waking up based on time
         let is_sleeping = self.get_entity().pose.load() == EntityPose::Sleeping;
         if let Some(home_pos) = self.get_home_pos() {
-            let time = world.get_time_of_day();
+            // The world's time of day keeps growing past a day; the night is within the day.
+            let time = world.get_time_of_day().rem_euclid(24_000);
             let is_night = (12000..=23000).contains(&time);
 
             if is_night {

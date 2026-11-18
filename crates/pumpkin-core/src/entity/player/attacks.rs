@@ -20,6 +20,9 @@ use pumpkin_util::{Difficulty, Hand};
 use std::sync::Arc;
 use std::sync::atomic::Ordering;
 
+#[cfg(test)]
+mod golden;
+
 impl Player {
     #[expect(clippy::too_many_lines)]
     pub fn attack(&self, victim: &Arc<dyn EntityBase>) {

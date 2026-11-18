@@ -16,6 +16,9 @@ use pumpkin_util::math::{boundingbox::BoundingBox, position::BlockPos, vector3::
 use std::sync::Arc;
 use std::sync::atomic::Ordering;
 
+#[cfg(test)]
+mod break_stats_tests;
+
 impl Player {
     pub(super) fn continue_mining(
         &self,

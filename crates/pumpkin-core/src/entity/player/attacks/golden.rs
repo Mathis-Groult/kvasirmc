@@ -670,6 +670,19 @@ fn packets_unseeded(sent: &[bytes::Bytes]) -> String {
         .join(" ")
 }
 
+/// What the attacker was sent. A Bedrock attacker's packets show only their id: the held
+/// item's slot update carries a stack id that depends on the tests run before.
+fn attacker_sent(sent: &[bytes::Bytes], scene: &Scene) -> String {
+    if scene.bedrock {
+        return sent
+            .iter()
+            .map(|p| format!("id{}", p.first().copied().unwrap_or_default()))
+            .collect::<Vec<_>>()
+            .join(" ");
+    }
+    sent_text(sent, true, scene.extra)
+}
+
 fn sent_text(sent: &[bytes::Bytes], masked: bool, extra: bool) -> String {
     if extra {
         packets_unseeded(sent)
@@ -985,7 +998,7 @@ async fn run(world: &Arc<World>, index: usize, scene: &Scene) -> Result<String, 
         scene.name,
         victim_text(&victim),
         attacker_text(&attacker, used),
-        sent_text(&attacker_drain(), !scene.bedrock, scene.extra),
+        attacker_sent(&attacker_drain(), scene),
         sent_text(&watcher_tap.drain(), true, scene.extra),
     );
     if let Some(tap) = victim_tap.as_mut() {

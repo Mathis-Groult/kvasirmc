@@ -670,13 +670,20 @@ fn packets_unseeded(sent: &[bytes::Bytes]) -> String {
         .join(" ")
 }
 
-/// What the attacker was sent. A Bedrock attacker's packets show only their id: the held
-/// item's slot update carries a stack id that depends on the tests run before.
+/// What the attacker was sent. A Bedrock attacker's inventory slot updates (game packet 50,
+/// after the 0xfe batch byte and a one-byte length) show only as `slot`: they carry a stack id
+/// that depends on the tests run before.
 fn attacker_sent(sent: &[bytes::Bytes], scene: &Scene) -> String {
     if scene.bedrock {
         return sent
             .iter()
-            .map(|p| format!("id{}", p.first().copied().unwrap_or_default()))
+            .map(|p| {
+                if p.get(2) == Some(&50) {
+                    "slot".to_string()
+                } else {
+                    format!("{}:{:08x}", p.len(), fnv(p) as u32)
+                }
+            })
             .collect::<Vec<_>>()
             .join(" ");
     }

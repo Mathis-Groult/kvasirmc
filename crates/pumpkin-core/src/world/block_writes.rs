@@ -901,3 +901,7 @@ impl World {
 mod break_golden;
 #[cfg(test)]
 mod break_tests;
+#[cfg(test)]
+mod flush_golden;
+#[cfg(test)]
+mod state_set_golden;

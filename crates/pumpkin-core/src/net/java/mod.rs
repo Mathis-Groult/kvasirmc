@@ -762,11 +762,19 @@ pub(crate) struct PacketTap(tokio::sync::mpsc::UnboundedReceiver<OutgoingPacket>
 
 #[cfg(test)]
 impl PacketTap {
-    /// The encoded packets queued since the last call (flush markers left out).
+    /// The encoded packets queued since the last call (flush markers left out). Completes each
+    /// packet's write notification like the writer task would, so a `send_packet_now` awaited
+    /// while a test task drains the tap returns instead of waiting forever.
     pub(crate) fn drain(&mut self) -> Vec<Bytes> {
         let mut packets = Vec::new();
         while let Ok(packet) = self.0.try_recv() {
-            if let OutgoingPacket::Data { data, .. } = packet {
+            if let OutgoingPacket::Data { data, completion } = packet {
+                if let Some(
+                    outgoing::Completion::Framed(done) | outgoing::Completion::Flushed(done),
+                ) = completion
+                {
+                    let _ = done.send(());
+                }
                 packets.push(data);
             }
         }

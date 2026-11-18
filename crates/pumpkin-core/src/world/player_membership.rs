@@ -488,3 +488,6 @@ impl World {
         removed_player
     }
 }
+
+#[cfg(test)]
+mod respawn_golden;

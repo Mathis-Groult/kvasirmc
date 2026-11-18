@@ -93,6 +93,9 @@ struct Scene {
     workers: bool,
     /// Appended: a composter (farmer job site) two blocks away.
     composter: bool,
+    /// Appended (second widening): stone under the villager and the composter, so the job-site
+    /// navigator can reach it.
+    floor: bool,
     /// Appended scenes write beds without neighbour updates (the old writer let a bed's halves
     /// reshape each other, so an occupied bed came out free), pair a watcher with the villager,
     /// and end their line with the regeneration flags, the villager's dirty synced data, the
@@ -125,6 +128,7 @@ const SCENE: Scene = Scene {
     neighbours_at: None,
     workers: false,
     composter: false,
+    floor: false,
     extra: false,
 };
 
@@ -158,7 +162,25 @@ fn scenes() -> Vec<Scene> {
     scenes.extend(widened_scenes());
     scenes.extend(widened_home_scenes());
     scenes.extend(widened_golem_scenes());
+    scenes.extend(widened_scenes_late());
     scenes
+}
+
+/// Appended in the second widening.
+fn widened_scenes_late() -> Vec<Scene> {
+    vec![
+        Scene {
+            age: 40,
+            composter: true,
+            floor: true,
+            ..wide("composter beside on a stone floor")
+        },
+        Scene {
+            age: 40,
+            sleeping: true,
+            ..wide("sleeping without a home, watched")
+        },
+    ]
 }
 
 const fn wide(name: &'static str) -> Scene {
@@ -940,6 +962,21 @@ fn run_extra(
     villager: &Arc<VillagerEntity>,
 ) -> Result<String, String> {
     let base = origin(index);
+    if scene.floor {
+        for x in -4..=5 {
+            for z in -5..=3 {
+                world.set_block_state(
+                    &base.offset(Vector3::new(x, -1, z)),
+                    Block::STONE.default_state.id,
+                    pumpkin_world::world::BlockFlags::FORCE_STATE,
+                );
+            }
+        }
+        villager
+            .get_entity()
+            .on_ground
+            .store(true, Ordering::Relaxed);
+    }
     if scene.composter {
         world.set_block_state(
             &base.offset(Vector3::new(2, 0, -2)),

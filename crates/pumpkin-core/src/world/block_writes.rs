@@ -8,7 +8,7 @@ use crate::{
     plugin::block::block_break::BlockBreakEvent,
 };
 use pumpkin_data::{
-    Block, BlockStateId, entity::EntityType, fluid::Fluid, item_stack::ItemStack, world::WorldEvent,
+    Block, BlockStateId, entity::EntityType, item_stack::ItemStack, world::WorldEvent,
 };
 use pumpkin_data::{BlockDirection, BlockState};
 use pumpkin_inventory::Inventory;
@@ -583,11 +583,9 @@ impl World {
             self.drop_broken_block_loot(position, cause, broken_block, broken_block_state);
         }
 
-        let new_state_id = if *self.get_fluid(position) == Fluid::WATER {
-            Block::WATER.default_state.id
-        } else {
-            Block::AIR.default_state.id
-        };
+        // Vanilla `Level.destroyBlock`: the fluid's legacy block (a water source for a
+        // waterlogged block, kelp or seagrass; flowing water keeps its level; air otherwise).
+        let new_state_id = self.get_fluid_and_fluid_state(position).1.block_state_id;
 
         let broken_state_id = self.set_block_state(position, new_state_id, flags);
         self.send_break_effects(position, cause, broken_state_id, new_state_id);
@@ -901,3 +899,5 @@ impl World {
 
 #[cfg(test)]
 mod break_golden;
+#[cfg(test)]
+mod break_tests;

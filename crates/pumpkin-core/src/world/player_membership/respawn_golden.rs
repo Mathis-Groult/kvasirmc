@@ -12,7 +12,8 @@
 //! Not covered: plugins that move the spawn or cancel the world change (none is loaded).
 
 use std::fmt::Write;
-use std::sync::atomic::{AtomicBool, Ordering};
+use std::num::NonZero;
+use std::sync::atomic::{AtomicBool, AtomicU64, Ordering};
 use std::sync::{Arc, Mutex};
 
 use bytes::Bytes;
@@ -27,6 +28,7 @@ use pumpkin_util::GameMode;
 use pumpkin_util::math::position::BlockPos;
 use pumpkin_util::math::vector2::Vector2;
 use pumpkin_util::math::vector3::Vector3;
+use pumpkin_world::cylindrical_chunk_iterator::Cylindrical;
 use pumpkin_world::world::BlockFlags;
 use uuid::Uuid;
 
@@ -81,6 +83,8 @@ enum Point {
     ForcedInStone,
     /// A respawn anchor in the nether at [`ANCHOR`] with this many charges.
     Anchor(u8),
+    /// A forced point in air in the End.
+    ForcedInEnd,
 }
 
 #[derive(Clone, Copy)]
@@ -94,6 +98,16 @@ struct Scene {
     keep_inventory: bool,
     gamemode: GameMode,
     bedrock: bool,
+    /// Appended after the first mutation run: the watchers see the respawner before it
+    /// respawns (watched section and sent chunks set by hand), and the respawner watches its
+    /// chunks and has its client's player set (so the center chunk is really sent).
+    seen: bool,
+    /// Appended: the level spawn at this x, z over its own lower column.
+    spawn_xz: Option<(i32, i32)>,
+    /// Appended: the level spawn chunk is not loaded; a stand-in chunk system answers it.
+    unloaded_spawn: bool,
+    /// Appended scenes end their line with the respawner's chunk-send epoch and tickets.
+    extra: bool,
 }
 
 const DEAD: Scene = Scene {
@@ -105,6 +119,15 @@ const DEAD: Scene = Scene {
     keep_inventory: false,
     gamemode: GameMode::Survival,
     bedrock: false,
+    seen: false,
+    spawn_xz: None,
+    unloaded_spawn: false,
+    extra: false,
+};
+
+const WIDE: Scene = Scene {
+    extra: true,
+    ..DEAD
 };
 
 const BED: BlockPos = BlockPos::new(8, 65, 7);
@@ -187,6 +210,51 @@ fn scenes() -> Vec<Scene> {
     ]
 }
 
+fn widened_scenes() -> Vec<Scene> {
+    vec![
+        Scene {
+            name: "seen, dead, no respawn point",
+            seen: true,
+            ..WIDE
+        },
+        Scene {
+            name: "seen, dead in the nether",
+            dies_in: Dim::Nether,
+            seen: true,
+            ..WIDE
+        },
+        Scene {
+            name: "seen, dead in the overworld, charged anchor in the nether",
+            point: Point::Anchor(2),
+            seen: true,
+            ..WIDE
+        },
+        Scene {
+            name: "seen Bedrock player, charged anchor in the nether",
+            point: Point::Anchor(2),
+            bedrock: true,
+            seen: true,
+            ..WIDE
+        },
+        Scene {
+            name: "Bedrock player, forced point in the End",
+            point: Point::ForcedInEnd,
+            bedrock: true,
+            ..WIDE
+        },
+        Scene {
+            name: "level spawn at x 3, z -6",
+            spawn_xz: Some((3, -6)),
+            ..WIDE
+        },
+        Scene {
+            name: "level spawn chunk not loaded yet",
+            unloaded_spawn: true,
+            ..WIDE
+        },
+    ]
+}
+
 fn fnv(bytes: &[u8]) -> u64 {
     bytes.iter().fold(0xcbf2_9ce4_8422_2325u64, |hash, byte| {
         (hash ^ u64::from(*byte)).wrapping_mul(0x0100_0000_01b3)
@@ -224,6 +292,8 @@ fn java_packets(tap: &mut PacketTap) -> String {
 /// the queue.
 struct Drained {
     packets: Arc<Mutex<Vec<Bytes>>>,
+    /// Drain passes completed, so [`Drained::take`] can wait for a pass that began after it.
+    passes: Arc<AtomicU64>,
     stop: Arc<AtomicBool>,
     task: tokio::task::JoinHandle<()>,
 }
@@ -231,9 +301,11 @@ struct Drained {
 impl Drained {
     fn start(mut drain: impl FnMut() -> Vec<Bytes> + Send + 'static) -> Self {
         let packets = Arc::new(Mutex::new(Vec::new()));
+        let passes = Arc::new(AtomicU64::new(0));
         let stop = Arc::new(AtomicBool::new(false));
         let task = tokio::spawn({
             let packets = Arc::clone(&packets);
+            let passes = Arc::clone(&passes);
             let stop = Arc::clone(&stop);
             async move {
                 loop {
@@ -243,6 +315,7 @@ impl Drained {
                         .lock()
                         .unwrap_or_else(std::sync::PoisonError::into_inner)
                         .extend(drained);
+                    passes.fetch_add(1, Ordering::AcqRel);
                     if done {
                         break;
                     }
@@ -252,6 +325,7 @@ impl Drained {
         });
         Self {
             packets,
+            passes,
             stop,
             task,
         }
@@ -260,6 +334,12 @@ impl Drained {
     /// Everything received since the last call.
     async fn take(&self) -> String {
         tokio::time::sleep(std::time::Duration::from_millis(20)).await;
+        // Scenes run side by side: on a busy host 20 ms may pass without a drain pass, so also
+        // wait for two passes (the second began after this call).
+        let start = self.passes.load(Ordering::Acquire);
+        while self.passes.load(Ordering::Acquire) < start + 2 {
+            tokio::time::sleep(std::time::Duration::from_millis(1)).await;
+        }
         std::mem::take(
             &mut *self
                 .packets
@@ -363,6 +443,21 @@ fn prepare(server: &Server, worlds: &Worlds, scene: &Scene) {
     let mut level = (**server.level_info.load()).clone();
     level.spawn_x = if scene.void_spawn { 64 } else { 0 };
     level.spawn_z = level.spawn_x;
+    if let Some((x, z)) = scene.spawn_xz {
+        for y in 65..=67 {
+            put(
+                &worlds.overworld,
+                BlockPos::new(x, y, z),
+                Block::STONE.default_state.id,
+            );
+        }
+        level.spawn_x = x;
+        level.spawn_z = z;
+    }
+    if scene.unloaded_spawn {
+        level.spawn_x = 200;
+        level.spawn_z = 200;
+    }
     level.spawn_y = 72;
     level.spawn_yaw = 45.0;
     level.spawn_pitch = 5.0;
@@ -378,6 +473,7 @@ fn respawn_point(point: Point) -> Option<RespawnPoint> {
         Point::ForcedInAir => (Dimension::OVERWORLD, BlockPos::new(5, 65, 9), true),
         Point::ForcedInStone => (Dimension::OVERWORLD, BlockPos::new(0, 66, 0), true),
         Point::Anchor(_) => (Dimension::THE_NETHER, ANCHOR, false),
+        Point::ForcedInEnd => (Dimension::THE_END, BlockPos::new(5, 65, 9), true),
     };
     Some(RespawnPoint {
         dimension,
@@ -469,7 +565,70 @@ fn player_text(player: &Player, worlds: &Worlds) -> String {
     text
 }
 
-async fn run_scene(scene: &Scene) -> Result<String, Box<dyn std::error::Error>> {
+/// The respawner's chunk-send epoch and whether it holds chunk tickets (appended scenes).
+fn chunk_text(player: &Player) -> String {
+    let tickets = player
+        .held_chunk_tickets
+        .lock()
+        .unwrap_or_else(std::sync::PoisonError::into_inner)
+        .is_some();
+    format!(
+        " epoch {} tickets {tickets}",
+        player.chunk_send_epoch.load(Ordering::Relaxed)
+    )
+}
+
+/// Lets `watcher` see everything in the chunks around the origin, as if the chunk system had
+/// sent them, and pairs it with the respawner's tracked entity in `world`.
+fn see(watcher: &Arc<Player>, world: &Arc<World>, respawner: &Player) {
+    watcher.watched_section.store(Cylindrical::new(
+        Vector2::new(0, 0),
+        NonZero::new(4).unwrap_or(NonZero::<u8>::MIN),
+    ));
+    {
+        let mut sender = watcher
+            .chunk_sender
+            .lock()
+            .unwrap_or_else(std::sync::PoisonError::into_inner);
+        for x in -2..=2 {
+            for z in -2..=2 {
+                sender.mark_sent_out_of_band(Vector2::new(x, z));
+            }
+        }
+    }
+    if let Some(tracked) = world
+        .entity_tracker
+        .get_tracked_entity(respawner.entity_id())
+    {
+        tracked.update_player(watcher, world);
+    }
+}
+
+/// Stands in for the chunk system, which does not run in a test server: answers every request
+/// for chunk (12, 12) with an empty chunk holding a stone column at (200, 64..=70, 200).
+fn answer_spawn_chunk_requests(
+    world: &Arc<World>,
+) -> (Arc<AtomicBool>, tokio::task::JoinHandle<()>) {
+    let chunk = pumpkin_world::chunk::ChunkData::empty_sync(12, 12);
+    for y in 64..=70 {
+        chunk.set_block_absolute_y(8, y, 8, Block::STONE.default_state.id);
+    }
+    let stop = Arc::new(AtomicBool::new(false));
+    let task = tokio::spawn({
+        let listener = Arc::clone(&world.level.chunk_listener);
+        let stop = Arc::clone(&stop);
+        async move {
+            while !stop.load(Ordering::Acquire) {
+                listener.process_new_chunk(Vector2::new(12, 12), &chunk);
+                tokio::time::sleep(std::time::Duration::from_millis(1)).await;
+            }
+        }
+    });
+    (stop, task)
+}
+
+async fn run_scene(scene: Scene) -> Result<String, Box<dyn std::error::Error>> {
+    let scene = &scene;
     let folder = tempfile::tempdir()?;
     let server = test_support::server(&folder).await?;
     let worlds = Worlds::of(&server);
@@ -505,26 +664,51 @@ async fn run_scene(scene: &Scene) -> Result<String, Box<dyn std::error::Error>> 
     };
     give_state(&player, scene);
     home.add_player(&player)?;
+    if scene.seen {
+        if let crate::net::ClientPlatform::Java(client) = player.client.as_ref() {
+            client.set_player(Arc::clone(&player));
+        }
+        crate::world::chunker::update_position(&player);
+        for (watcher, world) in [
+            (&java, &worlds.overworld),
+            (&bedrock, &worlds.overworld),
+            (&nether, &worlds.nether),
+        ] {
+            see(watcher, world, &player);
+        }
+    }
     let _ = received.take().await;
     let _ = java_tap.drain();
     let _ = nether_tap.drain();
     let _ = bedrock_watcher.take().await;
 
+    let chunk_system = scene
+        .unloaded_spawn
+        .then(|| answer_spawn_chunk_requests(&worlds.overworld));
     tokio::time::timeout(
         std::time::Duration::from_secs(20),
         home.respawn_player(&player, scene.alive),
     )
     .await
     .map_err(|_| "respawn_player did not finish in 20 s")?;
+    if let Some((stop, task)) = chunk_system {
+        stop.store(true, Ordering::Release);
+        let _ = task.await;
+    }
 
     let line = format!(
-        "{}: respawner [{}] | java watcher [{}] | bedrock watcher [{}] | nether watcher [{}] | {}\n",
+        "{}: respawner [{}] | java watcher [{}] | bedrock watcher [{}] | nether watcher [{}] | {}{}\n",
         scene.name,
         received.take().await,
         java_packets(&mut java_tap),
         bedrock_watcher.take().await,
         java_packets(&mut nether_tap),
         player_text(&player, &worlds),
+        if scene.extra {
+            chunk_text(&player)
+        } else {
+            String::new()
+        },
     );
     received.finish().await;
     bedrock_watcher.finish().await;
@@ -532,11 +716,24 @@ async fn run_scene(scene: &Scene) -> Result<String, Box<dyn std::error::Error>> 
     Ok(line)
 }
 
+/// [`run_scene`] with a `Send` error, so it can run on its own task.
+async fn run_scene_sendable(scene: Scene) -> Result<String, String> {
+    run_scene(scene).await.map_err(|error| error.to_string())
+}
+
 #[tokio::test(flavor = "multi_thread")]
 async fn respawn_player_is_the_same() -> TestResult {
+    // Each scene has its own server: run them side by side (one by one took 12.5 s, over the
+    // 10 s test budget), then join the lines in scene order.
+    let mut all = scenes();
+    all.extend(widened_scenes());
+    let runs: Vec<_> = all
+        .into_iter()
+        .map(|scene| tokio::spawn(run_scene_sendable(scene)))
+        .collect();
     let mut report = String::new();
-    for scene in scenes() {
-        report.push_str(&run_scene(&scene).await?);
+    for run in runs {
+        report.push_str(&run.await??);
     }
     crate::command::commands::script_golden::bless_or_compare("respawn_player.txt", &report)?;
     Ok(())

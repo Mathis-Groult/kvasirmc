@@ -992,14 +992,14 @@ fn run_extra(
     // With extra workers only they tick: whether one villager works is a coin flip, so the
     // line shows the scene's villager untouched and whether any of the 63 worked.
     let mut workers = Vec::new();
-    if !scene.workers {
-        workers.push(Arc::clone(villager));
-    } else {
+    if scene.workers {
         for n in 1..64 {
             let worker = self::villager(world, 900_000 + index as i32 * 64 + n, feet)?;
             prepare(&worker, scene);
             workers.push(worker);
         }
+    } else {
+        workers.push(Arc::clone(villager));
     }
     villager.get_entity().synched_data.clear_dirty();
     drop(tap.drain());

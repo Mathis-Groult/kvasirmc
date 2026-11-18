@@ -67,6 +67,8 @@ enum Kind {
     DoorLower,
     /// Appended (second widening).
     Ice,
+    /// Appended (third widening).
+    TurtleEgg,
 }
 
 #[derive(Clone, Copy)]
@@ -182,6 +184,14 @@ fn scenes() -> Vec<Scene> {
                 Ticks(20),
                 Act(A::PredictDestroyBlock),
             ],
+        )
+    });
+    scenes.push(Scene {
+        gamemode: GameMode::Creative,
+        kind: Kind::TurtleEgg,
+        ..scene(
+            "creative destroy on a turtle egg (break sound)",
+            &[Act(A::CreativeDestroyBlock)],
         )
     });
     scenes
@@ -808,6 +818,7 @@ fn lay(world: &Arc<World>, pos: BlockPos, kind: Kind) {
         Kind::RedstoneOre => Block::REDSTONE_ORE.default_state.id,
         Kind::DoorLower => door_half(DoubleBlockHalf::Lower),
         Kind::Ice => Block::ICE.default_state.id,
+        Kind::TurtleEgg => Block::TURTLE_EGG.default_state.id,
     };
     for x in -3..=9 {
         for z in -3..=9 {

@@ -1,6 +1,6 @@
 //! Placing, breaking and scheduling blocks, and what they drop.
 
-use super::{BlockBreakingProgress, World, bedrock_block_breaking_rate, villager_poi};
+use super::{BlockBreakingProgress, World, bedrock_block_breaking_rate};
 use crate::{block::BlockEvent, entity::item::ItemEntity};
 use crate::{
     entity::{Entity, EntityBase, player::Player},
@@ -12,27 +12,24 @@ use pumpkin_data::{
 };
 use pumpkin_data::{BlockDirection, BlockState};
 use pumpkin_inventory::Inventory;
-use pumpkin_protocol::bedrock::client::block_actor_data::CBlockActorData;
 use pumpkin_protocol::bedrock::client::level_event::{CLevelEvent, LevelEvent};
 use pumpkin_protocol::java::client::play::CBlockEvent;
-use pumpkin_protocol::java::client::play::{CBlockUpdate, CSetBlockDestroyStage, CWorldEvent};
+use pumpkin_protocol::java::client::play::{CSetBlockDestroyStage, CWorldEvent};
 use pumpkin_protocol::{
-    bedrock::client::block_event::CBlockEvent as CBedrockBlockEvent,
-    codec::var_int::VarInt,
-    java::client::play::{CBlockEntityData, CMultiBlockUpdate},
+    bedrock::client::block_event::CBlockEvent as CBedrockBlockEvent, codec::var_int::VarInt,
 };
 use pumpkin_util::math::{position::BlockPos, vector3::Vector3};
 use pumpkin_util::text::TextComponent;
 use pumpkin_util::{
-    math::{position::chunk_section_from_pos, vector2::Vector2},
+    math::vector2::Vector2,
     random::{RandomImpl, get_seed, xoroshiro128::Xoroshiro},
 };
-use pumpkin_world::chunk::{io::Dirtiable, palette::bedrock_water_state};
+use pumpkin_world::chunk::io::Dirtiable;
 use pumpkin_world::tick::TickPriority;
 use pumpkin_world::world::BlockFlags;
 use rand::RngExt;
 use std::sync::Arc;
-use std::{collections::HashMap, sync::atomic::Ordering};
+use std::sync::atomic::Ordering;
 
 impl World {
     pub fn add_synced_block_event(&self, pos: BlockPos, r#type: u8, data: u8) {
@@ -137,26 +134,8 @@ impl World {
         }
     }
 
-    #[expect(clippy::too_many_lines)]
     pub fn flush_block_updates(&self) {
-        let mut block_state_updates_by_chunk_section: HashMap<
-            Vector3<i32>,
-            Vec<(BlockPos, BlockStateId)>,
-        > = HashMap::new();
-        let changes = {
-            let mut guard = self
-                .unsent_block_changes
-                .lock()
-                .unwrap_or_else(std::sync::PoisonError::into_inner);
-            std::mem::take(&mut *guard)
-        };
-        for (position, block_state_id) in changes {
-            let chunk_section = chunk_section_from_pos(&position);
-            block_state_updates_by_chunk_section
-                .entry(chunk_section)
-                .or_default()
-                .push((position, block_state_id));
-        }
+        let block_state_updates_by_chunk_section = self.take_block_changes_by_section();
 
         // TODO: only send packet to players who have the chunks loaded
         // TODO: Send light updates to update the wire directly next to a broken block
@@ -167,130 +146,12 @@ impl World {
             let chunk_pos = Vector2::new(chunk_section.x, chunk_section.z);
             if updates.len() == 1 {
                 let (block_pos, block_state_id) = updates[0];
-                let be_block_id = BlockState::to_be_network_id(block_state_id);
-                self.broadcast_to_chunk_editioned(
-                    chunk_pos,
-                    &CBlockUpdate::new(block_pos, i32::from(block_state_id.as_u16()).into()),
-                    &pumpkin_protocol::bedrock::client::CUpdateBlock::new(block_pos, be_block_id),
-                );
-                if let Some(block_entity) = self.get_block_entity(&block_pos)
-                    && let Some(nbt) = block_entity.chunk_data_nbt()
-                {
-                    let bytes = pumpkin_nbt::Nbt::from(nbt).write_unnamed();
-                    self.broadcast_to_chunk(
-                        chunk_pos,
-                        &CBlockEntityData::new(
-                            block_pos,
-                            VarInt(block_entity.get_id() as i32),
-                            bytes.as_ref().into(),
-                        ),
-                    );
-                }
-                if let Some(data) = self.bedrock_block_entity_data(block_state_id, block_pos) {
-                    self.broadcast_to_chunk_bedrock(
-                        chunk_pos,
-                        &CBlockActorData::new(block_pos, data),
-                    );
-                }
+                self.send_single_block_update(chunk_pos, block_pos, block_state_id);
             } else {
-                let players = self.players.load();
-                let mut java_recipients = Vec::new();
-
-                let recipients = players.iter().filter(|p| {
-                    p.watched_section
-                        .load()
-                        .is_within_distance(chunk_pos.x, chunk_pos.y)
-                });
-
-                let mut bedrock_packets = Vec::new();
-                for (block_pos, block_state_id) in &updates {
-                    let be_block_id = BlockState::to_be_network_id(*block_state_id);
-                    let update_packet = pumpkin_protocol::bedrock::client::CUpdateBlock::new(
-                        *block_pos,
-                        be_block_id,
-                    );
-                    let actor_packet = self
-                        .bedrock_block_entity_data(*block_state_id, *block_pos)
-                        .map(|data| CBlockActorData::new(*block_pos, data));
-                    bedrock_packets.push((update_packet, actor_packet));
-                }
-
-                let mut bedrock_recipients = Vec::new();
-                for p in recipients {
-                    match p.client.as_ref() {
-                        ClientPlatform::Java(_) => java_recipients.push(p),
-                        ClientPlatform::Bedrock(be_client) => {
-                            bedrock_recipients.push(be_client);
-                        }
-                    }
-                }
-
-                for be_client in bedrock_recipients {
-                    for (update_packet, actor_packet) in &bedrock_packets {
-                        if let Ok(data) = be_client.serialize_packet(update_packet) {
-                            be_client.try_enqueue_packet(data);
-                        }
-                        if let Some(actor_packet) = actor_packet
-                            && let Ok(data) = be_client.serialize_packet(actor_packet)
-                        {
-                            be_client.try_enqueue_packet(data);
-                        }
-                    }
-                }
-
-                let recipients_by_version =
-                    Self::collect_java_recipients_by_version(java_recipients.into_iter());
-                Self::broadcast_java_grouped(
-                    &CMultiBlockUpdate::new(&updates),
-                    recipients_by_version,
-                );
-
-                for (block_pos, _) in &updates {
-                    if let Some(block_entity) = self.get_block_entity(block_pos)
-                        && let Some(nbt) = block_entity.chunk_data_nbt()
-                    {
-                        let bytes = pumpkin_nbt::Nbt::from(nbt).write_unnamed();
-                        self.broadcast_to_chunk(
-                            chunk_pos,
-                            &CBlockEntityData::new(
-                                *block_pos,
-                                VarInt(block_entity.get_id() as i32),
-                                bytes.as_ref().into(),
-                            ),
-                        );
-                    }
-                }
+                self.send_multi_block_update(chunk_pos, &updates);
             }
 
-            let mut bedrock_water_packets = Vec::new();
-            for (block_pos, block_state_id) in &updates {
-                let water_state = bedrock_water_state(*block_state_id);
-                let packet = pumpkin_protocol::bedrock::client::CUpdateBlock::with_layer(
-                    *block_pos,
-                    BlockState::to_be_network_id(water_state),
-                    1,
-                );
-                bedrock_water_packets.push(packet);
-            }
-
-            if !bedrock_water_packets.is_empty() {
-                let players = self.players.load();
-                let recipients = players.iter().filter(|player| {
-                    player
-                        .watched_section
-                        .load()
-                        .is_within_distance(chunk_pos.x, chunk_pos.y)
-                });
-                for player in recipients {
-                    if let ClientPlatform::Bedrock(client) = player.client.as_ref() {
-                        for packet in &bedrock_water_packets {
-                            if let Ok(data) = client.serialize_packet(packet) {
-                                client.try_enqueue_packet(data);
-                            }
-                        }
-                    }
-                }
-            }
+            self.send_bedrock_water_layer(chunk_pos, &updates);
         }
     }
 
@@ -428,17 +289,7 @@ impl World {
         let is_new_block = old_block != new_block;
         let block_moved = flags.contains(BlockFlags::MOVED);
 
-        if is_new_block
-            && old_block.default_state.block_entity_type != u16::MAX
-            && old_block.default_state.block_entity_type
-                != new_block.default_state.block_entity_type
-            && let Some(entity) = self.get_block_entity(position)
-        {
-            if !flags.contains(BlockFlags::SKIP_BLOCK_ENTITY_REPLACED_CALLBACK) {
-                entity.on_block_replaced(self, position);
-            }
-            self.remove_block_entity(position);
-        }
+        self.remove_replaced_block_entity(position, old_block, new_block, is_new_block, flags);
 
         if is_new_block && (flags.contains(BlockFlags::NOTIFY_NEIGHBORS) || block_moved) {
             self.block_registry.on_state_replaced(
@@ -462,56 +313,15 @@ impl World {
 
         // Level.java setBlock
         if self.get_block_state_id(position) == block_state_id {
-            if flags.contains(BlockFlags::NOTIFY_LISTENERS) {
-                self.send_block_updated(position, replaced_block_state_id, block_state_id);
-            }
-
-            if flags.contains(BlockFlags::NOTIFY_NEIGHBORS) {
-                self.update_neighbors_at(position, old_block, None);
-                if block_state_id.has_analog_output_signal() {
-                    self.update_neighbour_for_output_signal(position, new_block);
-                }
-            }
-
-            if !flags.intersects(BlockFlags::MOVED | BlockFlags::UPDATE_KNOWN_SHAPE) {
-                let mut neighbour_update_flags = flags;
-                neighbour_update_flags.remove(BlockFlags::NOTIFY_NEIGHBORS);
-                neighbour_update_flags.remove(BlockFlags::SKIP_DROPS);
-                self.block_registry.prepare(
-                    self,
-                    position,
-                    old_block,
-                    replaced_block_state_id,
-                    neighbour_update_flags,
-                );
-                self.block_registry
-                    .update_neighbors(self, position, neighbour_update_flags);
-                self.block_registry.prepare(
-                    self,
-                    position,
-                    new_block,
-                    block_state_id,
-                    neighbour_update_flags,
-                );
-            }
-
-            self.villager_poi
-                .lock()
-                .unwrap_or_else(std::sync::PoisonError::into_inner)
-                .update_block(*position, new_block);
-
-            if is_new_block {
-                let mut poi = self
-                    .portal_poi
-                    .lock()
-                    .unwrap_or_else(std::sync::PoisonError::into_inner);
-                if villager_poi::profession_for_block(old_block).is_some() {
-                    poi.remove(position);
-                }
-                if let Some(poi_type) = villager_poi::poi_type_for_block(new_block) {
-                    poi.add_with_free_tickets(*position, poi_type, 1);
-                }
-            }
+            self.notify_after_block_state_set(
+                position,
+                old_block,
+                new_block,
+                replaced_block_state_id,
+                block_state_id,
+                flags,
+            );
+            self.update_poi_after_block_state_set(position, old_block, new_block, is_new_block);
         }
 
         let old_state = replaced_block_state_id.to_state();
@@ -896,6 +706,9 @@ impl World {
         self.broadcast_to_chunk(chunk_pos, &packet);
     }
 }
+
+mod flush;
+mod state_set;
 
 #[cfg(test)]
 mod break_golden;

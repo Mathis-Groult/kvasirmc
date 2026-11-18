@@ -250,7 +250,6 @@ impl ItemEntity {
         }
     }
 
-    #[expect(clippy::too_many_lines)]
     fn try_merge_with(&self, other: &Self) {
         // Always lock in entity_id order to prevent deadlock when two
         // items try to merge with each other concurrently.
@@ -263,32 +262,10 @@ impl ItemEntity {
             return;
         };
 
-        let (expected_low, expected_high, target_is_self) = {
-            let low_stack = low
-                .item_stack
-                .lock()
-                .unwrap_or_else(std::sync::PoisonError::into_inner);
-            let high_stack = high
-                .item_stack
-                .lock()
-                .unwrap_or_else(std::sync::PoisonError::into_inner);
-            let (self_stack, other_stack) = if self.entity.entity_id < other.entity.entity_id {
-                (&*low_stack, &*high_stack)
-            } else {
-                (&*high_stack, &*low_stack)
-            };
-
-            if !Self::are_mergeable(self_stack, other_stack) {
-                return;
-            }
-
-            (
-                low_stack.clone(),
-                high_stack.clone(),
-                other_stack.item_count < self_stack.item_count,
-            )
+        let Some(snapshot) = self.merge_snapshot(other, low, high) else {
+            return;
         };
-        let (target, source) = if target_is_self {
+        let (target, source) = if snapshot.target_is_self {
             (self, other)
         } else {
             (other, self)
@@ -298,66 +275,13 @@ impl ItemEntity {
             return;
         }
 
-        let mut event = crate::plugin::api::events::entity::item_merge::ItemMergeEvent {
-            entity_id: target.entity.entity_id,
-            target_id: source.entity.entity_id,
-            cancelled: false,
-        };
-        let server = self.entity.world.load().server.upgrade();
-        if let Some(server) = server {
-            server.plugin_manager.fire_blocking(&server, &mut event);
-        }
-        if event.cancelled
-            || self.entity.removed.load(Ordering::SeqCst)
-            || other.entity.removed.load(Ordering::SeqCst)
-        {
+        if !self.merge_event_allows(other, target, source) {
             return;
         }
 
-        let low_stack = low
-            .item_stack
-            .lock()
-            .unwrap_or_else(std::sync::PoisonError::into_inner);
-        let high_stack = high
-            .item_stack
-            .lock()
-            .unwrap_or_else(std::sync::PoisonError::into_inner);
-        if low_stack.uid != expected_low.uid
-            || !low_stack.are_equal(&expected_low)
-            || high_stack.uid != expected_high.uid
-            || !high_stack.are_equal(&expected_high)
-            || self.entity.removed.load(Ordering::SeqCst)
-            || other.entity.removed.load(Ordering::SeqCst)
-        {
+        let Some(source_empty) = self.move_merged_items(other, low, high, &snapshot) else {
             return;
-        }
-
-        let (self_stack, other_stack) = if self.entity.entity_id < other.entity.entity_id {
-            (low_stack, high_stack)
-        } else {
-            (high_stack, low_stack)
         };
-        if !Self::are_mergeable(&self_stack, &other_stack)
-            || (other_stack.item_count < self_stack.item_count) != target_is_self
-        {
-            return;
-        }
-        let (mut stack1, mut stack2) = if target_is_self {
-            (self_stack, other_stack)
-        } else {
-            (other_stack, self_stack)
-        };
-
-        // Vanilla `ItemEntity.merge(to, from, 64)`.
-        let max_size = stack1.get_max_stack_size().min(MERGE_MAX_COUNT);
-        let moved = stack2
-            .item_count
-            .min(max_size.saturating_sub(stack1.item_count));
-        stack1.increment(moved);
-        stack2.decrement(moved);
-        let source_empty = stack2.is_empty();
-        drop(stack1);
-        drop(stack2);
 
         // `is_mergeable` already excluded never-despawn and never-pickup items.
         target.pickup_delay.fetch_max(
@@ -1008,5 +932,6 @@ mod tests {
     }
 }
 
+mod merge;
 #[cfg(test)]
 mod merge_golden;

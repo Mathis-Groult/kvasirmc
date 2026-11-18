@@ -577,6 +577,33 @@ impl World {
             return None;
         }
 
+        let flags = self.break_event_flags(position, cause, broken_block, flags)?;
+
+        if !flags.contains(BlockFlags::SKIP_DROPS) {
+            self.drop_broken_block_loot(position, cause, broken_block, broken_block_state);
+        }
+
+        let new_state_id = if *self.get_fluid(position) == Fluid::WATER {
+            Block::WATER.default_state.id
+        } else {
+            Block::AIR.default_state.id
+        };
+
+        let broken_state_id = self.set_block_state(position, new_state_id, flags);
+        self.send_break_effects(position, cause, broken_state_id, new_state_id);
+
+        Some(broken_state_id)
+    }
+
+    /// The flags of a break after a creative player's drop rule and the plugin break event
+    /// (whose `drop` decides `SKIP_DROPS`); `None` when a plugin cancelled the break.
+    fn break_event_flags(
+        &self,
+        position: &BlockPos,
+        cause: Option<&Arc<Player>>,
+        broken_block: &'static Block,
+        flags: BlockFlags,
+    ) -> Option<BlockFlags> {
         let mut flags = flags;
         if flags.contains(BlockFlags::SKIP_DROPS)
             && cause.is_some_and(|p| p.gamemode.load() == pumpkin_util::GameMode::Creative)
@@ -606,30 +633,41 @@ impl World {
         } else {
             flags.insert(BlockFlags::SKIP_DROPS);
         }
+        Some(flags)
+    }
 
-        if !flags.contains(BlockFlags::SKIP_DROPS) {
-            let tool = cause.as_ref().and_then(|p| {
-                let item = p.inventory().held_item();
-                if item.is_empty() { None } else { Some(item) }
-            });
-            let params = crate::world::loot::LootContextParameters {
-                world: Some(self),
-                tool,
-                block_state: Some(broken_block_state),
-                position: Some(position.to_f64()),
-                killed_by_player: Some(cause.is_some()),
-                ..Default::default()
-            };
-            crate::block::drop_loot(self, broken_block, position, true, &params);
-        }
-
-        let new_state_id = if *self.get_fluid(position) == Fluid::WATER {
-            Block::WATER.default_state.id
-        } else {
-            Block::AIR.default_state.id
+    /// Drops the broken block's loot, rolled with the breaking player's held item as the tool.
+    fn drop_broken_block_loot(
+        self: &Arc<Self>,
+        position: &BlockPos,
+        cause: Option<&Arc<Player>>,
+        broken_block: &'static Block,
+        broken_block_state: &'static BlockState,
+    ) {
+        let tool = cause.as_ref().and_then(|p| {
+            let item = p.inventory().held_item();
+            if item.is_empty() { None } else { Some(item) }
+        });
+        let params = crate::world::loot::LootContextParameters {
+            world: Some(self),
+            tool,
+            block_state: Some(broken_block_state),
+            position: Some(position.to_f64()),
+            killed_by_player: Some(cause.is_some()),
+            ..Default::default()
         };
+        crate::block::drop_loot(self, broken_block, position, true, &params);
+    }
 
-        let broken_state_id = self.set_block_state(position, new_state_id, flags);
+    /// The block-destroy particles for everyone watching (Java predicts its own; a Bedrock
+    /// breaker gets them from the server), unless nothing changed or fire went out.
+    fn send_break_effects(
+        &self,
+        position: &BlockPos,
+        cause: Option<&Arc<Player>>,
+        broken_state_id: BlockStateId,
+        new_state_id: BlockStateId,
+    ) {
         let broken_block = Block::from_state_id(broken_state_id);
         if !broken_block.is_air()
             && broken_state_id != new_state_id
@@ -663,8 +701,6 @@ impl World {
                 self.broadcast_to_chunk_editioned(chunk_pos, &je_packet, &be_packet);
             }
         }
-
-        Some(broken_state_id)
     }
 
     pub fn schedule_block_tick(

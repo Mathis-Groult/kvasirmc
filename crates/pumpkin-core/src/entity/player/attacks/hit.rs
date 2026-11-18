@@ -133,10 +133,10 @@ impl Player {
         Some(attack_cooldown_progress)
     }
 
-    /// The damage of a hit at this charge, with the enchantment damage and the strength and
-    /// weakness effects, never below zero.
+    /// The damage of a hit at this charge, with the enchantment damage, never below zero.
+    /// Strength and weakness are already in `base_damage`: their effects modify the
+    /// `ATTACK_DAMAGE` attribute (vanilla `Player.attack` reads only that attribute).
     pub(super) fn charged_damage(
-        &self,
         base_damage: f64,
         attack_cooldown_progress: f64,
         extra_ench_damage: f64,
@@ -153,18 +153,6 @@ impl Player {
         let mut damage = base_damage * damage_multiplier;
         damage += extra_ench_damage * attack_cooldown_progress;
 
-        if let Some(strength) = self
-            .living_entity
-            .get_effect(&pumpkin_data::effect::StatusEffect::STRENGTH)
-        {
-            damage += 3.0 * (f64::from(strength.amplifier) + 1.0);
-        }
-        if let Some(weakness) = self
-            .living_entity
-            .get_effect(&pumpkin_data::effect::StatusEffect::WEAKNESS)
-        {
-            damage -= 4.0 * (f64::from(weakness.amplifier) + 1.0);
-        }
         damage.max(0.0)
     }
 

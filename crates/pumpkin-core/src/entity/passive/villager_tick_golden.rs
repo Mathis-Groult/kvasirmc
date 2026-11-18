@@ -1022,11 +1022,7 @@ fn run_extra(
     let packets: Vec<String> = tap
         .drain()
         .iter()
-        .map(|p| match p.first() {
-            // Add Entity of a spawned golem: its UUID is random.
-            Some(1) => format!("{}:id1", p.len()),
-            _ => format!("{}:{:08x}", p.len(), fnv(p) as u32),
-        })
+        .map(|p| packet_text(p, villager.get_entity().entity_id))
         .collect();
     let line = format!(
         "{}: {} | regeneration flags {regeneration:?} dirty {dirty:?} watcher {packets:?} worked {worked} golems at {:?}\n",
@@ -1086,6 +1082,31 @@ fn golems_at(world: &World, base: BlockPos) -> Vec<String> {
         .collect();
     found.sort();
     found
+}
+
+/// A packet about the villager (its entity id right after the packet id, as a var int or a
+/// plain int) by length and hash; any
+/// other (a spawned golem: random UUID, and an entity id that depends on the tests run before)
+/// by packet id only.
+fn packet_text(packet: &[u8], villager_id: i32) -> String {
+    let mut value: u32 = 0;
+    for (shift, byte) in packet.iter().skip(1).take(5).enumerate() {
+        value |= u32::from(byte & 0x7f) << (7 * shift);
+        if byte & 0x80 == 0 {
+            break;
+        }
+    }
+    // Entity Status carries the id as a plain big-endian int, the others as a var int.
+    let plain = packet
+        .get(1..5)
+        .and_then(|b| <[u8; 4]>::try_from(b).ok())
+        .map(i32::from_be_bytes);
+    match packet.first() {
+        Some(id) if value.cast_signed() != villager_id && plain != Some(villager_id) => {
+            format!("id{id}")
+        }
+        _ => format!("{}:{:08x}", packet.len(), fnv(packet) as u32),
+    }
 }
 
 fn fnv(bytes: &[u8]) -> u64 {

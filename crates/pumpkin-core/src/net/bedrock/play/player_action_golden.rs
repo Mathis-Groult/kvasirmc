@@ -16,9 +16,11 @@ use std::time::{Duration, Instant};
 
 use pumpkin_data::block_properties::{DoubleBlockHalf, OakDoorLikeProperties, TntLikeProperties};
 use pumpkin_data::data_component_impl::EquipmentSlot;
+use pumpkin_data::effect::StatusEffect;
 use pumpkin_data::entity::EntityPose;
 use pumpkin_data::item::Item;
 use pumpkin_data::item_stack::ItemStack;
+use pumpkin_data::potion::Effect;
 use pumpkin_data::{Block, BlockStateId, Enchantment};
 use pumpkin_protocol::bedrock::server::player_action::{PlayerActionType, SPlayerAction};
 use pumpkin_protocol::codec::var_int::VarInt;
@@ -75,10 +77,14 @@ enum Step {
     Ticks(i32),
     /// The breaker now holds this item.
     Hold(&'static Item),
+    /// Appended: the breaker's game mode changes.
+    Mode(GameMode),
+    /// Appended: the breaker now holds an Efficiency V iron shovel.
+    Shovel,
 }
 
 use PlayerActionType as A;
-use Step::{Act, East, Hold, Ticks};
+use Step::{Act, East, Hold, Mode, Shovel, Ticks};
 
 #[derive(Clone, Copy)]
 struct Scene {
@@ -116,6 +122,10 @@ struct Scene {
     steps: &'static [Step],
     /// Appended: the world's spawn chunk is loaded (empty), so a respawn finishes at once.
     spawn_loaded: bool,
+    /// Appended: Haste XXI.
+    haste: bool,
+    /// Appended: health 0.5.
+    nearly_dead: bool,
 }
 
 const SCENE: Scene = Scene {
@@ -139,6 +149,8 @@ const SCENE: Scene = Scene {
     blocking: false,
     steps: &[Act(A::StartDestroyBlock)],
     spawn_loaded: false,
+    haste: false,
+    nearly_dead: false,
 };
 
 const fn scene(name: &'static str, steps: &'static [Step]) -> Scene {
@@ -156,7 +168,71 @@ fn scenes() -> Vec<Scene> {
     scenes.extend(start_scenes());
     scenes.extend(predict_scenes());
     scenes.extend(other_scenes());
+    scenes.extend(widened_scenes());
+    scenes.extend(widened_scenes_more());
     scenes
+}
+
+/// Appended in the first widening (second part).
+fn widened_scenes_more() -> Vec<Scene> {
+    vec![
+        Scene {
+            nearly_dead: true,
+            ..scene("health 0.5, start", &[Act(A::StartDestroyBlock)])
+        },
+        Scene {
+            nearly_dead: true,
+            ..scene("health 0.5, respawn", &[Act(A::Respawn)])
+        },
+        Scene {
+            kind: Kind::Dirt,
+            ..scene(
+                "dirt: start by hand, then an efficiency V shovel finishes at once",
+                &[
+                    Act(A::StartDestroyBlock),
+                    Shovel,
+                    Act(A::ContinueDestroyBlock),
+                ],
+            )
+        },
+        Scene {
+            kind: Kind::RedstoneOre,
+            held: PICKAXE,
+            efficient: true,
+            haste: true,
+            ..scene(
+                "redstone ore, efficiency V pickaxe and haste (instant)",
+                &[Act(A::StartDestroyBlock)],
+            )
+        },
+        Scene {
+            kind: Kind::DoorLower,
+            ..scene(
+                "door lower half by hand: start, 200 ticks, predict",
+                &[
+                    Act(A::StartDestroyBlock),
+                    Ticks(200),
+                    Act(A::PredictDestroyBlock),
+                ],
+            )
+        },
+        scene(
+            "start, turn creative, stop",
+            &[
+                Act(A::StartDestroyBlock),
+                Mode(GameMode::Creative),
+                Act(A::StopDestroyBlock),
+            ],
+        ),
+        scene(
+            "start, turn creative, predict",
+            &[
+                Act(A::StartDestroyBlock),
+                Mode(GameMode::Creative),
+                Act(A::PredictDestroyBlock),
+            ],
+        ),
+    ]
 }
 
 /// Appended in the first widening.
@@ -925,6 +1001,20 @@ fn equip(breaker: &Player, scene: &Scene, pos: BlockPos) {
             .living_entity
             .set_active_hand(Hand::Left, ItemStack::new(1, &Item::SHIELD), 72_000);
     }
+    if scene.haste {
+        breaker.living_entity.add_effect(Effect {
+            effect_type: &StatusEffect::HASTE,
+            duration: 600,
+            amplifier: 20,
+            ambient: false,
+            show_particles: true,
+            show_icon: true,
+            blend: false,
+        });
+    }
+    if scene.nearly_dead {
+        breaker.living_entity.health.store(0.5);
+    }
     breaker.tick_counter.store(37, Ordering::Relaxed);
     if let Some(long_ago) = Instant::now().checked_sub(Duration::from_secs(600)) {
         breaker.last_action_time.store(long_ago);
@@ -1017,9 +1107,15 @@ async fn run(
             Ticks(n) => {
                 breaker.tick_counter.fetch_add(n, Ordering::Relaxed);
             }
+            Shovel => {
+                let mut shovel = ItemStack::new(1, &Item::IRON_SHOVEL);
+                shovel.add_enchantment(&Enchantment::EFFICIENCY, 5);
+                breaker.inventory().set_stack_in_hand(Hand::Right, shovel);
+            }
             Hold(item) => breaker
                 .inventory()
                 .set_stack_in_hand(Hand::Right, ItemStack::new(1, item)),
+            Mode(mode) => breaker.gamemode.store(mode),
         }
     }
     let mut sent = Vec::new();

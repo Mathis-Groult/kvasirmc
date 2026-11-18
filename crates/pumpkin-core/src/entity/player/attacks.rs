@@ -15,6 +15,8 @@ use std::sync::Arc;
 use std::sync::atomic::Ordering;
 
 #[cfg(test)]
+mod effect_tests;
+#[cfg(test)]
 mod golden;
 mod hit;
 

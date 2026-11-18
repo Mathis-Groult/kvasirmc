@@ -16,6 +16,7 @@ use std::time::Duration;
 use pumpkin_util::math::vector2::Vector2;
 use pumpkin_util::math::vector3::Vector3;
 use pumpkin_util::text::TextComponent;
+use pumpkin_world::chunk::palette::{BlockPalette, PalettedContainer};
 
 use crate::command::{CommandSender, CommandSource};
 use crate::entity::ai::test_support;
@@ -112,21 +113,44 @@ fn unload_area(world: &Arc<World>, (cx, cz): (i32, i32)) {
     }
 }
 
+/// The empty chunk's block sections and the hash of their states.
+struct Empty {
+    sections: Box<[BlockPalette]>,
+    hash: u64,
+}
+
+/// Whether `sections` hold exactly the states of the empty chunk, decided without visiting them:
+/// every section is single-valued with the empty chunk's value. Hashing all 289 chunks of an area
+/// state by state at opt-level 0 was three quarters of this golden's run time, and most of them
+/// are untouched.
+fn same_as_empty(sections: &[BlockPalette], empty: &[BlockPalette]) -> bool {
+    sections.len() == empty.len()
+        && sections.iter().zip(empty).all(|pair| {
+            matches!(
+                pair,
+                (PalettedContainer::Homogeneous(a), PalettedContainer::Homogeneous(b)) if a == b
+            )
+        })
+}
+
 /// Hash of one chunk's block states, or `None` while it is still empty.
-fn chunk_hash(world: &Arc<World>, position: Vector2<i32>, empty: u64) -> Option<u64> {
+fn chunk_hash(world: &Arc<World>, position: Vector2<i32>, empty: &Empty) -> Option<u64> {
     let chunk = world.level.loaded_chunks.get(&position)?.value().clone();
     let sections = chunk
         .section
         .block_sections
         .read()
         .unwrap_or_else(std::sync::PoisonError::into_inner);
+    if same_as_empty(&sections, &empty.sections) {
+        return None;
+    }
     let mut hash = FNV_START;
     for section in sections.iter() {
         for state in section {
             hash = fnv(hash, &state.as_u16().to_le_bytes());
         }
     }
-    (hash != empty).then_some(hash)
+    (hash != empty.hash).then_some(hash)
 }
 
 /// Count and hash of the block entities of one chunk (sorted by position).
@@ -152,7 +176,7 @@ fn block_entities_text(world: &Arc<World>, position: Vector2<i32>) -> Option<Str
     Some(format!("{}:{hash:016x}", lines.len()))
 }
 
-fn record(world: &Arc<World>, (cx, cz): (i32, i32), empty: u64) -> String {
+fn record(world: &Arc<World>, (cx, cz): (i32, i32), empty: &Empty) -> String {
     let mut chunks = Vec::new();
     for x in cx - RADIUS..=cx + RADIUS {
         for z in cz - RADIUS..=cz + RADIUS {
@@ -166,7 +190,7 @@ fn record(world: &Arc<World>, (cx, cz): (i32, i32), empty: u64) -> String {
                 "{},{}:{:016x}{}",
                 x - cx,
                 z - cz,
-                blocks.unwrap_or(empty),
+                blocks.unwrap_or(empty.hash),
                 entities.map(|e| format!(" be={e}")).unwrap_or_default()
             ));
         }
@@ -225,12 +249,23 @@ async fn place_command_places_the_same_blocks() -> TestResult {
             Vector2::new(probe.0, probe.1),
             pumpkin_world::chunk::ChunkData::empty_sync(probe.0, probe.1),
         );
-        let hash = chunk_hash(&world, Vector2::new(probe.0, probe.1), 0).unwrap_or(0);
+        let chunk = pumpkin_world::chunk::ChunkData::empty_sync(probe.0, probe.1);
+        let sections = chunk
+            .section
+            .block_sections
+            .read()
+            .unwrap_or_else(std::sync::PoisonError::into_inner)
+            .clone();
+        let unhashed = Empty {
+            sections: Box::new([]),
+            hash: 0,
+        };
+        let hash = chunk_hash(&world, Vector2::new(probe.0, probe.1), &unhashed).unwrap_or(0);
         world
             .level
             .loaded_chunks
             .remove(&Vector2::new(probe.0, probe.1));
-        hash
+        Empty { sections, hash }
     };
 
     let mut now = String::new();
@@ -243,7 +278,7 @@ async fn place_command_places_the_same_blocks() -> TestResult {
             f64::from(area.1 * 16 + 8) + 0.5,
         );
         let result = run(&server, &world, centre, &expand(case, area));
-        let after = record(&world, area, empty);
+        let after = record(&world, area, &empty);
         writeln!(now, "{case} -> {result}; {after}")?;
         unload_area(&world, area);
     }

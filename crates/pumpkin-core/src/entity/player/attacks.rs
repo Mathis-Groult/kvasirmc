@@ -50,8 +50,11 @@ impl Player {
         };
         self.last_attacked_ticks.store(0, Ordering::Relaxed);
 
-        let mut damage =
-            Self::charged_damage(base_damage, attack_cooldown_progress, extra_ench_damage);
+        let Some(mut damage) =
+            Self::charged_damage(base_damage, attack_cooldown_progress, extra_ench_damage)
+        else {
+            return;
+        };
 
         let pos = victim_entity.pos.load();
         let attack_type = AttackType::new(self, attack_cooldown_progress as f32);

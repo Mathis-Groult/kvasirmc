@@ -133,14 +133,16 @@ impl Player {
         Some(attack_cooldown_progress)
     }
 
-    /// The damage of a hit at this charge, with the enchantment damage, never below zero.
-    /// Strength and weakness are already in `base_damage`: their effects modify the
+    /// The damage of a hit at this charge, with the enchantment damage, never below zero, or
+    /// `None` when neither the scaled base damage nor the enchantment bonus is above zero:
+    /// vanilla `Player.attack` then skips the hit (no damage, sound, knockback, wear or
+    /// exhaustion). Strength and weakness are already in `base_damage`: their effects modify the
     /// `ATTACK_DAMAGE` attribute (vanilla `Player.attack` reads only that attribute).
     pub(super) fn charged_damage(
         base_damage: f64,
         attack_cooldown_progress: f64,
         extra_ench_damage: f64,
-    ) -> f64 {
+    ) -> Option<f64> {
         // Only reduce attack damage if in cooldown
         // TODO: Enchantments are reduced in the same way, just without the square.
         let damage_multiplier = if attack_cooldown_progress < 1.0 {
@@ -150,10 +152,12 @@ impl Player {
         };
 
         // Modify the added damage based on the multiplier.
-        let mut damage = base_damage * damage_multiplier;
-        damage += extra_ench_damage * attack_cooldown_progress;
-
-        damage.max(0.0)
+        let scaled = base_damage * damage_multiplier;
+        let bonus = extra_ench_damage * attack_cooldown_progress;
+        if scaled <= 0.0 && bonus <= 0.0 {
+            return None;
+        }
+        Some((scaled + bonus).max(0.0))
     }
 
     /// The extra damage of a mace smash: per block fallen, 1.5 plus the density bonus.

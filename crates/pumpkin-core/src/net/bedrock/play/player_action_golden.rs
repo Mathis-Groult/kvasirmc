@@ -14,7 +14,7 @@ use std::sync::Arc;
 use std::sync::atomic::Ordering;
 use std::time::{Duration, Instant};
 
-use pumpkin_data::block_properties::TntLikeProperties;
+use pumpkin_data::block_properties::{DoubleBlockHalf, OakDoorLikeProperties, TntLikeProperties};
 use pumpkin_data::data_component_impl::EquipmentSlot;
 use pumpkin_data::entity::EntityPose;
 use pumpkin_data::item::Item;
@@ -59,6 +59,10 @@ enum Kind {
     Dirt,
     UnstableTnt,
     Leaves,
+    /// Appended.
+    RedstoneOre,
+    /// Appended: the lower half of an oak door (the upper half above it).
+    DoorLower,
 }
 
 #[derive(Clone, Copy)]
@@ -110,6 +114,8 @@ struct Scene {
     /// The breaker is blocking with its shield already.
     blocking: bool,
     steps: &'static [Step],
+    /// Appended: the world's spawn chunk is loaded (empty), so a respawn finishes at once.
+    spawn_loaded: bool,
 }
 
 const SCENE: Scene = Scene {
@@ -132,6 +138,7 @@ const SCENE: Scene = Scene {
     gliding: false,
     blocking: false,
     steps: &[Act(A::StartDestroyBlock)],
+    spawn_loaded: false,
 };
 
 const fn scene(name: &'static str, steps: &'static [Step]) -> Scene {
@@ -150,6 +157,58 @@ fn scenes() -> Vec<Scene> {
     scenes.extend(predict_scenes());
     scenes.extend(other_scenes());
     scenes
+}
+
+/// Appended in the first widening.
+fn widened_scenes() -> Vec<Scene> {
+    vec![
+        Scene {
+            gamemode: GameMode::Creative,
+            kind: Kind::DoorLower,
+            ..scene(
+                "creative destroy on the lower half of a door",
+                &[Act(A::CreativeDestroyBlock)],
+            )
+        },
+        scene(
+            "start, abort, start",
+            &[
+                Act(A::StartDestroyBlock),
+                Act(A::AbortDestroyBlock),
+                Ticks(3),
+                Act(A::StartDestroyBlock),
+            ],
+        ),
+        Scene {
+            kind: Kind::RedstoneOre,
+            ..scene("start on redstone ore", &[Act(A::StartDestroyBlock)])
+        },
+        Scene {
+            kind: Kind::RedstoneOre,
+            held: PICKAXE,
+            ..scene(
+                "redstone ore with a pickaxe: start, 20 ticks, predict",
+                &[
+                    Act(A::StartDestroyBlock),
+                    Ticks(20),
+                    Act(A::PredictDestroyBlock),
+                ],
+            )
+        },
+        Scene {
+            dead: true,
+            spawn_loaded: true,
+            ..scene("respawn while dead, spawn chunk loaded", &[Act(A::Respawn)])
+        },
+        Scene {
+            dead_flag_only: true,
+            spawn_loaded: true,
+            ..scene(
+                "respawn with the dead flag only, spawn chunk loaded",
+                &[Act(A::Respawn)],
+            )
+        },
+    ]
 }
 
 /// The guards before the match: loading, death, reach.
@@ -656,6 +715,8 @@ fn lay(world: &Arc<World>, pos: BlockPos, kind: Kind) {
         Kind::Dirt => Block::DIRT.default_state.id,
         Kind::UnstableTnt => TntLikeProperties { unstable: true }.to_state_id(&Block::TNT),
         Kind::Leaves => Block::OAK_LEAVES.default_state.id,
+        Kind::RedstoneOre => Block::REDSTONE_ORE.default_state.id,
+        Kind::DoorLower => door_half(DoubleBlockHalf::Lower),
     };
     for x in -3..=9 {
         for z in -3..=9 {
@@ -668,6 +729,27 @@ fn lay(world: &Arc<World>, pos: BlockPos, kind: Kind) {
     }
     put(world, &pos, state);
     put(world, &pos.east(), state);
+    if matches!(kind, Kind::DoorLower) {
+        put(world, &pos.up(), door_half(DoubleBlockHalf::Upper));
+        put(world, &pos.east().up(), door_half(DoubleBlockHalf::Upper));
+    }
+}
+
+fn door_half(half: DoubleBlockHalf) -> BlockStateId {
+    let mut door = OakDoorLikeProperties::default(&Block::OAK_DOOR);
+    door.half = half;
+    door.to_state_id(&Block::OAK_DOOR)
+}
+
+/// Loads the world's spawn chunk (empty), as a respawn fetches it before it moves the player.
+fn load_spawn_chunk(world: &World) {
+    let info = world.level_info.load();
+    let at = Vector2::new(info.spawn_x >> 4, info.spawn_z >> 4);
+    world
+        .level
+        .loaded_chunks
+        .entry(at)
+        .or_insert_with(|| pumpkin_world::chunk::ChunkData::empty_sync(at.x, at.y));
 }
 
 fn fnv(bytes: &[u8]) -> u64 {
@@ -849,6 +931,19 @@ fn equip(breaker: &Player, scene: &Scene, pos: BlockPos) {
     }
 }
 
+/// Appended scenes only: the block above, the lit state of an ore, and the breaker's position.
+fn extra_text(world: &World, breaker: &Player, pos: BlockPos, scene: &Scene) -> String {
+    match scene.kind {
+        Kind::DoorLower => format!(" above {}", world.get_block(&pos.up()).name),
+        Kind::RedstoneOre => format!(" state {}", world.get_block_state_id(&pos).as_u16()),
+        _ if scene.spawn_loaded => {
+            let at = breaker.get_entity().pos.load();
+            format!(" at {:.1},{:.1},{:.1}", at.x, at.y, at.z)
+        }
+        _ => String::new(),
+    }
+}
+
 fn bedrock(player: &Player) -> Option<&crate::net::bedrock::BedrockClient> {
     match player.client.as_ref() {
         ClientPlatform::Bedrock(client) => Some(client),
@@ -873,6 +968,9 @@ async fn run(
     scene: &Scene,
 ) -> Result<String, String> {
     let pos = position_of(index);
+    if scene.spawn_loaded {
+        load_spawn_chunk(world);
+    }
     lay(world, pos, scene.kind);
     let block = Block::from_state_id(world.get_block_state_id(&pos));
     let (breaker, mut breaker_tap) =
@@ -924,26 +1022,28 @@ async fn run(
                 .set_stack_in_hand(Hand::Right, ItemStack::new(1, item)),
         }
     }
+    let mut sent = Vec::new();
     if scene.steps.iter().any(|s| matches!(s, Act(A::Respawn))) {
-        // The respawn runs as a task of the client: wait for it (or two seconds).
-        for _ in 0..200 {
-            if !breaker.living_entity.dead.load(Ordering::Relaxed)
-                && breaker.living_entity.health.load() > 0.0
-            {
-                break;
-            }
-            tokio::time::sleep(Duration::from_millis(10)).await;
+        // The respawn runs as a task of the client, and `send_game_packet` waits until the
+        // writer took each packet: drain the breaker's packets until the client has no task
+        // left (or ten seconds).
+        let started = Instant::now();
+        while !client.tasks.is_empty() && started.elapsed() < Duration::from_secs(10) {
+            sent.extend(breaker_tap.drain());
+            tokio::time::sleep(Duration::from_millis(5)).await;
         }
     }
+    sent.extend(breaker_tap.drain());
     let line = format!(
-        "{}: left {} east {} around {:?} {} {} | breaker [{}] | watcher [{}]\n",
+        "{}: left {} east {}{} around {:?} {} {} | breaker [{}] | watcher [{}]\n",
         scene.name,
         world.get_block(&pos).name,
         world.get_block(&pos.east()).name,
+        extra_text(world, &breaker, pos, scene),
         around(world, pos),
         mining_text(&breaker, block),
         body_text(&breaker),
-        breaker_sent(&breaker_tap.drain()),
+        breaker_sent(&sent),
         watcher_sent(&watcher_tap.drain()),
     );
     Ok(line)

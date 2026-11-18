@@ -134,6 +134,8 @@ pub(super) use item_stack_request::record_update;
 pub mod mob_equipment;
 pub mod modal_form_response;
 pub mod player_action;
+#[cfg(test)]
+mod player_action_golden;
 pub mod player_auth_input;
 pub mod player_block_action;
 pub mod player_hotbar;

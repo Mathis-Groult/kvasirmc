@@ -17,7 +17,7 @@ use std::sync::Arc;
 use std::sync::atomic::Ordering;
 use std::time::{Duration, Instant};
 
-use pumpkin_data::block_properties::TntLikeProperties;
+use pumpkin_data::block_properties::{DoubleBlockHalf, OakDoorLikeProperties, TntLikeProperties};
 use pumpkin_data::item::Item;
 use pumpkin_data::item_stack::ItemStack;
 use pumpkin_data::{Block, BlockStateId, Enchantment};
@@ -72,6 +72,8 @@ enum Kind {
     RedstoneOre,
     UnstableTnt,
     Ice,
+    DoorLower,
+    Leaves,
 }
 
 #[derive(Clone, Copy)]
@@ -351,6 +353,19 @@ fn widened_scenes() -> Vec<Scene> {
             ..wide("spear jab at the watcher as spectator", &[SPEAR_JAB])
         },
         wide("change destroy direction, activity", &[CHANGE_DIRECTION]),
+        Scene {
+            kind: Kind::DoorLower,
+            gamemode: GameMode::Creative,
+            ..wide("start in creative on the lower half of a door", &[STARTED])
+        },
+        Scene {
+            kind: Kind::Leaves,
+            held: Some((&Item::SHEARS, 1)),
+            ..wide(
+                "start on leaves with shears (instant, tool damage)",
+                &[STARTED],
+            )
+        },
     ]
 }
 
@@ -375,6 +390,8 @@ fn lay(world: &Arc<World>, pos: BlockPos, kind: Kind) {
         Kind::RedstoneOre => Block::REDSTONE_ORE.default_state.id,
         Kind::UnstableTnt => TntLikeProperties { unstable: true }.to_state_id(&Block::TNT),
         Kind::Ice => Block::ICE.default_state.id,
+        Kind::DoorLower => door_half(DoubleBlockHalf::Lower),
+        Kind::Leaves => Block::OAK_LEAVES.default_state.id,
     };
     for x in -3..=9 {
         for z in -3..=3 {
@@ -386,6 +403,15 @@ fn lay(world: &Arc<World>, pos: BlockPos, kind: Kind) {
         }
     }
     put(world, &pos, state);
+    if matches!(kind, Kind::DoorLower) {
+        put(world, &pos.up(), door_half(DoubleBlockHalf::Upper));
+    }
+}
+
+fn door_half(half: DoubleBlockHalf) -> BlockStateId {
+    let mut door = OakDoorLikeProperties::default(&Block::OAK_DOOR);
+    door.half = half;
+    door.to_state_id(&Block::OAK_DOOR)
 }
 
 fn fnv(bytes: &[u8]) -> u64 {

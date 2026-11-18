@@ -250,8 +250,8 @@ impl Level {
             biome_source.as_ref(),
             structure_overrides.as_deref(),
         ));
-        if let Some(cache) = world_gen.global_structure_cache() {
-            cache.ensure_strongholds_generated();
+        if level_config.stronghold_search_at_load {
+            world_gen.start_stronghold_search();
         }
 
         let target_format =

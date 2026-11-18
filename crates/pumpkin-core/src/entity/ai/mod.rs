@@ -39,7 +39,7 @@ pub(crate) mod test_support {
     pub fn world_in_dimension(folder: &tempfile::TempDir, dimension: Dimension) -> Arc<World> {
         Arc::new(World::load(
             Level::from_root_folder(
-                &LevelConfig::default(),
+                &test_level_config(),
                 folder.path().to_path_buf(),
                 0,
                 dimension.clone(),
@@ -49,6 +49,16 @@ pub(crate) mod test_support {
             default_registry(),
             Weak::new(),
         ))
+    }
+
+    /// The default world settings, except that the stronghold ring search waits until a test
+    /// asks for strongholds: started at load it costs each test server about 2 CPU seconds on a
+    /// background pool (card #79), with identical rings either way.
+    fn test_level_config() -> LevelConfig {
+        LevelConfig {
+            stronghold_search_at_load: false,
+            ..LevelConfig::default()
+        }
     }
 
     /// A real server on an empty folder: no network, telemetry off, a fixed seed, nothing read
@@ -76,7 +86,10 @@ pub(crate) mod test_support {
         };
         Ok(Server::new(
             basic,
-            AdvancedConfiguration::default(),
+            AdvancedConfiguration {
+                world: test_level_config(),
+                ..AdvancedConfiguration::default()
+            },
             telemetry,
             vanilla,
             Vec::new(),

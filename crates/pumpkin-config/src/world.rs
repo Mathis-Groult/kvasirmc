@@ -24,6 +24,12 @@ pub struct LevelConfig {
     /// How redstone dust is updated.
     #[serde(default)]
     pub redstone: kvasir_wirenet::Config,
+    /// Start the stronghold ring search on a background pool as soon as the overworld loads (as
+    /// vanilla does), so the first eye of ender or `/locate` does not wait for it. With `false`
+    /// the same search runs the first time something asks for strongholds. Test servers turn it
+    /// off: each one otherwise spends about 2 CPU seconds on rings no test reads.
+    #[serde(default = "default_true")]
+    pub stronghold_search_at_load: bool,
     // TODO: More options
 }
 
@@ -80,6 +86,10 @@ const fn default_autosave_ticks() -> u64 {
     6000 // Default to 5 minutes at 20 TPS
 }
 
+const fn default_true() -> bool {
+    true
+}
+
 impl Default for LevelConfig {
     fn default() -> Self {
         Self {
@@ -89,6 +99,7 @@ impl Default for LevelConfig {
             entity_islands: EntityIslandsConfig::default(),
             mob_lod: kvasir_moblod::Config::default(),
             redstone: kvasir_wirenet::Config::default(),
+            stronghold_search_at_load: true,
         }
     }
 }
@@ -118,5 +129,22 @@ mod tests {
         let generated = toml::to_string(&disabled).unwrap();
         let reloaded: LevelConfig = toml::from_str(&generated).unwrap();
         assert_eq!(reloaded.autosave_ticks, 0);
+    }
+
+    #[test]
+    fn stronghold_search_starts_at_load_unless_turned_off() {
+        assert!(LevelConfig::default().stronghold_search_at_load);
+        // A config file written before the option existed keeps the vanilla behaviour.
+        let mut old = toml::to_string(&LevelConfig::default()).unwrap();
+        old = old.replace("stronghold_search_at_load = true\n", "");
+        assert!(!old.contains("stronghold_search_at_load"));
+        let reloaded: LevelConfig = toml::from_str(&old).unwrap();
+        assert!(reloaded.stronghold_search_at_load);
+        let off = LevelConfig {
+            stronghold_search_at_load: false,
+            ..LevelConfig::default()
+        };
+        let reloaded: LevelConfig = toml::from_str(&toml::to_string(&off).unwrap()).unwrap();
+        assert!(!reloaded.stronghold_search_at_load);
     }
 }

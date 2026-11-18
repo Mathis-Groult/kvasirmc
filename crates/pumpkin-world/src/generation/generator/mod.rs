@@ -112,6 +112,14 @@ impl WorldGenerator {
         }
     }
 
+    /// Starts the stronghold ring search on its background pool, for generators that place
+    /// strongholds; without this call it starts the first time something asks for strongholds.
+    pub fn start_stronghold_search(&self) {
+        if let Some(cache) = self.global_structure_cache() {
+            cache.ensure_strongholds_generated();
+        }
+    }
+
     #[must_use]
     pub fn find_spawn_position(&self) -> pumpkin_util::math::position::BlockPos {
         match self {

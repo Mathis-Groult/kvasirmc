@@ -17,7 +17,15 @@ use std::num::NonZero;
 use std::sync::Arc;
 use std::sync::atomic::Ordering;
 
-use pumpkin_data::Enchantment;
+use pumpkin_data::{AttributeModifierSlot, Enchantment};
+use std::borrow::Cow;
+
+use pumpkin_config::world::LevelConfig;
+use pumpkin_config::{AdvancedConfiguration, BasicConfiguration, TelemetryConfig};
+use pumpkin_data::attributes::Attributes;
+use pumpkin_data::data_component_impl::{
+    AttributeModifiersImpl, EquipmentSlot, Modifier, Operation,
+};
 use pumpkin_data::effect::StatusEffect;
 use pumpkin_data::entity::EntityType;
 use pumpkin_data::item::Item;
@@ -31,12 +39,14 @@ use pumpkin_world::cylindrical_chunk_iterator::Cylindrical;
 use uuid::Uuid;
 
 use crate::command::commands::script_golden::{self, TestResult};
+use crate::data::VanillaData;
 use crate::entity::ai::test_support::{self, Identity};
 use crate::entity::living::LivingEntity;
 use crate::entity::player::Player;
 use crate::entity::player::statistics::StatisticCategory;
 use crate::entity::vehicle::minecart::MinecartEntity;
 use crate::entity::{Entity, EntityBase};
+use crate::server::Server;
 use crate::world::World;
 
 const ATTACKER: Identity = Identity {
@@ -84,6 +94,29 @@ struct Scene {
     beside: bool,
     /// How many times `attack` is called.
     hits: u8,
+    /// Appended: the held item's attribute modifiers are applied, as the tick does when the
+    /// held item changes (a sword then hits for its own damage).
+    armed: bool,
+    /// Appended: bystanders on every side of the victim and below it instead of the three.
+    ring: bool,
+    /// Appended: a stick carrying hand-made attribute modifiers.
+    custom: Option<Custom>,
+    /// Appended: the scene runs on a server whose `pvp.knockback` setting is off.
+    no_knockback: bool,
+    /// Appended: a second effect.
+    also: Option<(&'static StatusEffect, u8)>,
+    /// Appended scenes show sound packets without their random seed and end their line with
+    /// how many advancements changed.
+    extra: bool,
+}
+
+/// Hand-made attribute modifiers on a stick (appended scenes).
+#[derive(Clone, Copy)]
+enum Custom {
+    /// Attack speed -3 (add value), then armor +2 (add value).
+    SpeedThenArmor,
+    /// Attack speed +50 % of the base (multiplied base).
+    MultipliedSpeed,
 }
 
 const SCENE: Scene = Scene {
@@ -99,6 +132,12 @@ const SCENE: Scene = Scene {
     bystanders: false,
     beside: false,
     hits: 1,
+    armed: false,
+    ring: false,
+    custom: None,
+    no_knockback: false,
+    also: None,
+    extra: false,
 };
 
 const fn scene(name: &'static str) -> Scene {
@@ -114,7 +153,153 @@ fn scenes() -> Vec<Scene> {
     scenes.extend(enchantment_scenes());
     scenes.extend(mace_scenes());
     scenes.extend(victim_scenes());
+    scenes.extend(armed_scenes());
+    scenes.extend(widened_scenes());
     scenes
+}
+
+const WIDE: Scene = Scene {
+    extra: true,
+    ..SCENE
+};
+
+const fn wide(name: &'static str) -> Scene {
+    Scene { name, ..WIDE }
+}
+
+const fn armed(name: &'static str) -> Scene {
+    Scene {
+        name,
+        armed: true,
+        ..WIDE
+    }
+}
+
+/// Appended: the held item's own damage and speed, sweep bystanders all around.
+fn armed_scenes() -> Vec<Scene> {
+    vec![
+        Scene {
+            held: SWORD,
+            ring: true,
+            ..armed("armed sword, full charge, ring")
+        },
+        Scene {
+            held: SWORD,
+            enchantments: &[(&Enchantment::SWEEPING_EDGE, 3)],
+            ring: true,
+            ..armed("armed sweeping edge III sword, ring")
+        },
+        Scene {
+            held: SWORD,
+            ticks: 5,
+            ..armed("armed sword, half charge")
+        },
+        Scene {
+            held: SWORD,
+            falling: Some(1.0),
+            ..armed("armed sword while falling")
+        },
+        Scene {
+            held: SWORD,
+            effect: Some((&StatusEffect::WEAKNESS, 0)),
+            ..armed("armed sword with weakness I")
+        },
+        Scene {
+            held: SWORD,
+            effect: Some((&StatusEffect::WEAKNESS, 1)),
+            ..armed("armed sword with weakness II")
+        },
+        Scene {
+            held: SWORD,
+            effect: Some((&StatusEffect::STRENGTH, 2)),
+            also: Some((&StatusEffect::WEAKNESS, 1)),
+            ..armed("armed sword with strength III and weakness II")
+        },
+        Scene {
+            held: MACE,
+            falling: Some(3.0),
+            ..armed("armed mace smash, fall 3")
+        },
+        Scene {
+            held: MACE,
+            falling: Some(5.0),
+            ..armed("armed mace smash, fall 5")
+        },
+        Scene {
+            held: MACE,
+            falling: Some(10.0),
+            ..armed("armed mace smash, fall 10")
+        },
+    ]
+}
+
+/// Appended: charge edges, hand-made modifiers, the overkill advancement, the no-damage sound
+/// and a server without knockback.
+fn widened_scenes() -> Vec<Scene> {
+    vec![
+        Scene {
+            held: Some(&Item::STICK),
+            ticks: 2,
+            ..wide("stick, two ticks")
+        },
+        Scene {
+            held: Some(&Item::COPPER_SPEAR),
+            ticks: 11,
+            ..wide("spear at eleven ticks")
+        },
+        Scene {
+            held: Some(&Item::COPPER_SPEAR),
+            ticks: 13,
+            ..wide("spear at thirteen ticks")
+        },
+        Scene {
+            held: Some(&Item::STICK),
+            custom: Some(Custom::SpeedThenArmor),
+            ticks: 2,
+            ..wide("stick with speed then armor modifiers, two ticks")
+        },
+        Scene {
+            held: Some(&Item::STICK),
+            custom: Some(Custom::MultipliedSpeed),
+            ticks: 2,
+            ..wide("stick with a multiplied speed modifier, two ticks")
+        },
+        Scene {
+            held: MACE,
+            enchantments: &[(&Enchantment::DENSITY, 1)],
+            falling: Some(49.5),
+            victim: Victim::Golem,
+            ..wide("density I mace smash for exactly 100")
+        },
+        Scene {
+            held: MACE,
+            enchantments: &[(&Enchantment::DENSITY, 1)],
+            falling: Some(49.0),
+            victim: Victim::Golem,
+            ..wide("density I mace smash for 99")
+        },
+        Scene {
+            effect: Some((&StatusEffect::STRENGTH, 33)),
+            victim: Victim::Golem,
+            ..wide("fist with strength XXXIV for 103")
+        },
+        Scene {
+            held: SWORD,
+            victim: Victim::Invulnerable,
+            ..wide("sword on an invulnerable zombie, sounds")
+        },
+        Scene {
+            sprinting: true,
+            no_knockback: true,
+            ..wide("fist while sprinting, knockback off")
+        },
+        Scene {
+            held: SWORD,
+            enchantments: &[(&Enchantment::KNOCKBACK, 2)],
+            no_knockback: true,
+            ..wide("knockback II sword, knockback off")
+        },
+    ]
 }
 
 fn charge_scenes() -> Vec<Scene> {
@@ -469,6 +654,29 @@ fn packets(sent: &[bytes::Bytes], masked: bool) -> String {
         .join(" ")
 }
 
+/// Like [`packets`], for appended scenes: sound packets are hashed without their trailing
+/// random pitch and seed (4 + 8 bytes), so the sound itself shows.
+fn packets_unseeded(sent: &[bytes::Bytes]) -> String {
+    sent.iter()
+        .map(|p| match p.first() {
+            Some(1) => format!("{}:id1", p.len()),
+            Some(id @ (118 | 119)) if p.len() > 12 => {
+                format!("{}:id{id}:{:08x}", p.len(), fnv(&p[..p.len() - 12]) as u32)
+            }
+            _ => format!("{}:{:08x}", p.len(), fnv(p) as u32),
+        })
+        .collect::<Vec<_>>()
+        .join(" ")
+}
+
+fn sent_text(sent: &[bytes::Bytes], masked: bool, extra: bool) -> String {
+    if extra {
+        packets_unseeded(sent)
+    } else {
+        packets(sent, masked)
+    }
+}
+
 fn vector(v: Vector3<f64>) -> String {
     format!("{:.6},{:.6},{:.6}", v.x, v.y, v.z)
 }
@@ -508,12 +716,49 @@ fn place(player: &Player, at: Vector3<f64>) {
     ));
 }
 
+fn custom_modifiers(custom: Custom) -> AttributeModifiersImpl {
+    let speed = |amount, operation| Modifier {
+        r#type: &Attributes::ATTACK_SPEED,
+        id: "minecraft:base_attack_speed",
+        amount,
+        operation,
+        slot: AttributeModifierSlot::MainHand,
+    };
+    let modifiers = match custom {
+        Custom::SpeedThenArmor => vec![
+            speed(-3.0, Operation::AddValue),
+            Modifier {
+                r#type: &Attributes::ARMOR,
+                id: "minecraft:golden_test_armor",
+                amount: 2.0,
+                operation: Operation::AddValue,
+                slot: AttributeModifierSlot::MainHand,
+            },
+        ],
+        Custom::MultipliedSpeed => vec![speed(0.5, Operation::AddMultipliedBase)],
+    };
+    AttributeModifiersImpl {
+        attribute_modifiers: Cow::Owned(modifiers),
+    }
+}
+
 /// Gives the attacker the scene's item, charge, motion, effect and facing.
 fn equip(attacker: &Player, scene: &Scene) {
     if let Some(item) = scene.held {
         let mut stack = ItemStack::new(1, item);
         for (enchantment, level) in scene.enchantments {
             stack.add_enchantment(enchantment, *level);
+        }
+        if let Some(custom) = scene.custom {
+            stack.set_data_component(custom_modifiers(custom));
+        }
+        if scene.armed {
+            attacker
+                .living_entity
+                .apply_and_send_equipment_attribute_modifiers(&[(
+                    EquipmentSlot::MAIN_HAND,
+                    stack.clone(),
+                )]);
         }
         attacker.inventory().set_stack_in_hand(Hand::Right, stack);
     }
@@ -532,7 +777,7 @@ fn equip(attacker: &Player, scene: &Scene) {
         .living_entity
         .fall_distance
         .store(scene.falling.unwrap_or(0.0));
-    if let Some((effect_type, amplifier)) = scene.effect {
+    for (effect_type, amplifier) in scene.effect.into_iter().chain(scene.also) {
         attacker.living_entity.add_effect(Effect {
             effect_type,
             duration: 2000,
@@ -587,6 +832,32 @@ fn attacker_text(attacker: &Player, used: &'static Item) -> String {
     )
 }
 
+/// Appended: bystanders just inside the sweep box on the -x, -z and +z sides, and one below
+/// whose top is inside the box only because the box reaches half a block down.
+fn ring(
+    world: &Arc<World>,
+    index: usize,
+    victim_at: Vector3<f64>,
+) -> Result<Vec<Arc<dyn EntityBase>>, String> {
+    let offsets = [
+        Vector3::new(-1.1, 0.0, 0.0),
+        Vector3::new(0.0, 0.0, -1.1),
+        Vector3::new(0.0, 0.0, 1.1),
+        Vector3::new(0.0, -2.2, 0.0),
+    ];
+    let mut found = Vec::new();
+    for (slot, offset) in (4..).zip(offsets) {
+        found.push(mob(
+            world,
+            index,
+            slot,
+            &EntityType::ZOMBIE,
+            victim_at.add(&offset),
+        )?);
+    }
+    Ok(found)
+}
+
 /// The attacker as a Java or a Bedrock player, with a function that drains what it was sent.
 type Drain = Box<dyn FnMut() -> Vec<bytes::Bytes>>;
 
@@ -614,6 +885,14 @@ async fn run(world: &Arc<World>, index: usize, scene: &Scene) -> Result<String, 
     };
     place(&attacker, attacker_at);
     equip(&attacker, scene);
+    if scene.extra {
+        // As the server's login does, so that awarded criteria are recorded.
+        attacker
+            .advancements
+            .lock()
+            .unwrap_or_else(std::sync::PoisonError::into_inner)
+            .player = Arc::downgrade(&attacker);
+    }
     let (watcher, mut watcher_tap) =
         test_support::java_player_as(world, GameMode::Survival, &WATCHER)
             .ok_or("no Java packet tap")?;
@@ -641,7 +920,9 @@ async fn run(world: &Arc<World>, index: usize, scene: &Scene) -> Result<String, 
             zombie
         }
     };
-    let bystanders = if scene.bystanders {
+    let bystanders = if scene.ring {
+        ring(world, index, victim_at)?
+    } else if scene.bystanders {
         vec![
             mob(
                 world,
@@ -691,23 +972,62 @@ async fn run(world: &Arc<World>, index: usize, scene: &Scene) -> Result<String, 
         scene.name,
         victim_text(&victim),
         attacker_text(&attacker, used),
-        packets(&attacker_drain(), !scene.bedrock),
-        packets(&watcher_tap.drain(), true),
+        sent_text(&attacker_drain(), !scene.bedrock, scene.extra),
+        sent_text(&watcher_tap.drain(), true, scene.extra),
     );
     if let Some(tap) = victim_tap.as_mut() {
-        let _ = write!(line, " | victim [{}]", packets(&tap.drain(), true));
+        let _ = write!(
+            line,
+            " | victim [{}]",
+            sent_text(&tap.drain(), true, scene.extra)
+        );
+    }
+    if scene.extra {
+        let changed = attacker
+            .advancements
+            .try_lock()
+            .map_or(usize::MAX, |advancements| {
+                advancements.progress_changed.len()
+            });
+        let _ = write!(line, " | advancements changed {changed}");
     }
     line.push('\n');
     Ok(line)
 }
 
-#[tokio::test(flavor = "multi_thread")]
-async fn player_attack_is_the_same() -> TestResult {
-    let folder = tempfile::tempdir()?;
-    let server = test_support::server(&folder).await?;
-    let world = server.worlds.load()[0].clone();
-    let scenes = scenes();
-    for index in 0..scenes.len() {
+/// Appended: a real server like [`test_support::server`] whose `pvp.knockback` setting is off.
+async fn server_without_knockback(
+    folder: &tempfile::TempDir,
+) -> Result<Arc<Server>, Box<dyn std::error::Error>> {
+    let mut basic = BasicConfiguration {
+        default_level_name: folder.path().join("world").to_string_lossy().into_owned(),
+        ..BasicConfiguration::default()
+    };
+    basic.seed.0 = 20_261_112;
+    let mut advanced = AdvancedConfiguration {
+        world: LevelConfig {
+            stronghold_search_at_load: false,
+            ..LevelConfig::default()
+        },
+        ..AdvancedConfiguration::default()
+    };
+    advanced.pvp.knockback = false;
+    let telemetry = TelemetryConfig {
+        enabled: false,
+        ..TelemetryConfig::default()
+    };
+    let vanilla = VanillaData {
+        banned_ip_list: std::sync::RwLock::default(),
+        banned_player_list: std::sync::RwLock::default(),
+        operator_config: std::sync::RwLock::default(),
+        user_cache: std::sync::RwLock::default(),
+        whitelist_config: std::sync::RwLock::default(),
+    };
+    Ok(Server::new(basic, advanced, telemetry, vanilla, Vec::new()).await?)
+}
+
+fn load_chunks(world: &World, count: usize) {
+    for index in 0..count {
         let chunk = position_of(index).chunk_position();
         for dx in -1..=1 {
             for dz in -1..=1 {
@@ -719,13 +1039,32 @@ async fn player_attack_is_the_same() -> TestResult {
             }
         }
     }
+}
+
+#[tokio::test(flavor = "multi_thread")]
+async fn player_attack_is_the_same() -> TestResult {
+    let folder = tempfile::tempdir()?;
+    let server = test_support::server(&folder).await?;
+    let world = server.worlds.load()[0].clone();
+    let other_folder = tempfile::tempdir()?;
+    let no_knockback = server_without_knockback(&other_folder).await?;
+    let no_knockback_world = no_knockback.worlds.load()[0].clone();
+    let scenes = scenes();
+    load_chunks(&world, scenes.len());
+    load_chunks(&no_knockback_world, scenes.len());
     let mut out = String::new();
     for (index, scene) in scenes.iter().enumerate() {
-        out.push_str(&run(&world, index, scene).await?);
+        let world = if scene.no_knockback {
+            &no_knockback_world
+        } else {
+            &world
+        };
+        out.push_str(&run(world, index, scene).await?);
         for player in world.players.load().iter() {
             world.remove_player(player, false).await;
         }
     }
     server.stop();
+    no_knockback.stop();
     script_golden::bless_or_compare("player_attack.txt", &out)
 }

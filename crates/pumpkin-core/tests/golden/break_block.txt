@@ -28,3 +28,4 @@ Cobweb by survival skip drops false at far: returned Some("cobweb") left air dro
 Cobweb holding shears by survival skip drops false at far: returned Some("cobweb") left air drops ["cobwebx1"]; breaker events [] chats 0; watcher events ["2f000007de00009e00000080400000093a00"] chats 0
 DiamondOre by survival skip drops false at far: returned Some("diamond_ore") left air drops ["diamondx1"] xp; breaker events [] chats 0; watcher events ["2f000007de0000a2000000804000001acf00"] chats 0
 DiamondOre by survival skip drops true at far: returned Some("diamond_ore") left air drops []; breaker events [] chats 0; watcher events ["2f000007de0000a6000000804000001acf00"] chats 0
+DoubleSlab by survival skip drops false at far: returned Some("stone_slab") left air drops ["stone_slabx2"]; breaker events [] chats 0; watcher events ["2f000007de0000aa000000804000003b9600"] chats 0

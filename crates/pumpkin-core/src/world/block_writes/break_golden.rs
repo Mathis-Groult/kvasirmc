@@ -12,7 +12,7 @@ use std::fmt::Write;
 use std::num::NonZero;
 use std::sync::Arc;
 
-use pumpkin_data::block_properties::WhiteWoolSlabLikeProperties;
+use pumpkin_data::block_properties::{SlabType, WhiteWoolSlabLikeProperties};
 use pumpkin_data::entity::EntityType;
 use pumpkin_data::item::Item;
 use pumpkin_data::item_stack::ItemStack;
@@ -53,6 +53,7 @@ enum Kind {
     SoulFire,
     Cobweb,
     DiamondOre,
+    DoubleSlab,
 }
 
 #[derive(Clone, Copy, PartialEq, Eq)]
@@ -141,6 +142,8 @@ const SCENES: &[Scene] = &[
     holding_shears(far(Kind::Cobweb, Cause::Survival, false)),
     far(Kind::DiamondOre, Cause::Survival, false),
     far(Kind::DiamondOre, Cause::Survival, true),
+    // Appended after the batch-32 run: the loot roll reads the broken block state (two slabs).
+    far(Kind::DoubleSlab, Cause::Survival, false),
 ];
 
 fn put(world: &Arc<World>, pos: &BlockPos, state: BlockStateId) {
@@ -169,6 +172,11 @@ fn lay(world: &Arc<World>, pos: BlockPos, kind: Kind) {
         Kind::SoulFire => Block::SOUL_FIRE.default_state.id,
         Kind::Cobweb => Block::COBWEB.default_state.id,
         Kind::DiamondOre => Block::DIAMOND_ORE.default_state.id,
+        Kind::DoubleSlab => {
+            let mut slab = WhiteWoolSlabLikeProperties::default(&Block::STONE_SLAB);
+            slab.r#type = SlabType::Double;
+            slab.to_state_id(&Block::STONE_SLAB)
+        }
     };
     put(world, &pos.down(), Block::STONE.default_state.id);
     put(world, &pos, state);

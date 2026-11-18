@@ -13,7 +13,8 @@ use std::fmt::Write;
 use std::sync::Arc;
 
 use pumpkin_data::block_properties::{
-    ChestLikeProperties, ChestType, ComposterLikeProperties, HorizontalFacing,
+    ChestLikeProperties, ChestType, ComparatorLikeProperties, ComposterLikeProperties,
+    HorizontalFacing, RedstoneOreLikeProperties, RedstoneWireLikeProperties,
 };
 use pumpkin_data::fluid::Fluid;
 use pumpkin_data::item::Item;
@@ -22,9 +23,11 @@ use pumpkin_data::{Block, BlockStateId};
 use pumpkin_inventory::Inventory;
 use pumpkin_util::math::position::BlockPos;
 use pumpkin_util::math::vector2::Vector2;
+use pumpkin_world::chunk::format::LightContainer;
 use pumpkin_world::world::BlockFlags;
 
 use crate::block::entities::chest::ChestBlockEntity;
+use crate::block::entities::shulker_box::ShulkerBoxBlockEntity;
 use crate::command::commands::script_golden::{self, TestResult};
 use crate::entity::ai::test_support;
 use crate::world::World;
@@ -36,6 +39,9 @@ struct Scene {
     setup: Setup,
     new_state: fn() -> BlockStateId,
     flags: BlockFlags,
+    /// Appended after the first mutation run: the chunks get light sections, and the line also
+    /// lists every non-air state and scheduled tick in the box around the position.
+    wide: bool,
 }
 
 const ALL: BlockFlags = BlockFlags::NOTIFY_ALL;
@@ -175,6 +181,103 @@ fn tnt() -> BlockStateId {
     Block::TNT.default_state.id
 }
 
+fn on_shulker_box(world: &Arc<World>, pos: BlockPos) {
+    floor(world, pos);
+    put(world, pos, Block::SHULKER_BOX.default_state.id);
+    world.add_block_entity(Arc::new(ShulkerBoxBlockEntity::new(pos)));
+}
+
+/// Stone with a chest block entity left over at its position.
+fn on_stone_with_stray_chest(world: &Arc<World>, pos: BlockPos) {
+    on_stone(world, pos);
+    world.add_block_entity(Arc::new(ChestBlockEntity::new(pos)));
+}
+
+fn dust(power: u8) -> BlockStateId {
+    let mut wire = RedstoneWireLikeProperties::default(&Block::REDSTONE_WIRE);
+    wire.power = power;
+    wire.to_state_id(&Block::REDSTONE_WIRE)
+}
+
+fn torch(lit: bool) -> BlockStateId {
+    RedstoneOreLikeProperties { lit }.to_state_id(&Block::REDSTONE_TORCH)
+}
+
+/// A lit torch under a solid block carrying powered dust: only the torch's own
+/// `on_state_replaced` reaches the dust two blocks up.
+fn torch_under_powered_dust(world: &Arc<World>, pos: BlockPos) {
+    floor(world, pos);
+    put(world, pos, torch(true));
+    put(world, pos.up(), Block::STONE.default_state.id);
+    put(world, pos.up().up(), dust(15));
+}
+
+/// Stone carrying a torch, with dust beside the torch on another stone.
+fn stone_under_torch_beside_dust(world: &Arc<World>, pos: BlockPos) {
+    on_stone(world, pos);
+    put(world, pos.up(), Block::TORCH.default_state.id);
+    put(world, pos.east(), Block::STONE.default_state.id);
+    put(world, pos.east().up(), dust(15));
+}
+
+/// Dust on the floor whose east neighbour carries dust one block higher.
+fn dust_below_raised_dust(world: &Arc<World>, pos: BlockPos) {
+    floor(world, pos);
+    put(world, pos, Block::REDSTONE_WIRE.default_state.id);
+    put(world, pos.east(), Block::STONE.default_state.id);
+    put(
+        world,
+        pos.east().up(),
+        Block::REDSTONE_WIRE.default_state.id,
+    );
+}
+
+fn air_below_raised_dust(world: &Arc<World>, pos: BlockPos) {
+    floor(world, pos);
+    put(world, pos.east(), Block::STONE.default_state.id);
+    put(
+        world,
+        pos.east().up(),
+        Block::REDSTONE_WIRE.default_state.id,
+    );
+}
+
+fn comparator(facing: HorizontalFacing) -> BlockStateId {
+    let mut gate = ComparatorLikeProperties::default(&Block::COMPARATOR);
+    gate.facing = facing;
+    gate.to_state_id(&Block::COMPARATOR)
+}
+
+/// Comparators two blocks away, behind stone on each side, facing east and west.
+fn composter_behind_stone(world: &Arc<World>, pos: BlockPos) {
+    floor(world, pos);
+    put(world, pos, composter(0));
+    for (side, far, facing) in [
+        (pos.east(), pos.east().east(), HorizontalFacing::East),
+        (pos.west(), pos.west().west(), HorizontalFacing::West),
+    ] {
+        put(world, side, Block::STONE.default_state.id);
+        put(world, far.down(), Block::STONE.default_state.id);
+        put(world, far, comparator(facing));
+    }
+}
+
+fn red_shulker_box() -> BlockStateId {
+    Block::RED_SHULKER_BOX.default_state.id
+}
+
+fn dirt() -> BlockStateId {
+    Block::DIRT.default_state.id
+}
+
+fn unlit_torch() -> BlockStateId {
+    torch(false)
+}
+
+fn plain_dust() -> BlockStateId {
+    Block::REDSTONE_WIRE.default_state.id
+}
+
 const fn scene(
     name: &'static str,
     setup: Setup,
@@ -186,6 +289,22 @@ const fn scene(
         setup,
         new_state,
         flags,
+        wide: false,
+    }
+}
+
+const fn wide(
+    name: &'static str,
+    setup: Setup,
+    new_state: fn() -> BlockStateId,
+    flags: BlockFlags,
+) -> Scene {
+    Scene {
+        name,
+        setup,
+        new_state,
+        flags,
+        wide: true,
     }
 }
 
@@ -196,6 +315,8 @@ const fn with(flags: BlockFlags, more: BlockFlags) -> BlockFlags {
 fn scenes() -> Vec<Scene> {
     let mut scenes = block_scenes();
     scenes.extend(neighbour_scenes());
+    scenes.extend(wide_block_scenes());
+    scenes.extend(wide_neighbour_scenes());
     scenes
 }
 
@@ -320,6 +441,104 @@ fn neighbour_scenes() -> Vec<Scene> {
     ]
 }
 
+fn wide_block_scenes() -> Vec<Scene> {
+    vec![
+        wide(
+            "red shulker box on a shulker box",
+            on_shulker_box,
+            red_shulker_box,
+            ALL,
+        ),
+        wide(
+            "dirt on stone with a stray chest entity",
+            on_stone_with_stray_chest,
+            dirt,
+            ALL,
+        ),
+        wide("glowstone on air, lit", on_air, glowstone, ALL),
+        wide("air on glowstone, lit", on_glowstone, air, ALL),
+        wide("lectern on air, lit", on_air, lectern, ALL),
+    ]
+}
+
+fn wide_neighbour_scenes() -> Vec<Scene> {
+    vec![
+        wide(
+            "air on a torch under powered dust",
+            torch_under_powered_dust,
+            air,
+            ALL,
+        ),
+        wide(
+            "air on a torch under powered dust, listeners only",
+            torch_under_powered_dust,
+            air,
+            BlockFlags::NOTIFY_LISTENERS,
+        ),
+        wide(
+            "air on a torch under powered dust, moved",
+            torch_under_powered_dust,
+            air,
+            with(BlockFlags::NOTIFY_LISTENERS, BlockFlags::MOVED),
+        ),
+        wide(
+            "unlit torch on a torch under powered dust",
+            torch_under_powered_dust,
+            unlit_torch,
+            ALL,
+        ),
+        wide(
+            "air on stone under a torch, skip drops",
+            stone_under_torch_beside_dust,
+            air,
+            with(ALL, BlockFlags::SKIP_DROPS),
+        ),
+        wide(
+            "stone on dust below raised dust",
+            dust_below_raised_dust,
+            stone,
+            ALL,
+        ),
+        wide(
+            "dust below raised dust",
+            air_below_raised_dust,
+            plain_dust,
+            ALL,
+        ),
+        wide(
+            "composter filled, comparators behind stone",
+            composter_behind_stone,
+            composter_three,
+            ALL,
+        ),
+    ]
+}
+
+/// Every non-air state and scheduled tick in x/z -2..=2, y -1..=2 around `pos`.
+fn box_text(world: &World, pos: BlockPos) -> String {
+    let mut text = String::new();
+    for dy in -1..=2 {
+        for dz in -1..=1 {
+            for dx in -2..=2 {
+                let at = BlockPos::new(pos.0.x + dx, pos.0.y + dy, pos.0.z + dz);
+                let state = world.get_block_state_id(&at);
+                let block = Block::from_state_id(state);
+                let ticked = world.is_block_tick_scheduled(&at, block);
+                if !block.is_air() || ticked {
+                    let tick = if ticked { "+tick" } else { "" };
+                    let _ = write!(
+                        text,
+                        " {dx},{dy},{dz}={}#{}{tick}",
+                        block.name,
+                        state.as_u16()
+                    );
+                }
+            }
+        }
+    }
+    text
+}
+
 fn state_text(world: &World, pos: &BlockPos) -> String {
     let state = world.get_block_state_id(pos);
     format!("{}#{}", Block::from_state_id(state).name, state.as_u16())
@@ -437,10 +656,29 @@ fn record(out: &mut String, world: &World, scene: &Scene, pos: BlockPos, returne
         ticks(world, pos),
         world.get_block_light_level(&pos),
     );
+    if scene.wide {
+        out.pop();
+        let _ = writeln!(out, " box{}", box_text(world, pos));
+    }
 }
 
-const fn position_of(index: usize) -> BlockPos {
-    BlockPos::new(index as i32 * 16 + 3008, 64, 8)
+/// Dark light sections, as a generated chunk has before lighting (empty chunks have none, so
+/// the light engine has nothing to write into).
+fn give_light_sections(chunk: &pumpkin_world::chunk::ChunkData) {
+    let count = chunk.section.count;
+    let mut light = chunk
+        .light_engine
+        .lock()
+        .unwrap_or_else(std::sync::PoisonError::into_inner);
+    light.block_light = (0..count).map(|_| LightContainer::new_empty(0)).collect();
+    light.sky_light = (0..count).map(|_| LightContainer::new_empty(0)).collect();
+}
+
+/// Wide scenes sit far from the others, so their lit chunks never replace a neighbour of an
+/// older scene's chunk.
+const fn position_of(index: usize, wide: bool) -> BlockPos {
+    let apart = if wide { 8192 } else { 0 };
+    BlockPos::new(index as i32 * 16 + 3008 + apart, 64, 8)
 }
 
 #[tokio::test(flavor = "multi_thread")]
@@ -449,21 +687,22 @@ async fn block_state_set_is_the_same() -> TestResult {
     let server = test_support::server(&folder).await?;
     let world = server.worlds.load()[0].clone();
     let scenes = scenes();
-    for index in 0..scenes.len() {
-        let chunk = position_of(index).chunk_position();
+    for (index, scene) in scenes.iter().enumerate() {
+        let chunk = position_of(index, scene.wide).chunk_position();
         for dx in -1..=1 {
             for dz in -1..=1 {
                 let at = Vector2::new(chunk.x + dx, chunk.y + dz);
-                world
-                    .level
-                    .loaded_chunks
-                    .insert(at, pumpkin_world::chunk::ChunkData::empty_sync(at.x, at.y));
+                let data = pumpkin_world::chunk::ChunkData::empty_sync(at.x, at.y);
+                if scene.wide {
+                    give_light_sections(&data);
+                }
+                world.level.loaded_chunks.insert(at, data);
             }
         }
     }
     let mut out = String::new();
     for (index, scene) in scenes.iter().enumerate() {
-        let pos = position_of(index);
+        let pos = position_of(index, scene.wide);
         (scene.setup)(&world, pos);
         drop(queued_changes(&world, pos));
         let returned = world.set_block_state(&pos, (scene.new_state)(), scene.flags);

@@ -341,6 +341,19 @@ fn dust_up_to_raised_dust(world: &Arc<World>, pos: BlockPos) {
     );
 }
 
+/// Dot dust (no side connected) under raised dust whose west side connects down to it: the old
+/// state's own sides, not the new state's, decide which indirect neighbours `prepare` updates.
+fn dot_dust_under_raised_dust(world: &Arc<World>, pos: BlockPos) {
+    floor(world, pos);
+    put(world, pos, Block::REDSTONE_WIRE.default_state.id);
+    put(world, pos.east(), Block::STONE.default_state.id);
+    put(
+        world,
+        pos.east().up(),
+        wire(EastRedstone::None, WestRedstone::Side),
+    );
+}
+
 /// The POI entry saved to disk at `pos` (type and free tickets).
 fn saved_poi(world: &World, pos: BlockPos) -> String {
     let mut storage = world
@@ -681,6 +694,12 @@ fn probe_scenes() -> Vec<Scene> {
             ALL,
         ),
         probed("lectern on air, saved", on_air, lectern, ALL, saved_poi),
+        wide(
+            "air on dot dust under raised dust connected to it",
+            dot_dust_under_raised_dust,
+            air,
+            ALL,
+        ),
     ]
 }
 

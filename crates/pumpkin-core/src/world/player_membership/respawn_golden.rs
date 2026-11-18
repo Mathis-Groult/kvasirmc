@@ -108,6 +108,9 @@ struct Scene {
     unloaded_spawn: bool,
     /// Appended scenes end their line with the respawner's chunk-send epoch and tickets.
     extra: bool,
+    /// Appended: before respawning from the nether, the respawner still counts as a viewer of
+    /// the overworld Java watcher (a pairing left over from an earlier world).
+    stale_pairing: bool,
 }
 
 const DEAD: Scene = Scene {
@@ -123,6 +126,7 @@ const DEAD: Scene = Scene {
     spawn_xz: None,
     unloaded_spawn: false,
     extra: false,
+    stale_pairing: false,
 };
 
 const WIDE: Scene = Scene {
@@ -250,6 +254,12 @@ fn widened_scenes() -> Vec<Scene> {
         Scene {
             name: "level spawn chunk not loaded yet",
             unloaded_spawn: true,
+            ..WIDE
+        },
+        Scene {
+            name: "dead in the nether, still paired with an overworld watcher",
+            dies_in: Dim::Nether,
+            stale_pairing: true,
             ..WIDE
         },
     ]
@@ -581,26 +591,29 @@ fn chunk_text(player: &Player) -> String {
 /// Lets `watcher` see everything in the chunks around the origin, as if the chunk system had
 /// sent them, and pairs it with the respawner's tracked entity in `world`.
 fn see(watcher: &Arc<Player>, world: &Arc<World>, respawner: &Player) {
-    watcher.watched_section.store(Cylindrical::new(
-        Vector2::new(0, 0),
-        NonZero::new(4).unwrap_or(NonZero::<u8>::MIN),
-    ));
-    {
-        let mut sender = watcher
-            .chunk_sender
-            .lock()
-            .unwrap_or_else(std::sync::PoisonError::into_inner);
-        for x in -2..=2 {
-            for z in -2..=2 {
-                sender.mark_sent_out_of_band(Vector2::new(x, z));
-            }
-        }
-    }
+    watch_origin(watcher);
     if let Some(tracked) = world
         .entity_tracker
         .get_tracked_entity(respawner.entity_id())
     {
         tracked.update_player(watcher, world);
+    }
+}
+
+/// `viewer` watches the chunks around the origin, all of them sent.
+fn watch_origin(viewer: &Player) {
+    viewer.watched_section.store(Cylindrical::new(
+        Vector2::new(0, 0),
+        NonZero::new(4).unwrap_or(NonZero::<u8>::MIN),
+    ));
+    let mut sender = viewer
+        .chunk_sender
+        .lock()
+        .unwrap_or_else(std::sync::PoisonError::into_inner);
+    for x in -2..=2 {
+        for z in -2..=2 {
+            sender.mark_sent_out_of_band(Vector2::new(x, z));
+        }
     }
 }
 
@@ -677,6 +690,16 @@ async fn run_scene(scene: Scene) -> Result<String, Box<dyn std::error::Error>> {
             see(watcher, world, &player);
         }
     }
+    if scene.stale_pairing {
+        watch_origin(&player);
+        if let Some(tracked) = worlds
+            .overworld
+            .entity_tracker
+            .get_tracked_entity(JAVA_WATCHER.entity_id)
+        {
+            tracked.update_player(&player, &worlds.overworld);
+        }
+    }
     let _ = received.take().await;
     let _ = java_tap.drain();
     let _ = nether_tap.drain();
@@ -721,13 +744,10 @@ async fn run_scene_sendable(scene: Scene) -> Result<String, String> {
     run_scene(scene).await.map_err(|error| error.to_string())
 }
 
-#[tokio::test(flavor = "multi_thread")]
-async fn respawn_player_is_the_same() -> TestResult {
-    // Each scene has its own server: run them side by side (one by one took 12.5 s, over the
-    // 10 s test budget), then join the lines in scene order.
-    let mut all = scenes();
-    all.extend(widened_scenes());
-    let runs: Vec<_> = all
+/// Runs `scenes` side by side (one server each; one by one took 12.5 s for 14 scenes) and
+/// joins their lines in scene order.
+async fn run_all(scenes: Vec<Scene>) -> Result<String, Box<dyn std::error::Error>> {
+    let runs: Vec<_> = scenes
         .into_iter()
         .map(|scene| tokio::spawn(run_scene_sendable(scene)))
         .collect();
@@ -735,6 +755,21 @@ async fn respawn_player_is_the_same() -> TestResult {
     for run in runs {
         report.push_str(&run.await??);
     }
+    Ok(report)
+}
+
+#[tokio::test(flavor = "multi_thread")]
+async fn respawn_player_is_the_same() -> TestResult {
+    let report = run_all(scenes()).await?;
     crate::command::commands::script_golden::bless_or_compare("respawn_player.txt", &report)?;
+    Ok(())
+}
+
+/// The scenes appended after the first mutation run, in their own test: each test server costs
+/// about 2 CPU-seconds to start, so all 22 scenes in one test stayed over the 10 s budget.
+#[tokio::test(flavor = "multi_thread")]
+async fn respawn_player_seen_is_the_same() -> TestResult {
+    let report = run_all(widened_scenes()).await?;
+    crate::command::commands::script_golden::bless_or_compare("respawn_player_seen.txt", &report)?;
     Ok(())
 }

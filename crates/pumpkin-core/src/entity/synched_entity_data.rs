@@ -159,7 +159,7 @@ impl SynchedEntityData {
         let mut buf = Vec::new();
         let mut has_any = false;
 
-        for item in items.values() {
+        for item in in_id_order(&items) {
             if item.dirty {
                 let before_len = buf.len();
                 if item
@@ -206,7 +206,7 @@ impl SynchedEntityData {
         let mut buf = Vec::new();
         let mut has_any = false;
 
-        for item in items.values() {
+        for item in in_id_order(&items) {
             if !item.is_default {
                 let before_len = buf.len();
                 if item
@@ -227,6 +227,13 @@ impl SynchedEntityData {
         buf.put_u8(255);
         Some(buf.into_boxed_slice())
     }
+}
+
+/// The items in tracked-id order, the order vanilla writes them in.
+fn in_id_order(items: &HashMap<TrackedData, DataItem>) -> Vec<&DataItem> {
+    let mut sorted: Vec<&DataItem> = items.values().collect();
+    sorted.sort_unstable_by_key(|item| item.tracked.id.0);
+    sorted
 }
 
 #[cfg(test)]
@@ -263,6 +270,37 @@ mod test {
         assert!(
             data.get_non_default_values_for_version(&JavaMinecraftVersion::V_26_3)
                 .is_none()
+        );
+    }
+
+    /// Entries go out in id order, as vanilla packs them (its items sit in an array indexed by
+    /// id). They used to follow `HashMap` order, so the same entity data gave different bytes
+    /// from run to run.
+    #[test]
+    fn values_are_written_in_id_order() {
+        let ids = [7u8, 2, 9, 0, 5, 3, 8, 1];
+        let data = SynchedEntityData::new();
+        for id in ids {
+            let tracked = TrackedData::new(TrackedId(id), MetaDataType::BYTE);
+            data.define(tracked, 0u8);
+            assert!(data.set(tracked, id + 1));
+        }
+        let mut expected = Vec::new();
+        let mut sorted = ids;
+        sorted.sort_unstable();
+        for id in sorted {
+            let holder = SerializerHolder { value: id + 1 };
+            expected.extend(holder.write_canonical(TrackedId(id), MetaDataType::BYTE));
+        }
+        expected.push(255);
+        let version = JavaMinecraftVersion::V_26_3;
+        assert_eq!(
+            data.get_non_default_values_for_version(&version).as_deref(),
+            Some(expected.as_slice())
+        );
+        assert_eq!(
+            data.pack_dirty_for_version(&version).as_deref(),
+            Some(expected.as_slice())
         );
     }
 }

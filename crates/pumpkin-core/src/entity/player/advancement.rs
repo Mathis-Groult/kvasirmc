@@ -230,6 +230,43 @@ static VANILLA_CONDITIONS_CACHE: std::sync::LazyLock<
     map
 });
 
+/// The listeners of every criterion of every advancement, grouped by trigger in tree order:
+/// what a player with no progress gets. Built once, so a new player clones it instead of
+/// hashing each (advancement, criterion) pair again (84 % of creating a test player).
+static DEFAULT_LISTENERS: std::sync::LazyLock<HashMap<&'static str, Vec<ActiveCriterionListener>>> =
+    std::sync::LazyLock::new(|| {
+        let mut listeners = HashMap::new();
+        for node in &ADVANCEMENT_TREE.nodes_vector {
+            push_every_criterion(&mut listeners, node.value);
+        }
+        listeners
+    });
+
+/// Appends a listener for each criterion of `advancement` under its trigger.
+fn push_every_criterion(
+    listeners: &mut HashMap<&'static str, Vec<ActiveCriterionListener>>,
+    advancement: &'static Advancement,
+) {
+    for criterion_def in advancement.criteria_definitions {
+        let conditions = VANILLA_CONDITIONS_CACHE
+            .get(&(advancement, criterion_def.name))
+            .cloned()
+            .unwrap_or_else(|| {
+                Arc::new(predicate::CriterionConditions::from(
+                    criterion_def.conditions,
+                ))
+            });
+        listeners
+            .entry(criterion_def.trigger)
+            .or_default()
+            .push(ActiveCriterionListener {
+                advancement,
+                criterion: criterion_def.name,
+                conditions,
+            });
+    }
+}
+
 /// Manages a player's collection of advancements.
 ///
 /// This handles saving, loading, and tracking the state of granted / revoked advancements.
@@ -309,6 +346,10 @@ impl PlayerAdvancement {
 
     /// Registers active listeners for all incomplete criteria across all advancements.
     pub fn register_all_listeners(&mut self) {
+        if self.progress.map.is_empty() {
+            self.active_listeners.clone_from(&DEFAULT_LISTENERS);
+            return;
+        }
         self.active_listeners.clear();
         for node in &ADVANCEMENT_TREE.nodes_vector {
             self.register_listeners(node.value);
@@ -342,24 +383,7 @@ impl PlayerAdvancement {
             }
         } else {
             // Not in progress map means 0 criteria completed: register all criteria
-            for criterion_def in advancement.criteria_definitions {
-                let conditions = VANILLA_CONDITIONS_CACHE
-                    .get(&(advancement, criterion_def.name))
-                    .cloned()
-                    .unwrap_or_else(|| {
-                        Arc::new(predicate::CriterionConditions::from(
-                            criterion_def.conditions,
-                        ))
-                    });
-                self.active_listeners
-                    .entry(criterion_def.trigger)
-                    .or_default()
-                    .push(ActiveCriterionListener {
-                        advancement,
-                        criterion: criterion_def.name,
-                        conditions,
-                    });
-            }
+            push_every_criterion(&mut self.active_listeners, advancement);
         }
     }
 
@@ -744,6 +768,53 @@ mod tests {
         assert!(pa.is_first_packet);
         assert!(pa.roots_to_update.is_empty());
         assert!(pa.progress.is_empty());
+    }
+
+    /// What `active_listeners` holds, by trigger: advancement, criterion and conditions in order.
+    fn listeners_text(pa: &PlayerAdvancement) -> Vec<String> {
+        let mut text: Vec<String> = pa
+            .active_listeners
+            .iter()
+            .map(|(trigger, listeners)| {
+                let entries: Vec<String> = listeners
+                    .iter()
+                    .map(|l| {
+                        format!(
+                            "{}/{}@{:p}",
+                            l.advancement.id,
+                            l.criterion,
+                            Arc::as_ptr(&l.conditions)
+                        )
+                    })
+                    .collect();
+                format!("{trigger}: {}", entries.join(" "))
+            })
+            .collect();
+        text.sort();
+        text
+    }
+
+    #[test]
+    fn new_player_listeners_match_the_per_advancement_registration() {
+        let temp_dir = tempdir().unwrap();
+        let manager = Arc::new(AdvancementManager::new(temp_dir.path(), true));
+        let mut pa = PlayerAdvancement::new(manager, Uuid::new_v4());
+        let cloned = listeners_text(&pa);
+        // Progress with nothing done takes the per-advancement path and must give the same.
+        let _ = pa
+            .progress
+            .get_mut_or_start_progress(Advancement::STORY_ROOT);
+        pa.register_all_listeners();
+        assert_eq!(cloned, listeners_text(&pa));
+        let total: usize = ADVANCEMENT_TREE
+            .nodes_vector
+            .iter()
+            .map(|node| node.value.criteria_definitions.len())
+            .sum();
+        assert_eq!(
+            total,
+            pa.active_listeners.values().map(Vec::len).sum::<usize>()
+        );
     }
 
     #[test]

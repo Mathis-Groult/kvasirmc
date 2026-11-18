@@ -46,6 +46,7 @@ use crate::entity::player::Player;
 use crate::entity::player::statistics::StatisticCategory;
 use crate::entity::vehicle::minecart::MinecartEntity;
 use crate::entity::{Entity, EntityBase};
+use crate::net::java::PacketTap;
 use crate::server::Server;
 use crate::world::World;
 
@@ -858,6 +859,68 @@ fn ring(
     Ok(found)
 }
 
+/// The scene's victim, with the packet tap of a victim player.
+fn victim_of(
+    world: &Arc<World>,
+    index: usize,
+    scene: &Scene,
+    victim_at: Vector3<f64>,
+) -> Result<(Arc<dyn EntityBase>, Option<PacketTap>), String> {
+    let victim: Arc<dyn EntityBase> = match scene.victim {
+        Victim::Player(gamemode) => {
+            let (player, tap) = test_support::java_player_as(world, gamemode, &VICTIM)
+                .ok_or("no Java packet tap")?;
+            place(&player, victim_at);
+            world.add_player(&player)?;
+            return Ok((player, Some(tap)));
+        }
+        Victim::Zombie => mob(world, index, 0, &EntityType::ZOMBIE, victim_at)?,
+        Victim::Spider => mob(world, index, 0, &EntityType::SPIDER, victim_at)?,
+        Victim::Golem => mob(world, index, 0, &EntityType::IRON_GOLEM, victim_at)?,
+        Victim::Minecart => mob(world, index, 0, &EntityType::MINECART, victim_at)?,
+        Victim::Invulnerable => {
+            let zombie = mob(world, index, 0, &EntityType::ZOMBIE, victim_at)?;
+            zombie
+                .get_entity()
+                .invulnerable
+                .store(true, Ordering::Relaxed);
+            zombie
+        }
+    };
+    Ok((victim, None))
+}
+
+/// The scene's bystanders: the ring, the three, or none.
+fn bystanders_of(
+    world: &Arc<World>,
+    index: usize,
+    scene: &Scene,
+    victim_at: Vector3<f64>,
+) -> Result<Vec<Arc<dyn EntityBase>>, String> {
+    if scene.ring {
+        return ring(world, index, victim_at);
+    }
+    if !scene.bystanders {
+        return Ok(Vec::new());
+    }
+    let offsets = [
+        Vector3::new(0.9, 0.0, 0.3),
+        Vector3::new(2.5, 0.0, 0.0),
+        Vector3::new(0.0, 1.2, 0.0),
+    ];
+    let mut found = Vec::new();
+    for (slot, offset) in (1..).zip(offsets) {
+        found.push(mob(
+            world,
+            index,
+            slot,
+            &EntityType::ZOMBIE,
+            victim_at.add(&offset),
+        )?);
+    }
+    Ok(found)
+}
+
 /// The attacker as a Java or a Bedrock player, with a function that drains what it was sent.
 type Drain = Box<dyn FnMut() -> Vec<bytes::Bytes>>;
 
@@ -897,58 +960,8 @@ async fn run(world: &Arc<World>, index: usize, scene: &Scene) -> Result<String, 
         test_support::java_player_as(world, GameMode::Survival, &WATCHER)
             .ok_or("no Java packet tap")?;
     place(&watcher, at.add(&Vector3::new(-6.0, 0.0, 0.0)));
-    let mut victim_tap = None;
-    let victim: Arc<dyn EntityBase> = match scene.victim {
-        Victim::Player(gamemode) => {
-            let (player, tap) = test_support::java_player_as(world, gamemode, &VICTIM)
-                .ok_or("no Java packet tap")?;
-            place(&player, victim_at);
-            world.add_player(&player)?;
-            victim_tap = Some(tap);
-            player
-        }
-        Victim::Zombie => mob(world, index, 0, &EntityType::ZOMBIE, victim_at)?,
-        Victim::Spider => mob(world, index, 0, &EntityType::SPIDER, victim_at)?,
-        Victim::Golem => mob(world, index, 0, &EntityType::IRON_GOLEM, victim_at)?,
-        Victim::Minecart => mob(world, index, 0, &EntityType::MINECART, victim_at)?,
-        Victim::Invulnerable => {
-            let zombie = mob(world, index, 0, &EntityType::ZOMBIE, victim_at)?;
-            zombie
-                .get_entity()
-                .invulnerable
-                .store(true, Ordering::Relaxed);
-            zombie
-        }
-    };
-    let bystanders = if scene.ring {
-        ring(world, index, victim_at)?
-    } else if scene.bystanders {
-        vec![
-            mob(
-                world,
-                index,
-                1,
-                &EntityType::ZOMBIE,
-                victim_at.add(&Vector3::new(0.9, 0.0, 0.3)),
-            )?,
-            mob(
-                world,
-                index,
-                2,
-                &EntityType::ZOMBIE,
-                victim_at.add(&Vector3::new(2.5, 0.0, 0.0)),
-            )?,
-            mob(
-                world,
-                index,
-                3,
-                &EntityType::ZOMBIE,
-                victim_at.add(&Vector3::new(0.0, 1.2, 0.0)),
-            )?,
-        ]
-    } else {
-        Vec::new()
-    };
+    let (victim, mut victim_tap) = victim_of(world, index, scene, victim_at)?;
+    let bystanders = bystanders_of(world, index, scene, victim_at)?;
     world.add_player(&attacker)?;
     world.add_player(&watcher)?;
     drop(attacker_drain());

@@ -20,3 +20,11 @@ Stone by survival skip drops false at spawn: returned None left stone drops []; 
 Stone by operator skip drops false at spawn: returned Some("stone") left air drops ["cobblestonex1"]; breaker events [] chats 0; watcher events ["2f000007de00000100000000400000000100"] chats 0
 Stone by nobody skip drops false at spawn: returned Some("stone") left air drops ["cobblestonex1"]; breaker events ["2f000007de00000000000000400000000100"] chats 0; watcher events ["2f000007de00000000000000400000000100"] chats 0
 Stone by survival skip drops false at past protection: returned Some("stone") left air drops ["cobblestonex1"]; breaker events [] chats 0; watcher events ["2f000007de00000440000000400000000100"] chats 0
+WaterSource by survival skip drops false at far: returned Some("water") left air drops []; breaker events [] chats 0; watcher events ["2f000007de00008a00000080400000005900"] chats 0
+WaterSource by nobody skip drops false at far: returned Some("water") left air drops []; breaker events ["2f000007de00008e00000080400000005900"] chats 0; watcher events ["2f000007de00008e00000080400000005900"] chats 0
+SoulFire by survival skip drops false at far: returned Some("soul_fire") left air drops []; breaker events [] chats 0; watcher events [] chats 0
+SoulFire by nobody skip drops false at far: returned Some("soul_fire") left air drops []; breaker events [] chats 0; watcher events [] chats 0
+Cobweb by survival skip drops false at far: returned Some("cobweb") left air drops ["stringx1"]; breaker events [] chats 0; watcher events ["2f000007de00009a00000080400000093a00"] chats 0
+Cobweb holding shears by survival skip drops false at far: returned Some("cobweb") left air drops ["cobwebx1"]; breaker events [] chats 0; watcher events ["2f000007de00009e00000080400000093a00"] chats 0
+DiamondOre by survival skip drops false at far: returned Some("diamond_ore") left air drops ["diamondx1"] xp; breaker events [] chats 0; watcher events ["2f000007de0000a2000000804000001acf00"] chats 0
+DiamondOre by survival skip drops true at far: returned Some("diamond_ore") left air drops []; breaker events [] chats 0; watcher events ["2f000007de0000a6000000804000001acf00"] chats 0

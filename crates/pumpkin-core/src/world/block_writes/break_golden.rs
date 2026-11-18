@@ -13,6 +13,7 @@ use std::num::NonZero;
 use std::sync::Arc;
 
 use pumpkin_data::block_properties::WhiteWoolSlabLikeProperties;
+use pumpkin_data::entity::EntityType;
 use pumpkin_data::item::Item;
 use pumpkin_data::item_stack::ItemStack;
 use pumpkin_data::packet::CURRENT_MC_VERSION;
@@ -20,11 +21,11 @@ use pumpkin_data::{Block, BlockStateId};
 use pumpkin_inventory::Inventory;
 use pumpkin_protocol::java::client::play::{CSystemChatMessage, CWorldEvent};
 use pumpkin_protocol::packet::MultiVersionJavaPacket;
-use pumpkin_util::GameMode;
 use pumpkin_util::math::position::BlockPos;
 use pumpkin_util::math::vector2::Vector2;
 use pumpkin_util::math::vector3::Vector3;
 use pumpkin_util::permission::PermissionLvl;
+use pumpkin_util::{GameMode, Hand};
 use pumpkin_world::cylindrical_chunk_iterator::Cylindrical;
 use pumpkin_world::world::BlockFlags;
 
@@ -48,6 +49,10 @@ enum Kind {
     FullChest,
     FullShulker,
     EmptyShulker,
+    WaterSource,
+    SoulFire,
+    Cobweb,
+    DiamondOre,
 }
 
 #[derive(Clone, Copy, PartialEq, Eq)]
@@ -65,11 +70,19 @@ enum Place {
     PastProtection,
 }
 
+/// What the breaker holds in the main hand.
+#[derive(Clone, Copy, PartialEq, Eq)]
+enum Held {
+    Nothing,
+    Shears,
+}
+
 struct Scene {
     kind: Kind,
     cause: Cause,
     skip_drops: bool,
     place: Place,
+    held: Held,
 }
 
 const fn far(kind: Kind, cause: Cause, skip_drops: bool) -> Scene {
@@ -78,7 +91,13 @@ const fn far(kind: Kind, cause: Cause, skip_drops: bool) -> Scene {
         cause,
         skip_drops,
         place: Place::Far,
+        held: Held::Nothing,
     }
+}
+
+const fn holding_shears(mut scene: Scene) -> Scene {
+    scene.held = Held::Shears;
+    scene
 }
 
 const fn at(mut scene: Scene, place: Place) -> Scene {
@@ -112,6 +131,16 @@ const SCENES: &[Scene] = &[
         far(Kind::Stone, Cause::Survival, false),
         Place::PastProtection,
     ),
+    // Appended after the first mutation run: a break that changes nothing (a water source
+    // stays water), soul fire, the held tool in the loot roll, experience.
+    far(Kind::WaterSource, Cause::Survival, false),
+    far(Kind::WaterSource, Cause::Nobody, false),
+    far(Kind::SoulFire, Cause::Survival, false),
+    far(Kind::SoulFire, Cause::Nobody, false),
+    far(Kind::Cobweb, Cause::Survival, false),
+    holding_shears(far(Kind::Cobweb, Cause::Survival, false)),
+    far(Kind::DiamondOre, Cause::Survival, false),
+    far(Kind::DiamondOre, Cause::Survival, true),
 ];
 
 fn put(world: &Arc<World>, pos: &BlockPos, state: BlockStateId) {
@@ -136,6 +165,10 @@ fn lay(world: &Arc<World>, pos: BlockPos, kind: Kind) {
         Kind::Air => Block::AIR.default_state.id,
         Kind::FullChest => Block::CHEST.default_state.id,
         Kind::FullShulker | Kind::EmptyShulker => Block::SHULKER_BOX.default_state.id,
+        Kind::WaterSource => Block::WATER.default_state.id,
+        Kind::SoulFire => Block::SOUL_FIRE.default_state.id,
+        Kind::Cobweb => Block::COBWEB.default_state.id,
+        Kind::DiamondOre => Block::DIAMOND_ORE.default_state.id,
     };
     put(world, &pos.down(), Block::STONE.default_state.id);
     put(world, &pos, state);
@@ -219,6 +252,19 @@ fn drops(world: &World, pos: BlockPos) -> Vec<String> {
     found
 }
 
+/// ` xp` when an experience orb lies over the block (old scenes drop none, so their lines
+/// stay as first blessed).
+fn experience(world: &World, pos: BlockPos) -> &'static str {
+    let orb = world.entities.load().iter().any(|entity| {
+        let entity = entity.get_entity();
+        let at = entity.pos.load();
+        entity.entity_type == &EntityType::EXPERIENCE_ORB
+            && (at.x - f64::from(pos.0.x) - 0.5).abs() < 1.0
+            && (at.z - f64::from(pos.0.z) - 0.5).abs() < 1.0
+    });
+    if orb { " xp" } else { "" }
+}
+
 struct Players {
     breaker: Arc<Player>,
     breaker_tap: PacketTap,
@@ -261,6 +307,11 @@ fn run(out: &mut String, world: &Arc<World>, players: &mut Players, index: usize
         PermissionLvl::Zero
     };
     breaker.permission_lvl.store(level);
+    if scene.held == Held::Shears {
+        breaker
+            .inventory()
+            .set_stack_in_hand(Hand::Right, ItemStack::new(1, &Item::SHEARS));
+    }
     drop(packets(&mut players.breaker_tap));
     drop(packets(&mut players.watcher_tap));
     let flags = if scene.skip_drops {
@@ -272,9 +323,19 @@ fn run(out: &mut String, world: &Arc<World>, players: &mut Players, index: usize
     let returned = world.break_block(&pos, cause, flags);
     let returned = returned.map(|state| Block::from_state_id(state).name);
     let left = world.get_block(&pos).name;
+    if scene.held == Held::Shears {
+        breaker
+            .inventory()
+            .set_stack_in_hand(Hand::Right, ItemStack::EMPTY.clone());
+    }
+    let held = if scene.held == Held::Shears {
+        " holding shears"
+    } else {
+        ""
+    };
     let _ = writeln!(
         out,
-        "{:?} by {} skip drops {} at {}: returned {returned:?} left {left} drops {:?}; breaker {}; watcher {}",
+        "{:?}{held} by {} skip drops {} at {}: returned {returned:?} left {left} drops {:?}{}; breaker {}; watcher {}",
         scene.kind,
         match scene.cause {
             Cause::Nobody => "nobody",
@@ -289,6 +350,7 @@ fn run(out: &mut String, world: &Arc<World>, players: &mut Players, index: usize
             Place::PastProtection => "past protection",
         },
         drops(world, pos),
+        experience(world, pos),
         packets(&mut players.breaker_tap),
         packets(&mut players.watcher_tap),
     );

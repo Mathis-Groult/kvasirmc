@@ -90,6 +90,9 @@ impl UseOn<'_> {
                 if matches!(result, BlockActionResult::SuccessServer) {
                     player.swing_hand(hand, true);
                 }
+                // Vanilla's block use works on the stack in the hand itself: keep what it
+                // consumed, damaged or turned the stack into.
+                self.update_hand(self.hand_slot(), before, item.clone());
                 return true;
             }
         }
@@ -106,14 +109,9 @@ impl UseOn<'_> {
         let server = self.server;
         let position = self.use_item_on.position;
         let face = self.face;
-        let inventory = player.inventory();
         let mut should_try_decrement = false;
 
-        let slot_index = if matches!(self.hand, Hand::Right) {
-            inventory.get_selected_slot() as usize
-        } else {
-            PlayerInventory::OFF_HAND_SLOT
-        };
+        let slot_index = self.hand_slot();
 
         if item.is_empty() {
             // TODO item cool down
@@ -168,7 +166,16 @@ impl UseOn<'_> {
         Ok(())
     }
 
-    /// Sends the break status of a used-up item, then syncs and stores the hand's new stack.
+    /// The inventory slot of the hand in use.
+    fn hand_slot(&self) -> usize {
+        if matches!(self.hand, Hand::Right) {
+            self.player.inventory().get_selected_slot() as usize
+        } else {
+            PlayerInventory::OFF_HAND_SLOT
+        }
+    }
+
+    /// Sends the break status of a broken item, then syncs and stores the hand's new stack.
     fn update_hand(&self, slot_index: usize, before: &ItemStack, after: ItemStack) {
         let player = self.player;
         let inventory = player.inventory();

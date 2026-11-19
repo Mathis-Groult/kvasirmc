@@ -1,9 +1,21 @@
 #[allow(clippy::wildcard_imports)]
 use super::*;
 use pumpkin_data::entity::EntityPose;
+use pumpkin_protocol::codec::bitset::Bitset;
+use pumpkin_util::math::vector3::Vector3;
+
+/// What one input packet changed about where the player stands and looks.
+struct MovementChange {
+    old_pos: Vector3<f64>,
+    new_pos: Vector3<f64>,
+    new_pitch: f32,
+    new_yaw: f32,
+    on_ground: bool,
+    pos_changed: bool,
+    rot_changed: bool,
+}
 
 impl BedrockClient {
-    #[expect(clippy::too_many_lines)]
     pub fn handle_player_auth_input(
         &self,
         player: &Arc<Player>,
@@ -40,119 +52,188 @@ impl BedrockClient {
         let rot_changed = new_pitch != old_pitch || new_yaw != old_yaw;
 
         if pos_changed || rot_changed {
-            let world = player.world();
-
-            if pos_changed {
-                player.get_entity().set_pos(new_pos);
-            }
-            if rot_changed {
-                entity.pitch.store(new_pitch);
-                entity.yaw.store(new_yaw);
-            }
-
-            // TODO: use `pumpkin_util::math::pack_degrees`.
-            let je_yaw = (new_yaw * 256.0 / 360.0).rem_euclid(256.0);
-            let je_pitch = (new_pitch * 256.0 / 360.0).rem_euclid(256.0);
-
-            let delta = pumpkin_util::math::vector3::Vector3::new(
-                new_pos.x - old_pos.x,
-                new_pos.y - old_pos.y,
-                new_pos.z - old_pos.z,
+            Self::apply_movement(
+                player,
+                &MovementChange {
+                    old_pos,
+                    new_pos,
+                    new_pitch,
+                    new_yaw,
+                    on_ground,
+                    pos_changed,
+                    rot_changed,
+                },
             );
-
-            let bedrock_move_packet = pumpkin_protocol::bedrock::client::CMovePlayer::new(
-                pumpkin_protocol::codec::var_ulong::VarULong(player.entity_id() as u64),
-                pumpkin_util::math::vector3::Vector3::new(
-                    new_pos.x as f32,
-                    new_pos.y as f32 + entity.entity_type.eye_height,
-                    new_pos.z as f32,
-                ),
-                new_pitch,
-                new_yaw,
-                new_yaw, // Head yaw
-                pumpkin_protocol::bedrock::client::CMovePlayer::MODE_NORMAL,
-                on_ground,
-                pumpkin_protocol::codec::var_ulong::VarULong(0),
-                0,
-                0,
-                pumpkin_protocol::codec::var_ulong::VarULong(0),
-            );
-
-            if pos_changed && delta.length_squared() >= 64.0 {
-                world.broadcast_packet_except(
-                    &[player.gameprofile.id],
-                    &pumpkin_protocol::java::client::play::CEntityPositionSync::new(
-                        player.entity_id().into(),
-                        new_pos,
-                        pumpkin_util::math::vector3::Vector3::new(0.0, 0.0, 0.0),
-                        je_yaw,
-                        je_pitch,
-                        on_ground,
-                    ),
-                );
-            } else if pos_changed && rot_changed {
-                world.broadcast_packet_except_editioned(
-                    &[player.gameprofile.id],
-                    &pumpkin_protocol::java::client::play::CUpdateEntityPosRot::new(
-                        player.entity_id().into(),
-                        pumpkin_util::math::vector3::Vector3::new(
-                            new_pos.x.mul_add(4096.0, -(old_pos.x * 4096.0)) as i16,
-                            new_pos.y.mul_add(4096.0, -(old_pos.y * 4096.0)) as i16,
-                            new_pos.z.mul_add(4096.0, -(old_pos.z * 4096.0)) as i16,
-                        ),
-                        je_yaw as u8,   // Use converted Java byte
-                        je_pitch as u8, // Use converted Java byte
-                        on_ground,
-                    ),
-                    &bedrock_move_packet,
-                );
-            } else if pos_changed {
-                world.broadcast_packet_except_editioned(
-                    &[player.gameprofile.id],
-                    &pumpkin_protocol::java::client::play::CUpdateEntityPos::new(
-                        player.entity_id().into(),
-                        pumpkin_util::math::vector3::Vector3::new(
-                            new_pos.x.mul_add(4096.0, -(old_pos.x * 4096.0)) as i16,
-                            new_pos.y.mul_add(4096.0, -(old_pos.y * 4096.0)) as i16,
-                            new_pos.z.mul_add(4096.0, -(old_pos.z * 4096.0)) as i16,
-                        ),
-                        on_ground,
-                    ),
-                    &bedrock_move_packet,
-                );
-            } else if rot_changed {
-                world.broadcast_packet_except_editioned(
-                    &[player.gameprofile.id],
-                    &pumpkin_protocol::java::client::play::CUpdateEntityRot::new(
-                        player.entity_id().into(),
-                        je_yaw as u8,   // Use converted Java byte
-                        je_pitch as u8, // Use converted Java byte
-                        on_ground,
-                    ),
-                    &bedrock_move_packet,
-                );
-            }
-
-            if rot_changed {
-                world.broadcast_packet_except(
-                    &[player.gameprofile.id],
-                    // Adjust to `CHeadRot` if that is what your crate currently calls it
-                    &pumpkin_protocol::java::client::play::CHeadRot::new(
-                        player.entity_id().into(),
-                        je_yaw as u8,
-                    ),
-                );
-            }
-
-            if pos_changed {
-                chunker::update_position(player);
-                player.check_location_enchantments(new_pos, on_ground);
-                player.progress_motion(delta);
-            }
         }
 
         let input_data = packet.input_data;
 
+        Self::apply_stance_inputs(player, server, &input_data);
+        Self::apply_flight_inputs(player, server, &input_data);
+
+        // The sneak and flight toggles arrive in the same packet as the move, so
+        // apply them first, like Java where they come in earlier packets.
+        if pos_changed {
+            entity.emit_client_movement(player.as_ref(), new_pos - old_pos);
+        }
+
+        Self::paddle_vehicle(player, &input_data);
+
+        if let Some(block_actions) = packet.block_actions {
+            for action in &block_actions {
+                self.handle_player_block_action(player, server, action);
+            }
+        }
+    }
+
+    /// Stores the new position and rotation, tells the others and updates the player's chunks.
+    fn apply_movement(player: &Arc<Player>, change: &MovementChange) {
+        let MovementChange {
+            old_pos,
+            new_pos,
+            new_pitch,
+            new_yaw,
+            on_ground,
+            pos_changed,
+            rot_changed,
+        } = *change;
+        let entity = player.get_entity();
+        let world = player.world();
+
+        if pos_changed {
+            player.get_entity().set_pos(new_pos);
+        }
+        if rot_changed {
+            entity.pitch.store(new_pitch);
+            entity.yaw.store(new_yaw);
+        }
+
+        // TODO: use `pumpkin_util::math::pack_degrees`.
+        let je_yaw = (new_yaw * 256.0 / 360.0).rem_euclid(256.0);
+        let je_pitch = (new_pitch * 256.0 / 360.0).rem_euclid(256.0);
+
+        let delta = pumpkin_util::math::vector3::Vector3::new(
+            new_pos.x - old_pos.x,
+            new_pos.y - old_pos.y,
+            new_pos.z - old_pos.z,
+        );
+
+        Self::broadcast_movement(player, &world, change, delta, je_yaw, je_pitch);
+
+        if rot_changed {
+            world.broadcast_packet_except(
+                &[player.gameprofile.id],
+                // Adjust to `CHeadRot` if that is what your crate currently calls it
+                &pumpkin_protocol::java::client::play::CHeadRot::new(
+                    player.entity_id().into(),
+                    je_yaw as u8,
+                ),
+            );
+        }
+
+        if pos_changed {
+            chunker::update_position(player);
+            player.check_location_enchantments(new_pos, on_ground);
+            player.progress_motion(delta);
+        }
+    }
+
+    /// Sends the move to the other players, in the packet that fits what changed.
+    fn broadcast_movement(
+        player: &Arc<Player>,
+        world: &Arc<crate::world::World>,
+        change: &MovementChange,
+        delta: Vector3<f64>,
+        je_yaw: f32,
+        je_pitch: f32,
+    ) {
+        let MovementChange {
+            old_pos,
+            new_pos,
+            new_pitch,
+            new_yaw,
+            on_ground,
+            pos_changed,
+            rot_changed,
+        } = *change;
+        let entity = player.get_entity();
+        let bedrock_move_packet = pumpkin_protocol::bedrock::client::CMovePlayer::new(
+            pumpkin_protocol::codec::var_ulong::VarULong(player.entity_id() as u64),
+            pumpkin_util::math::vector3::Vector3::new(
+                new_pos.x as f32,
+                new_pos.y as f32 + entity.entity_type.eye_height,
+                new_pos.z as f32,
+            ),
+            new_pitch,
+            new_yaw,
+            new_yaw, // Head yaw
+            pumpkin_protocol::bedrock::client::CMovePlayer::MODE_NORMAL,
+            on_ground,
+            pumpkin_protocol::codec::var_ulong::VarULong(0),
+            0,
+            0,
+            pumpkin_protocol::codec::var_ulong::VarULong(0),
+        );
+
+        if pos_changed && delta.length_squared() >= 64.0 {
+            world.broadcast_packet_except(
+                &[player.gameprofile.id],
+                &pumpkin_protocol::java::client::play::CEntityPositionSync::new(
+                    player.entity_id().into(),
+                    new_pos,
+                    pumpkin_util::math::vector3::Vector3::new(0.0, 0.0, 0.0),
+                    je_yaw,
+                    je_pitch,
+                    on_ground,
+                ),
+            );
+        } else if pos_changed && rot_changed {
+            world.broadcast_packet_except_editioned(
+                &[player.gameprofile.id],
+                &pumpkin_protocol::java::client::play::CUpdateEntityPosRot::new(
+                    player.entity_id().into(),
+                    pumpkin_util::math::vector3::Vector3::new(
+                        new_pos.x.mul_add(4096.0, -(old_pos.x * 4096.0)) as i16,
+                        new_pos.y.mul_add(4096.0, -(old_pos.y * 4096.0)) as i16,
+                        new_pos.z.mul_add(4096.0, -(old_pos.z * 4096.0)) as i16,
+                    ),
+                    je_yaw as u8,   // Use converted Java byte
+                    je_pitch as u8, // Use converted Java byte
+                    on_ground,
+                ),
+                &bedrock_move_packet,
+            );
+        } else if pos_changed {
+            world.broadcast_packet_except_editioned(
+                &[player.gameprofile.id],
+                &pumpkin_protocol::java::client::play::CUpdateEntityPos::new(
+                    player.entity_id().into(),
+                    pumpkin_util::math::vector3::Vector3::new(
+                        new_pos.x.mul_add(4096.0, -(old_pos.x * 4096.0)) as i16,
+                        new_pos.y.mul_add(4096.0, -(old_pos.y * 4096.0)) as i16,
+                        new_pos.z.mul_add(4096.0, -(old_pos.z * 4096.0)) as i16,
+                    ),
+                    on_ground,
+                ),
+                &bedrock_move_packet,
+            );
+        } else if rot_changed {
+            world.broadcast_packet_except_editioned(
+                &[player.gameprofile.id],
+                &pumpkin_protocol::java::client::play::CUpdateEntityRot::new(
+                    player.entity_id().into(),
+                    je_yaw as u8,   // Use converted Java byte
+                    je_pitch as u8, // Use converted Java byte
+                    on_ground,
+                ),
+                &bedrock_move_packet,
+            );
+        }
+    }
+
+    /// Sprint, sneak, crawl, glide, swim and spin-attack toggles of the packet.
+    fn apply_stance_inputs(player: &Arc<Player>, server: &Arc<Server>, input_data: &Bitset<66>) {
+        let entity = player.get_entity();
         if input_data.get(InputData::StartSprinting as usize) {
             player.set_sprinting(true);
         } else if input_data.get(InputData::StopSprinting as usize) {
@@ -192,7 +273,10 @@ impl BedrockClient {
         } else if input_data.get(InputData::StopSpinAttack as usize) {
             player.update_player_pose();
         }
+    }
 
+    /// The flight toggles of the packet (plugins may cancel them).
+    fn apply_flight_inputs(player: &Arc<Player>, server: &Arc<Server>, input_data: &Bitset<66>) {
         if input_data.get(InputData::StartFlying as usize) {
             let flying = {
                 player
@@ -241,13 +325,11 @@ impl BedrockClient {
                 }}
             }
         }
+    }
 
-        // The sneak and flight toggles arrive in the same packet as the move, so
-        // apply them first, like Java where they come in earlier packets.
-        if pos_changed {
-            entity.emit_client_movement(player.as_ref(), new_pos - old_pos);
-        }
-
+    /// The paddle keys while riding a boat.
+    fn paddle_vehicle(player: &Arc<Player>, input_data: &Bitset<66>) {
+        let entity = player.get_entity();
         if entity.has_vehicle() {
             let paddling_left = input_data.get(InputData::PaddlingLeft as usize);
             let paddling_right = input_data.get(InputData::PaddlingRight as usize);
@@ -258,12 +340,6 @@ impl BedrockClient {
                 .clone();
             if let Some(vehicle) = vehicle {
                 vehicle.set_paddle_state(paddling_left, paddling_right);
-            }
-        }
-
-        if let Some(block_actions) = packet.block_actions {
-            for action in &block_actions {
-                self.handle_player_block_action(player, server, action);
             }
         }
     }

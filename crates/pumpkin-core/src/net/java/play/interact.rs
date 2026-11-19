@@ -91,3 +91,5 @@ impl JavaClient {
 mod entity_use;
 #[cfg(test)]
 mod golden;
+#[cfg(test)]
+mod hand_tests;

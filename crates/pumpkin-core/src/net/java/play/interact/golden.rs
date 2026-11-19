@@ -17,6 +17,9 @@ use std::sync::Arc;
 use std::sync::atomic::Ordering;
 use std::time::{Duration, Instant};
 
+use pumpkin_config::world::LevelConfig;
+use pumpkin_config::{AdvancedConfiguration, BasicConfiguration, TelemetryConfig};
+use pumpkin_data::data_component_impl::EquipmentSlot;
 use pumpkin_data::entity::EntityType;
 use pumpkin_data::item::Item;
 use pumpkin_data::item_stack::ItemStack;
@@ -30,11 +33,15 @@ use pumpkin_world::cylindrical_chunk_iterator::Cylindrical;
 use uuid::Uuid;
 
 use crate::command::commands::script_golden::{self, TestResult};
+use crate::data::VanillaData;
 use crate::entity::ai::test_support::{self, Identity};
+use crate::entity::mob::piglin::PiglinEntity;
 use crate::entity::passive::allay::AllayEntity;
+use crate::entity::passive::armadillo::ArmadilloEntity;
 use crate::entity::passive::cod::CodEntity;
 use crate::entity::passive::cow::CowEntity;
 use crate::entity::passive::sheep::SheepEntity;
+use crate::entity::passive::sniffer::SnifferEntity;
 use crate::entity::player::Player;
 use crate::entity::player::statistics::StatisticCategory;
 use crate::entity::{Entity, EntityBase};
@@ -76,6 +83,13 @@ enum Target {
     Missing,
     /// The packet names the user itself.
     Itself,
+    /// Appended targets.
+    Sniffer,
+    BabySniffer,
+    Armadillo,
+    Piglin,
+    /// A survival player with half a heart.
+    WoundedPlayer,
 }
 
 #[derive(Clone, Copy)]
@@ -104,6 +118,10 @@ struct Scene {
     /// Appended scenes end their line with whether the packet counted as activity and whether
     /// the user's connection was closed (kicked).
     extra: bool,
+    /// Appended: the user wears a golden helmet.
+    golden_helmet: bool,
+    /// Appended: the scene runs on a second server whose `pvp.protect_creative` is off.
+    unprotected: bool,
 }
 
 const SCENE: Scene = Scene {
@@ -122,6 +140,8 @@ const SCENE: Scene = Scene {
     far: false,
     margin: false,
     extra: false,
+    golden_helmet: false,
+    unprotected: false,
 };
 
 const fn scene(name: &'static str, target: Target, action: i32) -> Scene {
@@ -138,7 +158,83 @@ fn scenes() -> Vec<Scene> {
     scenes.extend(attack_scenes());
     scenes.extend(interact_scenes());
     scenes.extend(widened_scenes());
+    scenes.extend(widened_scenes_late());
     scenes
+}
+
+const LATE: Scene = Scene {
+    extra: true,
+    ..SCENE
+};
+
+const fn late(name: &'static str, target: Target, action: i32) -> Scene {
+    Scene {
+        name,
+        target,
+        action,
+        ..LATE
+    }
+}
+
+/// Scenes appended in the second widening (the arm bodies, judged on the split helpers).
+fn widened_scenes_late() -> Vec<Scene> {
+    vec![
+        late(
+            "attack a player with half a heart",
+            Target::WoundedPlayer,
+            ATTACK,
+        ),
+        Scene {
+            held: Some((&Item::WHEAT, 1)),
+            ..late("the last wheat on a cow", Target::Cow, INTERACT)
+        },
+        Scene {
+            held: Some((&Item::TORCHFLOWER_SEEDS, 2)),
+            ..late(
+                "torchflower seeds on a baby sniffer",
+                Target::BabySniffer,
+                INTERACT,
+            )
+        },
+        Scene {
+            held: Some((&Item::TORCHFLOWER_SEEDS, 2)),
+            ..late("torchflower seeds on a sniffer", Target::Sniffer, INTERACT)
+        },
+        Scene {
+            held: Some((&Item::BRUSH, 1)),
+            ..late("brush on an armadillo", Target::Armadillo, INTERACT)
+        },
+        Scene {
+            held: Some((&Item::GOLD_INGOT, 2)),
+            ..late("gold ingot on a piglin", Target::Piglin, INTERACT)
+        },
+        Scene {
+            held: Some((&Item::GOLD_INGOT, 2)),
+            golden_helmet: true,
+            ..late(
+                "gold ingot on a piglin, golden helmet worn",
+                Target::Piglin,
+                INTERACT,
+            )
+        },
+        Scene {
+            held: Some((&Item::NAME_TAG, 2)),
+            named: true,
+            ..late(
+                "named name tag on a cow, advancements",
+                Target::Cow,
+                INTERACT,
+            )
+        },
+        Scene {
+            unprotected: true,
+            ..late(
+                "attack a creative player, creative not protected",
+                Target::Player(GameMode::Creative),
+                ATTACK,
+            )
+        },
+    ]
 }
 
 const WIDE: Scene = Scene {
@@ -377,7 +473,13 @@ fn mob(
         at,
         kind,
     );
-    let mob: Arc<dyn EntityBase> = if kind == &EntityType::SHEEP {
+    let mob: Arc<dyn EntityBase> = if kind == &EntityType::SNIFFER {
+        SnifferEntity::new(entity)
+    } else if kind == &EntityType::ARMADILLO {
+        ArmadilloEntity::new(entity)
+    } else if kind == &EntityType::PIGLIN {
+        PiglinEntity::new(entity)
+    } else if kind == &EntityType::SHEEP {
         SheepEntity::new(entity)
     } else if kind == &EntityType::ALLAY {
         AllayEntity::new(entity)
@@ -544,6 +646,16 @@ fn equip(user: &Arc<Player>, scene: &Scene) {
     if scene.was_sneaking {
         user.get_entity().set_sneaking(true);
     }
+    if scene.golden_helmet {
+        user.living_entity
+            .entity_equipment
+            .lock()
+            .unwrap_or_else(std::sync::PoisonError::into_inner)
+            .put(
+                &EquipmentSlot::HEAD,
+                ItemStack::new(1, &Item::GOLDEN_HELMET),
+            );
+    }
     if scene.extra
         && let Some(long_ago) = Instant::now().checked_sub(Duration::from_secs(600))
     {
@@ -576,9 +688,19 @@ fn target_of(
         Target::Sheep => &EntityType::SHEEP,
         Target::Allay => &EntityType::ALLAY,
         Target::Cod => &EntityType::COD,
+        Target::Sniffer | Target::BabySniffer => &EntityType::SNIFFER,
+        Target::Armadillo => &EntityType::ARMADILLO,
+        Target::Piglin => &EntityType::PIGLIN,
+        Target::WoundedPlayer => {
+            let found = player_target(world, GameMode::Survival, at, pos, false)?;
+            if let Some(victim) = found.0.as_ref().and_then(|t| t.get_living_entity()) {
+                victim.health.store(0.5);
+            }
+            return Ok(found);
+        }
     };
     let mob = mob(world, index, kind, at)?;
-    if scene.target == Target::BabyCow {
+    if matches!(scene.target, Target::BabyCow | Target::BabySniffer) {
         mob.get_entity().age.store(-24_000, Ordering::Relaxed);
     }
     Ok((Some(mob), None, target_id(index)))
@@ -667,13 +789,8 @@ fn run(
     Ok(line + "\n")
 }
 
-#[tokio::test(flavor = "multi_thread")]
-async fn interact_is_the_same() -> TestResult {
-    let folder = tempfile::tempdir()?;
-    let server = test_support::server(&folder).await?;
-    let world = server.worlds.load()[0].clone();
-    let scenes = scenes();
-    for index in 0..scenes.len() {
+fn load_chunks(world: &World, count: usize) {
+    for index in 0..count {
         let chunk = position_of(index).chunk_position();
         for dx in -1..=1 {
             for dz in -1..=1 {
@@ -685,13 +802,63 @@ async fn interact_is_the_same() -> TestResult {
             }
         }
     }
+}
+
+/// Appended: a real server like [`test_support::server`] whose `pvp.protect_creative` is off.
+async fn server_without_creative_protection(
+    folder: &tempfile::TempDir,
+) -> Result<Arc<Server>, Box<dyn std::error::Error>> {
+    let mut basic = BasicConfiguration {
+        default_level_name: folder.path().join("world").to_string_lossy().into_owned(),
+        ..BasicConfiguration::default()
+    };
+    basic.seed.0 = 20_261_119;
+    let mut advanced = AdvancedConfiguration {
+        world: LevelConfig {
+            stronghold_search_at_load: false,
+            ..LevelConfig::default()
+        },
+        ..AdvancedConfiguration::default()
+    };
+    advanced.pvp.protect_creative = false;
+    let telemetry = TelemetryConfig {
+        enabled: false,
+        ..TelemetryConfig::default()
+    };
+    let vanilla = VanillaData {
+        banned_ip_list: std::sync::RwLock::default(),
+        banned_player_list: std::sync::RwLock::default(),
+        operator_config: std::sync::RwLock::default(),
+        user_cache: std::sync::RwLock::default(),
+        whitelist_config: std::sync::RwLock::default(),
+    };
+    Ok(Server::new(basic, advanced, telemetry, vanilla, Vec::new()).await?)
+}
+
+#[tokio::test(flavor = "multi_thread")]
+async fn interact_is_the_same() -> TestResult {
+    let folder = tempfile::tempdir()?;
+    let server = test_support::server(&folder).await?;
+    let world = server.worlds.load()[0].clone();
+    let other_folder = tempfile::tempdir()?;
+    let unprotected = server_without_creative_protection(&other_folder).await?;
+    let other_world = unprotected.worlds.load()[0].clone();
+    let scenes = scenes();
+    load_chunks(&world, scenes.len());
+    load_chunks(&other_world, scenes.len());
     let mut out = String::new();
     for (index, scene) in scenes.iter().enumerate() {
-        out.push_str(&run(&server, &world, index, scene)?);
+        let (server, world) = if scene.unprotected {
+            (&unprotected, &other_world)
+        } else {
+            (&server, &world)
+        };
+        out.push_str(&run(server, world, index, scene)?);
         for player in world.players.load().iter() {
             world.remove_player(player, false).await;
         }
     }
     server.stop();
+    unprotected.stop();
     script_golden::bless_or_compare("interact.txt", &out)
 }

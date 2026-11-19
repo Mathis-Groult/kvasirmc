@@ -347,6 +347,7 @@ fn use_on_block(
     // Click block, with the item the server has in the hand, never the one the client claims
     // (`item_in_hand`): taking the claim would let a client place or use items it does not have.
     let mut held_item = player.inventory().held_item();
+    let before = held_item.clone();
 
     let result = server.block_registry.use_with_item(
         block,
@@ -363,6 +364,23 @@ fn use_on_block(
     );
 
     if result.consumes_action() {
+        // The block's use works on the stack in the hand itself (as in Java): keep what it
+        // consumed, damaged or turned the stack into.
+        if !held_item.are_equal(&before) {
+            if before.is_damageable() && held_item.is_empty() {
+                player.increment_stat(
+                    pumpkin_data::statistic::StatisticCategory::Broken,
+                    before.item.id as i32,
+                    1,
+                );
+                player.world().send_entity_status(
+                    player.get_entity(),
+                    crate::entity::equipment_break_status(&EquipmentSlot::MAIN_HAND),
+                    ActorEventID::None,
+                );
+            }
+            player.inventory().set_held_item(held_item);
+        }
         return ControlFlow::Break(());
     }
 

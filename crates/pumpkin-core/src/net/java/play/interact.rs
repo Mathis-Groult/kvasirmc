@@ -183,3 +183,6 @@ impl JavaClient {
         }
     }
 }
+
+#[cfg(test)]
+mod golden;

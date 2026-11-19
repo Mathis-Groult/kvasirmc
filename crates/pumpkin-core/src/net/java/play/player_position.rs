@@ -47,29 +47,13 @@ impl JavaClient {
         true
     }
 
-    #[expect(clippy::too_many_lines)]
     pub fn handle_position(
         &self,
         player: &Arc<Player>,
         server: &Arc<Server>,
         packet: &SPlayerPosition,
     ) {
-        if !player.has_client_loaded() {
-            return;
-        }
-        // A movement packet was received this tick — tracked for SClientTickEnd zeroing.
-        self.received_movement_this_tick
-            .store(true, Ordering::Relaxed);
-        if player.get_entity().has_vehicle() {
-            return;
-        }
-        // Ignore movement packets while awaiting a teleport confirmation (vanilla behavior)
-        if player
-            .awaiting_teleport
-            .lock()
-            .unwrap_or_else(std::sync::PoisonError::into_inner)
-            .is_some()
-        {
+        if !self.accepts_movement(player) {
             return;
         }
         if player.is_movement_locked.load(Ordering::Relaxed) {
@@ -79,11 +63,7 @@ impl JavaClient {
         // y = feet Y
         let position = packet.position;
         if position.x.is_nan() || position.y.is_nan() || position.z.is_nan() {
-            self.try_kick(&TextComponent::translate_cross(
-                translation::java::MULTIPLAYER_DISCONNECT_INVALID_PLAYER_MOVEMENT,
-                translation::java::MULTIPLAYER_DISCONNECT_INVALID_PLAYER_MOVEMENT,
-                [],
-            ));
+            self.kick_invalid_movement();
             return;
         }
         let position = Vector3::new(
@@ -107,12 +87,7 @@ impl JavaClient {
                 let last_pos = entity.pos.load();
                 player.get_entity().set_pos(pos);
 
-                let distance = last_pos.squared_distance_to_vec(&pos).sqrt();
-                let cm = (distance * 100.0) as i32;
-                if cm > 0 {
-                    let stat = player.get_movement_statistic();
-                    player.increment_stat(StatisticCategory::Custom, stat as i32, cm);
-                }
+                Self::count_movement(player, last_pos, pos);
 
                 let height_difference = pos.y - last_pos.y;
                 if entity.on_ground.load(Ordering::Relaxed) && packet.collision & FLAG_ON_GROUND == 0 && height_difference > 0.0 {
@@ -149,31 +124,7 @@ impl JavaClient {
                     );
                 }
 
-                // Only process fall damage if player is alive
-                if !player.abilities.lock().unwrap_or_else(std::sync::PoisonError::into_inner).flying
-                    && player.living_entity.health.load() > 0.0
-                    && !player.living_entity.dead.load(Ordering::Relaxed)
-                {
-                    player.living_entity.fall(
-                        player.as_ref(),
-                        height_difference,
-                        packet.collision & FLAG_ON_GROUND != 0,
-                        player.gamemode.load() == GameMode::Creative,
-                    );
-                }
-                chunker::update_position(player);
-                let delta = Vector3::new(
-                    pos.x - last_pos.x,
-                    pos.y - last_pos.y,
-                    pos.z - last_pos.z,
-                );
-                // Only update idle timeout if there's actual movement (vanilla threshold)
-                if delta.length_squared() > 1.0E-5 {
-                    player.update_last_action_time();
-                    player.check_location_enchantments(pos, packet.collision & FLAG_ON_GROUND != 0);
-                }
-                player.get_entity().emit_client_movement(player.as_ref(), delta);
-                player.progress_motion(delta);
+                Self::finish_movement(player, pos, last_pos, height_difference, packet.collision & FLAG_ON_GROUND != 0);
             }
 
             'cancelled: {
@@ -182,29 +133,13 @@ impl JavaClient {
         }}
     }
 
-    #[expect(clippy::too_many_lines)]
     pub fn handle_position_rotation(
         &self,
         player: &Arc<Player>,
         server: &Arc<Server>,
         packet: &SPlayerPositionRotation,
     ) {
-        if !player.has_client_loaded() {
-            return;
-        }
-        // A movement packet was received this tick — tracked for SClientTickEnd zeroing.
-        self.received_movement_this_tick
-            .store(true, Ordering::Relaxed);
-        if player.get_entity().has_vehicle() {
-            return;
-        }
-        // Ignore movement packets while awaiting a teleport confirmation (vanilla behavior)
-        if player
-            .awaiting_teleport
-            .lock()
-            .unwrap_or_else(std::sync::PoisonError::into_inner)
-            .is_some()
-        {
+        if !self.accepts_movement(player) {
             return;
         }
         if player.is_movement_locked.load(Ordering::Relaxed) {
@@ -221,11 +156,7 @@ impl JavaClient {
             || !packet.yaw.is_finite()
             || !packet.pitch.is_finite()
         {
-            self.try_kick(&TextComponent::translate_cross(
-                translation::java::MULTIPLAYER_DISCONNECT_INVALID_PLAYER_MOVEMENT,
-                translation::java::MULTIPLAYER_DISCONNECT_INVALID_PLAYER_MOVEMENT,
-                [],
-            ));
+            self.kick_invalid_movement();
             return;
         }
 
@@ -249,12 +180,7 @@ impl JavaClient {
                 let last_pos = entity.pos.load();
                 player.get_entity().set_pos(pos);
 
-                let distance = last_pos.squared_distance_to_vec(&pos).sqrt();
-                let cm = (distance * 100.0) as i32;
-                if cm > 0 {
-                    let stat = player.get_movement_statistic();
-                    player.increment_stat(StatisticCategory::Custom, stat as i32, cm);
-                }
+                Self::count_movement(player, last_pos, pos);
 
                 let height_difference = pos.y - last_pos.y;
                 if entity.on_ground.load(Ordering::Relaxed)
@@ -267,79 +193,147 @@ impl JavaClient {
                     .on_ground
                     .store((packet.collision & FLAG_ON_GROUND) != 0, Ordering::Relaxed);
 
-                entity.set_rotation(wrap_degrees(packet.yaw) % 360.0, wrap_degrees(packet.pitch));
-
-                let entity_id = entity.entity_id;
-
-                // TODO: use `pumpkin_util::math::pack_degrees`.
-                let yaw = (entity.yaw.load() * 256.0 / 360.0).rem_euclid(256.0);
-                let pitch = (entity.pitch.load() * 256.0 / 360.0).rem_euclid(256.0);
-                let world = entity.world.load_full();
-
-                // TODO: Warn when player moves to quickly
-                if !Self::sync_position(
-                    player,
-                    &world,
-                    entity,
-                    pos,
-                    last_pos,
-                    (packet.collision & FLAG_ON_GROUND) != 0,
-                ) {
-                    // Send the new position to tracking players only.
-                    world.send_to_tracking_players_editioned(
-                        entity,
-                        &CUpdateEntityPosRot::new(
-                            entity_id.into(),
-                            Vector3::new(
-                                pos.x.mul_add(4096.0, -(last_pos.x * 4096.0)) as i16,
-                                pos.y.mul_add(4096.0, -(last_pos.y * 4096.0)) as i16,
-                                pos.z.mul_add(4096.0, -(last_pos.z * 4096.0)) as i16,
-                            ),
-                            yaw as u8,
-                            pitch as u8,
-                            (packet.collision & FLAG_ON_GROUND) != 0,
-                        ),
-                        &bedrock_move_player_packet(
-                            entity,
-                            pos,
-                            CMovePlayer::MODE_NORMAL,
-                            (packet.collision & FLAG_ON_GROUND) != 0,
-                        ),
-                    );
-                }
-
-                world.send_to_tracking_players(entity, &CHeadRot::new(entity_id.into(), yaw as u8));
-                // Only process fall damage if player is alive
-                if !player.abilities.lock().unwrap_or_else(std::sync::PoisonError::into_inner).flying
-                    && player.living_entity.health.load() > 0.0
-                    && !player.living_entity.dead.load(Ordering::Relaxed)
-                {
-                    player.living_entity.fall(
-                        player.as_ref(),
-                        height_difference,
-                        (packet.collision & FLAG_ON_GROUND) != 0,
-                        player.gamemode.load() == GameMode::Creative,
-                    );
-                }
-                chunker::update_position(player);
-                let delta = Vector3::new(
-                    pos.x - last_pos.x,
-                    pos.y - last_pos.y,
-                    pos.z - last_pos.z,
-                );
-                // Only update idle timeout if there's actual movement (vanilla threshold)
-                if delta.length_squared() > 1.0E-5 {
-                    player.update_last_action_time();
-                    player.check_location_enchantments(pos, (packet.collision & FLAG_ON_GROUND) != 0);
-                }
-                player.get_entity().emit_client_movement(player.as_ref(), delta);
-                player.progress_motion(delta);
+                Self::send_turned_move(player, entity, pos, last_pos, packet);
+                Self::finish_movement(player, pos, last_pos, height_difference, (packet.collision & FLAG_ON_GROUND) != 0);
             }
 
             'cancelled: {
                 self.force_tp(player, position);
             }
         }}
+    }
+
+    /// Whether a movement packet is handled at all: the client loaded the world, the player rides
+    /// nothing and no teleport awaits confirmation (the packet still counts for this tick).
+    fn accepts_movement(&self, player: &Arc<Player>) -> bool {
+        if !player.has_client_loaded() {
+            return false;
+        }
+        // A movement packet was received this tick — tracked for SClientTickEnd zeroing.
+        self.received_movement_this_tick
+            .store(true, Ordering::Relaxed);
+        if player.get_entity().has_vehicle() {
+            return false;
+        }
+        // Ignore movement packets while awaiting a teleport confirmation (vanilla behavior)
+        if player
+            .awaiting_teleport
+            .lock()
+            .unwrap_or_else(std::sync::PoisonError::into_inner)
+            .is_some()
+        {
+            return false;
+        }
+        true
+    }
+
+    /// Kicks for a movement packet carrying an invalid value.
+    fn kick_invalid_movement(&self) {
+        self.try_kick(&TextComponent::translate_cross(
+            translation::java::MULTIPLAYER_DISCONNECT_INVALID_PLAYER_MOVEMENT,
+            translation::java::MULTIPLAYER_DISCONNECT_INVALID_PLAYER_MOVEMENT,
+            [],
+        ));
+    }
+
+    /// Counts the distance moved in the player's movement statistic.
+    fn count_movement(player: &Arc<Player>, last_pos: Vector3<f64>, pos: Vector3<f64>) {
+        let distance = last_pos.squared_distance_to_vec(&pos).sqrt();
+        let cm = (distance * 100.0) as i32;
+        if cm > 0 {
+            let stat = player.get_movement_statistic();
+            player.increment_stat(StatisticCategory::Custom, stat as i32, cm);
+        }
+    }
+
+    /// Applies a position-rotation packet's rotation and sends the move and head rotation to the
+    /// players tracking the player.
+    fn send_turned_move(
+        player: &Arc<Player>,
+        entity: &Entity,
+        pos: Vector3<f64>,
+        last_pos: Vector3<f64>,
+        packet: &SPlayerPositionRotation,
+    ) {
+        entity.set_rotation(wrap_degrees(packet.yaw) % 360.0, wrap_degrees(packet.pitch));
+
+        let entity_id = entity.entity_id;
+
+        // TODO: use `pumpkin_util::math::pack_degrees`.
+        let yaw = (entity.yaw.load() * 256.0 / 360.0).rem_euclid(256.0);
+        let pitch = (entity.pitch.load() * 256.0 / 360.0).rem_euclid(256.0);
+        let world = entity.world.load_full();
+
+        // TODO: Warn when player moves to quickly
+        if !Self::sync_position(
+            player,
+            &world,
+            entity,
+            pos,
+            last_pos,
+            (packet.collision & FLAG_ON_GROUND) != 0,
+        ) {
+            // Send the new position to tracking players only.
+            world.send_to_tracking_players_editioned(
+                entity,
+                &CUpdateEntityPosRot::new(
+                    entity_id.into(),
+                    Vector3::new(
+                        pos.x.mul_add(4096.0, -(last_pos.x * 4096.0)) as i16,
+                        pos.y.mul_add(4096.0, -(last_pos.y * 4096.0)) as i16,
+                        pos.z.mul_add(4096.0, -(last_pos.z * 4096.0)) as i16,
+                    ),
+                    yaw as u8,
+                    pitch as u8,
+                    (packet.collision & FLAG_ON_GROUND) != 0,
+                ),
+                &bedrock_move_player_packet(
+                    entity,
+                    pos,
+                    CMovePlayer::MODE_NORMAL,
+                    (packet.collision & FLAG_ON_GROUND) != 0,
+                ),
+            );
+        }
+
+        world.send_to_tracking_players(entity, &CHeadRot::new(entity_id.into(), yaw as u8));
+    }
+
+    /// After a move: fall damage, chunk loading, idle time, location enchantments and motion.
+    fn finish_movement(
+        player: &Arc<Player>,
+        pos: Vector3<f64>,
+        last_pos: Vector3<f64>,
+        height_difference: f64,
+        on_ground: bool,
+    ) {
+        // Only process fall damage if player is alive
+        if !player
+            .abilities
+            .lock()
+            .unwrap_or_else(std::sync::PoisonError::into_inner)
+            .flying
+            && player.living_entity.health.load() > 0.0
+            && !player.living_entity.dead.load(Ordering::Relaxed)
+        {
+            player.living_entity.fall(
+                player.as_ref(),
+                height_difference,
+                on_ground,
+                player.gamemode.load() == GameMode::Creative,
+            );
+        }
+        chunker::update_position(player);
+        let delta = Vector3::new(pos.x - last_pos.x, pos.y - last_pos.y, pos.z - last_pos.z);
+        // Only update idle timeout if there's actual movement (vanilla threshold)
+        if delta.length_squared() > 1.0E-5 {
+            player.update_last_action_time();
+            player.check_location_enchantments(pos, on_ground);
+        }
+        player
+            .get_entity()
+            .emit_client_movement(player.as_ref(), delta);
+        player.progress_motion(delta);
     }
 
     pub fn force_tp(&self, player: &Arc<Player>, position: Vector3<f64>) {

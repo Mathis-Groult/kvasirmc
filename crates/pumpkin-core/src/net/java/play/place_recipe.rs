@@ -243,3 +243,6 @@ impl JavaClient {
             .send_content_updates();
     }
 }
+
+#[cfg(test)]
+mod golden;

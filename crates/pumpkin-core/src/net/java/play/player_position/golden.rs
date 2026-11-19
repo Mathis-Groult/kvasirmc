@@ -88,6 +88,8 @@ struct Scene {
     sneaking: bool,
     /// The user starts in the air (not on the ground).
     airborne: bool,
+    /// Appended: the line ends with whether the client marked a movement packet this tick.
+    tick_flag: bool,
 }
 
 const SCENE: Scene = Scene {
@@ -103,6 +105,7 @@ const SCENE: Scene = Scene {
     sprinting: false,
     sneaking: false,
     airborne: false,
+    tick_flag: false,
 };
 
 const fn scene(name: &'static str, steps: &'static [Step]) -> Scene {
@@ -117,7 +120,40 @@ fn scenes() -> Vec<Scene> {
     let mut scenes = guard_scenes();
     scenes.extend(move_scenes());
     scenes.extend(fall_scenes());
+    scenes.extend(widened_scenes());
     scenes
+}
+
+const fn flagged(name: &'static str, steps: &'static [Step]) -> Scene {
+    Scene {
+        tick_flag: true,
+        ..scene(name, steps)
+    }
+}
+
+/// Scenes appended when the golden was widened: the tick's movement flag.
+fn widened_scenes() -> Vec<Scene> {
+    vec![
+        flagged("walk, tick flag", &[Step::Move(1.0, 0.0, 0.0, GROUND)]),
+        flagged(
+            "turn, tick flag",
+            &[Step::Turn(1.0, 0.0, 0.0, 90.0, 0.0, GROUND)],
+        ),
+        Scene {
+            unloaded: true,
+            ..flagged(
+                "client not loaded, tick flag",
+                &[Step::Move(1.0, 0.0, 0.0, GROUND)],
+            )
+        },
+        Scene {
+            awaiting: true,
+            ..flagged(
+                "awaiting a teleport, turn, tick flag",
+                &[Step::Turn(1.0, 0.0, 0.0, 0.0, 0.0, GROUND)],
+            )
+        },
+    ]
 }
 
 fn guard_scenes() -> Vec<Scene> {
@@ -565,12 +601,20 @@ fn run(
     for each in scene.steps {
         step(server, &user, *each)?;
     }
-    let kicked = match user.client.as_ref() {
-        ClientPlatform::Java(client) => client.is_closed(),
-        ClientPlatform::Bedrock(_) => false,
+    let (kicked, moved) = match user.client.as_ref() {
+        ClientPlatform::Java(client) => (
+            client.is_closed(),
+            client.received_movement_this_tick.load(Ordering::Relaxed),
+        ),
+        ClientPlatform::Bedrock(_) => (false, false),
+    };
+    let flag = if scene.tick_flag {
+        format!(" | moved this tick {moved}")
+    } else {
+        String::new()
     };
     Ok(format!(
-        "{}: {} acted {} kicked {kicked} | sent [{}] | watcher [{}]\n",
+        "{}: {} acted {} kicked {kicked} | sent [{}] | watcher [{}]{flag}\n",
         scene.name,
         user_text(&user),
         user.last_action_time.load().elapsed() < Duration::from_secs(300),

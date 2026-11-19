@@ -13,13 +13,16 @@
 //! Not covered: riding (a passenger's ground flag and the boat paddles) and plugins cancelling
 //! the flight toggle (none is loaded).
 
+use std::fmt::Write as _;
 use std::num::NonZero;
 use std::sync::Arc;
 use std::sync::atomic::Ordering;
 
 use pumpkin_data::data_component_impl::EquipmentSlot;
+use pumpkin_data::entity::{EntityPose, EntityType};
 use pumpkin_data::item::Item;
 use pumpkin_data::item_stack::ItemStack;
+use pumpkin_data::{Block, Enchantment};
 use pumpkin_protocol::bedrock::server::player_action::PlayerActionType;
 use pumpkin_protocol::bedrock::server::player_auth_input::{
     InputData, PlayerBlockAction, SPlayerAuthInput,
@@ -28,17 +31,19 @@ use pumpkin_protocol::codec::bitset::Bitset;
 use pumpkin_protocol::codec::var_int::VarInt;
 use pumpkin_protocol::codec::var_uint::VarUInt;
 use pumpkin_protocol::codec::var_ulong::VarULong;
-use pumpkin_util::GameMode;
 use pumpkin_util::math::position::BlockPos;
 use pumpkin_util::math::vector2::Vector2;
 use pumpkin_util::math::vector3::Vector3;
+use pumpkin_util::{GameMode, Hand};
 use pumpkin_world::cylindrical_chunk_iterator::Cylindrical;
+use pumpkin_world::world::BlockFlags;
 use uuid::Uuid;
 
 use crate::command::commands::script_golden::{self, TestResult};
-use crate::entity::EntityBase;
 use crate::entity::ai::test_support::{self, Identity};
 use crate::entity::player::Player;
+use crate::entity::vehicle::boat::BoatEntity;
+use crate::entity::{Entity, EntityBase};
 use crate::net::ClientPlatform;
 use crate::server::Server;
 use crate::world::World;
@@ -92,6 +97,14 @@ const STAY: Input = Input {
     has_actions: false,
 };
 
+/// What lies under the player's feet (y 63) in the area the scene walks over.
+#[derive(Clone, Copy, PartialEq, Eq)]
+enum Floor {
+    Nothing,
+    Stone,
+    Water,
+}
+
 #[derive(Clone, Copy)]
 struct Scene {
     name: &'static str,
@@ -110,6 +123,20 @@ struct Scene {
     swimming: bool,
     /// Wears an elytra on the chest.
     elytra: bool,
+    /// Appended: health to start with.
+    health: Option<f32>,
+    /// Appended: the pose to start in.
+    pose: Option<EntityPose>,
+    /// Appended: the floor under the walk (its block under the end position is recorded).
+    floor: Floor,
+    /// Appended: wears Frost Walker boots.
+    frost: bool,
+    /// Appended: holds a shield in the off hand (blocking is recorded).
+    shield: bool,
+    /// Appended: is blocking with the shield already.
+    blocking: bool,
+    /// Appended: sits in a boat.
+    boat: bool,
 }
 
 const SCENE: Scene = Scene {
@@ -127,6 +154,13 @@ const SCENE: Scene = Scene {
     sneaking: false,
     swimming: false,
     elytra: false,
+    health: None,
+    pose: None,
+    floor: Floor::Nothing,
+    frost: false,
+    shield: false,
+    blocking: false,
+    boat: false,
 };
 
 const fn scene(name: &'static str, steps: &'static [Input]) -> Scene {
@@ -154,6 +188,7 @@ fn scenes() -> Vec<Scene> {
     let mut all = guard_scenes();
     all.extend(move_scenes());
     all.extend(flag_scenes());
+    all.extend(widened_scenes());
     all
 }
 
@@ -430,6 +465,125 @@ fn combined_scenes() -> Vec<Scene> {
     ]
 }
 
+const GROUND: Input = Input {
+    flags: &[I::VerticalCollision],
+    delta_y: -0.08,
+    ..STAY
+};
+
+/// Appended after the mutation run of the first scenes.
+fn widened_scenes() -> Vec<Scene> {
+    let mut all = vec![
+        Scene {
+            health: Some(0.5),
+            ..scene("nearly dead", &[Input { dx: 0.5, ..STAY }])
+        },
+        scene(
+            "vertical collision without vertical movement",
+            &[Input {
+                dx: 0.25,
+                flags: &[I::VerticalCollision],
+                ..STAY
+            }],
+        ),
+        Scene {
+            sprinting: true,
+            ..scene("sprinting on the ground", &[Input { dx: 1.0, ..GROUND }])
+        },
+        Scene {
+            floor: Floor::Stone,
+            ..scene("a small step on stone", &[Input { dx: 0.25, ..GROUND }])
+        },
+        Scene {
+            floor: Floor::Stone,
+            ..scene("three blocks on stone", &[Input { dx: 3.0, ..GROUND }])
+        },
+        Scene {
+            floor: Floor::Water,
+            frost: true,
+            ..scene("frost walker over water", &[Input { dx: 1.0, ..GROUND }])
+        },
+        Scene {
+            floor: Floor::Water,
+            ..scene("over water without boots", &[Input { dx: 1.0, ..GROUND }])
+        },
+        Scene {
+            floor: Floor::Water,
+            frost: true,
+            ..scene("frost walker in the air", &[Input { dx: 1.0, ..STAY }])
+        },
+    ];
+    all.extend(posture_scenes());
+    all.extend(boat_scenes());
+    all
+}
+
+fn posture_scenes() -> Vec<Scene> {
+    vec![
+        Scene {
+            shield: true,
+            ..flagged!("sneak with a shield", &[I::StartSneaking])
+        },
+        Scene {
+            shield: true,
+            blocking: true,
+            sneaking: true,
+            ..flagged!("stop sneaking while blocking", &[I::StopSneaking])
+        },
+        Scene {
+            shield: true,
+            blocking: true,
+            ..flagged!("start sneaking while blocking", &[I::StartSneaking])
+        },
+        Scene {
+            shield: true,
+            blocking: true,
+            ..flagged!("start sneaking, shield gone", &[I::StartSneaking])
+        },
+        Scene {
+            pose: Some(EntityPose::Swimming),
+            ..flagged!("stop crawling from the crawl pose", &[I::StopCrawling])
+        },
+        Scene {
+            pose: Some(EntityPose::Swimming),
+            swimming: true,
+            ..flagged!("stop swimming from the swim pose", &[I::StopSwimming])
+        },
+        Scene {
+            pose: Some(EntityPose::SpinAttack),
+            ..flagged!("stop spinning from the spin pose", &[I::StopSpinAttack])
+        },
+    ]
+}
+
+fn boat_scenes() -> Vec<Scene> {
+    vec![
+        Scene {
+            boat: true,
+            ..flagged!("riding, paddling left", &[I::PaddlingLeft])
+        },
+        Scene {
+            boat: true,
+            ..flagged!("riding, paddling right", &[I::PaddlingRight])
+        },
+        Scene {
+            boat: true,
+            ..flagged!(
+                "riding, paddling both",
+                &[I::PaddlingLeft, I::PaddlingRight]
+            )
+        },
+        Scene {
+            boat: true,
+            ..flagged!("riding, not paddling", &[I::Up])
+        },
+        Scene {
+            boat: true,
+            ..scene("riding, ground flag", &[Input { dx: 0.25, ..GROUND }])
+        },
+    ]
+}
+
 const fn position_of(index: usize) -> BlockPos {
     BlockPos::new(index as i32 * 512 + 200, 64, 8)
 }
@@ -553,6 +707,32 @@ fn prepare(mover: &Player, scene: &Scene) {
     if scene.swimming {
         entity.set_swimming(true);
     }
+    if let Some(health) = scene.health {
+        mover.living_entity.health.store(health);
+    }
+    if let Some(pose) = scene.pose {
+        entity.set_pose(pose);
+    }
+    if scene.shield {
+        mover
+            .inventory()
+            .set_stack_in_hand(Hand::Left, ItemStack::new(1, &Item::SHIELD));
+    }
+    if scene.blocking {
+        mover
+            .living_entity
+            .set_active_hand(Hand::Left, ItemStack::new(1, &Item::SHIELD), 72_000);
+    }
+    if scene.frost {
+        let mut boots = ItemStack::new(1, &Item::DIAMOND_BOOTS);
+        boots.add_enchantment(&Enchantment::FROST_WALKER, 1);
+        mover
+            .inventory()
+            .entity_equipment
+            .lock()
+            .unwrap_or_else(std::sync::PoisonError::into_inner)
+            .put(&EquipmentSlot::FEET, boots);
+    }
     if scene.elytra {
         mover
             .inventory()
@@ -561,6 +741,39 @@ fn prepare(mover: &Player, scene: &Scene) {
             .unwrap_or_else(std::sync::PoisonError::into_inner)
             .put(&EquipmentSlot::CHEST, ItemStack::new(1, &Item::ELYTRA));
     }
+}
+
+/// Lays the scene's floor at y 63 under and around the walk.
+fn lay_floor(world: &Arc<World>, base: Vector3<f64>, floor: Floor) {
+    let state = match floor {
+        Floor::Nothing => return,
+        Floor::Stone => Block::STONE.default_state.id,
+        Floor::Water => Block::WATER.default_state.id,
+    };
+    let (x, z) = (base.x.floor() as i32, base.z.floor() as i32);
+    for dx in -1..=6 {
+        for dz in -1..=1 {
+            world.set_block_state(
+                &BlockPos::new(x + dx, 63, z + dz),
+                state,
+                BlockFlags::FORCE_STATE | BlockFlags::SKIP_BLOCK_ADDED_CALLBACK,
+            );
+        }
+    }
+}
+
+/// Appended scenes only: the block under the end position and whether the shield blocks.
+fn extra_text(world: &World, mover: &Player, scene: &Scene) -> String {
+    let mut text = String::new();
+    if scene.floor != Floor::Nothing {
+        let at = mover.get_entity().pos.load();
+        let under = BlockPos::new(at.x.floor() as i32, 63, at.z.floor() as i32);
+        let _ = write!(text, " | under {}", world.get_block(&under).name);
+    }
+    if scene.shield {
+        let _ = write!(text, " | blocking {}", mover.living_entity.is_blocking());
+    }
+    text
 }
 
 fn packet_of(mover: &Player, input: &Input) -> SPlayerAuthInput {
@@ -636,7 +849,17 @@ async fn run(
     world.add_player(&mover)?;
     world.add_player(&java)?;
     world.add_player(&bedrock)?;
+    lay_floor(world, base, scene.floor);
     prepare(&mover, scene);
+    if scene.boat {
+        // A fixed id: the global counter would make the packet bytes depend on test order.
+        let mut boat = Entity::new(world.clone(), base, &EntityType::OAK_BOAT);
+        boat.entity_id = 9_904;
+        let vehicle: Arc<dyn EntityBase> = Arc::new(BoatEntity::new(boat));
+        vehicle
+            .get_entity()
+            .add_passenger_silently(Arc::clone(&vehicle), mover.clone());
+    }
     drop(mover_tap.drain());
     drop(java_tap.drain());
     drop(bedrock_tap.drain());
@@ -647,12 +870,13 @@ async fn run(
         client.handle_player_auth_input(&mover, packet_of(&mover, input), server);
     }
     Ok(format!(
-        "{}: {} | sent [{}] | java watcher [{}] | bedrock watcher [{}]\n",
+        "{}: {} | sent [{}] | java watcher [{}] | bedrock watcher [{}]{}\n",
         scene.name,
         mover_text(&mover),
         bedrock_sent(&mover_tap.drain()),
         java_sent(&java_tap.drain()),
         bedrock_sent(&bedrock_tap.drain()),
+        extra_text(world, &mover, scene),
     ))
 }
 

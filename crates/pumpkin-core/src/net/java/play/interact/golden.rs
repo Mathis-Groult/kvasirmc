@@ -15,6 +15,7 @@
 use std::num::NonZero;
 use std::sync::Arc;
 use std::sync::atomic::Ordering;
+use std::time::{Duration, Instant};
 
 use pumpkin_data::entity::EntityType;
 use pumpkin_data::item::Item;
@@ -98,6 +99,11 @@ struct Scene {
     unloaded: bool,
     /// The target stands ten blocks away (out of reach).
     far: bool,
+    /// Appended: the target is in reach only with the 1.0 margin.
+    margin: bool,
+    /// Appended scenes end their line with whether the packet counted as activity and whether
+    /// the user's connection was closed (kicked).
+    extra: bool,
 }
 
 const SCENE: Scene = Scene {
@@ -114,6 +120,8 @@ const SCENE: Scene = Scene {
     was_sneaking: false,
     unloaded: false,
     far: false,
+    margin: false,
+    extra: false,
 };
 
 const fn scene(name: &'static str, target: Target, action: i32) -> Scene {
@@ -129,7 +137,57 @@ fn scenes() -> Vec<Scene> {
     let mut scenes = guard_scenes();
     scenes.extend(attack_scenes());
     scenes.extend(interact_scenes());
+    scenes.extend(widened_scenes());
     scenes
+}
+
+const WIDE: Scene = Scene {
+    extra: true,
+    ..SCENE
+};
+
+const fn wide(name: &'static str, target: Target, action: i32) -> Scene {
+    Scene {
+        name,
+        target,
+        action,
+        ..WIDE
+    }
+}
+
+/// Scenes appended in the first widening.
+fn widened_scenes() -> Vec<Scene> {
+    vec![
+        wide("invalid action, kick", Target::Cow, 5),
+        wide("attack itself, kick", Target::Itself, ATTACK),
+        wide("attack a missing entity, kick", Target::Missing, ATTACK),
+        wide(
+            "interact with a missing entity, no kick",
+            Target::Missing,
+            INTERACT,
+        ),
+        Scene {
+            held: Some((&Item::BUCKET, 1)),
+            ..wide("bucket on a cow, activity", Target::Cow, INTERACT)
+        },
+        Scene {
+            margin: true,
+            held: Some((&Item::BUCKET, 1)),
+            ..wide(
+                "bucket on a cow just inside the reach margin",
+                Target::Cow,
+                INTERACT,
+            )
+        },
+        Scene {
+            margin: true,
+            ..wide(
+                "attack a cow just inside the reach margin",
+                Target::Cow,
+                ATTACK,
+            )
+        },
+    ]
 }
 
 fn guard_scenes() -> Vec<Scene> {
@@ -486,6 +544,11 @@ fn equip(user: &Arc<Player>, scene: &Scene) {
     if scene.was_sneaking {
         user.get_entity().set_sneaking(true);
     }
+    if scene.extra
+        && let Some(long_ago) = Instant::now().checked_sub(Duration::from_secs(600))
+    {
+        user.last_action_time.store(long_ago);
+    }
     // As the server's login does, so that awarded criteria are recorded.
     user.advancements
         .lock()
@@ -551,7 +614,13 @@ fn run(
     let (watcher, mut watcher_tap) =
         test_support::java_player_as(world, GameMode::Survival, &WATCHER)
             .ok_or("no Java packet tap")?;
-    let away = if scene.far { 10.0 } else { 2.0 };
+    let away = if scene.far {
+        10.0
+    } else if scene.margin {
+        3.95
+    } else {
+        2.0
+    };
     place(&user, base.add(&Vector3::new(0.0, 0.0, away)), pos);
     place(&watcher, base.add(&Vector3::new(3.0, 0.0, 0.0)), pos);
     user.client_loaded.store(!scene.unloaded, Ordering::Relaxed);
@@ -579,15 +648,23 @@ fn run(
     };
     client.handle_interact(&user, &packet, server);
     let target_sent = target_tap.as_mut().map(packets);
-    Ok(format!(
-        "{}: target [{}] {:?} | user [{}] | sent [{}] | watcher [{}] | target sent {target_sent:?}\n",
+    let mut line = format!(
+        "{}: target [{}] {:?} | user [{}] | sent [{}] | watcher [{}] | target sent {target_sent:?}",
         scene.name,
         target_text(target.as_ref()),
         things_near(world, pos),
         user_text(&user, used),
         packets(&mut user_tap),
         packets(&mut watcher_tap),
-    ))
+    );
+    if scene.extra {
+        line = format!(
+            "{line} | acted {} kicked {}",
+            user.last_action_time.load().elapsed() < Duration::from_secs(300),
+            client.is_closed(),
+        );
+    }
+    Ok(line + "\n")
 }
 
 #[tokio::test(flavor = "multi_thread")]

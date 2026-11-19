@@ -15,8 +15,12 @@ use std::sync::Arc;
 use pumpkin_data::Block;
 use pumpkin_data::item::Item;
 use pumpkin_data::item_stack::ItemStack;
+use pumpkin_data::recipes::RecipeCategoryTypes;
 use pumpkin_data::recipes::{CraftingRecipeTypes, RECIPES_COOKING, RECIPES_CRAFTING};
 use pumpkin_inventory::Inventory;
+use pumpkin_protocol::codec::recipe::{
+    DynamicRecipe, OwnedCraftingRecipe, OwnedRecipeIngredient, OwnedRecipeResult,
+};
 use pumpkin_protocol::codec::var_int::VarInt;
 use pumpkin_protocol::java::server::play::SPlaceRecipe;
 use pumpkin_util::GameMode;
@@ -52,6 +56,8 @@ enum Recipe {
     Cooking,
     /// A display id past every crafting and cooking recipe with no dynamic recipe behind it.
     Unknown,
+    /// Appended: the n-th dynamic recipe the test registers ([`dynamic_recipes`]).
+    Dynamic(usize),
 }
 
 #[derive(Clone, Copy)]
@@ -67,6 +73,8 @@ struct Scene {
     table: bool,
     /// The inventory's other slots are filled with stone first.
     full: bool,
+    /// Appended: the player's screens are linked as at login, so content updates are sent.
+    linked: bool,
 }
 
 const SCENE: Scene = Scene {
@@ -76,6 +84,7 @@ const SCENE: Scene = Scene {
     grid: &[],
     table: false,
     full: false,
+    linked: false,
 };
 
 const PLANKS: Recipe = Recipe::Making("minecraft:oak_planks");
@@ -94,7 +103,112 @@ const fn scene(name: &'static str, clicks: &'static [(Recipe, bool)]) -> Scene {
 fn scenes() -> Vec<Scene> {
     let mut scenes = grid_scenes();
     scenes.extend(table_scenes());
+    scenes.extend(widened_scenes());
     scenes
+}
+
+/// Recipes a plugin would add; [`Recipe::Dynamic`] names them by index.
+fn dynamic_recipes() -> Vec<DynamicRecipe> {
+    let simple = |id: &str| OwnedRecipeIngredient::Simple(id.to_owned());
+    let result = OwnedRecipeResult {
+        item_id: "minecraft:diamond".to_owned(),
+        count: 1,
+    };
+    let shaped = |pattern: &[&str]| {
+        DynamicRecipe::Crafting(OwnedCraftingRecipe::Shaped {
+            recipe_id: None,
+            category: RecipeCategoryTypes::Misc,
+            group: None,
+            show_notification: false,
+            key: vec![
+                ('A', simple("minecraft:oak_log")),
+                ('B', simple("minecraft:dirt")),
+            ],
+            pattern: pattern.iter().map(|row| (*row).to_owned()).collect(),
+            result: result.clone(),
+        })
+    };
+    vec![
+        shaped(&["AB", " B"]),
+        DynamicRecipe::Crafting(OwnedCraftingRecipe::Shapeless {
+            recipe_id: None,
+            category: RecipeCategoryTypes::Misc,
+            group: None,
+            ingredients: vec![simple("minecraft:dirt"), simple("minecraft:stone")],
+            result: result.clone(),
+        }),
+        shaped(&["A", "B", "A"]),
+    ]
+}
+
+const fn wide(name: &'static str, clicks: &'static [(Recipe, bool)]) -> Scene {
+    Scene {
+        linked: true,
+        ..scene(name, clicks)
+    }
+}
+
+/// Scenes appended when the golden was widened (transmute that matches, dynamic recipes, a grid
+/// that does not hold the recipe, a grid cleared with nothing to place).
+fn widened_scenes() -> Vec<Scene> {
+    vec![
+        Scene {
+            inventory: &[(&Item::BUNDLE, 1), (&Item::BLACK_DYE, 2)],
+            ..wide("matching transmute", &[(Recipe::Transmute, false)])
+        },
+        Scene {
+            table: true,
+            inventory: &[(&Item::BUNDLE, 1), (&Item::BLACK_DYE, 2)],
+            ..wide(
+                "matching transmute on a table",
+                &[(Recipe::Transmute, false)],
+            )
+        },
+        Scene {
+            inventory: &[(&Item::OAK_LOG, 3), (&Item::DIRT, 6)],
+            ..wide(
+                "dynamic shaped",
+                &[(Recipe::Dynamic(0), false), (Recipe::Dynamic(0), false)],
+            )
+        },
+        Scene {
+            table: true,
+            inventory: &[(&Item::OAK_LOG, 3), (&Item::DIRT, 6)],
+            ..wide("dynamic shaped on a table", &[(Recipe::Dynamic(0), true)])
+        },
+        Scene {
+            inventory: &[(&Item::STONE, 3), (&Item::DIRT, 6)],
+            ..wide("dynamic shapeless", &[(Recipe::Dynamic(1), false)])
+        },
+        Scene {
+            inventory: &[(&Item::OAK_LOG, 3), (&Item::DIRT, 6)],
+            ..wide(
+                "dynamic three rows in the 2x2 grid",
+                &[(Recipe::Dynamic(2), false)],
+            )
+        },
+        Scene {
+            table: true,
+            inventory: &[(&Item::OAK_LOG, 3), (&Item::DIRT, 6)],
+            ..wide(
+                "dynamic three rows on a table",
+                &[(Recipe::Dynamic(2), false)],
+            )
+        },
+        Scene {
+            inventory: &[(&Item::OAK_LOG, 3)],
+            grid: &[(0, &Item::OAK_LOG, 1), (1, &Item::DIRT, 1)],
+            ..wide("planks over a log and dirt", &[(PLANKS, false)])
+        },
+        Scene {
+            grid: &[(0, &Item::DIRT, 2)],
+            ..wide("planks, use max, nothing to place", &[(PLANKS, true)])
+        },
+        Scene {
+            grid: &[(0, &Item::DIRT, 2)],
+            ..wide("planks, nothing to place", &[(PLANKS, false)])
+        },
+    ]
 }
 
 fn grid_scenes() -> Vec<Scene> {
@@ -248,6 +362,9 @@ fn display_id(recipe: Recipe) -> i32 {
             matches!(r, CraftingRecipeTypes::CraftingTransmute { .. }).then_some(index)
         }),
         Recipe::Cooking => Some(RECIPES_CRAFTING.iter().filter(|r| shown(r)).count()),
+        Recipe::Dynamic(n) => {
+            Some(RECIPES_CRAFTING.iter().filter(|r| shown(r)).count() + RECIPES_COOKING.len() + n)
+        }
         Recipe::Unknown => {
             Some(RECIPES_CRAFTING.iter().filter(|r| shown(r)).count() + RECIPES_COOKING.len() + 500)
         }
@@ -369,6 +486,14 @@ fn prepare(
     }
 }
 
+/// As the server's login does, so that screen updates reach the client.
+fn link_screens(crafter: &Arc<Player>) {
+    crafter
+        .screen_handler_sync_handler
+        .store_player(crafter.clone());
+    crafter.on_screen_handler_opened(&crafter.player_screen_handler);
+}
+
 fn run(
     server: &Arc<Server>,
     world: &Arc<World>,
@@ -385,6 +510,9 @@ fn run(
         NonZero::<u8>::MIN.saturating_add(1),
     ));
     world.add_player(&crafter)?;
+    if scene.linked {
+        link_screens(&crafter);
+    }
     prepare(server, world, &crafter, scene, pos);
     let ClientPlatform::Java(client) = crafter.client.as_ref() else {
         return Err("not a Java player".into());
@@ -416,6 +544,7 @@ async fn place_recipe_is_the_same() -> TestResult {
     let folder = tempfile::tempdir()?;
     let server = test_support::server(&folder).await?;
     let world = server.worlds.load()[0].clone();
+    server.recipe_manager.add_recipes(dynamic_recipes());
     let scenes = scenes();
     for index in 0..scenes.len() {
         let chunk = BlockPos::new(index as i32 * 16 + 200, 64, 8).chunk_position();

@@ -130,6 +130,8 @@ mod item_stack_golden;
 pub mod item_stack_request;
 #[cfg(test)]
 mod item_stack_tests;
+#[cfg(test)]
+mod use_on_block_tests;
 pub(super) use item_stack_request::record_update;
 pub mod mob_equipment;
 pub mod modal_form_response;

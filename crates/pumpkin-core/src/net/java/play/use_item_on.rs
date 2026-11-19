@@ -1,10 +1,8 @@
 #[allow(clippy::wildcard_imports)]
 use super::*;
-use crate::item::registry::should_try_block_placement;
-use pumpkin_data::block_properties::BlockProperties;
+use use_on::UseOn;
 
 impl JavaClient {
-    #[allow(clippy::too_many_lines)]
     pub fn handle_use_item_on(
         &self,
         player: &Arc<Player>,
@@ -18,9 +16,6 @@ impl JavaClient {
         self.update_sequence(use_item_on.sequence.0);
 
         let position = use_item_on.position;
-        let cursor_pos = use_item_on.cursor_pos;
-
-        let mut should_try_decrement = false;
 
         if !player.can_interact_with_block_at(&position, 1.0) {
             // TODO: maybe log?
@@ -36,36 +31,7 @@ impl JavaClient {
         };
 
         if player.gamemode.load() == GameMode::Spectator {
-            let entity = &player.get_entity();
-            let world = entity.world.load_full();
-            let block = world.get_block(&position);
-
-            let event = PlayerInteractEvent::new(
-                player,
-                InteractAction::RightClickBlock,
-                block,
-                Some(position),
-            );
-
-            send_cancellable_blocking! {{
-                server;
-                event;
-                'cancelled: {
-                    let state_id = world.get_block_state_id(&position);
-                    player.try_send_client_packet(&CBlockUpdate::new(
-                        position,
-                        VarInt(i32::from(state_id.as_u16())),
-                    ));
-                    return Ok(());
-                }
-            }}
-
-            if let Some(factory) = server
-                .block_registry
-                .get_screen_handler_factory(block, player, &position, server, &world)
-            {
-                player.open_handled_screen(factory.as_ref(), Some(position));
-            }
+            UseOn::spectator_use(player, server, position);
             return Ok(());
         }
 
@@ -104,174 +70,19 @@ impl JavaClient {
             }
         }}
 
-        let equipment_slot = if matches!(hand, Hand::Right) {
-            EquipmentSlot::MAIN_HAND
-        } else {
-            EquipmentSlot::OFF_HAND
+        let use_on = UseOn {
+            player,
+            server,
+            use_item_on,
+            world: &world,
+            block,
+            face,
+            hand,
         };
-
-        let sneaking = player.get_entity().is_sneaking();
-
-        // Code based on the java class ServerPlayerInteractionManager
-        if !(sneaking && (!held_item_empty || !off_hand_item_empty)) {
-            let result = Self::call_use_item_on(
-                player,
-                &position,
-                &cursor_pos,
-                face,
-                &mut item,
-                &equipment_slot,
-                &world,
-                block,
-                server,
-            );
-            if result.consumes_action() {
-                let state =
-                    pumpkin_data::block_properties::CopperBulbLikeProperties::handles_block_id(
-                        block.id,
-                    )
-                    .then(|| {
-                        let props =
-                            pumpkin_data::block_properties::CopperBulbLikeProperties::from_state_id(
-                                world.get_block_state(&position).id,
-                            );
-                        ("lit".to_string(), props.r#lit.to_string())
-                    });
-
-                let mut is_smokey = false;
-                for dy in 1..=5 {
-                    let check_pos = BlockPos::new(position.0.x, position.0.y - dy, position.0.z);
-                    let b = world.get_block(&check_pos);
-                    if b == &pumpkin_data::Block::CAMPFIRE
-                        || b == &pumpkin_data::Block::SOUL_CAMPFIRE
-                    {
-                        is_smokey = true;
-                        break;
-                    }
-                    if !world.get_block_state(&check_pos).is_air() {
-                        break;
-                    }
-                }
-
-                let biome = Some(world.get_biome(&position).registry_id.to_string());
-
-                player.trigger_advancement(
-                    crate::entity::player::advancement::trigger::AdvancementTrigger::ItemUsedOnBlock {
-                        block_id: format!("minecraft:{}", block.name),
-                        item_id: before.item.registry_key.to_string(),
-                        state,
-                        smokey: Some(is_smokey),
-                        biome,
-                    },
-                );
-
-                if matches!(result, BlockActionResult::SuccessServer) {
-                    player.swing_hand(hand, true);
-                }
-                return Ok(());
-            }
-        }
-
-        let slot_index = if matches!(hand, Hand::Right) {
-            inventory.get_selected_slot() as usize
-        } else {
-            PlayerInventory::OFF_HAND_SLOT
-        };
-
-        if item.is_empty() {
-            // TODO item cool down
-            // If the hand is empty we stop here
+        if use_on.block_use(&mut item, &before, held_item_empty, off_hand_item_empty) {
             return Ok(());
         }
-
-        let item_result = server
-            .item_registry
-            .use_on_block(&mut item, player, position, face, cursor_pos, block, server);
-
-        if should_try_block_placement(&item_result) {
-            // Check if the item is a block, because not every item can be placed :D
-            let item_id = item.item.id;
-            if let Some(block) = Block::from_item_id(item_id) {
-                should_try_decrement =
-                    Self::run_is_block_place(player, block, server, use_item_on, position, face)?;
-            }
-        }
-
-        if should_try_decrement {
-            // TODO: Config
-            // Decrease block count
-            if player.gamemode.load() != GameMode::Creative {
-                item.decrement(1);
-            }
-        }
-
-        let after = item.clone();
-
-        if item_result.consumes_action() || !item.are_equal(&before) {
-            let state = pumpkin_data::block_properties::CopperBulbLikeProperties::handles_block_id(
-                block.id,
-            )
-            .then(|| {
-                let props = pumpkin_data::block_properties::CopperBulbLikeProperties::from_state_id(
-                    world.get_block_state(&position).id,
-                );
-                ("lit".to_string(), props.r#lit.to_string())
-            });
-
-            let mut is_smokey = false;
-            for dy in 1..=5 {
-                let check_pos = BlockPos::new(position.0.x, position.0.y - dy, position.0.z);
-                let b = world.get_block(&check_pos);
-                if b == &pumpkin_data::Block::CAMPFIRE || b == &pumpkin_data::Block::SOUL_CAMPFIRE {
-                    is_smokey = true;
-                    break;
-                }
-                if !world.get_block_state(&check_pos).is_air() {
-                    break;
-                }
-            }
-
-            let biome = Some(world.get_biome(&position).registry_id.to_string());
-
-            player.trigger_advancement(
-                crate::entity::player::advancement::trigger::AdvancementTrigger::ItemUsedOnBlock {
-                    block_id: format!("minecraft:{}", block.name),
-                    item_id: before.item.registry_key.to_string(),
-                    state,
-                    smokey: Some(is_smokey),
-                    biome,
-                },
-            );
-        }
-
-        if matches!(item_result, BlockActionResult::SuccessServer) {
-            player.swing_hand(hand, true);
-        }
-
-        // Broadcast the break entity status before the slot sync; the client
-        // needs the old item texture in the slot for break particles.
-        if !before.is_empty() && after.is_empty() {
-            let slot = if slot_index == player.inventory.get_selected_slot() as usize {
-                &EquipmentSlot::MAIN_HAND
-            } else {
-                &EquipmentSlot::OFF_HAND
-            };
-            if before.is_damageable() {
-                player.increment_stat(StatisticCategory::Broken, before.item.id as i32, 1);
-            }
-            player.world().send_entity_status(
-                player.get_entity(),
-                equipment_break_status(slot),
-                ActorEventID::None,
-            );
-        }
-
-        if !after.are_equal(&before) {
-            player.sync_hand_slot(slot_index, after.clone());
-            inventory.set_stack_in_hand(hand, after);
-        }
-
-        Ok(())
+        use_on.item_use(item, &before)
     }
 
     #[expect(clippy::too_many_arguments)]
@@ -359,3 +170,4 @@ impl JavaClient {
 
 #[cfg(test)]
 mod golden;
+mod use_on;

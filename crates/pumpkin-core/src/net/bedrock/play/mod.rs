@@ -139,6 +139,8 @@ pub mod player_action;
 #[cfg(test)]
 mod player_action_golden;
 pub mod player_auth_input;
+#[cfg(test)]
+mod player_auth_input_golden;
 pub mod player_block_action;
 pub mod player_hotbar;
 pub mod request_ability;

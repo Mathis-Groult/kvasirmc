@@ -170,4 +170,6 @@ impl JavaClient {
 
 #[cfg(test)]
 mod golden;
+#[cfg(test)]
+mod hand_tests;
 mod use_on;

@@ -74,18 +74,14 @@ impl JavaClient {
             }
         }
         let packet_hand = interact.hand.map_or(0, |hand| hand.0);
-        let Ok(mut hand) = pumpkin_util::Hand::from_packet_id(packet_hand) else {
+        let Ok(hand) = pumpkin_util::Hand::from_packet_id(packet_hand) else {
             return;
         };
+        // The packet's hand is the hand used, as in vanilla `Player.interactOn` (card #96).
         let mut stack = player.inventory().get_stack_in_hand(hand);
-        let mut before = stack.clone();
+        let before = stack.clone();
         let native_interaction = target.interact_with_hand(player, &mut stack, hand);
-        let interacted = native_interaction.unwrap_or_else(|| {
-            hand = pumpkin_util::Hand::Right;
-            stack = player.inventory().held_item();
-            before = stack.clone();
-            target.interact(player, &mut stack)
-        });
+        let interacted = native_interaction.unwrap_or_else(|| target.interact(player, &mut stack));
         let item_id = before.item.id;
         if !interacted {
             server
@@ -114,9 +110,14 @@ impl JavaClient {
             player.increment_stat(StatisticCategory::Used, item_id as i32, 1);
             if before.is_damageable() && stack.is_empty() {
                 player.increment_stat(StatisticCategory::Broken, item_id as i32, 1);
+                let slot = if matches!(hand, pumpkin_util::Hand::Right) {
+                    EquipmentSlot::MAIN_HAND
+                } else {
+                    EquipmentSlot::OFF_HAND
+                };
                 player.world().send_entity_status(
                     player.get_entity(),
-                    equipment_break_status(&EquipmentSlot::MAIN_HAND),
+                    equipment_break_status(&slot),
                     ActorEventID::None,
                 );
             }

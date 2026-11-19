@@ -985,7 +985,6 @@ impl StructureTemplate {
             block_entities_map.insert(be.pos, nbt);
         }
 
-        let block_count = static_template.packed_blocks.len() / 4;
         let mut palettes = Vec::with_capacity(static_template.palettes.len());
 
         for static_palette in static_template.palettes {
@@ -994,7 +993,7 @@ impl StructureTemplate {
                 .map(|p| PaletteEntry::with_properties(p.name.to_string(), p.properties.to_vec()))
                 .collect();
 
-            let mut block_info_list = Vec::with_capacity(block_count);
+            let mut block_info_list = Vec::new();
             for chunk in static_template.packed_blocks.as_chunks::<4>().0 {
                 let pos = Vector3::new(chunk[0] as i32, chunk[1] as i32, chunk[2] as i32);
                 let state_idx = chunk[3] as usize;
@@ -1006,7 +1005,8 @@ impl StructureTemplate {
                 let nbt = block_entities_map.get(&[pos.x, pos.y, pos.z]).cloned();
                 block_info_list.push(StructureBlockInfo::new(pos, state, nbt));
             }
-            palettes.push(Palette::new(block_info_list));
+            // In vanilla order like an NBT template: random processors draw per block (#95).
+            palettes.push(Palette::new(Self::vanilla_order(block_info_list)));
         }
 
         let mut template = Self {
@@ -1118,10 +1118,7 @@ impl StructureTemplate {
             palette.add_mapping(entry, i);
         }
 
-        let mut full_block_list = Vec::new();
-        let mut block_entities_list = Vec::new();
-        let mut other_blocks_list = Vec::new();
-
+        let mut infos = Vec::with_capacity(block_list.len());
         for tag in block_list {
             let NbtTag::Compound(block_compound) = tag else {
                 return Err(TemplateError::InvalidFieldType("blocks entry"));
@@ -1153,20 +1150,20 @@ impl StructureTemplate {
 
             let nbt = block_compound.get_compound(Self::BLOCK_TAG_NBT).cloned();
 
-            let info = StructureBlockInfo::new(Vector3::new(x, y, z), state, nbt);
-            Self::add_to_lists(
-                info,
-                &mut full_block_list,
-                &mut block_entities_list,
-                &mut other_blocks_list,
-            );
+            infos.push(StructureBlockInfo::new(Vector3::new(x, y, z), state, nbt));
         }
-
-        let block_info_list =
-            Self::build_info_list(full_block_list, block_entities_list, other_blocks_list);
-        self.palettes.push(Palette::new(block_info_list));
+        self.palettes.push(Palette::new(Self::vanilla_order(infos)));
 
         Ok(())
+    }
+
+    /// The blocks in vanilla `StructureTemplate.buildInfoList` order.
+    fn vanilla_order(infos: Vec<StructureBlockInfo>) -> Vec<StructureBlockInfo> {
+        let (mut full, mut entities, mut other) = (Vec::new(), Vec::new(), Vec::new());
+        for info in infos {
+            Self::add_to_lists(info, &mut full, &mut entities, &mut other);
+        }
+        Self::build_info_list(full, entities, other)
     }
 
     fn add_to_lists(

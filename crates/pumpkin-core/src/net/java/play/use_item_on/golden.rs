@@ -14,13 +14,15 @@
 use std::num::NonZero;
 use std::sync::Arc;
 use std::sync::atomic::Ordering;
+use std::time::{Duration, Instant};
 
 use pumpkin_data::block_properties::{
     AttachFace, BeeNestLikeProperties, CopperBulbLikeProperties, HorizontalFacing,
-    LeverLikeProperties, RespawnAnchorLikeProperties,
+    LeverLikeProperties, NetherWartLikeProperties, RespawnAnchorLikeProperties,
 };
 use pumpkin_data::item::Item;
 use pumpkin_data::item_stack::ItemStack;
+use pumpkin_data::statistic::CustomStatistic;
 use pumpkin_data::{Block, BlockStateId};
 use pumpkin_protocol::codec::var_int::VarInt;
 use pumpkin_protocol::java::server::play::SUseItemOn;
@@ -33,6 +35,9 @@ use pumpkin_world::cylindrical_chunk_iterator::Cylindrical;
 use pumpkin_world::world::BlockFlags;
 use uuid::Uuid;
 
+use crate::block::entities::BlockEntity;
+use crate::block::entities::chest::ChestBlockEntity;
+use crate::block::entities::sign::SignBlockEntity;
 use crate::command::commands::script_golden::{self, TestResult};
 use crate::entity::EntityBase;
 use crate::entity::ai::test_support::{self, Identity};
@@ -78,6 +83,9 @@ enum Kind {
     NoteBlock,
     Tnt,
     ShortGrass,
+    Sign,
+    RipeBerryBush,
+    Wheat,
 }
 
 #[derive(Clone, Copy)]
@@ -105,6 +113,15 @@ struct Scene {
     height: i32,
     /// A campfire two blocks under the clicked block, air between.
     smoke: bool,
+    /// Appended: the clicked block gets its block entity (chest, sign).
+    block_entity: bool,
+    /// Appended: the user's food level is 10.
+    hungry: bool,
+    /// Appended: blocks and items by name only (random growth and drop counts).
+    names_only: bool,
+    /// Appended scenes end their line with whether the packet counted as activity and the
+    /// chest, cake and note block statistics.
+    extra: bool,
 }
 
 const SCENE: Scene = Scene {
@@ -124,6 +141,10 @@ const SCENE: Scene = Scene {
     in_the_way: false,
     height: 64,
     smoke: false,
+    block_entity: false,
+    hungry: false,
+    names_only: false,
+    extra: false,
 };
 
 const fn scene(name: &'static str, kind: Kind) -> Scene {
@@ -141,7 +162,70 @@ fn scenes() -> Vec<Scene> {
     scenes.extend(block_use_scenes());
     scenes.extend(placing_scenes());
     scenes.extend(item_use_scenes());
+    scenes.extend(widened_scenes());
     scenes
+}
+
+const WIDE: Scene = Scene {
+    extra: true,
+    ..SCENE
+};
+
+const fn wide(name: &'static str, kind: Kind) -> Scene {
+    Scene { name, kind, ..WIDE }
+}
+
+/// Scenes appended in the first widening.
+fn widened_scenes() -> Vec<Scene> {
+    vec![
+        Scene {
+            block_entity: true,
+            ..wide("empty hand on a chest with its block entity", Kind::Chest)
+        },
+        Scene {
+            gamemode: GameMode::Spectator,
+            block_entity: true,
+            ..wide("spectator on a chest with its block entity", Kind::Chest)
+        },
+        Scene {
+            hungry: true,
+            ..wide("empty hand on a cake, hungry", Kind::Cake)
+        },
+        wide("empty hand on a note block, statistics", Kind::NoteBlock),
+        wide("holding stone on stone, activity", Kind::Stone),
+        Scene {
+            block_entity: true,
+            ..wide("empty hand on a sign with its block entity", Kind::Sign)
+        },
+        Scene {
+            block_entity: true,
+            held: Some((&Item::GLOW_INK_SAC, 2)),
+            ..wide("glow ink sac on a sign with its block entity", Kind::Sign)
+        },
+        Scene {
+            names_only: true,
+            ..wide("empty hand on a ripe sweet berry bush", Kind::RipeBerryBush)
+        },
+        Scene {
+            names_only: true,
+            held: Some((&Item::BONE_MEAL, 3)),
+            ..wide("bone meal on wheat", Kind::Wheat)
+        },
+        Scene {
+            gamemode: GameMode::Creative,
+            held: Some((&Item::IRON_AXE, 1)),
+            ..wide(
+                "axe on a lit exposed copper bulb in creative",
+                Kind::LitBulb,
+            )
+        },
+        Scene {
+            offhand: Some((&Item::BONE_MEAL, 3)),
+            hand: LEFT,
+            names_only: true,
+            ..wide("offhand bone meal on wheat", Kind::Wheat)
+        },
+    ]
 }
 
 fn guard_scenes() -> Vec<Scene> {
@@ -438,6 +522,11 @@ fn state_of(kind: Kind) -> BlockStateId {
         Kind::NoteBlock => Block::NOTE_BLOCK.default_state.id,
         Kind::Tnt => Block::TNT.default_state.id,
         Kind::ShortGrass => Block::SHORT_GRASS.default_state.id,
+        Kind::Sign => Block::OAK_SIGN.default_state.id,
+        Kind::RipeBerryBush => {
+            NetherWartLikeProperties { age: 3 }.to_state_id(&Block::SWEET_BERRY_BUSH)
+        }
+        Kind::Wheat => Block::WHEAT.default_state.id,
     }
 }
 
@@ -457,6 +546,13 @@ fn lay(world: &Arc<World>, pos: BlockPos, scene: &Scene) {
         put(world, &pos.down(), Block::AIR.default_state.id);
     }
     put(world, &pos, state_of(scene.kind));
+    if scene.block_entity {
+        let entity: Arc<dyn BlockEntity> = match scene.kind {
+            Kind::Sign => Arc::new(SignBlockEntity::empty(pos)),
+            _ => Arc::new(ChestBlockEntity::new(pos)),
+        };
+        world.add_block_entity(entity);
+    }
 }
 
 fn fnv(bytes: &[u8]) -> u64 {
@@ -480,12 +576,30 @@ fn packets(tap: &mut PacketTap) -> String {
         .join(" ")
 }
 
+/// Like [`packets`], every packet by id only (scenes with random growth or drops).
+fn packet_ids(tap: &mut PacketTap) -> String {
+    tap.drain()
+        .iter()
+        .map(|p| format!("{}:id{}", p.len(), p.first().copied().unwrap_or_default()))
+        .collect::<Vec<_>>()
+        .join(" ")
+}
+
+fn tap_text(tap: &mut PacketTap, names_only: bool) -> String {
+    if names_only {
+        packet_ids(tap)
+    } else {
+        packets(tap)
+    }
+}
+
 fn near(at: Vector3<f64>, pos: BlockPos) -> bool {
     (at.x - f64::from(pos.0.x)).abs() < 6.0 && (at.z - f64::from(pos.0.z)).abs() < 6.0
 }
 
-/// Items (name x count) and other non-player entities (type) within six blocks of `pos`, sorted.
-fn things_near(world: &World, pos: BlockPos) -> Vec<String> {
+/// Items (name x count, or the name only) and other non-player entities (type) within six blocks
+/// of `pos`, sorted.
+fn things_near(world: &World, pos: BlockPos, names_only: bool) -> Vec<String> {
     let mut found: Vec<String> = world
         .entities
         .load()
@@ -500,6 +614,9 @@ fn things_near(world: &World, pos: BlockPos) -> Vec<String> {
                         .lock()
                         .unwrap_or_else(std::sync::PoisonError::into_inner)
                         .clone();
+                    if names_only {
+                        return stack.item.registry_key.to_string();
+                    }
                     format!("{}x{}", stack.item.registry_key, stack.item_count)
                 },
             )
@@ -521,7 +638,10 @@ fn stack_text(stack: &ItemStack) -> String {
     )
 }
 
-fn block_text(world: &World, pos: &BlockPos) -> String {
+fn block_text(world: &World, pos: &BlockPos, names_only: bool) -> String {
+    if names_only {
+        return world.get_block(pos).name.to_string();
+    }
     format!(
         "{}#{}",
         world.get_block(pos).name,
@@ -567,6 +687,23 @@ fn user_text(player: &Player, used: &Item) -> String {
     )
 }
 
+/// Appended scenes: whether the packet counted as activity, and the custom statistics of the
+/// blocks they use.
+fn extra_text(player: &Player) -> String {
+    let stats = player
+        .stats
+        .lock()
+        .unwrap_or_else(std::sync::PoisonError::into_inner);
+    let custom = |stat: CustomStatistic| stats.get(StatisticCategory::Custom, stat as i32);
+    format!(
+        " | acted {} open chest {} eat cake {} tune note block {}",
+        player.last_action_time.load().elapsed() < Duration::from_secs(300),
+        custom(CustomStatistic::OpenChest),
+        custom(CustomStatistic::EatCakeSlice),
+        custom(CustomStatistic::TuneNoteblock),
+    )
+}
+
 fn place(player: &Player, at: Vector3<f64>, pos: BlockPos) {
     player.get_entity().set_pos(at);
     player.watched_section.store(Cylindrical::new(
@@ -595,6 +732,14 @@ fn equip(user: &Arc<Player>, scene: &Scene) {
     }
     if scene.sneaking {
         user.get_entity().set_sneaking(true);
+    }
+    if scene.hungry {
+        user.hunger_manager.level.store(10);
+    }
+    if scene.extra
+        && let Some(long_ago) = Instant::now().checked_sub(Duration::from_secs(600))
+    {
+        user.last_action_time.store(long_ago);
     }
     // As the server's login does, so that awarded criteria are recorded.
     user.advancements
@@ -665,17 +810,21 @@ fn run(
         sequence: VarInt(5),
     };
     let result = client.handle_use_item_on(&user, &packet, server);
-    let line = format!(
+    let names = scene.names_only;
+    let mut line = format!(
         "{}: {result:?} | at {} above {} north {} | {:?} | user [{}] | sent [{}] | watcher [{}]",
         scene.name,
-        block_text(world, &pos),
-        block_text(world, &pos.up()),
-        block_text(world, &pos.north()),
-        things_near(world, pos),
+        block_text(world, &pos, names),
+        block_text(world, &pos.up(), names),
+        block_text(world, &pos.north(), names),
+        things_near(world, pos, names),
         user_text(&user, used),
-        packets(&mut user_tap),
-        packets(&mut watcher_tap),
+        tap_text(&mut user_tap, names),
+        tap_text(&mut watcher_tap, names),
     );
+    if scene.extra {
+        line.push_str(&extra_text(&user));
+    }
     Ok(line + "\n")
 }
 

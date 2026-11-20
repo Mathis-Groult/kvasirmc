@@ -363,6 +363,52 @@ const CRIT_SHOTS: &[Shot] = &[
     critical(shot((12.5, 65.3, 21.5), (1.5, 0.0, 0.0))),
 ];
 
+/// Faster, so the bonus range is wider: damage 5 plus 0..=3.
+const CRIT_FAST_SHOTS: &[Shot] = &[
+    critical(shot((6.5, 65.3, 1.5), (2.5, 0.0, 0.0))),
+    critical(shot((6.5, 65.3, 2.5), (2.5, 0.0, 0.0))),
+    critical(shot((6.5, 65.3, 3.5), (2.5, 0.0, 0.0))),
+    critical(shot((6.5, 65.3, 4.5), (2.5, 0.0, 0.0))),
+    critical(shot((6.5, 65.3, 5.5), (2.5, 0.0, 0.0))),
+    critical(shot((6.5, 65.3, 6.5), (2.5, 0.0, 0.0))),
+    critical(shot((6.5, 65.3, 7.5), (2.5, 0.0, 0.0))),
+    critical(shot((6.5, 65.3, 8.5), (2.5, 0.0, 0.0))),
+    critical(shot((6.5, 65.3, 9.5), (2.5, 0.0, 0.0))),
+    critical(shot((6.5, 65.3, 10.5), (2.5, 0.0, 0.0))),
+    critical(shot((6.5, 65.3, 11.5), (2.5, 0.0, 0.0))),
+    critical(shot((6.5, 65.3, 12.5), (2.5, 0.0, 0.0))),
+    critical(shot((6.5, 65.3, 13.5), (2.5, 0.0, 0.0))),
+    critical(shot((6.5, 65.3, 14.5), (2.5, 0.0, 0.0))),
+    critical(shot((6.5, 65.3, 15.5), (2.5, 0.0, 0.0))),
+    critical(shot((6.5, 65.3, 16.5), (2.5, 0.0, 0.0))),
+    critical(shot((6.5, 65.3, 17.5), (2.5, 0.0, 0.0))),
+    critical(shot((6.5, 65.3, 18.5), (2.5, 0.0, 0.0))),
+    critical(shot((6.5, 65.3, 19.5), (2.5, 0.0, 0.0))),
+    critical(shot((6.5, 65.3, 20.5), (2.5, 0.0, 0.0))),
+    critical(shot((6.5, 65.3, 21.5), (2.5, 0.0, 0.0))),
+    critical(shot((12.5, 65.3, 1.5), (2.5, 0.0, 0.0))),
+    critical(shot((12.5, 65.3, 2.5), (2.5, 0.0, 0.0))),
+    critical(shot((12.5, 65.3, 3.5), (2.5, 0.0, 0.0))),
+    critical(shot((12.5, 65.3, 4.5), (2.5, 0.0, 0.0))),
+    critical(shot((12.5, 65.3, 5.5), (2.5, 0.0, 0.0))),
+    critical(shot((12.5, 65.3, 6.5), (2.5, 0.0, 0.0))),
+    critical(shot((12.5, 65.3, 7.5), (2.5, 0.0, 0.0))),
+    critical(shot((12.5, 65.3, 8.5), (2.5, 0.0, 0.0))),
+    critical(shot((12.5, 65.3, 9.5), (2.5, 0.0, 0.0))),
+    critical(shot((12.5, 65.3, 10.5), (2.5, 0.0, 0.0))),
+    critical(shot((12.5, 65.3, 11.5), (2.5, 0.0, 0.0))),
+    critical(shot((12.5, 65.3, 12.5), (2.5, 0.0, 0.0))),
+    critical(shot((12.5, 65.3, 13.5), (2.5, 0.0, 0.0))),
+    critical(shot((12.5, 65.3, 14.5), (2.5, 0.0, 0.0))),
+    critical(shot((12.5, 65.3, 15.5), (2.5, 0.0, 0.0))),
+    critical(shot((12.5, 65.3, 16.5), (2.5, 0.0, 0.0))),
+    critical(shot((12.5, 65.3, 17.5), (2.5, 0.0, 0.0))),
+    critical(shot((12.5, 65.3, 18.5), (2.5, 0.0, 0.0))),
+    critical(shot((12.5, 65.3, 19.5), (2.5, 0.0, 0.0))),
+    critical(shot((12.5, 65.3, 20.5), (2.5, 0.0, 0.0))),
+    critical(shot((12.5, 65.3, 21.5), (2.5, 0.0, 0.0))),
+];
+
 const SCENES: &[Scene] = &[
     // Flight and the ground.
     scene(
@@ -718,6 +764,10 @@ const SCENES: &[Scene] = &[
     Scene {
         random: true,
         ..scene("critical_hits", &[], CRIT_SHOTS, CRIT_MOBS)
+    },
+    Scene {
+        random: true,
+        ..scene("critical_fast", &[], CRIT_FAST_SHOTS, CRIT_MOBS)
     },
     scene(
         "arrow_kinds",
@@ -1305,15 +1355,28 @@ fn report_losses(scene: &Scene, mobs: &[Arc<dyn EntityBase>], report: &mut Strin
         };
         seen[slot] += 1;
     }
+    let lost_all: Vec<i32> = mobs
+        .iter()
+        .map(|mob| (20.0 - mob.get_living_entity().map_or(20.0, |l| l.health.load())) as i32)
+        .collect();
     let _ = writeln!(
         report,
-        "{} lost 3 hp seen: {}, 4: {}, 5: {}, other: {}",
+        "{} lost min {:?} max {:?}",
         scene.name,
-        seen[0] > 0,
-        seen[1] > 0,
-        seen[2] > 0,
-        seen[3]
+        lost_all.iter().min(),
+        lost_all.iter().max()
     );
+    if scene.name == "critical_hits" {
+        let _ = writeln!(
+            report,
+            "{} lost 3 hp seen: {}, 4: {}, 5: {}, other: {}",
+            scene.name,
+            seen[0] > 0,
+            seen[1] > 0,
+            seen[2] > 0,
+            seen[3]
+        );
+    }
 }
 
 /// A released arrow keeps a random part of its speed: each axis must be in 0..0.2 of the old

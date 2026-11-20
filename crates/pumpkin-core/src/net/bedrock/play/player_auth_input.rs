@@ -278,14 +278,18 @@ impl BedrockClient {
     /// The flight toggles of the packet (plugins may cancel them).
     fn apply_flight_inputs(player: &Arc<Player>, server: &Arc<Server>, input_data: &Bitset<66>) {
         if input_data.get(InputData::StartFlying as usize) {
-            let flying = {
-                player
+            let (flying, may_fly) = {
+                let abilities = player
                     .abilities
                     .lock()
-                    .unwrap_or_else(std::sync::PoisonError::into_inner)
-                    .flying
+                    .unwrap_or_else(std::sync::PoisonError::into_inner);
+                (abilities.flying, abilities.allow_flying)
             };
-            if !flying {
+            if !may_fly {
+                // Vanilla `flying = packet.isFlying() && mayfly`: refuse, and send the
+                // abilities again so the client drops its own flight.
+                player.send_abilities_update();
+            } else if !flying {
                 send_cancellable_blocking! {{
                     server;
                     PlayerToggleFlightEvent::new(player.clone(), true);

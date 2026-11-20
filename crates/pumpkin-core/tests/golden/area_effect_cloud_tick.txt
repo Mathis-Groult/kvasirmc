@@ -1,0 +1,93 @@
+slowness ticks to 10: 87a2dc2a72566cec
+slowness ticks to 20: dc1ff6f86ca4592d
+slowness ticks to 30: f50ac61bd7064770
+slowness ticks to 40: 18ea6e50863db61e
+slowness ticks to 50: 714dd630f5aa253a
+slowness ticks to 60: 7acf910d10389516
+slowness end: age 41 radius 0.3000 duration 40 map [] removed true
+instant_damage ticks to 10: 41b8a8194c5a40e3
+instant_damage ticks to 20: da5c326d2cf3a5e8
+instant_damage ticks to 30: d171c77bb93d4dc5
+instant_damage ticks to 40: 85e726855a8190f7
+instant_damage ticks to 50: a007bf4fca0838b7
+instant_damage ticks to 60: 105066bdaab98077
+instant_damage end: age 41 radius 0.3000 duration 40 map [(81000, 5)] removed true
+instant_health ticks to 10: 91bf13daa9d27b87
+instant_health ticks to 20: 16013f3fd523fa8c
+instant_health ticks to 30: 1b28fec2e5f39969
+instant_health ticks to 40: dfefe042f968c1e3
+instant_health ticks to 50: a78313f8ba4fada5
+instant_health ticks to 60: f91f45b4daae350f
+instant_health end: age 41 radius 0.3000 duration 40 map [(81000, 5)] removed true
+two_effects ticks to 10: 87a2dc2a72566cec
+two_effects ticks to 20: 0e2f5bbba88212c5
+two_effects ticks to 30: 0ef519a2cd667157
+two_effects ticks to 40: d084a95235a7110c
+two_effects ticks to 50: 0e5ad3ec34ee687c
+two_effects ticks to 60: aab0f0bf2d7fdcac
+two_effects end: age 41 radius 0.3000 duration 40 map [(81000, 5)] removed true
+no_effects ticks to 10: c7078f5e15401fa9
+no_effects ticks to 20: 5cf459c3210cda66
+no_effects ticks to 30: a7c6c323325ef73f
+no_effects ticks to 40: 7ba46574c74b68a1
+no_effects ticks to 50: 8d767547e9cd4ccb
+no_effects ticks to 60: 4fe57d353e52bcad
+no_effects end: age 41 radius 0.3000 duration 40 map [] removed true
+shrinks_on_use ticks to 10: fecb1b23ca31ad84
+shrinks_on_use ticks to 20: 78de161d1af4fee1
+shrinks_on_use ticks to 30: 191622b7d3a9b2f2
+shrinks_on_use ticks to 40: 78128e1902882f60
+shrinks_on_use ticks to 50: dd8ec71fc64b14d8
+shrinks_on_use ticks to 60: 4268fbc4a67dbdb0
+shrinks_on_use end: age 35 radius -0.0500 duration 40 map [] removed true
+grows_on_use ticks to 10: c119b8280b58f954
+grows_on_use ticks to 20: 7536f150b5a36a75
+grows_on_use ticks to 30: 0da1241c526a4262
+grows_on_use ticks to 40: bdeda718319ac293
+grows_on_use ticks to 50: e0fbf816d678d6ff
+grows_on_use ticks to 60: 607a9cd89bd3041b
+grows_on_use end: age 41 radius 0.5000 duration 40 map [] removed true
+shortens_on_use ticks to 10: 82d2624a088e94d5
+shortens_on_use ticks to 20: c46967662d2359b5
+shortens_on_use ticks to 30: e2320a7ab39e7a15
+shortens_on_use ticks to 40: 6c62684372fbd8f5
+shortens_on_use ticks to 50: 8c8b0668dc799555
+shortens_on_use ticks to 60: a601d98b1b0ad235
+shortens_on_use end: age 5 radius 2.9250 duration -8 map [(81000, 10), (81001, 10), (81002, 10), (81004, 10)] removed true
+lengthens_on_use ticks to 10: 669f6e8c205c33db
+lengthens_on_use ticks to 20: 3127c0d28f11dfcb
+lengthens_on_use ticks to 30: 447cd7795737a544
+lengthens_on_use ticks to 40: 8097d16ed1e82f03
+lengthens_on_use ticks to 50: c9639354a666d71f
+lengthens_on_use ticks to 60: cba4329b479dc99f
+lengthens_on_use ticks to 70: f57a43fca129481f
+lengthens_on_use ticks to 80: e6c6bb044d6bf29f
+lengthens_on_use end: age 44 radius -0.0000 duration 165 map [] removed true
+waits_past_end ticks to 10: ff322fbf915bf0d3
+waits_past_end ticks to 20: 54e01e0ceb9b5ceb
+waits_past_end ticks to 30: 15d48b35c06d6b3d
+waits_past_end ticks to 40: b4f4ea5a1f654467
+waits_past_end end: age 21 radius 3.0000 duration 20 map [] removed true
+no_wait ticks to 10: bfdefde0aa050793
+no_wait ticks to 20: 4ca8358d46df6024
+no_wait end: age 20 radius 1.5000 duration 40 map [] removed false
+wait_ends_on_age ticks to 6: 90d756aed99c725d
+wait_ends_on_age end: age 6 radius 2.5500 duration 40 map [(81000, 5), (81001, 5), (81002, 5), (81004, 5)] removed false
+short_life ticks to 10: 76865bc8c2c9b405
+short_life ticks to 20: 093255aa042e4371
+short_life ticks to 30: 8a70249841ef7e3d
+short_life end: age 13 radius 0.0833 duration 12 map [] removed true
+twin ticks to 10: af9b0ea3ab723e30
+twin ticks to 20: a98400e1c94e8d4c
+twin ticks to 30: 0c3984d1c1f8404c
+twin end: age 30 radius 1.0500 duration 40 map [] removed false
+player ticks to 10: 7caddb1e80268271
+player ticks to 20: e5acc6c7a6e5892e
+player ticks to 30: 0af81f4f39eda7df
+player ticks to 40: 2a05bf852c8a4c91
+player end: age 40 radius 0.3000 duration 40 map [] removed false
+player_instant ticks to 10: 3d6d591787ee9ab1
+player_instant ticks to 20: 9d04e1b2f4cc9b58
+player_instant ticks to 30: 54c0e653026e0c07
+player_instant ticks to 40: f9b4d01d35c7e0a9
+player_instant end: age 40 radius 0.3000 duration 40 map [] removed false

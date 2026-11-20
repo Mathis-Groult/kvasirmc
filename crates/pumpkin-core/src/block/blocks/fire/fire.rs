@@ -3,11 +3,9 @@ use pumpkin_data::biome::Biome;
 use pumpkin_data::block_properties::HorizontalAxis;
 use pumpkin_data::dimension::Dimension;
 use pumpkin_data::fluid::Fluid;
-use pumpkin_data::tag::{self, Taggable};
 use pumpkin_data::{Block, BlockDirection};
 use pumpkin_macros::pumpkin_block;
 use pumpkin_util::math::position::BlockPos;
-use pumpkin_util::math::vector3::Vector3;
 use pumpkin_world::tick::TickPriority;
 use pumpkin_world::world::{BlockAccessor, BlockFlags};
 use rand::RngExt;
@@ -24,6 +22,8 @@ use crate::world::portal::nether::NetherPortal;
 type FireProperties = pumpkin_data::block_properties::FireLikeProperties;
 
 use super::FireBlockBase;
+
+mod tick;
 
 #[pumpkin_block("minecraft:fire")]
 pub struct FireBlock;
@@ -245,7 +245,6 @@ impl BlockBehaviour for FireBlock {
         Self::are_blocks_around_flammable(args.block_accessor, args.position)
     }
 
-    #[expect(clippy::too_many_lines)]
     fn on_scheduled_tick(&self, args: OnScheduledTickArgs<'_>) {
         let (world, block, pos) = (args.world, args.block, args.position);
 
@@ -280,19 +279,7 @@ impl BlockBehaviour for FireBlock {
         let block_state = world.get_block_state(pos);
         let block_below = world.get_block(&pos.down());
 
-        // Check for infiniburn blocks (depending on dimension)
-        let infiniburn = match world.dimension.id {
-            id if id == Dimension::OVERWORLD.id => {
-                block_below.has_tag(&tag::Block::MINECRAFT_INFINIBURN_OVERWORLD)
-            }
-            id if id == Dimension::THE_NETHER.id => {
-                block_below.has_tag(&tag::Block::MINECRAFT_INFINIBURN_NETHER)
-            }
-            id if id == Dimension::THE_END.id => {
-                block_below.has_tag(&tag::Block::MINECRAFT_INFINIBURN_END)
-            }
-            _ => false,
-        };
+        let infiniburn = Self::is_infiniburn(world.dimension.id, block_below);
 
         let mut fire_props = FireProperties::from_state_id(block_state.id);
         let age = fire_props.age;
@@ -319,151 +306,12 @@ impl BlockBehaviour for FireBlock {
             world.set_block_state(pos, new_state_id, BlockFlags::NOTIFY_ALL);
         }
 
-        if !infiniburn {
-            // Check if fire should extinguish due to lack of fuel
-            if !Self::are_blocks_around_flammable(world.as_ref(), pos) {
-                let block_below_state = world.get_block_state(&pos.down());
-                if !block_below_state.is_side_solid(BlockDirection::Up) || new_age > 3 {
-                    world.set_block_state(pos, Block::AIR.default_state.id, BlockFlags::NOTIFY_ALL);
-                    return;
-                }
-            }
-
-            // At max age, fire has a chance to extinguish if not on flammable block
-            if new_age == 15
-                && rand::rng().random_range(0..4) == 0
-                && !Self::is_flammable(world.get_block_state_id(&pos.down()))
-            {
-                world.set_block_state(pos, Block::AIR.default_state.id, BlockFlags::NOTIFY_ALL);
-                return;
-            }
+        if !infiniburn && Self::burns_out(world, pos, new_age) {
+            return;
         }
 
-        // Burn adjacent blocks
-        let extra = if Self::is_increased_burnout_biome(world, pos) {
-            -50 // Increases chance of block being destroyed
-        } else {
-            0
-        };
-
-        self.try_spreading_fire(
-            world,
-            &pos.offset(BlockDirection::East.to_offset()),
-            300 + extra,
-            new_age,
-        );
-        self.try_spreading_fire(
-            world,
-            &pos.offset(BlockDirection::West.to_offset()),
-            300 + extra,
-            new_age,
-        );
-        self.try_spreading_fire(
-            world,
-            &pos.offset(BlockDirection::Down.to_offset()),
-            250 + extra,
-            new_age,
-        );
-        self.try_spreading_fire(
-            world,
-            &pos.offset(BlockDirection::Up.to_offset()),
-            250 + extra,
-            new_age,
-        );
-        self.try_spreading_fire(
-            world,
-            &pos.offset(BlockDirection::North.to_offset()),
-            300 + extra,
-            new_age,
-        );
-        self.try_spreading_fire(
-            world,
-            &pos.offset(BlockDirection::South.to_offset()),
-            300 + extra,
-            new_age,
-        );
-
-        // Respect the `fire_spread_radius_around_player` gamerule.
-        // -1 = disabled (allow unlimited spread), 0 = disabled (no spread), >0 = radius in blocks
-        let spread_radius = world
-            .level_info
-            .load()
-            .game_rules
-            .fire_spread_radius_around_player;
-
-        // Try to spread fire to nearby air blocks
-        let difficulty = world.level_info.load().difficulty as i32;
-        for xx in -1..=1 {
-            for zz in -1..=1 {
-                for yy in -1..=4 {
-                    if xx != 0 || yy != 0 || zz != 0 {
-                        let offset_pos = pos.offset(Vector3::new(xx, yy, zz));
-                        let ignite_odds = self.get_burn_chance(world, &offset_pos);
-
-                        if ignite_odds > 0 {
-                            // Skip if spreding is disabled or if there are no players nearby
-                            if spread_radius == 0 {
-                                continue;
-                            }
-                            if spread_radius != -1 {
-                                let center = offset_pos.to_centered_f64();
-                                if world
-                                    .get_closest_player(center, spread_radius as f64)
-                                    .is_none()
-                                {
-                                    continue;
-                                }
-                            }
-
-                            // Calculate spread rate based on height
-                            let rate = if yy > 1 { 100 + (yy - 1) * 100 } else { 100 };
-
-                            // Calculate odds of spreading
-                            let mut odds =
-                                (ignite_odds + 40 + difficulty * 7) / (new_age as i32 + 30);
-
-                            // Reduce spread odds in certain biomes
-                            if Self::is_increased_burnout_biome(world, &offset_pos) {
-                                odds /= 2; // Fire spreads 50% slower
-                            }
-
-                            if odds > 0
-                                && rand::rng().random_range(0..rate) <= odds
-                                && !Self::is_near_rain(world.as_ref(), &offset_pos)
-                            {
-                                let spread_age =
-                                    (new_age + rand::rng().random_range(0..5) / 4).min(15) as u8;
-                                let fire_state_id =
-                                    self.get_state_for_position(world.as_ref(), block, &offset_pos);
-                                let mut new_fire_props =
-                                    FireProperties::from_state_id(fire_state_id);
-                                new_fire_props.age = spread_age;
-                                let new_state_id = new_fire_props.to_state_id(&Block::FIRE);
-
-                                if let Some(server) = world.server.upgrade() {
-                                    let mut event = crate::plugin::api::events::block::block_spread::BlockSpreadEvent::new(
-                                        *pos,
-                                        offset_pos,
-                                        world.clone(),
-                                        new_state_id,
-                                    );
-                                    server.plugin_manager.fire_blocking(&server, &mut event);
-                                    if event.cancelled {
-                                        continue;
-                                    }
-                                }
-
-                                world.set_block_state(
-                                    &offset_pos,
-                                    new_state_id,
-                                    BlockFlags::NOTIFY_NEIGHBORS,
-                                );
-                            }
-                        }
-                    }
-                }
-            }
-        }
+        self.burn_adjacent(world, pos, new_age);
+        self.spread_to_nearby(world, block, pos, new_age);
     }
 
     fn broken(&self, args: BrokenArgs<'_>) {

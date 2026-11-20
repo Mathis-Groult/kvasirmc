@@ -67,6 +67,18 @@ fn cuboid(from: (i32, i32, i32), to: (i32, i32, i32), block: &'static Block) -> 
     out
 }
 
+/// Walls of different heights in the rows and columns just outside, and just inside, the centre.
+fn ridges() -> Vec<Place> {
+    let mut out = floor(30, &Block::STONE);
+    out.extend(cuboid((-1, 31, -16), (-1, 60, 31), &Block::STONE));
+    out.extend(cuboid((16, 31, -16), (16, 45, 31), &Block::STONE));
+    out.extend(cuboid((-16, 31, -1), (31, 52, -1), &Block::STONE));
+    out.extend(cuboid((-16, 31, 16), (31, 38, 16), &Block::STONE));
+    out.extend(cuboid((0, 31, 0), (0, 70, 0), &Block::STONE));
+    out.extend(cuboid((15, 31, 15), (15, 66, 15), &Block::STONE));
+    out
+}
+
 fn scenes() -> Vec<Scene> {
     vec![
         Scene {
@@ -118,6 +130,34 @@ fn scenes() -> Vec<Scene> {
 
 fn cave_scenes() -> Vec<Scene> {
     vec![
+        Scene {
+            name: "water_fourteen_deep",
+            kinds: PROTO,
+            blocks: || {
+                let mut out = floor(40, &Block::STONE);
+                out.extend(cuboid((0, 41, 0), (7, 54, 7), &Block::WATER));
+                out
+            },
+        },
+        Scene {
+            name: "water_fourteen_deep_ring",
+            kinds: RING,
+            blocks: || {
+                let mut out = floor(40, &Block::STONE);
+                out.extend(cuboid((0, 41, 0), (7, 54, 7), &Block::WATER));
+                out
+            },
+        },
+        Scene {
+            name: "ridges_on_the_edge_of_the_window",
+            kinds: PROTO,
+            blocks: ridges,
+        },
+        Scene {
+            name: "ridges_on_the_edge_of_the_window_mixed",
+            kinds: MIXED,
+            blocks: ridges,
+        },
         Scene {
             name: "roof_over_cave",
             kinds: MIXED,

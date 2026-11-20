@@ -96,6 +96,20 @@ queue 1: TaskPriority { stage: 3, x: 0, z: 0, eff_level: 127 } StructureStart@0,
 waiting 0: 
 public 0: 
 running 3 told 0: 
+== task_above_the_new_ones req Noise -> created [Empty,Biomes,StructureStart,StructureReferences,Noise] occupied_by 1 edges (was null true) waiter in_degree 1
+holder 0,0 cur None target None dep Noise public false chunk none occupied null tasks [Empty@0,0 deg0 q1 f0 ->[Biomes@0,0]; Biomes@0,0 deg1 q0 f0 ->[StructureStart@0,0]; StructureStart@0,0 deg1 q0 f0 ->[StructureReferences@0,0]; StructureReferences@0,0 deg1 q0 f0 ->[Noise@0,0]; Noise@0,0 deg1 q0 f0 ->[Full@9,9]; Surface@0,0 deg0 q0 f0 ->[]]
+graph 7 nodes 6 edges: Biomes@0,0 deg1 q0 f0 ->[StructureStart@0,0] | Empty@0,0 deg0 q1 f0 ->[Biomes@0,0] | Full@9,9 deg1 q0 f0 ->[] | Noise@0,0 deg1 q0 f0 ->[Full@9,9] | StructureReferences@0,0 deg1 q0 f0 ->[Noise@0,0] | StructureStart@0,0 deg1 q0 f0 ->[StructureReferences@0,0] | Surface@0,0 deg0 q0 f0 ->[]
+queue 1: TaskPriority { stage: 1, x: 0, z: 0, eff_level: 127 } Empty@0,0 deg0 q1 f0 ->[Biomes@0,0]
+waiting 0: 
+public 0: 
+running 3 told 0: 
+== task_above_the_target req Biomes -> created [] occupied_by 1 edges (was null true) waiter in_degree 0
+holder 0,0 cur Biomes target None dep Biomes public false chunk proto Biomes occupied null tasks [StructureStart@0,0 deg0 q0 f0 ->[]]
+graph 2 nodes 1 edges: Full@9,9 deg0 q0 f0 ->[] | StructureStart@0,0 deg0 q0 f0 ->[]
+queue 0: 
+waiting 0: 
+public 0: 
+running 3 told 0: 
 == full_chunk req Spawn -> created [] occupied_by 1 edges (was null true) waiter in_degree 0
 holder 0,0 cur Full target None dep Spawn public true chunk level[block 333 sky 777 dirty false] occupied null tasks []
 graph 1 nodes 1 edges: Full@9,9 deg0 q0 f0 ->[]

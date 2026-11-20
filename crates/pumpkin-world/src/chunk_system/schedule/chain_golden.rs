@@ -100,6 +100,20 @@ fn scenes() -> Vec<Scene> {
             S::StructureReferences,
         ),
         scene(
+            "task_above_the_new_ones",
+            base().first_task(S::Surface).tasks_to(S::Surface),
+            S::Noise,
+        ),
+        scene(
+            "task_above_the_target",
+            base()
+                .current(S::Biomes)
+                .held(held(S::Biomes))
+                .first_task(S::StructureStart)
+                .tasks_to(S::StructureStart),
+            S::Biomes,
+        ),
+        scene(
             "full_chunk",
             base().current(S::Full).held(Held::Level).public(),
             S::Spawn,

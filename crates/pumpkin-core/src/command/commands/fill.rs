@@ -133,6 +133,7 @@ fn fill_blocks(
         filter,
     };
     let mut changed_positions = Vec::new();
+    let mut count = 0;
 
     let min_chunk_x = min_x >> 4;
     let max_chunk_x = max_x >> 4;
@@ -143,7 +144,8 @@ fn fill_blocks(
         for chunk_z in min_chunk_z..=max_chunk_z {
             let result = fill_chunk(&world, chunk_x, chunk_z, spec);
 
-            if let Some((chunk_changed, be_to_remove)) = result {
+            if let Some((chunk_changed, be_to_remove, counted)) = result {
+                count += counted;
                 for pos in be_to_remove {
                     world.remove_block_entity(&pos);
                 }
@@ -152,7 +154,7 @@ fn fill_blocks(
         }
     }
 
-    let count = changed_positions.len() as i32;
+    let count = count as i32;
     if count == 0 {
         return Err(ERROR_FAILED.create_without_context());
     }
@@ -214,7 +216,7 @@ fn fill_chunk(
     chunk_x: i32,
     chunk_z: i32,
     spec: FillSpec<'_>,
-) -> Option<(Vec<Changed>, Vec<BlockPos>)> {
+) -> Option<(Vec<Changed>, Vec<BlockPos>, usize)> {
     let FillRegion {
         min_x,
         min_z,
@@ -247,7 +249,7 @@ fn fill_chunk(
         }
 
         if updates_for_chunk.is_empty() {
-            return (Vec::new(), block_entities_to_remove);
+            return (Vec::new(), block_entities_to_remove, to_destroy.len());
         }
 
         let batch_inputs = updates_for_chunk
@@ -262,7 +264,12 @@ fn fill_chunk(
             .map(|((_, _, _, new_id, pos), (_, _, _, old_id))| (pos, old_id, new_id))
             .collect::<Vec<_>>();
 
-        (chunk_changed, block_entities_to_remove)
+        // Vanilla counts a position when its state changed or `destroy` broke the block there.
+        let counted = chunk_changed
+            .iter()
+            .filter(|(pos, old, new)| old != new || to_destroy.contains(pos))
+            .count();
+        (chunk_changed, block_entities_to_remove, counted)
     })
 }
 

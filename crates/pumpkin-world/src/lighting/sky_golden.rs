@@ -79,6 +79,27 @@ fn ridges() -> Vec<Place> {
     out
 }
 
+/// A sea of the given depth over stone, as wide as the cache.
+fn wide_water(depth: i32) -> Vec<Place> {
+    let mut out = floor(40, &Block::STONE);
+    out.extend(cuboid((-16, 41, -16), (31, 40 + depth, 31), &Block::WATER));
+    out
+}
+
+/// Open ground in the centre chunk and a roof over everything around it.
+fn overhang() -> Vec<Place> {
+    let mut out = floor(30, &Block::STONE);
+    for (from, to) in [
+        ((-16, 40, -16), (-1, 42, 31)),
+        ((16, 40, -16), (31, 42, 31)),
+        ((0, 40, -16), (15, 42, -1)),
+        ((0, 40, 16), (15, 42, 31)),
+    ] {
+        out.extend(cuboid(from, to, &Block::STONE));
+    }
+    out
+}
+
 fn scenes() -> Vec<Scene> {
     vec![
         Scene {
@@ -130,6 +151,31 @@ fn scenes() -> Vec<Scene> {
 
 fn cave_scenes() -> Vec<Scene> {
     vec![
+        Scene {
+            name: "wide_water_fourteen_deep",
+            kinds: PROTO,
+            blocks: || wide_water(14),
+        },
+        Scene {
+            name: "wide_water_fifteen_deep_ring",
+            kinds: RING,
+            blocks: || wide_water(15),
+        },
+        Scene {
+            name: "wide_water_thirteen_deep",
+            kinds: MIXED,
+            blocks: || wide_water(13),
+        },
+        Scene {
+            name: "overhang_all_around",
+            kinds: PROTO,
+            blocks: overhang,
+        },
+        Scene {
+            name: "overhang_all_around_mixed",
+            kinds: MIXED,
+            blocks: overhang,
+        },
         Scene {
             name: "water_fourteen_deep",
             kinds: PROTO,

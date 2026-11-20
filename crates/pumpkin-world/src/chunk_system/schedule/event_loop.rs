@@ -533,3 +533,7 @@ mod receive_golden;
 #[cfg(test)]
 #[path = "resort_golden.rs"]
 mod resort_golden;
+
+#[cfg(test)]
+#[path = "chain_golden.rs"]
+mod chain_golden;

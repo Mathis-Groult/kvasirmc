@@ -1,4 +1,5 @@
 use crate::generation::feature::configured_features::FeatureArgs;
+use crate::world::WorldPortalExt;
 use std::collections::{HashMap, HashSet};
 
 use pumpkin_data::{Block, BlockDirection, BlockId, BlockState, BlockStateId};
@@ -87,7 +88,6 @@ impl GeodeFeature {
             .is_some_and(|props| props.to_props().iter().any(|p| p.key() == property))
     }
 
-    #[allow(clippy::too_many_lines)]
     pub fn generate<T: GenerationCache>(
         &self,
         chunk: &mut T,
@@ -95,8 +95,7 @@ impl GeodeFeature {
         random: &mut RandomGenerator,
     ) -> bool {
         let block_registry = args.block_registry;
-        let pos = args.pos;
-        let origin = pos;
+        let origin = args.pos;
         let num_points = self.distribution_points.get(random);
         let noise = NormalNoise::create(random, -4, &[1.0]);
 
@@ -104,26 +103,76 @@ impl GeodeFeature {
         let invalid_raw_ids = block_ids(&self.invalid_blocks);
         let cannot_replace_raw_ids = block_ids(&self.cannot_replace);
 
-        let mut points: Vec<(BlockPos, i32)> = Vec::with_capacity(num_points as usize);
-        let mut crack_points: Vec<BlockPos> = Vec::new();
-        let crack_size_adjustment = num_points as f64 / (self.outer_wall_distance.get_max() as f64);
-        let inner_air = 1.0 / self.filling.sqrt();
-        let innermost_block_layer = 1.0 / (self.inner_layer + crack_size_adjustment).sqrt();
-        let inner_crust = 1.0 / (self.middle_layer + crack_size_adjustment).sqrt();
-        let outer_crust = 1.0 / (self.outer_layer + crack_size_adjustment).sqrt();
-        let crack_size = 1.0
-            / (self.base_crack_size
-                + random.next_f64() / 2.0
-                + if num_points > 3 {
-                    crack_size_adjustment
-                } else {
-                    0.0
-                })
-            .sqrt();
+        let layers = self.layers(num_points, random);
         let should_generate_crack = random.next_f32() < self.generate_crack_chance as f32;
-        let mut num_invalid_points = 0;
 
-        // Sample distribution points; bail out early if too many fall into invalid blocks
+        let Some(points) = self.sample_points(chunk, origin, num_points, &invalid_raw_ids, random)
+        else {
+            return false;
+        };
+        let crack_points = if should_generate_crack {
+            Self::crack_points(origin, num_points, random)
+        } else {
+            Vec::new()
+        };
+
+        // Determine which blocks can be replaced
+        let can_replace_pred = |state: &BlockState| {
+            let block_id = state.id.to_block_id();
+            state.is_air() || !cannot_replace_raw_ids.contains(&block_id)
+        };
+
+        let shell = Shell {
+            points: &points,
+            crack_points: &crack_points,
+            should_generate_crack,
+            layers,
+            noise: &noise,
+            origin,
+        };
+        let potential_crystal_placements =
+            self.build_shell(chunk, block_registry, &shell, &can_replace_pred, random);
+        self.place_crystals(
+            chunk,
+            potential_crystal_placements,
+            &can_replace_pred,
+            random,
+        );
+        true
+    }
+
+    /// The thresholds that tell which layer a cell belongs to. The crack size draws a random
+    /// number, so this must run at its place in the sequence.
+    fn layers(&self, num_points: i32, random: &mut RandomGenerator) -> Layers {
+        let crack_size_adjustment = num_points as f64 / (self.outer_wall_distance.get_max() as f64);
+        Layers {
+            inner_air: 1.0 / self.filling.sqrt(),
+            innermost_block_layer: 1.0 / (self.inner_layer + crack_size_adjustment).sqrt(),
+            inner_crust: 1.0 / (self.middle_layer + crack_size_adjustment).sqrt(),
+            outer_crust: 1.0 / (self.outer_layer + crack_size_adjustment).sqrt(),
+            crack_size: 1.0
+                / (self.base_crack_size
+                    + random.next_f64() / 2.0
+                    + if num_points > 3 {
+                        crack_size_adjustment
+                    } else {
+                        0.0
+                    })
+                .sqrt(),
+        }
+    }
+
+    /// Samples distribution points; `None` when too many fall into invalid blocks.
+    fn sample_points<T: GenerationCache>(
+        &self,
+        chunk: &T,
+        origin: BlockPos,
+        num_points: i32,
+        invalid_raw_ids: &HashSet<BlockId>,
+        random: &mut RandomGenerator,
+    ) -> Option<Vec<(BlockPos, i32)>> {
+        let mut points: Vec<(BlockPos, i32)> = Vec::with_capacity(num_points as usize);
+        let mut num_invalid_points = 0;
         for _ in 0..num_points {
             let x = self.outer_wall_distance.get(random);
             let y = self.outer_wall_distance.get(random);
@@ -137,48 +186,74 @@ impl GeodeFeature {
             if state.is_air() || invalid_raw_ids.contains(&raw_id) {
                 num_invalid_points += 1;
                 if num_invalid_points > self.invalid_blocks_threshold {
-                    return false;
+                    return None;
                 }
             }
             let offset = self.point_offset.get(random);
             points.push((p, offset));
         }
+        Some(points)
+    }
 
-        if should_generate_crack {
-            let offset_index = random.next_bounded_i32(4);
-            let crack_offset = num_points * 2 + 1;
-            match offset_index {
-                0 => {
-                    crack_points.push(origin.add(crack_offset, 7, 0));
-                    crack_points.push(origin.add(crack_offset, 5, 0));
-                    crack_points.push(origin.add(crack_offset, 1, 0));
-                }
-                1 => {
-                    crack_points.push(origin.add(0, 7, crack_offset));
-                    crack_points.push(origin.add(0, 5, crack_offset));
-                    crack_points.push(origin.add(0, 1, crack_offset));
-                }
-                2 => {
-                    crack_points.push(origin.add(crack_offset, 7, crack_offset));
-                    crack_points.push(origin.add(crack_offset, 5, crack_offset));
-                    crack_points.push(origin.add(crack_offset, 1, crack_offset));
-                }
-                _ => {
-                    crack_points.push(origin.add(0, 7, 0));
-                    crack_points.push(origin.add(0, 5, 0));
-                    crack_points.push(origin.add(0, 1, 0));
-                }
+    fn crack_points(
+        origin: BlockPos,
+        num_points: i32,
+        random: &mut RandomGenerator,
+    ) -> Vec<BlockPos> {
+        let mut crack_points: Vec<BlockPos> = Vec::new();
+        let offset_index = random.next_bounded_i32(4);
+        let crack_offset = num_points * 2 + 1;
+        match offset_index {
+            0 => {
+                crack_points.push(origin.add(crack_offset, 7, 0));
+                crack_points.push(origin.add(crack_offset, 5, 0));
+                crack_points.push(origin.add(crack_offset, 1, 0));
+            }
+            1 => {
+                crack_points.push(origin.add(0, 7, crack_offset));
+                crack_points.push(origin.add(0, 5, crack_offset));
+                crack_points.push(origin.add(0, 1, crack_offset));
+            }
+            2 => {
+                crack_points.push(origin.add(crack_offset, 7, crack_offset));
+                crack_points.push(origin.add(crack_offset, 5, crack_offset));
+                crack_points.push(origin.add(crack_offset, 1, crack_offset));
+            }
+            _ => {
+                crack_points.push(origin.add(0, 7, 0));
+                crack_points.push(origin.add(0, 5, 0));
+                crack_points.push(origin.add(0, 1, 0));
             }
         }
+        crack_points
+    }
 
+    /// Fills every cell of the box with the layer its distance puts it in. Returns the cells
+    /// where crystals may grow.
+    fn build_shell<T: GenerationCache>(
+        &self,
+        chunk: &mut T,
+        block_registry: &dyn WorldPortalExt,
+        shell: &Shell<'_>,
+        can_replace_pred: &dyn Fn(&BlockState) -> bool,
+        random: &mut RandomGenerator,
+    ) -> Vec<BlockPos> {
+        let Shell {
+            points: _,
+            crack_points: _,
+            should_generate_crack,
+            layers:
+                Layers {
+                    inner_air,
+                    innermost_block_layer,
+                    inner_crust,
+                    outer_crust,
+                    crack_size,
+                },
+            noise: _,
+            origin,
+        } = *shell;
         let mut potential_crystal_placements: Vec<BlockPos> = Vec::new();
-
-        // Determine which blocks can be replaced
-        let can_replace_pred = |state: &BlockState| {
-            let block_id = state.id.to_block_id();
-            state.is_air() || !cannot_replace_raw_ids.contains(&block_id)
-        };
-
         let min = origin.add(
             self.min_gen_offset,
             self.min_gen_offset,
@@ -191,28 +266,7 @@ impl GeodeFeature {
         );
 
         for point_inside in BlockPos::iterate(min, max) {
-            let noise_offset = noise.get_value(
-                point_inside.0.x as f64,
-                point_inside.0.y as f64,
-                point_inside.0.z as f64,
-            ) * self.noise_multiplier;
-            let mut dist_sum_shell = 0.0;
-            let mut dist_sum_crack = 0.0;
-            for (pt, off) in &points {
-                let dx = (point_inside.0.x - pt.0.x) as f64;
-                let dy = (point_inside.0.y - pt.0.y) as f64;
-                let dz = (point_inside.0.z - pt.0.z) as f64;
-                let dist_sq = dx * dx + dy * dy + dz * dz;
-                dist_sum_shell += 1.0 / (dist_sq + (*off as f64)).sqrt() + noise_offset;
-            }
-            for pt in &crack_points {
-                let dx = (point_inside.0.x - pt.0.x) as f64;
-                let dy = (point_inside.0.y - pt.0.y) as f64;
-                let dz = (point_inside.0.z - pt.0.z) as f64;
-                let dist_sq = dx * dx + dy * dy + dz * dz;
-                dist_sum_crack +=
-                    1.0 / (dist_sq + self.crack_point_offset as f64).sqrt() + noise_offset;
-            }
+            let (dist_sum_shell, dist_sum_crack) = self.distance_sums(point_inside, shell);
             if matches!(
                 dist_sum_shell.partial_cmp(&outer_crust),
                 Some(Ordering::Greater | Ordering::Equal)
@@ -226,13 +280,13 @@ impl GeodeFeature {
                         chunk,
                         point_inside,
                         BlockStateId::AIR.to_state(),
-                        &can_replace_pred,
+                        can_replace_pred,
                     );
                 } else if dist_sum_shell >= inner_air {
                     let state =
                         self.filling_provider
                             .get(random, point_inside, chunk, block_registry);
-                    Self::safe_set_block(chunk, point_inside, state, &can_replace_pred);
+                    Self::safe_set_block(chunk, point_inside, state, can_replace_pred);
                 } else if dist_sum_shell >= innermost_block_layer {
                     let use_alternate = random.next_f32() < self.use_alternate_layer0_chance as f32;
                     if use_alternate {
@@ -242,7 +296,7 @@ impl GeodeFeature {
                             chunk,
                             block_registry,
                         );
-                        Self::safe_set_block(chunk, point_inside, state, &can_replace_pred);
+                        Self::safe_set_block(chunk, point_inside, state, can_replace_pred);
                     } else {
                         let state = self.inner_layer_provider.get(
                             random,
@@ -250,7 +304,7 @@ impl GeodeFeature {
                             chunk,
                             block_registry,
                         );
-                        Self::safe_set_block(chunk, point_inside, state, &can_replace_pred);
+                        Self::safe_set_block(chunk, point_inside, state, can_replace_pred);
                     }
                     if (!self.placements_require_layer0_alternate || use_alternate)
                         && random.next_f32() < self.use_potential_placements_chance as f32
@@ -261,16 +315,51 @@ impl GeodeFeature {
                     let state =
                         self.middle_layer_provider
                             .get(random, point_inside, chunk, block_registry);
-                    Self::safe_set_block(chunk, point_inside, state, &can_replace_pred);
+                    Self::safe_set_block(chunk, point_inside, state, can_replace_pred);
                 } else if dist_sum_shell >= outer_crust {
                     let state =
                         self.outer_layer_provider
                             .get(random, point_inside, chunk, block_registry);
-                    Self::safe_set_block(chunk, point_inside, state, &can_replace_pred);
+                    Self::safe_set_block(chunk, point_inside, state, can_replace_pred);
                 }
             }
         }
+        potential_crystal_placements
+    }
 
+    /// How close a cell is to the shell's points and to the crack's points, each summed with
+    /// the noise at the cell.
+    fn distance_sums(&self, cell: BlockPos, shell: &Shell<'_>) -> (f64, f64) {
+        let noise_offset = shell
+            .noise
+            .get_value(cell.0.x as f64, cell.0.y as f64, cell.0.z as f64)
+            * self.noise_multiplier;
+        let dist_sq = |pt: &BlockPos| {
+            let dx = (cell.0.x - pt.0.x) as f64;
+            let dy = (cell.0.y - pt.0.y) as f64;
+            let dz = (cell.0.z - pt.0.z) as f64;
+            dx * dx + dy * dy + dz * dz
+        };
+        let mut dist_sum_shell = 0.0;
+        let mut dist_sum_crack = 0.0;
+        for (pt, off) in shell.points {
+            dist_sum_shell += 1.0 / (dist_sq(pt) + (*off as f64)).sqrt() + noise_offset;
+        }
+        for pt in shell.crack_points {
+            dist_sum_crack +=
+                1.0 / (dist_sq(pt) + self.crack_point_offset as f64).sqrt() + noise_offset;
+        }
+        (dist_sum_shell, dist_sum_crack)
+    }
+
+    /// Grows one crystal bud next to each budding block, facing away from it.
+    fn place_crystals<T: GenerationCache>(
+        &self,
+        chunk: &mut T,
+        potential_crystal_placements: Vec<BlockPos>,
+        can_replace_pred: &dyn Fn(&BlockState) -> bool,
+        random: &mut RandomGenerator,
+    ) {
         // Iterate through potential placements (these are the budding blocks)
         for crystal_pos in potential_crystal_placements {
             // Pick a random base placement codec for this budding block
@@ -318,7 +407,7 @@ impl GeodeFeature {
                         }
 
                         let final_state = final_codec.get_state();
-                        Self::safe_set_block(chunk, place_pos, final_state, &can_replace_pred);
+                        Self::safe_set_block(chunk, place_pos, final_state, can_replace_pred);
 
                         // Only place one crystal per budding block per geode gen
                         break;
@@ -326,9 +415,27 @@ impl GeodeFeature {
                 }
             }
         }
-
-        true
     }
+}
+
+#[derive(Clone, Copy)]
+struct Layers {
+    inner_air: f64,
+    innermost_block_layer: f64,
+    inner_crust: f64,
+    outer_crust: f64,
+    crack_size: f64,
+}
+
+/// What `build_shell` needs to know about the geode being built.
+#[derive(Clone, Copy)]
+struct Shell<'a> {
+    points: &'a [(BlockPos, i32)],
+    crack_points: &'a [BlockPos],
+    should_generate_crack: bool,
+    layers: Layers,
+    noise: &'a NormalNoise,
+    origin: BlockPos,
 }
 
 /// The blocks a block list names. Vanilla's geode lists are block tags (`#minecraft:...`), which

@@ -4,7 +4,6 @@
 #[allow(clippy::wildcard_imports)]
 use super::super::*;
 use crate::item::registry::should_try_block_placement;
-use pumpkin_data::block_properties::BlockProperties;
 
 /// What every step of one use-item-on packet works on.
 pub(super) struct UseOn<'a> {
@@ -209,15 +208,17 @@ impl UseOn<'_> {
         let world = self.world;
         let block = self.block;
         let position = self.use_item_on.position;
-        let state =
-            pumpkin_data::block_properties::CopperBulbLikeProperties::handles_block_id(block.id)
-                .then(|| {
-                    let props =
-                        pumpkin_data::block_properties::CopperBulbLikeProperties::from_state_id(
-                            world.get_block_state(&position).id,
-                        );
-                    ("lit".to_string(), props.r#lit.to_string())
-                });
+        // The whole state of the clicked block, as vanilla's location predicate reads it.
+        let state: Vec<(String, String)> = block
+            .properties(world.get_block_state(&position).id)
+            .map(|props| {
+                props
+                    .to_props()
+                    .into_iter()
+                    .map(|p| (p.key_str().to_string(), p.value_str().to_string()))
+                    .collect()
+            })
+            .unwrap_or_default();
 
         let mut is_smokey = false;
         for dy in 1..=5 {

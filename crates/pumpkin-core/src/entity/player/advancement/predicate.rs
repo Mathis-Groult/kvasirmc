@@ -526,7 +526,7 @@ impl ItemUsedOnBlockPredicate {
         &self,
         block_id: &str,
         item_id: &str,
-        block_state: Option<(&str, &str)>,
+        block_state: &[(&str, &str)],
         smokey: Option<bool>,
         biome: Option<&str>,
     ) -> bool {
@@ -541,12 +541,10 @@ impl ItemUsedOnBlockPredicate {
             return false;
         }
         if let Some(expected_key) = &self.state_key {
-            let Some((k, v)) = block_state else {
+            // The block's whole state is offered; the predicate names one property of it.
+            let Some((_, v)) = block_state.iter().find(|(k, _)| k == expected_key) else {
                 return false;
             };
-            if expected_key != k {
-                return false;
-            }
             if let Some(expected_val) = &self.state_value
                 && expected_val != v
             {
@@ -1832,21 +1830,21 @@ mod tests {
                 assert!(pred.matches(
                     "minecraft:copper_bulb",
                     "minecraft:redstone_torch",
-                    Some(("lit", "true")),
+                    &[("lit", "true")],
                     None,
                     None
                 ));
                 assert!(!pred.matches(
                     "minecraft:copper_bulb",
                     "minecraft:redstone_torch",
-                    Some(("lit", "false")),
+                    &[("lit", "false")],
                     None,
                     None
                 ));
                 assert!(!pred.matches(
                     "minecraft:tuff",
                     "minecraft:redstone_torch",
-                    Some(("lit", "true")),
+                    &[("lit", "true")],
                     None,
                     None
                 ));

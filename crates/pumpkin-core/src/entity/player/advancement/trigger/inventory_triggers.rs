@@ -71,7 +71,7 @@ impl Player {
     pub(super) fn allay_drop_item_on_block(&self, block_id: &str, item_id: &str) {
         self.trigger_criterion_event("minecraft:allay_drop_item_on_block", |cond| match cond {
             CriterionConditions::AllayDropItemOnBlock(pred) => {
-                pred.matches(block_id, item_id, None, None, None)
+                pred.matches(block_id, item_id, &[], None, None)
             }
             CriterionConditions::Custom { .. } => true,
             _ => false,

@@ -56,7 +56,7 @@ pub enum AdvancementTrigger {
     ItemUsedOnBlock {
         block_id: String,
         item_id: String,
-        state: Option<(String, String)>,
+        state: Vec<(String, String)>,
         smokey: Option<bool>,
         biome: Option<String>,
     },
@@ -282,13 +282,7 @@ impl Player {
                 state,
                 smokey,
                 biome,
-            } => self.item_used_on_block(
-                &block_id,
-                &item_id,
-                state.as_ref(),
-                smokey,
-                biome.as_deref(),
-            ),
+            } => self.item_used_on_block(&block_id, &item_id, &state, smokey, biome.as_deref()),
 
             AdvancementTrigger::TameAnimal { entity_type } => self.tame_animal(&entity_type),
 

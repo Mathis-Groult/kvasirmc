@@ -9,18 +9,18 @@ impl Player {
         &self,
         block_id: &str,
         item_id: &str,
-        state: Option<&(String, String)>,
+        state: &[(String, String)],
         smokey: Option<bool>,
         biome: Option<&str>,
     ) {
+        let state: Vec<(&str, &str)> = state
+            .iter()
+            .map(|(k, v)| (k.as_str(), v.as_str()))
+            .collect();
         self.trigger_criterion_event("minecraft:item_used_on_block", |cond| match cond {
-            CriterionConditions::ItemUsedOnBlock(pred) => pred.matches(
-                block_id,
-                item_id,
-                state.as_ref().map(|(k, v)| (k.as_str(), v.as_str())),
-                smokey,
-                biome,
-            ),
+            CriterionConditions::ItemUsedOnBlock(pred) => {
+                pred.matches(block_id, item_id, &state, smokey, biome)
+            }
             CriterionConditions::Custom { .. } => true,
             _ => false,
         });

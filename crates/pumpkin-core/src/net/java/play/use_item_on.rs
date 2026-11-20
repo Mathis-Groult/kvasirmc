@@ -96,7 +96,7 @@ impl JavaClient {
         world: &Arc<World>,
         block: &Block,
         server: &Arc<Server>,
-    ) -> BlockActionResult {
+    ) -> (BlockActionResult, bool) {
         let result = server.block_registry.use_with_item(
             block,
             player,
@@ -112,8 +112,7 @@ impl JavaClient {
         );
 
         if result.consumes_action() {
-            // TODO: Trigger ITEM_USED_ON_BLOCK Criteria
-            return result;
+            return (result, true);
         }
 
         if matches!(result, BlockActionResult::PassToDefaultBlockAction) {
@@ -131,11 +130,11 @@ impl JavaClient {
 
             if result.consumes_action() {
                 // TODO: Trigger DEFAULT_BLOCK_USE Criteria
-                return result;
+                return (result, false);
             }
         }
 
-        BlockActionResult::Pass
+        (BlockActionResult::Pass, false)
     }
 
     fn run_is_block_place(

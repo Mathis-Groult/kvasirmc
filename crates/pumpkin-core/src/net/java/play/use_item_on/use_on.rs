@@ -72,7 +72,7 @@ impl UseOn<'_> {
 
         // Code based on the java class ServerPlayerInteractionManager
         if !(sneaking && (!held_item_empty || !off_hand_item_empty)) {
-            let result = JavaClient::call_use_item_on(
+            let (result, by_item) = JavaClient::call_use_item_on(
                 player,
                 &self.use_item_on.position,
                 &self.use_item_on.cursor_pos,
@@ -84,7 +84,11 @@ impl UseOn<'_> {
                 self.server,
             );
             if result.consumes_action() {
-                self.trigger_item_used_on_block(before);
+                // Vanilla fires ITEM_USED_ON_BLOCK for `useItemOn` only; the block's default
+                // use (a sign's editor) is another trigger.
+                if by_item {
+                    self.trigger_item_used_on_block(before);
+                }
 
                 if matches!(result, BlockActionResult::SuccessServer) {
                     player.swing_hand(hand, true);

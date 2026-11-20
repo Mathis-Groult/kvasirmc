@@ -861,8 +861,7 @@ impl BlockRegistry {
             return Ok(None);
         }
 
-        let _replaced_id =
-            world.set_block_state(&final_block_pos, new_state, BlockFlags::NOTIFY_ALL);
+        world.place_block_for(player, &final_block_pos, new_state);
 
         world.play_bedrock_level_sound(
             "place",

@@ -181,3 +181,50 @@ async fn placing_the_last_block_sends_no_item_break_status() -> TestResult {
     );
     Ok(())
 }
+
+/// Places `item` on a floor block with a sculk sensor three blocks away, ticks the world and
+/// says whether the sensor heard it (vanilla `BlockItem.place` emits `BLOCK_PLACE`).
+async fn sensor_hears_placing(item: &'static Item) -> Result<bool, Box<dyn std::error::Error>> {
+    use pumpkin_data::block_properties::{SculkSensorLikeProperties, SculkSensorPhase};
+    let folder = tempfile::tempdir()?;
+    let server = test_support::server(&folder).await?;
+    let world = server.worlds.load()[0].clone();
+    let pos = BlockPos::new(232, 64, 8);
+    lay(&world, pos, Block::STONE.default_state.id);
+    let sensor = BlockPos::new(235, 65, 8);
+    world.set_block_state(
+        &sensor,
+        Block::SCULK_SENSOR.default_state.id,
+        BlockFlags::NOTIFY_ALL,
+    );
+    let (_, _, user) = use_on(&server, &world, pos, ItemStack::new(1, item))?;
+    let mut heard = false;
+    for _ in 0..10 {
+        world
+            .level_time
+            .lock()
+            .unwrap_or_else(std::sync::PoisonError::into_inner)
+            .world_age += 1;
+        if let Some(entity) = world.get_block_entity(&sensor) {
+            entity.tick(&world);
+        }
+        let id = world.get_block_state(&sensor).id;
+        heard |= SculkSensorLikeProperties::from_state_id(id).sculk_sensor_phase
+            != SculkSensorPhase::Inactive;
+    }
+    world.remove_player(&user, false).await;
+    server.stop();
+    Ok(heard)
+}
+
+#[tokio::test(flavor = "multi_thread")]
+async fn placing_a_block_is_heard_by_a_sculk_sensor() -> TestResult {
+    assert!(sensor_hears_placing(&Item::STONE).await?);
+    Ok(())
+}
+
+#[tokio::test(flavor = "multi_thread")]
+async fn placing_wool_is_not_heard_by_a_sculk_sensor() -> TestResult {
+    assert!(!sensor_hears_placing(&Item::WHITE_WOOL).await?);
+    Ok(())
+}

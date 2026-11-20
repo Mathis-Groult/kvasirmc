@@ -12,8 +12,9 @@ use pumpkin_world::world::BlockFlags;
 use crate::block::blocks::redstone::block_receives_redstone_power;
 use crate::block::entities::shelf::ShelfBlockEntity;
 use crate::block::{
-    BlockBehaviour, GetComparatorOutputArgs, GetStateForNeighborUpdateArgs, OnNeighborUpdateArgs,
-    OnPlaceArgs, OnStateReplacedArgs, PathComputationType, PlacedArgs,
+    BlockActionResult, BlockBehaviour, GetComparatorOutputArgs, GetStateForNeighborUpdateArgs,
+    OnNeighborUpdateArgs, OnPlaceArgs, OnStateReplacedArgs, PathComputationType, PlacedArgs,
+    UseWithItemArgs,
 };
 use crate::entity::EntityBase;
 use std::sync::Arc;
@@ -21,6 +22,9 @@ use std::sync::Arc;
 mod chain;
 #[cfg(test)]
 mod tests;
+mod use_item;
+#[cfg(test)]
+mod use_tests;
 
 #[pumpkin_block_from_tag("minecraft:wooden_shelves")]
 pub struct ShelfBlock;
@@ -61,6 +65,12 @@ impl BlockBehaviour for ShelfBlock {
         } else {
             chain::power_down(args.world, *args.position, args.state_id);
         }
+    }
+
+    /// Vanilla `ShelfBlock.useItemOn`: a click on the front swaps the held stack with the shelf
+    /// slot, or, on a powered shelf, the hotbar with the whole chain.
+    fn use_with_item(&self, args: UseWithItemArgs<'_>) -> BlockActionResult {
+        use_item::use_with_item(args)
     }
 
     /// Vanilla `ShelfBlock.neighborChanged`: a shelf follows the redstone signal around it, drops

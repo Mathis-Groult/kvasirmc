@@ -167,32 +167,42 @@ fn set_part(world: &Arc<World>, pos: BlockPos, part: SideChainPart) {
     }
 }
 
-/// `getAllBlocksConnectedTo(..).size()`: the shelf itself plus the neighbours that link toward it.
-fn connected_count(world: &Arc<World>, pos: BlockPos) -> i32 {
+/// `getAllBlocksConnectedTo`: the chain the shelf at `pos` belongs to, leftmost shelf first.
+pub(super) fn connected_positions(world: &Arc<World>, pos: BlockPos) -> Vec<BlockPos> {
     let (block, state_id) = world.get_block_and_state_id(&pos);
     let Some((facing, _)) = shelf_part(block, state_id) else {
-        return 0;
+        return Vec::new();
     };
     let neighbors = neighbors_of(world, pos, facing);
-    let mut count = 1;
-    count += links_towards(|steps| neighbors.left(steps), SideChainPart::Left);
-    count += links_towards(|steps| neighbors.right(steps), SideChainPart::Right);
-    count
+    let mut chain = links_towards(|steps| neighbors.left(steps), SideChainPart::Left);
+    chain.reverse();
+    chain.push(pos);
+    chain.extend(links_towards(
+        |steps| neighbors.right(steps),
+        SideChainPart::Right,
+    ));
+    chain
 }
 
-/// `addBlocksConnectingTowards`: walks away from the shelf until a chain end.
-fn links_towards(neighbor: impl Fn(i32) -> Neighbor, side: SideChainPart) -> i32 {
-    let mut count = 0;
+fn connected_count(world: &Arc<World>, pos: BlockPos) -> i32 {
+    i32::try_from(connected_positions(world, pos).len()).unwrap_or(0)
+}
+
+/// `addBlocksConnectingTowards`: walks away from the shelf until a chain end, nearest first.
+fn links_towards(neighbor: impl Fn(i32) -> Neighbor, side: SideChainPart) -> Vec<BlockPos> {
+    let mut found = Vec::new();
     for steps in 1..MAX_CHAIN_LENGTH {
         let next = neighbor(steps);
-        if next.connects_towards(side) {
-            count += 1;
+        if let Neighbor::Shelf { pos, .. } = next
+            && next.connects_towards(side)
+        {
+            found.push(pos);
         }
         if next.is_unconnectable_or_chain_end() {
             break;
         }
     }
-    count
+    found
 }
 
 /// `canConnect`: a non-empty side chain that still fits the maximum with the shelf's own.

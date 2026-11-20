@@ -1114,3 +1114,387 @@ observed broken sticky: t7 0,0,0:moving_piston[Facing(East), PistonType(Sticky)]
 observed broken sticky: t8 0,0,0:moving_piston[Facing(East), PistonType(Sticky)]<East ext=false src=true 0.50/1.00 sticky_piston> 1,0,0:moving_piston[Facing(East), PistonType(Normal)]<East ext=false src=false 0.50/1.00 stone>
 observed broken sticky: t9 0,0,0:sticky_piston[Extended(false), Facing(East)] 1,0,0:stone 2,1,0:observer[Facing(Down), Powered(true)]
 observed broken sticky: t12 2,1,0:observer[Facing(Down), Powered(false)]
+noise rest East normal: start 0,0,0:piston[Extended(false), Facing(East)] 1,0,0:stone
+noise rest East normal: t0 0,0,1:stone
+noise rest East normal: t3 0,0,1:-
+noise powered at 1 East normal: start 0,0,0:piston[Extended(false), Facing(East)] 1,0,0:stone
+noise powered at 1 East normal: t0 -1,0,0:redstone_block
+noise powered at 1 East normal: t1 0,0,0:piston[Extended(true), Facing(East)] 0,0,1:stone 1,0,0:moving_piston[Facing(East), PistonType(Normal)]<East ext=true src=true 0.00/0.50 piston_head> 2,0,0:moving_piston[Facing(East), PistonType(Normal)]<East ext=true src=false 0.00/0.50 stone>
+noise powered at 1 East normal: t2 1,0,0:moving_piston[Facing(East), PistonType(Normal)]<East ext=true src=true 0.50/1.00 piston_head> 2,0,0:moving_piston[Facing(East), PistonType(Normal)]<East ext=true src=false 0.50/1.00 stone>
+noise powered at 1 East normal: t3 1,0,0:piston_head[Facing(East), Short(false), PistonType(Normal)] 2,0,0:stone
+noise powered at 1 East normal: t4 0,0,1:-
+noise powered at 2 East normal: start 0,0,0:piston[Extended(false), Facing(East)] 1,0,0:stone
+noise powered at 2 East normal: t0 -1,0,0:redstone_block
+noise powered at 2 East normal: t1 0,0,0:piston[Extended(true), Facing(East)] 1,0,0:moving_piston[Facing(East), PistonType(Normal)]<East ext=true src=true 0.00/0.50 piston_head> 2,0,0:moving_piston[Facing(East), PistonType(Normal)]<East ext=true src=false 0.00/0.50 stone>
+noise powered at 2 East normal: t2 0,0,1:stone 1,0,0:moving_piston[Facing(East), PistonType(Normal)]<East ext=true src=true 0.50/1.00 piston_head> 2,0,0:moving_piston[Facing(East), PistonType(Normal)]<East ext=true src=false 0.50/1.00 stone>
+noise powered at 2 East normal: t3 1,0,0:piston_head[Facing(East), Short(false), PistonType(Normal)] 2,0,0:stone
+noise powered at 2 East normal: t5 0,0,1:-
+noise powered at 3 East normal: start 0,0,0:piston[Extended(false), Facing(East)] 1,0,0:stone
+noise powered at 3 East normal: t0 -1,0,0:redstone_block
+noise powered at 3 East normal: t1 0,0,0:piston[Extended(true), Facing(East)] 1,0,0:moving_piston[Facing(East), PistonType(Normal)]<East ext=true src=true 0.00/0.50 piston_head> 2,0,0:moving_piston[Facing(East), PistonType(Normal)]<East ext=true src=false 0.00/0.50 stone>
+noise powered at 3 East normal: t2 1,0,0:moving_piston[Facing(East), PistonType(Normal)]<East ext=true src=true 0.50/1.00 piston_head> 2,0,0:moving_piston[Facing(East), PistonType(Normal)]<East ext=true src=false 0.50/1.00 stone>
+noise powered at 3 East normal: t3 0,0,1:stone 1,0,0:piston_head[Facing(East), Short(false), PistonType(Normal)] 2,0,0:stone
+noise powered at 3 East normal: t6 0,0,1:-
+noise powered at 5 East normal: start 0,0,0:piston[Extended(false), Facing(East)] 1,0,0:stone
+noise powered at 5 East normal: t0 -1,0,0:redstone_block
+noise powered at 5 East normal: t1 0,0,0:piston[Extended(true), Facing(East)] 1,0,0:moving_piston[Facing(East), PistonType(Normal)]<East ext=true src=true 0.00/0.50 piston_head> 2,0,0:moving_piston[Facing(East), PistonType(Normal)]<East ext=true src=false 0.00/0.50 stone>
+noise powered at 5 East normal: t2 1,0,0:moving_piston[Facing(East), PistonType(Normal)]<East ext=true src=true 0.50/1.00 piston_head> 2,0,0:moving_piston[Facing(East), PistonType(Normal)]<East ext=true src=false 0.50/1.00 stone>
+noise powered at 5 East normal: t3 1,0,0:piston_head[Facing(East), Short(false), PistonType(Normal)] 2,0,0:stone
+noise powered at 5 East normal: t5 0,0,1:stone
+noise powered at 5 East normal: t8 0,0,1:-
+noise released 6 at 7 East normal: start 0,0,0:piston[Extended(false), Facing(East)] 1,0,0:stone
+noise released 6 at 7 East normal: t0 -1,0,0:redstone_block
+noise released 6 at 7 East normal: t1 0,0,0:piston[Extended(true), Facing(East)] 1,0,0:moving_piston[Facing(East), PistonType(Normal)]<East ext=true src=true 0.00/0.50 piston_head> 2,0,0:moving_piston[Facing(East), PistonType(Normal)]<East ext=true src=false 0.00/0.50 stone>
+noise released 6 at 7 East normal: t2 1,0,0:moving_piston[Facing(East), PistonType(Normal)]<East ext=true src=true 0.50/1.00 piston_head> 2,0,0:moving_piston[Facing(East), PistonType(Normal)]<East ext=true src=false 0.50/1.00 stone>
+noise released 6 at 7 East normal: t3 1,0,0:piston_head[Facing(East), Short(false), PistonType(Normal)] 2,0,0:stone
+noise released 6 at 7 East normal: t6 0,0,0:moving_piston[Facing(East), PistonType(Normal)]<East ext=false src=true 0.00/0.50 piston> -1,0,0:- 1,0,0:-
+noise released 6 at 7 East normal: t7 0,0,0:moving_piston[Facing(East), PistonType(Normal)]<East ext=false src=true 0.50/1.00 piston> 0,0,1:stone
+noise released 6 at 7 East normal: t8 0,0,0:piston[Extended(false), Facing(East)]
+noise released 6 at 7 East normal: t9 0,0,1:-
+noise released 6 at 8 East normal: start 0,0,0:piston[Extended(false), Facing(East)] 1,0,0:stone
+noise released 6 at 8 East normal: t0 -1,0,0:redstone_block
+noise released 6 at 8 East normal: t1 0,0,0:piston[Extended(true), Facing(East)] 1,0,0:moving_piston[Facing(East), PistonType(Normal)]<East ext=true src=true 0.00/0.50 piston_head> 2,0,0:moving_piston[Facing(East), PistonType(Normal)]<East ext=true src=false 0.00/0.50 stone>
+noise released 6 at 8 East normal: t2 1,0,0:moving_piston[Facing(East), PistonType(Normal)]<East ext=true src=true 0.50/1.00 piston_head> 2,0,0:moving_piston[Facing(East), PistonType(Normal)]<East ext=true src=false 0.50/1.00 stone>
+noise released 6 at 8 East normal: t3 1,0,0:piston_head[Facing(East), Short(false), PistonType(Normal)] 2,0,0:stone
+noise released 6 at 8 East normal: t6 0,0,0:moving_piston[Facing(East), PistonType(Normal)]<East ext=false src=true 0.00/0.50 piston> -1,0,0:- 1,0,0:-
+noise released 6 at 8 East normal: t7 0,0,0:moving_piston[Facing(East), PistonType(Normal)]<East ext=false src=true 0.50/1.00 piston>
+noise released 6 at 8 East normal: t8 0,0,0:piston[Extended(false), Facing(East)] 0,0,1:stone
+noise released 6 at 8 East normal: t10 0,0,1:-
+noise released 6 at 9 East normal: start 0,0,0:piston[Extended(false), Facing(East)] 1,0,0:stone
+noise released 6 at 9 East normal: t0 -1,0,0:redstone_block
+noise released 6 at 9 East normal: t1 0,0,0:piston[Extended(true), Facing(East)] 1,0,0:moving_piston[Facing(East), PistonType(Normal)]<East ext=true src=true 0.00/0.50 piston_head> 2,0,0:moving_piston[Facing(East), PistonType(Normal)]<East ext=true src=false 0.00/0.50 stone>
+noise released 6 at 9 East normal: t2 1,0,0:moving_piston[Facing(East), PistonType(Normal)]<East ext=true src=true 0.50/1.00 piston_head> 2,0,0:moving_piston[Facing(East), PistonType(Normal)]<East ext=true src=false 0.50/1.00 stone>
+noise released 6 at 9 East normal: t3 1,0,0:piston_head[Facing(East), Short(false), PistonType(Normal)] 2,0,0:stone
+noise released 6 at 9 East normal: t6 0,0,0:moving_piston[Facing(East), PistonType(Normal)]<East ext=false src=true 0.00/0.50 piston> -1,0,0:- 1,0,0:-
+noise released 6 at 9 East normal: t7 0,0,0:moving_piston[Facing(East), PistonType(Normal)]<East ext=false src=true 0.50/1.00 piston>
+noise released 6 at 9 East normal: t8 0,0,0:piston[Extended(false), Facing(East)]
+noise released 6 at 9 East normal: t9 0,0,1:stone
+noise released 6 at 9 East normal: t11 0,0,1:-
+noise released 8 at 9 East normal: start 0,0,0:piston[Extended(false), Facing(East)] 1,0,0:stone
+noise released 8 at 9 East normal: t0 -1,0,0:redstone_block
+noise released 8 at 9 East normal: t1 0,0,0:piston[Extended(true), Facing(East)] 1,0,0:moving_piston[Facing(East), PistonType(Normal)]<East ext=true src=true 0.00/0.50 piston_head> 2,0,0:moving_piston[Facing(East), PistonType(Normal)]<East ext=true src=false 0.00/0.50 stone>
+noise released 8 at 9 East normal: t2 1,0,0:moving_piston[Facing(East), PistonType(Normal)]<East ext=true src=true 0.50/1.00 piston_head> 2,0,0:moving_piston[Facing(East), PistonType(Normal)]<East ext=true src=false 0.50/1.00 stone>
+noise released 8 at 9 East normal: t3 1,0,0:piston_head[Facing(East), Short(false), PistonType(Normal)] 2,0,0:stone
+noise released 8 at 9 East normal: t8 0,0,0:moving_piston[Facing(East), PistonType(Normal)]<East ext=false src=true 0.00/0.50 piston> -1,0,0:- 1,0,0:-
+noise released 8 at 9 East normal: t9 0,0,0:moving_piston[Facing(East), PistonType(Normal)]<East ext=false src=true 0.50/1.00 piston> 0,0,1:stone
+noise released 8 at 9 East normal: t10 0,0,0:piston[Extended(false), Facing(East)]
+noise released 8 at 9 East normal: t11 0,0,1:-
+noise released 8 at 10 East normal: start 0,0,0:piston[Extended(false), Facing(East)] 1,0,0:stone
+noise released 8 at 10 East normal: t0 -1,0,0:redstone_block
+noise released 8 at 10 East normal: t1 0,0,0:piston[Extended(true), Facing(East)] 1,0,0:moving_piston[Facing(East), PistonType(Normal)]<East ext=true src=true 0.00/0.50 piston_head> 2,0,0:moving_piston[Facing(East), PistonType(Normal)]<East ext=true src=false 0.00/0.50 stone>
+noise released 8 at 10 East normal: t2 1,0,0:moving_piston[Facing(East), PistonType(Normal)]<East ext=true src=true 0.50/1.00 piston_head> 2,0,0:moving_piston[Facing(East), PistonType(Normal)]<East ext=true src=false 0.50/1.00 stone>
+noise released 8 at 10 East normal: t3 1,0,0:piston_head[Facing(East), Short(false), PistonType(Normal)] 2,0,0:stone
+noise released 8 at 10 East normal: t8 0,0,0:moving_piston[Facing(East), PistonType(Normal)]<East ext=false src=true 0.00/0.50 piston> -1,0,0:- 1,0,0:-
+noise released 8 at 10 East normal: t9 0,0,0:moving_piston[Facing(East), PistonType(Normal)]<East ext=false src=true 0.50/1.00 piston>
+noise released 8 at 10 East normal: t10 0,0,0:piston[Extended(false), Facing(East)] 0,0,1:stone
+noise released 8 at 10 East normal: t12 0,0,1:-
+noise released 8 at 11 East normal: start 0,0,0:piston[Extended(false), Facing(East)] 1,0,0:stone
+noise released 8 at 11 East normal: t0 -1,0,0:redstone_block
+noise released 8 at 11 East normal: t1 0,0,0:piston[Extended(true), Facing(East)] 1,0,0:moving_piston[Facing(East), PistonType(Normal)]<East ext=true src=true 0.00/0.50 piston_head> 2,0,0:moving_piston[Facing(East), PistonType(Normal)]<East ext=true src=false 0.00/0.50 stone>
+noise released 8 at 11 East normal: t2 1,0,0:moving_piston[Facing(East), PistonType(Normal)]<East ext=true src=true 0.50/1.00 piston_head> 2,0,0:moving_piston[Facing(East), PistonType(Normal)]<East ext=true src=false 0.50/1.00 stone>
+noise released 8 at 11 East normal: t3 1,0,0:piston_head[Facing(East), Short(false), PistonType(Normal)] 2,0,0:stone
+noise released 8 at 11 East normal: t8 0,0,0:moving_piston[Facing(East), PistonType(Normal)]<East ext=false src=true 0.00/0.50 piston> -1,0,0:- 1,0,0:-
+noise released 8 at 11 East normal: t9 0,0,0:moving_piston[Facing(East), PistonType(Normal)]<East ext=false src=true 0.50/1.00 piston>
+noise released 8 at 11 East normal: t10 0,0,0:piston[Extended(false), Facing(East)]
+noise released 8 at 11 East normal: t11 0,0,1:stone
+noise released 8 at 11 East normal: t13 0,0,1:-
+noise early release at 2 East normal: start 0,0,0:piston[Extended(false), Facing(East)] 1,0,0:stone
+noise early release at 2 East normal: t0 -1,0,0:redstone_block
+noise early release at 2 East normal: t1 -1,0,0:-
+noise early release at 2 East normal: t2 0,0,1:stone
+noise early release at 3 East normal: start 0,0,0:piston[Extended(false), Facing(East)] 1,0,0:stone
+noise early release at 3 East normal: t0 -1,0,0:redstone_block
+noise early release at 3 East normal: t1 -1,0,0:-
+noise early release at 3 East normal: t3 0,0,1:stone
+noise early release at 4 East normal: start 0,0,0:piston[Extended(false), Facing(East)] 1,0,0:stone
+noise early release at 4 East normal: t0 -1,0,0:redstone_block
+noise early release at 4 East normal: t1 -1,0,0:-
+noise early release at 4 East normal: t4 0,0,1:stone
+noise rest East sticky: start 0,0,0:sticky_piston[Extended(false), Facing(East)] 1,0,0:stone
+noise rest East sticky: t0 0,0,1:stone
+noise rest East sticky: t3 0,0,1:-
+noise powered at 1 East sticky: start 0,0,0:sticky_piston[Extended(false), Facing(East)] 1,0,0:stone
+noise powered at 1 East sticky: t0 -1,0,0:redstone_block
+noise powered at 1 East sticky: t1 0,0,0:sticky_piston[Extended(true), Facing(East)] 0,0,1:stone 1,0,0:moving_piston[Facing(East), PistonType(Sticky)]<East ext=true src=true 0.00/0.50 piston_head> 2,0,0:moving_piston[Facing(East), PistonType(Normal)]<East ext=true src=false 0.00/0.50 stone>
+noise powered at 1 East sticky: t2 1,0,0:moving_piston[Facing(East), PistonType(Sticky)]<East ext=true src=true 0.50/1.00 piston_head> 2,0,0:moving_piston[Facing(East), PistonType(Normal)]<East ext=true src=false 0.50/1.00 stone>
+noise powered at 1 East sticky: t3 1,0,0:piston_head[Facing(East), Short(false), PistonType(Sticky)] 2,0,0:stone
+noise powered at 1 East sticky: t4 0,0,1:-
+noise powered at 2 East sticky: start 0,0,0:sticky_piston[Extended(false), Facing(East)] 1,0,0:stone
+noise powered at 2 East sticky: t0 -1,0,0:redstone_block
+noise powered at 2 East sticky: t1 0,0,0:sticky_piston[Extended(true), Facing(East)] 1,0,0:moving_piston[Facing(East), PistonType(Sticky)]<East ext=true src=true 0.00/0.50 piston_head> 2,0,0:moving_piston[Facing(East), PistonType(Normal)]<East ext=true src=false 0.00/0.50 stone>
+noise powered at 2 East sticky: t2 0,0,1:stone 1,0,0:moving_piston[Facing(East), PistonType(Sticky)]<East ext=true src=true 0.50/1.00 piston_head> 2,0,0:moving_piston[Facing(East), PistonType(Normal)]<East ext=true src=false 0.50/1.00 stone>
+noise powered at 2 East sticky: t3 1,0,0:piston_head[Facing(East), Short(false), PistonType(Sticky)] 2,0,0:stone
+noise powered at 2 East sticky: t5 0,0,1:-
+noise powered at 3 East sticky: start 0,0,0:sticky_piston[Extended(false), Facing(East)] 1,0,0:stone
+noise powered at 3 East sticky: t0 -1,0,0:redstone_block
+noise powered at 3 East sticky: t1 0,0,0:sticky_piston[Extended(true), Facing(East)] 1,0,0:moving_piston[Facing(East), PistonType(Sticky)]<East ext=true src=true 0.00/0.50 piston_head> 2,0,0:moving_piston[Facing(East), PistonType(Normal)]<East ext=true src=false 0.00/0.50 stone>
+noise powered at 3 East sticky: t2 1,0,0:moving_piston[Facing(East), PistonType(Sticky)]<East ext=true src=true 0.50/1.00 piston_head> 2,0,0:moving_piston[Facing(East), PistonType(Normal)]<East ext=true src=false 0.50/1.00 stone>
+noise powered at 3 East sticky: t3 0,0,1:stone 1,0,0:piston_head[Facing(East), Short(false), PistonType(Sticky)] 2,0,0:stone
+noise powered at 3 East sticky: t6 0,0,1:-
+noise powered at 5 East sticky: start 0,0,0:sticky_piston[Extended(false), Facing(East)] 1,0,0:stone
+noise powered at 5 East sticky: t0 -1,0,0:redstone_block
+noise powered at 5 East sticky: t1 0,0,0:sticky_piston[Extended(true), Facing(East)] 1,0,0:moving_piston[Facing(East), PistonType(Sticky)]<East ext=true src=true 0.00/0.50 piston_head> 2,0,0:moving_piston[Facing(East), PistonType(Normal)]<East ext=true src=false 0.00/0.50 stone>
+noise powered at 5 East sticky: t2 1,0,0:moving_piston[Facing(East), PistonType(Sticky)]<East ext=true src=true 0.50/1.00 piston_head> 2,0,0:moving_piston[Facing(East), PistonType(Normal)]<East ext=true src=false 0.50/1.00 stone>
+noise powered at 5 East sticky: t3 1,0,0:piston_head[Facing(East), Short(false), PistonType(Sticky)] 2,0,0:stone
+noise powered at 5 East sticky: t5 0,0,1:stone
+noise powered at 5 East sticky: t8 0,0,1:-
+noise released 6 at 7 East sticky: start 0,0,0:sticky_piston[Extended(false), Facing(East)] 1,0,0:stone
+noise released 6 at 7 East sticky: t0 -1,0,0:redstone_block
+noise released 6 at 7 East sticky: t1 0,0,0:sticky_piston[Extended(true), Facing(East)] 1,0,0:moving_piston[Facing(East), PistonType(Sticky)]<East ext=true src=true 0.00/0.50 piston_head> 2,0,0:moving_piston[Facing(East), PistonType(Normal)]<East ext=true src=false 0.00/0.50 stone>
+noise released 6 at 7 East sticky: t2 1,0,0:moving_piston[Facing(East), PistonType(Sticky)]<East ext=true src=true 0.50/1.00 piston_head> 2,0,0:moving_piston[Facing(East), PistonType(Normal)]<East ext=true src=false 0.50/1.00 stone>
+noise released 6 at 7 East sticky: t3 1,0,0:piston_head[Facing(East), Short(false), PistonType(Sticky)] 2,0,0:stone
+noise released 6 at 7 East sticky: t6 0,0,0:moving_piston[Facing(East), PistonType(Sticky)]<East ext=false src=true 0.00/0.50 sticky_piston> 1,0,0:moving_piston[Facing(East), PistonType(Normal)]<East ext=false src=false 0.00/0.50 stone> -1,0,0:- 2,0,0:-
+noise released 6 at 7 East sticky: t7 0,0,0:moving_piston[Facing(East), PistonType(Sticky)]<East ext=false src=true 0.50/1.00 sticky_piston> 0,0,1:stone 1,0,0:moving_piston[Facing(East), PistonType(Normal)]<East ext=false src=false 0.50/1.00 stone>
+noise released 6 at 7 East sticky: t8 0,0,0:sticky_piston[Extended(false), Facing(East)] 1,0,0:stone
+noise released 6 at 7 East sticky: t9 0,0,1:-
+noise released 6 at 8 East sticky: start 0,0,0:sticky_piston[Extended(false), Facing(East)] 1,0,0:stone
+noise released 6 at 8 East sticky: t0 -1,0,0:redstone_block
+noise released 6 at 8 East sticky: t1 0,0,0:sticky_piston[Extended(true), Facing(East)] 1,0,0:moving_piston[Facing(East), PistonType(Sticky)]<East ext=true src=true 0.00/0.50 piston_head> 2,0,0:moving_piston[Facing(East), PistonType(Normal)]<East ext=true src=false 0.00/0.50 stone>
+noise released 6 at 8 East sticky: t2 1,0,0:moving_piston[Facing(East), PistonType(Sticky)]<East ext=true src=true 0.50/1.00 piston_head> 2,0,0:moving_piston[Facing(East), PistonType(Normal)]<East ext=true src=false 0.50/1.00 stone>
+noise released 6 at 8 East sticky: t3 1,0,0:piston_head[Facing(East), Short(false), PistonType(Sticky)] 2,0,0:stone
+noise released 6 at 8 East sticky: t6 0,0,0:moving_piston[Facing(East), PistonType(Sticky)]<East ext=false src=true 0.00/0.50 sticky_piston> 1,0,0:moving_piston[Facing(East), PistonType(Normal)]<East ext=false src=false 0.00/0.50 stone> -1,0,0:- 2,0,0:-
+noise released 6 at 8 East sticky: t7 0,0,0:moving_piston[Facing(East), PistonType(Sticky)]<East ext=false src=true 0.50/1.00 sticky_piston> 1,0,0:moving_piston[Facing(East), PistonType(Normal)]<East ext=false src=false 0.50/1.00 stone>
+noise released 6 at 8 East sticky: t8 0,0,0:sticky_piston[Extended(false), Facing(East)] 0,0,1:stone 1,0,0:stone
+noise released 6 at 8 East sticky: t10 0,0,1:-
+noise released 6 at 9 East sticky: start 0,0,0:sticky_piston[Extended(false), Facing(East)] 1,0,0:stone
+noise released 6 at 9 East sticky: t0 -1,0,0:redstone_block
+noise released 6 at 9 East sticky: t1 0,0,0:sticky_piston[Extended(true), Facing(East)] 1,0,0:moving_piston[Facing(East), PistonType(Sticky)]<East ext=true src=true 0.00/0.50 piston_head> 2,0,0:moving_piston[Facing(East), PistonType(Normal)]<East ext=true src=false 0.00/0.50 stone>
+noise released 6 at 9 East sticky: t2 1,0,0:moving_piston[Facing(East), PistonType(Sticky)]<East ext=true src=true 0.50/1.00 piston_head> 2,0,0:moving_piston[Facing(East), PistonType(Normal)]<East ext=true src=false 0.50/1.00 stone>
+noise released 6 at 9 East sticky: t3 1,0,0:piston_head[Facing(East), Short(false), PistonType(Sticky)] 2,0,0:stone
+noise released 6 at 9 East sticky: t6 0,0,0:moving_piston[Facing(East), PistonType(Sticky)]<East ext=false src=true 0.00/0.50 sticky_piston> 1,0,0:moving_piston[Facing(East), PistonType(Normal)]<East ext=false src=false 0.00/0.50 stone> -1,0,0:- 2,0,0:-
+noise released 6 at 9 East sticky: t7 0,0,0:moving_piston[Facing(East), PistonType(Sticky)]<East ext=false src=true 0.50/1.00 sticky_piston> 1,0,0:moving_piston[Facing(East), PistonType(Normal)]<East ext=false src=false 0.50/1.00 stone>
+noise released 6 at 9 East sticky: t8 0,0,0:sticky_piston[Extended(false), Facing(East)] 1,0,0:stone
+noise released 6 at 9 East sticky: t9 0,0,1:stone
+noise released 6 at 9 East sticky: t11 0,0,1:-
+noise released 8 at 9 East sticky: start 0,0,0:sticky_piston[Extended(false), Facing(East)] 1,0,0:stone
+noise released 8 at 9 East sticky: t0 -1,0,0:redstone_block
+noise released 8 at 9 East sticky: t1 0,0,0:sticky_piston[Extended(true), Facing(East)] 1,0,0:moving_piston[Facing(East), PistonType(Sticky)]<East ext=true src=true 0.00/0.50 piston_head> 2,0,0:moving_piston[Facing(East), PistonType(Normal)]<East ext=true src=false 0.00/0.50 stone>
+noise released 8 at 9 East sticky: t2 1,0,0:moving_piston[Facing(East), PistonType(Sticky)]<East ext=true src=true 0.50/1.00 piston_head> 2,0,0:moving_piston[Facing(East), PistonType(Normal)]<East ext=true src=false 0.50/1.00 stone>
+noise released 8 at 9 East sticky: t3 1,0,0:piston_head[Facing(East), Short(false), PistonType(Sticky)] 2,0,0:stone
+noise released 8 at 9 East sticky: t8 0,0,0:moving_piston[Facing(East), PistonType(Sticky)]<East ext=false src=true 0.00/0.50 sticky_piston> 1,0,0:moving_piston[Facing(East), PistonType(Normal)]<East ext=false src=false 0.00/0.50 stone> -1,0,0:- 2,0,0:-
+noise released 8 at 9 East sticky: t9 0,0,0:moving_piston[Facing(East), PistonType(Sticky)]<East ext=false src=true 0.50/1.00 sticky_piston> 0,0,1:stone 1,0,0:moving_piston[Facing(East), PistonType(Normal)]<East ext=false src=false 0.50/1.00 stone>
+noise released 8 at 9 East sticky: t10 0,0,0:sticky_piston[Extended(false), Facing(East)] 1,0,0:stone
+noise released 8 at 9 East sticky: t11 0,0,1:-
+noise released 8 at 10 East sticky: start 0,0,0:sticky_piston[Extended(false), Facing(East)] 1,0,0:stone
+noise released 8 at 10 East sticky: t0 -1,0,0:redstone_block
+noise released 8 at 10 East sticky: t1 0,0,0:sticky_piston[Extended(true), Facing(East)] 1,0,0:moving_piston[Facing(East), PistonType(Sticky)]<East ext=true src=true 0.00/0.50 piston_head> 2,0,0:moving_piston[Facing(East), PistonType(Normal)]<East ext=true src=false 0.00/0.50 stone>
+noise released 8 at 10 East sticky: t2 1,0,0:moving_piston[Facing(East), PistonType(Sticky)]<East ext=true src=true 0.50/1.00 piston_head> 2,0,0:moving_piston[Facing(East), PistonType(Normal)]<East ext=true src=false 0.50/1.00 stone>
+noise released 8 at 10 East sticky: t3 1,0,0:piston_head[Facing(East), Short(false), PistonType(Sticky)] 2,0,0:stone
+noise released 8 at 10 East sticky: t8 0,0,0:moving_piston[Facing(East), PistonType(Sticky)]<East ext=false src=true 0.00/0.50 sticky_piston> 1,0,0:moving_piston[Facing(East), PistonType(Normal)]<East ext=false src=false 0.00/0.50 stone> -1,0,0:- 2,0,0:-
+noise released 8 at 10 East sticky: t9 0,0,0:moving_piston[Facing(East), PistonType(Sticky)]<East ext=false src=true 0.50/1.00 sticky_piston> 1,0,0:moving_piston[Facing(East), PistonType(Normal)]<East ext=false src=false 0.50/1.00 stone>
+noise released 8 at 10 East sticky: t10 0,0,0:sticky_piston[Extended(false), Facing(East)] 0,0,1:stone 1,0,0:stone
+noise released 8 at 10 East sticky: t12 0,0,1:-
+noise released 8 at 11 East sticky: start 0,0,0:sticky_piston[Extended(false), Facing(East)] 1,0,0:stone
+noise released 8 at 11 East sticky: t0 -1,0,0:redstone_block
+noise released 8 at 11 East sticky: t1 0,0,0:sticky_piston[Extended(true), Facing(East)] 1,0,0:moving_piston[Facing(East), PistonType(Sticky)]<East ext=true src=true 0.00/0.50 piston_head> 2,0,0:moving_piston[Facing(East), PistonType(Normal)]<East ext=true src=false 0.00/0.50 stone>
+noise released 8 at 11 East sticky: t2 1,0,0:moving_piston[Facing(East), PistonType(Sticky)]<East ext=true src=true 0.50/1.00 piston_head> 2,0,0:moving_piston[Facing(East), PistonType(Normal)]<East ext=true src=false 0.50/1.00 stone>
+noise released 8 at 11 East sticky: t3 1,0,0:piston_head[Facing(East), Short(false), PistonType(Sticky)] 2,0,0:stone
+noise released 8 at 11 East sticky: t8 0,0,0:moving_piston[Facing(East), PistonType(Sticky)]<East ext=false src=true 0.00/0.50 sticky_piston> 1,0,0:moving_piston[Facing(East), PistonType(Normal)]<East ext=false src=false 0.00/0.50 stone> -1,0,0:- 2,0,0:-
+noise released 8 at 11 East sticky: t9 0,0,0:moving_piston[Facing(East), PistonType(Sticky)]<East ext=false src=true 0.50/1.00 sticky_piston> 1,0,0:moving_piston[Facing(East), PistonType(Normal)]<East ext=false src=false 0.50/1.00 stone>
+noise released 8 at 11 East sticky: t10 0,0,0:sticky_piston[Extended(false), Facing(East)] 1,0,0:stone
+noise released 8 at 11 East sticky: t11 0,0,1:stone
+noise released 8 at 11 East sticky: t13 0,0,1:-
+noise early release at 2 East sticky: start 0,0,0:sticky_piston[Extended(false), Facing(East)] 1,0,0:stone
+noise early release at 2 East sticky: t0 -1,0,0:redstone_block
+noise early release at 2 East sticky: t1 -1,0,0:-
+noise early release at 2 East sticky: t2 0,0,1:stone
+noise early release at 3 East sticky: start 0,0,0:sticky_piston[Extended(false), Facing(East)] 1,0,0:stone
+noise early release at 3 East sticky: t0 -1,0,0:redstone_block
+noise early release at 3 East sticky: t1 -1,0,0:-
+noise early release at 3 East sticky: t3 0,0,1:stone
+noise early release at 4 East sticky: start 0,0,0:sticky_piston[Extended(false), Facing(East)] 1,0,0:stone
+noise early release at 4 East sticky: t0 -1,0,0:redstone_block
+noise early release at 4 East sticky: t1 -1,0,0:-
+noise early release at 4 East sticky: t4 0,0,1:stone
+noise rest Up normal: start 0,0,0:piston[Extended(false), Facing(Up)] 1,0,0:stone
+noise rest Up normal: t0 0,0,1:stone
+noise rest Up normal: t3 0,0,1:-
+noise powered at 1 Up normal: start 0,0,0:piston[Extended(false), Facing(Up)] 1,0,0:stone
+noise powered at 1 Up normal: t0 -1,0,0:redstone_block
+noise powered at 1 Up normal: t1 0,0,0:piston[Extended(true), Facing(Up)] 0,0,1:stone 1,0,0:moving_piston[Facing(Up), PistonType(Normal)]<Up ext=true src=true 0.00/0.50 piston_head> 2,0,0:moving_piston[Facing(Up), PistonType(Normal)]<Up ext=true src=false 0.00/0.50 stone>
+noise powered at 1 Up normal: t2 1,0,0:moving_piston[Facing(Up), PistonType(Normal)]<Up ext=true src=true 0.50/1.00 piston_head> 2,0,0:moving_piston[Facing(Up), PistonType(Normal)]<Up ext=true src=false 0.50/1.00 stone>
+noise powered at 1 Up normal: t3 1,0,0:piston_head[Facing(Up), Short(false), PistonType(Normal)] 2,0,0:stone
+noise powered at 1 Up normal: t4 0,0,1:-
+noise powered at 2 Up normal: start 0,0,0:piston[Extended(false), Facing(Up)] 1,0,0:stone
+noise powered at 2 Up normal: t0 -1,0,0:redstone_block
+noise powered at 2 Up normal: t1 0,0,0:piston[Extended(true), Facing(Up)] 1,0,0:moving_piston[Facing(Up), PistonType(Normal)]<Up ext=true src=true 0.00/0.50 piston_head> 2,0,0:moving_piston[Facing(Up), PistonType(Normal)]<Up ext=true src=false 0.00/0.50 stone>
+noise powered at 2 Up normal: t2 0,0,1:stone 1,0,0:moving_piston[Facing(Up), PistonType(Normal)]<Up ext=true src=true 0.50/1.00 piston_head> 2,0,0:moving_piston[Facing(Up), PistonType(Normal)]<Up ext=true src=false 0.50/1.00 stone>
+noise powered at 2 Up normal: t3 1,0,0:piston_head[Facing(Up), Short(false), PistonType(Normal)] 2,0,0:stone
+noise powered at 2 Up normal: t5 0,0,1:-
+noise powered at 3 Up normal: start 0,0,0:piston[Extended(false), Facing(Up)] 1,0,0:stone
+noise powered at 3 Up normal: t0 -1,0,0:redstone_block
+noise powered at 3 Up normal: t1 0,0,0:piston[Extended(true), Facing(Up)] 1,0,0:moving_piston[Facing(Up), PistonType(Normal)]<Up ext=true src=true 0.00/0.50 piston_head> 2,0,0:moving_piston[Facing(Up), PistonType(Normal)]<Up ext=true src=false 0.00/0.50 stone>
+noise powered at 3 Up normal: t2 1,0,0:moving_piston[Facing(Up), PistonType(Normal)]<Up ext=true src=true 0.50/1.00 piston_head> 2,0,0:moving_piston[Facing(Up), PistonType(Normal)]<Up ext=true src=false 0.50/1.00 stone>
+noise powered at 3 Up normal: t3 0,0,1:stone 1,0,0:piston_head[Facing(Up), Short(false), PistonType(Normal)] 2,0,0:stone
+noise powered at 3 Up normal: t6 0,0,1:-
+noise powered at 5 Up normal: start 0,0,0:piston[Extended(false), Facing(Up)] 1,0,0:stone
+noise powered at 5 Up normal: t0 -1,0,0:redstone_block
+noise powered at 5 Up normal: t1 0,0,0:piston[Extended(true), Facing(Up)] 1,0,0:moving_piston[Facing(Up), PistonType(Normal)]<Up ext=true src=true 0.00/0.50 piston_head> 2,0,0:moving_piston[Facing(Up), PistonType(Normal)]<Up ext=true src=false 0.00/0.50 stone>
+noise powered at 5 Up normal: t2 1,0,0:moving_piston[Facing(Up), PistonType(Normal)]<Up ext=true src=true 0.50/1.00 piston_head> 2,0,0:moving_piston[Facing(Up), PistonType(Normal)]<Up ext=true src=false 0.50/1.00 stone>
+noise powered at 5 Up normal: t3 1,0,0:piston_head[Facing(Up), Short(false), PistonType(Normal)] 2,0,0:stone
+noise powered at 5 Up normal: t5 0,0,1:stone
+noise powered at 5 Up normal: t8 0,0,1:-
+noise released 6 at 7 Up normal: start 0,0,0:piston[Extended(false), Facing(Up)] 1,0,0:stone
+noise released 6 at 7 Up normal: t0 -1,0,0:redstone_block
+noise released 6 at 7 Up normal: t1 0,0,0:piston[Extended(true), Facing(Up)] 1,0,0:moving_piston[Facing(Up), PistonType(Normal)]<Up ext=true src=true 0.00/0.50 piston_head> 2,0,0:moving_piston[Facing(Up), PistonType(Normal)]<Up ext=true src=false 0.00/0.50 stone>
+noise released 6 at 7 Up normal: t2 1,0,0:moving_piston[Facing(Up), PistonType(Normal)]<Up ext=true src=true 0.50/1.00 piston_head> 2,0,0:moving_piston[Facing(Up), PistonType(Normal)]<Up ext=true src=false 0.50/1.00 stone>
+noise released 6 at 7 Up normal: t3 1,0,0:piston_head[Facing(Up), Short(false), PistonType(Normal)] 2,0,0:stone
+noise released 6 at 7 Up normal: t6 0,0,0:moving_piston[Facing(Up), PistonType(Normal)]<Up ext=false src=true 0.00/0.50 piston> -1,0,0:- 1,0,0:-
+noise released 6 at 7 Up normal: t7 0,0,0:moving_piston[Facing(Up), PistonType(Normal)]<Up ext=false src=true 0.50/1.00 piston> 0,0,1:stone
+noise released 6 at 7 Up normal: t8 0,0,0:piston[Extended(false), Facing(Up)]
+noise released 6 at 7 Up normal: t9 0,0,1:-
+noise released 6 at 8 Up normal: start 0,0,0:piston[Extended(false), Facing(Up)] 1,0,0:stone
+noise released 6 at 8 Up normal: t0 -1,0,0:redstone_block
+noise released 6 at 8 Up normal: t1 0,0,0:piston[Extended(true), Facing(Up)] 1,0,0:moving_piston[Facing(Up), PistonType(Normal)]<Up ext=true src=true 0.00/0.50 piston_head> 2,0,0:moving_piston[Facing(Up), PistonType(Normal)]<Up ext=true src=false 0.00/0.50 stone>
+noise released 6 at 8 Up normal: t2 1,0,0:moving_piston[Facing(Up), PistonType(Normal)]<Up ext=true src=true 0.50/1.00 piston_head> 2,0,0:moving_piston[Facing(Up), PistonType(Normal)]<Up ext=true src=false 0.50/1.00 stone>
+noise released 6 at 8 Up normal: t3 1,0,0:piston_head[Facing(Up), Short(false), PistonType(Normal)] 2,0,0:stone
+noise released 6 at 8 Up normal: t6 0,0,0:moving_piston[Facing(Up), PistonType(Normal)]<Up ext=false src=true 0.00/0.50 piston> -1,0,0:- 1,0,0:-
+noise released 6 at 8 Up normal: t7 0,0,0:moving_piston[Facing(Up), PistonType(Normal)]<Up ext=false src=true 0.50/1.00 piston>
+noise released 6 at 8 Up normal: t8 0,0,0:piston[Extended(false), Facing(Up)] 0,0,1:stone
+noise released 6 at 8 Up normal: t10 0,0,1:-
+noise released 6 at 9 Up normal: start 0,0,0:piston[Extended(false), Facing(Up)] 1,0,0:stone
+noise released 6 at 9 Up normal: t0 -1,0,0:redstone_block
+noise released 6 at 9 Up normal: t1 0,0,0:piston[Extended(true), Facing(Up)] 1,0,0:moving_piston[Facing(Up), PistonType(Normal)]<Up ext=true src=true 0.00/0.50 piston_head> 2,0,0:moving_piston[Facing(Up), PistonType(Normal)]<Up ext=true src=false 0.00/0.50 stone>
+noise released 6 at 9 Up normal: t2 1,0,0:moving_piston[Facing(Up), PistonType(Normal)]<Up ext=true src=true 0.50/1.00 piston_head> 2,0,0:moving_piston[Facing(Up), PistonType(Normal)]<Up ext=true src=false 0.50/1.00 stone>
+noise released 6 at 9 Up normal: t3 1,0,0:piston_head[Facing(Up), Short(false), PistonType(Normal)] 2,0,0:stone
+noise released 6 at 9 Up normal: t6 0,0,0:moving_piston[Facing(Up), PistonType(Normal)]<Up ext=false src=true 0.00/0.50 piston> -1,0,0:- 1,0,0:-
+noise released 6 at 9 Up normal: t7 0,0,0:moving_piston[Facing(Up), PistonType(Normal)]<Up ext=false src=true 0.50/1.00 piston>
+noise released 6 at 9 Up normal: t8 0,0,0:piston[Extended(false), Facing(Up)]
+noise released 6 at 9 Up normal: t9 0,0,1:stone
+noise released 6 at 9 Up normal: t11 0,0,1:-
+noise released 8 at 9 Up normal: start 0,0,0:piston[Extended(false), Facing(Up)] 1,0,0:stone
+noise released 8 at 9 Up normal: t0 -1,0,0:redstone_block
+noise released 8 at 9 Up normal: t1 0,0,0:piston[Extended(true), Facing(Up)] 1,0,0:moving_piston[Facing(Up), PistonType(Normal)]<Up ext=true src=true 0.00/0.50 piston_head> 2,0,0:moving_piston[Facing(Up), PistonType(Normal)]<Up ext=true src=false 0.00/0.50 stone>
+noise released 8 at 9 Up normal: t2 1,0,0:moving_piston[Facing(Up), PistonType(Normal)]<Up ext=true src=true 0.50/1.00 piston_head> 2,0,0:moving_piston[Facing(Up), PistonType(Normal)]<Up ext=true src=false 0.50/1.00 stone>
+noise released 8 at 9 Up normal: t3 1,0,0:piston_head[Facing(Up), Short(false), PistonType(Normal)] 2,0,0:stone
+noise released 8 at 9 Up normal: t8 0,0,0:moving_piston[Facing(Up), PistonType(Normal)]<Up ext=false src=true 0.00/0.50 piston> -1,0,0:- 1,0,0:-
+noise released 8 at 9 Up normal: t9 0,0,0:moving_piston[Facing(Up), PistonType(Normal)]<Up ext=false src=true 0.50/1.00 piston> 0,0,1:stone
+noise released 8 at 9 Up normal: t10 0,0,0:piston[Extended(false), Facing(Up)]
+noise released 8 at 9 Up normal: t11 0,0,1:-
+noise released 8 at 10 Up normal: start 0,0,0:piston[Extended(false), Facing(Up)] 1,0,0:stone
+noise released 8 at 10 Up normal: t0 -1,0,0:redstone_block
+noise released 8 at 10 Up normal: t1 0,0,0:piston[Extended(true), Facing(Up)] 1,0,0:moving_piston[Facing(Up), PistonType(Normal)]<Up ext=true src=true 0.00/0.50 piston_head> 2,0,0:moving_piston[Facing(Up), PistonType(Normal)]<Up ext=true src=false 0.00/0.50 stone>
+noise released 8 at 10 Up normal: t2 1,0,0:moving_piston[Facing(Up), PistonType(Normal)]<Up ext=true src=true 0.50/1.00 piston_head> 2,0,0:moving_piston[Facing(Up), PistonType(Normal)]<Up ext=true src=false 0.50/1.00 stone>
+noise released 8 at 10 Up normal: t3 1,0,0:piston_head[Facing(Up), Short(false), PistonType(Normal)] 2,0,0:stone
+noise released 8 at 10 Up normal: t8 0,0,0:moving_piston[Facing(Up), PistonType(Normal)]<Up ext=false src=true 0.00/0.50 piston> -1,0,0:- 1,0,0:-
+noise released 8 at 10 Up normal: t9 0,0,0:moving_piston[Facing(Up), PistonType(Normal)]<Up ext=false src=true 0.50/1.00 piston>
+noise released 8 at 10 Up normal: t10 0,0,0:piston[Extended(false), Facing(Up)] 0,0,1:stone
+noise released 8 at 10 Up normal: t12 0,0,1:-
+noise released 8 at 11 Up normal: start 0,0,0:piston[Extended(false), Facing(Up)] 1,0,0:stone
+noise released 8 at 11 Up normal: t0 -1,0,0:redstone_block
+noise released 8 at 11 Up normal: t1 0,0,0:piston[Extended(true), Facing(Up)] 1,0,0:moving_piston[Facing(Up), PistonType(Normal)]<Up ext=true src=true 0.00/0.50 piston_head> 2,0,0:moving_piston[Facing(Up), PistonType(Normal)]<Up ext=true src=false 0.00/0.50 stone>
+noise released 8 at 11 Up normal: t2 1,0,0:moving_piston[Facing(Up), PistonType(Normal)]<Up ext=true src=true 0.50/1.00 piston_head> 2,0,0:moving_piston[Facing(Up), PistonType(Normal)]<Up ext=true src=false 0.50/1.00 stone>
+noise released 8 at 11 Up normal: t3 1,0,0:piston_head[Facing(Up), Short(false), PistonType(Normal)] 2,0,0:stone
+noise released 8 at 11 Up normal: t8 0,0,0:moving_piston[Facing(Up), PistonType(Normal)]<Up ext=false src=true 0.00/0.50 piston> -1,0,0:- 1,0,0:-
+noise released 8 at 11 Up normal: t9 0,0,0:moving_piston[Facing(Up), PistonType(Normal)]<Up ext=false src=true 0.50/1.00 piston>
+noise released 8 at 11 Up normal: t10 0,0,0:piston[Extended(false), Facing(Up)]
+noise released 8 at 11 Up normal: t11 0,0,1:stone
+noise released 8 at 11 Up normal: t13 0,0,1:-
+noise early release at 2 Up normal: start 0,0,0:piston[Extended(false), Facing(Up)] 1,0,0:stone
+noise early release at 2 Up normal: t0 -1,0,0:redstone_block
+noise early release at 2 Up normal: t1 -1,0,0:-
+noise early release at 2 Up normal: t2 0,0,1:stone
+noise early release at 3 Up normal: start 0,0,0:piston[Extended(false), Facing(Up)] 1,0,0:stone
+noise early release at 3 Up normal: t0 -1,0,0:redstone_block
+noise early release at 3 Up normal: t1 -1,0,0:-
+noise early release at 3 Up normal: t3 0,0,1:stone
+noise early release at 4 Up normal: start 0,0,0:piston[Extended(false), Facing(Up)] 1,0,0:stone
+noise early release at 4 Up normal: t0 -1,0,0:redstone_block
+noise early release at 4 Up normal: t1 -1,0,0:-
+noise early release at 4 Up normal: t4 0,0,1:stone
+noise rest Up sticky: start 0,0,0:sticky_piston[Extended(false), Facing(Up)] 1,0,0:stone
+noise rest Up sticky: t0 0,0,1:stone
+noise rest Up sticky: t3 0,0,1:-
+noise powered at 1 Up sticky: start 0,0,0:sticky_piston[Extended(false), Facing(Up)] 1,0,0:stone
+noise powered at 1 Up sticky: t0 -1,0,0:redstone_block
+noise powered at 1 Up sticky: t1 0,0,0:sticky_piston[Extended(true), Facing(Up)] 0,0,1:stone 1,0,0:moving_piston[Facing(Up), PistonType(Sticky)]<Up ext=true src=true 0.00/0.50 piston_head> 2,0,0:moving_piston[Facing(Up), PistonType(Normal)]<Up ext=true src=false 0.00/0.50 stone>
+noise powered at 1 Up sticky: t2 1,0,0:moving_piston[Facing(Up), PistonType(Sticky)]<Up ext=true src=true 0.50/1.00 piston_head> 2,0,0:moving_piston[Facing(Up), PistonType(Normal)]<Up ext=true src=false 0.50/1.00 stone>
+noise powered at 1 Up sticky: t3 1,0,0:piston_head[Facing(Up), Short(false), PistonType(Sticky)] 2,0,0:stone
+noise powered at 1 Up sticky: t4 0,0,1:-
+noise powered at 2 Up sticky: start 0,0,0:sticky_piston[Extended(false), Facing(Up)] 1,0,0:stone
+noise powered at 2 Up sticky: t0 -1,0,0:redstone_block
+noise powered at 2 Up sticky: t1 0,0,0:sticky_piston[Extended(true), Facing(Up)] 1,0,0:moving_piston[Facing(Up), PistonType(Sticky)]<Up ext=true src=true 0.00/0.50 piston_head> 2,0,0:moving_piston[Facing(Up), PistonType(Normal)]<Up ext=true src=false 0.00/0.50 stone>
+noise powered at 2 Up sticky: t2 0,0,1:stone 1,0,0:moving_piston[Facing(Up), PistonType(Sticky)]<Up ext=true src=true 0.50/1.00 piston_head> 2,0,0:moving_piston[Facing(Up), PistonType(Normal)]<Up ext=true src=false 0.50/1.00 stone>
+noise powered at 2 Up sticky: t3 1,0,0:piston_head[Facing(Up), Short(false), PistonType(Sticky)] 2,0,0:stone
+noise powered at 2 Up sticky: t5 0,0,1:-
+noise powered at 3 Up sticky: start 0,0,0:sticky_piston[Extended(false), Facing(Up)] 1,0,0:stone
+noise powered at 3 Up sticky: t0 -1,0,0:redstone_block
+noise powered at 3 Up sticky: t1 0,0,0:sticky_piston[Extended(true), Facing(Up)] 1,0,0:moving_piston[Facing(Up), PistonType(Sticky)]<Up ext=true src=true 0.00/0.50 piston_head> 2,0,0:moving_piston[Facing(Up), PistonType(Normal)]<Up ext=true src=false 0.00/0.50 stone>
+noise powered at 3 Up sticky: t2 1,0,0:moving_piston[Facing(Up), PistonType(Sticky)]<Up ext=true src=true 0.50/1.00 piston_head> 2,0,0:moving_piston[Facing(Up), PistonType(Normal)]<Up ext=true src=false 0.50/1.00 stone>
+noise powered at 3 Up sticky: t3 0,0,1:stone 1,0,0:piston_head[Facing(Up), Short(false), PistonType(Sticky)] 2,0,0:stone
+noise powered at 3 Up sticky: t6 0,0,1:-
+noise powered at 5 Up sticky: start 0,0,0:sticky_piston[Extended(false), Facing(Up)] 1,0,0:stone
+noise powered at 5 Up sticky: t0 -1,0,0:redstone_block
+noise powered at 5 Up sticky: t1 0,0,0:sticky_piston[Extended(true), Facing(Up)] 1,0,0:moving_piston[Facing(Up), PistonType(Sticky)]<Up ext=true src=true 0.00/0.50 piston_head> 2,0,0:moving_piston[Facing(Up), PistonType(Normal)]<Up ext=true src=false 0.00/0.50 stone>
+noise powered at 5 Up sticky: t2 1,0,0:moving_piston[Facing(Up), PistonType(Sticky)]<Up ext=true src=true 0.50/1.00 piston_head> 2,0,0:moving_piston[Facing(Up), PistonType(Normal)]<Up ext=true src=false 0.50/1.00 stone>
+noise powered at 5 Up sticky: t3 1,0,0:piston_head[Facing(Up), Short(false), PistonType(Sticky)] 2,0,0:stone
+noise powered at 5 Up sticky: t5 0,0,1:stone
+noise powered at 5 Up sticky: t8 0,0,1:-
+noise released 6 at 7 Up sticky: start 0,0,0:sticky_piston[Extended(false), Facing(Up)] 1,0,0:stone
+noise released 6 at 7 Up sticky: t0 -1,0,0:redstone_block
+noise released 6 at 7 Up sticky: t1 0,0,0:sticky_piston[Extended(true), Facing(Up)] 1,0,0:moving_piston[Facing(Up), PistonType(Sticky)]<Up ext=true src=true 0.00/0.50 piston_head> 2,0,0:moving_piston[Facing(Up), PistonType(Normal)]<Up ext=true src=false 0.00/0.50 stone>
+noise released 6 at 7 Up sticky: t2 1,0,0:moving_piston[Facing(Up), PistonType(Sticky)]<Up ext=true src=true 0.50/1.00 piston_head> 2,0,0:moving_piston[Facing(Up), PistonType(Normal)]<Up ext=true src=false 0.50/1.00 stone>
+noise released 6 at 7 Up sticky: t3 1,0,0:piston_head[Facing(Up), Short(false), PistonType(Sticky)] 2,0,0:stone
+noise released 6 at 7 Up sticky: t6 0,0,0:moving_piston[Facing(Up), PistonType(Sticky)]<Up ext=false src=true 0.00/0.50 sticky_piston> 1,0,0:moving_piston[Facing(Up), PistonType(Normal)]<Up ext=false src=false 0.00/0.50 stone> -1,0,0:- 2,0,0:-
+noise released 6 at 7 Up sticky: t7 0,0,0:moving_piston[Facing(Up), PistonType(Sticky)]<Up ext=false src=true 0.50/1.00 sticky_piston> 0,0,1:stone 1,0,0:moving_piston[Facing(Up), PistonType(Normal)]<Up ext=false src=false 0.50/1.00 stone>
+noise released 6 at 7 Up sticky: t8 0,0,0:sticky_piston[Extended(false), Facing(Up)] 1,0,0:stone
+noise released 6 at 7 Up sticky: t9 0,0,1:-
+noise released 6 at 8 Up sticky: start 0,0,0:sticky_piston[Extended(false), Facing(Up)] 1,0,0:stone
+noise released 6 at 8 Up sticky: t0 -1,0,0:redstone_block
+noise released 6 at 8 Up sticky: t1 0,0,0:sticky_piston[Extended(true), Facing(Up)] 1,0,0:moving_piston[Facing(Up), PistonType(Sticky)]<Up ext=true src=true 0.00/0.50 piston_head> 2,0,0:moving_piston[Facing(Up), PistonType(Normal)]<Up ext=true src=false 0.00/0.50 stone>
+noise released 6 at 8 Up sticky: t2 1,0,0:moving_piston[Facing(Up), PistonType(Sticky)]<Up ext=true src=true 0.50/1.00 piston_head> 2,0,0:moving_piston[Facing(Up), PistonType(Normal)]<Up ext=true src=false 0.50/1.00 stone>
+noise released 6 at 8 Up sticky: t3 1,0,0:piston_head[Facing(Up), Short(false), PistonType(Sticky)] 2,0,0:stone
+noise released 6 at 8 Up sticky: t6 0,0,0:moving_piston[Facing(Up), PistonType(Sticky)]<Up ext=false src=true 0.00/0.50 sticky_piston> 1,0,0:moving_piston[Facing(Up), PistonType(Normal)]<Up ext=false src=false 0.00/0.50 stone> -1,0,0:- 2,0,0:-
+noise released 6 at 8 Up sticky: t7 0,0,0:moving_piston[Facing(Up), PistonType(Sticky)]<Up ext=false src=true 0.50/1.00 sticky_piston> 1,0,0:moving_piston[Facing(Up), PistonType(Normal)]<Up ext=false src=false 0.50/1.00 stone>
+noise released 6 at 8 Up sticky: t8 0,0,0:sticky_piston[Extended(false), Facing(Up)] 0,0,1:stone 1,0,0:stone
+noise released 6 at 8 Up sticky: t10 0,0,1:-
+noise released 6 at 9 Up sticky: start 0,0,0:sticky_piston[Extended(false), Facing(Up)] 1,0,0:stone
+noise released 6 at 9 Up sticky: t0 -1,0,0:redstone_block
+noise released 6 at 9 Up sticky: t1 0,0,0:sticky_piston[Extended(true), Facing(Up)] 1,0,0:moving_piston[Facing(Up), PistonType(Sticky)]<Up ext=true src=true 0.00/0.50 piston_head> 2,0,0:moving_piston[Facing(Up), PistonType(Normal)]<Up ext=true src=false 0.00/0.50 stone>
+noise released 6 at 9 Up sticky: t2 1,0,0:moving_piston[Facing(Up), PistonType(Sticky)]<Up ext=true src=true 0.50/1.00 piston_head> 2,0,0:moving_piston[Facing(Up), PistonType(Normal)]<Up ext=true src=false 0.50/1.00 stone>
+noise released 6 at 9 Up sticky: t3 1,0,0:piston_head[Facing(Up), Short(false), PistonType(Sticky)] 2,0,0:stone
+noise released 6 at 9 Up sticky: t6 0,0,0:moving_piston[Facing(Up), PistonType(Sticky)]<Up ext=false src=true 0.00/0.50 sticky_piston> 1,0,0:moving_piston[Facing(Up), PistonType(Normal)]<Up ext=false src=false 0.00/0.50 stone> -1,0,0:- 2,0,0:-
+noise released 6 at 9 Up sticky: t7 0,0,0:moving_piston[Facing(Up), PistonType(Sticky)]<Up ext=false src=true 0.50/1.00 sticky_piston> 1,0,0:moving_piston[Facing(Up), PistonType(Normal)]<Up ext=false src=false 0.50/1.00 stone>
+noise released 6 at 9 Up sticky: t8 0,0,0:sticky_piston[Extended(false), Facing(Up)] 1,0,0:stone
+noise released 6 at 9 Up sticky: t9 0,0,1:stone
+noise released 6 at 9 Up sticky: t11 0,0,1:-
+noise released 8 at 9 Up sticky: start 0,0,0:sticky_piston[Extended(false), Facing(Up)] 1,0,0:stone
+noise released 8 at 9 Up sticky: t0 -1,0,0:redstone_block
+noise released 8 at 9 Up sticky: t1 0,0,0:sticky_piston[Extended(true), Facing(Up)] 1,0,0:moving_piston[Facing(Up), PistonType(Sticky)]<Up ext=true src=true 0.00/0.50 piston_head> 2,0,0:moving_piston[Facing(Up), PistonType(Normal)]<Up ext=true src=false 0.00/0.50 stone>
+noise released 8 at 9 Up sticky: t2 1,0,0:moving_piston[Facing(Up), PistonType(Sticky)]<Up ext=true src=true 0.50/1.00 piston_head> 2,0,0:moving_piston[Facing(Up), PistonType(Normal)]<Up ext=true src=false 0.50/1.00 stone>
+noise released 8 at 9 Up sticky: t3 1,0,0:piston_head[Facing(Up), Short(false), PistonType(Sticky)] 2,0,0:stone
+noise released 8 at 9 Up sticky: t8 0,0,0:moving_piston[Facing(Up), PistonType(Sticky)]<Up ext=false src=true 0.00/0.50 sticky_piston> 1,0,0:moving_piston[Facing(Up), PistonType(Normal)]<Up ext=false src=false 0.00/0.50 stone> -1,0,0:- 2,0,0:-
+noise released 8 at 9 Up sticky: t9 0,0,0:moving_piston[Facing(Up), PistonType(Sticky)]<Up ext=false src=true 0.50/1.00 sticky_piston> 0,0,1:stone 1,0,0:moving_piston[Facing(Up), PistonType(Normal)]<Up ext=false src=false 0.50/1.00 stone>
+noise released 8 at 9 Up sticky: t10 0,0,0:sticky_piston[Extended(false), Facing(Up)] 1,0,0:stone
+noise released 8 at 9 Up sticky: t11 0,0,1:-
+noise released 8 at 10 Up sticky: start 0,0,0:sticky_piston[Extended(false), Facing(Up)] 1,0,0:stone
+noise released 8 at 10 Up sticky: t0 -1,0,0:redstone_block
+noise released 8 at 10 Up sticky: t1 0,0,0:sticky_piston[Extended(true), Facing(Up)] 1,0,0:moving_piston[Facing(Up), PistonType(Sticky)]<Up ext=true src=true 0.00/0.50 piston_head> 2,0,0:moving_piston[Facing(Up), PistonType(Normal)]<Up ext=true src=false 0.00/0.50 stone>
+noise released 8 at 10 Up sticky: t2 1,0,0:moving_piston[Facing(Up), PistonType(Sticky)]<Up ext=true src=true 0.50/1.00 piston_head> 2,0,0:moving_piston[Facing(Up), PistonType(Normal)]<Up ext=true src=false 0.50/1.00 stone>
+noise released 8 at 10 Up sticky: t3 1,0,0:piston_head[Facing(Up), Short(false), PistonType(Sticky)] 2,0,0:stone
+noise released 8 at 10 Up sticky: t8 0,0,0:moving_piston[Facing(Up), PistonType(Sticky)]<Up ext=false src=true 0.00/0.50 sticky_piston> 1,0,0:moving_piston[Facing(Up), PistonType(Normal)]<Up ext=false src=false 0.00/0.50 stone> -1,0,0:- 2,0,0:-
+noise released 8 at 10 Up sticky: t9 0,0,0:moving_piston[Facing(Up), PistonType(Sticky)]<Up ext=false src=true 0.50/1.00 sticky_piston> 1,0,0:moving_piston[Facing(Up), PistonType(Normal)]<Up ext=false src=false 0.50/1.00 stone>
+noise released 8 at 10 Up sticky: t10 0,0,0:sticky_piston[Extended(false), Facing(Up)] 0,0,1:stone 1,0,0:stone
+noise released 8 at 10 Up sticky: t12 0,0,1:-
+noise released 8 at 11 Up sticky: start 0,0,0:sticky_piston[Extended(false), Facing(Up)] 1,0,0:stone
+noise released 8 at 11 Up sticky: t0 -1,0,0:redstone_block
+noise released 8 at 11 Up sticky: t1 0,0,0:sticky_piston[Extended(true), Facing(Up)] 1,0,0:moving_piston[Facing(Up), PistonType(Sticky)]<Up ext=true src=true 0.00/0.50 piston_head> 2,0,0:moving_piston[Facing(Up), PistonType(Normal)]<Up ext=true src=false 0.00/0.50 stone>
+noise released 8 at 11 Up sticky: t2 1,0,0:moving_piston[Facing(Up), PistonType(Sticky)]<Up ext=true src=true 0.50/1.00 piston_head> 2,0,0:moving_piston[Facing(Up), PistonType(Normal)]<Up ext=true src=false 0.50/1.00 stone>
+noise released 8 at 11 Up sticky: t3 1,0,0:piston_head[Facing(Up), Short(false), PistonType(Sticky)] 2,0,0:stone
+noise released 8 at 11 Up sticky: t8 0,0,0:moving_piston[Facing(Up), PistonType(Sticky)]<Up ext=false src=true 0.00/0.50 sticky_piston> 1,0,0:moving_piston[Facing(Up), PistonType(Normal)]<Up ext=false src=false 0.00/0.50 stone> -1,0,0:- 2,0,0:-
+noise released 8 at 11 Up sticky: t9 0,0,0:moving_piston[Facing(Up), PistonType(Sticky)]<Up ext=false src=true 0.50/1.00 sticky_piston> 1,0,0:moving_piston[Facing(Up), PistonType(Normal)]<Up ext=false src=false 0.50/1.00 stone>
+noise released 8 at 11 Up sticky: t10 0,0,0:sticky_piston[Extended(false), Facing(Up)] 1,0,0:stone
+noise released 8 at 11 Up sticky: t11 0,0,1:stone
+noise released 8 at 11 Up sticky: t13 0,0,1:-
+noise early release at 2 Up sticky: start 0,0,0:sticky_piston[Extended(false), Facing(Up)] 1,0,0:stone
+noise early release at 2 Up sticky: t0 -1,0,0:redstone_block
+noise early release at 2 Up sticky: t1 -1,0,0:-
+noise early release at 2 Up sticky: t2 0,0,1:stone
+noise early release at 3 Up sticky: start 0,0,0:sticky_piston[Extended(false), Facing(Up)] 1,0,0:stone
+noise early release at 3 Up sticky: t0 -1,0,0:redstone_block
+noise early release at 3 Up sticky: t1 -1,0,0:-
+noise early release at 3 Up sticky: t3 0,0,1:stone
+noise early release at 4 Up sticky: start 0,0,0:sticky_piston[Extended(false), Facing(Up)] 1,0,0:stone
+noise early release at 4 Up sticky: t0 -1,0,0:redstone_block
+noise early release at 4 Up sticky: t1 -1,0,0:-
+noise early release at 4 Up sticky: t4 0,0,1:stone

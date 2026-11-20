@@ -440,6 +440,7 @@ fn scenes() -> Vec<Scene> {
     all.extend(timing());
     all.extend(direct_calls());
     all.extend(neighbours());
+    all.extend(noise());
     all
 }
 
@@ -867,6 +868,53 @@ fn neighbours() -> Vec<Scene> {
             ])
             .pulse(0, 7),
         );
+    }
+    out
+}
+
+/// Block updates that are not a power change, next to a piston at rest, extending, extended and
+/// retracting: `try_move` must not move it for any of them.
+fn noise() -> Vec<Scene> {
+    let side: Rel = (0, 0, 1);
+    let mut out = Vec::new();
+    for facing in [BlockDirection::East, BlockDirection::Up] {
+        for sticky in [false, true] {
+            let name = |what: &str| format!("noise {what} {facing:?} {}", kind(sticky));
+            let base = |what: &str, ticks| {
+                Scene::new(name(what), sticky, facing, ticks).cells(row(1, STONE))
+            };
+            out.push(
+                base("rest", 8)
+                    .at(0, Action::Set(side, STONE))
+                    .at(3, Action::Set(side, AIR)),
+            );
+            // Powered from tick 0; the update arrives while the head moves, and once extended.
+            for at in [1, 2, 3, 5] {
+                out.push(
+                    base(&format!("powered at {at}"), 14)
+                        .at(0, Action::Set(BEHIND, POWER))
+                        .at(at, Action::Set(side, STONE))
+                        .at(at + 3, Action::Set(side, AIR)),
+                );
+            }
+            // Power taken away at tick 6 or 8; the update arrives while the head returns.
+            for (off, at) in [(6, 7), (6, 8), (6, 9), (8, 9), (8, 10), (8, 11)] {
+                out.push(
+                    base(&format!("released {off} at {at}"), 16)
+                        .pulse(0, off)
+                        .at(at, Action::Set(side, STONE))
+                        .at(at + 2, Action::Set(side, AIR)),
+                );
+            }
+            // Power taken away before the head arrives: the update comes after.
+            for at in [2, 3, 4] {
+                out.push(
+                    base(&format!("early release at {at}"), 14)
+                        .pulse(0, 1)
+                        .at(at, Action::Set(side, STONE)),
+                );
+            }
+        }
     }
     out
 }

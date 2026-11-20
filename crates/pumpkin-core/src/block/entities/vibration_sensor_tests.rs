@@ -201,3 +201,28 @@ async fn breaking_wool_is_silent() -> TestResult {
     assert!(!heard);
     Ok(())
 }
+
+#[tokio::test(flavor = "multi_thread")]
+async fn a_vibration_in_flight_survives_a_save_and_reload() -> TestResult {
+    use super::BlockEntity;
+    use super::sculk_sensor::SculkSensorBlockEntity;
+    let (before, after) = with_world(|world| {
+        step_at(world, "step", 4);
+        tick(world); // selected, three ticks of travel left
+        let saved = {
+            let entity = world.get_block_entity(&sensor()).expect("sensor");
+            let mut nbt = pumpkin_nbt::compound::NbtCompound::new();
+            entity.write_nbt(&mut nbt);
+            nbt
+        };
+        let before = state(world);
+        // The chunk unloads and loads again: a new block entity from the saved compound.
+        world.add_block_entity(Arc::new(SculkSensorBlockEntity::from_nbt(&saved, sensor())));
+        (before, ticks_until_active(world, 20))
+    })
+    .await?;
+    assert_eq!(before.0, SculkSensorPhase::Inactive);
+    // floor(4.0) = 4 travel ticks, one spent in the selecting tick.
+    assert_eq!(after, Some(3));
+    Ok(())
+}

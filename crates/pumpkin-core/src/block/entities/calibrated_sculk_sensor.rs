@@ -28,7 +28,7 @@ impl BlockEntity for CalibratedSculkSensorBlockEntity {
         Self {
             position,
             last_vibration_frequency: Mutex::new(last_vibration_frequency),
-            sensor: VibrationSensor::new(position, true),
+            sensor: VibrationSensor::from_nbt(position, true, nbt.get_compound("listener")),
         }
     }
 

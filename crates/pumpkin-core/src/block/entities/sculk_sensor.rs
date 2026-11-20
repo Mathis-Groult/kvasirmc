@@ -28,7 +28,7 @@ impl BlockEntity for SculkSensorBlockEntity {
         Self {
             position,
             last_vibration_frequency: Mutex::new(last_vibration_frequency),
-            sensor: VibrationSensor::new(position, false),
+            sensor: VibrationSensor::from_nbt(position, false, nbt.get_compound("listener")),
         }
     }
 
@@ -36,6 +36,7 @@ impl BlockEntity for SculkSensorBlockEntity {
         if let Ok(last_vibration_frequency) = self.last_vibration_frequency.lock() {
             nbt.put_int("last_vibration_frequency", *last_vibration_frequency);
         }
+        nbt.put_compound("listener", self.sensor.write_nbt());
     }
 
     fn chunk_data_nbt(&self) -> Option<NbtCompound> {

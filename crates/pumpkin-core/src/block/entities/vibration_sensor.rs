@@ -4,6 +4,7 @@
 use std::sync::{Arc, Mutex, PoisonError};
 
 use pumpkin_data::{game_event::GameEvent, tag};
+use pumpkin_nbt::{compound::NbtCompound, tag::NbtTag};
 use pumpkin_util::math::{position::BlockPos, vector3::Vector3};
 
 use crate::block::blocks::redstone::sculk_sensor::SculkSensorBlock;
@@ -20,6 +21,43 @@ struct Vibration {
     event: GameEvent,
     distance: f32,
     origin: Vector3<f64>,
+}
+
+impl Vibration {
+    /// `VibrationInfo.CODEC` (source and projectile owner are not kept).
+    fn read_nbt(nbt: &NbtCompound) -> Option<Self> {
+        let event = GameEvent::from_name(nbt.get_string("game_event")?)?;
+        let distance = nbt.get_float("distance")?;
+        let pos = nbt.get_list("pos")?;
+        if pos.len() != 3 || !distance.is_finite() || distance < 0.0 {
+            return None;
+        }
+        let origin = Vector3::new(
+            pos[0].extract_double()?,
+            pos[1].extract_double()?,
+            pos[2].extract_double()?,
+        );
+        (origin.x.is_finite() && origin.y.is_finite() && origin.z.is_finite()).then_some(Self {
+            event,
+            distance,
+            origin,
+        })
+    }
+
+    fn write_nbt(&self) -> NbtCompound {
+        let mut nbt = NbtCompound::new();
+        nbt.put_string("game_event", format!("minecraft:{}", self.event.name()));
+        nbt.put_float("distance", self.distance);
+        nbt.put_list(
+            "pos",
+            vec![
+                NbtTag::Double(self.origin.x),
+                NbtTag::Double(self.origin.y),
+                NbtTag::Double(self.origin.z),
+            ],
+        );
+        nbt
+    }
 }
 
 #[derive(Default)]
@@ -47,6 +85,52 @@ impl VibrationSensor {
                 current: None,
             }),
         }
+    }
+
+    /// A sensor holding the vibrations of a saved `listener` compound (`VibrationSystem.Data`).
+    #[must_use]
+    pub fn from_nbt(position: BlockPos, calibrated: bool, nbt: Option<&NbtCompound>) -> Self {
+        let sensor = Self::new(position, calibrated);
+        if let Some(nbt) = nbt
+            && let Some(tick) = nbt
+                .get_compound("selector")
+                .and_then(|s| s.get_long("tick"))
+            && let delay = nbt.get_int("event_delay").unwrap_or(0)
+            && delay >= 0
+        {
+            let mut state = sensor.state.lock().unwrap_or_else(PoisonError::into_inner);
+            state.current = nbt
+                .get_compound("event")
+                .and_then(Vibration::read_nbt)
+                .map(|vibration| (vibration, delay));
+            state.candidate = nbt
+                .get_compound("selector")
+                .and_then(|s| s.get_compound("event"))
+                .and_then(Vibration::read_nbt)
+                .map(|vibration| (vibration, tick));
+        }
+        sensor
+    }
+
+    /// The `listener` compound (`VibrationSystem.Data.CODEC`).
+    #[must_use]
+    pub fn write_nbt(&self) -> NbtCompound {
+        let state = self.state.lock().unwrap_or_else(PoisonError::into_inner);
+        let mut nbt = NbtCompound::new();
+        if let Some((vibration, _)) = &state.current {
+            nbt.put_compound("event", vibration.write_nbt());
+        }
+        let mut selector = NbtCompound::new();
+        selector.put_long(
+            "tick",
+            state.candidate.as_ref().map_or(-1, |(_, tick)| *tick),
+        );
+        if let Some((vibration, _)) = &state.candidate {
+            selector.put_compound("event", vibration.write_nbt());
+        }
+        nbt.put_compound("selector", selector);
+        nbt.put_int("event_delay", state.current.map_or(0, |(_, delay)| delay));
+        nbt
     }
 
     const fn range(&self) -> i32 {

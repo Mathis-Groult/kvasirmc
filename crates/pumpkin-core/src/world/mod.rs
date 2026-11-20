@@ -46,7 +46,6 @@ pub(crate) use entity_index::EntityIndex;
 pub mod entity_islands;
 pub mod explosion;
 pub mod game_event;
-pub mod vibration;
 pub mod generation_cache;
 pub mod loot;
 pub mod map;
@@ -56,6 +55,7 @@ pub mod raid;
 pub mod random_sequences;
 pub mod stopwatches;
 pub mod time;
+pub mod vibration;
 pub mod villager_poi;
 
 use crate::block::BlockEvent;

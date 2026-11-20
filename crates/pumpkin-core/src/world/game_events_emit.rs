@@ -10,6 +10,7 @@ impl World {
             position,
             &game_event::GameEventContext {
                 source_entity: None,
+                affected_state: None,
             },
         );
     }

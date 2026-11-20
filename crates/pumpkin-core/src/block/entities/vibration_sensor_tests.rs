@@ -173,3 +173,31 @@ async fn a_second_vibration_waits_while_the_first_travels() -> TestResult {
     assert_eq!(power, 4);
     Ok(())
 }
+
+fn break_at(world: &Arc<World>, block: &Block, dx: i32) {
+    let at = BlockPos::new(X + dx, Y, 3);
+    world.set_block_state(&at, block.default_state.id, BlockFlags::SKIP_DROPS);
+    world.break_block(&at, None, BlockFlags::NOTIFY_ALL | BlockFlags::SKIP_DROPS);
+}
+
+#[tokio::test(flavor = "multi_thread")]
+async fn breaking_a_block_nearby_is_heard() -> TestResult {
+    let heard = with_world(|world| {
+        break_at(world, &Block::STONE, 1);
+        ticks_until_active(world, 30).is_some()
+    })
+    .await?;
+    assert!(heard);
+    Ok(())
+}
+
+#[tokio::test(flavor = "multi_thread")]
+async fn breaking_wool_is_silent() -> TestResult {
+    let heard = with_world(|world| {
+        break_at(world, &Block::WHITE_WOOL, 1);
+        ticks_until_active(world, 30).is_some()
+    })
+    .await?;
+    assert!(!heard);
+    Ok(())
+}

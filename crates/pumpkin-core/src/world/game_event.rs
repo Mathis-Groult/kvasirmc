@@ -12,6 +12,8 @@ use crate::entity::EntityBase;
 
 pub struct GameEventContext<'a> {
     pub source_entity: Option<&'a dyn EntityBase>,
+    /// `GameEvent.Context.affectedState`: the block state a block event changed.
+    pub affected_state: Option<pumpkin_data::BlockStateId>,
 }
 
 pub trait GameEventListener {

@@ -1,7 +1,7 @@
 //! What every vibration listener (sculk sensors, allays, ...) shares, from vanilla 26.3
 //! `VibrationSystem` and `VibrationSystem$User`.
 
-use pumpkin_data::{BlockDirection, game_event::GameEvent, tag, tag::Taggable};
+use pumpkin_data::{Block, BlockDirection, game_event::GameEvent, tag, tag::Taggable};
 use pumpkin_util::math::{position::BlockPos, vector3::Vector3};
 
 use pumpkin_data::{game_event::PositionSourceType, particle::Particle};
@@ -91,8 +91,11 @@ pub fn is_valid_vibration(
     if !listenable.0.contains(&event.name()) {
         return false;
     }
+    let undampened = context.affected_state.is_none_or(|state| {
+        !Block::from_state_id(state).has_tag(&tag::Block::MINECRAFT_DAMPENS_VIBRATIONS)
+    });
     let Some(source) = context.source_entity else {
-        return true;
+        return undampened;
     };
     let ignored_while_sneaking = tag::GameEvent::MINECRAFT_IGNORE_VIBRATIONS_SNEAKING
         .0
@@ -100,6 +103,7 @@ pub fn is_valid_vibration(
     !source.is_spectator()
         && (!source.get_entity().is_sneaking() || !ignored_while_sneaking)
         && !source.dampens_vibrations()
+        && undampened
 }
 
 /// `VibrationSystem.Listener.isOccluded`: wool-like blocks must close all six lines.

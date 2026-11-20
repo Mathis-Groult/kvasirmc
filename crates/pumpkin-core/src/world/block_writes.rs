@@ -1,12 +1,13 @@
 //! Placing, breaking and scheduling blocks, and what they drop.
 
 use super::{BlockBreakingProgress, World, bedrock_block_breaking_rate};
-use crate::{block::BlockEvent, entity::item::ItemEntity};
+use crate::{block::BlockEvent, entity::item::ItemEntity, world::game_event::GameEventContext};
 use crate::{
     entity::{Entity, EntityBase, player::Player},
     net::ClientPlatform,
     plugin::block::block_break::BlockBreakEvent,
 };
+use pumpkin_data::game_event::GameEvent;
 use pumpkin_data::{
     Block, BlockStateId, entity::EntityType, item_stack::ItemStack, world::WorldEvent,
 };
@@ -399,6 +400,15 @@ impl World {
 
         let broken_state_id = self.set_block_state(position, new_state_id, flags);
         self.send_break_effects(position, cause, broken_state_id, new_state_id);
+        // Vanilla `Level.destroyBlock`: BLOCK_DESTROY from the breaker, with the destroyed state.
+        self.emit_game_event_with_context(
+            GameEvent::BlockDestroy.name(),
+            position.to_centered_f64(),
+            &GameEventContext {
+                source_entity: cause.map(|player| &**player as &dyn EntityBase),
+                affected_state: Some(broken_state_id),
+            },
+        );
 
         Some(broken_state_id)
     }

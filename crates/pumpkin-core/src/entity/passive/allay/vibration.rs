@@ -342,6 +342,7 @@ mod tests {
             GameEvent::NoteBlockPlay,
             &GameEventContext {
                 source_entity: None,
+                affected_state: None,
             },
             origin,
         );
@@ -364,6 +365,7 @@ mod tests {
             GameEvent::NoteBlockPlay,
             &GameEventContext {
                 source_entity: None,
+                affected_state: None,
             },
             origin,
         );
@@ -395,6 +397,7 @@ mod tests {
             GameEvent::NoteBlockPlay,
             &GameEventContext {
                 source_entity: None,
+                affected_state: None,
             },
             origin.to_centered_f64(),
         );

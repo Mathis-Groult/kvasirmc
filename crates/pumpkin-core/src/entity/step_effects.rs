@@ -137,6 +137,7 @@ impl Entity {
             self.pos.load(),
             &crate::world::game_event::GameEventContext {
                 source_entity: Some(caller),
+                affected_state: None,
             },
         );
     }

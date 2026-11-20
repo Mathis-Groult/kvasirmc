@@ -9,13 +9,17 @@ use pumpkin_util::math::{position::BlockPos, vector3::Vector3};
 use crate::block::blocks::redstone::sculk_sensor::SculkSensorBlock;
 use crate::world::World;
 use crate::world::game_event::{GameEventContext, GameEventListener};
-use crate::world::vibration::{frequency, is_occluded, is_valid_vibration, strength_for_distance};
+use crate::world::vibration::{
+    block_destination_payload, frequency, is_occluded, is_valid_vibration, send_vibration_particle,
+    strength_for_distance,
+};
 
 /// A vibration heard by the sensor and not yet delivered.
 #[derive(Clone, Copy)]
 struct Vibration {
     event: GameEvent,
     distance: f32,
+    origin: Vector3<f64>,
 }
 
 #[derive(Default)]
@@ -38,7 +42,10 @@ impl VibrationSensor {
         Self {
             position,
             calibrated,
-            state: Mutex::new(State { candidate: None, current: None }),
+            state: Mutex::new(State {
+                candidate: None,
+                current: None,
+            }),
         }
     }
 
@@ -74,7 +81,11 @@ impl VibrationSensor {
                 && tick < now
             {
                 state.candidate = None;
-                state.current = Some((vibration, vibration.distance.floor() as i32));
+                let travel = vibration.distance.floor() as i32;
+                state.current = Some((vibration, travel));
+                if let Ok(payload) = block_destination_payload(self.position, travel) {
+                    send_vibration_particle(world, vibration.origin, &payload);
+                }
             }
             let Some((vibration, travel)) = state.current else {
                 return;
@@ -130,6 +141,7 @@ impl GameEventListener for VibrationSensor {
         let vibration = Vibration {
             event,
             distance: distance.sqrt() as f32,
+            origin: source_position,
         };
         let replaces = state.candidate.is_none_or(|(held, tick)| {
             tick == now

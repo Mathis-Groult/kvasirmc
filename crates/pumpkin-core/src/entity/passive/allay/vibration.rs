@@ -1,23 +1,21 @@
 use pumpkin_data::{
     game_event::{GameEvent, PositionSourceType},
-    particle::Particle,
     tag,
 };
 use pumpkin_nbt::{compound::NbtCompound, tag::NbtTag};
-use pumpkin_protocol::{codec::var_int::VarInt, java::client::play::CParticle, ser::WritingError};
+use pumpkin_protocol::{codec::var_int::VarInt, ser::WritingError};
 use pumpkin_util::math::{position::BlockPos, vector3::Vector3};
 use uuid::Uuid;
 
 use super::{AllayEntity, ai};
 use crate::entity::EntityBase;
-use crate::world::vibration::{is_occluded, is_valid_vibration};
+use crate::world::vibration::{is_occluded, is_valid_vibration, send_vibration_particle};
 use crate::world::{
     World,
     game_event::{GameEventContext, GameEventListener},
 };
 
 const VIBRATION_EVENT_LISTENER_RANGE: i32 = 16;
-const PARTICLE_SEND_DISTANCE: f64 = 32.0;
 
 #[derive(Clone)]
 struct VibrationInfo {
@@ -286,27 +284,8 @@ impl AllayEntity {
         ) else {
             return false;
         };
-        let packet = CParticle::new(
-            false,
-            false,
-            pos,
-            Vector3::new(0.0, 0.0, 0.0),
-            0.0,
-            1,
-            VarInt(i32::from(Particle::Vibration.to_id())),
-            &payload,
-        );
         let world = self.get_entity().world.load();
-        let mut sent = false;
-        for player in world.players.load().iter() {
-            if player.position().squared_distance_to_vec(&pos)
-                <= PARTICLE_SEND_DISTANCE * PARTICLE_SEND_DISTANCE
-            {
-                player.try_send_client_packet(&packet);
-                sent = true;
-            }
-        }
-        sent
+        send_vibration_particle(&world, pos, &payload)
     }
 }
 

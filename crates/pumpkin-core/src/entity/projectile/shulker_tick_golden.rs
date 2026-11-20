@@ -269,7 +269,18 @@ fn effects_text(living: &LivingEntity) -> String {
         .unwrap_or_else(std::sync::PoisonError::into_inner);
     let mut effects: Vec<_> = effects
         .values()
-        .map(|e| format!("{}:{}:{}", e.effect_type.id, e.duration, e.amplifier))
+        .map(|e| {
+            format!(
+                "{}:{}:{}:{}{}{}{}",
+                e.effect_type.id,
+                e.duration,
+                e.amplifier,
+                u8::from(e.ambient),
+                u8::from(e.show_particles),
+                u8::from(e.show_icon),
+                u8::from(e.blend)
+            )
+        })
         .collect();
     effects.sort();
     effects.join(",")
@@ -305,6 +316,41 @@ fn state_text(
     text
 }
 
+const SOUND: u8 = 119;
+const PARTICLE: u8 = 48;
+
+/// The float that ends a sound packet before its 8-byte seed, `back` bytes from the end.
+fn sound_float(packet: &[u8], back: usize) -> f32 {
+    let at = packet.len().saturating_sub(back);
+    packet
+        .get(at..at + 4)
+        .and_then(|bytes| <[u8; 4]>::try_from(bytes).ok())
+        .map_or(f32::NAN, f32::from_be_bytes)
+}
+
+/// A packet by id and length. A particle also by a hash of its bytes, a sound by its volume
+/// and whether its pitch is exactly 1 (the bullet's own sounds; the sounds mobs make when
+/// hurt have a random pitch and a random seed). Other packets name the bullet's entity id,
+/// which is not fixed.
+fn packet_text(packet: &[u8]) -> String {
+    let id = packet.first().copied().unwrap_or(0);
+    match id {
+        SOUND => format!(
+            "{id}:{} volume {} pitch one {}",
+            packet.len(),
+            sound_float(packet, 16),
+            sound_float(packet, 12) == 1.0
+        ),
+        PARTICLE => {
+            let hash = packet.iter().fold(0xcbf2_9ce4_8422_2325u64, |hash, byte| {
+                (hash ^ u64::from(*byte)).wrapping_mul(0x0100_0000_01b3)
+            });
+            format!("{id}:{}:{:08x}", packet.len(), hash as u32)
+        }
+        _ => format!("{id}:{}", packet.len()),
+    }
+}
+
 fn fly(
     server: &Arc<Server>,
     world: &Arc<World>,
@@ -316,6 +362,7 @@ fn fly(
 ) -> TestResult {
     let mut hash = 0xcbf2_9ce4_8422_2325u64;
     let mut gone = None;
+    let (mut sounds, mut particles) = (0, 0);
     for tick in 1..=scene.ticks {
         if !bullet.get_entity().is_removed() {
             EntityBase::tick(bullet.as_ref(), bullet.as_ref(), server);
@@ -323,12 +370,16 @@ fn fly(
             gone = Some(tick);
         }
         let mut text = state_text(bullet, target, world, scene.random);
+        let sent = tap.drain();
+        for packet in &sent {
+            match packet.first() {
+                Some(&SOUND) => sounds += 1,
+                Some(&PARTICLE) => particles += 1,
+                _ => {}
+            }
+        }
         if !scene.random {
-            let sent: Vec<String> = tap
-                .drain()
-                .iter()
-                .map(|p| format!("{}:{}", p.first().copied().unwrap_or(0), p.len()))
-                .collect();
+            let sent: Vec<String> = sent.iter().map(|p| packet_text(p)).collect();
             let _ = write!(text, " sent [{}]", sent.join(" "));
         }
         if let Some(file) = std::env::var_os("KVASIR_DUMP") {
@@ -352,9 +403,9 @@ fn fly(
         scene.name,
         state_text(bullet, target, world, true),
         if scene.random {
-            String::new()
+            format!(", sounds {sounds}, particles {particles}")
         } else {
-            format!(", removed after tick {gone:?}")
+            format!(", removed after tick {gone:?}, sounds {sounds}, particles {particles}")
         }
     );
 

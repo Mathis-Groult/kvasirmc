@@ -1,49 +1,49 @@
 fall ticks to 10: 6ffc00315467a5aa
-fall ticks to 20: f1cc427468bba075
-fall ticks to 30: 83f6eba021dff7bb
-fall ticks to 40: 915331a53885b591
-fall end: removed true entities 1, removed after tick Some(20)
+fall ticks to 20: 84798a23ed621fd4
+fall ticks to 30: ebffab92692bfe36
+fall ticks to 40: 1ff7d8c187f35538
+fall end: removed true entities 1, removed after tick Some(20), sounds 1, particles 1
 missing ticks to 10: afba7f9b7567461a
-missing ticks to 20: 8bffa5f8ee45b33d
-missing ticks to 30: c1f3b2bb1e3a20b7
-missing ticks to 40: 17a67ada553cc969
-missing end: removed true entities 1, removed after tick Some(20)
+missing ticks to 20: d5782fa85c2219dd
+missing ticks to 30: b30f5f85a4ff35d7
+missing ticks to 40: 7292a4ef7387d189
+missing end: removed true entities 1, removed after tick Some(20), sounds 1, particles 1
 dead_target ticks to 10: f536ef748d8872d0
-dead_target ticks to 20: 8e9fa1e349fd6585
-dead_target ticks to 30: 9fb0548c3160596d
-dead_target ticks to 40: 049ba8e831107715
-dead_target end: removed true health 0.00 effects [] entities 1, removed after tick Some(20)
-near ticks to 10: 245af51a7177ab94
-near ticks to 20: b7d5e68cc662301a
-near ticks to 30: 7a8761308bbd9a90
-near ticks to 40: d02e9440b43ea846
-near end: removed true health 16.00 effects [24:200:0] entities 2, removed after tick Some(11)
-near_above ticks to 10: 90628c28832439a7
-near_above ticks to 20: 9cb90ff70fa278d9
-near_above ticks to 30: b2a67406b9b324d3
-near_above ticks to 40: f12aa93e90c30e65
-near_above end: removed true health 16.00 effects [24:200:0] entities 2, removed after tick Some(4)
+dead_target ticks to 20: 86965a161c27f91e
+dead_target ticks to 30: 34604305ec2492fa
+dead_target ticks to 40: 56c83e1ae06e7446
+dead_target end: removed true health 0.00 effects [] entities 1, removed after tick Some(20), sounds 1, particles 1
+near ticks to 10: 57ed2727c9473dc5
+near ticks to 20: 5437638b3d851add
+near ticks to 30: ac446eae4eb2b695
+near ticks to 40: d74c8a583b56d3ed
+near end: removed true health 16.00 effects [24:200:0:0110] entities 2, removed after tick Some(11), sounds 1, particles 1
+near_above ticks to 10: 90c42c075ac2db06
+near_above ticks to 20: a522128f557130de
+near_above ticks to 30: 842aa0ba63a94776
+near_above ticks to 40: 5d2920ddba9306ce
+near_above end: removed true health 16.00 effects [24:200:0:0110] entities 2, removed after tick Some(4), sounds 1, particles 1
 far_east ticks to 9: db3cdf7390d4ae1e
-far_east end: removed false health 20.00 effects [] entities 3, removed after tick None
+far_east end: removed false health 20.00 effects [] entities 3, removed after tick None, sounds 0, particles 0
 far_up ticks to 9: 4ad3452b861ffe22
-far_up end: removed false health 20.00 effects [] entities 3, removed after tick None
+far_up end: removed false health 20.00 effects [] entities 3, removed after tick None, sounds 0, particles 0
 far_down ticks to 9: c2e790fa404aa773
-far_down end: removed false health 20.00 effects [] entities 3, removed after tick None
+far_down end: removed false health 20.00 effects [] entities 3, removed after tick None, sounds 0, particles 0
 far_south ticks to 9: 9755f4dc94818923
-far_south end: removed false health 20.00 effects [] entities 3, removed after tick None
+far_south end: removed false health 20.00 effects [] entities 3, removed after tick None, sounds 0, particles 0
 far_west ticks to 9: 3c914226416cac70
-far_west end: removed false health 20.00 effects [] entities 3, removed after tick None
+far_west end: removed false health 20.00 effects [] entities 3, removed after tick None, sounds 0, particles 0
 far_north ticks to 9: 7870febeb84423f5
-far_north end: removed false health 20.00 effects [] entities 3, removed after tick None
+far_north end: removed false health 20.00 effects [] entities 3, removed after tick None, sounds 0, particles 0
 avoid_x ticks to 9: 83e3897c4e8d4887
-avoid_x end: removed false health 20.00 effects [] entities 3, removed after tick None
+avoid_x end: removed false health 20.00 effects [] entities 3, removed after tick None, sounds 0, particles 0
 avoid_z ticks to 9: 54319ad25e0c4ce6
-avoid_z end: removed false health 20.00 effects [] entities 3, removed after tick None
-wall end: removed false health 20.00 effects [] entities 3
+avoid_z end: removed false health 20.00 effects [] entities 3, removed after tick None, sounds 0, particles 0
+wall end: removed false health 20.00 effects [] entities 3, sounds 0, particles 0
 hit_wall ticks to 10: 9e58afbff4053f7e
-hit_wall ticks to 20: 0659ea86e6b4670b
-hit_wall ticks to 30: 94e9053c9eda2733
-hit_wall ticks to 40: 171ae11d620695bb
-hit_wall end: removed true entities 1, removed after tick Some(13)
-wander end: removed false health 20.00 effects [] entities 3
-age end: removed true health 20.00 effects [] entities 2
+hit_wall ticks to 20: a7224efe3969c17b
+hit_wall ticks to 30: 9c131f30170c0de3
+hit_wall ticks to 40: 1699ef45bff1b3eb
+hit_wall end: removed true entities 1, removed after tick Some(13), sounds 1, particles 1
+wander end: removed false health 20.00 effects [] entities 3, sounds 0, particles 0
+age end: removed true health 20.00 effects [] entities 2, sounds 1, particles 1

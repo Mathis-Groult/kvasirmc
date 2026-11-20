@@ -1,19 +1,26 @@
 use pumpkin_data::HorizontalFacingExt;
-use pumpkin_data::block_properties::AcaciaShelfLikeProperties;
+use pumpkin_data::block_properties::{AcaciaShelfLikeProperties, SideChainPart};
 use pumpkin_data::fluid::Fluid;
+use pumpkin_data::game_event::GameEvent;
+use pumpkin_data::sound::{Sound, SoundCategory};
 use pumpkin_data::{BlockState, BlockStateId};
 use pumpkin_inventory::Inventory;
 use pumpkin_macros::pumpkin_block_from_tag;
 use pumpkin_world::tick::TickPriority;
+use pumpkin_world::world::BlockFlags;
 
 use crate::block::blocks::redstone::block_receives_redstone_power;
 use crate::block::entities::shelf::ShelfBlockEntity;
 use crate::block::{
-    BlockBehaviour, GetComparatorOutputArgs, GetStateForNeighborUpdateArgs, OnPlaceArgs,
-    PathComputationType, PlacedArgs,
+    BlockBehaviour, GetComparatorOutputArgs, GetStateForNeighborUpdateArgs, OnNeighborUpdateArgs,
+    OnPlaceArgs, OnStateReplacedArgs, PathComputationType, PlacedArgs,
 };
 use crate::entity::EntityBase;
 use std::sync::Arc;
+
+mod chain;
+#[cfg(test)]
+mod tests;
 
 #[pumpkin_block_from_tag("minecraft:wooden_shelves")]
 pub struct ShelfBlock;
@@ -46,10 +53,52 @@ impl BlockBehaviour for ShelfBlock {
     }
 
     fn placed(&self, args: PlacedArgs<'_>) {
-        {
-            let entity = ShelfBlockEntity::new(*args.position);
-            args.world.add_block_entity(Arc::new(entity));
+        let entity = ShelfBlockEntity::new(*args.position);
+        args.world.add_block_entity(Arc::new(entity));
+        // Vanilla `ShelfBlock.onPlace`.
+        if AcaciaShelfLikeProperties::from_state_id(args.state_id).powered {
+            chain::power_up(args.world, *args.position, args.state_id, args.old_state_id);
+        } else {
+            chain::power_down(args.world, *args.position, args.state_id);
         }
+    }
+
+    /// Vanilla `ShelfBlock.neighborChanged`: a shelf follows the redstone signal around it, drops
+    /// its chain links when it loses power, and clicks.
+    fn on_neighbor_update(&self, args: OnNeighborUpdateArgs<'_>) {
+        let (block, state_id) = args.world.get_block_and_state_id(args.position);
+        let mut properties = AcaciaShelfLikeProperties::from_state_id(state_id);
+        let powered = block_receives_redstone_power(args.world, args.position);
+        if properties.powered == powered {
+            return;
+        }
+        properties.powered = powered;
+        if !powered {
+            properties.side_chain = SideChainPart::Unconnected;
+        }
+        let new_state_id = properties.to_state_id(block);
+        args.world
+            .set_block_state(args.position, new_state_id, BlockFlags::NOTIFY_ALL);
+        // `onPlace` of the new state; Pumpkin runs `placed` only when the block type changes.
+        if powered {
+            chain::power_up(args.world, *args.position, new_state_id, state_id);
+        } else {
+            chain::power_down(args.world, *args.position, new_state_id);
+        }
+        let (sound, event) = if powered {
+            (Sound::BlockShelfActivate, GameEvent::BlockActivate)
+        } else {
+            (Sound::BlockShelfDeactivate, GameEvent::BlockDeactivate)
+        };
+        args.world
+            .play_block_sound(sound, SoundCategory::Blocks, *args.position);
+        args.world
+            .emit_game_event(event.name(), args.position.to_centered_f64());
+    }
+
+    /// Vanilla `ShelfBlock.affectNeighborsAfterRemoval`: the neighbours drop their links.
+    fn on_state_replaced(&self, args: OnStateReplacedArgs<'_>) {
+        chain::power_down(args.world, *args.position, args.old_state_id);
     }
 
     fn get_comparator_output(&self, args: GetComparatorOutputArgs<'_>) -> Option<u8> {

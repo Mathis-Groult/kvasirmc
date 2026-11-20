@@ -321,6 +321,9 @@ impl CustomBossbars {
     ) -> Result<(), BossbarUpdateError> {
         let bossbar = self.custom_bossbars.get_mut(resource_location);
         if let Some(bossbar) = bossbar {
+            if bossbar.bossbar_data.title == *new_title {
+                return Err(BossbarUpdateError::NoChanges("name", None));
+            }
             bossbar.bossbar_data.title = new_title.clone();
 
             let players: Vec<Arc<Player>> = server.get_all_players();
@@ -349,6 +352,9 @@ impl CustomBossbars {
     ) -> Result<(), BossbarUpdateError> {
         let bossbar = self.custom_bossbars.get_mut(resource_location);
         if let Some(bossbar) = bossbar {
+            if bossbar.bossbar_data.color == new_color {
+                return Err(BossbarUpdateError::NoChanges("color", None));
+            }
             bossbar.bossbar_data.color = new_color;
 
             let players: Vec<Arc<Player>> = server.get_all_players();
@@ -381,6 +387,9 @@ impl CustomBossbars {
     ) -> Result<(), BossbarUpdateError> {
         let bossbar = self.custom_bossbars.get_mut(resource_location);
         if let Some(bossbar) = bossbar {
+            if bossbar.bossbar_data.division == new_style {
+                return Err(BossbarUpdateError::NoChanges("style", None));
+            }
             bossbar.bossbar_data.division = new_style;
 
             let players: Vec<Arc<Player>> = server.get_all_players();

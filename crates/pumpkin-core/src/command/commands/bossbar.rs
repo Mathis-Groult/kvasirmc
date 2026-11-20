@@ -117,19 +117,34 @@ fn bossbar_prefix(title: TextComponent, namespace: String) -> TextComponent {
         .hover_event(HoverEvent::show_text(TextComponent::text(namespace)))
 }
 
+/// The `Simple` unchanged errors of vanilla `BossBarCommands`, shown as plain messages.
+fn unchanged_error(value: &str, variation: Option<&str>) -> &'static CommandErrorType<0> {
+    macro_rules! unchanged {
+        ($key:ident) => {{
+            const ERROR: CommandErrorType<0> =
+                CommandErrorType::new(translation::java::$key, translation::java::$key);
+            &ERROR
+        }};
+    }
+    match (value, variation) {
+        ("color", _) => unchanged!(COMMANDS_BOSSBAR_SET_COLOR_UNCHANGED),
+        ("max", _) => unchanged!(COMMANDS_BOSSBAR_SET_MAX_UNCHANGED),
+        ("name", _) => unchanged!(COMMANDS_BOSSBAR_SET_NAME_UNCHANGED),
+        ("players", _) => unchanged!(COMMANDS_BOSSBAR_SET_PLAYERS_UNCHANGED),
+        ("style", _) => unchanged!(COMMANDS_BOSSBAR_SET_STYLE_UNCHANGED),
+        ("value", _) => unchanged!(COMMANDS_BOSSBAR_SET_VALUE_UNCHANGED),
+        (_, Some("hidden")) => unchanged!(COMMANDS_BOSSBAR_SET_VISIBILITY_UNCHANGED_HIDDEN),
+        _ => unchanged!(COMMANDS_BOSSBAR_SET_VISIBILITY_UNCHANGED_VISIBLE),
+    }
+}
+
 fn handle_bossbar_error(error: BossbarUpdateError) -> CommandSyntaxError {
     match error {
         BossbarUpdateError::InvalidResourceLocation(location) => {
             ERROR_UNKNOWN_BOSSBAR.create_without_context(TextComponent::text(location))
         }
         BossbarUpdateError::NoChanges(value, variation) => {
-            let key = variation.map_or_else(
-                || format!("commands.bossbar.set.{value}.unchanged"),
-                |var| format!("commands.bossbar.set.{value}.unchanged.{var}"),
-            );
-
-            crate::command::errors::error_types::DISPATCHER_PARSE_EXCEPTION
-                .create_without_context(TextComponent::translate_cross(key.clone(), key, []))
+            unchanged_error(value, variation).create_without_context()
         }
     }
 }

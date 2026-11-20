@@ -640,6 +640,25 @@ fn proto_generation_scenes() -> Vec<Scene> {
             let chunks = vec![level(f, 0, 0)];
             Fixture::generation(0, 0, 1, chunks)
         }),
+        generation_scene("gen_wakes_unrelated_waiting_task", default, |f| {
+            f.holder(
+                Spec::at(0, 0)
+                    .current(S::Spawn)
+                    .tasks_to(S::Full)
+                    .occupied(Occupied::Live),
+            );
+            f.holder(
+                Spec::at(5, 5)
+                    .current(S::Empty)
+                    .target(S::Biomes)
+                    .first_task(S::Biomes)
+                    .tasks_to(S::Biomes)
+                    .held(Held::Proto(S::Empty)),
+            );
+            f.wait(5, 5, S::Biomes);
+            let chunks = vec![level(f, 0, 0)];
+            Fixture::generation(0, 0, 1, chunks)
+        }),
         generation_scene("gen_two_by_two_wakes_waiting", default, |f| {
             for (x, z) in [(0, 0), (1, 0), (0, 1), (1, 1)] {
                 f.holder(

@@ -197,6 +197,14 @@ queue 10: TaskPriority { stage: 10, x: 0, z: 0, eff_level: 127 } gone | TaskPrio
 waiting 0: 
 public 1: 0,0 [block 333 sky 777 dirty false]
 running 2 told 1: 0,0
+== gen_wakes_unrelated_waiting_task
+holder 0,0 cur Full target Full dep None public true chunk level[block 333 sky 777 dirty false] occupied null tasks []
+holder 5,5 cur Empty target Biomes dep None public false chunk proto Empty occupied null tasks [Biomes@5,5 deg0 q1 f0 ->[]]
+graph 1 nodes 0 edges: Biomes@5,5 deg0 q1 f0 ->[]
+queue 11: TaskPriority { stage: 10, x: 0, z: 0, eff_level: 127 } gone | TaskPriority { stage: 11, x: 0, z: 0, eff_level: 127 } gone | TaskPriority { stage: 2, x: 0, z: 0, eff_level: 127 } gone | TaskPriority { stage: 2, x: 5, z: 5, eff_level: 127 } Biomes@5,5 deg0 q1 f0 ->[] | TaskPriority { stage: 3, x: 0, z: 0, eff_level: 127 } gone | TaskPriority { stage: 4, x: 0, z: 0, eff_level: 127 } gone | TaskPriority { stage: 5, x: 0, z: 0, eff_level: 127 } gone | TaskPriority { stage: 6, x: 0, z: 0, eff_level: 127 } gone | TaskPriority { stage: 7, x: 0, z: 0, eff_level: 127 } gone | TaskPriority { stage: 8, x: 0, z: 0, eff_level: 127 } gone | TaskPriority { stage: 9, x: 0, z: 0, eff_level: 127 } gone
+waiting 0: 
+public 1: 0,0 [block 333 sky 777 dirty false]
+running 2 told 1: 0,0
 == gen_two_by_two_wakes_waiting
 holder 0,0 cur Biomes target Biomes dep None public false chunk proto Biomes occupied null tasks []
 holder 0,1 cur Biomes target Biomes dep None public false chunk proto Biomes occupied null tasks []

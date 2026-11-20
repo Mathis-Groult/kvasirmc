@@ -523,7 +523,9 @@ fn advancements_match(advancements_map: &HashMap<String, bool>, entity: &dyn Ent
         return false;
     };
     for (adv_id, expected_done) in advancements_map {
-        if let Some(advancement) = Advancement::from_name(adv_id) {
+        // An id without a namespace is `minecraft:` (vanilla `Identifier.parse`).
+        let name = adv_id.strip_prefix("minecraft:").unwrap_or(adv_id);
+        if let Some(advancement) = Advancement::from_name(name) {
             let is_done = player.has_advancement(advancement);
             if is_done != *expected_done {
                 return false;

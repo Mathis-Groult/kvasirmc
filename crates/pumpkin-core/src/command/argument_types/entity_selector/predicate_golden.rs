@@ -220,7 +220,7 @@ fn selector_lines(entities: &[(&str, &dyn EntityBase)], now: &mut String) -> Tes
 
 /// Hand-built advancement predicates.
 fn advancement_lines(entities: &[(&str, &dyn EntityBase)], now: &mut String) -> TestResult {
-    // Advancement keys with a namespace do not parse yet, so these are built by hand.
+    // Hand-built, so the predicate is checked apart from the parser.
     for (id, done) in [
         ("minecraft:story/root", true),
         ("minecraft:story/root", false),

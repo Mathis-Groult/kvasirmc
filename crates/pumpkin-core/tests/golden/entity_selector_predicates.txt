@@ -104,11 +104,11 @@ rotations GoldA=0/0 GoldB=90/-30 GoldC=-170/60 GoldD=179/-90 zombie=45/10 cow=-9
 @e[scores={deaths=..0}] -> [GoldA,GoldB,GoldC,GoldD,zombie,cow,skeleton,pig]
 @e[scores={missing=0}] -> [GoldA,GoldB,GoldC,GoldD,zombie,cow,skeleton,pig]
 @e[scores={missing=1}] -> []
-@e[advancements={minecraft:story/root=true}] -> error CommandSyntaxError { error_type: CommandErrorType { java_translation_key: "parsing.expected", bedrock_translation_key: "parsing.expected" }, message: TextComponent(TextComponentBase { content: Translate { translate: "parsing.expected", bedrock_translate: Some("parsing.expected"), with: [TextComponentBase { content: Text { text: "=" }, style: Style { color: None, bold: None, italic: None, underlined: None, strikethrough: None, obfuscated: None, insertion: None, click_event: None, hover_event: None, font: None, shadow_color: None }, extra: [] }] }, style: Style { color: None, bold: None, italic: None, underlined: None, strikethrough: None, obfuscated: None, insertion: None, click_event: None, hover_event: None, font: None, shadow_color: None }, extra: [] }), context: Some(CommandSyntaxErrorContext { input: "@e[advancements={minecraft:story/root=true}]", cursor: 26 }) }
-@e[advancements={minecraft:story/root=false}] -> error CommandSyntaxError { error_type: CommandErrorType { java_translation_key: "parsing.expected", bedrock_translation_key: "parsing.expected" }, message: TextComponent(TextComponentBase { content: Translate { translate: "parsing.expected", bedrock_translate: Some("parsing.expected"), with: [TextComponentBase { content: Text { text: "=" }, style: Style { color: None, bold: None, italic: None, underlined: None, strikethrough: None, obfuscated: None, insertion: None, click_event: None, hover_event: None, font: None, shadow_color: None }, extra: [] }] }, style: Style { color: None, bold: None, italic: None, underlined: None, strikethrough: None, obfuscated: None, insertion: None, click_event: None, hover_event: None, font: None, shadow_color: None }, extra: [] }), context: Some(CommandSyntaxErrorContext { input: "@e[advancements={minecraft:story/root=false}]", cursor: 26 }) }
-@e[advancements={story/root=true}] -> error CommandSyntaxError { error_type: CommandErrorType { java_translation_key: "parsing.expected", bedrock_translation_key: "parsing.expected" }, message: TextComponent(TextComponentBase { content: Translate { translate: "parsing.expected", bedrock_translate: Some("parsing.expected"), with: [TextComponentBase { content: Text { text: "=" }, style: Style { color: None, bold: None, italic: None, underlined: None, strikethrough: None, obfuscated: None, insertion: None, click_event: None, hover_event: None, font: None, shadow_color: None }, extra: [] }] }, style: Style { color: None, bold: None, italic: None, underlined: None, strikethrough: None, obfuscated: None, insertion: None, click_event: None, hover_event: None, font: None, shadow_color: None }, extra: [] }), context: Some(CommandSyntaxErrorContext { input: "@e[advancements={story/root=true}]", cursor: 22 }) }
-@e[advancements={minecraft:no/such=true}] -> error CommandSyntaxError { error_type: CommandErrorType { java_translation_key: "parsing.expected", bedrock_translation_key: "parsing.expected" }, message: TextComponent(TextComponentBase { content: Translate { translate: "parsing.expected", bedrock_translate: Some("parsing.expected"), with: [TextComponentBase { content: Text { text: "=" }, style: Style { color: None, bold: None, italic: None, underlined: None, strikethrough: None, obfuscated: None, insertion: None, click_event: None, hover_event: None, font: None, shadow_color: None }, extra: [] }] }, style: Style { color: None, bold: None, italic: None, underlined: None, strikethrough: None, obfuscated: None, insertion: None, click_event: None, hover_event: None, font: None, shadow_color: None }, extra: [] }), context: Some(CommandSyntaxErrorContext { input: "@e[advancements={minecraft:no/such=true}]", cursor: 26 }) }
-@e[advancements={minecraft:no/such=false}] -> error CommandSyntaxError { error_type: CommandErrorType { java_translation_key: "parsing.expected", bedrock_translation_key: "parsing.expected" }, message: TextComponent(TextComponentBase { content: Translate { translate: "parsing.expected", bedrock_translate: Some("parsing.expected"), with: [TextComponentBase { content: Text { text: "=" }, style: Style { color: None, bold: None, italic: None, underlined: None, strikethrough: None, obfuscated: None, insertion: None, click_event: None, hover_event: None, font: None, shadow_color: None }, extra: [] }] }, style: Style { color: None, bold: None, italic: None, underlined: None, strikethrough: None, obfuscated: None, insertion: None, click_event: None, hover_event: None, font: None, shadow_color: None }, extra: [] }), context: Some(CommandSyntaxErrorContext { input: "@e[advancements={minecraft:no/such=false}]", cursor: 26 }) }
+@e[advancements={minecraft:story/root=true}] -> [GoldB]
+@e[advancements={minecraft:story/root=false}] -> [GoldA,GoldC,GoldD]
+@e[advancements={story/root=true}] -> [GoldB]
+@e[advancements={minecraft:no/such=true}] -> []
+@e[advancements={minecraft:no/such=false}] -> []
 @e[nbt={Tags:["beta"]}] -> [GoldB,cow]
 @e[nbt=!{Tags:["beta"]}] -> [GoldA,GoldC,GoldD,zombie,skeleton,pig]
 @e[nbt={Tags:["alpha","beta"]}] -> [GoldB]
@@ -124,15 +124,15 @@ rotations GoldA=0/0 GoldB=90/-30 GoldC=-170/60 GoldD=179/-90 zombie=45/10 cow=-9
 @a -> [GoldA,GoldB,GoldC,GoldD,zombie,cow,skeleton,dead,pig]
 @p -> [GoldA,GoldB,GoldC,GoldD,zombie,cow,skeleton,dead,pig]
 @s -> [GoldA,GoldB,GoldC,GoldD,zombie,cow,skeleton,dead,pig]
-advancements minecraft:story/root=true -> []
-advancements minecraft:story/root=false -> []
+advancements minecraft:story/root=true -> [GoldB]
+advancements minecraft:story/root=false -> [GoldA,GoldC,GoldD]
 advancements story/root=true -> [GoldB]
 advancements story/root=false -> [GoldA,GoldC,GoldD]
 advancements story/mine_stone=true -> []
 advancements story/mine_stone=false -> [GoldA,GoldB,GoldC,GoldD]
 advancements minecraft:story/mine_stone=true -> []
-advancements minecraft:story/mine_stone=false -> []
+advancements minecraft:story/mine_stone=false -> [GoldA,GoldB,GoldC,GoldD]
 advancements minecraft:no/such=true -> []
 advancements minecraft:no/such=false -> []
-advancements root=true,mine_stone=false -> []
+advancements root=true,mine_stone=false -> [GoldB]
 advancements {} -> [GoldA,GoldB,GoldC,GoldD]

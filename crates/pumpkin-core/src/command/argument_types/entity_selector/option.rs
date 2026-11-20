@@ -445,7 +445,15 @@ impl EntitySelectorOption {
         let mut advancements = std::collections::HashMap::new();
         while parser.reader.can_read_char() && parser.reader.peek() != Some('}') {
             parser.reader.skip_whitespace();
-            let advancement_id = parser.reader.read_unquoted_string();
+            // A resource location: `minecraft:story/root` contains ':' and '/'.
+            let id_start = parser.reader.cursor();
+            while let Some(c) = parser.reader.peek()
+                && Identifier::is_valid_char(c)
+            {
+                parser.reader.skip();
+            }
+            let advancement_id =
+                parser.reader.string()[id_start..parser.reader.cursor()].to_string();
             parser.reader.skip_whitespace();
             parser.reader.expect('=')?;
             parser.reader.skip_whitespace();

@@ -798,3 +798,7 @@ mod tests {
         );
     }
 }
+
+#[cfg(test)]
+#[path = "pack_contents_golden.rs"]
+mod pack_contents_golden;

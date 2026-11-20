@@ -1,0 +1,90 @@
+vanilla counts recipes 2042 functions 0 test_instances 1 damage_types 51 int 26 float 4 loot 1447 structures 1511 pools 245 processors 40 dynamic 2188 trade_sets 136 trades 782 trade_tags 146 advancements 1866 predicates 3 item_modifiers 0 slot_sources 0 tags 1406
+vanilla recipes: 2042
+vanilla functions: 0 cbf29ce484222325
+vanilla function_tags: 0 cbf29ce484222325
+vanilla test_instances: 1 e3aec3ce4d53e305
+vanilla damage_types: 51 99160efd6340f000
+vanilla context_int: 26 962da02670134285
+vanilla context_float: 4 c15d2fe97b1641e4
+vanilla loot_tables: 1447 49ae5e5f8fe50a70
+vanilla dynamic: 56 21a27f2824c18426
+vanilla trades: 782 6274b21074062f60
+vanilla trade_sets: 136 6328d6520c1da861
+vanilla trade_tags: 146 172c9d1b353b4962
+vanilla advancements: 1866 ed6a531352cf8adf
+vanilla predicates: 3 77a1d56354662b09
+vanilla item_modifiers: 0 cbf29ce484222325
+vanilla slot_sources: 0 cbf29ce484222325
+vanilla tags: 20 ad4e9231203c1190
+trade_rebalance counts recipes 0 functions 0 test_instances 0 damage_types 0 int 0 float 0 loot 5 structures 0 pools 0 processors 0 dynamic 81 trade_sets 0 trades 152 trade_tags 20 advancements 0 predicates 0 item_modifiers 0 slot_sources 0 tags 17
+trade_rebalance recipes: 0
+trade_rebalance functions: 0 cbf29ce484222325
+trade_rebalance function_tags: 0 cbf29ce484222325
+trade_rebalance test_instances: 0 cbf29ce484222325
+trade_rebalance damage_types: 0 cbf29ce484222325
+trade_rebalance context_int: 0 cbf29ce484222325
+trade_rebalance context_float: 0 cbf29ce484222325
+trade_rebalance loot_tables: 5 594689a113f9bc41
+trade_rebalance dynamic: 56 23566a079c60ca1f
+trade_rebalance trades: 152 6e09bda24fb1d403
+trade_rebalance trade_sets: 0 cbf29ce484222325
+trade_rebalance trade_tags: 20 73c7d2a69e8f0aff
+trade_rebalance advancements: 0 cbf29ce484222325
+trade_rebalance predicates: 0 cbf29ce484222325
+trade_rebalance item_modifiers: 0 cbf29ce484222325
+trade_rebalance slot_sources: 0 cbf29ce484222325
+trade_rebalance tags: 2 96ec6d22b037b9ca
+redstone_experiments counts recipes 0 functions 0 test_instances 0 damage_types 0 int 0 float 0 loot 0 structures 0 pools 0 processors 0 dynamic 0 trade_sets 0 trades 0 trade_tags 0 advancements 0 predicates 0 item_modifiers 0 slot_sources 0 tags 0
+redstone_experiments recipes: 0
+redstone_experiments functions: 0 cbf29ce484222325
+redstone_experiments function_tags: 0 cbf29ce484222325
+redstone_experiments test_instances: 0 cbf29ce484222325
+redstone_experiments damage_types: 0 cbf29ce484222325
+redstone_experiments context_int: 0 cbf29ce484222325
+redstone_experiments context_float: 0 cbf29ce484222325
+redstone_experiments loot_tables: 0 cbf29ce484222325
+redstone_experiments dynamic: 0 cbf29ce484222325
+redstone_experiments trades: 0 cbf29ce484222325
+redstone_experiments trade_sets: 0 cbf29ce484222325
+redstone_experiments trade_tags: 0 cbf29ce484222325
+redstone_experiments advancements: 0 cbf29ce484222325
+redstone_experiments predicates: 0 cbf29ce484222325
+redstone_experiments item_modifiers: 0 cbf29ce484222325
+redstone_experiments slot_sources: 0 cbf29ce484222325
+redstone_experiments tags: 0 cbf29ce484222325
+minecart_improvements counts recipes 0 functions 0 test_instances 0 damage_types 0 int 0 float 0 loot 0 structures 0 pools 0 processors 0 dynamic 0 trade_sets 0 trades 0 trade_tags 0 advancements 0 predicates 0 item_modifiers 0 slot_sources 0 tags 0
+minecart_improvements recipes: 0
+minecart_improvements functions: 0 cbf29ce484222325
+minecart_improvements function_tags: 0 cbf29ce484222325
+minecart_improvements test_instances: 0 cbf29ce484222325
+minecart_improvements damage_types: 0 cbf29ce484222325
+minecart_improvements context_int: 0 cbf29ce484222325
+minecart_improvements context_float: 0 cbf29ce484222325
+minecart_improvements loot_tables: 0 cbf29ce484222325
+minecart_improvements dynamic: 0 cbf29ce484222325
+minecart_improvements trades: 0 cbf29ce484222325
+minecart_improvements trade_sets: 0 cbf29ce484222325
+minecart_improvements trade_tags: 0 cbf29ce484222325
+minecart_improvements advancements: 0 cbf29ce484222325
+minecart_improvements predicates: 0 cbf29ce484222325
+minecart_improvements item_modifiers: 0 cbf29ce484222325
+minecart_improvements slot_sources: 0 cbf29ce484222325
+minecart_improvements tags: 0 cbf29ce484222325
+synthetic counts recipes 1 functions 1 test_instances 0 damage_types 1 int 1 float 1 loot 1 structures 0 pools 0 processors 0 dynamic 3 trade_sets 2 trades 0 trade_tags 2 advancements 1 predicates 1 item_modifiers 1 slot_sources 1 tags 3
+synthetic recipes: 1
+synthetic functions: 1 82a6c730f688b566
+synthetic function_tags: 1 0b3f6e9e229f6720
+synthetic test_instances: 0 cbf29ce484222325
+synthetic damage_types: 1 ad8aec72fb302b1e
+synthetic context_int: 1 adb71672fb55ad67
+synthetic context_float: 1 ad91b472fb35eaa4
+synthetic loot_tables: 1 ada60c72fb472936
+synthetic dynamic: 56 46564f7b41e94d97
+synthetic trades: 0 cbf29ce484222325
+synthetic trade_sets: 2 448e74183d022b62
+synthetic trade_tags: 2 d7e2c811420be53c
+synthetic advancements: 1 ad9bd672fb3e78ef
+synthetic predicates: 1 cc1130e1974d0133
+synthetic item_modifiers: 1 9b6a96012e29fa7d
+synthetic slot_sources: 1 dd21cd35d51c6393
+synthetic tags: 3 8cf29ac57fc7efef

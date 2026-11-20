@@ -41,10 +41,17 @@ impl ReplaceDiskPredicateExt for ReplaceDiskPredicate {
             }
             Self::MatchingFluids { offset, fluids } => {
                 let test_pos = pos.offset(*offset);
-                let (_, fluid) = world.get_block_and_fluid(&test_pos);
+                // Vanilla compares the fluid type: a source block is `water`, a flowing one
+                // `flowing_water`. The world answers with the flowing type plus the state.
+                let (fluid, state) = world.get_fluid_and_fluid_state(&test_pos);
+                let name = if state.is_source {
+                    fluid.name.strip_prefix("flowing_").unwrap_or(fluid.name)
+                } else {
+                    fluid.name
+                };
                 fluids.iter().any(|f| {
                     let stripped = f.strip_prefix("minecraft:").unwrap_or(f);
-                    stripped == fluid.name
+                    stripped == name
                 })
             }
             Self::Unobstructed => true,

@@ -613,9 +613,50 @@ fn bedrock_sent(sent: &[bytes::Bytes]) -> String {
 /// Java packet ids whose bytes are random like in vanilla: Add Entity and the two sound packets.
 const RANDOM_PACKETS: [u8; 3] = [1, 118, 119];
 
+/// A frost walker's disk changes many blocks, which Bedrock sends in the hash order of their
+/// positions: those scenes record the packets sorted.
+fn unordered_if(unordered: bool, sent: String) -> String {
+    if !unordered {
+        return sent;
+    }
+    let mut packets: Vec<&str> = sent.split(' ').collect();
+    packets.sort_unstable();
+    packets.join(" ")
+}
+
+/// The Java Update Section Blocks packet id: its entries come in the order of a hash set.
+const SECTION_BLOCKS: u8 = 0x56;
+
+/// The packet with the varlong entries of an Update Section Blocks packet sorted, so the
+/// record does not depend on the hash order of the changed positions.
+fn sorted_section_blocks(p: &[u8]) -> Vec<u8> {
+    // id, section position (long), entry count (varint, one byte under 128), entries.
+    let mut at = 1 + 8;
+    let count = usize::from(p[at]);
+    at += 1;
+    let mut entries = Vec::with_capacity(count);
+    for _ in 0..count {
+        let start = at;
+        while p[at] & 0x80 != 0 {
+            at += 1;
+        }
+        at += 1;
+        entries.push(p[start..at].to_vec());
+    }
+    entries.sort();
+    let mut out = p[..10].to_vec();
+    out.extend(entries.concat());
+    out.extend_from_slice(&p[at..]);
+    out
+}
+
 fn java_sent(sent: &[bytes::Bytes]) -> String {
     sent.iter()
         .map(|p| match p.first() {
+            Some(&SECTION_BLOCKS) => {
+                let sorted = sorted_section_blocks(p);
+                format!("{}:{:08x}", sorted.len(), fnv(&sorted) as u32)
+            }
             Some(id) if RANDOM_PACKETS.contains(id) => format!("{}:id{id}", p.len()),
             _ => format!("{}:{:08x}", p.len(), fnv(p) as u32),
         })
@@ -873,9 +914,9 @@ async fn run(
         "{}: {} | sent [{}] | java watcher [{}] | bedrock watcher [{}]{}\n",
         scene.name,
         mover_text(&mover),
-        bedrock_sent(&mover_tap.drain()),
+        unordered_if(scene.frost, bedrock_sent(&mover_tap.drain())),
         java_sent(&java_tap.drain()),
-        bedrock_sent(&bedrock_tap.drain()),
+        unordered_if(scene.frost, bedrock_sent(&bedrock_tap.drain())),
         extra_text(world, &mover, scene),
     ))
 }

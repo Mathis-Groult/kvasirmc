@@ -473,6 +473,7 @@ fn parse_block_state(v: &serde_json::Value) -> TokenStream {
     };
     let name = state_val
         .get("Name")
+        .or_else(|| state_val.get("id"))
         .and_then(|n| n.as_str())
         .unwrap_or("minecraft:air");
     let name_stripped = name.strip_prefix("minecraft:").unwrap_or(name);

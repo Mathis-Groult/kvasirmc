@@ -25,8 +25,143 @@ pub trait EnchantmentEntityEffectExt {
     );
 }
 
+/// The arguments every effect is applied with.
+struct Call<'a> {
+    world: &'a Arc<World>,
+    enchantment_level: i32,
+    owner: Option<&'a Arc<Player>>,
+    entity: Option<&'a Entity>,
+    position: Vector3<f64>,
+}
+
+impl Call<'_> {
+    fn run(&self, effect: &impl EnchantmentEntityEffectExt) {
+        effect.apply(
+            self.world,
+            self.enchantment_level,
+            self.owner,
+            self.entity,
+            self.position,
+        );
+    }
+}
+
+/// The effects that carry several settings of their own.
+/// The effects that change blocks around the target.
+fn apply_block_effect(effect: &EnchantmentEntityEffect, call: &Call<'_>) {
+    match effect {
+        EnchantmentEntityEffect::ReplaceBlock {
+            offset_x,
+            offset_y,
+            offset_z,
+            trigger_game_event,
+        } => {
+            let offset = Vector3::new(*offset_x, *offset_y, *offset_z);
+            call.run(&ReplaceBlock::new(offset, *trigger_game_event));
+        }
+        EnchantmentEntityEffect::SetBlockProperties {
+            properties,
+            offset_x,
+            offset_y,
+            offset_z,
+            trigger_game_event,
+        } => {
+            let offset = Vector3::new(*offset_x, *offset_y, *offset_z);
+            let props = properties
+                .iter()
+                .map(|(k, v)| ((*k).to_string(), (*v).to_string()))
+                .collect();
+            call.run(&SetBlockProperties::new(props, offset, *trigger_game_event));
+        }
+        EnchantmentEntityEffect::ReplaceDisk {
+            radius,
+            height,
+            offset_x,
+            offset_y,
+            offset_z,
+            predicate,
+            block_state,
+            trigger_game_event,
+        } => {
+            let offset = Vector3::new(*offset_x, *offset_y, *offset_z);
+            call.run(&ReplaceDisk {
+                radius: radius.clone(),
+                height: height.clone(),
+                offset,
+                predicate: predicate.clone(),
+                block_state,
+                trigger_game_event: *trigger_game_event,
+            });
+        }
+        _ => {}
+    }
+}
+
+fn apply_configured(effect: &EnchantmentEntityEffect, call: &Call<'_>) {
+    match effect {
+        EnchantmentEntityEffect::SpawnParticles {
+            particle,
+            horizontal_position,
+            vertical_position,
+            horizontal_velocity,
+            vertical_velocity,
+            speed,
+        } => {
+            let spawn_particles = SpawnParticlesEffect::new(
+                *particle,
+                *horizontal_position,
+                *vertical_position,
+                horizontal_velocity.clone(),
+                vertical_velocity.clone(),
+                speed.clone(),
+            );
+            call.run(&spawn_particles);
+        }
+        EnchantmentEntityEffect::ApplyMobEffect {
+            to_apply,
+            min_duration,
+            max_duration,
+            min_amplifier,
+            max_amplifier,
+        } => {
+            call.run(&ApplyMobEffect::new(
+                to_apply.to_vec(),
+                min_duration.clone(),
+                max_duration.clone(),
+                min_amplifier.clone(),
+                max_amplifier.clone(),
+            ));
+        }
+        EnchantmentEntityEffect::Explode {
+            offset_x,
+            offset_y,
+            offset_z,
+            radius,
+            create_fire,
+            ..
+        } => {
+            call.run(&ExplodeEffect::new(
+                false,
+                None,
+                None,
+                None,
+                Vector3::new(*offset_x, *offset_y, *offset_z),
+                radius.clone(),
+                *create_fire,
+                crate::world::ExplosionInteraction::None,
+                None,
+                None,
+                None,
+            ));
+        }
+        EnchantmentEntityEffect::ReplaceBlock { .. }
+        | EnchantmentEntityEffect::SetBlockProperties { .. }
+        | EnchantmentEntityEffect::ReplaceDisk { .. } => apply_block_effect(effect, call),
+        _ => {}
+    }
+}
+
 impl EnchantmentEntityEffectExt for EnchantmentEntityEffect {
-    #[allow(clippy::too_many_lines)]
     fn apply(
         &self,
         world: &Arc<World>,
@@ -35,247 +170,65 @@ impl EnchantmentEntityEffectExt for EnchantmentEntityEffect {
         entity: Option<&Entity>,
         position: Vector3<f64>,
     ) {
+        let call = Call {
+            world,
+            enchantment_level,
+            owner,
+            entity,
+            position,
+        };
         match self {
             Self::Ignite { duration } => {
-                EnchantmentEntityEffectExt::apply(
-                    &Ignite::new(duration.clone()),
-                    world,
-                    enchantment_level,
-                    owner,
-                    entity,
-                    position,
-                );
+                call.run(&Ignite::new(duration.clone()));
             }
             Self::DamageEntity {
                 min_damage,
                 max_damage,
                 damage_type,
             } => {
-                EnchantmentEntityEffectExt::apply(
-                    &DamageEntity::new(min_damage.clone(), max_damage.clone(), *damage_type),
-                    world,
-                    enchantment_level,
-                    owner,
-                    entity,
-                    position,
-                );
+                call.run(&DamageEntity::new(
+                    min_damage.clone(),
+                    max_damage.clone(),
+                    *damage_type,
+                ));
             }
             Self::ChangeItemDamage { amount } => {
-                EnchantmentEntityEffectExt::apply(
-                    &ChangeItemDamage::new(amount.clone()),
-                    world,
-                    enchantment_level,
-                    owner,
-                    entity,
-                    position,
-                );
+                call.run(&ChangeItemDamage::new(amount.clone()));
             }
             Self::PlaySound { sound } => {
-                EnchantmentEntityEffectExt::apply(
-                    &PlaySound::new(sound),
-                    world,
-                    enchantment_level,
-                    owner,
-                    entity,
-                    position,
-                );
+                call.run(&PlaySound::new(sound));
             }
-            Self::ReplaceBlock {
-                offset_x,
-                offset_y,
-                offset_z,
-                trigger_game_event,
-            } => {
-                let offset = Vector3::new(*offset_x, *offset_y, *offset_z);
-                EnchantmentEntityEffectExt::apply(
-                    &ReplaceBlock::new(offset, *trigger_game_event),
-                    world,
-                    enchantment_level,
-                    owner,
-                    entity,
-                    position,
-                );
-            }
-            Self::SetBlockProperties {
-                properties,
-                offset_x,
-                offset_y,
-                offset_z,
-                trigger_game_event,
-            } => {
-                let offset = Vector3::new(*offset_x, *offset_y, *offset_z);
-                let props = properties
-                    .iter()
-                    .map(|(k, v)| ((*k).to_string(), (*v).to_string()))
-                    .collect();
-                EnchantmentEntityEffectExt::apply(
-                    &SetBlockProperties::new(props, offset, *trigger_game_event),
-                    world,
-                    enchantment_level,
-                    owner,
-                    entity,
-                    position,
-                );
-            }
-            Self::ReplaceDisk {
-                radius,
-                height,
-                offset_x,
-                offset_y,
-                offset_z,
-                predicate,
-                block_state,
-                trigger_game_event,
-            } => {
-                let offset = Vector3::new(*offset_x, *offset_y, *offset_z);
-                EnchantmentEntityEffectExt::apply(
-                    &ReplaceDisk {
-                        radius: radius.clone(),
-                        height: height.clone(),
-                        offset,
-                        predicate: predicate.clone(),
-                        block_state,
-                        trigger_game_event: *trigger_game_event,
-                    },
-                    world,
-                    enchantment_level,
-                    owner,
-                    entity,
-                    position,
-                );
-            }
+            Self::ReplaceBlock { .. }
+            | Self::SetBlockProperties { .. }
+            | Self::ReplaceDisk { .. }
+            | Self::SpawnParticles { .. }
+            | Self::ApplyMobEffect { .. }
+            | Self::Explode { .. } => apply_configured(self, &call),
             Self::SummonEntity {
                 entity_types,
                 join_team,
             } => {
-                EnchantmentEntityEffectExt::apply(
-                    &SummonEntityEffect::new(entity_types.to_vec(), *join_team),
-                    world,
-                    enchantment_level,
-                    owner,
-                    entity,
-                    position,
-                );
-            }
-            Self::SpawnParticles {
-                particle,
-                horizontal_position,
-                vertical_position,
-                horizontal_velocity,
-                vertical_velocity,
-                speed,
-            } => {
-                let spawn_particles = SpawnParticlesEffect::new(
-                    *particle,
-                    *horizontal_position,
-                    *vertical_position,
-                    horizontal_velocity.clone(),
-                    vertical_velocity.clone(),
-                    speed.clone(),
-                );
-                EnchantmentEntityEffectExt::apply(
-                    &spawn_particles,
-                    world,
-                    enchantment_level,
-                    owner,
-                    entity,
-                    position,
-                );
+                call.run(&SummonEntityEffect::new(entity_types.to_vec(), *join_team));
             }
             Self::RunFunction { function } => {
-                EnchantmentEntityEffectExt::apply(
-                    &RunFunction::new(*function),
-                    world,
-                    enchantment_level,
-                    owner,
-                    entity,
-                    position,
-                );
+                call.run(&RunFunction::new(*function));
             }
             Self::ApplyExhaustion { amount } => {
-                EnchantmentEntityEffectExt::apply(
-                    &ApplyExhaustion::new(amount.clone()),
-                    world,
-                    enchantment_level,
-                    owner,
-                    entity,
-                    position,
-                );
+                call.run(&ApplyExhaustion::new(amount.clone()));
             }
             Self::ApplyImpulse {
                 direction,
                 coordinate_scale,
                 magnitude,
             } => {
-                EnchantmentEntityEffectExt::apply(
-                    &ApplyEntityImpulse::new(*direction, *coordinate_scale, magnitude.clone()),
-                    world,
-                    enchantment_level,
-                    owner,
-                    entity,
-                    position,
-                );
-            }
-            Self::ApplyMobEffect {
-                to_apply,
-                min_duration,
-                max_duration,
-                min_amplifier,
-                max_amplifier,
-            } => {
-                EnchantmentEntityEffectExt::apply(
-                    &ApplyMobEffect::new(
-                        to_apply.to_vec(),
-                        min_duration.clone(),
-                        max_duration.clone(),
-                        min_amplifier.clone(),
-                        max_amplifier.clone(),
-                    ),
-                    world,
-                    enchantment_level,
-                    owner,
-                    entity,
-                    position,
-                );
-            }
-            Self::Explode {
-                offset_x,
-                offset_y,
-                offset_z,
-                radius,
-                create_fire,
-                ..
-            } => {
-                EnchantmentEntityEffectExt::apply(
-                    &ExplodeEffect::new(
-                        false,
-                        None,
-                        None,
-                        None,
-                        Vector3::new(*offset_x, *offset_y, *offset_z),
-                        radius.clone(),
-                        *create_fire,
-                        crate::world::ExplosionInteraction::None,
-                        None,
-                        None,
-                        None,
-                    ),
-                    world,
-                    enchantment_level,
-                    owner,
-                    entity,
-                    position,
-                );
+                call.run(&ApplyEntityImpulse::new(
+                    *direction,
+                    *coordinate_scale,
+                    magnitude.clone(),
+                ));
             }
             Self::AllOf(effects) => {
-                EnchantmentEntityEffectExt::apply(
-                    &AllOf::new(effects),
-                    world,
-                    enchantment_level,
-                    owner,
-                    entity,
-                    position,
-                );
+                call.run(&AllOf::new(effects));
             }
             Self::Other => {}
         }

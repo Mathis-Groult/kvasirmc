@@ -511,3 +511,6 @@ fn move_piston(
 
     true
 }
+
+#[cfg(test)]
+mod golden;

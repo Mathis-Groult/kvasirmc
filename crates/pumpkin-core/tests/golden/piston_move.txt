@@ -1,0 +1,1116 @@
+basic East normal: start 0,0,0:piston[Extended(false), Facing(East)] 1,0,0:stone
+basic East normal: t0 -1,0,0:redstone_block
+basic East normal: t1 0,0,0:piston[Extended(true), Facing(East)] 1,0,0:moving_piston[Facing(East), PistonType(Normal)]<East ext=true src=true 0.00/0.50 piston_head> 2,0,0:moving_piston[Facing(East), PistonType(Normal)]<East ext=true src=false 0.00/0.50 stone>
+basic East normal: t2 1,0,0:moving_piston[Facing(East), PistonType(Normal)]<East ext=true src=true 0.50/1.00 piston_head> 2,0,0:moving_piston[Facing(East), PistonType(Normal)]<East ext=true src=false 0.50/1.00 stone>
+basic East normal: t3 1,0,0:piston_head[Facing(East), Short(false), PistonType(Normal)] 2,0,0:stone
+basic East normal: t7 0,0,0:moving_piston[Facing(East), PistonType(Normal)]<East ext=false src=true 0.00/0.50 piston> -1,0,0:- 1,0,0:-
+basic East normal: t8 0,0,0:moving_piston[Facing(East), PistonType(Normal)]<East ext=false src=true 0.50/1.00 piston>
+basic East normal: t9 0,0,0:piston[Extended(false), Facing(East)]
+basic East sticky: start 0,0,0:sticky_piston[Extended(false), Facing(East)] 1,0,0:stone
+basic East sticky: t0 -1,0,0:redstone_block
+basic East sticky: t1 0,0,0:sticky_piston[Extended(true), Facing(East)] 1,0,0:moving_piston[Facing(East), PistonType(Sticky)]<East ext=true src=true 0.00/0.50 piston_head> 2,0,0:moving_piston[Facing(East), PistonType(Normal)]<East ext=true src=false 0.00/0.50 stone>
+basic East sticky: t2 1,0,0:moving_piston[Facing(East), PistonType(Sticky)]<East ext=true src=true 0.50/1.00 piston_head> 2,0,0:moving_piston[Facing(East), PistonType(Normal)]<East ext=true src=false 0.50/1.00 stone>
+basic East sticky: t3 1,0,0:piston_head[Facing(East), Short(false), PistonType(Sticky)] 2,0,0:stone
+basic East sticky: t7 0,0,0:moving_piston[Facing(East), PistonType(Sticky)]<East ext=false src=true 0.00/0.50 sticky_piston> 1,0,0:moving_piston[Facing(East), PistonType(Normal)]<East ext=false src=false 0.00/0.50 stone> -1,0,0:- 2,0,0:-
+basic East sticky: t8 0,0,0:moving_piston[Facing(East), PistonType(Sticky)]<East ext=false src=true 0.50/1.00 sticky_piston> 1,0,0:moving_piston[Facing(East), PistonType(Normal)]<East ext=false src=false 0.50/1.00 stone>
+basic East sticky: t9 0,0,0:sticky_piston[Extended(false), Facing(East)] 1,0,0:stone
+basic West normal: start 0,0,0:piston[Extended(false), Facing(West)] 1,0,0:stone
+basic West normal: t0 -1,0,0:redstone_block
+basic West normal: t1 0,0,0:piston[Extended(true), Facing(West)] 1,0,0:moving_piston[Facing(West), PistonType(Normal)]<West ext=true src=true 0.00/0.50 piston_head> 2,0,0:moving_piston[Facing(West), PistonType(Normal)]<West ext=true src=false 0.00/0.50 stone>
+basic West normal: t2 1,0,0:moving_piston[Facing(West), PistonType(Normal)]<West ext=true src=true 0.50/1.00 piston_head> 2,0,0:moving_piston[Facing(West), PistonType(Normal)]<West ext=true src=false 0.50/1.00 stone>
+basic West normal: t3 1,0,0:piston_head[Facing(West), Short(false), PistonType(Normal)] 2,0,0:stone
+basic West normal: t7 0,0,0:moving_piston[Facing(West), PistonType(Normal)]<West ext=false src=true 0.00/0.50 piston> -1,0,0:- 1,0,0:-
+basic West normal: t8 0,0,0:moving_piston[Facing(West), PistonType(Normal)]<West ext=false src=true 0.50/1.00 piston>
+basic West normal: t9 0,0,0:piston[Extended(false), Facing(West)]
+basic West sticky: start 0,0,0:sticky_piston[Extended(false), Facing(West)] 1,0,0:stone
+basic West sticky: t0 -1,0,0:redstone_block
+basic West sticky: t1 0,0,0:sticky_piston[Extended(true), Facing(West)] 1,0,0:moving_piston[Facing(West), PistonType(Sticky)]<West ext=true src=true 0.00/0.50 piston_head> 2,0,0:moving_piston[Facing(West), PistonType(Normal)]<West ext=true src=false 0.00/0.50 stone>
+basic West sticky: t2 1,0,0:moving_piston[Facing(West), PistonType(Sticky)]<West ext=true src=true 0.50/1.00 piston_head> 2,0,0:moving_piston[Facing(West), PistonType(Normal)]<West ext=true src=false 0.50/1.00 stone>
+basic West sticky: t3 1,0,0:piston_head[Facing(West), Short(false), PistonType(Sticky)] 2,0,0:stone
+basic West sticky: t7 0,0,0:moving_piston[Facing(West), PistonType(Sticky)]<West ext=false src=true 0.00/0.50 sticky_piston> 1,0,0:moving_piston[Facing(West), PistonType(Normal)]<West ext=false src=false 0.00/0.50 stone> -1,0,0:- 2,0,0:-
+basic West sticky: t8 0,0,0:moving_piston[Facing(West), PistonType(Sticky)]<West ext=false src=true 0.50/1.00 sticky_piston> 1,0,0:moving_piston[Facing(West), PistonType(Normal)]<West ext=false src=false 0.50/1.00 stone>
+basic West sticky: t9 0,0,0:sticky_piston[Extended(false), Facing(West)] 1,0,0:stone
+basic South normal: start 0,0,0:piston[Extended(false), Facing(South)] 1,0,0:stone
+basic South normal: t0 -1,0,0:redstone_block
+basic South normal: t1 0,0,0:piston[Extended(true), Facing(South)] 1,0,0:moving_piston[Facing(South), PistonType(Normal)]<South ext=true src=true 0.00/0.50 piston_head> 2,0,0:moving_piston[Facing(South), PistonType(Normal)]<South ext=true src=false 0.00/0.50 stone>
+basic South normal: t2 1,0,0:moving_piston[Facing(South), PistonType(Normal)]<South ext=true src=true 0.50/1.00 piston_head> 2,0,0:moving_piston[Facing(South), PistonType(Normal)]<South ext=true src=false 0.50/1.00 stone>
+basic South normal: t3 1,0,0:piston_head[Facing(South), Short(false), PistonType(Normal)] 2,0,0:stone
+basic South normal: t7 0,0,0:moving_piston[Facing(South), PistonType(Normal)]<South ext=false src=true 0.00/0.50 piston> -1,0,0:- 1,0,0:-
+basic South normal: t8 0,0,0:moving_piston[Facing(South), PistonType(Normal)]<South ext=false src=true 0.50/1.00 piston>
+basic South normal: t9 0,0,0:piston[Extended(false), Facing(South)]
+basic South sticky: start 0,0,0:sticky_piston[Extended(false), Facing(South)] 1,0,0:stone
+basic South sticky: t0 -1,0,0:redstone_block
+basic South sticky: t1 0,0,0:sticky_piston[Extended(true), Facing(South)] 1,0,0:moving_piston[Facing(South), PistonType(Sticky)]<South ext=true src=true 0.00/0.50 piston_head> 2,0,0:moving_piston[Facing(South), PistonType(Normal)]<South ext=true src=false 0.00/0.50 stone>
+basic South sticky: t2 1,0,0:moving_piston[Facing(South), PistonType(Sticky)]<South ext=true src=true 0.50/1.00 piston_head> 2,0,0:moving_piston[Facing(South), PistonType(Normal)]<South ext=true src=false 0.50/1.00 stone>
+basic South sticky: t3 1,0,0:piston_head[Facing(South), Short(false), PistonType(Sticky)] 2,0,0:stone
+basic South sticky: t7 0,0,0:moving_piston[Facing(South), PistonType(Sticky)]<South ext=false src=true 0.00/0.50 sticky_piston> 1,0,0:moving_piston[Facing(South), PistonType(Normal)]<South ext=false src=false 0.00/0.50 stone> -1,0,0:- 2,0,0:-
+basic South sticky: t8 0,0,0:moving_piston[Facing(South), PistonType(Sticky)]<South ext=false src=true 0.50/1.00 sticky_piston> 1,0,0:moving_piston[Facing(South), PistonType(Normal)]<South ext=false src=false 0.50/1.00 stone>
+basic South sticky: t9 0,0,0:sticky_piston[Extended(false), Facing(South)] 1,0,0:stone
+basic North normal: start 0,0,0:piston[Extended(false), Facing(North)] 1,0,0:stone
+basic North normal: t0 -1,0,0:redstone_block
+basic North normal: t1 0,0,0:piston[Extended(true), Facing(North)] 1,0,0:moving_piston[Facing(North), PistonType(Normal)]<North ext=true src=true 0.00/0.50 piston_head> 2,0,0:moving_piston[Facing(North), PistonType(Normal)]<North ext=true src=false 0.00/0.50 stone>
+basic North normal: t2 1,0,0:moving_piston[Facing(North), PistonType(Normal)]<North ext=true src=true 0.50/1.00 piston_head> 2,0,0:moving_piston[Facing(North), PistonType(Normal)]<North ext=true src=false 0.50/1.00 stone>
+basic North normal: t3 1,0,0:piston_head[Facing(North), Short(false), PistonType(Normal)] 2,0,0:stone
+basic North normal: t7 0,0,0:moving_piston[Facing(North), PistonType(Normal)]<North ext=false src=true 0.00/0.50 piston> -1,0,0:- 1,0,0:-
+basic North normal: t8 0,0,0:moving_piston[Facing(North), PistonType(Normal)]<North ext=false src=true 0.50/1.00 piston>
+basic North normal: t9 0,0,0:piston[Extended(false), Facing(North)]
+basic North sticky: start 0,0,0:sticky_piston[Extended(false), Facing(North)] 1,0,0:stone
+basic North sticky: t0 -1,0,0:redstone_block
+basic North sticky: t1 0,0,0:sticky_piston[Extended(true), Facing(North)] 1,0,0:moving_piston[Facing(North), PistonType(Sticky)]<North ext=true src=true 0.00/0.50 piston_head> 2,0,0:moving_piston[Facing(North), PistonType(Normal)]<North ext=true src=false 0.00/0.50 stone>
+basic North sticky: t2 1,0,0:moving_piston[Facing(North), PistonType(Sticky)]<North ext=true src=true 0.50/1.00 piston_head> 2,0,0:moving_piston[Facing(North), PistonType(Normal)]<North ext=true src=false 0.50/1.00 stone>
+basic North sticky: t3 1,0,0:piston_head[Facing(North), Short(false), PistonType(Sticky)] 2,0,0:stone
+basic North sticky: t7 0,0,0:moving_piston[Facing(North), PistonType(Sticky)]<North ext=false src=true 0.00/0.50 sticky_piston> 1,0,0:moving_piston[Facing(North), PistonType(Normal)]<North ext=false src=false 0.00/0.50 stone> -1,0,0:- 2,0,0:-
+basic North sticky: t8 0,0,0:moving_piston[Facing(North), PistonType(Sticky)]<North ext=false src=true 0.50/1.00 sticky_piston> 1,0,0:moving_piston[Facing(North), PistonType(Normal)]<North ext=false src=false 0.50/1.00 stone>
+basic North sticky: t9 0,0,0:sticky_piston[Extended(false), Facing(North)] 1,0,0:stone
+basic Up normal: start 0,0,0:piston[Extended(false), Facing(Up)] 1,0,0:stone
+basic Up normal: t0 -1,0,0:redstone_block
+basic Up normal: t1 0,0,0:piston[Extended(true), Facing(Up)] 1,0,0:moving_piston[Facing(Up), PistonType(Normal)]<Up ext=true src=true 0.00/0.50 piston_head> 2,0,0:moving_piston[Facing(Up), PistonType(Normal)]<Up ext=true src=false 0.00/0.50 stone>
+basic Up normal: t2 1,0,0:moving_piston[Facing(Up), PistonType(Normal)]<Up ext=true src=true 0.50/1.00 piston_head> 2,0,0:moving_piston[Facing(Up), PistonType(Normal)]<Up ext=true src=false 0.50/1.00 stone>
+basic Up normal: t3 1,0,0:piston_head[Facing(Up), Short(false), PistonType(Normal)] 2,0,0:stone
+basic Up normal: t7 0,0,0:moving_piston[Facing(Up), PistonType(Normal)]<Up ext=false src=true 0.00/0.50 piston> -1,0,0:- 1,0,0:-
+basic Up normal: t8 0,0,0:moving_piston[Facing(Up), PistonType(Normal)]<Up ext=false src=true 0.50/1.00 piston>
+basic Up normal: t9 0,0,0:piston[Extended(false), Facing(Up)]
+basic Up sticky: start 0,0,0:sticky_piston[Extended(false), Facing(Up)] 1,0,0:stone
+basic Up sticky: t0 -1,0,0:redstone_block
+basic Up sticky: t1 0,0,0:sticky_piston[Extended(true), Facing(Up)] 1,0,0:moving_piston[Facing(Up), PistonType(Sticky)]<Up ext=true src=true 0.00/0.50 piston_head> 2,0,0:moving_piston[Facing(Up), PistonType(Normal)]<Up ext=true src=false 0.00/0.50 stone>
+basic Up sticky: t2 1,0,0:moving_piston[Facing(Up), PistonType(Sticky)]<Up ext=true src=true 0.50/1.00 piston_head> 2,0,0:moving_piston[Facing(Up), PistonType(Normal)]<Up ext=true src=false 0.50/1.00 stone>
+basic Up sticky: t3 1,0,0:piston_head[Facing(Up), Short(false), PistonType(Sticky)] 2,0,0:stone
+basic Up sticky: t7 0,0,0:moving_piston[Facing(Up), PistonType(Sticky)]<Up ext=false src=true 0.00/0.50 sticky_piston> 1,0,0:moving_piston[Facing(Up), PistonType(Normal)]<Up ext=false src=false 0.00/0.50 stone> -1,0,0:- 2,0,0:-
+basic Up sticky: t8 0,0,0:moving_piston[Facing(Up), PistonType(Sticky)]<Up ext=false src=true 0.50/1.00 sticky_piston> 1,0,0:moving_piston[Facing(Up), PistonType(Normal)]<Up ext=false src=false 0.50/1.00 stone>
+basic Up sticky: t9 0,0,0:sticky_piston[Extended(false), Facing(Up)] 1,0,0:stone
+basic Down normal: start 0,0,0:piston[Extended(false), Facing(Down)] 1,0,0:stone
+basic Down normal: t0 -1,0,0:redstone_block
+basic Down normal: t1 0,0,0:piston[Extended(true), Facing(Down)] 1,0,0:moving_piston[Facing(Down), PistonType(Normal)]<Down ext=true src=true 0.00/0.50 piston_head> 2,0,0:moving_piston[Facing(Down), PistonType(Normal)]<Down ext=true src=false 0.00/0.50 stone>
+basic Down normal: t2 1,0,0:moving_piston[Facing(Down), PistonType(Normal)]<Down ext=true src=true 0.50/1.00 piston_head> 2,0,0:moving_piston[Facing(Down), PistonType(Normal)]<Down ext=true src=false 0.50/1.00 stone>
+basic Down normal: t3 1,0,0:piston_head[Facing(Down), Short(false), PistonType(Normal)] 2,0,0:stone
+basic Down normal: t7 0,0,0:moving_piston[Facing(Down), PistonType(Normal)]<Down ext=false src=true 0.00/0.50 piston> -1,0,0:- 1,0,0:-
+basic Down normal: t8 0,0,0:moving_piston[Facing(Down), PistonType(Normal)]<Down ext=false src=true 0.50/1.00 piston>
+basic Down normal: t9 0,0,0:piston[Extended(false), Facing(Down)]
+basic Down sticky: start 0,0,0:sticky_piston[Extended(false), Facing(Down)] 1,0,0:stone
+basic Down sticky: t0 -1,0,0:redstone_block
+basic Down sticky: t1 0,0,0:sticky_piston[Extended(true), Facing(Down)] 1,0,0:moving_piston[Facing(Down), PistonType(Sticky)]<Down ext=true src=true 0.00/0.50 piston_head> 2,0,0:moving_piston[Facing(Down), PistonType(Normal)]<Down ext=true src=false 0.00/0.50 stone>
+basic Down sticky: t2 1,0,0:moving_piston[Facing(Down), PistonType(Sticky)]<Down ext=true src=true 0.50/1.00 piston_head> 2,0,0:moving_piston[Facing(Down), PistonType(Normal)]<Down ext=true src=false 0.50/1.00 stone>
+basic Down sticky: t3 1,0,0:piston_head[Facing(Down), Short(false), PistonType(Sticky)] 2,0,0:stone
+basic Down sticky: t7 0,0,0:moving_piston[Facing(Down), PistonType(Sticky)]<Down ext=false src=true 0.00/0.50 sticky_piston> 1,0,0:moving_piston[Facing(Down), PistonType(Normal)]<Down ext=false src=false 0.00/0.50 stone> -1,0,0:- 2,0,0:-
+basic Down sticky: t8 0,0,0:moving_piston[Facing(Down), PistonType(Sticky)]<Down ext=false src=true 0.50/1.00 sticky_piston> 1,0,0:moving_piston[Facing(Down), PistonType(Normal)]<Down ext=false src=false 0.50/1.00 stone>
+basic Down sticky: t9 0,0,0:sticky_piston[Extended(false), Facing(Down)] 1,0,0:stone
+power East at -1,0,0: start 0,0,0:piston[Extended(false), Facing(East)] 2,0,0:stone
+power East at -1,0,0: t0 -1,0,0:redstone_block
+power East at -1,0,0: t1 0,0,0:piston[Extended(true), Facing(East)] 1,0,0:moving_piston[Facing(East), PistonType(Normal)]<East ext=true src=true 0.00/0.50 piston_head>
+power East at -1,0,0: t2 1,0,0:moving_piston[Facing(East), PistonType(Normal)]<East ext=true src=true 0.50/1.00 piston_head>
+power East at -1,0,0: t3 1,0,0:piston_head[Facing(East), Short(false), PistonType(Normal)]
+power East at -1,0,0: t7 0,0,0:moving_piston[Facing(East), PistonType(Normal)]<East ext=false src=true 0.00/0.50 piston> -1,0,0:- 1,0,0:-
+power East at -1,0,0: t8 0,0,0:moving_piston[Facing(East), PistonType(Normal)]<East ext=false src=true 0.50/1.00 piston>
+power East at -1,0,0: t9 0,0,0:piston[Extended(false), Facing(East)]
+power East at 0,1,0: start 0,0,0:piston[Extended(false), Facing(East)] 2,0,0:stone
+power East at 0,1,0: t0 0,1,0:redstone_block
+power East at 0,1,0: t1 0,0,0:piston[Extended(true), Facing(East)] 1,0,0:moving_piston[Facing(East), PistonType(Normal)]<East ext=true src=true 0.00/0.50 piston_head>
+power East at 0,1,0: t2 1,0,0:moving_piston[Facing(East), PistonType(Normal)]<East ext=true src=true 0.50/1.00 piston_head>
+power East at 0,1,0: t3 1,0,0:piston_head[Facing(East), Short(false), PistonType(Normal)]
+power East at 0,1,0: t7 0,0,0:moving_piston[Facing(East), PistonType(Normal)]<East ext=false src=true 0.00/0.50 piston> 0,1,0:- 1,0,0:-
+power East at 0,1,0: t8 0,0,0:moving_piston[Facing(East), PistonType(Normal)]<East ext=false src=true 0.50/1.00 piston>
+power East at 0,1,0: t9 0,0,0:piston[Extended(false), Facing(East)]
+power East at 0,-1,0: start 0,0,0:piston[Extended(false), Facing(East)] 2,0,0:stone
+power East at 0,-1,0: t0 0,-1,0:redstone_block
+power East at 0,-1,0: t1 0,0,0:piston[Extended(true), Facing(East)] 1,0,0:moving_piston[Facing(East), PistonType(Normal)]<East ext=true src=true 0.00/0.50 piston_head>
+power East at 0,-1,0: t2 1,0,0:moving_piston[Facing(East), PistonType(Normal)]<East ext=true src=true 0.50/1.00 piston_head>
+power East at 0,-1,0: t3 1,0,0:piston_head[Facing(East), Short(false), PistonType(Normal)]
+power East at 0,-1,0: t7 0,0,0:moving_piston[Facing(East), PistonType(Normal)]<East ext=false src=true 0.00/0.50 piston> 0,-1,0:- 1,0,0:-
+power East at 0,-1,0: t8 0,0,0:moving_piston[Facing(East), PistonType(Normal)]<East ext=false src=true 0.50/1.00 piston>
+power East at 0,-1,0: t9 0,0,0:piston[Extended(false), Facing(East)]
+power East at 0,0,1: start 0,0,0:piston[Extended(false), Facing(East)] 2,0,0:stone
+power East at 0,0,1: t0 0,0,1:redstone_block
+power East at 0,0,1: t1 0,0,0:piston[Extended(true), Facing(East)] 1,0,0:moving_piston[Facing(East), PistonType(Normal)]<East ext=true src=true 0.00/0.50 piston_head>
+power East at 0,0,1: t2 1,0,0:moving_piston[Facing(East), PistonType(Normal)]<East ext=true src=true 0.50/1.00 piston_head>
+power East at 0,0,1: t3 1,0,0:piston_head[Facing(East), Short(false), PistonType(Normal)]
+power East at 0,0,1: t7 0,0,0:moving_piston[Facing(East), PistonType(Normal)]<East ext=false src=true 0.00/0.50 piston> 0,0,1:- 1,0,0:-
+power East at 0,0,1: t8 0,0,0:moving_piston[Facing(East), PistonType(Normal)]<East ext=false src=true 0.50/1.00 piston>
+power East at 0,0,1: t9 0,0,0:piston[Extended(false), Facing(East)]
+power East at 0,0,-1: start 0,0,0:piston[Extended(false), Facing(East)] 2,0,0:stone
+power East at 0,0,-1: t0 0,0,-1:redstone_block
+power East at 0,0,-1: t1 0,0,0:piston[Extended(true), Facing(East)] 1,0,0:moving_piston[Facing(East), PistonType(Normal)]<East ext=true src=true 0.00/0.50 piston_head>
+power East at 0,0,-1: t2 1,0,0:moving_piston[Facing(East), PistonType(Normal)]<East ext=true src=true 0.50/1.00 piston_head>
+power East at 0,0,-1: t3 1,0,0:piston_head[Facing(East), Short(false), PistonType(Normal)]
+power East at 0,0,-1: t7 0,0,0:moving_piston[Facing(East), PistonType(Normal)]<East ext=false src=true 0.00/0.50 piston> 0,0,-1:- 1,0,0:-
+power East at 0,0,-1: t8 0,0,0:moving_piston[Facing(East), PistonType(Normal)]<East ext=false src=true 0.50/1.00 piston>
+power East at 0,0,-1: t9 0,0,0:piston[Extended(false), Facing(East)]
+power East at 1,0,0: start 0,0,0:piston[Extended(false), Facing(East)] 2,0,0:stone
+power East at 1,0,0: t0 1,0,0:redstone_block
+power East at 1,0,0: t7 1,0,0:-
+quasi East at 0,2,0: start 0,0,0:piston[Extended(false), Facing(East)] 0,2,0:redstone_block 2,0,0:stone
+quasi East at 0,2,0: t0 -1,0,0:glass
+quasi East at 0,2,0: t1 0,0,0:piston[Extended(true), Facing(East)] 1,0,0:moving_piston[Facing(East), PistonType(Normal)]<East ext=true src=true 0.00/0.50 piston_head>
+quasi East at 0,2,0: t2 1,0,0:moving_piston[Facing(East), PistonType(Normal)]<East ext=true src=true 0.50/1.00 piston_head>
+quasi East at 0,2,0: t3 1,0,0:piston_head[Facing(East), Short(false), PistonType(Normal)]
+quasi East at 0,2,0: t7 0,2,0:-
+quasi East at 0,2,0: t8 0,0,0:moving_piston[Facing(East), PistonType(Normal)]<East ext=false src=true 0.00/0.50 piston> -1,0,0:- 1,0,0:-
+quasi East at 0,2,0: t9 0,0,0:moving_piston[Facing(East), PistonType(Normal)]<East ext=false src=true 0.50/1.00 piston>
+quasi East at 0,2,0: t10 0,0,0:piston[Extended(false), Facing(East)]
+quasi East at 1,1,0: start 0,0,0:piston[Extended(false), Facing(East)] 1,1,0:redstone_block 2,0,0:stone
+quasi East at 1,1,0: t0 -1,0,0:glass
+quasi East at 1,1,0: t1 0,0,0:piston[Extended(true), Facing(East)] 1,0,0:moving_piston[Facing(East), PistonType(Normal)]<East ext=true src=true 0.00/0.50 piston_head>
+quasi East at 1,1,0: t2 1,0,0:moving_piston[Facing(East), PistonType(Normal)]<East ext=true src=true 0.50/1.00 piston_head>
+quasi East at 1,1,0: t3 1,0,0:piston_head[Facing(East), Short(false), PistonType(Normal)]
+quasi East at 1,1,0: t7 0,0,0:moving_piston[Facing(East), PistonType(Normal)]<East ext=false src=true 0.00/0.50 piston> 1,0,0:- 1,1,0:-
+quasi East at 1,1,0: t8 0,0,0:moving_piston[Facing(East), PistonType(Normal)]<East ext=false src=true 0.50/1.00 piston> -1,0,0:-
+quasi East at 1,1,0: t9 0,0,0:piston[Extended(false), Facing(East)]
+quasi East at -1,1,0: start -1,1,0:redstone_block 0,0,0:piston[Extended(false), Facing(East)] 2,0,0:stone
+quasi East at -1,1,0: t0 -1,0,0:glass
+quasi East at -1,1,0: t1 0,0,0:piston[Extended(true), Facing(East)] 1,0,0:moving_piston[Facing(East), PistonType(Normal)]<East ext=true src=true 0.00/0.50 piston_head>
+quasi East at -1,1,0: t2 1,0,0:moving_piston[Facing(East), PistonType(Normal)]<East ext=true src=true 0.50/1.00 piston_head>
+quasi East at -1,1,0: t3 1,0,0:piston_head[Facing(East), Short(false), PistonType(Normal)]
+quasi East at -1,1,0: t7 -1,1,0:-
+quasi East at -1,1,0: t8 0,0,0:moving_piston[Facing(East), PistonType(Normal)]<East ext=false src=true 0.00/0.50 piston> -1,0,0:- 1,0,0:-
+quasi East at -1,1,0: t9 0,0,0:moving_piston[Facing(East), PistonType(Normal)]<East ext=false src=true 0.50/1.00 piston>
+quasi East at -1,1,0: t10 0,0,0:piston[Extended(false), Facing(East)]
+quasi East at 0,1,1: start 0,0,0:piston[Extended(false), Facing(East)] 0,1,1:redstone_block 2,0,0:stone
+quasi East at 0,1,1: t0 -1,0,0:glass
+quasi East at 0,1,1: t1 0,0,0:piston[Extended(true), Facing(East)] 1,0,0:moving_piston[Facing(East), PistonType(Normal)]<East ext=true src=true 0.00/0.50 piston_head>
+quasi East at 0,1,1: t2 1,0,0:moving_piston[Facing(East), PistonType(Normal)]<East ext=true src=true 0.50/1.00 piston_head>
+quasi East at 0,1,1: t3 1,0,0:piston_head[Facing(East), Short(false), PistonType(Normal)]
+quasi East at 0,1,1: t7 0,1,1:-
+quasi East at 0,1,1: t8 0,0,0:moving_piston[Facing(East), PistonType(Normal)]<East ext=false src=true 0.00/0.50 piston> -1,0,0:- 1,0,0:-
+quasi East at 0,1,1: t9 0,0,0:moving_piston[Facing(East), PistonType(Normal)]<East ext=false src=true 0.50/1.00 piston>
+quasi East at 0,1,1: t10 0,0,0:piston[Extended(false), Facing(East)]
+quasi East at 0,1,-1: start 0,0,0:piston[Extended(false), Facing(East)] 0,1,-1:redstone_block 2,0,0:stone
+quasi East at 0,1,-1: t0 -1,0,0:glass
+quasi East at 0,1,-1: t1 0,0,0:piston[Extended(true), Facing(East)] 1,0,0:moving_piston[Facing(East), PistonType(Normal)]<East ext=true src=true 0.00/0.50 piston_head>
+quasi East at 0,1,-1: t2 1,0,0:moving_piston[Facing(East), PistonType(Normal)]<East ext=true src=true 0.50/1.00 piston_head>
+quasi East at 0,1,-1: t3 1,0,0:piston_head[Facing(East), Short(false), PistonType(Normal)]
+quasi East at 0,1,-1: t7 0,1,-1:-
+quasi East at 0,1,-1: t8 0,0,0:moving_piston[Facing(East), PistonType(Normal)]<East ext=false src=true 0.00/0.50 piston> -1,0,0:- 1,0,0:-
+quasi East at 0,1,-1: t9 0,0,0:moving_piston[Facing(East), PistonType(Normal)]<East ext=false src=true 0.50/1.00 piston>
+quasi East at 0,1,-1: t10 0,0,0:piston[Extended(false), Facing(East)]
+power Up at -1,0,0: start 0,0,0:piston[Extended(false), Facing(Up)] 2,0,0:stone
+power Up at -1,0,0: t0 -1,0,0:redstone_block
+power Up at -1,0,0: t1 0,0,0:piston[Extended(true), Facing(Up)] 1,0,0:moving_piston[Facing(Up), PistonType(Normal)]<Up ext=true src=true 0.00/0.50 piston_head>
+power Up at -1,0,0: t2 1,0,0:moving_piston[Facing(Up), PistonType(Normal)]<Up ext=true src=true 0.50/1.00 piston_head>
+power Up at -1,0,0: t3 1,0,0:piston_head[Facing(Up), Short(false), PistonType(Normal)]
+power Up at -1,0,0: t7 0,0,0:moving_piston[Facing(Up), PistonType(Normal)]<Up ext=false src=true 0.00/0.50 piston> -1,0,0:- 1,0,0:-
+power Up at -1,0,0: t8 0,0,0:moving_piston[Facing(Up), PistonType(Normal)]<Up ext=false src=true 0.50/1.00 piston>
+power Up at -1,0,0: t9 0,0,0:piston[Extended(false), Facing(Up)]
+power Up at 0,1,0: start 0,0,0:piston[Extended(false), Facing(Up)] 2,0,0:stone
+power Up at 0,1,0: t0 0,1,0:redstone_block
+power Up at 0,1,0: t1 0,0,0:piston[Extended(true), Facing(Up)] 1,0,0:moving_piston[Facing(Up), PistonType(Normal)]<Up ext=true src=true 0.00/0.50 piston_head>
+power Up at 0,1,0: t2 1,0,0:moving_piston[Facing(Up), PistonType(Normal)]<Up ext=true src=true 0.50/1.00 piston_head>
+power Up at 0,1,0: t3 1,0,0:piston_head[Facing(Up), Short(false), PistonType(Normal)]
+power Up at 0,1,0: t7 0,0,0:moving_piston[Facing(Up), PistonType(Normal)]<Up ext=false src=true 0.00/0.50 piston> 0,1,0:- 1,0,0:-
+power Up at 0,1,0: t8 0,0,0:moving_piston[Facing(Up), PistonType(Normal)]<Up ext=false src=true 0.50/1.00 piston>
+power Up at 0,1,0: t9 0,0,0:piston[Extended(false), Facing(Up)]
+power Up at 0,-1,0: start 0,0,0:piston[Extended(false), Facing(Up)] 2,0,0:stone
+power Up at 0,-1,0: t0 0,-1,0:redstone_block
+power Up at 0,-1,0: t1 0,0,0:piston[Extended(true), Facing(Up)] 1,0,0:moving_piston[Facing(Up), PistonType(Normal)]<Up ext=true src=true 0.00/0.50 piston_head>
+power Up at 0,-1,0: t2 1,0,0:moving_piston[Facing(Up), PistonType(Normal)]<Up ext=true src=true 0.50/1.00 piston_head>
+power Up at 0,-1,0: t3 1,0,0:piston_head[Facing(Up), Short(false), PistonType(Normal)]
+power Up at 0,-1,0: t7 0,0,0:moving_piston[Facing(Up), PistonType(Normal)]<Up ext=false src=true 0.00/0.50 piston> 0,-1,0:- 1,0,0:-
+power Up at 0,-1,0: t8 0,0,0:moving_piston[Facing(Up), PistonType(Normal)]<Up ext=false src=true 0.50/1.00 piston>
+power Up at 0,-1,0: t9 0,0,0:piston[Extended(false), Facing(Up)]
+power Up at 0,0,1: start 0,0,0:piston[Extended(false), Facing(Up)] 2,0,0:stone
+power Up at 0,0,1: t0 0,0,1:redstone_block
+power Up at 0,0,1: t1 0,0,0:piston[Extended(true), Facing(Up)] 1,0,0:moving_piston[Facing(Up), PistonType(Normal)]<Up ext=true src=true 0.00/0.50 piston_head>
+power Up at 0,0,1: t2 1,0,0:moving_piston[Facing(Up), PistonType(Normal)]<Up ext=true src=true 0.50/1.00 piston_head>
+power Up at 0,0,1: t3 1,0,0:piston_head[Facing(Up), Short(false), PistonType(Normal)]
+power Up at 0,0,1: t7 0,0,0:moving_piston[Facing(Up), PistonType(Normal)]<Up ext=false src=true 0.00/0.50 piston> 0,0,1:- 1,0,0:-
+power Up at 0,0,1: t8 0,0,0:moving_piston[Facing(Up), PistonType(Normal)]<Up ext=false src=true 0.50/1.00 piston>
+power Up at 0,0,1: t9 0,0,0:piston[Extended(false), Facing(Up)]
+power Up at 0,0,-1: start 0,0,0:piston[Extended(false), Facing(Up)] 2,0,0:stone
+power Up at 0,0,-1: t0 0,0,-1:redstone_block
+power Up at 0,0,-1: t1 0,0,0:piston[Extended(true), Facing(Up)] 1,0,0:moving_piston[Facing(Up), PistonType(Normal)]<Up ext=true src=true 0.00/0.50 piston_head>
+power Up at 0,0,-1: t2 1,0,0:moving_piston[Facing(Up), PistonType(Normal)]<Up ext=true src=true 0.50/1.00 piston_head>
+power Up at 0,0,-1: t3 1,0,0:piston_head[Facing(Up), Short(false), PistonType(Normal)]
+power Up at 0,0,-1: t7 0,0,0:moving_piston[Facing(Up), PistonType(Normal)]<Up ext=false src=true 0.00/0.50 piston> 0,0,-1:- 1,0,0:-
+power Up at 0,0,-1: t8 0,0,0:moving_piston[Facing(Up), PistonType(Normal)]<Up ext=false src=true 0.50/1.00 piston>
+power Up at 0,0,-1: t9 0,0,0:piston[Extended(false), Facing(Up)]
+power Up at 1,0,0: start 0,0,0:piston[Extended(false), Facing(Up)] 2,0,0:stone
+power Up at 1,0,0: t0 1,0,0:redstone_block
+power Up at 1,0,0: t7 1,0,0:-
+quasi Up at 2,0,0: start 0,0,0:piston[Extended(false), Facing(Up)] 2,0,0:redstone_block
+quasi Up at 2,0,0: t0 -1,0,0:glass
+quasi Up at 2,0,0: t1 0,0,0:piston[Extended(true), Facing(Up)] 1,0,0:moving_piston[Facing(Up), PistonType(Normal)]<Up ext=true src=true 0.00/0.50 piston_head>
+quasi Up at 2,0,0: t2 1,0,0:moving_piston[Facing(Up), PistonType(Normal)]<Up ext=true src=true 0.50/1.00 piston_head>
+quasi Up at 2,0,0: t3 1,0,0:piston_head[Facing(Up), Short(false), PistonType(Normal)]
+quasi Up at 2,0,0: t7 0,0,0:moving_piston[Facing(Up), PistonType(Normal)]<Up ext=false src=true 0.00/0.50 piston> 1,0,0:- 2,0,0:-
+quasi Up at 2,0,0: t8 0,0,0:moving_piston[Facing(Up), PistonType(Normal)]<Up ext=false src=true 0.50/1.00 piston> -1,0,0:-
+quasi Up at 2,0,0: t9 0,0,0:piston[Extended(false), Facing(Up)]
+quasi Up at 1,1,0: start 0,0,0:piston[Extended(false), Facing(Up)] 1,1,0:redstone_block 2,0,0:stone
+quasi Up at 1,1,0: t0 -1,0,0:glass
+quasi Up at 1,1,0: t1 0,0,0:piston[Extended(true), Facing(Up)] 1,0,0:moving_piston[Facing(Up), PistonType(Normal)]<Up ext=true src=true 0.00/0.50 piston_head>
+quasi Up at 1,1,0: t2 1,0,0:moving_piston[Facing(Up), PistonType(Normal)]<Up ext=true src=true 0.50/1.00 piston_head>
+quasi Up at 1,1,0: t3 1,0,0:piston_head[Facing(Up), Short(false), PistonType(Normal)]
+quasi Up at 1,1,0: t7 0,0,0:moving_piston[Facing(Up), PistonType(Normal)]<Up ext=false src=true 0.00/0.50 piston> 1,0,0:- 1,1,0:-
+quasi Up at 1,1,0: t8 0,0,0:moving_piston[Facing(Up), PistonType(Normal)]<Up ext=false src=true 0.50/1.00 piston> -1,0,0:-
+quasi Up at 1,1,0: t9 0,0,0:piston[Extended(false), Facing(Up)]
+quasi Up at 1,-1,0: start 0,0,0:piston[Extended(false), Facing(Up)] 1,-1,0:redstone_block 2,0,0:stone
+quasi Up at 1,-1,0: t0 -1,0,0:glass
+quasi Up at 1,-1,0: t1 0,0,0:piston[Extended(true), Facing(Up)] 1,0,0:moving_piston[Facing(Up), PistonType(Normal)]<Up ext=true src=true 0.00/0.50 piston_head>
+quasi Up at 1,-1,0: t2 1,0,0:moving_piston[Facing(Up), PistonType(Normal)]<Up ext=true src=true 0.50/1.00 piston_head>
+quasi Up at 1,-1,0: t3 1,0,0:piston_head[Facing(Up), Short(false), PistonType(Normal)]
+quasi Up at 1,-1,0: t7 0,0,0:moving_piston[Facing(Up), PistonType(Normal)]<Up ext=false src=true 0.00/0.50 piston> 1,-1,0:- 1,0,0:-
+quasi Up at 1,-1,0: t8 0,0,0:moving_piston[Facing(Up), PistonType(Normal)]<Up ext=false src=true 0.50/1.00 piston> -1,0,0:-
+quasi Up at 1,-1,0: t9 0,0,0:piston[Extended(false), Facing(Up)]
+quasi Up at 1,0,1: start 0,0,0:piston[Extended(false), Facing(Up)] 1,0,1:redstone_block 2,0,0:stone
+quasi Up at 1,0,1: t0 -1,0,0:glass
+quasi Up at 1,0,1: t1 0,0,0:piston[Extended(true), Facing(Up)] 1,0,0:moving_piston[Facing(Up), PistonType(Normal)]<Up ext=true src=true 0.00/0.50 piston_head>
+quasi Up at 1,0,1: t2 1,0,0:moving_piston[Facing(Up), PistonType(Normal)]<Up ext=true src=true 0.50/1.00 piston_head>
+quasi Up at 1,0,1: t3 1,0,0:piston_head[Facing(Up), Short(false), PistonType(Normal)]
+quasi Up at 1,0,1: t7 0,0,0:moving_piston[Facing(Up), PistonType(Normal)]<Up ext=false src=true 0.00/0.50 piston> 1,0,0:- 1,0,1:-
+quasi Up at 1,0,1: t8 0,0,0:moving_piston[Facing(Up), PistonType(Normal)]<Up ext=false src=true 0.50/1.00 piston> -1,0,0:-
+quasi Up at 1,0,1: t9 0,0,0:piston[Extended(false), Facing(Up)]
+quasi Up at 1,0,-1: start 0,0,0:piston[Extended(false), Facing(Up)] 1,0,-1:redstone_block 2,0,0:stone
+quasi Up at 1,0,-1: t0 -1,0,0:glass
+quasi Up at 1,0,-1: t1 0,0,0:piston[Extended(true), Facing(Up)] 1,0,0:moving_piston[Facing(Up), PistonType(Normal)]<Up ext=true src=true 0.00/0.50 piston_head>
+quasi Up at 1,0,-1: t2 1,0,0:moving_piston[Facing(Up), PistonType(Normal)]<Up ext=true src=true 0.50/1.00 piston_head>
+quasi Up at 1,0,-1: t3 1,0,0:piston_head[Facing(Up), Short(false), PistonType(Normal)]
+quasi Up at 1,0,-1: t7 0,0,0:moving_piston[Facing(Up), PistonType(Normal)]<Up ext=false src=true 0.00/0.50 piston> 1,0,-1:- 1,0,0:-
+quasi Up at 1,0,-1: t8 0,0,0:moving_piston[Facing(Up), PistonType(Normal)]<Up ext=false src=true 0.50/1.00 piston> -1,0,0:-
+quasi Up at 1,0,-1: t9 0,0,0:piston[Extended(false), Facing(Up)]
+load 0 normal: start 0,0,0:piston[Extended(false), Facing(East)]
+load 0 normal: t0 -1,0,0:redstone_block
+load 0 normal: t1 0,0,0:piston[Extended(true), Facing(East)] 1,0,0:moving_piston[Facing(East), PistonType(Normal)]<East ext=true src=true 0.00/0.50 piston_head>
+load 0 normal: t2 1,0,0:moving_piston[Facing(East), PistonType(Normal)]<East ext=true src=true 0.50/1.00 piston_head>
+load 0 normal: t3 1,0,0:piston_head[Facing(East), Short(false), PistonType(Normal)]
+load 0 normal: t7 0,0,0:moving_piston[Facing(East), PistonType(Normal)]<East ext=false src=true 0.00/0.50 piston> -1,0,0:- 1,0,0:-
+load 0 normal: t8 0,0,0:moving_piston[Facing(East), PistonType(Normal)]<East ext=false src=true 0.50/1.00 piston>
+load 0 normal: t9 0,0,0:piston[Extended(false), Facing(East)]
+load 1 normal: start 0,0,0:piston[Extended(false), Facing(East)] 1,0,0:stone
+load 1 normal: t0 -1,0,0:redstone_block
+load 1 normal: t1 0,0,0:piston[Extended(true), Facing(East)] 1,0,0:moving_piston[Facing(East), PistonType(Normal)]<East ext=true src=true 0.00/0.50 piston_head> 2,0,0:moving_piston[Facing(East), PistonType(Normal)]<East ext=true src=false 0.00/0.50 stone>
+load 1 normal: t2 1,0,0:moving_piston[Facing(East), PistonType(Normal)]<East ext=true src=true 0.50/1.00 piston_head> 2,0,0:moving_piston[Facing(East), PistonType(Normal)]<East ext=true src=false 0.50/1.00 stone>
+load 1 normal: t3 1,0,0:piston_head[Facing(East), Short(false), PistonType(Normal)] 2,0,0:stone
+load 1 normal: t7 0,0,0:moving_piston[Facing(East), PistonType(Normal)]<East ext=false src=true 0.00/0.50 piston> -1,0,0:- 1,0,0:-
+load 1 normal: t8 0,0,0:moving_piston[Facing(East), PistonType(Normal)]<East ext=false src=true 0.50/1.00 piston>
+load 1 normal: t9 0,0,0:piston[Extended(false), Facing(East)]
+load 11 normal: start 0,0,0:piston[Extended(false), Facing(East)] 1,0,0:stone 2,0,0:stone 3,0,0:stone 4,0,0:stone 5,0,0:stone 6,0,0:stone 7,0,0:stone 8,0,0:stone 9,0,0:stone 10,0,0:stone 11,0,0:stone
+load 11 normal: t0 -1,0,0:redstone_block
+load 11 normal: t1 0,0,0:piston[Extended(true), Facing(East)] 1,0,0:moving_piston[Facing(East), PistonType(Normal)]<East ext=true src=true 0.00/0.50 piston_head> 2,0,0:moving_piston[Facing(East), PistonType(Normal)]<East ext=true src=false 0.00/0.50 stone> 3,0,0:moving_piston[Facing(East), PistonType(Normal)]<East ext=true src=false 0.00/0.50 stone> 4,0,0:moving_piston[Facing(East), PistonType(Normal)]<East ext=true src=false 0.00/0.50 stone> 5,0,0:moving_piston[Facing(East), PistonType(Normal)]<East ext=true src=false 0.00/0.50 stone> 6,0,0:moving_piston[Facing(East), PistonType(Normal)]<East ext=true src=false 0.00/0.50 stone> 7,0,0:moving_piston[Facing(East), PistonType(Normal)]<East ext=true src=false 0.00/0.50 stone> 8,0,0:moving_piston[Facing(East), PistonType(Normal)]<East ext=true src=false 0.00/0.50 stone> 9,0,0:moving_piston[Facing(East), PistonType(Normal)]<East ext=true src=false 0.00/0.50 stone> 10,0,0:moving_piston[Facing(East), PistonType(Normal)]<East ext=true src=false 0.00/0.50 stone> 11,0,0:moving_piston[Facing(East), PistonType(Normal)]<East ext=true src=false 0.00/0.50 stone> 12,0,0:moving_piston[Facing(East), PistonType(Normal)]<East ext=true src=false 0.00/0.50 stone>
+load 11 normal: t2 1,0,0:moving_piston[Facing(East), PistonType(Normal)]<East ext=true src=true 0.50/1.00 piston_head> 2,0,0:moving_piston[Facing(East), PistonType(Normal)]<East ext=true src=false 0.50/1.00 stone> 3,0,0:moving_piston[Facing(East), PistonType(Normal)]<East ext=true src=false 0.50/1.00 stone> 4,0,0:moving_piston[Facing(East), PistonType(Normal)]<East ext=true src=false 0.50/1.00 stone> 5,0,0:moving_piston[Facing(East), PistonType(Normal)]<East ext=true src=false 0.50/1.00 stone> 6,0,0:moving_piston[Facing(East), PistonType(Normal)]<East ext=true src=false 0.50/1.00 stone> 7,0,0:moving_piston[Facing(East), PistonType(Normal)]<East ext=true src=false 0.50/1.00 stone> 8,0,0:moving_piston[Facing(East), PistonType(Normal)]<East ext=true src=false 0.50/1.00 stone> 9,0,0:moving_piston[Facing(East), PistonType(Normal)]<East ext=true src=false 0.50/1.00 stone> 10,0,0:moving_piston[Facing(East), PistonType(Normal)]<East ext=true src=false 0.50/1.00 stone> 11,0,0:moving_piston[Facing(East), PistonType(Normal)]<East ext=true src=false 0.50/1.00 stone> 12,0,0:moving_piston[Facing(East), PistonType(Normal)]<East ext=true src=false 0.50/1.00 stone>
+load 11 normal: t3 1,0,0:piston_head[Facing(East), Short(false), PistonType(Normal)] 2,0,0:stone 3,0,0:stone 4,0,0:stone 5,0,0:stone 6,0,0:stone 7,0,0:stone 8,0,0:stone 9,0,0:stone 10,0,0:stone 11,0,0:stone 12,0,0:stone
+load 11 normal: t7 0,0,0:moving_piston[Facing(East), PistonType(Normal)]<East ext=false src=true 0.00/0.50 piston> -1,0,0:- 1,0,0:-
+load 11 normal: t8 0,0,0:moving_piston[Facing(East), PistonType(Normal)]<East ext=false src=true 0.50/1.00 piston>
+load 11 normal: t9 0,0,0:piston[Extended(false), Facing(East)]
+load 12 normal: start 0,0,0:piston[Extended(false), Facing(East)] 1,0,0:stone 2,0,0:stone 3,0,0:stone 4,0,0:stone 5,0,0:stone 6,0,0:stone 7,0,0:stone 8,0,0:stone 9,0,0:stone 10,0,0:stone 11,0,0:stone 12,0,0:stone
+load 12 normal: t0 -1,0,0:redstone_block
+load 12 normal: t1 0,0,0:piston[Extended(true), Facing(East)] 1,0,0:moving_piston[Facing(East), PistonType(Normal)]<East ext=true src=true 0.00/0.50 piston_head> 2,0,0:moving_piston[Facing(East), PistonType(Normal)]<East ext=true src=false 0.00/0.50 stone> 3,0,0:moving_piston[Facing(East), PistonType(Normal)]<East ext=true src=false 0.00/0.50 stone> 4,0,0:moving_piston[Facing(East), PistonType(Normal)]<East ext=true src=false 0.00/0.50 stone> 5,0,0:moving_piston[Facing(East), PistonType(Normal)]<East ext=true src=false 0.00/0.50 stone> 6,0,0:moving_piston[Facing(East), PistonType(Normal)]<East ext=true src=false 0.00/0.50 stone> 7,0,0:moving_piston[Facing(East), PistonType(Normal)]<East ext=true src=false 0.00/0.50 stone> 8,0,0:moving_piston[Facing(East), PistonType(Normal)]<East ext=true src=false 0.00/0.50 stone> 9,0,0:moving_piston[Facing(East), PistonType(Normal)]<East ext=true src=false 0.00/0.50 stone> 10,0,0:moving_piston[Facing(East), PistonType(Normal)]<East ext=true src=false 0.00/0.50 stone> 11,0,0:moving_piston[Facing(East), PistonType(Normal)]<East ext=true src=false 0.00/0.50 stone> 12,0,0:moving_piston[Facing(East), PistonType(Normal)]<East ext=true src=false 0.00/0.50 stone> 13,0,0:moving_piston[Facing(East), PistonType(Normal)]<East ext=true src=false 0.00/0.50 stone>
+load 12 normal: t2 1,0,0:moving_piston[Facing(East), PistonType(Normal)]<East ext=true src=true 0.50/1.00 piston_head> 2,0,0:moving_piston[Facing(East), PistonType(Normal)]<East ext=true src=false 0.50/1.00 stone> 3,0,0:moving_piston[Facing(East), PistonType(Normal)]<East ext=true src=false 0.50/1.00 stone> 4,0,0:moving_piston[Facing(East), PistonType(Normal)]<East ext=true src=false 0.50/1.00 stone> 5,0,0:moving_piston[Facing(East), PistonType(Normal)]<East ext=true src=false 0.50/1.00 stone> 6,0,0:moving_piston[Facing(East), PistonType(Normal)]<East ext=true src=false 0.50/1.00 stone> 7,0,0:moving_piston[Facing(East), PistonType(Normal)]<East ext=true src=false 0.50/1.00 stone> 8,0,0:moving_piston[Facing(East), PistonType(Normal)]<East ext=true src=false 0.50/1.00 stone> 9,0,0:moving_piston[Facing(East), PistonType(Normal)]<East ext=true src=false 0.50/1.00 stone> 10,0,0:moving_piston[Facing(East), PistonType(Normal)]<East ext=true src=false 0.50/1.00 stone> 11,0,0:moving_piston[Facing(East), PistonType(Normal)]<East ext=true src=false 0.50/1.00 stone> 12,0,0:moving_piston[Facing(East), PistonType(Normal)]<East ext=true src=false 0.50/1.00 stone> 13,0,0:moving_piston[Facing(East), PistonType(Normal)]<East ext=true src=false 0.50/1.00 stone>
+load 12 normal: t3 1,0,0:piston_head[Facing(East), Short(false), PistonType(Normal)] 2,0,0:stone 3,0,0:stone 4,0,0:stone 5,0,0:stone 6,0,0:stone 7,0,0:stone 8,0,0:stone 9,0,0:stone 10,0,0:stone 11,0,0:stone 12,0,0:stone 13,0,0:stone
+load 12 normal: t7 0,0,0:moving_piston[Facing(East), PistonType(Normal)]<East ext=false src=true 0.00/0.50 piston> -1,0,0:- 1,0,0:-
+load 12 normal: t8 0,0,0:moving_piston[Facing(East), PistonType(Normal)]<East ext=false src=true 0.50/1.00 piston>
+load 12 normal: t9 0,0,0:piston[Extended(false), Facing(East)]
+load 13 normal: start 0,0,0:piston[Extended(false), Facing(East)] 1,0,0:stone 2,0,0:stone 3,0,0:stone 4,0,0:stone 5,0,0:stone 6,0,0:stone 7,0,0:stone 8,0,0:stone 9,0,0:stone 10,0,0:stone 11,0,0:stone 12,0,0:stone 13,0,0:stone
+load 13 normal: t0 -1,0,0:redstone_block
+load 13 normal: t7 -1,0,0:-
+load 14 normal: start 0,0,0:piston[Extended(false), Facing(East)] 1,0,0:stone 2,0,0:stone 3,0,0:stone 4,0,0:stone 5,0,0:stone 6,0,0:stone 7,0,0:stone 8,0,0:stone 9,0,0:stone 10,0,0:stone 11,0,0:stone 12,0,0:stone 13,0,0:stone 14,0,0:stone
+load 14 normal: t0 -1,0,0:redstone_block
+load 14 normal: t7 -1,0,0:-
+load 1 sticky: start 0,0,0:sticky_piston[Extended(false), Facing(East)] 1,0,0:stone
+load 1 sticky: t0 -1,0,0:redstone_block
+load 1 sticky: t1 0,0,0:sticky_piston[Extended(true), Facing(East)] 1,0,0:moving_piston[Facing(East), PistonType(Sticky)]<East ext=true src=true 0.00/0.50 piston_head> 2,0,0:moving_piston[Facing(East), PistonType(Normal)]<East ext=true src=false 0.00/0.50 stone>
+load 1 sticky: t2 1,0,0:moving_piston[Facing(East), PistonType(Sticky)]<East ext=true src=true 0.50/1.00 piston_head> 2,0,0:moving_piston[Facing(East), PistonType(Normal)]<East ext=true src=false 0.50/1.00 stone>
+load 1 sticky: t3 1,0,0:piston_head[Facing(East), Short(false), PistonType(Sticky)] 2,0,0:stone
+load 1 sticky: t7 0,0,0:moving_piston[Facing(East), PistonType(Sticky)]<East ext=false src=true 0.00/0.50 sticky_piston> 1,0,0:moving_piston[Facing(East), PistonType(Normal)]<East ext=false src=false 0.00/0.50 stone> -1,0,0:- 2,0,0:-
+load 1 sticky: t8 0,0,0:moving_piston[Facing(East), PistonType(Sticky)]<East ext=false src=true 0.50/1.00 sticky_piston> 1,0,0:moving_piston[Facing(East), PistonType(Normal)]<East ext=false src=false 0.50/1.00 stone>
+load 1 sticky: t9 0,0,0:sticky_piston[Extended(false), Facing(East)] 1,0,0:stone
+load 12 sticky: start 0,0,0:sticky_piston[Extended(false), Facing(East)] 1,0,0:stone 2,0,0:stone 3,0,0:stone 4,0,0:stone 5,0,0:stone 6,0,0:stone 7,0,0:stone 8,0,0:stone 9,0,0:stone 10,0,0:stone 11,0,0:stone 12,0,0:stone
+load 12 sticky: t0 -1,0,0:redstone_block
+load 12 sticky: t1 0,0,0:sticky_piston[Extended(true), Facing(East)] 1,0,0:moving_piston[Facing(East), PistonType(Sticky)]<East ext=true src=true 0.00/0.50 piston_head> 2,0,0:moving_piston[Facing(East), PistonType(Normal)]<East ext=true src=false 0.00/0.50 stone> 3,0,0:moving_piston[Facing(East), PistonType(Normal)]<East ext=true src=false 0.00/0.50 stone> 4,0,0:moving_piston[Facing(East), PistonType(Normal)]<East ext=true src=false 0.00/0.50 stone> 5,0,0:moving_piston[Facing(East), PistonType(Normal)]<East ext=true src=false 0.00/0.50 stone> 6,0,0:moving_piston[Facing(East), PistonType(Normal)]<East ext=true src=false 0.00/0.50 stone> 7,0,0:moving_piston[Facing(East), PistonType(Normal)]<East ext=true src=false 0.00/0.50 stone> 8,0,0:moving_piston[Facing(East), PistonType(Normal)]<East ext=true src=false 0.00/0.50 stone> 9,0,0:moving_piston[Facing(East), PistonType(Normal)]<East ext=true src=false 0.00/0.50 stone> 10,0,0:moving_piston[Facing(East), PistonType(Normal)]<East ext=true src=false 0.00/0.50 stone> 11,0,0:moving_piston[Facing(East), PistonType(Normal)]<East ext=true src=false 0.00/0.50 stone> 12,0,0:moving_piston[Facing(East), PistonType(Normal)]<East ext=true src=false 0.00/0.50 stone> 13,0,0:moving_piston[Facing(East), PistonType(Normal)]<East ext=true src=false 0.00/0.50 stone>
+load 12 sticky: t2 1,0,0:moving_piston[Facing(East), PistonType(Sticky)]<East ext=true src=true 0.50/1.00 piston_head> 2,0,0:moving_piston[Facing(East), PistonType(Normal)]<East ext=true src=false 0.50/1.00 stone> 3,0,0:moving_piston[Facing(East), PistonType(Normal)]<East ext=true src=false 0.50/1.00 stone> 4,0,0:moving_piston[Facing(East), PistonType(Normal)]<East ext=true src=false 0.50/1.00 stone> 5,0,0:moving_piston[Facing(East), PistonType(Normal)]<East ext=true src=false 0.50/1.00 stone> 6,0,0:moving_piston[Facing(East), PistonType(Normal)]<East ext=true src=false 0.50/1.00 stone> 7,0,0:moving_piston[Facing(East), PistonType(Normal)]<East ext=true src=false 0.50/1.00 stone> 8,0,0:moving_piston[Facing(East), PistonType(Normal)]<East ext=true src=false 0.50/1.00 stone> 9,0,0:moving_piston[Facing(East), PistonType(Normal)]<East ext=true src=false 0.50/1.00 stone> 10,0,0:moving_piston[Facing(East), PistonType(Normal)]<East ext=true src=false 0.50/1.00 stone> 11,0,0:moving_piston[Facing(East), PistonType(Normal)]<East ext=true src=false 0.50/1.00 stone> 12,0,0:moving_piston[Facing(East), PistonType(Normal)]<East ext=true src=false 0.50/1.00 stone> 13,0,0:moving_piston[Facing(East), PistonType(Normal)]<East ext=true src=false 0.50/1.00 stone>
+load 12 sticky: t3 1,0,0:piston_head[Facing(East), Short(false), PistonType(Sticky)] 2,0,0:stone 3,0,0:stone 4,0,0:stone 5,0,0:stone 6,0,0:stone 7,0,0:stone 8,0,0:stone 9,0,0:stone 10,0,0:stone 11,0,0:stone 12,0,0:stone 13,0,0:stone
+load 12 sticky: t7 0,0,0:moving_piston[Facing(East), PistonType(Sticky)]<East ext=false src=true 0.00/0.50 sticky_piston> 1,0,0:moving_piston[Facing(East), PistonType(Normal)]<East ext=false src=false 0.00/0.50 stone> -1,0,0:- 2,0,0:-
+load 12 sticky: t8 0,0,0:moving_piston[Facing(East), PistonType(Sticky)]<East ext=false src=true 0.50/1.00 sticky_piston> 1,0,0:moving_piston[Facing(East), PistonType(Normal)]<East ext=false src=false 0.50/1.00 stone>
+load 12 sticky: t9 0,0,0:sticky_piston[Extended(false), Facing(East)] 1,0,0:stone
+load 13 sticky: start 0,0,0:sticky_piston[Extended(false), Facing(East)] 1,0,0:stone 2,0,0:stone 3,0,0:stone 4,0,0:stone 5,0,0:stone 6,0,0:stone 7,0,0:stone 8,0,0:stone 9,0,0:stone 10,0,0:stone 11,0,0:stone 12,0,0:stone 13,0,0:stone
+load 13 sticky: t0 -1,0,0:redstone_block
+load 13 sticky: t7 -1,0,0:-
+kind obsidian normal: start 0,-1,-1:grass_block 0,-1,0:grass_block 0,-1,1:grass_block 0,0,0:piston[Extended(false), Facing(East)] 1,-1,-1:grass_block 1,-1,0:grass_block 1,-1,1:grass_block 1,0,0:obsidian 2,-1,-1:grass_block 2,-1,0:grass_block 2,-1,1:grass_block 3,-1,-1:grass_block 3,-1,0:grass_block 3,-1,1:grass_block 4,-1,-1:grass_block 4,-1,0:grass_block 4,-1,1:grass_block
+kind obsidian normal: t0 -1,0,0:redstone_block
+kind obsidian normal: t7 -1,0,0:-
+kind obsidian sticky: start 0,-1,-1:grass_block 0,-1,0:grass_block 0,-1,1:grass_block 0,0,0:sticky_piston[Extended(false), Facing(East)] 1,-1,-1:grass_block 1,-1,0:grass_block 1,-1,1:grass_block 1,0,0:obsidian 2,-1,-1:grass_block 2,-1,0:grass_block 2,-1,1:grass_block 3,-1,-1:grass_block 3,-1,0:grass_block 3,-1,1:grass_block 4,-1,-1:grass_block 4,-1,0:grass_block 4,-1,1:grass_block
+kind obsidian sticky: t0 -1,0,0:redstone_block
+kind obsidian sticky: t7 -1,0,0:-
+kind bedrock normal: start 0,-1,-1:grass_block 0,-1,0:grass_block 0,-1,1:grass_block 0,0,0:piston[Extended(false), Facing(East)] 1,-1,-1:grass_block 1,-1,0:grass_block 1,-1,1:grass_block 1,0,0:bedrock 2,-1,-1:grass_block 2,-1,0:grass_block 2,-1,1:grass_block 3,-1,-1:grass_block 3,-1,0:grass_block 3,-1,1:grass_block 4,-1,-1:grass_block 4,-1,0:grass_block 4,-1,1:grass_block
+kind bedrock normal: t0 -1,0,0:redstone_block
+kind bedrock normal: t7 -1,0,0:-
+kind bedrock sticky: start 0,-1,-1:grass_block 0,-1,0:grass_block 0,-1,1:grass_block 0,0,0:sticky_piston[Extended(false), Facing(East)] 1,-1,-1:grass_block 1,-1,0:grass_block 1,-1,1:grass_block 1,0,0:bedrock 2,-1,-1:grass_block 2,-1,0:grass_block 2,-1,1:grass_block 3,-1,-1:grass_block 3,-1,0:grass_block 3,-1,1:grass_block 4,-1,-1:grass_block 4,-1,0:grass_block 4,-1,1:grass_block
+kind bedrock sticky: t0 -1,0,0:redstone_block
+kind bedrock sticky: t7 -1,0,0:-
+kind chest normal: start 0,-1,-1:grass_block 0,-1,0:grass_block 0,-1,1:grass_block 0,0,0:piston[Extended(false), Facing(East)] 1,-1,-1:grass_block 1,-1,0:grass_block 1,-1,1:grass_block 1,0,0:chest 2,-1,-1:grass_block 2,-1,0:grass_block 2,-1,1:grass_block 3,-1,-1:grass_block 3,-1,0:grass_block 3,-1,1:grass_block 4,-1,-1:grass_block 4,-1,0:grass_block 4,-1,1:grass_block
+kind chest normal: t0 -1,0,0:redstone_block
+kind chest normal: t7 -1,0,0:-
+kind chest sticky: start 0,-1,-1:grass_block 0,-1,0:grass_block 0,-1,1:grass_block 0,0,0:sticky_piston[Extended(false), Facing(East)] 1,-1,-1:grass_block 1,-1,0:grass_block 1,-1,1:grass_block 1,0,0:chest 2,-1,-1:grass_block 2,-1,0:grass_block 2,-1,1:grass_block 3,-1,-1:grass_block 3,-1,0:grass_block 3,-1,1:grass_block 4,-1,-1:grass_block 4,-1,0:grass_block 4,-1,1:grass_block
+kind chest sticky: t0 -1,0,0:redstone_block
+kind chest sticky: t7 -1,0,0:-
+kind furnace normal: start 0,-1,-1:grass_block 0,-1,0:grass_block 0,-1,1:grass_block 0,0,0:piston[Extended(false), Facing(East)] 1,-1,-1:grass_block 1,-1,0:grass_block 1,-1,1:grass_block 1,0,0:furnace 2,-1,-1:grass_block 2,-1,0:grass_block 2,-1,1:grass_block 3,-1,-1:grass_block 3,-1,0:grass_block 3,-1,1:grass_block 4,-1,-1:grass_block 4,-1,0:grass_block 4,-1,1:grass_block
+kind furnace normal: t0 -1,0,0:redstone_block
+kind furnace normal: t7 -1,0,0:-
+kind furnace sticky: start 0,-1,-1:grass_block 0,-1,0:grass_block 0,-1,1:grass_block 0,0,0:sticky_piston[Extended(false), Facing(East)] 1,-1,-1:grass_block 1,-1,0:grass_block 1,-1,1:grass_block 1,0,0:furnace 2,-1,-1:grass_block 2,-1,0:grass_block 2,-1,1:grass_block 3,-1,-1:grass_block 3,-1,0:grass_block 3,-1,1:grass_block 4,-1,-1:grass_block 4,-1,0:grass_block 4,-1,1:grass_block
+kind furnace sticky: t0 -1,0,0:redstone_block
+kind furnace sticky: t7 -1,0,0:-
+kind poppy normal: start 0,-1,-1:grass_block 0,-1,0:grass_block 0,-1,1:grass_block 0,0,0:piston[Extended(false), Facing(East)] 1,-1,-1:grass_block 1,-1,0:grass_block 1,-1,1:grass_block 1,0,0:poppy 2,-1,-1:grass_block 2,-1,0:grass_block 2,-1,1:grass_block 3,-1,-1:grass_block 3,-1,0:grass_block 3,-1,1:grass_block 4,-1,-1:grass_block 4,-1,0:grass_block 4,-1,1:grass_block
+kind poppy normal: t0 -1,0,0:redstone_block
+kind poppy normal: t1 0,0,0:piston[Extended(true), Facing(East)] 1,0,0:moving_piston[Facing(East), PistonType(Normal)]<East ext=true src=true 0.00/0.50 piston_head>
+kind poppy normal: t2 1,0,0:moving_piston[Facing(East), PistonType(Normal)]<East ext=true src=true 0.50/1.00 piston_head>
+kind poppy normal: t3 1,0,0:piston_head[Facing(East), Short(false), PistonType(Normal)]
+kind poppy normal: t7 0,0,0:moving_piston[Facing(East), PistonType(Normal)]<East ext=false src=true 0.00/0.50 piston> -1,0,0:- 1,0,0:-
+kind poppy normal: t8 0,0,0:moving_piston[Facing(East), PistonType(Normal)]<East ext=false src=true 0.50/1.00 piston>
+kind poppy normal: t9 0,0,0:piston[Extended(false), Facing(East)]
+kind poppy sticky: start 0,-1,-1:grass_block 0,-1,0:grass_block 0,-1,1:grass_block 0,0,0:sticky_piston[Extended(false), Facing(East)] 1,-1,-1:grass_block 1,-1,0:grass_block 1,-1,1:grass_block 1,0,0:poppy 2,-1,-1:grass_block 2,-1,0:grass_block 2,-1,1:grass_block 3,-1,-1:grass_block 3,-1,0:grass_block 3,-1,1:grass_block 4,-1,-1:grass_block 4,-1,0:grass_block 4,-1,1:grass_block
+kind poppy sticky: t0 -1,0,0:redstone_block
+kind poppy sticky: t1 0,0,0:sticky_piston[Extended(true), Facing(East)] 1,0,0:moving_piston[Facing(East), PistonType(Sticky)]<East ext=true src=true 0.00/0.50 piston_head>
+kind poppy sticky: t2 1,0,0:moving_piston[Facing(East), PistonType(Sticky)]<East ext=true src=true 0.50/1.00 piston_head>
+kind poppy sticky: t3 1,0,0:piston_head[Facing(East), Short(false), PistonType(Sticky)]
+kind poppy sticky: t7 0,0,0:moving_piston[Facing(East), PistonType(Sticky)]<East ext=false src=true 0.00/0.50 sticky_piston> -1,0,0:- 1,0,0:-
+kind poppy sticky: t8 0,0,0:moving_piston[Facing(East), PistonType(Sticky)]<East ext=false src=true 0.50/1.00 sticky_piston>
+kind poppy sticky: t9 0,0,0:sticky_piston[Extended(false), Facing(East)]
+kind short_grass normal: start 0,-1,-1:grass_block 0,-1,0:grass_block 0,-1,1:grass_block 0,0,0:piston[Extended(false), Facing(East)] 1,-1,-1:grass_block 1,-1,0:grass_block 1,-1,1:grass_block 1,0,0:short_grass 2,-1,-1:grass_block 2,-1,0:grass_block 2,-1,1:grass_block 3,-1,-1:grass_block 3,-1,0:grass_block 3,-1,1:grass_block 4,-1,-1:grass_block 4,-1,0:grass_block 4,-1,1:grass_block
+kind short_grass normal: t0 -1,0,0:redstone_block
+kind short_grass normal: t1 0,0,0:piston[Extended(true), Facing(East)] 1,0,0:moving_piston[Facing(East), PistonType(Normal)]<East ext=true src=true 0.00/0.50 piston_head>
+kind short_grass normal: t2 1,0,0:moving_piston[Facing(East), PistonType(Normal)]<East ext=true src=true 0.50/1.00 piston_head>
+kind short_grass normal: t3 1,0,0:piston_head[Facing(East), Short(false), PistonType(Normal)]
+kind short_grass normal: t7 0,0,0:moving_piston[Facing(East), PistonType(Normal)]<East ext=false src=true 0.00/0.50 piston> -1,0,0:- 1,0,0:-
+kind short_grass normal: t8 0,0,0:moving_piston[Facing(East), PistonType(Normal)]<East ext=false src=true 0.50/1.00 piston>
+kind short_grass normal: t9 0,0,0:piston[Extended(false), Facing(East)]
+kind short_grass sticky: start 0,-1,-1:grass_block 0,-1,0:grass_block 0,-1,1:grass_block 0,0,0:sticky_piston[Extended(false), Facing(East)] 1,-1,-1:grass_block 1,-1,0:grass_block 1,-1,1:grass_block 1,0,0:short_grass 2,-1,-1:grass_block 2,-1,0:grass_block 2,-1,1:grass_block 3,-1,-1:grass_block 3,-1,0:grass_block 3,-1,1:grass_block 4,-1,-1:grass_block 4,-1,0:grass_block 4,-1,1:grass_block
+kind short_grass sticky: t0 -1,0,0:redstone_block
+kind short_grass sticky: t1 0,0,0:sticky_piston[Extended(true), Facing(East)] 1,0,0:moving_piston[Facing(East), PistonType(Sticky)]<East ext=true src=true 0.00/0.50 piston_head>
+kind short_grass sticky: t2 1,0,0:moving_piston[Facing(East), PistonType(Sticky)]<East ext=true src=true 0.50/1.00 piston_head>
+kind short_grass sticky: t3 1,0,0:piston_head[Facing(East), Short(false), PistonType(Sticky)]
+kind short_grass sticky: t7 0,0,0:moving_piston[Facing(East), PistonType(Sticky)]<East ext=false src=true 0.00/0.50 sticky_piston> -1,0,0:- 1,0,0:-
+kind short_grass sticky: t8 0,0,0:moving_piston[Facing(East), PistonType(Sticky)]<East ext=false src=true 0.50/1.00 sticky_piston>
+kind short_grass sticky: t9 0,0,0:sticky_piston[Extended(false), Facing(East)]
+kind torch normal: start 0,-1,-1:grass_block 0,-1,0:grass_block 0,-1,1:grass_block 0,0,0:piston[Extended(false), Facing(East)] 1,-1,-1:grass_block 1,-1,0:grass_block 1,-1,1:grass_block 1,0,0:torch 2,-1,-1:grass_block 2,-1,0:grass_block 2,-1,1:grass_block 3,-1,-1:grass_block 3,-1,0:grass_block 3,-1,1:grass_block 4,-1,-1:grass_block 4,-1,0:grass_block 4,-1,1:grass_block
+kind torch normal: t0 -1,0,0:redstone_block
+kind torch normal: t1 0,0,0:piston[Extended(true), Facing(East)] 1,0,0:moving_piston[Facing(East), PistonType(Normal)]<East ext=true src=true 0.00/0.50 piston_head>
+kind torch normal: t2 1,0,0:moving_piston[Facing(East), PistonType(Normal)]<East ext=true src=true 0.50/1.00 piston_head>
+kind torch normal: t3 1,0,0:piston_head[Facing(East), Short(false), PistonType(Normal)]
+kind torch normal: t7 0,0,0:moving_piston[Facing(East), PistonType(Normal)]<East ext=false src=true 0.00/0.50 piston> -1,0,0:- 1,0,0:-
+kind torch normal: t8 0,0,0:moving_piston[Facing(East), PistonType(Normal)]<East ext=false src=true 0.50/1.00 piston>
+kind torch normal: t9 0,0,0:piston[Extended(false), Facing(East)]
+kind torch sticky: start 0,-1,-1:grass_block 0,-1,0:grass_block 0,-1,1:grass_block 0,0,0:sticky_piston[Extended(false), Facing(East)] 1,-1,-1:grass_block 1,-1,0:grass_block 1,-1,1:grass_block 1,0,0:torch 2,-1,-1:grass_block 2,-1,0:grass_block 2,-1,1:grass_block 3,-1,-1:grass_block 3,-1,0:grass_block 3,-1,1:grass_block 4,-1,-1:grass_block 4,-1,0:grass_block 4,-1,1:grass_block
+kind torch sticky: t0 -1,0,0:redstone_block
+kind torch sticky: t1 0,0,0:sticky_piston[Extended(true), Facing(East)] 1,0,0:moving_piston[Facing(East), PistonType(Sticky)]<East ext=true src=true 0.00/0.50 piston_head>
+kind torch sticky: t2 1,0,0:moving_piston[Facing(East), PistonType(Sticky)]<East ext=true src=true 0.50/1.00 piston_head>
+kind torch sticky: t3 1,0,0:piston_head[Facing(East), Short(false), PistonType(Sticky)]
+kind torch sticky: t7 0,0,0:moving_piston[Facing(East), PistonType(Sticky)]<East ext=false src=true 0.00/0.50 sticky_piston> -1,0,0:- 1,0,0:-
+kind torch sticky: t8 0,0,0:moving_piston[Facing(East), PistonType(Sticky)]<East ext=false src=true 0.50/1.00 sticky_piston>
+kind torch sticky: t9 0,0,0:sticky_piston[Extended(false), Facing(East)]
+kind glowstone normal: start 0,-1,-1:grass_block 0,-1,0:grass_block 0,-1,1:grass_block 0,0,0:piston[Extended(false), Facing(East)] 1,-1,-1:grass_block 1,-1,0:grass_block 1,-1,1:grass_block 1,0,0:glowstone 2,-1,-1:grass_block 2,-1,0:grass_block 2,-1,1:grass_block 3,-1,-1:grass_block 3,-1,0:grass_block 3,-1,1:grass_block 4,-1,-1:grass_block 4,-1,0:grass_block 4,-1,1:grass_block
+kind glowstone normal: t0 -1,0,0:redstone_block
+kind glowstone normal: t1 0,0,0:piston[Extended(true), Facing(East)] 1,0,0:moving_piston[Facing(East), PistonType(Normal)]<East ext=true src=true 0.00/0.50 piston_head> 2,0,0:moving_piston[Facing(East), PistonType(Normal)]<East ext=true src=false 0.00/0.50 glowstone>
+kind glowstone normal: t2 1,0,0:moving_piston[Facing(East), PistonType(Normal)]<East ext=true src=true 0.50/1.00 piston_head> 2,0,0:moving_piston[Facing(East), PistonType(Normal)]<East ext=true src=false 0.50/1.00 glowstone>
+kind glowstone normal: t3 1,0,0:piston_head[Facing(East), Short(false), PistonType(Normal)] 2,0,0:glowstone
+kind glowstone normal: t7 0,0,0:moving_piston[Facing(East), PistonType(Normal)]<East ext=false src=true 0.00/0.50 piston> -1,0,0:- 1,0,0:-
+kind glowstone normal: t8 0,0,0:moving_piston[Facing(East), PistonType(Normal)]<East ext=false src=true 0.50/1.00 piston>
+kind glowstone normal: t9 0,0,0:piston[Extended(false), Facing(East)]
+kind glowstone sticky: start 0,-1,-1:grass_block 0,-1,0:grass_block 0,-1,1:grass_block 0,0,0:sticky_piston[Extended(false), Facing(East)] 1,-1,-1:grass_block 1,-1,0:grass_block 1,-1,1:grass_block 1,0,0:glowstone 2,-1,-1:grass_block 2,-1,0:grass_block 2,-1,1:grass_block 3,-1,-1:grass_block 3,-1,0:grass_block 3,-1,1:grass_block 4,-1,-1:grass_block 4,-1,0:grass_block 4,-1,1:grass_block
+kind glowstone sticky: t0 -1,0,0:redstone_block
+kind glowstone sticky: t1 0,0,0:sticky_piston[Extended(true), Facing(East)] 1,0,0:moving_piston[Facing(East), PistonType(Sticky)]<East ext=true src=true 0.00/0.50 piston_head> 2,0,0:moving_piston[Facing(East), PistonType(Normal)]<East ext=true src=false 0.00/0.50 glowstone>
+kind glowstone sticky: t2 1,0,0:moving_piston[Facing(East), PistonType(Sticky)]<East ext=true src=true 0.50/1.00 piston_head> 2,0,0:moving_piston[Facing(East), PistonType(Normal)]<East ext=true src=false 0.50/1.00 glowstone>
+kind glowstone sticky: t3 1,0,0:piston_head[Facing(East), Short(false), PistonType(Sticky)] 2,0,0:glowstone
+kind glowstone sticky: t7 0,0,0:moving_piston[Facing(East), PistonType(Sticky)]<East ext=false src=true 0.00/0.50 sticky_piston> 1,0,0:moving_piston[Facing(East), PistonType(Normal)]<East ext=false src=false 0.00/0.50 glowstone> -1,0,0:- 2,0,0:-
+kind glowstone sticky: t8 0,0,0:moving_piston[Facing(East), PistonType(Sticky)]<East ext=false src=true 0.50/1.00 sticky_piston> 1,0,0:moving_piston[Facing(East), PistonType(Normal)]<East ext=false src=false 0.50/1.00 glowstone>
+kind glowstone sticky: t9 0,0,0:sticky_piston[Extended(false), Facing(East)] 1,0,0:glowstone
+kind tnt normal: start 0,-1,-1:grass_block 0,-1,0:grass_block 0,-1,1:grass_block 0,0,0:piston[Extended(false), Facing(East)] 1,-1,-1:grass_block 1,-1,0:grass_block 1,-1,1:grass_block 1,0,0:tnt 2,-1,-1:grass_block 2,-1,0:grass_block 2,-1,1:grass_block 3,-1,-1:grass_block 3,-1,0:grass_block 3,-1,1:grass_block 4,-1,-1:grass_block 4,-1,0:grass_block 4,-1,1:grass_block
+kind tnt normal: t0 -1,0,0:redstone_block
+kind tnt normal: t1 0,0,0:piston[Extended(true), Facing(East)] 1,0,0:moving_piston[Facing(East), PistonType(Normal)]<East ext=true src=true 0.00/0.50 piston_head> 2,0,0:moving_piston[Facing(East), PistonType(Normal)]<East ext=true src=false 0.00/0.50 tnt>
+kind tnt normal: t2 1,0,0:moving_piston[Facing(East), PistonType(Normal)]<East ext=true src=true 0.50/1.00 piston_head> 2,0,0:moving_piston[Facing(East), PistonType(Normal)]<East ext=true src=false 0.50/1.00 tnt>
+kind tnt normal: t3 1,0,0:piston_head[Facing(East), Short(false), PistonType(Normal)] 2,0,0:tnt
+kind tnt normal: t7 0,0,0:moving_piston[Facing(East), PistonType(Normal)]<East ext=false src=true 0.00/0.50 piston> -1,0,0:- 1,0,0:-
+kind tnt normal: t8 0,0,0:moving_piston[Facing(East), PistonType(Normal)]<East ext=false src=true 0.50/1.00 piston>
+kind tnt normal: t9 0,0,0:piston[Extended(false), Facing(East)]
+kind tnt sticky: start 0,-1,-1:grass_block 0,-1,0:grass_block 0,-1,1:grass_block 0,0,0:sticky_piston[Extended(false), Facing(East)] 1,-1,-1:grass_block 1,-1,0:grass_block 1,-1,1:grass_block 1,0,0:tnt 2,-1,-1:grass_block 2,-1,0:grass_block 2,-1,1:grass_block 3,-1,-1:grass_block 3,-1,0:grass_block 3,-1,1:grass_block 4,-1,-1:grass_block 4,-1,0:grass_block 4,-1,1:grass_block
+kind tnt sticky: t0 -1,0,0:redstone_block
+kind tnt sticky: t1 0,0,0:sticky_piston[Extended(true), Facing(East)] 1,0,0:moving_piston[Facing(East), PistonType(Sticky)]<East ext=true src=true 0.00/0.50 piston_head> 2,0,0:moving_piston[Facing(East), PistonType(Normal)]<East ext=true src=false 0.00/0.50 tnt>
+kind tnt sticky: t2 1,0,0:moving_piston[Facing(East), PistonType(Sticky)]<East ext=true src=true 0.50/1.00 piston_head> 2,0,0:moving_piston[Facing(East), PistonType(Normal)]<East ext=true src=false 0.50/1.00 tnt>
+kind tnt sticky: t3 1,0,0:piston_head[Facing(East), Short(false), PistonType(Sticky)] 2,0,0:tnt
+kind tnt sticky: t7 0,0,0:moving_piston[Facing(East), PistonType(Sticky)]<East ext=false src=true 0.00/0.50 sticky_piston> 1,0,0:moving_piston[Facing(East), PistonType(Normal)]<East ext=false src=false 0.00/0.50 tnt> -1,0,0:- 2,0,0:-
+kind tnt sticky: t8 0,0,0:moving_piston[Facing(East), PistonType(Sticky)]<East ext=false src=true 0.50/1.00 sticky_piston> 1,0,0:moving_piston[Facing(East), PistonType(Normal)]<East ext=false src=false 0.50/1.00 tnt>
+kind tnt sticky: t9 0,0,0:sticky_piston[Extended(false), Facing(East)] 1,0,0:tnt
+kind pressure_plate normal: start 0,-1,-1:grass_block 0,-1,0:grass_block 0,-1,1:grass_block 0,0,0:piston[Extended(false), Facing(East)] 1,-1,-1:grass_block 1,-1,0:grass_block 1,-1,1:grass_block 1,0,0:stone_pressure_plate 2,-1,-1:grass_block 2,-1,0:grass_block 2,-1,1:grass_block 3,-1,-1:grass_block 3,-1,0:grass_block 3,-1,1:grass_block 4,-1,-1:grass_block 4,-1,0:grass_block 4,-1,1:grass_block
+kind pressure_plate normal: t0 -1,0,0:redstone_block
+kind pressure_plate normal: t1 0,0,0:piston[Extended(true), Facing(East)] 1,0,0:moving_piston[Facing(East), PistonType(Normal)]<East ext=true src=true 0.00/0.50 piston_head>
+kind pressure_plate normal: t2 1,0,0:moving_piston[Facing(East), PistonType(Normal)]<East ext=true src=true 0.50/1.00 piston_head>
+kind pressure_plate normal: t3 1,0,0:piston_head[Facing(East), Short(false), PistonType(Normal)]
+kind pressure_plate normal: t7 0,0,0:moving_piston[Facing(East), PistonType(Normal)]<East ext=false src=true 0.00/0.50 piston> -1,0,0:- 1,0,0:-
+kind pressure_plate normal: t8 0,0,0:moving_piston[Facing(East), PistonType(Normal)]<East ext=false src=true 0.50/1.00 piston>
+kind pressure_plate normal: t9 0,0,0:piston[Extended(false), Facing(East)]
+kind pressure_plate sticky: start 0,-1,-1:grass_block 0,-1,0:grass_block 0,-1,1:grass_block 0,0,0:sticky_piston[Extended(false), Facing(East)] 1,-1,-1:grass_block 1,-1,0:grass_block 1,-1,1:grass_block 1,0,0:stone_pressure_plate 2,-1,-1:grass_block 2,-1,0:grass_block 2,-1,1:grass_block 3,-1,-1:grass_block 3,-1,0:grass_block 3,-1,1:grass_block 4,-1,-1:grass_block 4,-1,0:grass_block 4,-1,1:grass_block
+kind pressure_plate sticky: t0 -1,0,0:redstone_block
+kind pressure_plate sticky: t1 0,0,0:sticky_piston[Extended(true), Facing(East)] 1,0,0:moving_piston[Facing(East), PistonType(Sticky)]<East ext=true src=true 0.00/0.50 piston_head>
+kind pressure_plate sticky: t2 1,0,0:moving_piston[Facing(East), PistonType(Sticky)]<East ext=true src=true 0.50/1.00 piston_head>
+kind pressure_plate sticky: t3 1,0,0:piston_head[Facing(East), Short(false), PistonType(Sticky)]
+kind pressure_plate sticky: t7 0,0,0:moving_piston[Facing(East), PistonType(Sticky)]<East ext=false src=true 0.00/0.50 sticky_piston> -1,0,0:- 1,0,0:-
+kind pressure_plate sticky: t8 0,0,0:moving_piston[Facing(East), PistonType(Sticky)]<East ext=false src=true 0.50/1.00 sticky_piston>
+kind pressure_plate sticky: t9 0,0,0:sticky_piston[Extended(false), Facing(East)]
+kind lever normal: start 0,-1,-1:grass_block 0,-1,0:grass_block 0,-1,1:grass_block 0,0,0:piston[Extended(false), Facing(East)] 1,-1,-1:grass_block 1,-1,0:grass_block 1,-1,1:grass_block 1,0,0:lever 2,-1,-1:grass_block 2,-1,0:grass_block 2,-1,1:grass_block 3,-1,-1:grass_block 3,-1,0:grass_block 3,-1,1:grass_block 4,-1,-1:grass_block 4,-1,0:grass_block 4,-1,1:grass_block
+kind lever normal: t0 -1,0,0:redstone_block
+kind lever normal: t1 0,0,0:piston[Extended(true), Facing(East)] 1,0,0:moving_piston[Facing(East), PistonType(Normal)]<East ext=true src=true 0.00/0.50 piston_head>
+kind lever normal: t2 1,0,0:moving_piston[Facing(East), PistonType(Normal)]<East ext=true src=true 0.50/1.00 piston_head>
+kind lever normal: t3 1,0,0:piston_head[Facing(East), Short(false), PistonType(Normal)]
+kind lever normal: t7 0,0,0:moving_piston[Facing(East), PistonType(Normal)]<East ext=false src=true 0.00/0.50 piston> -1,0,0:- 1,0,0:-
+kind lever normal: t8 0,0,0:moving_piston[Facing(East), PistonType(Normal)]<East ext=false src=true 0.50/1.00 piston>
+kind lever normal: t9 0,0,0:piston[Extended(false), Facing(East)]
+kind lever sticky: start 0,-1,-1:grass_block 0,-1,0:grass_block 0,-1,1:grass_block 0,0,0:sticky_piston[Extended(false), Facing(East)] 1,-1,-1:grass_block 1,-1,0:grass_block 1,-1,1:grass_block 1,0,0:lever 2,-1,-1:grass_block 2,-1,0:grass_block 2,-1,1:grass_block 3,-1,-1:grass_block 3,-1,0:grass_block 3,-1,1:grass_block 4,-1,-1:grass_block 4,-1,0:grass_block 4,-1,1:grass_block
+kind lever sticky: t0 -1,0,0:redstone_block
+kind lever sticky: t1 0,0,0:sticky_piston[Extended(true), Facing(East)] 1,0,0:moving_piston[Facing(East), PistonType(Sticky)]<East ext=true src=true 0.00/0.50 piston_head>
+kind lever sticky: t2 1,0,0:moving_piston[Facing(East), PistonType(Sticky)]<East ext=true src=true 0.50/1.00 piston_head>
+kind lever sticky: t3 1,0,0:piston_head[Facing(East), Short(false), PistonType(Sticky)]
+kind lever sticky: t7 0,0,0:moving_piston[Facing(East), PistonType(Sticky)]<East ext=false src=true 0.00/0.50 sticky_piston> -1,0,0:- 1,0,0:-
+kind lever sticky: t8 0,0,0:moving_piston[Facing(East), PistonType(Sticky)]<East ext=false src=true 0.50/1.00 sticky_piston>
+kind lever sticky: t9 0,0,0:sticky_piston[Extended(false), Facing(East)]
+kind anvil normal: start 0,-1,-1:grass_block 0,-1,0:grass_block 0,-1,1:grass_block 0,0,0:piston[Extended(false), Facing(East)] 1,-1,-1:grass_block 1,-1,0:grass_block 1,-1,1:grass_block 1,0,0:anvil 2,-1,-1:grass_block 2,-1,0:grass_block 2,-1,1:grass_block 3,-1,-1:grass_block 3,-1,0:grass_block 3,-1,1:grass_block 4,-1,-1:grass_block 4,-1,0:grass_block 4,-1,1:grass_block
+kind anvil normal: t0 -1,0,0:redstone_block
+kind anvil normal: t1 0,0,0:piston[Extended(true), Facing(East)] 1,0,0:moving_piston[Facing(East), PistonType(Normal)]<East ext=true src=true 0.00/0.50 piston_head> 2,0,0:moving_piston[Facing(East), PistonType(Normal)]<East ext=true src=false 0.00/0.50 anvil>
+kind anvil normal: t2 1,0,0:moving_piston[Facing(East), PistonType(Normal)]<East ext=true src=true 0.50/1.00 piston_head> 2,0,0:moving_piston[Facing(East), PistonType(Normal)]<East ext=true src=false 0.50/1.00 anvil>
+kind anvil normal: t3 1,0,0:piston_head[Facing(East), Short(false), PistonType(Normal)] 2,0,0:anvil
+kind anvil normal: t7 0,0,0:moving_piston[Facing(East), PistonType(Normal)]<East ext=false src=true 0.00/0.50 piston> -1,0,0:- 1,0,0:-
+kind anvil normal: t8 0,0,0:moving_piston[Facing(East), PistonType(Normal)]<East ext=false src=true 0.50/1.00 piston>
+kind anvil normal: t9 0,0,0:piston[Extended(false), Facing(East)]
+kind anvil sticky: start 0,-1,-1:grass_block 0,-1,0:grass_block 0,-1,1:grass_block 0,0,0:sticky_piston[Extended(false), Facing(East)] 1,-1,-1:grass_block 1,-1,0:grass_block 1,-1,1:grass_block 1,0,0:anvil 2,-1,-1:grass_block 2,-1,0:grass_block 2,-1,1:grass_block 3,-1,-1:grass_block 3,-1,0:grass_block 3,-1,1:grass_block 4,-1,-1:grass_block 4,-1,0:grass_block 4,-1,1:grass_block
+kind anvil sticky: t0 -1,0,0:redstone_block
+kind anvil sticky: t1 0,0,0:sticky_piston[Extended(true), Facing(East)] 1,0,0:moving_piston[Facing(East), PistonType(Sticky)]<East ext=true src=true 0.00/0.50 piston_head> 2,0,0:moving_piston[Facing(East), PistonType(Normal)]<East ext=true src=false 0.00/0.50 anvil>
+kind anvil sticky: t2 1,0,0:moving_piston[Facing(East), PistonType(Sticky)]<East ext=true src=true 0.50/1.00 piston_head> 2,0,0:moving_piston[Facing(East), PistonType(Normal)]<East ext=true src=false 0.50/1.00 anvil>
+kind anvil sticky: t3 1,0,0:piston_head[Facing(East), Short(false), PistonType(Sticky)] 2,0,0:anvil
+kind anvil sticky: t7 0,0,0:moving_piston[Facing(East), PistonType(Sticky)]<East ext=false src=true 0.00/0.50 sticky_piston> -1,0,0:- 1,0,0:-
+kind anvil sticky: t8 0,0,0:moving_piston[Facing(East), PistonType(Sticky)]<East ext=false src=true 0.50/1.00 sticky_piston>
+kind anvil sticky: t9 0,0,0:sticky_piston[Extended(false), Facing(East)]
+kind leaves normal: start 0,-1,-1:grass_block 0,-1,0:grass_block 0,-1,1:grass_block 0,0,0:piston[Extended(false), Facing(East)] 1,-1,-1:grass_block 1,-1,0:grass_block 1,-1,1:grass_block 1,0,0:oak_leaves 2,-1,-1:grass_block 2,-1,0:grass_block 2,-1,1:grass_block 3,-1,-1:grass_block 3,-1,0:grass_block 3,-1,1:grass_block 4,-1,-1:grass_block 4,-1,0:grass_block 4,-1,1:grass_block
+kind leaves normal: t0 -1,0,0:redstone_block
+kind leaves normal: t1 0,0,0:piston[Extended(true), Facing(East)] 1,0,0:moving_piston[Facing(East), PistonType(Normal)]<East ext=true src=true 0.00/0.50 piston_head>
+kind leaves normal: t2 1,0,0:moving_piston[Facing(East), PistonType(Normal)]<East ext=true src=true 0.50/1.00 piston_head>
+kind leaves normal: t3 1,0,0:piston_head[Facing(East), Short(false), PistonType(Normal)]
+kind leaves normal: t7 0,0,0:moving_piston[Facing(East), PistonType(Normal)]<East ext=false src=true 0.00/0.50 piston> -1,0,0:- 1,0,0:-
+kind leaves normal: t8 0,0,0:moving_piston[Facing(East), PistonType(Normal)]<East ext=false src=true 0.50/1.00 piston>
+kind leaves normal: t9 0,0,0:piston[Extended(false), Facing(East)]
+kind leaves sticky: start 0,-1,-1:grass_block 0,-1,0:grass_block 0,-1,1:grass_block 0,0,0:sticky_piston[Extended(false), Facing(East)] 1,-1,-1:grass_block 1,-1,0:grass_block 1,-1,1:grass_block 1,0,0:oak_leaves 2,-1,-1:grass_block 2,-1,0:grass_block 2,-1,1:grass_block 3,-1,-1:grass_block 3,-1,0:grass_block 3,-1,1:grass_block 4,-1,-1:grass_block 4,-1,0:grass_block 4,-1,1:grass_block
+kind leaves sticky: t0 -1,0,0:redstone_block
+kind leaves sticky: t1 0,0,0:sticky_piston[Extended(true), Facing(East)] 1,0,0:moving_piston[Facing(East), PistonType(Sticky)]<East ext=true src=true 0.00/0.50 piston_head>
+kind leaves sticky: t2 1,0,0:moving_piston[Facing(East), PistonType(Sticky)]<East ext=true src=true 0.50/1.00 piston_head>
+kind leaves sticky: t3 1,0,0:piston_head[Facing(East), Short(false), PistonType(Sticky)]
+kind leaves sticky: t7 0,0,0:moving_piston[Facing(East), PistonType(Sticky)]<East ext=false src=true 0.00/0.50 sticky_piston> -1,0,0:- 1,0,0:-
+kind leaves sticky: t8 0,0,0:moving_piston[Facing(East), PistonType(Sticky)]<East ext=false src=true 0.50/1.00 sticky_piston>
+kind leaves sticky: t9 0,0,0:sticky_piston[Extended(false), Facing(East)]
+kind sand normal: start 0,-1,-1:grass_block 0,-1,0:grass_block 0,-1,1:grass_block 0,0,0:piston[Extended(false), Facing(East)] 1,-1,-1:grass_block 1,-1,0:grass_block 1,-1,1:grass_block 1,0,0:sand 2,-1,-1:grass_block 2,-1,0:grass_block 2,-1,1:grass_block 3,-1,-1:grass_block 3,-1,0:grass_block 3,-1,1:grass_block 4,-1,-1:grass_block 4,-1,0:grass_block 4,-1,1:grass_block
+kind sand normal: t0 -1,0,0:redstone_block
+kind sand normal: t1 0,0,0:piston[Extended(true), Facing(East)] 1,0,0:moving_piston[Facing(East), PistonType(Normal)]<East ext=true src=true 0.00/0.50 piston_head> 2,0,0:moving_piston[Facing(East), PistonType(Normal)]<East ext=true src=false 0.00/0.50 sand>
+kind sand normal: t2 1,0,0:moving_piston[Facing(East), PistonType(Normal)]<East ext=true src=true 0.50/1.00 piston_head> 2,0,0:moving_piston[Facing(East), PistonType(Normal)]<East ext=true src=false 0.50/1.00 sand>
+kind sand normal: t3 1,0,0:piston_head[Facing(East), Short(false), PistonType(Normal)] 2,0,0:sand
+kind sand normal: t7 0,0,0:moving_piston[Facing(East), PistonType(Normal)]<East ext=false src=true 0.00/0.50 piston> -1,0,0:- 1,0,0:-
+kind sand normal: t8 0,0,0:moving_piston[Facing(East), PistonType(Normal)]<East ext=false src=true 0.50/1.00 piston>
+kind sand normal: t9 0,0,0:piston[Extended(false), Facing(East)]
+kind sand sticky: start 0,-1,-1:grass_block 0,-1,0:grass_block 0,-1,1:grass_block 0,0,0:sticky_piston[Extended(false), Facing(East)] 1,-1,-1:grass_block 1,-1,0:grass_block 1,-1,1:grass_block 1,0,0:sand 2,-1,-1:grass_block 2,-1,0:grass_block 2,-1,1:grass_block 3,-1,-1:grass_block 3,-1,0:grass_block 3,-1,1:grass_block 4,-1,-1:grass_block 4,-1,0:grass_block 4,-1,1:grass_block
+kind sand sticky: t0 -1,0,0:redstone_block
+kind sand sticky: t1 0,0,0:sticky_piston[Extended(true), Facing(East)] 1,0,0:moving_piston[Facing(East), PistonType(Sticky)]<East ext=true src=true 0.00/0.50 piston_head> 2,0,0:moving_piston[Facing(East), PistonType(Normal)]<East ext=true src=false 0.00/0.50 sand>
+kind sand sticky: t2 1,0,0:moving_piston[Facing(East), PistonType(Sticky)]<East ext=true src=true 0.50/1.00 piston_head> 2,0,0:moving_piston[Facing(East), PistonType(Normal)]<East ext=true src=false 0.50/1.00 sand>
+kind sand sticky: t3 1,0,0:piston_head[Facing(East), Short(false), PistonType(Sticky)] 2,0,0:sand
+kind sand sticky: t7 0,0,0:moving_piston[Facing(East), PistonType(Sticky)]<East ext=false src=true 0.00/0.50 sticky_piston> 1,0,0:moving_piston[Facing(East), PistonType(Normal)]<East ext=false src=false 0.00/0.50 sand> -1,0,0:- 2,0,0:-
+kind sand sticky: t8 0,0,0:moving_piston[Facing(East), PistonType(Sticky)]<East ext=false src=true 0.50/1.00 sticky_piston> 1,0,0:moving_piston[Facing(East), PistonType(Normal)]<East ext=false src=false 0.50/1.00 sand>
+kind sand sticky: t9 0,0,0:sticky_piston[Extended(false), Facing(East)] 1,0,0:sand
+kind enchanting_table normal: start 0,-1,-1:grass_block 0,-1,0:grass_block 0,-1,1:grass_block 0,0,0:piston[Extended(false), Facing(East)] 1,-1,-1:grass_block 1,-1,0:grass_block 1,-1,1:grass_block 1,0,0:enchanting_table 2,-1,-1:grass_block 2,-1,0:grass_block 2,-1,1:grass_block 3,-1,-1:grass_block 3,-1,0:grass_block 3,-1,1:grass_block 4,-1,-1:grass_block 4,-1,0:grass_block 4,-1,1:grass_block
+kind enchanting_table normal: t0 -1,0,0:redstone_block
+kind enchanting_table normal: t7 -1,0,0:-
+kind enchanting_table sticky: start 0,-1,-1:grass_block 0,-1,0:grass_block 0,-1,1:grass_block 0,0,0:sticky_piston[Extended(false), Facing(East)] 1,-1,-1:grass_block 1,-1,0:grass_block 1,-1,1:grass_block 1,0,0:enchanting_table 2,-1,-1:grass_block 2,-1,0:grass_block 2,-1,1:grass_block 3,-1,-1:grass_block 3,-1,0:grass_block 3,-1,1:grass_block 4,-1,-1:grass_block 4,-1,0:grass_block 4,-1,1:grass_block
+kind enchanting_table sticky: t0 -1,0,0:redstone_block
+kind enchanting_table sticky: t7 -1,0,0:-
+kind jukebox normal: start 0,-1,-1:grass_block 0,-1,0:grass_block 0,-1,1:grass_block 0,0,0:piston[Extended(false), Facing(East)] 1,-1,-1:grass_block 1,-1,0:grass_block 1,-1,1:grass_block 1,0,0:jukebox 2,-1,-1:grass_block 2,-1,0:grass_block 2,-1,1:grass_block 3,-1,-1:grass_block 3,-1,0:grass_block 3,-1,1:grass_block 4,-1,-1:grass_block 4,-1,0:grass_block 4,-1,1:grass_block
+kind jukebox normal: t0 -1,0,0:redstone_block
+kind jukebox normal: t7 -1,0,0:-
+kind jukebox sticky: start 0,-1,-1:grass_block 0,-1,0:grass_block 0,-1,1:grass_block 0,0,0:sticky_piston[Extended(false), Facing(East)] 1,-1,-1:grass_block 1,-1,0:grass_block 1,-1,1:grass_block 1,0,0:jukebox 2,-1,-1:grass_block 2,-1,0:grass_block 2,-1,1:grass_block 3,-1,-1:grass_block 3,-1,0:grass_block 3,-1,1:grass_block 4,-1,-1:grass_block 4,-1,0:grass_block 4,-1,1:grass_block
+kind jukebox sticky: t0 -1,0,0:redstone_block
+kind jukebox sticky: t7 -1,0,0:-
+kind ender_chest normal: start 0,-1,-1:grass_block 0,-1,0:grass_block 0,-1,1:grass_block 0,0,0:piston[Extended(false), Facing(East)] 1,-1,-1:grass_block 1,-1,0:grass_block 1,-1,1:grass_block 1,0,0:ender_chest 2,-1,-1:grass_block 2,-1,0:grass_block 2,-1,1:grass_block 3,-1,-1:grass_block 3,-1,0:grass_block 3,-1,1:grass_block 4,-1,-1:grass_block 4,-1,0:grass_block 4,-1,1:grass_block
+kind ender_chest normal: t0 -1,0,0:redstone_block
+kind ender_chest normal: t7 -1,0,0:-
+kind ender_chest sticky: start 0,-1,-1:grass_block 0,-1,0:grass_block 0,-1,1:grass_block 0,0,0:sticky_piston[Extended(false), Facing(East)] 1,-1,-1:grass_block 1,-1,0:grass_block 1,-1,1:grass_block 1,0,0:ender_chest 2,-1,-1:grass_block 2,-1,0:grass_block 2,-1,1:grass_block 3,-1,-1:grass_block 3,-1,0:grass_block 3,-1,1:grass_block 4,-1,-1:grass_block 4,-1,0:grass_block 4,-1,1:grass_block
+kind ender_chest sticky: t0 -1,0,0:redstone_block
+kind ender_chest sticky: t7 -1,0,0:-
+kind glass normal: start 0,-1,-1:grass_block 0,-1,0:grass_block 0,-1,1:grass_block 0,0,0:piston[Extended(false), Facing(East)] 1,-1,-1:grass_block 1,-1,0:grass_block 1,-1,1:grass_block 1,0,0:glass 2,-1,-1:grass_block 2,-1,0:grass_block 2,-1,1:grass_block 3,-1,-1:grass_block 3,-1,0:grass_block 3,-1,1:grass_block 4,-1,-1:grass_block 4,-1,0:grass_block 4,-1,1:grass_block
+kind glass normal: t0 -1,0,0:redstone_block
+kind glass normal: t1 0,0,0:piston[Extended(true), Facing(East)] 1,0,0:moving_piston[Facing(East), PistonType(Normal)]<East ext=true src=true 0.00/0.50 piston_head> 2,0,0:moving_piston[Facing(East), PistonType(Normal)]<East ext=true src=false 0.00/0.50 glass>
+kind glass normal: t2 1,0,0:moving_piston[Facing(East), PistonType(Normal)]<East ext=true src=true 0.50/1.00 piston_head> 2,0,0:moving_piston[Facing(East), PistonType(Normal)]<East ext=true src=false 0.50/1.00 glass>
+kind glass normal: t3 1,0,0:piston_head[Facing(East), Short(false), PistonType(Normal)] 2,0,0:glass
+kind glass normal: t7 0,0,0:moving_piston[Facing(East), PistonType(Normal)]<East ext=false src=true 0.00/0.50 piston> -1,0,0:- 1,0,0:-
+kind glass normal: t8 0,0,0:moving_piston[Facing(East), PistonType(Normal)]<East ext=false src=true 0.50/1.00 piston>
+kind glass normal: t9 0,0,0:piston[Extended(false), Facing(East)]
+kind glass sticky: start 0,-1,-1:grass_block 0,-1,0:grass_block 0,-1,1:grass_block 0,0,0:sticky_piston[Extended(false), Facing(East)] 1,-1,-1:grass_block 1,-1,0:grass_block 1,-1,1:grass_block 1,0,0:glass 2,-1,-1:grass_block 2,-1,0:grass_block 2,-1,1:grass_block 3,-1,-1:grass_block 3,-1,0:grass_block 3,-1,1:grass_block 4,-1,-1:grass_block 4,-1,0:grass_block 4,-1,1:grass_block
+kind glass sticky: t0 -1,0,0:redstone_block
+kind glass sticky: t1 0,0,0:sticky_piston[Extended(true), Facing(East)] 1,0,0:moving_piston[Facing(East), PistonType(Sticky)]<East ext=true src=true 0.00/0.50 piston_head> 2,0,0:moving_piston[Facing(East), PistonType(Normal)]<East ext=true src=false 0.00/0.50 glass>
+kind glass sticky: t2 1,0,0:moving_piston[Facing(East), PistonType(Sticky)]<East ext=true src=true 0.50/1.00 piston_head> 2,0,0:moving_piston[Facing(East), PistonType(Normal)]<East ext=true src=false 0.50/1.00 glass>
+kind glass sticky: t3 1,0,0:piston_head[Facing(East), Short(false), PistonType(Sticky)] 2,0,0:glass
+kind glass sticky: t7 0,0,0:moving_piston[Facing(East), PistonType(Sticky)]<East ext=false src=true 0.00/0.50 sticky_piston> 1,0,0:moving_piston[Facing(East), PistonType(Normal)]<East ext=false src=false 0.00/0.50 glass> -1,0,0:- 2,0,0:-
+kind glass sticky: t8 0,0,0:moving_piston[Facing(East), PistonType(Sticky)]<East ext=false src=true 0.50/1.00 sticky_piston> 1,0,0:moving_piston[Facing(East), PistonType(Normal)]<East ext=false src=false 0.50/1.00 glass>
+kind glass sticky: t9 0,0,0:sticky_piston[Extended(false), Facing(East)] 1,0,0:glass
+kind crying_obsidian normal: start 0,-1,-1:grass_block 0,-1,0:grass_block 0,-1,1:grass_block 0,0,0:piston[Extended(false), Facing(East)] 1,-1,-1:grass_block 1,-1,0:grass_block 1,-1,1:grass_block 1,0,0:crying_obsidian 2,-1,-1:grass_block 2,-1,0:grass_block 2,-1,1:grass_block 3,-1,-1:grass_block 3,-1,0:grass_block 3,-1,1:grass_block 4,-1,-1:grass_block 4,-1,0:grass_block 4,-1,1:grass_block
+kind crying_obsidian normal: t0 -1,0,0:redstone_block
+kind crying_obsidian normal: t7 -1,0,0:-
+kind crying_obsidian sticky: start 0,-1,-1:grass_block 0,-1,0:grass_block 0,-1,1:grass_block 0,0,0:sticky_piston[Extended(false), Facing(East)] 1,-1,-1:grass_block 1,-1,0:grass_block 1,-1,1:grass_block 1,0,0:crying_obsidian 2,-1,-1:grass_block 2,-1,0:grass_block 2,-1,1:grass_block 3,-1,-1:grass_block 3,-1,0:grass_block 3,-1,1:grass_block 4,-1,-1:grass_block 4,-1,0:grass_block 4,-1,1:grass_block
+kind crying_obsidian sticky: t0 -1,0,0:redstone_block
+kind crying_obsidian sticky: t7 -1,0,0:-
+kind cobweb normal: start 0,-1,-1:grass_block 0,-1,0:grass_block 0,-1,1:grass_block 0,0,0:piston[Extended(false), Facing(East)] 1,-1,-1:grass_block 1,-1,0:grass_block 1,-1,1:grass_block 1,0,0:cobweb 2,-1,-1:grass_block 2,-1,0:grass_block 2,-1,1:grass_block 3,-1,-1:grass_block 3,-1,0:grass_block 3,-1,1:grass_block 4,-1,-1:grass_block 4,-1,0:grass_block 4,-1,1:grass_block
+kind cobweb normal: t0 -1,0,0:redstone_block
+kind cobweb normal: t1 0,0,0:piston[Extended(true), Facing(East)] 1,0,0:moving_piston[Facing(East), PistonType(Normal)]<East ext=true src=true 0.00/0.50 piston_head>
+kind cobweb normal: t2 1,0,0:moving_piston[Facing(East), PistonType(Normal)]<East ext=true src=true 0.50/1.00 piston_head>
+kind cobweb normal: t3 1,0,0:piston_head[Facing(East), Short(false), PistonType(Normal)]
+kind cobweb normal: t7 0,0,0:moving_piston[Facing(East), PistonType(Normal)]<East ext=false src=true 0.00/0.50 piston> -1,0,0:- 1,0,0:-
+kind cobweb normal: t8 0,0,0:moving_piston[Facing(East), PistonType(Normal)]<East ext=false src=true 0.50/1.00 piston>
+kind cobweb normal: t9 0,0,0:piston[Extended(false), Facing(East)]
+kind cobweb sticky: start 0,-1,-1:grass_block 0,-1,0:grass_block 0,-1,1:grass_block 0,0,0:sticky_piston[Extended(false), Facing(East)] 1,-1,-1:grass_block 1,-1,0:grass_block 1,-1,1:grass_block 1,0,0:cobweb 2,-1,-1:grass_block 2,-1,0:grass_block 2,-1,1:grass_block 3,-1,-1:grass_block 3,-1,0:grass_block 3,-1,1:grass_block 4,-1,-1:grass_block 4,-1,0:grass_block 4,-1,1:grass_block
+kind cobweb sticky: t0 -1,0,0:redstone_block
+kind cobweb sticky: t1 0,0,0:sticky_piston[Extended(true), Facing(East)] 1,0,0:moving_piston[Facing(East), PistonType(Sticky)]<East ext=true src=true 0.00/0.50 piston_head>
+kind cobweb sticky: t2 1,0,0:moving_piston[Facing(East), PistonType(Sticky)]<East ext=true src=true 0.50/1.00 piston_head>
+kind cobweb sticky: t3 1,0,0:piston_head[Facing(East), Short(false), PistonType(Sticky)]
+kind cobweb sticky: t7 0,0,0:moving_piston[Facing(East), PistonType(Sticky)]<East ext=false src=true 0.00/0.50 sticky_piston> -1,0,0:- 1,0,0:-
+kind cobweb sticky: t8 0,0,0:moving_piston[Facing(East), PistonType(Sticky)]<East ext=false src=true 0.50/1.00 sticky_piston>
+kind cobweb sticky: t9 0,0,0:sticky_piston[Extended(false), Facing(East)]
+kind glazed_terracotta normal: start 0,-1,-1:grass_block 0,-1,0:grass_block 0,-1,1:grass_block 0,0,0:piston[Extended(false), Facing(East)] 1,-1,-1:grass_block 1,-1,0:grass_block 1,-1,1:grass_block 1,0,0:white_glazed_terracotta 2,-1,-1:grass_block 2,-1,0:grass_block 2,-1,1:grass_block 3,-1,-1:grass_block 3,-1,0:grass_block 3,-1,1:grass_block 4,-1,-1:grass_block 4,-1,0:grass_block 4,-1,1:grass_block
+kind glazed_terracotta normal: t0 -1,0,0:redstone_block
+kind glazed_terracotta normal: t1 0,0,0:piston[Extended(true), Facing(East)] 1,0,0:moving_piston[Facing(East), PistonType(Normal)]<East ext=true src=true 0.00/0.50 piston_head> 2,0,0:moving_piston[Facing(East), PistonType(Normal)]<East ext=true src=false 0.00/0.50 white_glazed_terracotta>
+kind glazed_terracotta normal: t2 1,0,0:moving_piston[Facing(East), PistonType(Normal)]<East ext=true src=true 0.50/1.00 piston_head> 2,0,0:moving_piston[Facing(East), PistonType(Normal)]<East ext=true src=false 0.50/1.00 white_glazed_terracotta>
+kind glazed_terracotta normal: t3 1,0,0:piston_head[Facing(East), Short(false), PistonType(Normal)] 2,0,0:white_glazed_terracotta
+kind glazed_terracotta normal: t7 0,0,0:moving_piston[Facing(East), PistonType(Normal)]<East ext=false src=true 0.00/0.50 piston> -1,0,0:- 1,0,0:-
+kind glazed_terracotta normal: t8 0,0,0:moving_piston[Facing(East), PistonType(Normal)]<East ext=false src=true 0.50/1.00 piston>
+kind glazed_terracotta normal: t9 0,0,0:piston[Extended(false), Facing(East)]
+kind glazed_terracotta sticky: start 0,-1,-1:grass_block 0,-1,0:grass_block 0,-1,1:grass_block 0,0,0:sticky_piston[Extended(false), Facing(East)] 1,-1,-1:grass_block 1,-1,0:grass_block 1,-1,1:grass_block 1,0,0:white_glazed_terracotta 2,-1,-1:grass_block 2,-1,0:grass_block 2,-1,1:grass_block 3,-1,-1:grass_block 3,-1,0:grass_block 3,-1,1:grass_block 4,-1,-1:grass_block 4,-1,0:grass_block 4,-1,1:grass_block
+kind glazed_terracotta sticky: t0 -1,0,0:redstone_block
+kind glazed_terracotta sticky: t1 0,0,0:sticky_piston[Extended(true), Facing(East)] 1,0,0:moving_piston[Facing(East), PistonType(Sticky)]<East ext=true src=true 0.00/0.50 piston_head> 2,0,0:moving_piston[Facing(East), PistonType(Normal)]<East ext=true src=false 0.00/0.50 white_glazed_terracotta>
+kind glazed_terracotta sticky: t2 1,0,0:moving_piston[Facing(East), PistonType(Sticky)]<East ext=true src=true 0.50/1.00 piston_head> 2,0,0:moving_piston[Facing(East), PistonType(Normal)]<East ext=true src=false 0.50/1.00 white_glazed_terracotta>
+kind glazed_terracotta sticky: t3 1,0,0:piston_head[Facing(East), Short(false), PistonType(Sticky)] 2,0,0:white_glazed_terracotta
+kind glazed_terracotta sticky: t7 0,0,0:moving_piston[Facing(East), PistonType(Sticky)]<East ext=false src=true 0.00/0.50 sticky_piston> -1,0,0:- 1,0,0:-
+kind glazed_terracotta sticky: t8 0,0,0:moving_piston[Facing(East), PistonType(Sticky)]<East ext=false src=true 0.50/1.00 sticky_piston>
+kind glazed_terracotta sticky: t9 0,0,0:sticky_piston[Extended(false), Facing(East)]
+kind barrier normal: start 0,-1,-1:grass_block 0,-1,0:grass_block 0,-1,1:grass_block 0,0,0:piston[Extended(false), Facing(East)] 1,-1,-1:grass_block 1,-1,0:grass_block 1,-1,1:grass_block 1,0,0:barrier 2,-1,-1:grass_block 2,-1,0:grass_block 2,-1,1:grass_block 3,-1,-1:grass_block 3,-1,0:grass_block 3,-1,1:grass_block 4,-1,-1:grass_block 4,-1,0:grass_block 4,-1,1:grass_block
+kind barrier normal: t0 -1,0,0:redstone_block
+kind barrier normal: t7 -1,0,0:-
+kind barrier sticky: start 0,-1,-1:grass_block 0,-1,0:grass_block 0,-1,1:grass_block 0,0,0:sticky_piston[Extended(false), Facing(East)] 1,-1,-1:grass_block 1,-1,0:grass_block 1,-1,1:grass_block 1,0,0:barrier 2,-1,-1:grass_block 2,-1,0:grass_block 2,-1,1:grass_block 3,-1,-1:grass_block 3,-1,0:grass_block 3,-1,1:grass_block 4,-1,-1:grass_block 4,-1,0:grass_block 4,-1,1:grass_block
+kind barrier sticky: t0 -1,0,0:redstone_block
+kind barrier sticky: t7 -1,0,0:-
+kind end_portal_frame normal: start 0,-1,-1:grass_block 0,-1,0:grass_block 0,-1,1:grass_block 0,0,0:piston[Extended(false), Facing(East)] 1,-1,-1:grass_block 1,-1,0:grass_block 1,-1,1:grass_block 1,0,0:end_portal_frame 2,-1,-1:grass_block 2,-1,0:grass_block 2,-1,1:grass_block 3,-1,-1:grass_block 3,-1,0:grass_block 3,-1,1:grass_block 4,-1,-1:grass_block 4,-1,0:grass_block 4,-1,1:grass_block
+kind end_portal_frame normal: t0 -1,0,0:redstone_block
+kind end_portal_frame normal: t7 -1,0,0:-
+kind end_portal_frame sticky: start 0,-1,-1:grass_block 0,-1,0:grass_block 0,-1,1:grass_block 0,0,0:sticky_piston[Extended(false), Facing(East)] 1,-1,-1:grass_block 1,-1,0:grass_block 1,-1,1:grass_block 1,0,0:end_portal_frame 2,-1,-1:grass_block 2,-1,0:grass_block 2,-1,1:grass_block 3,-1,-1:grass_block 3,-1,0:grass_block 3,-1,1:grass_block 4,-1,-1:grass_block 4,-1,0:grass_block 4,-1,1:grass_block
+kind end_portal_frame sticky: t0 -1,0,0:redstone_block
+kind end_portal_frame sticky: t7 -1,0,0:-
+kind redstone_wire normal: start 0,-1,-1:grass_block 0,-1,0:grass_block 0,-1,1:grass_block 0,0,0:piston[Extended(false), Facing(East)] 1,-1,-1:grass_block 1,-1,0:grass_block 1,-1,1:grass_block 1,0,0:redstone_wire 2,-1,-1:grass_block 2,-1,0:grass_block 2,-1,1:grass_block 3,-1,-1:grass_block 3,-1,0:grass_block 3,-1,1:grass_block 4,-1,-1:grass_block 4,-1,0:grass_block 4,-1,1:grass_block
+kind redstone_wire normal: t0 -1,0,0:redstone_block
+kind redstone_wire normal: t1 0,0,0:piston[Extended(true), Facing(East)] 1,0,0:moving_piston[Facing(East), PistonType(Normal)]<East ext=true src=true 0.00/0.50 piston_head>
+kind redstone_wire normal: t2 1,0,0:moving_piston[Facing(East), PistonType(Normal)]<East ext=true src=true 0.50/1.00 piston_head>
+kind redstone_wire normal: t3 1,0,0:piston_head[Facing(East), Short(false), PistonType(Normal)]
+kind redstone_wire normal: t7 0,0,0:moving_piston[Facing(East), PistonType(Normal)]<East ext=false src=true 0.00/0.50 piston> -1,0,0:- 1,0,0:-
+kind redstone_wire normal: t8 0,0,0:moving_piston[Facing(East), PistonType(Normal)]<East ext=false src=true 0.50/1.00 piston>
+kind redstone_wire normal: t9 0,0,0:piston[Extended(false), Facing(East)]
+kind redstone_wire sticky: start 0,-1,-1:grass_block 0,-1,0:grass_block 0,-1,1:grass_block 0,0,0:sticky_piston[Extended(false), Facing(East)] 1,-1,-1:grass_block 1,-1,0:grass_block 1,-1,1:grass_block 1,0,0:redstone_wire 2,-1,-1:grass_block 2,-1,0:grass_block 2,-1,1:grass_block 3,-1,-1:grass_block 3,-1,0:grass_block 3,-1,1:grass_block 4,-1,-1:grass_block 4,-1,0:grass_block 4,-1,1:grass_block
+kind redstone_wire sticky: t0 -1,0,0:redstone_block
+kind redstone_wire sticky: t1 0,0,0:sticky_piston[Extended(true), Facing(East)] 1,0,0:moving_piston[Facing(East), PistonType(Sticky)]<East ext=true src=true 0.00/0.50 piston_head>
+kind redstone_wire sticky: t2 1,0,0:moving_piston[Facing(East), PistonType(Sticky)]<East ext=true src=true 0.50/1.00 piston_head>
+kind redstone_wire sticky: t3 1,0,0:piston_head[Facing(East), Short(false), PistonType(Sticky)]
+kind redstone_wire sticky: t7 0,0,0:moving_piston[Facing(East), PistonType(Sticky)]<East ext=false src=true 0.00/0.50 sticky_piston> -1,0,0:- 1,0,0:-
+kind redstone_wire sticky: t8 0,0,0:moving_piston[Facing(East), PistonType(Sticky)]<East ext=false src=true 0.50/1.00 sticky_piston>
+kind redstone_wire sticky: t9 0,0,0:sticky_piston[Extended(false), Facing(East)]
+group slime_row normal: start 0,0,0:piston[Extended(false), Facing(East)] 1,0,0:slime_block 2,0,0:slime_block 3,0,0:slime_block
+group slime_row normal: t0 -1,0,0:redstone_block
+group slime_row normal: t1 0,0,0:piston[Extended(true), Facing(East)] 1,0,0:moving_piston[Facing(East), PistonType(Normal)]<East ext=true src=true 0.00/0.50 piston_head> 2,0,0:moving_piston[Facing(East), PistonType(Normal)]<East ext=true src=false 0.00/0.50 slime_block> 3,0,0:moving_piston[Facing(East), PistonType(Normal)]<East ext=true src=false 0.00/0.50 slime_block> 4,0,0:moving_piston[Facing(East), PistonType(Normal)]<East ext=true src=false 0.00/0.50 slime_block>
+group slime_row normal: t2 1,0,0:moving_piston[Facing(East), PistonType(Normal)]<East ext=true src=true 0.50/1.00 piston_head> 2,0,0:moving_piston[Facing(East), PistonType(Normal)]<East ext=true src=false 0.50/1.00 slime_block> 3,0,0:moving_piston[Facing(East), PistonType(Normal)]<East ext=true src=false 0.50/1.00 slime_block> 4,0,0:moving_piston[Facing(East), PistonType(Normal)]<East ext=true src=false 0.50/1.00 slime_block>
+group slime_row normal: t3 1,0,0:piston_head[Facing(East), Short(false), PistonType(Normal)] 2,0,0:slime_block 3,0,0:slime_block 4,0,0:slime_block
+group slime_row normal: t7 0,0,0:moving_piston[Facing(East), PistonType(Normal)]<East ext=false src=true 0.00/0.50 piston> -1,0,0:- 1,0,0:-
+group slime_row normal: t8 0,0,0:moving_piston[Facing(East), PistonType(Normal)]<East ext=false src=true 0.50/1.00 piston>
+group slime_row normal: t9 0,0,0:piston[Extended(false), Facing(East)]
+group slime_row sticky: start 0,0,0:sticky_piston[Extended(false), Facing(East)] 1,0,0:slime_block 2,0,0:slime_block 3,0,0:slime_block
+group slime_row sticky: t0 -1,0,0:redstone_block
+group slime_row sticky: t1 0,0,0:sticky_piston[Extended(true), Facing(East)] 1,0,0:moving_piston[Facing(East), PistonType(Sticky)]<East ext=true src=true 0.00/0.50 piston_head> 2,0,0:moving_piston[Facing(East), PistonType(Normal)]<East ext=true src=false 0.00/0.50 slime_block> 3,0,0:moving_piston[Facing(East), PistonType(Normal)]<East ext=true src=false 0.00/0.50 slime_block> 4,0,0:moving_piston[Facing(East), PistonType(Normal)]<East ext=true src=false 0.00/0.50 slime_block>
+group slime_row sticky: t2 1,0,0:moving_piston[Facing(East), PistonType(Sticky)]<East ext=true src=true 0.50/1.00 piston_head> 2,0,0:moving_piston[Facing(East), PistonType(Normal)]<East ext=true src=false 0.50/1.00 slime_block> 3,0,0:moving_piston[Facing(East), PistonType(Normal)]<East ext=true src=false 0.50/1.00 slime_block> 4,0,0:moving_piston[Facing(East), PistonType(Normal)]<East ext=true src=false 0.50/1.00 slime_block>
+group slime_row sticky: t3 1,0,0:piston_head[Facing(East), Short(false), PistonType(Sticky)] 2,0,0:slime_block 3,0,0:slime_block 4,0,0:slime_block
+group slime_row sticky: t7 0,0,0:moving_piston[Facing(East), PistonType(Sticky)]<East ext=false src=true 0.00/0.50 sticky_piston> 1,0,0:moving_piston[Facing(East), PistonType(Normal)]<East ext=false src=false 0.00/0.50 slime_block> 2,0,0:moving_piston[Facing(East), PistonType(Normal)]<East ext=false src=false 0.00/0.50 slime_block> 3,0,0:moving_piston[Facing(East), PistonType(Normal)]<East ext=false src=false 0.00/0.50 slime_block> -1,0,0:- 4,0,0:-
+group slime_row sticky: t8 0,0,0:moving_piston[Facing(East), PistonType(Sticky)]<East ext=false src=true 0.50/1.00 sticky_piston> 1,0,0:moving_piston[Facing(East), PistonType(Normal)]<East ext=false src=false 0.50/1.00 slime_block> 2,0,0:moving_piston[Facing(East), PistonType(Normal)]<East ext=false src=false 0.50/1.00 slime_block> 3,0,0:moving_piston[Facing(East), PistonType(Normal)]<East ext=false src=false 0.50/1.00 slime_block>
+group slime_row sticky: t9 0,0,0:sticky_piston[Extended(false), Facing(East)] 1,0,0:slime_block 2,0,0:slime_block 3,0,0:slime_block
+group slime_stone_top normal: start 0,0,0:piston[Extended(false), Facing(East)] 1,0,0:slime_block 1,1,0:stone
+group slime_stone_top normal: t0 -1,0,0:redstone_block
+group slime_stone_top normal: t1 0,0,0:piston[Extended(true), Facing(East)] 1,0,0:moving_piston[Facing(East), PistonType(Normal)]<East ext=true src=true 0.00/0.50 piston_head> 2,0,0:moving_piston[Facing(East), PistonType(Normal)]<East ext=true src=false 0.00/0.50 slime_block> 2,1,0:moving_piston[Facing(East), PistonType(Normal)]<East ext=true src=false 0.00/0.50 stone> 1,1,0:-
+group slime_stone_top normal: t2 1,0,0:moving_piston[Facing(East), PistonType(Normal)]<East ext=true src=true 0.50/1.00 piston_head> 2,0,0:moving_piston[Facing(East), PistonType(Normal)]<East ext=true src=false 0.50/1.00 slime_block> 2,1,0:moving_piston[Facing(East), PistonType(Normal)]<East ext=true src=false 0.50/1.00 stone>
+group slime_stone_top normal: t3 1,0,0:piston_head[Facing(East), Short(false), PistonType(Normal)] 2,0,0:slime_block 2,1,0:stone
+group slime_stone_top normal: t7 0,0,0:moving_piston[Facing(East), PistonType(Normal)]<East ext=false src=true 0.00/0.50 piston> -1,0,0:- 1,0,0:-
+group slime_stone_top normal: t8 0,0,0:moving_piston[Facing(East), PistonType(Normal)]<East ext=false src=true 0.50/1.00 piston>
+group slime_stone_top normal: t9 0,0,0:piston[Extended(false), Facing(East)]
+group slime_stone_top sticky: start 0,0,0:sticky_piston[Extended(false), Facing(East)] 1,0,0:slime_block 1,1,0:stone
+group slime_stone_top sticky: t0 -1,0,0:redstone_block
+group slime_stone_top sticky: t1 0,0,0:sticky_piston[Extended(true), Facing(East)] 1,0,0:moving_piston[Facing(East), PistonType(Sticky)]<East ext=true src=true 0.00/0.50 piston_head> 2,0,0:moving_piston[Facing(East), PistonType(Normal)]<East ext=true src=false 0.00/0.50 slime_block> 2,1,0:moving_piston[Facing(East), PistonType(Normal)]<East ext=true src=false 0.00/0.50 stone> 1,1,0:-
+group slime_stone_top sticky: t2 1,0,0:moving_piston[Facing(East), PistonType(Sticky)]<East ext=true src=true 0.50/1.00 piston_head> 2,0,0:moving_piston[Facing(East), PistonType(Normal)]<East ext=true src=false 0.50/1.00 slime_block> 2,1,0:moving_piston[Facing(East), PistonType(Normal)]<East ext=true src=false 0.50/1.00 stone>
+group slime_stone_top sticky: t3 1,0,0:piston_head[Facing(East), Short(false), PistonType(Sticky)] 2,0,0:slime_block 2,1,0:stone
+group slime_stone_top sticky: t7 0,0,0:moving_piston[Facing(East), PistonType(Sticky)]<East ext=false src=true 0.00/0.50 sticky_piston> 1,0,0:moving_piston[Facing(East), PistonType(Normal)]<East ext=false src=false 0.00/0.50 slime_block> 1,1,0:moving_piston[Facing(East), PistonType(Normal)]<East ext=false src=false 0.00/0.50 stone> -1,0,0:- 2,0,0:- 2,1,0:-
+group slime_stone_top sticky: t8 0,0,0:moving_piston[Facing(East), PistonType(Sticky)]<East ext=false src=true 0.50/1.00 sticky_piston> 1,0,0:moving_piston[Facing(East), PistonType(Normal)]<East ext=false src=false 0.50/1.00 slime_block> 1,1,0:moving_piston[Facing(East), PistonType(Normal)]<East ext=false src=false 0.50/1.00 stone>
+group slime_stone_top sticky: t9 0,0,0:sticky_piston[Extended(false), Facing(East)] 1,0,0:slime_block 1,1,0:stone
+group slime_l normal: start 0,0,0:piston[Extended(false), Facing(East)] 1,0,0:slime_block 2,0,0:slime_block 3,0,0:slime_block 3,1,0:slime_block 3,2,0:slime_block
+group slime_l normal: t0 -1,0,0:redstone_block
+group slime_l normal: t1 0,0,0:piston[Extended(true), Facing(East)] 1,0,0:moving_piston[Facing(East), PistonType(Normal)]<East ext=true src=true 0.00/0.50 piston_head> 2,0,0:moving_piston[Facing(East), PistonType(Normal)]<East ext=true src=false 0.00/0.50 slime_block> 3,0,0:moving_piston[Facing(East), PistonType(Normal)]<East ext=true src=false 0.00/0.50 slime_block> 4,0,0:moving_piston[Facing(East), PistonType(Normal)]<East ext=true src=false 0.00/0.50 slime_block> 4,1,0:moving_piston[Facing(East), PistonType(Normal)]<East ext=true src=false 0.00/0.50 slime_block> 4,2,0:moving_piston[Facing(East), PistonType(Normal)]<East ext=true src=false 0.00/0.50 slime_block> 3,1,0:- 3,2,0:-
+group slime_l normal: t2 1,0,0:moving_piston[Facing(East), PistonType(Normal)]<East ext=true src=true 0.50/1.00 piston_head> 2,0,0:moving_piston[Facing(East), PistonType(Normal)]<East ext=true src=false 0.50/1.00 slime_block> 3,0,0:moving_piston[Facing(East), PistonType(Normal)]<East ext=true src=false 0.50/1.00 slime_block> 4,0,0:moving_piston[Facing(East), PistonType(Normal)]<East ext=true src=false 0.50/1.00 slime_block> 4,1,0:moving_piston[Facing(East), PistonType(Normal)]<East ext=true src=false 0.50/1.00 slime_block> 4,2,0:moving_piston[Facing(East), PistonType(Normal)]<East ext=true src=false 0.50/1.00 slime_block>
+group slime_l normal: t3 1,0,0:piston_head[Facing(East), Short(false), PistonType(Normal)] 2,0,0:slime_block 3,0,0:slime_block 4,0,0:slime_block 4,1,0:slime_block 4,2,0:slime_block
+group slime_l normal: t7 0,0,0:moving_piston[Facing(East), PistonType(Normal)]<East ext=false src=true 0.00/0.50 piston> -1,0,0:- 1,0,0:-
+group slime_l normal: t8 0,0,0:moving_piston[Facing(East), PistonType(Normal)]<East ext=false src=true 0.50/1.00 piston>
+group slime_l normal: t9 0,0,0:piston[Extended(false), Facing(East)]
+group slime_l sticky: start 0,0,0:sticky_piston[Extended(false), Facing(East)] 1,0,0:slime_block 2,0,0:slime_block 3,0,0:slime_block 3,1,0:slime_block 3,2,0:slime_block
+group slime_l sticky: t0 -1,0,0:redstone_block
+group slime_l sticky: t1 0,0,0:sticky_piston[Extended(true), Facing(East)] 1,0,0:moving_piston[Facing(East), PistonType(Sticky)]<East ext=true src=true 0.00/0.50 piston_head> 2,0,0:moving_piston[Facing(East), PistonType(Normal)]<East ext=true src=false 0.00/0.50 slime_block> 3,0,0:moving_piston[Facing(East), PistonType(Normal)]<East ext=true src=false 0.00/0.50 slime_block> 4,0,0:moving_piston[Facing(East), PistonType(Normal)]<East ext=true src=false 0.00/0.50 slime_block> 4,1,0:moving_piston[Facing(East), PistonType(Normal)]<East ext=true src=false 0.00/0.50 slime_block> 4,2,0:moving_piston[Facing(East), PistonType(Normal)]<East ext=true src=false 0.00/0.50 slime_block> 3,1,0:- 3,2,0:-
+group slime_l sticky: t2 1,0,0:moving_piston[Facing(East), PistonType(Sticky)]<East ext=true src=true 0.50/1.00 piston_head> 2,0,0:moving_piston[Facing(East), PistonType(Normal)]<East ext=true src=false 0.50/1.00 slime_block> 3,0,0:moving_piston[Facing(East), PistonType(Normal)]<East ext=true src=false 0.50/1.00 slime_block> 4,0,0:moving_piston[Facing(East), PistonType(Normal)]<East ext=true src=false 0.50/1.00 slime_block> 4,1,0:moving_piston[Facing(East), PistonType(Normal)]<East ext=true src=false 0.50/1.00 slime_block> 4,2,0:moving_piston[Facing(East), PistonType(Normal)]<East ext=true src=false 0.50/1.00 slime_block>
+group slime_l sticky: t3 1,0,0:piston_head[Facing(East), Short(false), PistonType(Sticky)] 2,0,0:slime_block 3,0,0:slime_block 4,0,0:slime_block 4,1,0:slime_block 4,2,0:slime_block
+group slime_l sticky: t7 0,0,0:moving_piston[Facing(East), PistonType(Sticky)]<East ext=false src=true 0.00/0.50 sticky_piston> 1,0,0:moving_piston[Facing(East), PistonType(Normal)]<East ext=false src=false 0.00/0.50 slime_block> 2,0,0:moving_piston[Facing(East), PistonType(Normal)]<East ext=false src=false 0.00/0.50 slime_block> 3,0,0:moving_piston[Facing(East), PistonType(Normal)]<East ext=false src=false 0.00/0.50 slime_block> 3,1,0:moving_piston[Facing(East), PistonType(Normal)]<East ext=false src=false 0.00/0.50 slime_block> 3,2,0:moving_piston[Facing(East), PistonType(Normal)]<East ext=false src=false 0.00/0.50 slime_block> -1,0,0:- 4,0,0:- 4,1,0:- 4,2,0:-
+group slime_l sticky: t8 0,0,0:moving_piston[Facing(East), PistonType(Sticky)]<East ext=false src=true 0.50/1.00 sticky_piston> 1,0,0:moving_piston[Facing(East), PistonType(Normal)]<East ext=false src=false 0.50/1.00 slime_block> 2,0,0:moving_piston[Facing(East), PistonType(Normal)]<East ext=false src=false 0.50/1.00 slime_block> 3,0,0:moving_piston[Facing(East), PistonType(Normal)]<East ext=false src=false 0.50/1.00 slime_block> 3,1,0:moving_piston[Facing(East), PistonType(Normal)]<East ext=false src=false 0.50/1.00 slime_block> 3,2,0:moving_piston[Facing(East), PistonType(Normal)]<East ext=false src=false 0.50/1.00 slime_block>
+group slime_l sticky: t9 0,0,0:sticky_piston[Extended(false), Facing(East)] 1,0,0:slime_block 2,0,0:slime_block 3,0,0:slime_block 3,1,0:slime_block 3,2,0:slime_block
+group slime_plate_one normal: start 0,0,0:piston[Extended(false), Facing(East)] 1,-1,-1:slime_block 1,-1,0:slime_block 1,-1,1:slime_block 1,0,-1:slime_block 1,0,0:slime_block 1,0,1:slime_block 1,1,-1:slime_block 1,1,0:slime_block 1,1,1:slime_block
+group slime_plate_one normal: t0 -1,0,0:redstone_block
+group slime_plate_one normal: t1 0,0,0:piston[Extended(true), Facing(East)] 1,0,0:moving_piston[Facing(East), PistonType(Normal)]<East ext=true src=true 0.00/0.50 piston_head> 2,-1,-1:moving_piston[Facing(East), PistonType(Normal)]<East ext=true src=false 0.00/0.50 slime_block> 2,-1,0:moving_piston[Facing(East), PistonType(Normal)]<East ext=true src=false 0.00/0.50 slime_block> 2,-1,1:moving_piston[Facing(East), PistonType(Normal)]<East ext=true src=false 0.00/0.50 slime_block> 2,0,-1:moving_piston[Facing(East), PistonType(Normal)]<East ext=true src=false 0.00/0.50 slime_block> 2,0,0:moving_piston[Facing(East), PistonType(Normal)]<East ext=true src=false 0.00/0.50 slime_block> 2,0,1:moving_piston[Facing(East), PistonType(Normal)]<East ext=true src=false 0.00/0.50 slime_block> 2,1,-1:moving_piston[Facing(East), PistonType(Normal)]<East ext=true src=false 0.00/0.50 slime_block> 2,1,0:moving_piston[Facing(East), PistonType(Normal)]<East ext=true src=false 0.00/0.50 slime_block> 2,1,1:moving_piston[Facing(East), PistonType(Normal)]<East ext=true src=false 0.00/0.50 slime_block> 1,-1,-1:- 1,-1,0:- 1,-1,1:- 1,0,-1:- 1,0,1:- 1,1,-1:- 1,1,0:- 1,1,1:-
+group slime_plate_one normal: t2 1,0,0:moving_piston[Facing(East), PistonType(Normal)]<East ext=true src=true 0.50/1.00 piston_head> 2,-1,-1:moving_piston[Facing(East), PistonType(Normal)]<East ext=true src=false 0.50/1.00 slime_block> 2,-1,0:moving_piston[Facing(East), PistonType(Normal)]<East ext=true src=false 0.50/1.00 slime_block> 2,-1,1:moving_piston[Facing(East), PistonType(Normal)]<East ext=true src=false 0.50/1.00 slime_block> 2,0,-1:moving_piston[Facing(East), PistonType(Normal)]<East ext=true src=false 0.50/1.00 slime_block> 2,0,0:moving_piston[Facing(East), PistonType(Normal)]<East ext=true src=false 0.50/1.00 slime_block> 2,0,1:moving_piston[Facing(East), PistonType(Normal)]<East ext=true src=false 0.50/1.00 slime_block> 2,1,-1:moving_piston[Facing(East), PistonType(Normal)]<East ext=true src=false 0.50/1.00 slime_block> 2,1,0:moving_piston[Facing(East), PistonType(Normal)]<East ext=true src=false 0.50/1.00 slime_block> 2,1,1:moving_piston[Facing(East), PistonType(Normal)]<East ext=true src=false 0.50/1.00 slime_block>
+group slime_plate_one normal: t3 1,0,0:piston_head[Facing(East), Short(false), PistonType(Normal)] 2,-1,-1:slime_block 2,-1,0:slime_block 2,-1,1:slime_block 2,0,-1:slime_block 2,0,0:slime_block 2,0,1:slime_block 2,1,-1:slime_block 2,1,0:slime_block 2,1,1:slime_block
+group slime_plate_one normal: t7 0,0,0:moving_piston[Facing(East), PistonType(Normal)]<East ext=false src=true 0.00/0.50 piston> -1,0,0:- 1,0,0:-
+group slime_plate_one normal: t8 0,0,0:moving_piston[Facing(East), PistonType(Normal)]<East ext=false src=true 0.50/1.00 piston>
+group slime_plate_one normal: t9 0,0,0:piston[Extended(false), Facing(East)]
+group slime_plate_one sticky: start 0,0,0:sticky_piston[Extended(false), Facing(East)] 1,-1,-1:slime_block 1,-1,0:slime_block 1,-1,1:slime_block 1,0,-1:slime_block 1,0,0:slime_block 1,0,1:slime_block 1,1,-1:slime_block 1,1,0:slime_block 1,1,1:slime_block
+group slime_plate_one sticky: t0 -1,0,0:redstone_block
+group slime_plate_one sticky: t1 0,0,0:sticky_piston[Extended(true), Facing(East)] 1,0,0:moving_piston[Facing(East), PistonType(Sticky)]<East ext=true src=true 0.00/0.50 piston_head> 2,-1,-1:moving_piston[Facing(East), PistonType(Normal)]<East ext=true src=false 0.00/0.50 slime_block> 2,-1,0:moving_piston[Facing(East), PistonType(Normal)]<East ext=true src=false 0.00/0.50 slime_block> 2,-1,1:moving_piston[Facing(East), PistonType(Normal)]<East ext=true src=false 0.00/0.50 slime_block> 2,0,-1:moving_piston[Facing(East), PistonType(Normal)]<East ext=true src=false 0.00/0.50 slime_block> 2,0,0:moving_piston[Facing(East), PistonType(Normal)]<East ext=true src=false 0.00/0.50 slime_block> 2,0,1:moving_piston[Facing(East), PistonType(Normal)]<East ext=true src=false 0.00/0.50 slime_block> 2,1,-1:moving_piston[Facing(East), PistonType(Normal)]<East ext=true src=false 0.00/0.50 slime_block> 2,1,0:moving_piston[Facing(East), PistonType(Normal)]<East ext=true src=false 0.00/0.50 slime_block> 2,1,1:moving_piston[Facing(East), PistonType(Normal)]<East ext=true src=false 0.00/0.50 slime_block> 1,-1,-1:- 1,-1,0:- 1,-1,1:- 1,0,-1:- 1,0,1:- 1,1,-1:- 1,1,0:- 1,1,1:-
+group slime_plate_one sticky: t2 1,0,0:moving_piston[Facing(East), PistonType(Sticky)]<East ext=true src=true 0.50/1.00 piston_head> 2,-1,-1:moving_piston[Facing(East), PistonType(Normal)]<East ext=true src=false 0.50/1.00 slime_block> 2,-1,0:moving_piston[Facing(East), PistonType(Normal)]<East ext=true src=false 0.50/1.00 slime_block> 2,-1,1:moving_piston[Facing(East), PistonType(Normal)]<East ext=true src=false 0.50/1.00 slime_block> 2,0,-1:moving_piston[Facing(East), PistonType(Normal)]<East ext=true src=false 0.50/1.00 slime_block> 2,0,0:moving_piston[Facing(East), PistonType(Normal)]<East ext=true src=false 0.50/1.00 slime_block> 2,0,1:moving_piston[Facing(East), PistonType(Normal)]<East ext=true src=false 0.50/1.00 slime_block> 2,1,-1:moving_piston[Facing(East), PistonType(Normal)]<East ext=true src=false 0.50/1.00 slime_block> 2,1,0:moving_piston[Facing(East), PistonType(Normal)]<East ext=true src=false 0.50/1.00 slime_block> 2,1,1:moving_piston[Facing(East), PistonType(Normal)]<East ext=true src=false 0.50/1.00 slime_block>
+group slime_plate_one sticky: t3 1,0,0:piston_head[Facing(East), Short(false), PistonType(Sticky)] 2,-1,-1:slime_block 2,-1,0:slime_block 2,-1,1:slime_block 2,0,-1:slime_block 2,0,0:slime_block 2,0,1:slime_block 2,1,-1:slime_block 2,1,0:slime_block 2,1,1:slime_block
+group slime_plate_one sticky: t7 0,0,0:moving_piston[Facing(East), PistonType(Sticky)]<East ext=false src=true 0.00/0.50 sticky_piston> 1,-1,-1:moving_piston[Facing(East), PistonType(Normal)]<East ext=false src=false 0.00/0.50 slime_block> 1,-1,0:moving_piston[Facing(East), PistonType(Normal)]<East ext=false src=false 0.00/0.50 slime_block> 1,-1,1:moving_piston[Facing(East), PistonType(Normal)]<East ext=false src=false 0.00/0.50 slime_block> 1,0,-1:moving_piston[Facing(East), PistonType(Normal)]<East ext=false src=false 0.00/0.50 slime_block> 1,0,0:moving_piston[Facing(East), PistonType(Normal)]<East ext=false src=false 0.00/0.50 slime_block> 1,0,1:moving_piston[Facing(East), PistonType(Normal)]<East ext=false src=false 0.00/0.50 slime_block> 1,1,-1:moving_piston[Facing(East), PistonType(Normal)]<East ext=false src=false 0.00/0.50 slime_block> 1,1,0:moving_piston[Facing(East), PistonType(Normal)]<East ext=false src=false 0.00/0.50 slime_block> 1,1,1:moving_piston[Facing(East), PistonType(Normal)]<East ext=false src=false 0.00/0.50 slime_block> -1,0,0:- 2,-1,-1:- 2,-1,0:- 2,-1,1:- 2,0,-1:- 2,0,0:- 2,0,1:- 2,1,-1:- 2,1,0:- 2,1,1:-
+group slime_plate_one sticky: t8 0,0,0:moving_piston[Facing(East), PistonType(Sticky)]<East ext=false src=true 0.50/1.00 sticky_piston> 1,-1,-1:moving_piston[Facing(East), PistonType(Normal)]<East ext=false src=false 0.50/1.00 slime_block> 1,-1,0:moving_piston[Facing(East), PistonType(Normal)]<East ext=false src=false 0.50/1.00 slime_block> 1,-1,1:moving_piston[Facing(East), PistonType(Normal)]<East ext=false src=false 0.50/1.00 slime_block> 1,0,-1:moving_piston[Facing(East), PistonType(Normal)]<East ext=false src=false 0.50/1.00 slime_block> 1,0,0:moving_piston[Facing(East), PistonType(Normal)]<East ext=false src=false 0.50/1.00 slime_block> 1,0,1:moving_piston[Facing(East), PistonType(Normal)]<East ext=false src=false 0.50/1.00 slime_block> 1,1,-1:moving_piston[Facing(East), PistonType(Normal)]<East ext=false src=false 0.50/1.00 slime_block> 1,1,0:moving_piston[Facing(East), PistonType(Normal)]<East ext=false src=false 0.50/1.00 slime_block> 1,1,1:moving_piston[Facing(East), PistonType(Normal)]<East ext=false src=false 0.50/1.00 slime_block>
+group slime_plate_one sticky: t9 0,0,0:sticky_piston[Extended(false), Facing(East)] 1,-1,-1:slime_block 1,-1,0:slime_block 1,-1,1:slime_block 1,0,-1:slime_block 1,0,0:slime_block 1,0,1:slime_block 1,1,-1:slime_block 1,1,0:slime_block 1,1,1:slime_block
+group slime_plate normal: start 0,0,0:piston[Extended(false), Facing(East)] 1,-1,-1:slime_block 1,-1,0:slime_block 1,-1,1:slime_block 1,0,-1:slime_block 1,0,0:slime_block 1,0,1:slime_block 1,1,-1:slime_block 1,1,0:slime_block 1,1,1:slime_block 2,-1,-1:slime_block 2,-1,0:slime_block 2,-1,1:slime_block 2,0,-1:slime_block 2,0,0:slime_block 2,0,1:slime_block 2,1,-1:slime_block 2,1,0:slime_block 2,1,1:slime_block
+group slime_plate normal: t0 -1,0,0:redstone_block
+group slime_plate normal: t7 -1,0,0:-
+group slime_plate sticky: start 0,0,0:sticky_piston[Extended(false), Facing(East)] 1,-1,-1:slime_block 1,-1,0:slime_block 1,-1,1:slime_block 1,0,-1:slime_block 1,0,0:slime_block 1,0,1:slime_block 1,1,-1:slime_block 1,1,0:slime_block 1,1,1:slime_block 2,-1,-1:slime_block 2,-1,0:slime_block 2,-1,1:slime_block 2,0,-1:slime_block 2,0,0:slime_block 2,0,1:slime_block 2,1,-1:slime_block 2,1,0:slime_block 2,1,1:slime_block
+group slime_plate sticky: t0 -1,0,0:redstone_block
+group slime_plate sticky: t7 -1,0,0:-
+group slime_obsidian_side normal: start 0,0,0:piston[Extended(false), Facing(East)] 1,0,0:slime_block 1,1,0:obsidian
+group slime_obsidian_side normal: t0 -1,0,0:redstone_block
+group slime_obsidian_side normal: t1 0,0,0:piston[Extended(true), Facing(East)] 1,0,0:moving_piston[Facing(East), PistonType(Normal)]<East ext=true src=true 0.00/0.50 piston_head> 2,0,0:moving_piston[Facing(East), PistonType(Normal)]<East ext=true src=false 0.00/0.50 slime_block>
+group slime_obsidian_side normal: t2 1,0,0:moving_piston[Facing(East), PistonType(Normal)]<East ext=true src=true 0.50/1.00 piston_head> 2,0,0:moving_piston[Facing(East), PistonType(Normal)]<East ext=true src=false 0.50/1.00 slime_block>
+group slime_obsidian_side normal: t3 1,0,0:piston_head[Facing(East), Short(false), PistonType(Normal)] 2,0,0:slime_block
+group slime_obsidian_side normal: t7 0,0,0:moving_piston[Facing(East), PistonType(Normal)]<East ext=false src=true 0.00/0.50 piston> -1,0,0:- 1,0,0:-
+group slime_obsidian_side normal: t8 0,0,0:moving_piston[Facing(East), PistonType(Normal)]<East ext=false src=true 0.50/1.00 piston>
+group slime_obsidian_side normal: t9 0,0,0:piston[Extended(false), Facing(East)]
+group slime_obsidian_side sticky: start 0,0,0:sticky_piston[Extended(false), Facing(East)] 1,0,0:slime_block 1,1,0:obsidian
+group slime_obsidian_side sticky: t0 -1,0,0:redstone_block
+group slime_obsidian_side sticky: t1 0,0,0:sticky_piston[Extended(true), Facing(East)] 1,0,0:moving_piston[Facing(East), PistonType(Sticky)]<East ext=true src=true 0.00/0.50 piston_head> 2,0,0:moving_piston[Facing(East), PistonType(Normal)]<East ext=true src=false 0.00/0.50 slime_block>
+group slime_obsidian_side sticky: t2 1,0,0:moving_piston[Facing(East), PistonType(Sticky)]<East ext=true src=true 0.50/1.00 piston_head> 2,0,0:moving_piston[Facing(East), PistonType(Normal)]<East ext=true src=false 0.50/1.00 slime_block>
+group slime_obsidian_side sticky: t3 1,0,0:piston_head[Facing(East), Short(false), PistonType(Sticky)] 2,0,0:slime_block
+group slime_obsidian_side sticky: t7 0,0,0:moving_piston[Facing(East), PistonType(Sticky)]<East ext=false src=true 0.00/0.50 sticky_piston> 1,0,0:moving_piston[Facing(East), PistonType(Normal)]<East ext=false src=false 0.00/0.50 slime_block> -1,0,0:- 2,0,0:-
+group slime_obsidian_side sticky: t8 0,0,0:moving_piston[Facing(East), PistonType(Sticky)]<East ext=false src=true 0.50/1.00 sticky_piston> 1,0,0:moving_piston[Facing(East), PistonType(Normal)]<East ext=false src=false 0.50/1.00 slime_block>
+group slime_obsidian_side sticky: t9 0,0,0:sticky_piston[Extended(false), Facing(East)] 1,0,0:slime_block
+group slime_obsidian_far normal: start 0,0,0:piston[Extended(false), Facing(East)] 1,0,0:slime_block 2,0,0:slime_block 2,1,0:obsidian
+group slime_obsidian_far normal: t0 -1,0,0:redstone_block
+group slime_obsidian_far normal: t1 0,0,0:piston[Extended(true), Facing(East)] 1,0,0:moving_piston[Facing(East), PistonType(Normal)]<East ext=true src=true 0.00/0.50 piston_head> 2,0,0:moving_piston[Facing(East), PistonType(Normal)]<East ext=true src=false 0.00/0.50 slime_block> 3,0,0:moving_piston[Facing(East), PistonType(Normal)]<East ext=true src=false 0.00/0.50 slime_block>
+group slime_obsidian_far normal: t2 1,0,0:moving_piston[Facing(East), PistonType(Normal)]<East ext=true src=true 0.50/1.00 piston_head> 2,0,0:moving_piston[Facing(East), PistonType(Normal)]<East ext=true src=false 0.50/1.00 slime_block> 3,0,0:moving_piston[Facing(East), PistonType(Normal)]<East ext=true src=false 0.50/1.00 slime_block>
+group slime_obsidian_far normal: t3 1,0,0:piston_head[Facing(East), Short(false), PistonType(Normal)] 2,0,0:slime_block 3,0,0:slime_block
+group slime_obsidian_far normal: t7 0,0,0:moving_piston[Facing(East), PistonType(Normal)]<East ext=false src=true 0.00/0.50 piston> -1,0,0:- 1,0,0:-
+group slime_obsidian_far normal: t8 0,0,0:moving_piston[Facing(East), PistonType(Normal)]<East ext=false src=true 0.50/1.00 piston>
+group slime_obsidian_far normal: t9 0,0,0:piston[Extended(false), Facing(East)]
+group slime_obsidian_far sticky: start 0,0,0:sticky_piston[Extended(false), Facing(East)] 1,0,0:slime_block 2,0,0:slime_block 2,1,0:obsidian
+group slime_obsidian_far sticky: t0 -1,0,0:redstone_block
+group slime_obsidian_far sticky: t1 0,0,0:sticky_piston[Extended(true), Facing(East)] 1,0,0:moving_piston[Facing(East), PistonType(Sticky)]<East ext=true src=true 0.00/0.50 piston_head> 2,0,0:moving_piston[Facing(East), PistonType(Normal)]<East ext=true src=false 0.00/0.50 slime_block> 3,0,0:moving_piston[Facing(East), PistonType(Normal)]<East ext=true src=false 0.00/0.50 slime_block>
+group slime_obsidian_far sticky: t2 1,0,0:moving_piston[Facing(East), PistonType(Sticky)]<East ext=true src=true 0.50/1.00 piston_head> 2,0,0:moving_piston[Facing(East), PistonType(Normal)]<East ext=true src=false 0.50/1.00 slime_block> 3,0,0:moving_piston[Facing(East), PistonType(Normal)]<East ext=true src=false 0.50/1.00 slime_block>
+group slime_obsidian_far sticky: t3 1,0,0:piston_head[Facing(East), Short(false), PistonType(Sticky)] 2,0,0:slime_block 3,0,0:slime_block
+group slime_obsidian_far sticky: t7 0,0,0:moving_piston[Facing(East), PistonType(Sticky)]<East ext=false src=true 0.00/0.50 sticky_piston> 1,0,0:moving_piston[Facing(East), PistonType(Normal)]<East ext=false src=false 0.00/0.50 slime_block> 2,0,0:moving_piston[Facing(East), PistonType(Normal)]<East ext=false src=false 0.00/0.50 slime_block> -1,0,0:- 3,0,0:-
+group slime_obsidian_far sticky: t8 0,0,0:moving_piston[Facing(East), PistonType(Sticky)]<East ext=false src=true 0.50/1.00 sticky_piston> 1,0,0:moving_piston[Facing(East), PistonType(Normal)]<East ext=false src=false 0.50/1.00 slime_block> 2,0,0:moving_piston[Facing(East), PistonType(Normal)]<East ext=false src=false 0.50/1.00 slime_block>
+group slime_obsidian_far sticky: t9 0,0,0:sticky_piston[Extended(false), Facing(East)] 1,0,0:slime_block 2,0,0:slime_block
+group honey_stone_side normal: start 0,0,0:piston[Extended(false), Facing(East)] 1,0,0:honey_block 1,1,0:stone
+group honey_stone_side normal: t0 -1,0,0:redstone_block
+group honey_stone_side normal: t1 0,0,0:piston[Extended(true), Facing(East)] 1,0,0:moving_piston[Facing(East), PistonType(Normal)]<East ext=true src=true 0.00/0.50 piston_head> 2,0,0:moving_piston[Facing(East), PistonType(Normal)]<East ext=true src=false 0.00/0.50 honey_block> 2,1,0:moving_piston[Facing(East), PistonType(Normal)]<East ext=true src=false 0.00/0.50 stone> 1,1,0:-
+group honey_stone_side normal: t2 1,0,0:moving_piston[Facing(East), PistonType(Normal)]<East ext=true src=true 0.50/1.00 piston_head> 2,0,0:moving_piston[Facing(East), PistonType(Normal)]<East ext=true src=false 0.50/1.00 honey_block> 2,1,0:moving_piston[Facing(East), PistonType(Normal)]<East ext=true src=false 0.50/1.00 stone>
+group honey_stone_side normal: t3 1,0,0:piston_head[Facing(East), Short(false), PistonType(Normal)] 2,0,0:honey_block 2,1,0:stone
+group honey_stone_side normal: t7 0,0,0:moving_piston[Facing(East), PistonType(Normal)]<East ext=false src=true 0.00/0.50 piston> -1,0,0:- 1,0,0:-
+group honey_stone_side normal: t8 0,0,0:moving_piston[Facing(East), PistonType(Normal)]<East ext=false src=true 0.50/1.00 piston>
+group honey_stone_side normal: t9 0,0,0:piston[Extended(false), Facing(East)]
+group honey_stone_side sticky: start 0,0,0:sticky_piston[Extended(false), Facing(East)] 1,0,0:honey_block 1,1,0:stone
+group honey_stone_side sticky: t0 -1,0,0:redstone_block
+group honey_stone_side sticky: t1 0,0,0:sticky_piston[Extended(true), Facing(East)] 1,0,0:moving_piston[Facing(East), PistonType(Sticky)]<East ext=true src=true 0.00/0.50 piston_head> 2,0,0:moving_piston[Facing(East), PistonType(Normal)]<East ext=true src=false 0.00/0.50 honey_block> 2,1,0:moving_piston[Facing(East), PistonType(Normal)]<East ext=true src=false 0.00/0.50 stone> 1,1,0:-
+group honey_stone_side sticky: t2 1,0,0:moving_piston[Facing(East), PistonType(Sticky)]<East ext=true src=true 0.50/1.00 piston_head> 2,0,0:moving_piston[Facing(East), PistonType(Normal)]<East ext=true src=false 0.50/1.00 honey_block> 2,1,0:moving_piston[Facing(East), PistonType(Normal)]<East ext=true src=false 0.50/1.00 stone>
+group honey_stone_side sticky: t3 1,0,0:piston_head[Facing(East), Short(false), PistonType(Sticky)] 2,0,0:honey_block 2,1,0:stone
+group honey_stone_side sticky: t7 0,0,0:moving_piston[Facing(East), PistonType(Sticky)]<East ext=false src=true 0.00/0.50 sticky_piston> 1,0,0:moving_piston[Facing(East), PistonType(Normal)]<East ext=false src=false 0.00/0.50 honey_block> 1,1,0:moving_piston[Facing(East), PistonType(Normal)]<East ext=false src=false 0.00/0.50 stone> -1,0,0:- 2,0,0:- 2,1,0:-
+group honey_stone_side sticky: t8 0,0,0:moving_piston[Facing(East), PistonType(Sticky)]<East ext=false src=true 0.50/1.00 sticky_piston> 1,0,0:moving_piston[Facing(East), PistonType(Normal)]<East ext=false src=false 0.50/1.00 honey_block> 1,1,0:moving_piston[Facing(East), PistonType(Normal)]<East ext=false src=false 0.50/1.00 stone>
+group honey_stone_side sticky: t9 0,0,0:sticky_piston[Extended(false), Facing(East)] 1,0,0:honey_block 1,1,0:stone
+group honey_slime_side normal: start 0,0,0:piston[Extended(false), Facing(East)] 1,0,0:honey_block 1,1,0:slime_block
+group honey_slime_side normal: t0 -1,0,0:redstone_block
+group honey_slime_side normal: t1 0,0,0:piston[Extended(true), Facing(East)] 1,0,0:moving_piston[Facing(East), PistonType(Normal)]<East ext=true src=true 0.00/0.50 piston_head> 2,0,0:moving_piston[Facing(East), PistonType(Normal)]<East ext=true src=false 0.00/0.50 honey_block>
+group honey_slime_side normal: t2 1,0,0:moving_piston[Facing(East), PistonType(Normal)]<East ext=true src=true 0.50/1.00 piston_head> 2,0,0:moving_piston[Facing(East), PistonType(Normal)]<East ext=true src=false 0.50/1.00 honey_block>
+group honey_slime_side normal: t3 1,0,0:piston_head[Facing(East), Short(false), PistonType(Normal)] 2,0,0:honey_block
+group honey_slime_side normal: t7 0,0,0:moving_piston[Facing(East), PistonType(Normal)]<East ext=false src=true 0.00/0.50 piston> -1,0,0:- 1,0,0:-
+group honey_slime_side normal: t8 0,0,0:moving_piston[Facing(East), PistonType(Normal)]<East ext=false src=true 0.50/1.00 piston>
+group honey_slime_side normal: t9 0,0,0:piston[Extended(false), Facing(East)]
+group honey_slime_side sticky: start 0,0,0:sticky_piston[Extended(false), Facing(East)] 1,0,0:honey_block 1,1,0:slime_block
+group honey_slime_side sticky: t0 -1,0,0:redstone_block
+group honey_slime_side sticky: t1 0,0,0:sticky_piston[Extended(true), Facing(East)] 1,0,0:moving_piston[Facing(East), PistonType(Sticky)]<East ext=true src=true 0.00/0.50 piston_head> 2,0,0:moving_piston[Facing(East), PistonType(Normal)]<East ext=true src=false 0.00/0.50 honey_block>
+group honey_slime_side sticky: t2 1,0,0:moving_piston[Facing(East), PistonType(Sticky)]<East ext=true src=true 0.50/1.00 piston_head> 2,0,0:moving_piston[Facing(East), PistonType(Normal)]<East ext=true src=false 0.50/1.00 honey_block>
+group honey_slime_side sticky: t3 1,0,0:piston_head[Facing(East), Short(false), PistonType(Sticky)] 2,0,0:honey_block
+group honey_slime_side sticky: t7 0,0,0:moving_piston[Facing(East), PistonType(Sticky)]<East ext=false src=true 0.00/0.50 sticky_piston> 1,0,0:moving_piston[Facing(East), PistonType(Normal)]<East ext=false src=false 0.00/0.50 honey_block> -1,0,0:- 2,0,0:-
+group honey_slime_side sticky: t8 0,0,0:moving_piston[Facing(East), PistonType(Sticky)]<East ext=false src=true 0.50/1.00 sticky_piston> 1,0,0:moving_piston[Facing(East), PistonType(Normal)]<East ext=false src=false 0.50/1.00 honey_block>
+group honey_slime_side sticky: t9 0,0,0:sticky_piston[Extended(false), Facing(East)] 1,0,0:honey_block
+group slime_honey_line normal: start 0,0,0:piston[Extended(false), Facing(East)] 1,0,0:slime_block 2,0,0:honey_block
+group slime_honey_line normal: t0 -1,0,0:redstone_block
+group slime_honey_line normal: t1 0,0,0:piston[Extended(true), Facing(East)] 1,0,0:moving_piston[Facing(East), PistonType(Normal)]<East ext=true src=true 0.00/0.50 piston_head> 2,0,0:moving_piston[Facing(East), PistonType(Normal)]<East ext=true src=false 0.00/0.50 slime_block> 3,0,0:moving_piston[Facing(East), PistonType(Normal)]<East ext=true src=false 0.00/0.50 honey_block>
+group slime_honey_line normal: t2 1,0,0:moving_piston[Facing(East), PistonType(Normal)]<East ext=true src=true 0.50/1.00 piston_head> 2,0,0:moving_piston[Facing(East), PistonType(Normal)]<East ext=true src=false 0.50/1.00 slime_block> 3,0,0:moving_piston[Facing(East), PistonType(Normal)]<East ext=true src=false 0.50/1.00 honey_block>
+group slime_honey_line normal: t3 1,0,0:piston_head[Facing(East), Short(false), PistonType(Normal)] 2,0,0:slime_block 3,0,0:honey_block
+group slime_honey_line normal: t7 0,0,0:moving_piston[Facing(East), PistonType(Normal)]<East ext=false src=true 0.00/0.50 piston> -1,0,0:- 1,0,0:-
+group slime_honey_line normal: t8 0,0,0:moving_piston[Facing(East), PistonType(Normal)]<East ext=false src=true 0.50/1.00 piston>
+group slime_honey_line normal: t9 0,0,0:piston[Extended(false), Facing(East)]
+group slime_honey_line sticky: start 0,0,0:sticky_piston[Extended(false), Facing(East)] 1,0,0:slime_block 2,0,0:honey_block
+group slime_honey_line sticky: t0 -1,0,0:redstone_block
+group slime_honey_line sticky: t1 0,0,0:sticky_piston[Extended(true), Facing(East)] 1,0,0:moving_piston[Facing(East), PistonType(Sticky)]<East ext=true src=true 0.00/0.50 piston_head> 2,0,0:moving_piston[Facing(East), PistonType(Normal)]<East ext=true src=false 0.00/0.50 slime_block> 3,0,0:moving_piston[Facing(East), PistonType(Normal)]<East ext=true src=false 0.00/0.50 honey_block>
+group slime_honey_line sticky: t2 1,0,0:moving_piston[Facing(East), PistonType(Sticky)]<East ext=true src=true 0.50/1.00 piston_head> 2,0,0:moving_piston[Facing(East), PistonType(Normal)]<East ext=true src=false 0.50/1.00 slime_block> 3,0,0:moving_piston[Facing(East), PistonType(Normal)]<East ext=true src=false 0.50/1.00 honey_block>
+group slime_honey_line sticky: t3 1,0,0:piston_head[Facing(East), Short(false), PistonType(Sticky)] 2,0,0:slime_block 3,0,0:honey_block
+group slime_honey_line sticky: t7 0,0,0:moving_piston[Facing(East), PistonType(Sticky)]<East ext=false src=true 0.00/0.50 sticky_piston> 1,0,0:moving_piston[Facing(East), PistonType(Normal)]<East ext=false src=false 0.00/0.50 slime_block> -1,0,0:- 2,0,0:-
+group slime_honey_line sticky: t8 0,0,0:moving_piston[Facing(East), PistonType(Sticky)]<East ext=false src=true 0.50/1.00 sticky_piston> 1,0,0:moving_piston[Facing(East), PistonType(Normal)]<East ext=false src=false 0.50/1.00 slime_block>
+group slime_honey_line sticky: t9 0,0,0:sticky_piston[Extended(false), Facing(East)] 1,0,0:slime_block
+group slime_over_limit normal: start 0,0,0:piston[Extended(false), Facing(East)] 1,0,0:stone 2,0,0:stone 3,0,0:stone 4,0,0:stone 5,0,0:stone 6,0,0:stone 7,0,0:stone 8,0,0:stone 9,0,0:stone 10,0,0:stone 11,0,0:stone 12,0,0:slime_block 12,1,0:stone 12,2,0:stone
+group slime_over_limit normal: t0 -1,0,0:redstone_block
+group slime_over_limit normal: t7 -1,0,0:-
+group slime_over_limit sticky: start 0,0,0:sticky_piston[Extended(false), Facing(East)] 1,0,0:stone 2,0,0:stone 3,0,0:stone 4,0,0:stone 5,0,0:stone 6,0,0:stone 7,0,0:stone 8,0,0:stone 9,0,0:stone 10,0,0:stone 11,0,0:stone 12,0,0:slime_block 12,1,0:stone 12,2,0:stone
+group slime_over_limit sticky: t0 -1,0,0:redstone_block
+group slime_over_limit sticky: t7 -1,0,0:-
+group slime_at_limit normal: start 0,0,0:piston[Extended(false), Facing(East)] 1,0,0:stone 2,0,0:stone 3,0,0:stone 4,0,0:stone 5,0,0:stone 6,0,0:stone 7,0,0:stone 8,0,0:stone 9,0,0:stone 10,0,0:stone 11,0,0:slime_block 11,1,0:stone
+group slime_at_limit normal: t0 -1,0,0:redstone_block
+group slime_at_limit normal: t1 0,0,0:piston[Extended(true), Facing(East)] 1,0,0:moving_piston[Facing(East), PistonType(Normal)]<East ext=true src=true 0.00/0.50 piston_head> 2,0,0:moving_piston[Facing(East), PistonType(Normal)]<East ext=true src=false 0.00/0.50 stone> 3,0,0:moving_piston[Facing(East), PistonType(Normal)]<East ext=true src=false 0.00/0.50 stone> 4,0,0:moving_piston[Facing(East), PistonType(Normal)]<East ext=true src=false 0.00/0.50 stone> 5,0,0:moving_piston[Facing(East), PistonType(Normal)]<East ext=true src=false 0.00/0.50 stone> 6,0,0:moving_piston[Facing(East), PistonType(Normal)]<East ext=true src=false 0.00/0.50 stone> 7,0,0:moving_piston[Facing(East), PistonType(Normal)]<East ext=true src=false 0.00/0.50 stone> 8,0,0:moving_piston[Facing(East), PistonType(Normal)]<East ext=true src=false 0.00/0.50 stone> 9,0,0:moving_piston[Facing(East), PistonType(Normal)]<East ext=true src=false 0.00/0.50 stone> 10,0,0:moving_piston[Facing(East), PistonType(Normal)]<East ext=true src=false 0.00/0.50 stone> 11,0,0:moving_piston[Facing(East), PistonType(Normal)]<East ext=true src=false 0.00/0.50 stone> 12,0,0:moving_piston[Facing(East), PistonType(Normal)]<East ext=true src=false 0.00/0.50 slime_block> 12,1,0:moving_piston[Facing(East), PistonType(Normal)]<East ext=true src=false 0.00/0.50 stone> 11,1,0:-
+group slime_at_limit normal: t2 1,0,0:moving_piston[Facing(East), PistonType(Normal)]<East ext=true src=true 0.50/1.00 piston_head> 2,0,0:moving_piston[Facing(East), PistonType(Normal)]<East ext=true src=false 0.50/1.00 stone> 3,0,0:moving_piston[Facing(East), PistonType(Normal)]<East ext=true src=false 0.50/1.00 stone> 4,0,0:moving_piston[Facing(East), PistonType(Normal)]<East ext=true src=false 0.50/1.00 stone> 5,0,0:moving_piston[Facing(East), PistonType(Normal)]<East ext=true src=false 0.50/1.00 stone> 6,0,0:moving_piston[Facing(East), PistonType(Normal)]<East ext=true src=false 0.50/1.00 stone> 7,0,0:moving_piston[Facing(East), PistonType(Normal)]<East ext=true src=false 0.50/1.00 stone> 8,0,0:moving_piston[Facing(East), PistonType(Normal)]<East ext=true src=false 0.50/1.00 stone> 9,0,0:moving_piston[Facing(East), PistonType(Normal)]<East ext=true src=false 0.50/1.00 stone> 10,0,0:moving_piston[Facing(East), PistonType(Normal)]<East ext=true src=false 0.50/1.00 stone> 11,0,0:moving_piston[Facing(East), PistonType(Normal)]<East ext=true src=false 0.50/1.00 stone> 12,0,0:moving_piston[Facing(East), PistonType(Normal)]<East ext=true src=false 0.50/1.00 slime_block> 12,1,0:moving_piston[Facing(East), PistonType(Normal)]<East ext=true src=false 0.50/1.00 stone>
+group slime_at_limit normal: t3 1,0,0:piston_head[Facing(East), Short(false), PistonType(Normal)] 2,0,0:stone 3,0,0:stone 4,0,0:stone 5,0,0:stone 6,0,0:stone 7,0,0:stone 8,0,0:stone 9,0,0:stone 10,0,0:stone 11,0,0:stone 12,0,0:slime_block 12,1,0:stone
+group slime_at_limit normal: t7 0,0,0:moving_piston[Facing(East), PistonType(Normal)]<East ext=false src=true 0.00/0.50 piston> -1,0,0:- 1,0,0:-
+group slime_at_limit normal: t8 0,0,0:moving_piston[Facing(East), PistonType(Normal)]<East ext=false src=true 0.50/1.00 piston>
+group slime_at_limit normal: t9 0,0,0:piston[Extended(false), Facing(East)]
+group slime_at_limit sticky: start 0,0,0:sticky_piston[Extended(false), Facing(East)] 1,0,0:stone 2,0,0:stone 3,0,0:stone 4,0,0:stone 5,0,0:stone 6,0,0:stone 7,0,0:stone 8,0,0:stone 9,0,0:stone 10,0,0:stone 11,0,0:slime_block 11,1,0:stone
+group slime_at_limit sticky: t0 -1,0,0:redstone_block
+group slime_at_limit sticky: t1 0,0,0:sticky_piston[Extended(true), Facing(East)] 1,0,0:moving_piston[Facing(East), PistonType(Sticky)]<East ext=true src=true 0.00/0.50 piston_head> 2,0,0:moving_piston[Facing(East), PistonType(Normal)]<East ext=true src=false 0.00/0.50 stone> 3,0,0:moving_piston[Facing(East), PistonType(Normal)]<East ext=true src=false 0.00/0.50 stone> 4,0,0:moving_piston[Facing(East), PistonType(Normal)]<East ext=true src=false 0.00/0.50 stone> 5,0,0:moving_piston[Facing(East), PistonType(Normal)]<East ext=true src=false 0.00/0.50 stone> 6,0,0:moving_piston[Facing(East), PistonType(Normal)]<East ext=true src=false 0.00/0.50 stone> 7,0,0:moving_piston[Facing(East), PistonType(Normal)]<East ext=true src=false 0.00/0.50 stone> 8,0,0:moving_piston[Facing(East), PistonType(Normal)]<East ext=true src=false 0.00/0.50 stone> 9,0,0:moving_piston[Facing(East), PistonType(Normal)]<East ext=true src=false 0.00/0.50 stone> 10,0,0:moving_piston[Facing(East), PistonType(Normal)]<East ext=true src=false 0.00/0.50 stone> 11,0,0:moving_piston[Facing(East), PistonType(Normal)]<East ext=true src=false 0.00/0.50 stone> 12,0,0:moving_piston[Facing(East), PistonType(Normal)]<East ext=true src=false 0.00/0.50 slime_block> 12,1,0:moving_piston[Facing(East), PistonType(Normal)]<East ext=true src=false 0.00/0.50 stone> 11,1,0:-
+group slime_at_limit sticky: t2 1,0,0:moving_piston[Facing(East), PistonType(Sticky)]<East ext=true src=true 0.50/1.00 piston_head> 2,0,0:moving_piston[Facing(East), PistonType(Normal)]<East ext=true src=false 0.50/1.00 stone> 3,0,0:moving_piston[Facing(East), PistonType(Normal)]<East ext=true src=false 0.50/1.00 stone> 4,0,0:moving_piston[Facing(East), PistonType(Normal)]<East ext=true src=false 0.50/1.00 stone> 5,0,0:moving_piston[Facing(East), PistonType(Normal)]<East ext=true src=false 0.50/1.00 stone> 6,0,0:moving_piston[Facing(East), PistonType(Normal)]<East ext=true src=false 0.50/1.00 stone> 7,0,0:moving_piston[Facing(East), PistonType(Normal)]<East ext=true src=false 0.50/1.00 stone> 8,0,0:moving_piston[Facing(East), PistonType(Normal)]<East ext=true src=false 0.50/1.00 stone> 9,0,0:moving_piston[Facing(East), PistonType(Normal)]<East ext=true src=false 0.50/1.00 stone> 10,0,0:moving_piston[Facing(East), PistonType(Normal)]<East ext=true src=false 0.50/1.00 stone> 11,0,0:moving_piston[Facing(East), PistonType(Normal)]<East ext=true src=false 0.50/1.00 stone> 12,0,0:moving_piston[Facing(East), PistonType(Normal)]<East ext=true src=false 0.50/1.00 slime_block> 12,1,0:moving_piston[Facing(East), PistonType(Normal)]<East ext=true src=false 0.50/1.00 stone>
+group slime_at_limit sticky: t3 1,0,0:piston_head[Facing(East), Short(false), PistonType(Sticky)] 2,0,0:stone 3,0,0:stone 4,0,0:stone 5,0,0:stone 6,0,0:stone 7,0,0:stone 8,0,0:stone 9,0,0:stone 10,0,0:stone 11,0,0:stone 12,0,0:slime_block 12,1,0:stone
+group slime_at_limit sticky: t7 0,0,0:moving_piston[Facing(East), PistonType(Sticky)]<East ext=false src=true 0.00/0.50 sticky_piston> 1,0,0:moving_piston[Facing(East), PistonType(Normal)]<East ext=false src=false 0.00/0.50 stone> -1,0,0:- 2,0,0:-
+group slime_at_limit sticky: t8 0,0,0:moving_piston[Facing(East), PistonType(Sticky)]<East ext=false src=true 0.50/1.00 sticky_piston> 1,0,0:moving_piston[Facing(East), PistonType(Normal)]<East ext=false src=false 0.50/1.00 stone>
+group slime_at_limit sticky: t9 0,0,0:sticky_piston[Extended(false), Facing(East)] 1,0,0:stone
+group slime_poppy_side normal: start 0,0,0:piston[Extended(false), Facing(East)] 1,0,0:slime_block 1,1,0:poppy
+group slime_poppy_side normal: t0 -1,0,0:redstone_block
+group slime_poppy_side normal: t1 0,0,0:piston[Extended(true), Facing(East)] 1,0,0:moving_piston[Facing(East), PistonType(Normal)]<East ext=true src=true 0.00/0.50 piston_head> 2,0,0:moving_piston[Facing(East), PistonType(Normal)]<East ext=true src=false 0.00/0.50 slime_block>
+group slime_poppy_side normal: t2 1,0,0:moving_piston[Facing(East), PistonType(Normal)]<East ext=true src=true 0.50/1.00 piston_head> 2,0,0:moving_piston[Facing(East), PistonType(Normal)]<East ext=true src=false 0.50/1.00 slime_block>
+group slime_poppy_side normal: t3 1,0,0:piston_head[Facing(East), Short(false), PistonType(Normal)] 2,0,0:slime_block
+group slime_poppy_side normal: t7 0,0,0:moving_piston[Facing(East), PistonType(Normal)]<East ext=false src=true 0.00/0.50 piston> -1,0,0:- 1,0,0:- 1,1,0:-
+group slime_poppy_side normal: t8 0,0,0:moving_piston[Facing(East), PistonType(Normal)]<East ext=false src=true 0.50/1.00 piston>
+group slime_poppy_side normal: t9 0,0,0:piston[Extended(false), Facing(East)]
+group slime_poppy_side sticky: start 0,0,0:sticky_piston[Extended(false), Facing(East)] 1,0,0:slime_block 1,1,0:poppy
+group slime_poppy_side sticky: t0 -1,0,0:redstone_block
+group slime_poppy_side sticky: t1 0,0,0:sticky_piston[Extended(true), Facing(East)] 1,0,0:moving_piston[Facing(East), PistonType(Sticky)]<East ext=true src=true 0.00/0.50 piston_head> 2,0,0:moving_piston[Facing(East), PistonType(Normal)]<East ext=true src=false 0.00/0.50 slime_block>
+group slime_poppy_side sticky: t2 1,0,0:moving_piston[Facing(East), PistonType(Sticky)]<East ext=true src=true 0.50/1.00 piston_head> 2,0,0:moving_piston[Facing(East), PistonType(Normal)]<East ext=true src=false 0.50/1.00 slime_block>
+group slime_poppy_side sticky: t3 1,0,0:piston_head[Facing(East), Short(false), PistonType(Sticky)] 2,0,0:slime_block
+group slime_poppy_side sticky: t7 0,0,0:moving_piston[Facing(East), PistonType(Sticky)]<East ext=false src=true 0.00/0.50 sticky_piston> 1,0,0:moving_piston[Facing(East), PistonType(Normal)]<East ext=false src=false 0.00/0.50 slime_block> -1,0,0:- 1,1,0:- 2,0,0:-
+group slime_poppy_side sticky: t8 0,0,0:moving_piston[Facing(East), PistonType(Sticky)]<East ext=false src=true 0.50/1.00 sticky_piston> 1,0,0:moving_piston[Facing(East), PistonType(Normal)]<East ext=false src=false 0.50/1.00 slime_block>
+group slime_poppy_side sticky: t9 0,0,0:sticky_piston[Extended(false), Facing(East)] 1,0,0:slime_block
+group slime_above_piston normal: start 0,0,0:piston[Extended(false), Facing(East)] 0,1,0:slime_block 1,0,0:stone 1,1,0:slime_block
+group slime_above_piston normal: t0 -1,0,0:redstone_block
+group slime_above_piston normal: t1 0,0,0:piston[Extended(true), Facing(East)] 1,0,0:moving_piston[Facing(East), PistonType(Normal)]<East ext=true src=true 0.00/0.50 piston_head> 2,0,0:moving_piston[Facing(East), PistonType(Normal)]<East ext=true src=false 0.00/0.50 stone>
+group slime_above_piston normal: t2 1,0,0:moving_piston[Facing(East), PistonType(Normal)]<East ext=true src=true 0.50/1.00 piston_head> 2,0,0:moving_piston[Facing(East), PistonType(Normal)]<East ext=true src=false 0.50/1.00 stone>
+group slime_above_piston normal: t3 1,0,0:piston_head[Facing(East), Short(false), PistonType(Normal)] 2,0,0:stone
+group slime_above_piston normal: t7 0,0,0:moving_piston[Facing(East), PistonType(Normal)]<East ext=false src=true 0.00/0.50 piston> -1,0,0:- 1,0,0:-
+group slime_above_piston normal: t8 0,0,0:moving_piston[Facing(East), PistonType(Normal)]<East ext=false src=true 0.50/1.00 piston>
+group slime_above_piston normal: t9 0,0,0:piston[Extended(false), Facing(East)]
+group slime_above_piston sticky: start 0,0,0:sticky_piston[Extended(false), Facing(East)] 0,1,0:slime_block 1,0,0:stone 1,1,0:slime_block
+group slime_above_piston sticky: t0 -1,0,0:redstone_block
+group slime_above_piston sticky: t1 0,0,0:sticky_piston[Extended(true), Facing(East)] 1,0,0:moving_piston[Facing(East), PistonType(Sticky)]<East ext=true src=true 0.00/0.50 piston_head> 2,0,0:moving_piston[Facing(East), PistonType(Normal)]<East ext=true src=false 0.00/0.50 stone>
+group slime_above_piston sticky: t2 1,0,0:moving_piston[Facing(East), PistonType(Sticky)]<East ext=true src=true 0.50/1.00 piston_head> 2,0,0:moving_piston[Facing(East), PistonType(Normal)]<East ext=true src=false 0.50/1.00 stone>
+group slime_above_piston sticky: t3 1,0,0:piston_head[Facing(East), Short(false), PistonType(Sticky)] 2,0,0:stone
+group slime_above_piston sticky: t7 0,0,0:moving_piston[Facing(East), PistonType(Sticky)]<East ext=false src=true 0.00/0.50 sticky_piston> 1,0,0:moving_piston[Facing(East), PistonType(Normal)]<East ext=false src=false 0.00/0.50 stone> -1,0,0:- 2,0,0:-
+group slime_above_piston sticky: t8 0,0,0:moving_piston[Facing(East), PistonType(Sticky)]<East ext=false src=true 0.50/1.00 sticky_piston> 1,0,0:moving_piston[Facing(East), PistonType(Normal)]<East ext=false src=false 0.50/1.00 stone>
+group slime_above_piston sticky: t9 0,0,0:sticky_piston[Extended(false), Facing(East)] 1,0,0:stone
+group slime_back_side normal: start 0,0,0:piston[Extended(false), Facing(East)] 0,0,1:slime_block 1,0,0:slime_block 1,0,1:stone
+group slime_back_side normal: t0 -1,0,0:redstone_block
+group slime_back_side normal: t1 0,0,0:piston[Extended(true), Facing(East)] 1,0,0:moving_piston[Facing(East), PistonType(Normal)]<East ext=true src=true 0.00/0.50 piston_head> 2,0,0:moving_piston[Facing(East), PistonType(Normal)]<East ext=true src=false 0.00/0.50 slime_block> 2,0,1:moving_piston[Facing(East), PistonType(Normal)]<East ext=true src=false 0.00/0.50 stone> 1,0,1:-
+group slime_back_side normal: t2 1,0,0:moving_piston[Facing(East), PistonType(Normal)]<East ext=true src=true 0.50/1.00 piston_head> 2,0,0:moving_piston[Facing(East), PistonType(Normal)]<East ext=true src=false 0.50/1.00 slime_block> 2,0,1:moving_piston[Facing(East), PistonType(Normal)]<East ext=true src=false 0.50/1.00 stone>
+group slime_back_side normal: t3 1,0,0:piston_head[Facing(East), Short(false), PistonType(Normal)] 2,0,0:slime_block 2,0,1:stone
+group slime_back_side normal: t7 0,0,0:moving_piston[Facing(East), PistonType(Normal)]<East ext=false src=true 0.00/0.50 piston> -1,0,0:- 1,0,0:-
+group slime_back_side normal: t8 0,0,0:moving_piston[Facing(East), PistonType(Normal)]<East ext=false src=true 0.50/1.00 piston>
+group slime_back_side normal: t9 0,0,0:piston[Extended(false), Facing(East)]
+group slime_back_side sticky: start 0,0,0:sticky_piston[Extended(false), Facing(East)] 0,0,1:slime_block 1,0,0:slime_block 1,0,1:stone
+group slime_back_side sticky: t0 -1,0,0:redstone_block
+group slime_back_side sticky: t1 0,0,0:sticky_piston[Extended(true), Facing(East)] 1,0,0:moving_piston[Facing(East), PistonType(Sticky)]<East ext=true src=true 0.00/0.50 piston_head> 2,0,0:moving_piston[Facing(East), PistonType(Normal)]<East ext=true src=false 0.00/0.50 slime_block> 2,0,1:moving_piston[Facing(East), PistonType(Normal)]<East ext=true src=false 0.00/0.50 stone> 1,0,1:-
+group slime_back_side sticky: t2 1,0,0:moving_piston[Facing(East), PistonType(Sticky)]<East ext=true src=true 0.50/1.00 piston_head> 2,0,0:moving_piston[Facing(East), PistonType(Normal)]<East ext=true src=false 0.50/1.00 slime_block> 2,0,1:moving_piston[Facing(East), PistonType(Normal)]<East ext=true src=false 0.50/1.00 stone>
+group slime_back_side sticky: t3 1,0,0:piston_head[Facing(East), Short(false), PistonType(Sticky)] 2,0,0:slime_block 2,0,1:stone
+group slime_back_side sticky: t7 0,0,0:moving_piston[Facing(East), PistonType(Sticky)]<East ext=false src=true 0.00/0.50 sticky_piston> 1,0,0:moving_piston[Facing(East), PistonType(Normal)]<East ext=false src=false 0.00/0.50 slime_block> 1,0,1:moving_piston[Facing(East), PistonType(Normal)]<East ext=false src=false 0.00/0.50 stone> -1,0,0:- 2,0,0:- 2,0,1:-
+group slime_back_side sticky: t8 0,0,0:moving_piston[Facing(East), PistonType(Sticky)]<East ext=false src=true 0.50/1.00 sticky_piston> 1,0,0:moving_piston[Facing(East), PistonType(Normal)]<East ext=false src=false 0.50/1.00 slime_block> 1,0,1:moving_piston[Facing(East), PistonType(Normal)]<East ext=false src=false 0.50/1.00 stone>
+group slime_back_side sticky: t9 0,0,0:sticky_piston[Extended(false), Facing(East)] 1,0,0:slime_block 1,0,1:stone
+line rest_fwd normal: start 0,0,0:piston[Extended(false), Facing(East)] 1,0,0:stone 2,0,0:piston[Extended(false), Facing(East)]
+line rest_fwd normal: t0 -1,0,0:redstone_block
+line rest_fwd normal: t1 0,0,0:piston[Extended(true), Facing(East)] 1,0,0:moving_piston[Facing(East), PistonType(Normal)]<East ext=true src=true 0.00/0.50 piston_head> 2,0,0:moving_piston[Facing(East), PistonType(Normal)]<East ext=true src=false 0.00/0.50 stone> 3,0,0:moving_piston[Facing(East), PistonType(Normal)]<East ext=true src=false 0.00/0.50 piston>
+line rest_fwd normal: t2 1,0,0:moving_piston[Facing(East), PistonType(Normal)]<East ext=true src=true 0.50/1.00 piston_head> 2,0,0:moving_piston[Facing(East), PistonType(Normal)]<East ext=true src=false 0.50/1.00 stone> 3,0,0:moving_piston[Facing(East), PistonType(Normal)]<East ext=true src=false 0.50/1.00 piston>
+line rest_fwd normal: t3 1,0,0:piston_head[Facing(East), Short(false), PistonType(Normal)] 2,0,0:stone 3,0,0:piston[Extended(false), Facing(East)]
+line rest_fwd normal: t7 0,0,0:moving_piston[Facing(East), PistonType(Normal)]<East ext=false src=true 0.00/0.50 piston> -1,0,0:- 1,0,0:-
+line rest_fwd normal: t8 0,0,0:moving_piston[Facing(East), PistonType(Normal)]<East ext=false src=true 0.50/1.00 piston>
+line rest_fwd normal: t9 0,0,0:piston[Extended(false), Facing(East)]
+line rest_fwd sticky: start 0,0,0:sticky_piston[Extended(false), Facing(East)] 1,0,0:stone 2,0,0:piston[Extended(false), Facing(East)]
+line rest_fwd sticky: t0 -1,0,0:redstone_block
+line rest_fwd sticky: t1 0,0,0:sticky_piston[Extended(true), Facing(East)] 1,0,0:moving_piston[Facing(East), PistonType(Sticky)]<East ext=true src=true 0.00/0.50 piston_head> 2,0,0:moving_piston[Facing(East), PistonType(Normal)]<East ext=true src=false 0.00/0.50 stone> 3,0,0:moving_piston[Facing(East), PistonType(Normal)]<East ext=true src=false 0.00/0.50 piston>
+line rest_fwd sticky: t2 1,0,0:moving_piston[Facing(East), PistonType(Sticky)]<East ext=true src=true 0.50/1.00 piston_head> 2,0,0:moving_piston[Facing(East), PistonType(Normal)]<East ext=true src=false 0.50/1.00 stone> 3,0,0:moving_piston[Facing(East), PistonType(Normal)]<East ext=true src=false 0.50/1.00 piston>
+line rest_fwd sticky: t3 1,0,0:piston_head[Facing(East), Short(false), PistonType(Sticky)] 2,0,0:stone 3,0,0:piston[Extended(false), Facing(East)]
+line rest_fwd sticky: t7 0,0,0:moving_piston[Facing(East), PistonType(Sticky)]<East ext=false src=true 0.00/0.50 sticky_piston> 1,0,0:moving_piston[Facing(East), PistonType(Normal)]<East ext=false src=false 0.00/0.50 stone> -1,0,0:- 2,0,0:-
+line rest_fwd sticky: t8 0,0,0:moving_piston[Facing(East), PistonType(Sticky)]<East ext=false src=true 0.50/1.00 sticky_piston> 1,0,0:moving_piston[Facing(East), PistonType(Normal)]<East ext=false src=false 0.50/1.00 stone>
+line rest_fwd sticky: t9 0,0,0:sticky_piston[Extended(false), Facing(East)] 1,0,0:stone
+line rest_back normal: start 0,0,0:piston[Extended(false), Facing(East)] 1,0,0:stone 2,0,0:piston[Extended(false), Facing(West)]
+line rest_back normal: t0 -1,0,0:redstone_block
+line rest_back normal: t1 0,0,0:piston[Extended(true), Facing(East)] 1,0,0:moving_piston[Facing(East), PistonType(Normal)]<East ext=true src=true 0.00/0.50 piston_head> 2,0,0:moving_piston[Facing(East), PistonType(Normal)]<East ext=true src=false 0.00/0.50 stone> 3,0,0:moving_piston[Facing(East), PistonType(Normal)]<East ext=true src=false 0.00/0.50 piston>
+line rest_back normal: t2 1,0,0:moving_piston[Facing(East), PistonType(Normal)]<East ext=true src=true 0.50/1.00 piston_head> 2,0,0:moving_piston[Facing(East), PistonType(Normal)]<East ext=true src=false 0.50/1.00 stone> 3,0,0:moving_piston[Facing(East), PistonType(Normal)]<East ext=true src=false 0.50/1.00 piston>
+line rest_back normal: t3 1,0,0:piston_head[Facing(East), Short(false), PistonType(Normal)] 2,0,0:stone 3,0,0:piston[Extended(false), Facing(West)]
+line rest_back normal: t7 0,0,0:moving_piston[Facing(East), PistonType(Normal)]<East ext=false src=true 0.00/0.50 piston> -1,0,0:- 1,0,0:-
+line rest_back normal: t8 0,0,0:moving_piston[Facing(East), PistonType(Normal)]<East ext=false src=true 0.50/1.00 piston>
+line rest_back normal: t9 0,0,0:piston[Extended(false), Facing(East)]
+line rest_back sticky: start 0,0,0:sticky_piston[Extended(false), Facing(East)] 1,0,0:stone 2,0,0:piston[Extended(false), Facing(West)]
+line rest_back sticky: t0 -1,0,0:redstone_block
+line rest_back sticky: t1 0,0,0:sticky_piston[Extended(true), Facing(East)] 1,0,0:moving_piston[Facing(East), PistonType(Sticky)]<East ext=true src=true 0.00/0.50 piston_head> 2,0,0:moving_piston[Facing(East), PistonType(Normal)]<East ext=true src=false 0.00/0.50 stone> 3,0,0:moving_piston[Facing(East), PistonType(Normal)]<East ext=true src=false 0.00/0.50 piston>
+line rest_back sticky: t2 1,0,0:moving_piston[Facing(East), PistonType(Sticky)]<East ext=true src=true 0.50/1.00 piston_head> 2,0,0:moving_piston[Facing(East), PistonType(Normal)]<East ext=true src=false 0.50/1.00 stone> 3,0,0:moving_piston[Facing(East), PistonType(Normal)]<East ext=true src=false 0.50/1.00 piston>
+line rest_back sticky: t3 1,0,0:piston_head[Facing(East), Short(false), PistonType(Sticky)] 2,0,0:stone 3,0,0:piston[Extended(false), Facing(West)]
+line rest_back sticky: t7 0,0,0:moving_piston[Facing(East), PistonType(Sticky)]<East ext=false src=true 0.00/0.50 sticky_piston> 1,0,0:moving_piston[Facing(East), PistonType(Normal)]<East ext=false src=false 0.00/0.50 stone> -1,0,0:- 2,0,0:-
+line rest_back sticky: t8 0,0,0:moving_piston[Facing(East), PistonType(Sticky)]<East ext=false src=true 0.50/1.00 sticky_piston> 1,0,0:moving_piston[Facing(East), PistonType(Normal)]<East ext=false src=false 0.50/1.00 stone>
+line rest_back sticky: t9 0,0,0:sticky_piston[Extended(false), Facing(East)] 1,0,0:stone
+line rest_up normal: start 0,0,0:piston[Extended(false), Facing(East)] 1,0,0:sticky_piston[Extended(false), Facing(Up)]
+line rest_up normal: t0 -1,0,0:redstone_block
+line rest_up normal: t1 0,0,0:piston[Extended(true), Facing(East)] 1,0,0:moving_piston[Facing(East), PistonType(Normal)]<East ext=true src=true 0.00/0.50 piston_head> 2,0,0:moving_piston[Facing(East), PistonType(Normal)]<East ext=true src=false 0.00/0.50 sticky_piston>
+line rest_up normal: t2 1,0,0:moving_piston[Facing(East), PistonType(Normal)]<East ext=true src=true 0.50/1.00 piston_head> 2,0,0:moving_piston[Facing(East), PistonType(Normal)]<East ext=true src=false 0.50/1.00 sticky_piston>
+line rest_up normal: t3 1,0,0:piston_head[Facing(East), Short(false), PistonType(Normal)] 2,0,0:sticky_piston[Extended(false), Facing(Up)]
+line rest_up normal: t7 0,0,0:moving_piston[Facing(East), PistonType(Normal)]<East ext=false src=true 0.00/0.50 piston> -1,0,0:- 1,0,0:-
+line rest_up normal: t8 0,0,0:moving_piston[Facing(East), PistonType(Normal)]<East ext=false src=true 0.50/1.00 piston>
+line rest_up normal: t9 0,0,0:piston[Extended(false), Facing(East)]
+line rest_up sticky: start 0,0,0:sticky_piston[Extended(false), Facing(East)] 1,0,0:sticky_piston[Extended(false), Facing(Up)]
+line rest_up sticky: t0 -1,0,0:redstone_block
+line rest_up sticky: t1 0,0,0:sticky_piston[Extended(true), Facing(East)] 1,0,0:moving_piston[Facing(East), PistonType(Sticky)]<East ext=true src=true 0.00/0.50 piston_head> 2,0,0:moving_piston[Facing(East), PistonType(Normal)]<East ext=true src=false 0.00/0.50 sticky_piston>
+line rest_up sticky: t2 1,0,0:moving_piston[Facing(East), PistonType(Sticky)]<East ext=true src=true 0.50/1.00 piston_head> 2,0,0:moving_piston[Facing(East), PistonType(Normal)]<East ext=true src=false 0.50/1.00 sticky_piston>
+line rest_up sticky: t3 1,0,0:piston_head[Facing(East), Short(false), PistonType(Sticky)] 2,0,0:sticky_piston[Extended(false), Facing(Up)]
+line rest_up sticky: t7 0,0,0:moving_piston[Facing(East), PistonType(Sticky)]<East ext=false src=true 0.00/0.50 sticky_piston> 1,0,0:moving_piston[Facing(East), PistonType(Normal)]<East ext=false src=false 0.00/0.50 sticky_piston> -1,0,0:- 2,0,0:-
+line rest_up sticky: t8 0,0,0:moving_piston[Facing(East), PistonType(Sticky)]<East ext=false src=true 0.50/1.00 sticky_piston> 1,0,0:moving_piston[Facing(East), PistonType(Normal)]<East ext=false src=false 0.50/1.00 sticky_piston>
+line rest_up sticky: t9 0,0,0:sticky_piston[Extended(false), Facing(East)] 1,0,0:sticky_piston[Extended(false), Facing(Up)]
+line extended_fwd normal: start 0,0,0:piston[Extended(false), Facing(East)] 1,0,0:piston[Extended(true), Facing(East)] 2,0,0:piston_head[Facing(East), Short(false), PistonType(Normal)]
+line extended_fwd normal: t0 -1,0,0:redstone_block
+line extended_fwd normal: t7 -1,0,0:-
+line extended_fwd sticky: start 0,0,0:sticky_piston[Extended(false), Facing(East)] 1,0,0:piston[Extended(true), Facing(East)] 2,0,0:piston_head[Facing(East), Short(false), PistonType(Normal)]
+line extended_fwd sticky: t0 -1,0,0:redstone_block
+line extended_fwd sticky: t7 -1,0,0:-
+line sticky_back normal: start 0,0,0:piston[Extended(false), Facing(East)] 1,0,0:sticky_piston[Extended(false), Facing(West)]
+line sticky_back normal: t0 -1,0,0:redstone_block
+line sticky_back normal: t1 0,0,0:piston[Extended(true), Facing(East)] 1,0,0:moving_piston[Facing(East), PistonType(Normal)]<East ext=true src=true 0.00/0.50 piston_head> 2,0,0:moving_piston[Facing(East), PistonType(Normal)]<East ext=true src=false 0.00/0.50 sticky_piston>
+line sticky_back normal: t2 1,0,0:moving_piston[Facing(East), PistonType(Normal)]<East ext=true src=true 0.50/1.00 piston_head> 2,0,0:moving_piston[Facing(East), PistonType(Normal)]<East ext=true src=false 0.50/1.00 sticky_piston>
+line sticky_back normal: t3 1,0,0:piston_head[Facing(East), Short(false), PistonType(Normal)] 2,0,0:sticky_piston[Extended(false), Facing(West)]
+line sticky_back normal: t7 0,0,0:moving_piston[Facing(East), PistonType(Normal)]<East ext=false src=true 0.00/0.50 piston> -1,0,0:- 1,0,0:-
+line sticky_back normal: t8 0,0,0:moving_piston[Facing(East), PistonType(Normal)]<East ext=false src=true 0.50/1.00 piston>
+line sticky_back normal: t9 0,0,0:piston[Extended(false), Facing(East)]
+line sticky_back sticky: start 0,0,0:sticky_piston[Extended(false), Facing(East)] 1,0,0:sticky_piston[Extended(false), Facing(West)]
+line sticky_back sticky: t0 -1,0,0:redstone_block
+line sticky_back sticky: t1 0,0,0:sticky_piston[Extended(true), Facing(East)] 1,0,0:moving_piston[Facing(East), PistonType(Sticky)]<East ext=true src=true 0.00/0.50 piston_head> 2,0,0:moving_piston[Facing(East), PistonType(Normal)]<East ext=true src=false 0.00/0.50 sticky_piston>
+line sticky_back sticky: t2 1,0,0:moving_piston[Facing(East), PistonType(Sticky)]<East ext=true src=true 0.50/1.00 piston_head> 2,0,0:moving_piston[Facing(East), PistonType(Normal)]<East ext=true src=false 0.50/1.00 sticky_piston>
+line sticky_back sticky: t3 1,0,0:piston_head[Facing(East), Short(false), PistonType(Sticky)] 2,0,0:sticky_piston[Extended(false), Facing(West)]
+line sticky_back sticky: t7 0,0,0:moving_piston[Facing(East), PistonType(Sticky)]<East ext=false src=true 0.00/0.50 sticky_piston> 1,0,0:moving_piston[Facing(East), PistonType(Normal)]<East ext=false src=false 0.00/0.50 sticky_piston> -1,0,0:- 2,0,0:-
+line sticky_back sticky: t8 0,0,0:moving_piston[Facing(East), PistonType(Sticky)]<East ext=false src=true 0.50/1.00 sticky_piston> 1,0,0:moving_piston[Facing(East), PistonType(Normal)]<East ext=false src=false 0.50/1.00 sticky_piston>
+line sticky_back sticky: t9 0,0,0:sticky_piston[Extended(false), Facing(East)] 1,0,0:sticky_piston[Extended(false), Facing(West)]
+quick off 1 normal: start 0,0,0:piston[Extended(false), Facing(East)] 1,0,0:stone
+quick off 1 normal: t0 -1,0,0:redstone_block
+quick off 1 normal: t1 -1,0,0:-
+quick off 2 normal: start 0,0,0:piston[Extended(false), Facing(East)] 1,0,0:stone
+quick off 2 normal: t0 -1,0,0:redstone_block
+quick off 2 normal: t1 0,0,0:piston[Extended(true), Facing(East)] 1,0,0:moving_piston[Facing(East), PistonType(Normal)]<East ext=true src=true 0.00/0.50 piston_head> 2,0,0:moving_piston[Facing(East), PistonType(Normal)]<East ext=true src=false 0.00/0.50 stone>
+quick off 2 normal: t2 0,0,0:moving_piston[Facing(East), PistonType(Normal)]<East ext=false src=true 0.00/0.50 piston> 2,0,0:moving_piston[Facing(East), PistonType(Normal)]<East ext=true src=false 0.50/1.00 stone> -1,0,0:- 1,0,0:-
+quick off 2 normal: t3 0,0,0:moving_piston[Facing(East), PistonType(Normal)]<East ext=false src=true 0.50/1.00 piston> 2,0,0:stone
+quick off 2 normal: t4 0,0,0:piston[Extended(false), Facing(East)]
+quick off 3 normal: start 0,0,0:piston[Extended(false), Facing(East)] 1,0,0:stone
+quick off 3 normal: t0 -1,0,0:redstone_block
+quick off 3 normal: t1 0,0,0:piston[Extended(true), Facing(East)] 1,0,0:moving_piston[Facing(East), PistonType(Normal)]<East ext=true src=true 0.00/0.50 piston_head> 2,0,0:moving_piston[Facing(East), PistonType(Normal)]<East ext=true src=false 0.00/0.50 stone>
+quick off 3 normal: t2 1,0,0:moving_piston[Facing(East), PistonType(Normal)]<East ext=true src=true 0.50/1.00 piston_head> 2,0,0:moving_piston[Facing(East), PistonType(Normal)]<East ext=true src=false 0.50/1.00 stone>
+quick off 3 normal: t3 0,0,0:moving_piston[Facing(East), PistonType(Normal)]<East ext=false src=true 0.00/0.50 piston> 2,0,0:stone -1,0,0:- 1,0,0:-
+quick off 3 normal: t4 0,0,0:moving_piston[Facing(East), PistonType(Normal)]<East ext=false src=true 0.50/1.00 piston>
+quick off 3 normal: t5 0,0,0:piston[Extended(false), Facing(East)]
+quick off 4 normal: start 0,0,0:piston[Extended(false), Facing(East)] 1,0,0:stone
+quick off 4 normal: t0 -1,0,0:redstone_block
+quick off 4 normal: t1 0,0,0:piston[Extended(true), Facing(East)] 1,0,0:moving_piston[Facing(East), PistonType(Normal)]<East ext=true src=true 0.00/0.50 piston_head> 2,0,0:moving_piston[Facing(East), PistonType(Normal)]<East ext=true src=false 0.00/0.50 stone>
+quick off 4 normal: t2 1,0,0:moving_piston[Facing(East), PistonType(Normal)]<East ext=true src=true 0.50/1.00 piston_head> 2,0,0:moving_piston[Facing(East), PistonType(Normal)]<East ext=true src=false 0.50/1.00 stone>
+quick off 4 normal: t3 1,0,0:piston_head[Facing(East), Short(false), PistonType(Normal)] 2,0,0:stone
+quick off 4 normal: t4 0,0,0:moving_piston[Facing(East), PistonType(Normal)]<East ext=false src=true 0.00/0.50 piston> -1,0,0:- 1,0,0:-
+quick off 4 normal: t5 0,0,0:moving_piston[Facing(East), PistonType(Normal)]<East ext=false src=true 0.50/1.00 piston>
+quick off 4 normal: t6 0,0,0:piston[Extended(false), Facing(East)]
+quick off 5 normal: start 0,0,0:piston[Extended(false), Facing(East)] 1,0,0:stone
+quick off 5 normal: t0 -1,0,0:redstone_block
+quick off 5 normal: t1 0,0,0:piston[Extended(true), Facing(East)] 1,0,0:moving_piston[Facing(East), PistonType(Normal)]<East ext=true src=true 0.00/0.50 piston_head> 2,0,0:moving_piston[Facing(East), PistonType(Normal)]<East ext=true src=false 0.00/0.50 stone>
+quick off 5 normal: t2 1,0,0:moving_piston[Facing(East), PistonType(Normal)]<East ext=true src=true 0.50/1.00 piston_head> 2,0,0:moving_piston[Facing(East), PistonType(Normal)]<East ext=true src=false 0.50/1.00 stone>
+quick off 5 normal: t3 1,0,0:piston_head[Facing(East), Short(false), PistonType(Normal)] 2,0,0:stone
+quick off 5 normal: t5 0,0,0:moving_piston[Facing(East), PistonType(Normal)]<East ext=false src=true 0.00/0.50 piston> -1,0,0:- 1,0,0:-
+quick off 5 normal: t6 0,0,0:moving_piston[Facing(East), PistonType(Normal)]<East ext=false src=true 0.50/1.00 piston>
+quick off 5 normal: t7 0,0,0:piston[Extended(false), Facing(East)]
+quick off 1 sticky: start 0,0,0:sticky_piston[Extended(false), Facing(East)] 1,0,0:stone
+quick off 1 sticky: t0 -1,0,0:redstone_block
+quick off 1 sticky: t1 -1,0,0:-
+quick off 2 sticky: start 0,0,0:sticky_piston[Extended(false), Facing(East)] 1,0,0:stone
+quick off 2 sticky: t0 -1,0,0:redstone_block
+quick off 2 sticky: t1 0,0,0:sticky_piston[Extended(true), Facing(East)] 1,0,0:moving_piston[Facing(East), PistonType(Sticky)]<East ext=true src=true 0.00/0.50 piston_head> 2,0,0:moving_piston[Facing(East), PistonType(Normal)]<East ext=true src=false 0.00/0.50 stone>
+quick off 2 sticky: t2 0,0,0:moving_piston[Facing(East), PistonType(Sticky)]<East ext=false src=true 0.00/0.50 sticky_piston> 2,0,0:stone -1,0,0:- 1,0,0:-
+quick off 2 sticky: t3 0,0,0:moving_piston[Facing(East), PistonType(Sticky)]<East ext=false src=true 0.50/1.00 sticky_piston>
+quick off 2 sticky: t4 0,0,0:sticky_piston[Extended(false), Facing(East)]
+quick off 3 sticky: start 0,0,0:sticky_piston[Extended(false), Facing(East)] 1,0,0:stone
+quick off 3 sticky: t0 -1,0,0:redstone_block
+quick off 3 sticky: t1 0,0,0:sticky_piston[Extended(true), Facing(East)] 1,0,0:moving_piston[Facing(East), PistonType(Sticky)]<East ext=true src=true 0.00/0.50 piston_head> 2,0,0:moving_piston[Facing(East), PistonType(Normal)]<East ext=true src=false 0.00/0.50 stone>
+quick off 3 sticky: t2 1,0,0:moving_piston[Facing(East), PistonType(Sticky)]<East ext=true src=true 0.50/1.00 piston_head> 2,0,0:moving_piston[Facing(East), PistonType(Normal)]<East ext=true src=false 0.50/1.00 stone>
+quick off 3 sticky: t3 0,0,0:moving_piston[Facing(East), PistonType(Sticky)]<East ext=false src=true 0.00/0.50 sticky_piston> 1,0,0:moving_piston[Facing(East), PistonType(Normal)]<East ext=false src=false 0.00/0.50 stone> -1,0,0:- 2,0,0:-
+quick off 3 sticky: t4 0,0,0:moving_piston[Facing(East), PistonType(Sticky)]<East ext=false src=true 0.50/1.00 sticky_piston> 1,0,0:moving_piston[Facing(East), PistonType(Normal)]<East ext=false src=false 0.50/1.00 stone>
+quick off 3 sticky: t5 0,0,0:sticky_piston[Extended(false), Facing(East)] 1,0,0:stone
+quick off 4 sticky: start 0,0,0:sticky_piston[Extended(false), Facing(East)] 1,0,0:stone
+quick off 4 sticky: t0 -1,0,0:redstone_block
+quick off 4 sticky: t1 0,0,0:sticky_piston[Extended(true), Facing(East)] 1,0,0:moving_piston[Facing(East), PistonType(Sticky)]<East ext=true src=true 0.00/0.50 piston_head> 2,0,0:moving_piston[Facing(East), PistonType(Normal)]<East ext=true src=false 0.00/0.50 stone>
+quick off 4 sticky: t2 1,0,0:moving_piston[Facing(East), PistonType(Sticky)]<East ext=true src=true 0.50/1.00 piston_head> 2,0,0:moving_piston[Facing(East), PistonType(Normal)]<East ext=true src=false 0.50/1.00 stone>
+quick off 4 sticky: t3 1,0,0:piston_head[Facing(East), Short(false), PistonType(Sticky)] 2,0,0:stone
+quick off 4 sticky: t4 0,0,0:moving_piston[Facing(East), PistonType(Sticky)]<East ext=false src=true 0.00/0.50 sticky_piston> 1,0,0:moving_piston[Facing(East), PistonType(Normal)]<East ext=false src=false 0.00/0.50 stone> -1,0,0:- 2,0,0:-
+quick off 4 sticky: t5 0,0,0:moving_piston[Facing(East), PistonType(Sticky)]<East ext=false src=true 0.50/1.00 sticky_piston> 1,0,0:moving_piston[Facing(East), PistonType(Normal)]<East ext=false src=false 0.50/1.00 stone>
+quick off 4 sticky: t6 0,0,0:sticky_piston[Extended(false), Facing(East)] 1,0,0:stone
+quick off 5 sticky: start 0,0,0:sticky_piston[Extended(false), Facing(East)] 1,0,0:stone
+quick off 5 sticky: t0 -1,0,0:redstone_block
+quick off 5 sticky: t1 0,0,0:sticky_piston[Extended(true), Facing(East)] 1,0,0:moving_piston[Facing(East), PistonType(Sticky)]<East ext=true src=true 0.00/0.50 piston_head> 2,0,0:moving_piston[Facing(East), PistonType(Normal)]<East ext=true src=false 0.00/0.50 stone>
+quick off 5 sticky: t2 1,0,0:moving_piston[Facing(East), PistonType(Sticky)]<East ext=true src=true 0.50/1.00 piston_head> 2,0,0:moving_piston[Facing(East), PistonType(Normal)]<East ext=true src=false 0.50/1.00 stone>
+quick off 5 sticky: t3 1,0,0:piston_head[Facing(East), Short(false), PistonType(Sticky)] 2,0,0:stone
+quick off 5 sticky: t5 0,0,0:moving_piston[Facing(East), PistonType(Sticky)]<East ext=false src=true 0.00/0.50 sticky_piston> 1,0,0:moving_piston[Facing(East), PistonType(Normal)]<East ext=false src=false 0.00/0.50 stone> -1,0,0:- 2,0,0:-
+quick off 5 sticky: t6 0,0,0:moving_piston[Facing(East), PistonType(Sticky)]<East ext=false src=true 0.50/1.00 sticky_piston> 1,0,0:moving_piston[Facing(East), PistonType(Normal)]<East ext=false src=false 0.50/1.00 stone>
+quick off 5 sticky: t7 0,0,0:sticky_piston[Extended(false), Facing(East)] 1,0,0:stone
+flicker 0 2 3 5 sticky: start 0,0,0:sticky_piston[Extended(false), Facing(East)] 1,0,0:stone
+flicker 0 2 3 5 sticky: t0 -1,0,0:redstone_block
+flicker 0 2 3 5 sticky: t1 0,0,0:sticky_piston[Extended(true), Facing(East)] 1,0,0:moving_piston[Facing(East), PistonType(Sticky)]<East ext=true src=true 0.00/0.50 piston_head> 2,0,0:moving_piston[Facing(East), PistonType(Normal)]<East ext=true src=false 0.00/0.50 stone>
+flicker 0 2 3 5 sticky: t2 0,0,0:moving_piston[Facing(East), PistonType(Sticky)]<East ext=false src=true 0.00/0.50 sticky_piston> 2,0,0:stone -1,0,0:- 1,0,0:-
+flicker 0 2 3 5 sticky: t3 -1,0,0:redstone_block 0,0,0:moving_piston[Facing(East), PistonType(Sticky)]<East ext=false src=true 0.50/1.00 sticky_piston>
+flicker 0 2 3 5 sticky: t4 0,0,0:sticky_piston[Extended(false), Facing(East)]
+flicker 0 2 3 5 sticky: t5 -1,0,0:-
+flicker 0 1 2 3 sticky slime: start 0,0,0:sticky_piston[Extended(false), Facing(East)] 1,0,0:slime_block 2,0,0:slime_block
+flicker 0 1 2 3 sticky slime: t0 -1,0,0:redstone_block
+flicker 0 1 2 3 sticky slime: t1 -1,0,0:-
+flicker 0 1 2 3 sticky slime: t2 -1,0,0:redstone_block 0,0,0:sticky_piston[Extended(true), Facing(East)] 1,0,0:moving_piston[Facing(East), PistonType(Sticky)]<East ext=true src=true 0.00/0.50 piston_head> 2,0,0:moving_piston[Facing(East), PistonType(Normal)]<East ext=true src=false 0.00/0.50 slime_block> 3,0,0:moving_piston[Facing(East), PistonType(Normal)]<East ext=true src=false 0.00/0.50 slime_block>
+flicker 0 1 2 3 sticky slime: t3 0,0,0:moving_piston[Facing(East), PistonType(Sticky)]<East ext=false src=true 0.00/0.50 sticky_piston> 2,0,0:slime_block 3,0,0:moving_piston[Facing(East), PistonType(Normal)]<East ext=true src=false 0.50/1.00 slime_block> -1,0,0:- 1,0,0:-
+flicker 0 1 2 3 sticky slime: t4 0,0,0:moving_piston[Facing(East), PistonType(Sticky)]<East ext=false src=true 0.50/1.00 sticky_piston> 3,0,0:slime_block
+flicker 0 1 2 3 sticky slime: t5 0,0,0:sticky_piston[Extended(false), Facing(East)]
+quick off 1 sticky slime: start 0,0,0:sticky_piston[Extended(false), Facing(East)] 1,0,0:slime_block 2,0,0:slime_block
+quick off 1 sticky slime: t0 -1,0,0:redstone_block
+quick off 1 sticky slime: t1 -1,0,0:-
+call 0 normal rest unpowered: start 0,0,0:piston[Extended(false), Facing(East)] 1,0,0:stone
+call 0 normal rest unpowered: t0 call 0 -> false
+call 1 normal rest unpowered: start 0,0,0:piston[Extended(false), Facing(East)] 1,0,0:stone
+call 1 normal rest unpowered: t0 call 1 -> true
+call 1 normal rest unpowered: t0 0,0,0:moving_piston[Facing(East), PistonType(Normal)]<East ext=false src=true 0.00/0.00 piston> 1,0,0:-
+call 1 normal rest unpowered: t1 0,0,0:moving_piston[Facing(East), PistonType(Normal)]<East ext=false src=true 0.00/0.50 piston>
+call 1 normal rest unpowered: t2 0,0,0:moving_piston[Facing(East), PistonType(Normal)]<East ext=false src=true 0.50/1.00 piston>
+call 1 normal rest unpowered: t3 0,0,0:piston[Extended(false), Facing(East)]
+call 2 normal rest unpowered: start 0,0,0:piston[Extended(false), Facing(East)] 1,0,0:stone
+call 2 normal rest unpowered: t0 call 2 -> true
+call 2 normal rest unpowered: t0 0,0,0:moving_piston[Facing(East), PistonType(Normal)]<East ext=false src=true 0.00/0.00 piston> 1,0,0:-
+call 2 normal rest unpowered: t1 0,0,0:moving_piston[Facing(East), PistonType(Normal)]<East ext=false src=true 0.00/0.50 piston>
+call 2 normal rest unpowered: t2 0,0,0:moving_piston[Facing(East), PistonType(Normal)]<East ext=false src=true 0.50/1.00 piston>
+call 2 normal rest unpowered: t3 0,0,0:piston[Extended(false), Facing(East)]
+call 0 normal rest powered: start -1,0,0:redstone_block 0,0,0:piston[Extended(false), Facing(East)] 1,0,0:stone
+call 0 normal rest powered: t0 call 0 -> true
+call 0 normal rest powered: t0 0,0,0:piston[Extended(true), Facing(East)] 1,0,0:moving_piston[Facing(East), PistonType(Normal)]<East ext=true src=true 0.00/0.00 piston_head> 2,0,0:moving_piston[Facing(East), PistonType(Normal)]<East ext=true src=false 0.00/0.00 stone>
+call 0 normal rest powered: t1 1,0,0:moving_piston[Facing(East), PistonType(Normal)]<East ext=true src=true 0.00/0.50 piston_head> 2,0,0:moving_piston[Facing(East), PistonType(Normal)]<East ext=true src=false 0.00/0.50 stone>
+call 0 normal rest powered: t2 1,0,0:moving_piston[Facing(East), PistonType(Normal)]<East ext=true src=true 0.50/1.00 piston_head> 2,0,0:moving_piston[Facing(East), PistonType(Normal)]<East ext=true src=false 0.50/1.00 stone>
+call 0 normal rest powered: t3 1,0,0:piston_head[Facing(East), Short(false), PistonType(Normal)] 2,0,0:stone
+call 1 normal rest powered: start -1,0,0:redstone_block 0,0,0:piston[Extended(false), Facing(East)] 1,0,0:stone
+call 1 normal rest powered: t0 call 1 -> false
+call 1 normal rest powered: t0 0,0,0:piston[Extended(true), Facing(East)]
+call 2 normal rest powered: start -1,0,0:redstone_block 0,0,0:piston[Extended(false), Facing(East)] 1,0,0:stone
+call 2 normal rest powered: t0 call 2 -> false
+call 2 normal rest powered: t0 0,0,0:piston[Extended(true), Facing(East)]
+call 0 normal extended unpowered: start 0,0,0:piston[Extended(true), Facing(East)] 1,0,0:piston_head[Facing(East), Short(false), PistonType(Normal)] 2,0,0:stone
+call 0 normal extended unpowered: t0 call 0 -> false
+call 1 normal extended unpowered: start 0,0,0:piston[Extended(true), Facing(East)] 1,0,0:piston_head[Facing(East), Short(false), PistonType(Normal)] 2,0,0:stone
+call 1 normal extended unpowered: t0 call 1 -> true
+call 1 normal extended unpowered: t0 0,0,0:moving_piston[Facing(East), PistonType(Normal)]<East ext=false src=true 0.00/0.00 piston> 1,0,0:-
+call 1 normal extended unpowered: t1 0,0,0:moving_piston[Facing(East), PistonType(Normal)]<East ext=false src=true 0.00/0.50 piston>
+call 1 normal extended unpowered: t2 0,0,0:moving_piston[Facing(East), PistonType(Normal)]<East ext=false src=true 0.50/1.00 piston>
+call 1 normal extended unpowered: t3 0,0,0:piston[Extended(false), Facing(East)]
+call 2 normal extended unpowered: start 0,0,0:piston[Extended(true), Facing(East)] 1,0,0:piston_head[Facing(East), Short(false), PistonType(Normal)] 2,0,0:stone
+call 2 normal extended unpowered: t0 call 2 -> true
+call 2 normal extended unpowered: t0 0,0,0:moving_piston[Facing(East), PistonType(Normal)]<East ext=false src=true 0.00/0.00 piston> 1,0,0:-
+call 2 normal extended unpowered: t1 0,0,0:moving_piston[Facing(East), PistonType(Normal)]<East ext=false src=true 0.00/0.50 piston>
+call 2 normal extended unpowered: t2 0,0,0:moving_piston[Facing(East), PistonType(Normal)]<East ext=false src=true 0.50/1.00 piston>
+call 2 normal extended unpowered: t3 0,0,0:piston[Extended(false), Facing(East)]
+call 0 normal extended powered: start -1,0,0:redstone_block 0,0,0:piston[Extended(true), Facing(East)] 1,0,0:piston_head[Facing(East), Short(false), PistonType(Normal)] 2,0,0:stone
+call 0 normal extended powered: t0 call 0 -> true
+call 0 normal extended powered: t0 1,0,0:moving_piston[Facing(East), PistonType(Normal)]<East ext=true src=true 0.00/0.00 piston_head> 2,0,0:moving_piston[Facing(East), PistonType(Normal)]<East ext=true src=false 0.00/0.00 piston_head> 3,0,0:moving_piston[Facing(East), PistonType(Normal)]<East ext=true src=false 0.00/0.00 stone>
+call 0 normal extended powered: t1 1,0,0:moving_piston[Facing(East), PistonType(Normal)]<East ext=true src=true 0.00/0.50 piston_head> 2,0,0:moving_piston[Facing(East), PistonType(Normal)]<East ext=true src=false 0.00/0.50 piston_head> 3,0,0:moving_piston[Facing(East), PistonType(Normal)]<East ext=true src=false 0.00/0.50 stone>
+call 0 normal extended powered: t2 1,0,0:moving_piston[Facing(East), PistonType(Normal)]<East ext=true src=true 0.50/1.00 piston_head> 2,0,0:moving_piston[Facing(East), PistonType(Normal)]<East ext=true src=false 0.50/1.00 piston_head> 3,0,0:moving_piston[Facing(East), PistonType(Normal)]<East ext=true src=false 0.50/1.00 stone>
+call 0 normal extended powered: t3 1,0,0:piston_head[Facing(East), Short(false), PistonType(Normal)] 3,0,0:stone 2,0,0:-
+call 1 normal extended powered: start -1,0,0:redstone_block 0,0,0:piston[Extended(true), Facing(East)] 1,0,0:piston_head[Facing(East), Short(false), PistonType(Normal)] 2,0,0:stone
+call 1 normal extended powered: t0 call 1 -> false
+call 2 normal extended powered: start -1,0,0:redstone_block 0,0,0:piston[Extended(true), Facing(East)] 1,0,0:piston_head[Facing(East), Short(false), PistonType(Normal)] 2,0,0:stone
+call 2 normal extended powered: t0 call 2 -> false
+call 0 sticky rest unpowered: start 0,0,0:sticky_piston[Extended(false), Facing(East)] 1,0,0:stone
+call 0 sticky rest unpowered: t0 call 0 -> false
+call 1 sticky rest unpowered: start 0,0,0:sticky_piston[Extended(false), Facing(East)] 1,0,0:stone
+call 1 sticky rest unpowered: t0 call 1 -> true
+call 1 sticky rest unpowered: t0 0,0,0:moving_piston[Facing(East), PistonType(Sticky)]<East ext=false src=true 0.00/0.00 sticky_piston> 1,0,0:-
+call 1 sticky rest unpowered: t1 0,0,0:moving_piston[Facing(East), PistonType(Sticky)]<East ext=false src=true 0.00/0.50 sticky_piston>
+call 1 sticky rest unpowered: t2 0,0,0:moving_piston[Facing(East), PistonType(Sticky)]<East ext=false src=true 0.50/1.00 sticky_piston>
+call 1 sticky rest unpowered: t3 0,0,0:sticky_piston[Extended(false), Facing(East)]
+call 2 sticky rest unpowered: start 0,0,0:sticky_piston[Extended(false), Facing(East)] 1,0,0:stone
+call 2 sticky rest unpowered: t0 call 2 -> true
+call 2 sticky rest unpowered: t0 0,0,0:moving_piston[Facing(East), PistonType(Sticky)]<East ext=false src=true 0.00/0.00 sticky_piston> 1,0,0:-
+call 2 sticky rest unpowered: t1 0,0,0:moving_piston[Facing(East), PistonType(Sticky)]<East ext=false src=true 0.00/0.50 sticky_piston>
+call 2 sticky rest unpowered: t2 0,0,0:moving_piston[Facing(East), PistonType(Sticky)]<East ext=false src=true 0.50/1.00 sticky_piston>
+call 2 sticky rest unpowered: t3 0,0,0:sticky_piston[Extended(false), Facing(East)]
+call 0 sticky rest powered: start -1,0,0:redstone_block 0,0,0:sticky_piston[Extended(false), Facing(East)] 1,0,0:stone
+call 0 sticky rest powered: t0 call 0 -> true
+call 0 sticky rest powered: t0 0,0,0:sticky_piston[Extended(true), Facing(East)] 1,0,0:moving_piston[Facing(East), PistonType(Sticky)]<East ext=true src=true 0.00/0.00 piston_head> 2,0,0:moving_piston[Facing(East), PistonType(Normal)]<East ext=true src=false 0.00/0.00 stone>
+call 0 sticky rest powered: t1 1,0,0:moving_piston[Facing(East), PistonType(Sticky)]<East ext=true src=true 0.00/0.50 piston_head> 2,0,0:moving_piston[Facing(East), PistonType(Normal)]<East ext=true src=false 0.00/0.50 stone>
+call 0 sticky rest powered: t2 1,0,0:moving_piston[Facing(East), PistonType(Sticky)]<East ext=true src=true 0.50/1.00 piston_head> 2,0,0:moving_piston[Facing(East), PistonType(Normal)]<East ext=true src=false 0.50/1.00 stone>
+call 0 sticky rest powered: t3 1,0,0:piston_head[Facing(East), Short(false), PistonType(Sticky)] 2,0,0:stone
+call 1 sticky rest powered: start -1,0,0:redstone_block 0,0,0:sticky_piston[Extended(false), Facing(East)] 1,0,0:stone
+call 1 sticky rest powered: t0 call 1 -> false
+call 1 sticky rest powered: t0 0,0,0:sticky_piston[Extended(true), Facing(East)]
+call 2 sticky rest powered: start -1,0,0:redstone_block 0,0,0:sticky_piston[Extended(false), Facing(East)] 1,0,0:stone
+call 2 sticky rest powered: t0 call 2 -> false
+call 2 sticky rest powered: t0 0,0,0:sticky_piston[Extended(true), Facing(East)]
+call 0 sticky extended unpowered: start 0,0,0:sticky_piston[Extended(true), Facing(East)] 1,0,0:piston_head[Facing(East), Short(false), PistonType(Sticky)] 2,0,0:stone
+call 0 sticky extended unpowered: t0 call 0 -> false
+call 1 sticky extended unpowered: start 0,0,0:sticky_piston[Extended(true), Facing(East)] 1,0,0:piston_head[Facing(East), Short(false), PistonType(Sticky)] 2,0,0:stone
+call 1 sticky extended unpowered: t0 call 1 -> true
+call 1 sticky extended unpowered: t0 0,0,0:moving_piston[Facing(East), PistonType(Sticky)]<East ext=false src=true 0.00/0.00 sticky_piston> 1,0,0:moving_piston[Facing(East), PistonType(Normal)]<East ext=false src=false 0.00/0.00 stone> 2,0,0:-
+call 1 sticky extended unpowered: t1 0,0,0:moving_piston[Facing(East), PistonType(Sticky)]<East ext=false src=true 0.00/0.50 sticky_piston> 1,0,0:moving_piston[Facing(East), PistonType(Normal)]<East ext=false src=false 0.00/0.50 stone>
+call 1 sticky extended unpowered: t2 0,0,0:moving_piston[Facing(East), PistonType(Sticky)]<East ext=false src=true 0.50/1.00 sticky_piston> 1,0,0:moving_piston[Facing(East), PistonType(Normal)]<East ext=false src=false 0.50/1.00 stone>
+call 1 sticky extended unpowered: t3 0,0,0:sticky_piston[Extended(false), Facing(East)] 1,0,0:stone
+call 2 sticky extended unpowered: start 0,0,0:sticky_piston[Extended(true), Facing(East)] 1,0,0:piston_head[Facing(East), Short(false), PistonType(Sticky)] 2,0,0:stone
+call 2 sticky extended unpowered: t0 call 2 -> true
+call 2 sticky extended unpowered: t0 0,0,0:moving_piston[Facing(East), PistonType(Sticky)]<East ext=false src=true 0.00/0.00 sticky_piston> 1,0,0:-
+call 2 sticky extended unpowered: t1 0,0,0:moving_piston[Facing(East), PistonType(Sticky)]<East ext=false src=true 0.00/0.50 sticky_piston>
+call 2 sticky extended unpowered: t2 0,0,0:moving_piston[Facing(East), PistonType(Sticky)]<East ext=false src=true 0.50/1.00 sticky_piston>
+call 2 sticky extended unpowered: t3 0,0,0:sticky_piston[Extended(false), Facing(East)]
+call 0 sticky extended powered: start -1,0,0:redstone_block 0,0,0:sticky_piston[Extended(true), Facing(East)] 1,0,0:piston_head[Facing(East), Short(false), PistonType(Sticky)] 2,0,0:stone
+call 0 sticky extended powered: t0 call 0 -> true
+call 0 sticky extended powered: t0 1,0,0:moving_piston[Facing(East), PistonType(Sticky)]<East ext=true src=true 0.00/0.00 piston_head> 2,0,0:moving_piston[Facing(East), PistonType(Normal)]<East ext=true src=false 0.00/0.00 piston_head> 3,0,0:moving_piston[Facing(East), PistonType(Normal)]<East ext=true src=false 0.00/0.00 stone>
+call 0 sticky extended powered: t1 1,0,0:moving_piston[Facing(East), PistonType(Sticky)]<East ext=true src=true 0.00/0.50 piston_head> 2,0,0:moving_piston[Facing(East), PistonType(Normal)]<East ext=true src=false 0.00/0.50 piston_head> 3,0,0:moving_piston[Facing(East), PistonType(Normal)]<East ext=true src=false 0.00/0.50 stone>
+call 0 sticky extended powered: t2 1,0,0:moving_piston[Facing(East), PistonType(Sticky)]<East ext=true src=true 0.50/1.00 piston_head> 2,0,0:moving_piston[Facing(East), PistonType(Normal)]<East ext=true src=false 0.50/1.00 piston_head> 3,0,0:moving_piston[Facing(East), PistonType(Normal)]<East ext=true src=false 0.50/1.00 stone>
+call 0 sticky extended powered: t3 1,0,0:piston_head[Facing(East), Short(false), PistonType(Sticky)] 3,0,0:stone 2,0,0:-
+call 1 sticky extended powered: start -1,0,0:redstone_block 0,0,0:sticky_piston[Extended(true), Facing(East)] 1,0,0:piston_head[Facing(East), Short(false), PistonType(Sticky)] 2,0,0:stone
+call 1 sticky extended powered: t0 call 1 -> false
+call 2 sticky extended powered: start -1,0,0:redstone_block 0,0,0:sticky_piston[Extended(true), Facing(East)] 1,0,0:piston_head[Facing(East), Short(false), PistonType(Sticky)] 2,0,0:stone
+call 2 sticky extended powered: t0 call 2 -> false
+observed normal: start 0,0,0:piston[Extended(false), Facing(East)] 1,0,0:stone 1,1,0:observer[Facing(Down), Powered(false)] 1,2,0:redstone_lamp[Lit(false)] 2,0,0:stone 2,1,0:observer[Facing(Down), Powered(false)] 2,2,0:redstone_lamp[Lit(false)] 3,1,0:observer[Facing(Down), Powered(false)] 3,2,0:redstone_lamp[Lit(false)]
+observed normal: t0 -1,0,0:redstone_block
+observed normal: t1 0,0,0:piston[Extended(true), Facing(East)] 1,0,0:moving_piston[Facing(East), PistonType(Normal)]<East ext=true src=true 0.00/0.50 piston_head> 2,0,0:moving_piston[Facing(East), PistonType(Normal)]<East ext=true src=false 0.00/0.50 stone> 3,0,0:moving_piston[Facing(East), PistonType(Normal)]<East ext=true src=false 0.00/0.50 stone>
+observed normal: t2 1,0,0:moving_piston[Facing(East), PistonType(Normal)]<East ext=true src=true 0.50/1.00 piston_head> 2,0,0:moving_piston[Facing(East), PistonType(Normal)]<East ext=true src=false 0.50/1.00 stone> 3,0,0:moving_piston[Facing(East), PistonType(Normal)]<East ext=true src=false 0.50/1.00 stone>
+observed normal: t3 1,0,0:piston_head[Facing(East), Short(false), PistonType(Normal)] 2,0,0:stone 3,0,0:stone
+observed normal: t7 0,0,0:moving_piston[Facing(East), PistonType(Normal)]<East ext=false src=true 0.00/0.50 piston> -1,0,0:- 1,0,0:-
+observed normal: t8 0,0,0:moving_piston[Facing(East), PistonType(Normal)]<East ext=false src=true 0.50/1.00 piston>
+observed normal: t9 0,0,0:piston[Extended(false), Facing(East)] 1,1,0:observer[Facing(Down), Powered(true)] 1,2,0:redstone_lamp[Lit(true)] 2,2,0:redstone_lamp[Lit(true)]
+observed normal: t12 1,1,0:observer[Facing(Down), Powered(false)]
+observed broken normal: start 0,-1,-1:grass_block 0,-1,0:grass_block 0,-1,1:grass_block 0,0,0:piston[Extended(false), Facing(East)] 1,-1,-1:grass_block 1,-1,0:grass_block 1,-1,1:grass_block 1,0,0:stone 2,-1,-1:grass_block 2,-1,0:grass_block 2,-1,1:grass_block 2,0,0:poppy 2,1,0:observer[Facing(Down), Powered(false)] 2,2,0:redstone_lamp[Lit(false)] 3,-1,-1:grass_block 3,-1,0:grass_block 3,-1,1:grass_block 4,-1,-1:grass_block 4,-1,0:grass_block 4,-1,1:grass_block
+observed broken normal: t0 -1,0,0:redstone_block
+observed broken normal: t1 0,0,0:piston[Extended(true), Facing(East)] 1,0,0:moving_piston[Facing(East), PistonType(Normal)]<East ext=true src=true 0.00/0.50 piston_head> 2,0,0:moving_piston[Facing(East), PistonType(Normal)]<East ext=true src=false 0.00/0.50 stone>
+observed broken normal: t2 1,0,0:moving_piston[Facing(East), PistonType(Normal)]<East ext=true src=true 0.50/1.00 piston_head> 2,0,0:moving_piston[Facing(East), PistonType(Normal)]<East ext=true src=false 0.50/1.00 stone>
+observed broken normal: t3 1,0,0:piston_head[Facing(East), Short(false), PistonType(Normal)] 2,0,0:stone 2,1,0:observer[Facing(Down), Powered(true)] 2,2,0:redstone_lamp[Lit(true)]
+observed broken normal: t6 2,1,0:observer[Facing(Down), Powered(false)]
+observed broken normal: t7 0,0,0:moving_piston[Facing(East), PistonType(Normal)]<East ext=false src=true 0.00/0.50 piston> -1,0,0:- 1,0,0:-
+observed broken normal: t8 0,0,0:moving_piston[Facing(East), PistonType(Normal)]<East ext=false src=true 0.50/1.00 piston>
+observed broken normal: t9 0,0,0:piston[Extended(false), Facing(East)]
+observed broken normal: t11 2,2,0:redstone_lamp[Lit(false)]
+observed sticky: start 0,0,0:sticky_piston[Extended(false), Facing(East)] 1,0,0:stone 1,1,0:observer[Facing(Down), Powered(false)] 1,2,0:redstone_lamp[Lit(false)] 2,0,0:stone 2,1,0:observer[Facing(Down), Powered(false)] 2,2,0:redstone_lamp[Lit(false)] 3,1,0:observer[Facing(Down), Powered(false)] 3,2,0:redstone_lamp[Lit(false)]
+observed sticky: t0 -1,0,0:redstone_block
+observed sticky: t1 0,0,0:sticky_piston[Extended(true), Facing(East)] 1,0,0:moving_piston[Facing(East), PistonType(Sticky)]<East ext=true src=true 0.00/0.50 piston_head> 2,0,0:moving_piston[Facing(East), PistonType(Normal)]<East ext=true src=false 0.00/0.50 stone> 3,0,0:moving_piston[Facing(East), PistonType(Normal)]<East ext=true src=false 0.00/0.50 stone>
+observed sticky: t2 1,0,0:moving_piston[Facing(East), PistonType(Sticky)]<East ext=true src=true 0.50/1.00 piston_head> 2,0,0:moving_piston[Facing(East), PistonType(Normal)]<East ext=true src=false 0.50/1.00 stone> 3,0,0:moving_piston[Facing(East), PistonType(Normal)]<East ext=true src=false 0.50/1.00 stone>
+observed sticky: t3 1,0,0:piston_head[Facing(East), Short(false), PistonType(Sticky)] 2,0,0:stone 3,0,0:stone
+observed sticky: t7 0,0,0:moving_piston[Facing(East), PistonType(Sticky)]<East ext=false src=true 0.00/0.50 sticky_piston> 1,0,0:moving_piston[Facing(East), PistonType(Normal)]<East ext=false src=false 0.00/0.50 stone> -1,0,0:- 2,0,0:-
+observed sticky: t8 0,0,0:moving_piston[Facing(East), PistonType(Sticky)]<East ext=false src=true 0.50/1.00 sticky_piston> 1,0,0:moving_piston[Facing(East), PistonType(Normal)]<East ext=false src=false 0.50/1.00 stone>
+observed sticky: t9 0,0,0:sticky_piston[Extended(false), Facing(East)] 1,0,0:stone 1,1,0:observer[Facing(Down), Powered(true)] 1,2,0:redstone_lamp[Lit(true)] 2,1,0:observer[Facing(Down), Powered(true)] 2,2,0:redstone_lamp[Lit(true)] 3,2,0:redstone_lamp[Lit(true)]
+observed sticky: t12 1,1,0:observer[Facing(Down), Powered(false)] 2,1,0:observer[Facing(Down), Powered(false)]
+observed broken sticky: start 0,-1,-1:grass_block 0,-1,0:grass_block 0,-1,1:grass_block 0,0,0:sticky_piston[Extended(false), Facing(East)] 1,-1,-1:grass_block 1,-1,0:grass_block 1,-1,1:grass_block 1,0,0:stone 2,-1,-1:grass_block 2,-1,0:grass_block 2,-1,1:grass_block 2,0,0:poppy 2,1,0:observer[Facing(Down), Powered(false)] 2,2,0:redstone_lamp[Lit(false)] 3,-1,-1:grass_block 3,-1,0:grass_block 3,-1,1:grass_block 4,-1,-1:grass_block 4,-1,0:grass_block 4,-1,1:grass_block
+observed broken sticky: t0 -1,0,0:redstone_block
+observed broken sticky: t1 0,0,0:sticky_piston[Extended(true), Facing(East)] 1,0,0:moving_piston[Facing(East), PistonType(Sticky)]<East ext=true src=true 0.00/0.50 piston_head> 2,0,0:moving_piston[Facing(East), PistonType(Normal)]<East ext=true src=false 0.00/0.50 stone>
+observed broken sticky: t2 1,0,0:moving_piston[Facing(East), PistonType(Sticky)]<East ext=true src=true 0.50/1.00 piston_head> 2,0,0:moving_piston[Facing(East), PistonType(Normal)]<East ext=true src=false 0.50/1.00 stone>
+observed broken sticky: t3 1,0,0:piston_head[Facing(East), Short(false), PistonType(Sticky)] 2,0,0:stone 2,1,0:observer[Facing(Down), Powered(true)] 2,2,0:redstone_lamp[Lit(true)]
+observed broken sticky: t6 2,1,0:observer[Facing(Down), Powered(false)]
+observed broken sticky: t7 0,0,0:moving_piston[Facing(East), PistonType(Sticky)]<East ext=false src=true 0.00/0.50 sticky_piston> 1,0,0:moving_piston[Facing(East), PistonType(Normal)]<East ext=false src=false 0.00/0.50 stone> -1,0,0:- 2,0,0:-
+observed broken sticky: t8 0,0,0:moving_piston[Facing(East), PistonType(Sticky)]<East ext=false src=true 0.50/1.00 sticky_piston> 1,0,0:moving_piston[Facing(East), PistonType(Normal)]<East ext=false src=false 0.50/1.00 stone>
+observed broken sticky: t9 0,0,0:sticky_piston[Extended(false), Facing(East)] 1,0,0:stone 2,1,0:observer[Facing(Down), Powered(true)]
+observed broken sticky: t12 2,1,0:observer[Facing(Down), Powered(false)]

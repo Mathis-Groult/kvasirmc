@@ -219,7 +219,7 @@ impl World {
     }
 
     /// The block entities of the active chunks.
-    pub(super) fn collect_block_entities(
+    pub(crate) fn collect_block_entities(
         &self,
         active_chunks: &Arc<FxHashSet<Vector2<i32>>>,
     ) -> Vec<Arc<dyn BlockEntity>> {
@@ -241,7 +241,7 @@ impl World {
     }
 
     /// Ticks the block entities in batches and returns how long that took.
-    pub(super) fn tick_block_entities(
+    pub(crate) fn tick_block_entities(
         self: &Arc<Self>,
         block_entities: &[Arc<dyn BlockEntity>],
     ) -> std::time::Duration {

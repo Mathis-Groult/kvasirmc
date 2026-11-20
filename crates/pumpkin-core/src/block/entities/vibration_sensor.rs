@@ -78,6 +78,8 @@ struct State {
     candidate: Option<(Vibration, i64)>,
     /// The vibration travelling to the sensor and its remaining ticks.
     current: Option<(Vibration, i32)>,
+    /// A loaded vibration still owes its particle (`Data.reloadVibrationParticle`).
+    reload_particle: bool,
 }
 
 pub struct VibrationSensor {
@@ -95,6 +97,7 @@ impl VibrationSensor {
             state: Mutex::new(State {
                 candidate: None,
                 current: None,
+                reload_particle: false,
             }),
         }
     }
@@ -115,6 +118,7 @@ impl VibrationSensor {
                 .get_compound("event")
                 .and_then(Vibration::read_nbt)
                 .map(|vibration| (vibration, delay));
+            state.reload_particle = state.current.is_some();
             state.candidate = nbt
                 .get_compound("selector")
                 .and_then(|s| s.get_compound("event"))
@@ -204,6 +208,17 @@ impl VibrationSensor {
         })
     }
 
+    /// `Ticker.tryReloadVibrationParticle`: the particle of a vibration loaded in flight, at the
+    /// point of its path where `travel` ticks are left; true when a player saw it.
+    fn reload_particle(&self, world: &World, vibration: Vibration, travel: i32) -> bool {
+        let total = vibration.distance.floor().max(1.0);
+        let done = 1.0 - f64::from(travel) / f64::from(total);
+        let to = self.position.to_centered_f64();
+        let at = vibration.origin + (to - vibration.origin) * done;
+        block_destination_payload(self.position, travel)
+            .is_ok_and(|payload| send_vibration_particle(world, at, &payload))
+    }
+
     /// `VibrationSystem.Ticker.tick`.
     pub fn tick(&self, world: &Arc<World>) {
         let now = world.get_world_age();
@@ -223,6 +238,9 @@ impl VibrationSensor {
             let Some((vibration, travel)) = state.current else {
                 return;
             };
+            if travel > 0 && state.reload_particle {
+                state.reload_particle = !self.reload_particle(world, vibration, travel);
+            }
             let travel = travel - 1;
             if travel > 0 {
                 state.current = Some((vibration, travel));

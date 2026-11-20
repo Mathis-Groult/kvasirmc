@@ -378,3 +378,45 @@ async fn a_vibration_waits_until_the_neighbouring_chunks_are_loaded() -> TestRes
     assert_eq!(after, Some(1));
     Ok(())
 }
+
+#[tokio::test(flavor = "multi_thread")]
+async fn a_vibration_loaded_in_flight_shows_its_particle_once() -> TestResult {
+    use super::BlockEntity;
+    use super::sculk_sensor::SculkSensorBlockEntity;
+    use crate::net::java::PacketTap;
+    use pumpkin_data::packet::clientbound::play::LEVEL_PARTICLES;
+    use pumpkin_util::math::vector3::Vector3;
+
+    fn particles(tap: &mut PacketTap) -> usize {
+        tap.drain()
+            .iter()
+            .filter(|p| p.first().copied() == Some(LEVEL_PARTICLES.0 as u8))
+            .count()
+    }
+
+    let counts = with_world(|world| -> Result<_, String> {
+        let (player, mut tap) = test_support::java_player_as(world, GameMode::Survival, &WALKER)
+            .ok_or("no Java tap")?;
+        player
+            .living_entity
+            .entity
+            .set_pos(Vector3::new(f64::from(X), f64::from(Y), 1.0));
+        world.add_player(&player)?;
+        step_at(world, "step", 4);
+        tick(world); // selected: the particle is sent once, three ticks of travel left
+        let at_selection = particles(&mut tap);
+        let mut saved = pumpkin_nbt::compound::NbtCompound::new();
+        world
+            .get_block_entity(&sensor())
+            .expect("sensor")
+            .write_nbt(&mut saved);
+        world.add_block_entity(Arc::new(SculkSensorBlockEntity::from_nbt(&saved, sensor())));
+        tick(world);
+        let on_reload = particles(&mut tap);
+        tick(world);
+        Ok((at_selection, on_reload, particles(&mut tap)))
+    })
+    .await??;
+    assert_eq!(counts, (1, 1, 0));
+    Ok(())
+}

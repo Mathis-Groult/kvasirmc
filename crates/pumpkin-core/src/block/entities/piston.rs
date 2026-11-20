@@ -281,16 +281,10 @@ impl BlockEntity for PistonBlockEntity {
         nbt.put_bool(SOURCE, self.source);
     }
 
-    fn chunk_data_nbt(&self) -> Option<NbtCompound> {
-        let mut nbt = NbtCompound::new();
-        // TODO: pushed_block_state
-        nbt.put_byte(FACING, self.facing.to_index() as i8);
-        nbt.put_float(LAST_PROGRESS, self.last_progress.load());
-        nbt.put_bool(EXTENDING, self.extending);
-        nbt.put_bool(SOURCE, self.source);
-        // TODO: duplicated code because of async :c
-        Some(nbt)
-    }
+    // No `chunk_data_nbt`: vanilla `PistonMovingBlockEntity` has no update packet
+    // (`BlockEntity.getUpdatePacket` returns null). The client animates a push from the block
+    // event alone; a block entity data packet here (without the moved block, card #51) reset
+    // the client's moving block to air mid-animation, so pistons showed no animation.
 
     fn as_any(&self) -> &dyn std::any::Any {
         self

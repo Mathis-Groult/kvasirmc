@@ -33,7 +33,7 @@ impl Player {
             nbt.put_int("previousPlayerGameType", previous_gamemode as i32);
         }
 
-        nbt.put_bool("seenCredits", self.seen_credits.load(Ordering::Relaxed));
+        nbt.put_bool("seenCredits", self.end_credits.seen.load(Ordering::Relaxed));
         nbt.put_compound(
             "warden_spawn_tracker",
             self.warden_spawn_tracker
@@ -155,7 +155,7 @@ impl Player {
             self.sleeping_since.store(Some(sleep_timer as u8));
         }
 
-        self.seen_credits.store(
+        self.end_credits.seen.store(
             nbt.get_bool("seenCredits").unwrap_or(false),
             Ordering::Relaxed,
         );

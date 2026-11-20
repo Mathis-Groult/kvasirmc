@@ -74,14 +74,9 @@ impl JavaClient {
                 PlayerInteractUnknownEntityEvent::new(player, entity_id.0, action);
 
                 'after: {
-                    if event.action == ActionType::Attack {
-                        error!(
-                            "Player id {} interacted with entity id {}, which was not found.",
-                            player.entity_id(),
-                            event.entity_id
-                        );
-                        self.try_kick(&TextComponent::translate_cross(translation::java::MULTIPLAYER_DISCONNECT_INVALID_ENTITY_ATTACKED, translation::java::MULTIPLAYER_DISCONNECT_INVALID_ENTITY_ATTACKED, []));
-                    }
+                    // Vanilla ignores an unknown target (no kick): it is usually one the server
+                    // has just removed (card #61).
+                    let _ = event;
                 }
             }}
         }

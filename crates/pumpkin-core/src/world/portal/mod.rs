@@ -129,41 +129,41 @@ impl PortalType {
                             pitch: None,
                         })
                     } else {
-                        // Leaving the End through the exit portal: return to overworld spawn
+                        // Leaving the End (vanilla 26.3 `EndPortalBlock.entityInside` and
+                        // `getPortalDestination`): a player who has not seen the credits gets them and
+                        // is respawned when the client asks (`ServerPlayer.showEndCredits`); any other
+                        // player goes where a respawn would put it. Pumpkin teleported every player
+                        // to the raw world-spawn height (in the sky) and sent the credits in a form
+                        // the client does not show (cards #55, #56).
                         if let Some(player) =
                             current_level.get_player_by_id(caller.get_entity().entity_id)
                         {
-                            match player.client.as_ref() {
-                                crate::net::ClientPlatform::Java(client) => {
-                                    if let Ok(data) = client.serialize_packet(&pumpkin_protocol::java::client::play::CGameEvent::new(
-                                        pumpkin_protocol::java::client::play::GameEvent::WinGame,
-                                        1.0,
-                                    )) {
-                                        client.try_enqueue_packet(data);
-                                    }
-                                }
-                                crate::net::ClientPlatform::Bedrock(client) => {
-                                    if let Ok(data) = client.serialize_packet(
-                                        &pumpkin_protocol::bedrock::client::CShowCredits {
-                                            player_runtime_id: (caller.get_entity().entity_id
-                                                as u64)
-                                                .into(),
-                                            credits_state: 0.into(),
-                                        },
-                                    ) {
-                                        client.try_enqueue_packet(data);
-                                    }
-                                }
-                            }
+                            player.leave_the_end().await;
+                            return None;
                         }
 
+                        // Other entities: vanilla `Entity.adjustSpawnLocation`, the top of the
+                        // world-spawn column.
                         let info = dest_world.level_info.load();
+                        let (spawn_x, spawn_y, spawn_z) =
+                            (info.spawn_x, info.spawn_y, info.spawn_z);
+                        drop(info);
+                        dest_world
+                            .level
+                            .get_or_fetch_chunk(Vector2::new(spawn_x >> 4, spawn_z >> 4), |_| ())
+                            .await;
+                        let top = dest_world.get_top_block(Vector2::new(spawn_x, spawn_z));
+                        let y = if top > dest_world.dimension.min_y {
+                            top + 1
+                        } else {
+                            spawn_y
+                        };
                         Some(TeleportTransition {
                             new_world: dest_world,
                             position: Vector3::new(
-                                f64::from(info.spawn_x) + 0.5,
-                                f64::from(info.spawn_y),
-                                f64::from(info.spawn_z) + 0.5,
+                                f64::from(spawn_x) + 0.5,
+                                f64::from(y),
+                                f64::from(spawn_z) + 0.5,
                             ),
                             yaw: None,
                             pitch: None,

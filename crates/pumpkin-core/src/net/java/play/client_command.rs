@@ -8,8 +8,12 @@ impl JavaClient {
         player.update_last_action_time();
         match client_status.action_id.0 {
             SClientCommand::PERFORM_RESPAWN => {
-                // Perform respawn
-                if player.living_entity.health.load() > 0.0 {
+                // Perform respawn; alive after the End credits (vanilla `wonGame`).
+                let won_game = player
+                    .end_credits
+                    .won
+                    .load(std::sync::atomic::Ordering::Relaxed);
+                if !won_game && player.living_entity.health.load() > 0.0 {
                     return;
                 }
                 let player_c = player.clone();
@@ -18,12 +22,16 @@ impl JavaClient {
                 };
                 let hardcore = server.basic_config.hardcore;
                 server.spawn_task(async move {
-                    player_c
-                        .world()
-                        .clone()
-                        .respawn_player(&player_c, false)
-                        .await;
-                    if hardcore {
+                    if won_game {
+                        player_c.respawn_after_winning().await;
+                    } else {
+                        player_c
+                            .world()
+                            .clone()
+                            .respawn_player(&player_c, false)
+                            .await;
+                    }
+                    if hardcore && !won_game {
                         player_c.set_gamemode(GameMode::Spectator);
                     }
 

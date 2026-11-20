@@ -27,6 +27,8 @@ pub const MAX_TICKS_BEFORE_DRAGON_RESPAWN: i32 = 1200;
 pub const TIME_BETWEEN_CRYSTAL_SCANS: i32 = 100;
 pub const TIME_BETWEEN_PLAYER_SCANS: i32 = 20;
 pub const ARENA_SIZE_CHUNKS: i32 = 8;
+mod arena;
+
 pub const ARENA_TICKET_LEVEL: i32 = 9;
 pub const GATEWAY_COUNT: usize = 20;
 pub const GATEWAY_DISTANCE: f64 = 96.0;
@@ -68,6 +70,8 @@ pub struct DragonFight {
 
     // ── Transient counters & testing flags ────────────────────────────────────
     pub skip_arena_loaded_check: bool,
+    /// Whether the arena's chunk ticket (vanilla `TicketType.DRAGON`) is held.
+    arena_ticket: bool,
     pub alive_crystals: i32,
     ticks_since_dragon_seen: i32,
     ticks_since_crystals_scanned: i32,
@@ -117,6 +121,7 @@ impl DragonFight {
             gateways,
             respawn_crystals: Vec::new(),
             skip_arena_loaded_check: false,
+            arena_ticket: false,
             alive_crystals: 0,
             ticks_since_dragon_seen: 0,
             ticks_since_crystals_scanned: 0,
@@ -163,8 +168,15 @@ impl DragonFight {
             fight.ticks_since_last_player_scan = 0;
         }
 
+        // Vanilla keeps the arena loaded while players are in it, wherever they stand; without
+        // it the fight waited for players to load the arena chunks themselves (the dragon came
+        // only when they flew in) and a dragon in an unloaded chunk was lost and spawned anew
+        // a minute later (card #53).
+        let players_present = !fight.bossbar_players.is_empty();
+        fight.hold_arena_ticket(world, players_present);
+
         // Nothing to do without nearby players
-        if fight.bossbar_players.is_empty() {
+        if !players_present {
             return;
         }
 
@@ -377,24 +389,6 @@ impl DragonFight {
         }
 
         None
-    }
-
-    #[must_use]
-    pub fn is_arena_loaded(&self, world: &Arc<World>) -> bool {
-        if self.skip_arena_loaded_check {
-            return true;
-        }
-        let center_chunk_x = self.origin.0.x >> 4;
-        let center_chunk_z = self.origin.0.z >> 4;
-        for dx in -3..=3 {
-            for dz in -3..=3 {
-                let cp = Vector2::new(center_chunk_x + dx, center_chunk_z + dz);
-                if !world.level.is_chunk_loaded(&cp) {
-                    return false;
-                }
-            }
-        }
-        true
     }
 
     // ── Dragon lifecycle ──────────────────────────────────────────────────────

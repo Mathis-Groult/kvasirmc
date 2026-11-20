@@ -158,6 +158,19 @@ impl EntityBase for WindChargeEntity {
                 owner.as_deref(),
             );
         }
-        self.create_explosion(hit_pos);
+        // Vanilla `AbstractWindCharge.onHitBlock` bursts a quarter block out from the face it
+        // hit. Bursting on the face itself let the ground block every exposure ray to a mob
+        // standing beside it, so a wind charge shot at the ground moved only players (card #63).
+        let burst_at = if let ProjectileHit::Block { face, .. } = &hit {
+            let normal = face.to_offset();
+            hit_pos.add(&Vector3::new(
+                f64::from(normal.x) * 0.25,
+                f64::from(normal.y) * 0.25,
+                f64::from(normal.z) * 0.25,
+            ))
+        } else {
+            hit_pos
+        };
+        self.create_explosion(burst_at);
     }
 }

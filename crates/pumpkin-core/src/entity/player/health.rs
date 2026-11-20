@@ -1,5 +1,8 @@
 //! Health, damage and death.
 
+mod end_exit;
+pub use end_exit::EndCredits;
+
 use super::super::EntityBase;
 use super::{Player, statistics};
 use crate::net::ClientPlatform;

@@ -6,6 +6,7 @@ use pumpkin_data::entity::EntityType;
 use pumpkin_data::item::Item;
 use pumpkin_data::item_stack::ItemStack;
 use pumpkin_data::tag::{self, Taggable};
+use pumpkin_data::world::WorldEvent;
 use pumpkin_protocol::bedrock::client::CUpdateBlock;
 use pumpkin_protocol::java::client::play::CBlockUpdate;
 use pumpkin_util::math::position::BlockPos;
@@ -22,6 +23,16 @@ use crate::{
 pub struct FallingEntity {
     entity: Entity,
     block_state_id: BlockStateId,
+    /// Vanilla `fallDistance`: blocks fallen since the last landing.
+    fall_distance: crossbeam::atomic::AtomicCell<f64>,
+}
+
+/// Vanilla `setHurtsEntities`: damage per block fallen and the cap. Only anvils here
+/// (`AnvilBlock.falling`: 2 per block, at most 40); pointed dripstone is not ported.
+fn hurts_entities(block: &Block) -> Option<(f32, f32)> {
+    block
+        .has_tag(&tag::Block::MINECRAFT_ANVIL)
+        .then_some((2.0, 40.0))
 }
 
 impl FallingEntity {
@@ -30,6 +41,7 @@ impl FallingEntity {
         Self {
             entity,
             block_state_id,
+            fall_distance: crossbeam::atomic::AtomicCell::new(0.0),
         }
     }
 
@@ -52,6 +64,46 @@ impl FallingEntity {
     }
 }
 
+impl FallingEntity {
+    /// Vanilla `FallingBlockEntity.causeFallDamage` on landing: an anvil hurts every living
+    /// entity in its box (not creative or spectator players) by 2 per block fallen beyond the
+    /// first, at most 40, and may crack (5% + 5% per block). Returns the block to place, `None`
+    /// when a damaged anvil broke. Pumpkin had no fall damage at all (card #62).
+    fn cause_fall_damage(&self, world: &Arc<World>) -> Option<BlockStateId> {
+        let state_id = self.block_state_id;
+        let fallen = self.fall_distance.swap(0.0);
+        let Some((per_block, max)) = hurts_entities(Block::from_state_id(state_id)) else {
+            return Some(state_id);
+        };
+        let blocks = (fallen - 1.0).ceil();
+        if blocks < 0.0 {
+            return Some(state_id);
+        }
+        let damage = ((blocks as f32) * per_block).floor().min(max);
+        for target in world.get_all_at_box(&self.entity.bounding_box.load()) {
+            let Some(living) = target.get_living_entity() else {
+                continue;
+            };
+            if target.get_entity().entity_id == self.entity.entity_id
+                || living.health.load() <= 0.0
+                || target.is_spectator()
+                || target
+                    .get_player()
+                    .is_some_and(super::player::Player::is_creative)
+            {
+                continue;
+            }
+            // `caller` is the victim itself (as in explosions), not the anvil.
+            target.damage(target.as_ref(), damage, DamageType::FALLING_ANVIL);
+        }
+        let crack_chance = 0.05 + blocks as f32 * 0.05;
+        if damage > 0.0 && rand::random::<f32>() < crack_chance {
+            return crate::block::blocks::anvil::AnvilBlock::damage(state_id);
+        }
+        Some(state_id)
+    }
+}
+
 impl EntityBase for FallingEntity {
     fn tick(&self, caller: &dyn EntityBase, _server: &Server) {
         let entity = &self.entity;
@@ -60,7 +112,12 @@ impl EntityBase for FallingEntity {
 
         entity.velocity.store(velo);
 
+        let before_y = entity.pos.load().y;
         entity.move_entity(caller, velo);
+        let fallen = before_y - entity.pos.load().y;
+        if fallen > 0.0 {
+            self.fall_distance.store(self.fall_distance.load() + fallen);
+        }
         entity.tick_block_collisions(caller);
         if entity.on_ground.load(Ordering::Relaxed) {
             entity.velocity.store(velo.multiply(0.7, -0.5, 0.7));
@@ -69,7 +126,13 @@ impl EntityBase for FallingEntity {
             let (current_block, current_state) = world.get_block_and_state(&landing_pos);
             // Vanilla waits until a piston has finished moving a block through the landing cell.
             if current_block != &Block::MOVING_PISTON {
-                let mut state_id = self.block_state_id;
+                let Some(mut state_id) = self.cause_fall_damage(&world) else {
+                    // The anvil broke on landing: no block and no item (vanilla `cancelDrop`).
+                    world.sync_world_event(WorldEvent::SoundAnvilBroken, landing_pos, 0);
+                    self.entity.remove();
+                    entity.velocity.store(velo.multiply(0.98, 0.98, 0.98));
+                    return;
+                };
                 let block = Block::from_state_id(state_id);
                 let (below_block, below_state) = world.get_block_and_state(&landing_pos.down());
                 let may_replace = can_replace_with_other_block(current_block, current_state);
@@ -95,6 +158,10 @@ impl EntityBase for FallingEntity {
                         state_id = concrete.default_state.id;
                     }
                     world.set_block_state(&landing_pos, state_id, BlockFlags::NOTIFY_ALL);
+                    if block.has_tag(&tag::Block::MINECRAFT_ANVIL) {
+                        // Vanilla `AnvilBlock.onLand`.
+                        world.sync_world_event(WorldEvent::SoundAnvilLand, landing_pos, 0);
+                    }
                     // block updates to watchers before the despawn, else a invisible block gap until the tick flush.
                     let placed = world.get_block_state_id(&landing_pos);
                     world.send_to_tracking_players_editioned(
@@ -159,3 +226,6 @@ impl EntityBase for FallingEntity {
         self
     }
 }
+
+#[cfg(test)]
+mod tests;

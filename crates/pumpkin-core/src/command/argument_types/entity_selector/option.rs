@@ -359,11 +359,12 @@ impl EntitySelectorOption {
     fn parse_name(self, parser: &mut EntitySelectorParser) -> Result<(), CommandSyntaxError> {
         let start = parser.reader.cursor();
         let invert = parser.consume_inverted_start();
-        if parser.has_flag(if invert {
-            Flags::NAME_NOT_EQUALS_SET
-        } else {
-            Flags::NAME_EQUALS_SET
-        }) {
+        if !can_parse_element(
+            parser,
+            invert,
+            Flags::NAME_EQUALS_SET,
+            Flags::NAME_NOT_EQUALS_SET,
+        ) {
             parser.reader.set_cursor(start);
             return Err(self.inapplicable_error(parser.reader));
         }
@@ -391,11 +392,12 @@ impl EntitySelectorOption {
     fn parse_team(self, parser: &mut EntitySelectorParser) -> Result<(), CommandSyntaxError> {
         let start = parser.reader.cursor();
         let invert = parser.consume_inverted_start();
-        if parser.has_flag(if invert {
-            Flags::TEAM_NOT_EQUALS_SET
-        } else {
-            Flags::TEAM_EQUALS_SET
-        }) {
+        if !can_parse_element(
+            parser,
+            invert,
+            Flags::TEAM_EQUALS_SET,
+            Flags::TEAM_NOT_EQUALS_SET,
+        ) {
             parser.reader.set_cursor(start);
             return Err(self.inapplicable_error(parser.reader));
         }
@@ -530,5 +532,20 @@ impl EntitySelectorOption {
             }
         }
         builder
+    }
+}
+
+/// Vanilla `InvertableSetOptionState.canParseElement`: after an equals value nothing more can
+/// follow, after a negated value only more negated ones.
+const fn can_parse_element(
+    parser: &EntitySelectorParser,
+    invert: bool,
+    equals_set: Flags,
+    not_equals_set: Flags,
+) -> bool {
+    if invert {
+        !parser.has_flag(equals_set)
+    } else {
+        !parser.has_flag(equals_set) && !parser.has_flag(not_equals_set)
     }
 }

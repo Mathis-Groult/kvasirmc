@@ -96,7 +96,7 @@ rotations GoldA=0/0 GoldB=90/-30 GoldC=-170/60 GoldD=179/-90 zombie=45/10 cow=-9
 @e[team=!red] -> [GoldA,GoldB,GoldC,GoldD,zombie,cow,skeleton,pig]
 @e[team=blue] -> [GoldB]
 @e[team=green] -> []
-@e[team=!blue,team=!red] -> error CommandSyntaxError { error_type: CommandErrorType { java_translation_key: "argument.entity.options.inapplicable", bedrock_translation_key: "argument.entity.options.inapplicable" }, message: TextComponent(TextComponentBase { content: Translate { translate: "argument.entity.options.inapplicable", bedrock_translate: Some("argument.entity.options.inapplicable"), with: [TextComponentBase { content: Text { text: "team" }, style: Style { color: None, bold: None, italic: None, underlined: None, strikethrough: None, obfuscated: None, insertion: None, click_event: None, hover_event: None, font: None, shadow_color: None }, extra: [] }] }, style: Style { color: None, bold: None, italic: None, underlined: None, strikethrough: None, obfuscated: None, insertion: None, click_event: None, hover_event: None, font: None, shadow_color: None }, extra: [] }), context: Some(CommandSyntaxErrorContext { input: "@e[team=!blue,team=!red]", cursor: 19 }) }
+@e[team=!blue,team=!red] -> [GoldA,GoldC,GoldD,zombie,cow,skeleton,pig]
 @e[scores={kills=5}] -> []
 @e[scores={kills=6..}] -> []
 @e[scores={kills=..5}] -> [GoldA,GoldB,GoldC,GoldD,zombie,cow,skeleton,pig]

@@ -26,6 +26,6 @@ effect clear @a[name=!GoldA] -> ok 3; GoldA[82:9f1df47e0e436b5f] GoldB[5:426cc0b
 effect clear @a -> ok 1; GoldA[5:827a62cfdd10de64,5:827a62cfdd10de64,82:8521837dff8b6f5e] GoldB[159:b8f5d82ddf03241b] GoldC[] GoldD[83:bd75b6cb0771ef55]; GoldA[] GoldB[] GoldC[] GoldD[]
 effect clear @a -> err Target has no effects to remove; GoldA[] GoldB[] GoldC[] GoldD[]; GoldA[] GoldB[] GoldC[] GoldD[]
 effect clear GoldB minecraft:no_such_effect -> err Can't find element 'no_such_effect' of type 'minecraft:mob_effect'; GoldA[] GoldB[] GoldC[] GoldD[]; GoldA[] GoldB[] GoldC[] GoldD[]
-effect clear NoSuchPlayer -> err No player was found; GoldA[] GoldB[] GoldC[] GoldD[]; GoldA[] GoldB[] GoldC[] GoldD[]
-effect clear @e[type=minecraft:zombie] -> err Only players may be affected by this command, but the provided selector includes entities; GoldA[] GoldB[] GoldC[] GoldD[]; GoldA[] GoldB[] GoldC[] GoldD[]
+effect clear NoSuchPlayer -> err No entity was found; GoldA[] GoldB[] GoldC[] GoldD[]; GoldA[] GoldB[] GoldC[] GoldD[]
+effect clear @e[type=minecraft:zombie] -> err No entity was found; GoldA[] GoldB[] GoldC[] GoldD[]; GoldA[] GoldB[] GoldC[] GoldD[]
 effect clear GoldB speed -> err Target doesn't have the requested effect; GoldA[] GoldB[] GoldC[] GoldD[]; GoldA[] GoldB[] GoldC[] GoldD[]

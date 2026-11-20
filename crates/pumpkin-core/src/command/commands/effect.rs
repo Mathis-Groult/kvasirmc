@@ -16,6 +16,7 @@ use crate::command::errors::error_types::CommandErrorType;
 use crate::command::node::dispatcher::CommandDispatcher;
 use crate::command::node::{CommandExecutor, CommandExecutorResult};
 use crate::entity::EntityBase;
+use crate::entity::living::LivingEntity;
 use crate::entity::player::Player;
 
 const DESCRIPTION: &str = "Adds or removes the status effects of players and other entities.";
@@ -41,6 +42,14 @@ const ERROR_CLEAR_SPECIFIC_FAILED: CommandErrorType<0> = CommandErrorType::new(
     translation::java::COMMANDS_EFFECT_CLEAR_SPECIFIC_FAILED,
 );
 
+/// Adds `effect`; a player also gets the effects-changed advancement trigger.
+fn add_effect(target: &dyn EntityBase, living: &LivingEntity, effect: &Effect) {
+    target.get_player().map_or_else(
+        || living.add_effect(effect.clone()),
+        |player| player.add_effect(effect.clone()),
+    );
+}
+
 #[derive(Clone, Copy)]
 enum Duration {
     Default,
@@ -56,7 +65,7 @@ struct GiveExecutor {
 
 impl CommandExecutor for GiveExecutor {
     fn execute(&self, context: &CommandContext) -> CommandExecutorResult {
-        let targets = EntityArgumentType::get_players(context, "targets")?;
+        let targets = EntityArgumentType::get_entities(context, "targets")?;
         let effect = ResourceArgument::get_mob_effect(context, "effect")?;
 
         let duration_ticks = match self.duration {
@@ -80,21 +89,27 @@ impl CommandExecutor for GiveExecutor {
         let mut successes = 0;
 
         for target in &targets {
-            let should_skip = target
-                .living_entity
+            let Some(living) = target.get_living_entity() else {
+                continue;
+            };
+            let should_skip = living
                 .get_effect(effect)
                 .is_some_and(|existing| existing.amplifier >= amplifier);
 
             if !should_skip {
-                target.add_effect(Effect {
-                    effect_type: effect,
-                    duration: duration_ticks,
-                    amplifier,
-                    ambient: false,
-                    show_particles: !hide_particles,
-                    show_icon: true,
-                    blend: false,
-                });
+                add_effect(
+                    target.as_ref(),
+                    living,
+                    &Effect {
+                        effect_type: effect,
+                        duration: duration_ticks,
+                        amplifier,
+                        ambient: false,
+                        show_particles: !hide_particles,
+                        show_icon: true,
+                        blend: false,
+                    },
+                );
                 successes += 1;
             }
         }
@@ -153,10 +168,10 @@ impl CommandExecutor for ClearExecutor {
                     .output
                     .as_player()
                     .ok_or_else(|| ERROR_NOT_PLAYER.create_without_context())?;
-                vec![player]
+                vec![player as Arc<dyn EntityBase>]
             }
             ClearMode::TargetsAll | ClearMode::TargetsSpecific => {
-                EntityArgumentType::get_players(context, "targets")?
+                EntityArgumentType::get_entities(context, "targets")?
             }
         };
 
@@ -168,17 +183,24 @@ impl CommandExecutor for ClearExecutor {
 }
 
 /// `effect clear [targets]`: every effect of every target.
-fn clear_all_effects(context: &CommandContext, targets: &[Arc<Player>]) -> CommandExecutorResult {
+fn clear_all_effects(
+    context: &CommandContext,
+    targets: &[Arc<dyn EntityBase>],
+) -> CommandExecutorResult {
     let mut succeeded_clears = 0;
     for target in targets {
-        let has_effects = !target
-            .living_entity
+        let Some(living) = target.get_living_entity() else {
+            continue;
+        };
+        let has_effects = !living
             .active_effects
             .lock()
             .unwrap_or_else(std::sync::PoisonError::into_inner)
             .is_empty();
         if has_effects {
-            target.remove_all_effects();
+            target
+                .get_player()
+                .map_or_else(|| living.remove_all_effects(), Player::remove_all_effects);
             succeeded_clears += 1;
         }
     }
@@ -210,12 +232,21 @@ fn clear_all_effects(context: &CommandContext, targets: &[Arc<Player>]) -> Comma
 }
 
 /// `effect clear <targets> <effect>`: one effect.
-fn clear_effect(context: &CommandContext, targets: &[Arc<Player>]) -> CommandExecutorResult {
+fn clear_effect(
+    context: &CommandContext,
+    targets: &[Arc<dyn EntityBase>],
+) -> CommandExecutorResult {
     let effect = ResourceArgument::get_mob_effect(context, "effect")?;
     let mut succeeded_clears = 0;
     for target in targets {
-        if target.living_entity.has_effect(effect) {
-            target.remove_effect(effect);
+        let Some(living) = target.get_living_entity() else {
+            continue;
+        };
+        if living.has_effect(effect) {
+            target.get_player().map_or_else(
+                || living.remove_effect(effect),
+                |player| player.remove_effect(effect),
+            );
             succeeded_clears += 1;
         }
     }
@@ -312,7 +343,7 @@ pub fn register(dispatcher: &mut CommandDispatcher, registry: &PermissionRegistr
         );
 
     let give_node = literal("give").then(
-        argument("targets", EntityArgumentType::Players).then(
+        argument("targets", EntityArgumentType::Entities).then(
             argument("effect", MOB_EFFECT_ARGUMENT.clone())
                 .executes(GiveExecutor {
                     duration: Duration::Default,
@@ -327,7 +358,7 @@ pub fn register(dispatcher: &mut CommandDispatcher, registry: &PermissionRegistr
     let clear_node = literal("clear")
         .executes(ClearExecutor(ClearMode::SelfAll))
         .then(
-            argument("targets", EntityArgumentType::Players)
+            argument("targets", EntityArgumentType::Entities)
                 .executes(ClearExecutor(ClearMode::TargetsAll))
                 .then(
                     argument("effect", MOB_EFFECT_ARGUMENT.clone())
@@ -345,3 +376,6 @@ pub fn register(dispatcher: &mut CommandDispatcher, registry: &PermissionRegistr
 
 #[cfg(test)]
 mod golden;
+
+#[cfg(test)]
+mod mob_tests;

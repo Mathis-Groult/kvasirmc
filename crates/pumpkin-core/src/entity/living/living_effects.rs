@@ -259,6 +259,22 @@ impl LivingEntity {
         }
     }
 
+    /// Vanilla `LivingEntity.removeAllEffects`: true when there was any effect to remove.
+    pub fn remove_all_effects(&self) -> bool {
+        let effects: Vec<_> = self
+            .active_effects
+            .lock()
+            .unwrap_or_else(std::sync::PoisonError::into_inner)
+            .keys()
+            .copied()
+            .collect();
+        let any = !effects.is_empty();
+        for effect in effects {
+            self.remove_effect(effect);
+        }
+        any
+    }
+
     pub fn remove_effect(&self, effect_type: &'static StatusEffect) -> bool {
         // Remove the effect
         let succeeded = self

@@ -15,7 +15,7 @@ defaultgamemode nodes=2 hash=c27a6ee1cbb87c9f
 deop nodes=2 hash=934e78495674dcc5
 dialog nodes=6 hash=ad9551aed4d5a266
 difficulty nodes=5 hash=c2eebd8377b6196b
-effect nodes=13 hash=214c878870a00dbd
+effect nodes=13 hash=245eab4f646d0951
 enchant nodes=4 hash=61d175cc742e6a1d
 execute nodes=142 hash=d409e81ef92ae49e
 experience nodes=15 hash=29665974a9f9d8d6

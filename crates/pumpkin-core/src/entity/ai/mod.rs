@@ -3,6 +3,9 @@ pub mod brain;
 pub mod control;
 pub mod goal;
 pub mod pathfinder;
+#[cfg(test)]
+#[path = "pathfinder/fly_neighbors_golden.rs"]
+mod fly_neighbors_golden;
 pub mod random_pos;
 pub mod sensing;
 pub mod target_match;

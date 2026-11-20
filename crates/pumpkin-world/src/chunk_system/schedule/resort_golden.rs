@@ -130,6 +130,7 @@ fn lowering_scenes() -> Vec<Scene> {
                         .first_task(S::Biomes)
                         .tasks_to(S::Features),
                 );
+                f.wait(0, 0, S::Features);
                 change(&[(0, 0, S::Features, S::Surface)], &[])
             },
         },
@@ -217,6 +218,26 @@ fn lowering_scenes() -> Vec<Scene> {
 fn reloading_scenes() -> Vec<Scene> {
     vec![
         Scene {
+            name: "unload_keeps_dependency_of_loaded_neighbor",
+            build: |f| {
+                f.schedule
+                    .resort_work(change(&[(0, 0, S::None, S::Surface)], &[]));
+                f.holder_at(1, 0).target_stage = S::Biomes;
+                change(&[(1, 0, S::Biomes, S::None)], &[])
+            },
+        },
+        Scene {
+            name: "unload_after_dependent_is_gone",
+            build: |f| {
+                f.schedule
+                    .resort_work(change(&[(0, 0, S::None, S::Surface)], &[]));
+                f.schedule
+                    .resort_work(change(&[(0, 0, S::Surface, S::None)], &[]));
+                f.holder_at(1, 0).target_stage = S::Biomes;
+                change(&[(1, 0, S::Biomes, S::None)], &[])
+            },
+        },
+        Scene {
             name: "reload_cancels_unload",
             build: |f| {
                 f.holder(
@@ -231,6 +252,11 @@ fn reloading_scenes() -> Vec<Scene> {
                 change(&[(0, 0, S::None, S::Surface)], &[])
             },
         },
+    ]
+}
+
+fn publishing_scenes() -> Vec<Scene> {
+    vec![
         Scene {
             name: "reload_publishes_full_chunk",
             build: |f| {
@@ -304,6 +330,7 @@ fn scenes() -> Vec<Scene> {
     let mut all = raising_scenes();
     all.extend(lowering_scenes());
     all.extend(reloading_scenes());
+    all.extend(publishing_scenes());
     all
 }
 

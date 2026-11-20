@@ -66,6 +66,8 @@ struct Spec {
     held: Held,
     /// The stages that have a task, from the lowest to this one.
     tasks_to: StagedChunkEnum,
+    /// The lowest stage that has a task.
+    first_task: StagedChunkEnum,
     occupied: Occupied,
 }
 
@@ -80,6 +82,7 @@ impl Spec {
             public: false,
             held: Held::Nothing,
             tasks_to: S::None,
+            first_task: S::Empty,
             occupied: Occupied::Null,
         }
     }
@@ -101,6 +104,10 @@ impl Spec {
     }
     const fn tasks_to(mut self, stage: StagedChunkEnum) -> Self {
         self.tasks_to = stage;
+        self
+    }
+    const fn first_task(mut self, stage: StagedChunkEnum) -> Self {
+        self.first_task = stage;
         self
     }
     const fn occupied(mut self, occupied: Occupied) -> Self {
@@ -199,7 +206,7 @@ impl Fixture {
         };
         let graph = &mut self.schedule.graph;
         let mut previous = NodeKey::null();
-        for index in (S::None as usize + 1)..=(spec.tasks_to as usize) {
+        for index in (spec.first_task as usize)..=(spec.tasks_to as usize) {
             let key = graph.nodes.insert(Node::new(pos, stage_of(index)));
             if !previous.is_null() {
                 graph.add_edge(previous, key);
@@ -236,7 +243,7 @@ impl Fixture {
     fn publish_other(&self, x: i32, z: i32) {
         self.schedule
             .public_chunks
-            .publish(ChunkPos::new(x, z), lit_chunk(x, z));
+            .publish(ChunkPos::new(x, z), lit_chunk_with(x, z, 5));
     }
 
     /// A message with a `size` by `size` square of chunks from `(x, z)`.
@@ -249,12 +256,16 @@ impl Fixture {
 
 /// An empty chunk whose light sections are not empty, so that a lighting override shows.
 fn lit_chunk(x: i32, z: i32) -> SyncChunk {
+    lit_chunk_with(x, z, 3)
+}
+
+fn lit_chunk_with(x: i32, z: i32, block: u8) -> SyncChunk {
     let chunk = ChunkData::empty(x, z);
     let mut engine = chunk
         .light_engine
         .lock()
         .unwrap_or_else(std::sync::PoisonError::into_inner);
-    engine.block_light = vec![LightContainer::Empty(3); 3].into_boxed_slice();
+    engine.block_light = vec![LightContainer::Empty(block); 3].into_boxed_slice();
     engine.sky_light = vec![LightContainer::Empty(7); 3].into_boxed_slice();
     drop(engine);
     Arc::new(chunk)
@@ -289,14 +300,24 @@ fn node_text(graph: &DAG, key: NodeKey) -> String {
     graph.nodes.get(key).map_or_else(
         || "gone".to_owned(),
         |node| {
+            let mut to = Vec::new();
+            let mut edge = node.edge;
+            while let Some(found) = graph.edges.get(edge) {
+                to.push(graph.nodes.get(found.to).map_or_else(
+                    || "gone".to_owned(),
+                    |target| format!("{:?}@{},{}", target.stage, target.pos.x, target.pos.y),
+                ));
+                edge = found.next;
+            }
             format!(
-                "{:?}@{},{} deg{} q{} f{}",
+                "{:?}@{},{} deg{} q{} f{} ->[{}]",
                 node.stage,
                 node.pos.x,
                 node.pos.y,
                 node.in_degree,
                 u8::from(node.in_queue),
-                u8::from(node.in_flight)
+                u8::from(node.in_flight),
+                to.join(",")
             )
         },
     )
@@ -499,6 +520,7 @@ fn io_scenes() -> Vec<Scene> {
                 Spec::at(1, 0)
                     .current(S::Empty)
                     .target(S::Biomes)
+                    .first_task(S::Biomes)
                     .tasks_to(S::Biomes)
                     .held(Held::Proto(S::Empty)),
             );
@@ -558,6 +580,12 @@ fn generation_scenes() -> Vec<Scene> {
                 Fixture::generation(-1, -1, 3, chunks)
             },
         ),
+        generation_scene("gen_level_everywhere_occupied", default, |f| {
+            ring(f, S::Empty, Occupied::Live);
+            f.holder_at(0, 0).current_stage = S::Spawn;
+            let chunks = square(f, (-1, -1), 3, level);
+            Fixture::generation(-1, -1, 3, chunks)
+        }),
         generation_scene(
             "gen_level_center_dark_unoccupied",
             LightingEngineConfig::Dark,
@@ -618,6 +646,7 @@ fn proto_generation_scenes() -> Vec<Scene> {
                     Spec::at(x, z)
                         .current(S::Empty)
                         .target(S::Biomes)
+                        .first_task(S::Biomes)
                         .tasks_to(S::Biomes)
                         .held(Held::Proto(S::Empty))
                         .occupied(Occupied::Live),

@@ -71,7 +71,21 @@ fn get_calibrated_sculk_sensor_input_strength(
 }
 
 impl SculkSensorBlock {
-    pub fn trigger(world: &Arc<World>, pos: &BlockPos, block: &Block, power: u8) {
+    /// Vanilla `SculkSensorBlock.canActivate`.
+    pub fn can_activate(world: &World, pos: &BlockPos) -> bool {
+        let (block, state) = world.get_block_and_state(pos);
+        sculk_sensor_phase(block, state.id) == SculkSensorPhase::Inactive
+    }
+
+    /// The strength a calibrated sensor reads behind it.
+    pub fn calibrated_input(world: &World, pos: &BlockPos) -> u8 {
+        let state = world.get_block_state(pos);
+        let props = CalibratedSculkSensorLikeProperties::from_state_id(state.id);
+        get_calibrated_sculk_sensor_input_strength(world, pos, props.facing)
+    }
+
+    /// Vanilla `SculkSensorBlock.activate(.., power, frequency)`.
+    pub fn activate(world: &Arc<World>, pos: &BlockPos, block: &Block, power: u8, frequency: u8) {
         if block.id == BlockId::SCULK_SENSOR {
             let state = world.get_block_state(pos);
             let mut props = SculkSensorLikeProperties::from_state_id(state.id);
@@ -82,7 +96,7 @@ impl SculkSensorBlock {
                     *sensor_be
                         .last_vibration_frequency
                         .lock()
-                        .unwrap_or_else(std::sync::PoisonError::into_inner) = power as i32;
+                        .unwrap_or_else(std::sync::PoisonError::into_inner) = i32::from(frequency);
                 }
 
                 props.sculk_sensor_phase = SculkSensorPhase::Active;
@@ -106,13 +120,6 @@ impl SculkSensorBlock {
             let state = world.get_block_state(pos);
             let mut props = CalibratedSculkSensorLikeProperties::from_state_id(state.id);
             if props.sculk_sensor_phase == SculkSensorPhase::Inactive {
-                let calibrated_freq =
-                    get_calibrated_sculk_sensor_input_strength(world, pos, props.facing);
-
-                if calibrated_freq > 0 && calibrated_freq != power {
-                    return;
-                }
-
                 if let Some(be) = world.get_block_entity(pos)
                     && let Some(cal_be) = be
                         .as_any()
@@ -121,7 +128,7 @@ impl SculkSensorBlock {
                     *cal_be
                         .last_vibration_frequency
                         .lock()
-                        .unwrap_or_else(std::sync::PoisonError::into_inner) = power as i32;
+                        .unwrap_or_else(std::sync::PoisonError::into_inner) = i32::from(frequency);
                 }
 
                 props.sculk_sensor_phase = SculkSensorPhase::Active;

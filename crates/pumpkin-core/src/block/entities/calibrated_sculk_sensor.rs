@@ -1,11 +1,14 @@
-use super::BlockEntity;
+use super::{BlockEntity, vibration_sensor::VibrationSensor};
+use crate::world::{World, game_event::GameEventListener};
 use pumpkin_nbt::compound::NbtCompound;
 use pumpkin_util::math::position::BlockPos;
+use std::sync::Arc;
 use std::sync::Mutex;
 
 pub struct CalibratedSculkSensorBlockEntity {
     pub position: BlockPos,
     pub last_vibration_frequency: Mutex<i32>,
+    sensor: VibrationSensor,
 }
 
 impl BlockEntity for CalibratedSculkSensorBlockEntity {
@@ -25,6 +28,7 @@ impl BlockEntity for CalibratedSculkSensorBlockEntity {
         Self {
             position,
             last_vibration_frequency: Mutex::new(last_vibration_frequency),
+            sensor: VibrationSensor::new(position, true),
         }
     }
 
@@ -43,6 +47,14 @@ impl BlockEntity for CalibratedSculkSensorBlockEntity {
         Some(nbt)
     }
 
+    fn tick(&self, world: &Arc<World>) {
+        self.sensor.tick(world);
+    }
+
+    fn game_event_listener(&self) -> Option<&dyn GameEventListener> {
+        Some(&self.sensor)
+    }
+
     fn as_any(&self) -> &dyn std::any::Any {
         self
     }
@@ -55,6 +67,7 @@ impl CalibratedSculkSensorBlockEntity {
         Self {
             position,
             last_vibration_frequency: Mutex::new(0),
+            sensor: VibrationSensor::new(position, true),
         }
     }
 }

@@ -63,6 +63,9 @@ pub mod structure_block;
 pub mod test_block;
 pub mod test_instance_block;
 pub mod trial_spawner;
+pub mod vibration_sensor;
+#[cfg(test)]
+mod vibration_sensor_tests;
 pub mod vault;
 
 pub use furnace_like_block_entity::ExperienceContainer;
@@ -75,6 +78,11 @@ pub trait BlockEntity: Any + Send + Sync {
     where
         Self: Sized;
     fn tick(&self, _world: &Arc<World>) {}
+
+    /// The game events this block entity listens to (sculk sensors).
+    fn game_event_listener(&self) -> Option<&dyn crate::world::game_event::GameEventListener> {
+        None
+    }
     fn resource_location(&self) -> &'static str;
     fn get_position(&self) -> BlockPos;
 

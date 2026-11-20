@@ -2,6 +2,7 @@ use pumpkin_data::game_event::GameEvent;
 use pumpkin_util::math::{
     boundingbox::BoundingBox,
     position::{BlockPos, chunk_section_from_pos},
+    vector2::Vector2,
     vector3::Vector3,
 };
 use pumpkin_world::generation::section_coords::section_to_block;
@@ -53,6 +54,25 @@ pub fn notified_area(position: Vector3<f64>, radius: i32) -> BoundingBox {
     )
 }
 
+/// Whether `listener` is in the notified sections and inside its own radius of the event.
+fn listener_hears(
+    listener: &dyn GameEventListener,
+    center: BlockPos,
+    section_min: Vector3<i32>,
+    section_max: Vector3<i32>,
+) -> bool {
+    let listener_block = BlockPos::floored_v(listener.listener_position());
+    let section = chunk_section_from_pos(&listener_block);
+    let radius = listener.listener_radius();
+    section.x >= section_min.x
+        && section.y >= section_min.y
+        && section.z >= section_min.z
+        && section.x <= section_max.x
+        && section.y <= section_max.y
+        && section.z <= section_max.z
+        && listener_block.squared_distance(&center) <= radius * radius
+}
+
 impl World {
     pub(super) fn post_game_event(
         &self,
@@ -78,22 +98,28 @@ impl World {
                 continue;
             }
             mob.for_each_game_event_listener(&mut |listener| {
-                let listener_block = BlockPos::floored_v(listener.listener_position());
-                let section = chunk_section_from_pos(&listener_block);
-                let listener_radius = listener.listener_radius();
-                if section.x < section_min.x
-                    || section.y < section_min.y
-                    || section.z < section_min.z
-                    || section.x > section_max.x
-                    || section.y > section_max.y
-                    || section.z > section_max.z
-                    || listener_block.squared_distance(&center) > listener_radius * listener_radius
-                {
+                if !listener_hears(listener, center, section_min, section_max) {
                     return;
                 }
                 entity_islands::check_reached(entity.get_entity().entity_id);
                 listener.handle_game_event(self, event, context, position);
             });
+        }
+        // Block entities (sculk sensors) listen too; chunk x/z equal section x/z.
+        let mut heard = Vec::new();
+        for x in section_min.x..=section_max.x {
+            for z in section_min.z..=section_max.z {
+                if let Some(chunk) = self.block_entities.get(&Vector2::new(x, z)) {
+                    heard.extend(chunk.values().cloned());
+                }
+            }
+        }
+        for block_entity in heard {
+            if let Some(listener) = block_entity.game_event_listener()
+                && listener_hears(listener, center, section_min, section_max)
+            {
+                listener.handle_game_event(self, event, context, position);
+            }
         }
     }
 }

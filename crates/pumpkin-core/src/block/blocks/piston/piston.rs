@@ -106,7 +106,6 @@ impl BlockBehaviour for PistonBlock {
 }
 
 impl PistonBlock {
-    #[expect(clippy::too_many_lines)]
     fn handle_synced_block_event(
         block: &Block,
         world: &Arc<World>,
@@ -172,7 +171,18 @@ impl PistonBlock {
             return true;
         }
         // Reduce Piston
+        Self::retract_piston(block, world, pos, dir, sticky, r#type, data)
+    }
 
+    fn retract_piston(
+        block: &Block,
+        world: &Arc<World>,
+        pos: &BlockPos,
+        dir: BlockDirection,
+        sticky: bool,
+        r#type: u8,
+        data: u8,
+    ) -> bool {
         let mut event =
             crate::plugin::api::events::block::block_piston::BlockPistonRetractEvent::new(
                 *pos,
@@ -223,6 +233,31 @@ impl PistonBlock {
         }));
 
         world.update_neighbors(pos, None);
+        Self::remove_or_pull(world, pos, dir, sticky, r#type, extended_pos);
+        // Play piston contract sound
+        let pitch = rand::rng().random_range(0.6f32..0.75);
+        world.play_sound_fine(
+            Sound::BlockPistonContract,
+            SoundCategory::Blocks,
+            &pos.to_centered_f64(),
+            0.5,
+            pitch,
+        );
+        world.emit_game_event(
+            pumpkin_data::game_event::GameEvent::BlockDeactivate.name(),
+            pos.to_centered_f64(),
+        );
+        true
+    }
+
+    fn remove_or_pull(
+        world: &Arc<World>,
+        pos: &BlockPos,
+        dir: BlockDirection,
+        sticky: bool,
+        r#type: u8,
+        extended_pos: BlockPos,
+    ) {
         if sticky {
             let pull_pos = pos.offset_dir(dir.to_offset(), 2);
             let (block, _) = world.get_block_and_state(&pull_pos);
@@ -265,20 +300,6 @@ impl PistonBlock {
                 BlockFlags::NOTIFY_ALL,
             );
         }
-        // Play piston contract sound
-        let pitch = rand::rng().random_range(0.6f32..0.75);
-        world.play_sound_fine(
-            Sound::BlockPistonContract,
-            SoundCategory::Blocks,
-            &pos.to_centered_f64(),
-            0.5,
-            pitch,
-        );
-        world.emit_game_event(
-            pumpkin_data::game_event::GameEvent::BlockDeactivate.name(),
-            pos.to_centered_f64(),
-        );
-        true
     }
 }
 
@@ -341,7 +362,6 @@ pub fn try_move(world: &Arc<World>, _block: &Block, block_pos: &BlockPos) {
     }
 }
 
-#[expect(clippy::too_many_lines)]
 fn move_piston(
     world: &Arc<World>,
     dir: BlockDirection,
@@ -376,7 +396,6 @@ fn move_piston(
     let broken_blocks: Vec<BlockPos> = handler.broken_blocks;
     let mut affected_block_states: Vec<&BlockState> =
         Vec::with_capacity(moved_blocks.len() + broken_blocks.len());
-    let move_direction = if extend { dir } else { dir.opposite() };
 
     for &broken_block_pos in broken_blocks.iter().rev() {
         let block_state = world.get_block_state(&broken_block_pos);
@@ -387,6 +406,47 @@ fn move_piston(
         );
         affected_block_states.push(block_state);
     }
+
+    push_moving_blocks(
+        world,
+        dir,
+        extend,
+        &moved_blocks,
+        &moved_block_states,
+        &mut moved_blocks_map,
+        &mut affected_block_states,
+    );
+
+    if extend {
+        extend_head(world, dir, sticky, extended_pos, &mut moved_blocks_map);
+    }
+
+    clear_moved_sources(world, &moved_blocks_map);
+
+    notify_after_move(
+        world,
+        extend,
+        extended_pos,
+        &moved_blocks,
+        &moved_block_states,
+        &broken_blocks,
+        &affected_block_states,
+    );
+
+    true
+}
+
+/// Puts a moving piston block (with its block entity) at every pushed block's target.
+fn push_moving_blocks(
+    world: &Arc<World>,
+    dir: BlockDirection,
+    extend: bool,
+    moved_blocks: &[BlockPos],
+    moved_block_states: &[&'static BlockState],
+    moved_blocks_map: &mut FxHashMap<BlockPos, &'static BlockState>,
+    affected_block_states: &mut Vec<&'static BlockState>,
+) {
+    let move_direction = if extend { dir } else { dir.opposite() };
 
     for (index, &moved_block_pos) in moved_blocks.iter().rev().enumerate() {
         let block_state = world.get_block_state(&moved_block_pos);
@@ -416,36 +476,49 @@ fn move_piston(
         }
         affected_block_states.push(block_state);
     }
+}
 
-    if extend {
-        let pistion_type = if sticky {
-            PistonType::Sticky
-        } else {
-            PistonType::Normal
-        };
-        let mut props = MovingPistonLikeProperties::default(&Block::MOVING_PISTON);
-        props.facing = dir.to_facing();
-        props.r#type = pistion_type;
-        moved_blocks_map.remove(&extended_pos);
-        world.set_block_state(
-            &extended_pos,
-            props.to_state_id(&Block::MOVING_PISTON),
-            BlockFlags::NOTIFY_LISTENERS | BlockFlags::MOVED,
-        );
-        let mut props = PistonHeadLikeProperties::default(&Block::PISTON_HEAD);
-        props.facing = dir.to_facing();
-        props.r#type = pistion_type;
-        world.add_block_entity(Arc::new(PistonBlockEntity {
-            position: extended_pos,
-            facing: dir.to_facing().to_block_direction(),
-            pushed_block_state: BlockState::from_id(props.to_state_id(&Block::PISTON_HEAD)),
-            current_progress: 0.0.into(),
-            last_progress: 0.0.into(),
-            extending: true,
-            source: true,
-        }));
-    }
+/// Puts the moving head in front of the piston.
+fn extend_head(
+    world: &Arc<World>,
+    dir: BlockDirection,
+    sticky: bool,
+    extended_pos: BlockPos,
+    moved_blocks_map: &mut FxHashMap<BlockPos, &'static BlockState>,
+) {
+    let pistion_type = if sticky {
+        PistonType::Sticky
+    } else {
+        PistonType::Normal
+    };
+    let mut props = MovingPistonLikeProperties::default(&Block::MOVING_PISTON);
+    props.facing = dir.to_facing();
+    props.r#type = pistion_type;
+    moved_blocks_map.remove(&extended_pos);
+    world.set_block_state(
+        &extended_pos,
+        props.to_state_id(&Block::MOVING_PISTON),
+        BlockFlags::NOTIFY_LISTENERS | BlockFlags::MOVED,
+    );
+    let mut props = PistonHeadLikeProperties::default(&Block::PISTON_HEAD);
+    props.facing = dir.to_facing();
+    props.r#type = pistion_type;
+    world.add_block_entity(Arc::new(PistonBlockEntity {
+        position: extended_pos,
+        facing: dir.to_facing().to_block_direction(),
+        pushed_block_state: BlockState::from_id(props.to_state_id(&Block::PISTON_HEAD)),
+        current_progress: 0.0.into(),
+        last_progress: 0.0.into(),
+        extending: true,
+        source: true,
+    }));
+}
 
+/// Empties the cells the pushed blocks left, then tells their neighbours.
+fn clear_moved_sources(
+    world: &Arc<World>,
+    moved_blocks_map: &FxHashMap<BlockPos, &'static BlockState>,
+) {
     let air_state = Block::AIR.default_state.id;
     for &pos in moved_blocks_map.keys() {
         world.set_block_state(
@@ -455,7 +528,7 @@ fn move_piston(
         );
     }
 
-    for (pos, state) in &moved_blocks_map {
+    for (pos, state) in moved_blocks_map {
         world.block_registry.prepare(
             world,
             pos,
@@ -474,7 +547,18 @@ fn move_piston(
             BlockFlags::NOTIFY_LISTENERS,
         );
     }
+}
 
+/// Neighbour updates for the broken, moved and extended cells.
+fn notify_after_move(
+    world: &Arc<World>,
+    extend: bool,
+    extended_pos: BlockPos,
+    moved_blocks: &[BlockPos],
+    moved_block_states: &[&'static BlockState],
+    broken_blocks: &[BlockPos],
+    affected_block_states: &[&'static BlockState],
+) {
     for (i, &broken_block_pos) in broken_blocks.iter().rev().enumerate() {
         if let Some(block_state) = affected_block_states.get(i) {
             world.block_registry.on_state_replaced(
@@ -508,8 +592,6 @@ fn move_piston(
     if extend {
         world.update_neighbors_at(&extended_pos, &Block::PISTON_HEAD, None);
     }
-
-    true
 }
 
 #[cfg(test)]

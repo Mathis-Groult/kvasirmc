@@ -184,21 +184,23 @@ impl JavaClient {
 
                 let height_difference = pos.y - last_pos.y;
                 if entity.on_ground.load(Ordering::Relaxed)
-                    && (packet.collision & FLAG_ON_GROUND) != 0
+                    && (packet.collision & FLAG_ON_GROUND) == 0
                     && height_difference > 0.0
                 {
                     player.jump();
                 }
-                entity
-                    .on_ground
-                    .store((packet.collision & FLAG_ON_GROUND) != 0, Ordering::Relaxed);
+                let new_on_ground = (packet.collision & FLAG_ON_GROUND) != 0;
+                entity.on_ground.store(new_on_ground, Ordering::Relaxed);
+                if new_on_ground && entity.is_fall_flying() {
+                    entity.set_fall_flying(false);
+                }
 
                 Self::send_turned_move(player, entity, pos, last_pos, packet);
                 Self::finish_movement(player, pos, last_pos, height_difference, (packet.collision & FLAG_ON_GROUND) != 0);
             }
 
             'cancelled: {
-                self.force_tp(player, position);
+                self.force_tp(player, player.get_entity().pos.load());
             }
         }}
     }

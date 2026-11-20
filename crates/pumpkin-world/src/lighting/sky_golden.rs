@@ -23,6 +23,9 @@ use crate::generation::proto_chunk::ProtoChunk;
 const MIN_Y: i32 = -64;
 const SECTIONS: usize = 24;
 
+/// The chunk in the middle of the square, away from the origin so that no coordinate is zero.
+const ORIGIN: (i32, i32) = (5, -2);
+
 type Place = (i32, i32, i32, &'static Block);
 
 /// Which of the nine chunks, in cache order, are finished chunks. The centre one never is.
@@ -220,10 +223,10 @@ fn finished_chunk(x: i32, z: i32) -> Chunk {
 }
 
 fn build(scene: &Scene, world_gen: &WorldGenerator) -> Cache {
-    let mut cache = Cache::new(-1, -1, 3);
+    let mut cache = Cache::new(ORIGIN.0 - 1, ORIGIN.1 - 1, 3);
     for dx in 0..3 {
         for dz in 0..3 {
-            let (x, z) = (dx - 1, dz - 1);
+            let (x, z) = (ORIGIN.0 + dx - 1, ORIGIN.1 + dz - 1);
             let index = (dx * 3 + dz) as usize;
             cache.chunks.push(if scene.kinds.0[index] {
                 finished_chunk(x, z)
@@ -233,8 +236,9 @@ fn build(scene: &Scene, world_gen: &WorldGenerator) -> Cache {
         }
     }
     for (x, y, z, block) in (scene.blocks)() {
-        let index = (((x >> 4) + 1) * 3 + ((z >> 4) + 1)) as usize;
-        if !(0..9).contains(&index) || !(-16..32).contains(&x) || !(-16..32).contains(&z) {
+        let (x, z) = (x + 16 * ORIGIN.0, z + 16 * ORIGIN.1);
+        let index = (((x >> 4) - cache.x) * 3 + ((z >> 4) - cache.z)) as usize;
+        if !(0..3).contains(&((x >> 4) - cache.x)) || !(0..3).contains(&((z >> 4) - cache.z)) {
             continue;
         }
         let (lx, lz) = ((x & 15) as usize, (z & 15) as usize);

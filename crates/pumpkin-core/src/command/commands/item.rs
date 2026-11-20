@@ -4,7 +4,7 @@ use pumpkin_data::item_stack::ItemStack;
 use pumpkin_data::translation;
 use pumpkin_inventory::Inventory;
 use pumpkin_inventory::player::player_inventory::PlayerInventory;
-use pumpkin_inventory::screen_handler::InventoryPlayer;
+use pumpkin_inventory::screen_handler::{InventoryPlayer, ScreenHandler};
 use pumpkin_protocol::codec::item_stack_seralizer::ItemStackSerializer;
 use pumpkin_protocol::java::client::play::CSetContainerSlot;
 use std::sync::Arc;
@@ -160,7 +160,13 @@ fn replace_player_slot(
     modified_count: &mut i32,
 ) {
     if let Some(player_arc) = player.world().get_player_by_uuid(player.gameprofile.id) {
-        if (200..=226).contains(&mojang_slot) {
+        if mojang_slot == CURSOR_SLOT {
+            replace_cursor(player, item_stack);
+            *modified_count += 1;
+        } else if CRAFTING_SLOTS.contains(&mojang_slot) {
+            replace_crafting_slot(player, mojang_slot - CRAFTING_SLOTS.start, item_stack);
+            *modified_count += 1;
+        } else if (200..=226).contains(&mojang_slot) {
             let ender_slot = mojang_slot - 200;
             if ender_slot < player.ender_chest_inventory.size() {
                 player_arc
@@ -193,6 +199,40 @@ fn replace_player_slot(
             }
         }
     }
+}
+
+/// Command slot of the item the player carries on the cursor (`player.cursor`).
+const CURSOR_SLOT: usize = 499;
+/// Command slots of the 2x2 crafting grid (`player.crafting.0` to `player.crafting.3`).
+const CRAFTING_SLOTS: std::ops::Range<usize> = 500..504;
+
+/// Vanilla `Player.getSlot(499)`: the item carried in the open menu, which the client is told of.
+fn replace_cursor(player: &Player, item_stack: &ItemStack) {
+    let handler = player
+        .current_screen_handler
+        .lock()
+        .unwrap_or_else(std::sync::PoisonError::into_inner)
+        .clone();
+    let mut handler = handler
+        .lock()
+        .unwrap_or_else(std::sync::PoisonError::into_inner);
+    *handler
+        .get_behaviour()
+        .cursor_stack
+        .lock()
+        .unwrap_or_else(std::sync::PoisonError::into_inner) = item_stack.clone();
+    handler.send_content_updates();
+}
+
+/// Vanilla `Player.getSlot(500 + n)`: a cell of the 2x2 crafting grid of the inventory menu
+/// (menu slots 1 to 4; slot 0 is the result).
+fn replace_crafting_slot(player: &Player, cell: usize, item_stack: &ItemStack) {
+    let mut handler = player
+        .player_screen_handler
+        .lock()
+        .unwrap_or_else(std::sync::PoisonError::into_inner);
+    handler.get_slot(1 + cell).set_stack(item_stack.clone());
+    handler.send_content_updates();
 }
 
 /// The player inventory slot a command slot names: hands, armour, hotbar and main inventory.

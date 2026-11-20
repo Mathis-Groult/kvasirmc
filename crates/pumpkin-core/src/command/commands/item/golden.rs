@@ -183,3 +183,62 @@ async fn item_command_changes_the_same_slots() -> TestResult {
     script_golden::finish(&server, &world, &online).await;
     Ok(())
 }
+
+/// `player.cursor` and `player.crafting.0-3` (vanilla `Player.getSlot` 499 and 500-503) reach
+/// the carried item of the open menu and the cells of the inventory menu's 2x2 grid.
+#[tokio::test(flavor = "multi_thread")]
+async fn item_command_reaches_the_cursor_and_the_crafting_grid() -> TestResult {
+    let folder = tempfile::tempdir()?;
+    let server = test_support::server(&folder).await?;
+    let world = server.worlds.load()[0].clone();
+    let online = script_golden::join(&world).await?;
+    let source = online[0].player.clone();
+    let target = online[1].player.clone();
+
+    for step in [
+        "item replace entity GoldB player.cursor with minecraft:gold_ingot 5",
+        "item replace entity GoldB player.crafting.2 with minecraft:diamond 3",
+    ] {
+        let result = script_golden::run(&server, &source, step);
+        assert!(result.starts_with("ok 1"), "{step}: {result}");
+    }
+
+    let carried = {
+        let handler = target
+            .current_screen_handler
+            .lock()
+            .unwrap_or_else(std::sync::PoisonError::into_inner)
+            .clone();
+        let handler = handler
+            .lock()
+            .unwrap_or_else(std::sync::PoisonError::into_inner);
+        let stack = handler
+            .get_behaviour()
+            .cursor_stack
+            .lock()
+            .unwrap_or_else(std::sync::PoisonError::into_inner)
+            .clone();
+        (stack.item.registry_key, stack.item_count)
+    };
+    assert_eq!(carried, ("gold_ingot", 5));
+
+    let grid: Vec<_> = {
+        let handler = target
+            .player_screen_handler
+            .lock()
+            .unwrap_or_else(std::sync::PoisonError::into_inner);
+        (1..=4)
+            .map(|slot| {
+                let stack = handler.get_slot(slot).get_cloned_stack();
+                (stack.item.registry_key, stack.item_count)
+            })
+            .collect()
+    };
+    assert_eq!(
+        grid,
+        [("air", 0), ("air", 0), ("diamond", 3), ("air", 0)],
+        "crafting.2 is the third cell"
+    );
+    script_golden::finish(&server, &world, &online).await;
+    Ok(())
+}

@@ -466,7 +466,14 @@ fn entity_actual_name(entity: &dyn EntityBase) -> String {
     } else if let Some(custom_name) = &**entity.get_entity().custom_name.load() {
         custom_name.clone().get_text()
     } else {
-        entity.get_entity().entity_type.resource_name.to_string()
+        // Vanilla `getPlainTextName`: the type's English name ("Cow"), not its registry id.
+        pumpkin_util::translation::get_translation(
+            &format!(
+                "minecraft:entity.minecraft.{}",
+                entity.get_entity().entity_type.resource_name
+            ),
+            pumpkin_util::translation::Locale::EnUs,
+        )
     }
 }
 
@@ -484,37 +491,25 @@ fn rotation_matches(bounds: &FloatDegreeBounds, f: RotationType, entity: &dyn En
 
 /// Whether the entity is on the named team (inverted with `invert`).
 fn team_matches(expected_team: &str, invert: bool, entity: &dyn EntityBase) -> bool {
-    let actual_name = entity_actual_name(entity);
-    let world = entity.get_entity().world.load();
-    let scoreboard = world
-        .scoreboard
-        .lock()
-        .unwrap_or_else(std::sync::PoisonError::into_inner);
-    let has_team = scoreboard
-        .get_teams()
-        .iter()
-        .any(|(name, team)| name == expected_team && team.players.contains(&actual_name));
-    has_team ^ invert
+    // Vanilla compares the team name, "" for an entity without a team (`team=` selects those).
+    let name = entity.get_team_name().unwrap_or_default();
+    (name == expected_team) ^ invert
 }
 
 /// Whether every listed score of the entity lies in its bounds.
 fn scores_match(scores_map: &HashMap<String, IntBounds>, entity: &dyn EntityBase) -> bool {
-    let actual_name = entity_actual_name(entity);
+    let name = entity.get_scoreboard_name();
     let world = entity.get_entity().world.load();
     let scoreboard = world
         .scoreboard
         .lock()
         .unwrap_or_else(std::sync::PoisonError::into_inner);
-    let entity_scores = scoreboard.get_scores().get(&actual_name);
-    for (objective, bounds) in scores_map {
-        let score_val = entity_scores
-            .and_then(|obj_map| obj_map.get(objective))
-            .map_or(0, |score| score.value.0);
-        if !bounds.matches(score_val) {
-            return false;
-        }
-    }
-    true
+    // Vanilla: an unknown objective or a missing score fails the selector, it is not a 0.
+    scores_map.iter().all(|(objective, bounds)| {
+        scoreboard
+            .get_score_value(&name, objective)
+            .is_some_and(|value| bounds.matches(value))
+    })
 }
 
 /// Whether the player has (or lacks) each listed advancement.

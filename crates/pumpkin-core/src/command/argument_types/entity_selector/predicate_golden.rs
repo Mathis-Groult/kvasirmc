@@ -117,6 +117,7 @@ const SELECTORS: &[&str] = &[
     "@e[name=Bob]",
     "@e[name=zombie]",
     "@e[name=cow]",
+    "@e[name=Cow]",
     "@e[name=minecraft:cow]",
     "@e[tag=alpha]",
     "@e[tag=!alpha]",

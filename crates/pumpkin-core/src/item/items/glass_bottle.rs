@@ -5,7 +5,9 @@ use crate::entity::EntityBase;
 use crate::entity::player::Player;
 use crate::item::{ItemBehaviour, ItemMetadata};
 use crate::server::Server;
-use pumpkin_data::block_properties::WaterCauldronLikeProperties;
+use pumpkin_data::block_properties::{
+    BeeNestLikeProperties, BlockProperties, WaterCauldronLikeProperties,
+};
 use pumpkin_data::data_component::DataComponent;
 use pumpkin_data::data_component_impl::PotionContentsImpl;
 use pumpkin_data::game_event::GameEvent;
@@ -14,7 +16,7 @@ use pumpkin_data::item_stack::ItemStack;
 use pumpkin_data::potion::Potion;
 use pumpkin_data::sound::{Sound, SoundCategory};
 use pumpkin_data::statistic::{CustomStatistic, StatisticCategory};
-use pumpkin_data::{Block, BlockDirection, BlockId};
+use pumpkin_data::{Block, BlockDirection, BlockId, BlockStateId};
 use pumpkin_util::math::position::BlockPos;
 use pumpkin_util::math::vector3::Vector3;
 use pumpkin_world::world::BlockFlags;
@@ -47,6 +49,43 @@ impl ItemMetadata for GlassBottleItem {
 }
 
 impl GlassBottleItem {
+    /// `BeehiveBlock.useItemOn` with a glass bottle: a full hive gives a honey bottle and
+    /// goes back to honey level 0. Not ported (the shears path lacks it too): angering the bees
+    /// when no campfire smokes the hive, and releasing them.
+    fn collect_honey(
+        item: &mut ItemStack,
+        player: &Player,
+        location: BlockPos,
+        block: &Block,
+        state_id: BlockStateId,
+    ) -> BlockActionResult {
+        let mut props = BeeNestLikeProperties::from_state_id(state_id);
+        if props.honey_level != 5 {
+            return BlockActionResult::Pass;
+        }
+        let world = player.world();
+        let creative = player.gamemode.load() == pumpkin_util::GameMode::Creative;
+        let mut honey = ItemStack::new(1, &Item::HONEY_BOTTLE);
+        if item.item_count == 1 && !creative {
+            *item = honey;
+        } else {
+            item.decrement_unless_creative(player.gamemode.load(), 1);
+            if !player.inventory().insert_stack_anywhere(&mut honey) && !honey.is_empty() {
+                world.drop_stack(&player.position().to_block_pos(), honey);
+            }
+        }
+        world.play_sound(
+            Sound::ItemBottleFill,
+            SoundCategory::Blocks,
+            &player.position(),
+        );
+        world.emit_game_event(GameEvent::FluidPickup.name(), location.to_f64());
+        player.increment_stat(StatisticCategory::Used, i32::from(Item::GLASS_BOTTLE.id), 1);
+        props.honey_level = 0;
+        world.set_block_state(&location, props.to_state_id(block), BlockFlags::NOTIFY_ALL);
+        BlockActionResult::Success
+    }
+
     fn turn_bottle_into_item(
         player: &Player,
         hand: pumpkin_util::Hand,
@@ -186,6 +225,10 @@ impl ItemBehaviour for GlassBottleItem {
     ) -> BlockActionResult {
         let world = player.world();
         let state_id = world.get_block_state_id(&location);
+
+        if BeeNestLikeProperties::handles_block_id(block.id) {
+            return Self::collect_honey(item, player, location, block, state_id);
+        }
 
         if !matches!(block.id, BlockId::WATER | BlockId::WATER_CAULDRON)
             && !block.is_waterlogged(state_id)

@@ -70,7 +70,7 @@ minecart_improvements predicates: 0 cbf29ce484222325
 minecart_improvements item_modifiers: 0 cbf29ce484222325
 minecart_improvements slot_sources: 0 cbf29ce484222325
 minecart_improvements tags: 0 cbf29ce484222325
-synthetic counts recipes 1 functions 1 test_instances 0 damage_types 1 int 1 float 1 loot 1 structures 0 pools 0 processors 0 dynamic 3 trade_sets 2 trades 0 trade_tags 2 advancements 1 predicates 1 item_modifiers 1 slot_sources 1 tags 3
+synthetic counts recipes 1 functions 1 test_instances 0 damage_types 1 int 1 float 1 loot 1 structures 0 pools 1 processors 1 dynamic 5 trade_sets 2 trades 0 trade_tags 2 advancements 1 predicates 1 item_modifiers 1 slot_sources 1 tags 3
 synthetic recipes: 1
 synthetic functions: 1 82a6c730f688b566
 synthetic function_tags: 1 0b3f6e9e229f6720
@@ -79,7 +79,7 @@ synthetic damage_types: 1 ad8aec72fb302b1e
 synthetic context_int: 1 adb71672fb55ad67
 synthetic context_float: 1 ad91b472fb35eaa4
 synthetic loot_tables: 1 ada60c72fb472936
-synthetic dynamic: 56 46564f7b41e94d97
+synthetic dynamic: 56 9f773fdd71780e1f
 synthetic trades: 0 cbf29ce484222325
 synthetic trade_sets: 2 448e74183d022b62
 synthetic trade_tags: 2 d7e2c811420be53c

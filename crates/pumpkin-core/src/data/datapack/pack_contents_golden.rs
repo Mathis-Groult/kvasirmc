@@ -180,7 +180,7 @@ fn pack(name: &str, path: &Path, report: &mut String) {
 
 /// A pack of one small file of each kind, so that a mix-up between loaders shows.
 fn synthetic_pack(root: &std::path::Path) -> std::io::Result<()> {
-    let files: [(&str, &str); 14] = [
+    let files: [(&str, &str); 16] = [
         ("function/a.mcfunction", "say hi\nsay there\n"),
         ("tags/function/t.json", r#"{"values":["demo:a"]}"#),
         ("tags/item/i.json", r#"{"values":["minecraft:stone"]}"#),
@@ -215,6 +215,11 @@ fn synthetic_pack(root: &std::path::Path) -> std::io::Result<()> {
             r#"{"type":"minecraft:crafting_shapeless","ingredients":["minecraft:stone"],"result":{"id":"minecraft:cobblestone"}}"#,
         ),
         ("trade_set/ts.json", r##"{"trades":"#demo:x","amount":1}"##),
+        (
+            "worldgen/template_pool/tp.json",
+            r#"{"fallback":"minecraft:empty","elements":[]}"#,
+        ),
+        ("worldgen/processor_list/pl.json", r#"{"processors":[]}"#),
         (
             "advancement/a.json",
             r#"{"criteria":{"c":{"trigger":"minecraft:impossible"}}}"#,

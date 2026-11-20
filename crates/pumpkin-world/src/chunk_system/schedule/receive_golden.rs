@@ -41,7 +41,7 @@ fn stage_of(index: usize) -> StagedChunkEnum {
 
 /// How a holder's `occupied` key is set up.
 #[derive(Clone, Copy)]
-enum Occupied {
+pub(super) enum Occupied {
     Null,
     Live,
     /// A key of a node that is no longer in the graph.
@@ -49,14 +49,14 @@ enum Occupied {
 }
 
 #[derive(Clone, Copy)]
-enum Held {
+pub(super) enum Held {
     Nothing,
     Level,
     Proto(StagedChunkEnum),
 }
 
 #[derive(Clone, Copy)]
-struct Spec {
+pub(super) struct Spec {
     x: i32,
     z: i32,
     current: StagedChunkEnum,
@@ -72,7 +72,7 @@ struct Spec {
 }
 
 impl Spec {
-    const fn at(x: i32, z: i32) -> Self {
+    pub(super) const fn at(x: i32, z: i32) -> Self {
         Self {
             x,
             z,
@@ -86,44 +86,48 @@ impl Spec {
             occupied: Occupied::Null,
         }
     }
-    const fn current(mut self, stage: StagedChunkEnum) -> Self {
+    pub(super) const fn current(mut self, stage: StagedChunkEnum) -> Self {
         self.current = stage;
         self
     }
-    const fn target(mut self, stage: StagedChunkEnum) -> Self {
+    pub(super) const fn target(mut self, stage: StagedChunkEnum) -> Self {
         self.target = stage;
         self
     }
-    const fn public(mut self) -> Self {
+    pub(super) const fn public(mut self) -> Self {
         self.public = true;
         self
     }
-    const fn held(mut self, held: Held) -> Self {
+    pub(super) const fn held(mut self, held: Held) -> Self {
         self.held = held;
         self
     }
-    const fn tasks_to(mut self, stage: StagedChunkEnum) -> Self {
+    pub(super) const fn tasks_to(mut self, stage: StagedChunkEnum) -> Self {
         self.tasks_to = stage;
         self
     }
-    const fn first_task(mut self, stage: StagedChunkEnum) -> Self {
+    pub(super) const fn dependency(mut self, stage: StagedChunkEnum) -> Self {
+        self.dependency = stage;
+        self
+    }
+    pub(super) const fn first_task(mut self, stage: StagedChunkEnum) -> Self {
         self.first_task = stage;
         self
     }
-    const fn occupied(mut self, occupied: Occupied) -> Self {
+    pub(super) const fn occupied(mut self, occupied: Occupied) -> Self {
         self.occupied = occupied;
         self
     }
 }
 
-struct Fixture {
-    schedule: GenerationSchedule,
-    world_gen: Arc<WorldGenerator>,
-    heard: crossbeam::channel::Receiver<(ChunkPos, std::sync::Weak<ChunkData>)>,
+pub(super) struct Fixture {
+    pub(super) schedule: GenerationSchedule,
+    pub(super) world_gen: Arc<WorldGenerator>,
+    pub(super) heard: crossbeam::channel::Receiver<(ChunkPos, std::sync::Weak<ChunkData>)>,
 }
 
 impl Fixture {
-    fn new(world_gen: &Arc<WorldGenerator>, lighting: LightingEngineConfig) -> Self {
+    pub(super) fn new(world_gen: &Arc<WorldGenerator>, lighting: LightingEngineConfig) -> Self {
         let (send_chunk, recv_chunk) = crossbeam::channel::unbounded();
         let (io_read, _) = tokio::sync::mpsc::channel(4);
         let (io_write, _) = tokio::sync::mpsc::channel(4);
@@ -171,7 +175,7 @@ impl Fixture {
         }
     }
 
-    fn chunk(&self, x: i32, z: i32, held: Held) -> Option<Chunk> {
+    pub(super) fn chunk(&self, x: i32, z: i32, held: Held) -> Option<Chunk> {
         match held {
             Held::Nothing => None,
             Held::Level => Some(Chunk::Level(lit_chunk(x, z))),
@@ -180,21 +184,21 @@ impl Fixture {
     }
 
     /// The holder at `(x, z)`, which the scene has set up.
-    fn holder_at(&mut self, x: i32, z: i32) -> &mut ChunkHolder {
+    pub(super) fn holder_at(&mut self, x: i32, z: i32) -> &mut ChunkHolder {
         self.schedule
             .chunk_map
             .get_mut(&ChunkPos::new(x, z))
             .unwrap_or_else(|| panic!("the scene has no holder at {x},{z}"))
     }
 
-    fn proto(&self, x: i32, z: i32, stage: StagedChunkEnum) -> Box<ProtoChunk> {
+    pub(super) fn proto(&self, x: i32, z: i32, stage: StagedChunkEnum) -> Box<ProtoChunk> {
         let mut proto = Box::new(ProtoChunk::new(x, z, &self.world_gen));
         proto.stage = stage;
         proto
     }
 
     /// Adds a holder with a chain of tasks, one per stage up to `tasks_to`.
-    fn holder(&mut self, spec: Spec) -> NodeKey {
+    pub(super) fn holder(&mut self, spec: Spec) -> NodeKey {
         let pos = ChunkPos::new(spec.x, spec.z);
         let mut holder = ChunkHolder {
             target_stage: spec.target,
@@ -235,19 +239,27 @@ impl Fixture {
     }
 
     /// Puts the task of `stage` of the holder at `(x, z)` among the tasks that wait.
-    fn wait(&mut self, x: i32, z: i32, stage: StagedChunkEnum) {
+    pub(super) fn wait(&mut self, x: i32, z: i32, stage: StagedChunkEnum) {
         let key = self.schedule.chunk_map[&ChunkPos::new(x, z)].tasks[stage as usize];
         self.schedule.waiting_for_chunks.insert(key);
     }
 
-    fn publish_other(&self, x: i32, z: i32) {
+    /// Marks the task of `stage` of the holder at `(x, z)` as running on a worker.
+    pub(super) fn in_flight(&mut self, x: i32, z: i32, stage: StagedChunkEnum) {
+        let key = self.schedule.chunk_map[&ChunkPos::new(x, z)].tasks[stage as usize];
+        if let Some(node) = self.schedule.graph.nodes.get_mut(key) {
+            node.in_flight = true;
+        }
+    }
+
+    pub(super) fn publish_other(&self, x: i32, z: i32) {
         self.schedule
             .public_chunks
             .publish(ChunkPos::new(x, z), lit_chunk_with(x, z, 5));
     }
 
     /// A message with a `size` by `size` square of chunks from `(x, z)`.
-    fn generation(x: i32, z: i32, size: i32, chunks: Vec<Chunk>) -> RecvChunk {
+    pub(super) fn generation(x: i32, z: i32, size: i32, chunks: Vec<Chunk>) -> RecvChunk {
         let mut cache = Cache::new(x, z, size);
         cache.chunks = chunks;
         RecvChunk::Generation(cache)
@@ -255,11 +267,11 @@ impl Fixture {
 }
 
 /// An empty chunk whose light sections are not empty, so that a lighting override shows.
-fn lit_chunk(x: i32, z: i32) -> SyncChunk {
+pub(super) fn lit_chunk(x: i32, z: i32) -> SyncChunk {
     lit_chunk_with(x, z, 3)
 }
 
-fn lit_chunk_with(x: i32, z: i32, block: u8) -> SyncChunk {
+pub(super) fn lit_chunk_with(x: i32, z: i32, block: u8) -> SyncChunk {
     let chunk = ChunkData::empty(x, z);
     let mut engine = chunk
         .light_engine
@@ -323,7 +335,7 @@ fn node_text(graph: &DAG, key: NodeKey) -> String {
     )
 }
 
-fn state_text(fixture: &Fixture) -> String {
+pub(super) fn state_text(fixture: &Fixture) -> String {
     let schedule = &fixture.schedule;
     let mut out = String::new();
     let mut positions: Vec<ChunkPos> = schedule.chunk_map.keys().copied().collect();
@@ -756,13 +768,7 @@ fn failure(name: &'static str, setup: fn(&mut Fixture)) -> Scene {
 
 #[test]
 fn receive_chunk() -> Result<(), Box<dyn std::error::Error>> {
-    let world_gen: Arc<WorldGenerator> = Arc::from(get_world_gen(
-        Seed(1),
-        pumpkin_data::dimension::Dimension::OVERWORLD,
-        true,
-        Vec::new(),
-        "minecraft:plains".to_owned(),
-    ));
+    let world_gen = test_world_gen();
     let mut report = String::new();
     for scene in scenes() {
         let mut fixture = Fixture::new(&world_gen, scene.lighting);
@@ -783,4 +789,14 @@ fn receive_chunk() -> Result<(), Box<dyn std::error::Error>> {
     }
     assert_eq!(std::fs::read_to_string(&path)?, report);
     Ok(())
+}
+
+pub(super) fn test_world_gen() -> Arc<WorldGenerator> {
+    Arc::from(get_world_gen(
+        Seed(1),
+        pumpkin_data::dimension::Dimension::OVERWORLD,
+        true,
+        Vec::new(),
+        "minecraft:plains".to_owned(),
+    ))
 }

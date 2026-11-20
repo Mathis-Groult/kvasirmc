@@ -529,3 +529,7 @@ impl GenerationSchedule {
 #[cfg(test)]
 #[path = "receive_golden.rs"]
 mod receive_golden;
+
+#[cfg(test)]
+#[path = "resort_golden.rs"]
+mod resort_golden;

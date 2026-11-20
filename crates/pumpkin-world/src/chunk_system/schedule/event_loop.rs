@@ -525,3 +525,7 @@ impl GenerationSchedule {
         self.graph.edges.clear();
     }
 }
+
+#[cfg(test)]
+#[path = "receive_golden.rs"]
+mod receive_golden;

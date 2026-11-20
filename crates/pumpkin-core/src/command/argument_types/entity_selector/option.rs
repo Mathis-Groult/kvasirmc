@@ -235,7 +235,7 @@ impl EntitySelectorOption {
         i: usize,
     ) -> Result<(), CommandSyntaxError> {
         let bounds = DoubleBounds::from_reader(parser.reader)?;
-        if bounds.min().is_none_or(|n| n < 0.0) && bounds.max().is_none_or(|n| n < 0.0) {
+        if bounds.min().is_some_and(|n| n < 0.0) || bounds.max().is_some_and(|n| n < 0.0) {
             parser.reader.set_cursor(i);
             Err(DISTANCE_NEGATIVE_ERROR_TYPE.create(parser.reader))
         } else {
@@ -248,7 +248,7 @@ impl EntitySelectorOption {
     /// The `level` option: parses its value and records it in the parser.
     fn parse_level(parser: &mut EntitySelectorParser, i: usize) -> Result<(), CommandSyntaxError> {
         let bounds = IntBounds::from_reader(parser.reader)?;
-        if bounds.min().is_none_or(|n| n < 0) && bounds.max().is_none_or(|n| n < 0) {
+        if bounds.min().is_some_and(|n| n < 0) || bounds.max().is_some_and(|n| n < 0) {
             parser.reader.set_cursor(i);
             Err(LEVEL_NEGATIVE_ERROR_TYPE.create(parser.reader))
         } else {

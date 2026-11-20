@@ -37,8 +37,8 @@ impl JavaClient {
                 return;
             }
             if player.gamemode.load() == GameMode::Spectator {
-                player.camera_target_id.store(Some(entity_id.0));
-                player.try_send_client_packet(&CSetCamera::new(entity_id));
+                // Vanilla 26.3: an attack is dropped, and an interaction only opens the
+                // target's menu (not ported); the camera comes from the spectate packet.
                 return;
             }
             send_cancellable_blocking! {{

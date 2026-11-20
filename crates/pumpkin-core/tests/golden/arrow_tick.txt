@@ -1,0 +1,351 @@
+free_flight ticks 1-15: ae130fd10d07ad04
+free_flight ticks 16-30: 9fd16d5f5f60773d
+free_flight ticks 31-45: be7b51bf70ca61cf
+free_flight ticks 46-60: 95fe94900061f697
+free_flight arrow 0: pos 28.6251,64.0500,30.4850 vel 0.0000,0.0000,0.0000 rot 78.690,-62.685 ground true in Some((28, 63, 30)) shake 0 life 37 time 37 hit true pierced [] crit false flame false pierce 0 punch 0 fire -1 burning false removed false
+free_flight sounds: 1, arrow hits: 1, pitched in range: 1
+into_the_floor ticks 1-15: 4ee452c618b943b8
+into_the_floor ticks 16-30: c8b0c830c227fb2d
+into_the_floor ticks 31-45: 0a0b4f7cb8057c6a
+into_the_floor ticks 46-60: 39eeecdf2fcfcad9
+into_the_floor arrow 0: pos 87.0321,64.0500,28.4500 vel 0.0000,0.0000,0.0000 rot 90.000,-40.609 ground true in Some((87, 63, 28)) shake 0 life 52 time 52 hit true pierced [] crit false flame false pierce 0 punch 0 fire -1 burning false removed false
+into_the_floor arrow 1: pos 86.4500,64.0500,22.4500 vel 0.0000,0.0000,0.0000 rot 0.000,-90.000 ground true in Some((86, 63, 22)) shake 0 life 54 time 54 hit true pierced [] crit false flame false pierce 0 punch 0 fire -1 burning false removed false
+into_the_floor sounds: 2, arrow hits: 2, pitched in range: 2
+wall_from_west ticks 1-15: b85511cc87077671
+wall_from_west ticks 16-30: 65412ac5c332c1eb
+wall_from_west ticks 31-45: 2ebd991d27177479
+wall_from_west ticks 46-60: 5ebbb3bc05c4c4f7
+wall_from_west arrow 0: pos 153.9500,64.7718,28.4500 vel 0.0000,0.0000,0.0000 rot 90.000,-11.592 ground true in Some((154, 64, 28)) shake 0 life 54 time 54 hit true pierced [] crit false flame false pierce 0 punch 0 fire -1 burning false removed false
+wall_from_west sounds: 1, arrow hits: 1, pitched in range: 1
+wall_every_face ticks 1-15: fb6024266415c408
+wall_every_face ticks 16-30: ce676f97290c2b83
+wall_every_face ticks 31-45: 99f3d24bfa50d4be
+wall_every_face ticks 46-60: 10896de7a9a408e9
+wall_every_face arrow 0: pos 217.9500,66.6470,20.4500 vel 0.0000,0.0000,0.0000 rot 90.000,-5.768 ground true in Some((218, 66, 20)) shake 0 life 57 time 57 hit true pierced [] crit false flame false pierce 0 punch 0 fire -1 burning false removed false
+wall_every_face arrow 1: pos 219.0500,66.6470,25.4500 vel 0.0000,0.0000,0.0000 rot -90.000,-5.768 ground true in Some((218, 66, 25)) shake 0 life 57 time 57 hit true pierced [] crit false flame false pierce 0 punch 0 fire -1 burning false removed false
+wall_every_face arrow 2: pos 224.4500,66.6470,31.0500 vel 0.0000,0.0000,0.0000 rot 180.000,-5.768 ground true in Some((224, 66, 30)) shake 0 life 57 time 57 hit true pierced [] crit false flame false pierce 0 punch 0 fire -1 burning false removed false
+wall_every_face arrow 3: pos 226.4500,66.6470,23.9500 vel 0.0000,0.0000,0.0000 rot 0.000,-5.768 ground true in Some((226, 66, 24)) shake 0 life 57 time 57 hit true pierced [] crit false flame false pierce 0 punch 0 fire -1 burning false removed false
+wall_every_face arrow 4: pos 228.4500,67.0500,36.4500 vel 0.0000,0.0000,0.0000 rot 0.000,-90.000 ground true in Some((228, 66, 36)) shake 0 life 57 time 57 hit true pierced [] crit false flame false pierce 0 punch 0 fire -1 burning false removed false
+wall_every_face arrow 5: pos 222.4500,71.9500,36.4500 vel 0.0000,0.0000,0.0000 rot 0.000,90.000 ground true in Some((222, 72, 36)) shake 0 life 57 time 57 hit true pierced [] crit false flame false pierce 0 punch 0 fire -1 burning false removed false
+wall_every_face sounds: 6, arrow hits: 6, pitched in range: 6
+inside_a_block ticks 1-15: 7985fd5da50cebb6
+inside_a_block ticks 16-30: e2d7464f19c5b539
+inside_a_block ticks 31-45: c0450a727f1839b8
+inside_a_block ticks 46-60: da054807ee9950e3
+inside_a_block arrow 0: pos 282.4500,65.5500,28.4500 vel 0.0000,0.0000,0.0000 rot 90.000,-26.565 ground true in Some((282, 65, 28)) shake 0 life 59 time 59 hit true pierced [] crit false flame false pierce 0 punch 0 fire -1 burning false removed false
+inside_a_block sounds: 1, arrow hits: 1, pitched in range: 1
+already_hit ticks 1-15: 04e7ac8d40bf27db
+already_hit ticks 16-30: 31feee4150f96e64
+already_hit ticks 31-45: f742a9bd2d40f08f
+already_hit ticks 46-60: 76984e513ffa9e9b
+already_hit arrow 0: pos 387.3315,-9.5841,28.5000 vel 0.5472,-2.2416,0.0000 rot 90.000,-76.283 ground false in None shake 0 life 0 time 0 hit true pierced [] crit false flame false pierce 0 punch 0 fire -1 burning false removed false
+target_block ticks 1-15: 71180361c652ed5d
+target_block ticks 16-30: 4dbde2c900fd0156
+target_block ticks 31-45: ba4d2465198e7687
+target_block ticks 46-60: d2495fb98c4638c4
+target_block arrow 0: pos 409.9500,65.7325,28.4500 vel 0.0000,0.0000,0.0000 rot 90.000,-3.833 ground true in Some((410, 65, 28)) shake 0 life 58 time 58 hit true pierced [] crit false flame false pierce 0 punch 0 fire -1 burning false removed false
+target_block arrow 1: pos 409.9500,65.7325,22.4500 vel 0.0000,0.0000,0.0000 rot 90.000,-3.833 ground true in Some((410, 65, 22)) shake 0 life 58 time 58 hit true pierced [] crit false flame false pierce 0 punch 0 fire -1 burning false removed false
+target_block sounds: 2, arrow hits: 2, pitched in range: 2
+reacting_blocks ticks 1-15: 97b087987c66fad2
+reacting_blocks ticks 16-30: 40ec9b95bc8ab4cb
+reacting_blocks ticks 31-45: a8936e5a8918920e
+reacting_blocks ticks 46-60: 3e1cefe41c38a9b7
+reacting_blocks arrow 0: pos 473.9500,65.7325,19.4500 vel 0.0000,0.0000,0.0000 rot 90.000,-3.833 ground true in Some((474, 65, 19)) shake 0 life 58 time 58 hit true pierced [] crit false flame false pierce 0 punch 0 fire -1 burning false removed false
+reacting_blocks arrow 1: pos 473.9500,-2.7092,23.4500 vel 0.0000,-2.1587,0.0000 rot 0.000,-90.000 ground false in Some((474, 65, 23)) shake 0 life 1 time 1 hit true pierced [] crit false flame true pierce 0 punch 0 fire -1 burning true removed false
+reacting_blocks arrow 2: pos 473.9500,65.7325,27.4500 vel 0.0000,0.0000,0.0000 rot 90.000,-3.833 ground true in Some((474, 65, 27)) shake 0 life 58 time 58 hit true pierced [] crit false flame false pierce 0 punch 0 fire -1 burning false removed false
+reacting_blocks arrow 3: pos 483.1111,64.0500,31.4500 vel 0.0000,0.0000,0.0000 rot 90.000,-17.349 ground true in Some((483, 63, 31)) shake 0 life 51 time 51 hit true pierced [] crit false flame false pierce 0 punch 0 fire -1 burning false removed false
+reacting_blocks arrow 4: pos 473.9500,-2.7092,35.4500 vel 0.0000,-2.1587,0.0000 rot 0.000,-90.000 ground false in Some((474, 65, 35)) shake 0 life 1 time 1 hit true pierced [] crit false flame false pierce 0 punch 0 fire -1 burning false removed false
+reacting_blocks sounds: 7, arrow hits: 5, pitched in range: 5
+collision_shapes ticks 1-15: 5bfcd42ece3dd194
+collision_shapes ticks 16-30: bd78514d3e2d7248
+collision_shapes ticks 31-45: 4a3cd30d9a8a2ade
+collision_shapes ticks 46-60: ea22ad46c714f644
+collision_shapes arrow 0: pos 542.8124,64.0500,18.4500 vel 0.0000,0.0000,0.0000 rot 90.000,-11.592 ground true in Some((542, 63, 18)) shake 0 life 54 time 54 hit true pierced [] crit false flame false pierce 0 punch 0 fire -1 burning false removed false
+collision_shapes arrow 1: pos 537.9500,64.2325,20.4500 vel 0.0000,0.0000,0.0000 rot 90.000,-3.833 ground true in Some((538, 64, 20)) shake 0 life 58 time 58 hit true pierced [] crit false flame false pierce 0 punch 0 fire -1 burning false removed false
+collision_shapes arrow 2: pos 538.3250,65.3074,24.4500 vel 0.0000,0.0000,0.0000 rot 90.000,-3.833 ground true in Some((538, 64, 24)) shake 0 life 58 time 58 hit true pierced [] crit false flame false pierce 0 punch 0 fire -1 burning false removed false
+collision_shapes arrow 3: pos 547.1111,64.0500,26.4500 vel 0.0000,0.0000,0.0000 rot 90.000,-17.349 ground true in Some((547, 63, 26)) shake 0 life 51 time 51 hit true pierced [] crit false flame false pierce 0 punch 0 fire -1 burning false removed false
+collision_shapes arrow 4: pos 541.9479,64.0500,30.4500 vel 0.0000,0.0000,0.0000 rot 90.000,-9.652 ground true in Some((541, 63, 30)) shake 0 life 55 time 55 hit true pierced [] crit false flame false pierce 0 punch 0 fire -1 burning false removed false
+collision_shapes arrow 5: pos 541.9479,64.0500,32.4500 vel 0.0000,0.0000,0.0000 rot 90.000,-9.652 ground true in Some((541, 63, 32)) shake 0 life 55 time 55 hit true pierced [] crit false flame false pierce 0 punch 0 fire -1 burning false removed false
+collision_shapes arrow 6: pos 537.9500,64.5325,36.4500 vel 0.0000,0.0000,0.0000 rot 90.000,-3.833 ground true in Some((538, 64, 36)) shake 0 life 58 time 58 hit true pierced [] crit false flame false pierce 0 punch 0 fire -1 burning false removed false
+collision_shapes sounds: 7, arrow hits: 7, pitched in range: 7
+water ticks 1-15: 8b3c8868b4201cd8
+water ticks 16-30: 046be135062763f8
+water ticks 31-45: 2811df1d195b09b1
+water ticks 46-60: 967dc3c8bc77d6d8
+water arrow 0: pos 605.5143,64.0500,28.4500 vel 0.0000,0.0000,0.0000 rot 90.000,-28.124 ground true in Some((605, 63, 28)) shake 0 life 48 time 48 hit true pierced [] crit false flame false pierce 0 punch 0 fire -1 burning false removed false
+water arrow 1: pos 610.6693,64.0500,24.4500 vel 0.0000,0.0000,0.0000 rot 90.000,-59.543 ground true in Some((610, 63, 24)) shake 0 life 36 time 36 hit true pierced [] crit false flame false pierce 0 punch 0 fire -1 burning false removed false
+water arrow 2: pos 605.0470,64.0500,37.0470 vel 0.0000,0.0000,0.0000 rot 45.000,-36.506 ground true in Some((605, 63, 37)) shake 0 life 50 time 50 hit true pierced [] crit false flame false pierce 0 punch 0 fire -1 burning false removed false
+water sounds: 3, arrow hits: 3, pitched in range: 3
+lava_and_fire ticks 1-15: 784c7d51994865b8
+lava_and_fire ticks 16-30: cb49cea37ef19c42
+lava_and_fire ticks 31-45: 2eb28304fbc239a2
+lava_and_fire ticks 46-60: c19d26a23f77cdf2
+lava_and_fire arrow 0: pos 663.4500,64.0500,20.4500 vel 0.0000,0.0000,0.0000 rot 0.000,-90.000 ground true in Some((663, 63, 20)) shake 0 life 52 time 52 hit true pierced [] crit false flame true pierce 0 punch 0 fire 300 burning true removed false
+lava_and_fire arrow 1: pos 663.4500,64.0500,26.4500 vel 0.0000,0.0000,0.0000 rot 0.000,-90.000 ground true in Some((663, 63, 26)) shake 0 life 55 time 55 hit true pierced [] crit false flame true pierce 0 punch 0 fire 160 burning true removed false
+lava_and_fire arrow 2: pos 663.4500,64.0500,32.4500 vel 0.0000,0.0000,0.0000 rot 0.000,-90.000 ground true in Some((663, 63, 32)) shake 0 life 55 time 55 hit true pierced [] crit false flame true pierce 0 punch 0 fire 160 burning true removed false
+lava_and_fire sounds: 3, arrow hits: 3, pitched in range: 3
+burning_down ticks 1-15: 4af5ef82bf783d7d
+burning_down ticks 16-30: 26a3b9dd9ab010fa
+burning_down ticks 31-45: 5cfa8e572728bcda
+burning_down ticks 46-60: 3c81f2b991493e1a
+burning_down arrow 0: pos 724.4500,64.0500,20.4500 vel 0.0000,0.0000,0.0000 rot 0.000,-90.000 ground true in Some((724, 63, 20)) shake 0 life 43 time 43 hit true pierced [] crit false flame false pierce 0 punch 0 fire 0 burning false removed false
+burning_down arrow 1: pos 724.4500,64.0500,24.4500 vel 0.0000,0.0000,0.0000 rot 0.000,-90.000 ground true in Some((724, 63, 24)) shake 0 life 43 time 43 hit true pierced [] crit false flame false pierce 0 punch 0 fire 0 burning true removed false
+burning_down arrow 2: pos 724.4500,64.0500,28.4500 vel 0.0000,0.0000,0.0000 rot 0.000,-90.000 ground true in Some((724, 63, 28)) shake 0 life 43 time 43 hit true pierced [] crit false flame true pierce 0 punch 0 fire 0 burning true removed false
+burning_down arrow 3: pos 724.4500,64.0500,32.4500 vel 0.0000,0.0000,0.0000 rot 0.000,-90.000 ground true in Some((724, 63, 32)) shake 0 life 43 time 43 hit true pierced [] crit false flame true pierce 0 punch 0 fire -1 burning true removed false
+burning_down sounds: 4, arrow hits: 4, pitched in range: 4
+burning_in_water ticks 1-15: 3c495ca1aa6e2d0b
+burning_in_water ticks 16-30: d6ea822d8079b82b
+burning_in_water ticks 31-45: 071fc5220ba522ab
+burning_in_water ticks 46-60: a5b6e8248ce21e3d
+burning_in_water arrow 0: pos 793.3694,64.0500,22.4500 vel 0.0000,0.0000,0.0000 rot 90.000,-79.183 ground true in Some((793, 63, 22)) shake 0 life 50 time 50 hit true pierced [] crit false flame false pierce 0 punch 0 fire 0 burning false removed false
+burning_in_water arrow 1: pos 793.3694,64.0500,21.4500 vel 0.0000,0.0000,0.0000 rot 90.000,-79.183 ground true in Some((793, 63, 21)) shake 0 life 50 time 50 hit true pierced [] crit false flame false pierce 0 punch 0 fire 0 burning true removed false
+burning_in_water sounds: 2, arrow hits: 2, pitched in range: 2
+stuck_stays ticks 1-15: 36c10cb17c6c033f
+stuck_stays ticks 16-30: 9d3d912f7ec17e7e
+stuck_stays ticks 31-45: 5bf0e9b6ae76ae24
+stuck_stays ticks 46-60: 5c4464a65598013b
+stuck_stays arrow 0: pos 852.5000,66.0000,20.5000 vel 0.0000,0.0000,0.0000 rot 0.000,0.000 ground true in Some((852, 65, 20)) shake 0 life 60 time 60 hit false pierced [] crit false flame false pierce 0 punch 0 fire -1 burning false removed false
+stuck_stays arrow 1: pos 852.5000,66.0000,22.5000 vel 0.0000,0.0000,0.0000 rot 0.000,0.000 ground true in Some((852, 65, 22)) shake 0 life 160 time 60 hit false pierced [] crit false flame false pierce 0 punch 0 fire -1 burning false removed false
+stuck_stays arrow 2: pos 852.5000,66.0000,24.5000 vel 0.0000,0.0000,0.0000 rot 0.000,0.000 ground true in Some((852, 65, 24)) shake 0 life 659 time 60 hit false pierced [] crit false flame false pierce 0 punch 0 fire -1 burning false removed false
+stuck_released ticks 1-15: 3a5aa434a5aafa09
+stuck_released ticks 16-30: 9e673dd875b5612e
+stuck_released ticks 31-45: cadd2a0f4b87bc28
+stuck_released ticks 46-60: 9810e803d3a91a11
+stuck_released arrow 0: pos 916.4500,64.0500,28.4500 vel 0.0000,0.0000,0.0000 rot 0.000,-90.000 ground true in Some((916, 63, 28)) shake 0 life 57 time 52 hit true pierced [] crit false flame false pierce 0 punch 0 fire -1 burning false removed false
+stuck_released sounds: 1, arrow hits: 1, pitched in range: 1
+stuck_despawns ticks 1-15: 07782cceb7873e4a
+stuck_despawns ticks 16-30: f1803ce46bbad2c0
+stuck_despawns ticks 31-45: 1d6b5791bcb795b2
+stuck_despawns ticks 46-60: c4e078f24ec79348
+stuck_despawns arrow 0: pos 980.5000,66.0000,20.5000 vel 0.0000,0.0000,0.0000 rot 0.000,0.000 ground true in Some((980, 65, 20)) shake 0 life 1201 time 11 hit false pierced [] crit false flame false pierce 0 punch 0 fire -1 burning false removed true
+stuck_despawns arrow 1: pos 980.5000,66.0000,24.5000 vel 0.0000,0.0000,0.0000 rot 0.000,0.000 ground true in Some((980, 65, 24)) shake 0 life 1201 time 2 hit false pierced [] crit false flame false pierce 0 punch 0 fire -1 burning false removed true
+stuck_despawns arrow 2: pos 980.5000,66.0000,28.5000 vel 0.0000,0.0000,0.0000 rot 0.000,0.000 ground true in Some((980, 65, 28)) shake 0 life 1201 time 1 hit false pierced [] crit false flame false pierce 0 punch 0 fire -1 burning false removed true
+entity_basic ticks 1-15: f636cec88b922dd9
+entity_basic ticks 16-30: b0202360dade758c
+entity_basic ticks 31-45: 47d96e74174a419f
+entity_basic ticks 46-60: 48a082ad53c02ace
+entity_basic arrow 0: pos 1050.4010,64.8099,28.5000 vel 0.9606,-0.1950,0.0000 rot 90.000,-11.478 ground false in None shake 0 life 0 time 0 hit true pierced [71650] crit false flame false pierce 0 punch 0 fire -1 burning false removed true
+entity_basic mob 0: health 18.00 pos 1050.5000,64.0000,28.5000 vel 0.4000,0.0000,0.0000 fire -1 burning false removed false
+entity_basic sounds: 2, arrow hits: 1, pitched in range: 1
+entity_speeds ticks 1-15: 1a1da6748a42d22c
+entity_speeds ticks 16-30: 20290e56091c1a7f
+entity_speeds ticks 31-45: ed2d2922ffba4e80
+entity_speeds ticks 46-60: 647c14ab0f6b491b
+entity_speeds arrow 0: pos 1114.3241,63.9414,20.5000 vel 0.4614,-0.3363,0.0000 rot 90.000,-36.087 ground false in None shake 0 life 0 time 0 hit true pierced [71750] crit false flame false pierce 0 punch 0 fire -1 burning false removed true
+entity_speeds arrow 1: pos 1114.4402,65.1520,28.5000 vel 1.9602,-0.0985,0.0000 rot 90.000,-2.877 ground false in None shake 0 life 0 time 0 hit true pierced [71751] crit false flame false pierce 0 punch 0 fire -1 burning false removed true
+entity_speeds arrow 2: pos 1116.4103,65.1520,36.5000 vel 2.9403,-0.0985,0.0000 rot 90.000,-1.919 ground false in None shake 0 life 0 time 0 hit true pierced [71752] crit false flame false pierce 0 punch 0 fire -1 burning false removed true
+entity_speeds mob 0: health 18.00 pos 1114.5000,64.0000,20.5000 vel 0.4000,0.0000,0.0000 fire -1 burning false removed false
+entity_speeds mob 1: health 16.00 pos 1114.5000,64.0000,28.5000 vel 0.4000,0.0000,0.0000 fire -1 burning false removed false
+entity_speeds mob 2: health 14.00 pos 1114.5000,64.0000,36.5000 vel -0.4000,0.0000,0.0000 fire -1 burning false removed false
+entity_speeds sounds: 6, arrow hits: 3, pitched in range: 3
+entity_base_damage ticks 1-15: 33b2f6cfb250b133
+entity_base_damage ticks 16-30: 01c5ec41663cd90f
+entity_base_damage ticks 31-45: 9c6c6f49197d7d63
+entity_base_damage ticks 46-60: 2b3796bdb55ce3df
+entity_base_damage arrow 0: pos 1178.4010,64.8099,20.5000 vel 0.9606,-0.1950,0.0000 rot 90.000,-11.478 ground false in None shake 0 life 0 time 0 hit true pierced [71850] crit false flame false pierce 0 punch 0 fire -1 burning false removed true
+entity_base_damage arrow 1: pos 1178.4010,64.8099,28.5000 vel 0.9606,-0.1950,0.0000 rot 90.000,-11.478 ground false in None shake 0 life 0 time 0 hit true pierced [71851] crit false flame false pierce 0 punch 0 fire -1 burning false removed true
+entity_base_damage arrow 2: pos 1178.4010,64.8099,36.5000 vel 0.9606,-0.1950,0.0000 rot 90.000,-11.478 ground false in None shake 0 life 0 time 0 hit true pierced [71852] crit false flame false pierce 0 punch 0 fire -1 burning false removed true
+entity_base_damage mob 0: health 15.00 pos 1178.5000,64.0000,20.5000 vel 0.4000,0.0000,0.0000 fire -1 burning false removed false
+entity_base_damage mob 1: health 16.00 pos 1178.5000,64.0000,28.5000 vel 0.4000,0.0000,0.0000 fire -1 burning false removed false
+entity_base_damage mob 2: health 20.00 pos 1178.5000,64.0000,36.5000 vel 0.4000,0.0000,0.0000 fire -1 burning false removed false
+entity_base_damage sounds: 6, arrow hits: 3, pitched in range: 3
+entity_kills ticks 1-15: 73089068a8abb6cf
+entity_kills ticks 16-30: f186c278a2494d1b
+entity_kills ticks 31-45: 90d5eab585dc1d97
+entity_kills ticks 46-60: c58012a6783e5f03
+entity_kills arrow 0: pos 1242.9106,65.0050,20.5000 vel 1.4554,-0.1470,0.0000 rot 90.000,-5.768 ground false in None shake 0 life 0 time 0 hit true pierced [71950] crit false flame false pierce 0 punch 0 fire -1 burning false removed true
+entity_kills arrow 1: pos 1242.9106,65.0050,28.5000 vel 1.4554,-0.1470,0.0000 rot 90.000,-5.768 ground false in None shake 0 life 0 time 0 hit true pierced [71951] crit false flame false pierce 0 punch 0 fire -1 burning false removed true
+entity_kills mob 0: health 0.00 pos 1242.5000,64.0000,20.5000 vel 0.0000,0.0000,0.0000 fire -1 burning false removed false
+entity_kills mob 1: health 0.00 pos 1242.5000,64.0000,28.5000 vel 0.0000,0.0000,0.0000 fire -1 burning false removed false
+pierce_levels ticks 1-15: ffe30f67f65b00f4
+pierce_levels ticks 16-30: 57a15296bfcda788
+pierce_levels ticks 31-45: 3863e6d1abcbe09c
+pierce_levels ticks 46-60: 2c393b57e31a3140
+pierce_levels arrow 0: pos 1304.9552,65.7520,20.5000 vel 1.4701,-0.0985,0.0000 rot 90.000,-3.833 ground false in None shake 0 life 0 time 0 hit true pierced [72050] crit false flame false pierce 0 punch 0 fire -1 burning false removed true
+pierce_levels arrow 1: pos 1309.2780,65.1673,28.5000 vel 1.4265,-0.2426,0.0000 rot 90.000,-9.652 ground false in None shake 0 life 0 time 0 hit true pierced [72053, 72054] crit false flame false pierce 1 punch 0 fire -1 burning false removed true
+pierce_levels arrow 2: pos 1312.0883,64.5414,36.5000 vel 1.3981,-0.3363,0.0000 rot 90.000,-13.524 ground false in None shake 0 life 0 time 0 hit true pierced [72056, 72057, 72058] crit false flame false pierce 2 punch 0 fire -1 burning false removed true
+pierce_levels mob 0: health 17.00 pos 1304.5000,64.0000,20.5000 vel -0.4000,0.0000,0.0000 fire -1 burning false removed false
+pierce_levels mob 1: health 20.00 pos 1308.5000,64.0000,20.5000 vel 0.0000,0.0000,0.0000 fire -1 burning false removed false
+pierce_levels mob 2: health 20.00 pos 1312.5000,64.0000,20.5000 vel 0.0000,0.0000,0.0000 fire -1 burning false removed false
+pierce_levels mob 3: health 17.00 pos 1304.5000,64.0000,28.5000 vel -0.4000,0.0000,0.0000 fire -1 burning false removed false
+pierce_levels mob 4: health 17.00 pos 1308.5000,64.0000,28.5000 vel -0.4000,0.0000,0.0000 fire -1 burning false removed false
+pierce_levels mob 5: health 20.00 pos 1312.5000,64.0000,28.5000 vel 0.0000,0.0000,0.0000 fire -1 burning false removed false
+pierce_levels mob 6: health 17.00 pos 1304.5000,64.0000,36.5000 vel -0.4000,0.0000,0.0000 fire -1 burning false removed false
+pierce_levels mob 7: health 17.00 pos 1308.5000,64.0000,36.5000 vel -0.4000,0.0000,0.0000 fire -1 burning false removed false
+pierce_levels mob 8: health 17.00 pos 1312.5000,64.0000,36.5000 vel 0.4000,0.0000,0.0000 fire -1 burning false removed false
+pierce_levels sounds: 12, arrow hits: 6, pitched in range: 6
+pierce_into_wall ticks 1-15: ea426ebebbfaa939
+pierce_into_wall ticks 16-30: 34f14dae1f2eada1
+pierce_into_wall ticks 31-45: da3bcb206247c16f
+pierce_into_wall ticks 46-60: 466397f02bb61071
+pierce_into_wall arrow 0: pos 1375.9500,64.3395,20.4500 vel 0.0000,0.0000,0.0000 rot 90.000,-15.445 ground true in Some((1376, 64, 20)) shake 0 life 52 time 52 hit true pierced [] crit false flame false pierce 0 punch 0 fire -1 burning false removed false
+pierce_into_wall mob 0: health 17.00 pos 1368.5000,64.0000,20.5000 vel 0.4000,0.0000,0.0000 fire -1 burning false removed false
+pierce_into_wall mob 1: health 17.00 pos 1370.5000,64.0000,20.5000 vel -0.4000,0.0000,0.0000 fire -1 burning false removed false
+pierce_into_wall mob 2: health 17.00 pos 1372.5000,64.0000,20.5000 vel 0.4000,0.0000,0.0000 fire -1 burning false removed false
+pierce_into_wall sounds: 7, arrow hits: 4, pitched in range: 4
+punch ticks 1-15: c835559454081745
+punch ticks 16-30: 776d824fdfefea4a
+punch ticks 31-45: 1eab1e58250f0573
+punch ticks 46-60: 1de8bf210a3f5674
+punch arrow 0: pos 1434.4010,64.8099,20.5000 vel 0.9606,-0.1950,0.0000 rot 90.000,-11.478 ground false in None shake 0 life 0 time 0 hit true pierced [72250] crit false flame false pierce 0 punch 1 fire -1 burning false removed true
+punch arrow 1: pos 1434.4010,64.8099,28.5000 vel 0.9606,-0.1950,0.0000 rot 90.000,-11.478 ground false in None shake 0 life 0 time 0 hit true pierced [72251] crit false flame false pierce 0 punch 2 fire -1 burning false removed true
+punch arrow 2: pos 1430.4500,64.0500,36.4500 vel 0.0000,0.0000,0.0000 rot 0.000,-90.000 ground true in Some((1430, 63, 36)) shake 0 life 53 time 53 hit true pierced [] crit false flame false pierce 0 punch 3 fire -1 burning false removed false
+punch arrow 3: pos 1434.9950,65.2505,36.6980 vel 0.4950,-0.0495,0.1980 rot 68.199,-5.305 ground false in None shake 0 life 0 time 0 hit true pierced [72252] crit false flame false pierce 0 punch 2 fire -1 burning false removed true
+punch mob 0: health 18.00 pos 1434.5000,64.0000,20.5000 vel 1.0000,0.1000,0.0000 fire -1 burning false removed false
+punch mob 1: health 18.00 pos 1434.5000,64.0000,28.5000 vel 1.6000,0.1000,0.0000 fire -1 burning false removed false
+punch mob 2: health 18.00 pos 1434.5000,64.0000,36.5000 vel 0.7428,0.1000,0.2971 fire -1 burning false removed false
+punch sounds: 7, arrow hits: 4, pitched in range: 4
+flame_arrows ticks 1-15: 280785c15fa76797
+flame_arrows ticks 16-30: 4d5d66ef9bed56a7
+flame_arrows ticks 31-45: 7919f79957cf12d7
+flame_arrows ticks 46-60: f95061dbc26cf1e7
+flame_arrows arrow 0: pos 1498.4010,64.8099,20.5000 vel 0.9606,-0.1950,0.0000 rot 90.000,-11.478 ground false in None shake 0 life 0 time 0 hit true pierced [72350] crit false flame true pierce 0 punch 0 fire -1 burning true removed true
+flame_arrows arrow 1: pos 1498.4010,64.8099,28.5000 vel 0.9606,-0.1950,0.0000 rot 90.000,-11.478 ground false in None shake 0 life 0 time 0 hit true pierced [72351] crit false flame true pierce 0 punch 0 fire -1 burning true removed true
+flame_arrows arrow 2: pos 1498.4010,64.8099,36.5000 vel 0.9606,-0.1950,0.0000 rot 90.000,-11.478 ground false in None shake 0 life 0 time 0 hit true pierced [72352] crit false flame false pierce 0 punch 0 fire -1 burning false removed true
+flame_arrows mob 0: health 18.00 pos 1498.5000,64.0000,20.5000 vel 0.4000,0.0000,0.0000 fire 100 burning true removed false
+flame_arrows mob 1: health 18.00 pos 1498.5000,64.0000,28.5000 vel 0.4000,0.0000,0.0000 fire -1 burning false removed false
+flame_arrows mob 2: health 18.00 pos 1498.5000,64.0000,36.5000 vel 0.4000,0.0000,0.0000 fire -1 burning false removed false
+flame_arrows sounds: 6, arrow hits: 3, pitched in range: 3
+critical_hits ticks 1-15: e248b34271790568
+critical_hits ticks 16-30: ec0eba815e2cb1ba
+critical_hits ticks 31-45: 6698652ed489a23c
+critical_hits ticks 46-60: 88586f9a4fd5eade
+critical_hits arrow 0: pos 1562.9106,65.0050,17.5000 vel 1.4554,-0.1470,0.0000 rot 90.000,-5.768 ground false in None shake 0 life 0 time 0 hit true pierced [72450] crit true flame false pierce 0 punch 0 fire -1 burning false removed true
+critical_hits arrow 1: pos 1562.9106,65.0050,18.5000 vel 1.4554,-0.1470,0.0000 rot 90.000,-5.768 ground false in None shake 0 life 0 time 0 hit true pierced [72451] crit true flame false pierce 0 punch 0 fire -1 burning false removed true
+critical_hits arrow 2: pos 1562.9106,65.0050,19.5000 vel 1.4554,-0.1470,0.0000 rot 90.000,-5.768 ground false in None shake 0 life 0 time 0 hit true pierced [72452] crit true flame false pierce 0 punch 0 fire -1 burning false removed true
+critical_hits lost 3 hp seen: true, 4: true, 5: true, other: 0
+arrow_kinds ticks 1-15: fce3c534acda1a0d
+arrow_kinds ticks 16-30: 2d04e0a45e8ce1e1
+arrow_kinds ticks 31-45: bfdcc9bfbd380345
+arrow_kinds ticks 46-60: 523bbd4fe2f68749
+arrow_kinds arrow 0: pos 1626.4010,64.8099,18.5000 vel 0.9606,-0.1950,0.0000 rot 90.000,-11.478 ground false in None shake 0 life 0 time 0 hit true pierced [72550] crit false flame false pierce 0 punch 0 fire -1 burning false removed true
+arrow_kinds arrow 1: pos 1626.4010,64.8099,22.5000 vel 0.9606,-0.1950,0.0000 rot 90.000,-11.478 ground false in None shake 0 life 0 time 0 hit true pierced [72551] crit false flame false pierce 0 punch 0 fire -1 burning false removed true
+arrow_kinds arrow 2: pos 1626.4010,64.8099,26.5000 vel 0.9606,-0.1950,0.0000 rot 90.000,-11.478 ground false in None shake 0 life 0 time 0 hit true pierced [72552] crit false flame false pierce 0 punch 0 fire -1 burning false removed true
+arrow_kinds arrow 3: pos 1626.4010,64.8099,30.5000 vel 0.9606,-0.1950,0.0000 rot 90.000,-11.478 ground false in None shake 0 life 0 time 0 hit true pierced [72553] crit false flame false pierce 0 punch 0 fire -1 burning false removed true
+arrow_kinds arrow 4: pos 1626.4010,64.8099,34.5000 vel 0.9606,-0.1950,0.0000 rot 90.000,-11.478 ground false in None shake 0 life 0 time 0 hit true pierced [72554] crit false flame true pierce 0 punch 0 fire -1 burning true removed true
+arrow_kinds mob 0: health 18.00 pos 1626.5000,64.0000,18.5000 vel 0.4000,0.0000,0.0000 fire -1 burning false removed false
+arrow_kinds mob 1: health 18.00 pos 1626.5000,64.0000,22.5000 vel 0.4000,0.0000,0.0000 fire -1 burning false minecraft:glowing:0:200 removed false
+arrow_kinds mob 2: health 18.00 pos 1626.5000,64.0000,26.5000 vel 0.4000,0.0000,0.0000 fire -1 burning false minecraft:night_vision:0:4800 removed false
+arrow_kinds mob 3: health 18.00 pos 1626.5000,64.0000,30.5000 vel 0.4000,0.0000,0.0000 fire -1 burning false minecraft:night_vision:0:1200 removed false
+arrow_kinds mob 4: health 18.00 pos 1626.5000,64.0000,34.5000 vel 0.4000,0.0000,0.0000 fire 100 burning true minecraft:glowing:0:200 removed false
+arrow_kinds sounds: 10, arrow hits: 5, pitched in range: 5
+damage_refused ticks 1-15: b8d0aa0716ded406
+damage_refused ticks 16-30: 7c3dfd9b34027818
+damage_refused ticks 31-45: da958a6fbcd5ce5e
+damage_refused ticks 46-60: 94a4a5b68d1e3440
+damage_refused arrow 0: pos 1690.4010,64.8099,20.5000 vel 0.9606,-0.1950,0.0000 rot 90.000,-11.478 ground false in None shake 0 life 0 time 0 hit true pierced [72650] crit false flame false pierce 0 punch 0 fire -1 burning false removed true
+damage_refused arrow 1: pos 1690.4010,64.8099,28.5000 vel 0.9606,-0.1950,0.0000 rot 90.000,-11.478 ground false in None shake 0 life 0 time 0 hit true pierced [72651] crit false flame false pierce 0 punch 2 fire -1 burning false removed true
+damage_refused mob 0: health 20.00 pos 1690.5000,64.0000,20.5000 vel 0.0000,0.0000,0.0000 fire -1 burning false removed false
+damage_refused mob 1: health 20.00 pos 1690.5000,64.0000,28.5000 vel 1.2000,0.1000,0.0000 fire -1 burning false removed false
+damage_refused sounds: 2, arrow hits: 2, pitched in range: 2
+owner_in_the_way ticks 1-15: 28553df08a1bf678
+owner_in_the_way ticks 16-30: 039da5a64ccd61f0
+owner_in_the_way ticks 31-45: 43619d10cc7d0640
+owner_in_the_way ticks 46-60: 7c10889baf1abd24
+owner_in_the_way arrow 0: pos 1754.7000,65.6278,20.5000 vel 0.0000,-0.8063,0.0000 rot 0.000,-90.000 ground false in None shake 0 life 0 time 0 hit true pierced [72750] crit false flame false pierce 0 punch 0 fire -1 burning false removed true
+owner_in_the_way arrow 1: pos 1754.4010,64.8099,28.5000 vel 0.9606,-0.1950,0.0000 rot 90.000,-11.478 ground false in None shake 0 life 0 time 0 hit true pierced [72751] crit false flame false pierce 0 punch 0 fire -1 burning false removed true
+owner_in_the_way arrow 2: pos 1759.0130,64.0500,36.4500 vel 0.0000,0.0000,0.0000 rot 90.000,-19.839 ground true in Some((1759, 63, 36)) shake 0 life 53 time 53 hit true pierced [] crit false flame false pierce 0 punch 0 fire -1 burning false removed false
+owner_in_the_way arrow 3: pos 1753.4900,65.2505,38.5000 vel 0.9900,-0.0495,0.0000 rot 90.000,-2.862 ground false in None shake 0 life 0 time 0 hit true pierced [72753] crit false flame false pierce 0 punch 0 fire -1 burning false removed true
+owner_in_the_way mob 0: health 18.00 pos 1754.5000,64.0000,20.5000 vel -0.4000,0.0000,0.0000 fire -1 burning false removed false
+owner_in_the_way mob 1: health 18.00 pos 1754.5000,64.0000,28.5000 vel 0.4000,0.0000,0.0000 fire -1 burning false removed false
+owner_in_the_way mob 2: health 20.00 pos 1752.5000,64.0000,36.5000 vel 0.0000,0.0000,0.0000 fire -1 burning false removed false
+owner_in_the_way mob 3: health 18.00 pos 1752.5000,64.0000,38.5000 vel -0.4000,0.0000,0.0000 fire -1 burning false removed false
+owner_in_the_way sounds: 7, arrow hits: 4, pitched in range: 4
+passes_through_things ticks 1-15: 03a49d95bdd68cc6
+passes_through_things ticks 16-30: 9b66269e32c413f4
+passes_through_things ticks 31-45: e9b15429135d60b2
+passes_through_things ticks 46-60: 6657c46a9d472360
+passes_through_things arrow 0: pos 1821.7780,65.0673,18.5000 vel 1.4265,-0.2426,0.0000 rot 90.000,-9.652 ground false in None shake 0 life 0 time 0 hit true pierced [72856] crit false flame false pierce 0 punch 0 fire -1 burning false removed true
+passes_through_things arrow 1: pos 1821.7780,65.0673,22.5000 vel 1.4265,-0.2426,0.0000 rot 90.000,-9.652 ground false in None shake 0 life 0 time 0 hit true pierced [72857] crit false flame false pierce 0 punch 0 fire -1 burning false removed true
+passes_through_things arrow 2: pos 1821.7780,65.0673,26.5000 vel 1.4265,-0.2426,0.0000 rot 90.000,-9.652 ground false in None shake 0 life 0 time 0 hit true pierced [72858] crit false flame false pierce 0 punch 0 fire -1 burning false removed true
+passes_through_things arrow 3: pos 1821.7780,65.0673,30.5000 vel 1.4265,-0.2426,0.0000 rot 90.000,-9.652 ground false in None shake 0 life 0 time 0 hit true pierced [72859] crit false flame false pierce 0 punch 0 fire -1 burning false removed true
+passes_through_things arrow 4: pos 1821.7780,65.0673,34.5000 vel 1.4265,-0.2426,0.0000 rot 90.000,-9.652 ground false in None shake 0 life 0 time 0 hit true pierced [72860] crit false flame false pierce 0 punch 0 fire -1 burning false removed true
+passes_through_things arrow 5: pos 1815.9850,65.7505,38.5000 vel 1.4850,-0.0495,0.0000 rot 90.000,-1.909 ground false in None shake 0 life 0 time 0 hit true pierced [72855] crit false flame false pierce 0 punch 0 fire -1 burning false removed true
+passes_through_things mob 0: health 20.00 pos 1817.5000,64.0000,18.5000 vel 0.0000,0.0000,0.0000 fire -1 burning false removed false
+passes_through_things mob 1: health 20.00 pos 1817.5000,64.0000,22.5000 vel 0.0000,0.0000,0.0000 fire -1 burning false removed false
+passes_through_things mob 2:  removed false
+passes_through_things mob 3: health 20.00 pos 1817.5000,64.0000,30.5000 vel 0.0000,0.0000,0.0000 fire -1 burning false removed false
+passes_through_things mob 4: health 20.00 pos 1816.5000,64.0000,34.5000 vel 0.0000,0.0000,0.0000 fire -1 burning false removed false
+passes_through_things mob 5: health 0.00 pos 1816.5000,64.0000,38.5000 vel 0.0000,0.0000,0.0000 fire -1 burning false removed false
+passes_through_things mob 6: health 17.00 pos 1821.5000,64.0000,18.5000 vel -0.4000,0.0000,0.0000 fire -1 burning false removed false
+passes_through_things mob 7: health 17.00 pos 1821.5000,64.0000,22.5000 vel -0.4000,0.0000,0.0000 fire -1 burning false removed false
+passes_through_things mob 8: health 17.00 pos 1821.5000,64.0000,26.5000 vel -0.4000,0.0000,0.0000 fire -1 burning false removed false
+passes_through_things mob 9: health 17.00 pos 1821.5000,64.0000,30.5000 vel -0.4000,0.0000,0.0000 fire -1 burning false removed false
+passes_through_things mob 10: health 17.00 pos 1821.5000,64.0000,34.5000 vel -0.4000,0.0000,0.0000 fire -1 burning false removed false
+passes_through_things mob 11: health 20.00 pos 1821.5000,64.0000,38.5000 vel 0.0000,0.0000,0.0000 fire -1 burning false removed false
+passes_through_things sounds: 11, arrow hits: 6, pitched in range: 6
+wall_and_entity ticks 1-15: 3469036da0314b52
+wall_and_entity ticks 16-30: 326434425d23a5bf
+wall_and_entity ticks 31-45: c38281a4d40f40a0
+wall_and_entity ticks 46-60: 24f75e23620ebd95
+wall_and_entity arrow 0: pos 1881.9500,65.1470,20.4500 vel 0.0000,0.0000,0.0000 rot 90.000,-5.768 ground true in Some((1882, 65, 20)) shake 0 life 57 time 57 hit true pierced [] crit false flame false pierce 0 punch 0 fire -1 burning false removed false
+wall_and_entity arrow 1: pos 1882.9106,65.0050,28.5000 vel 1.4554,-0.1470,0.0000 rot 90.000,-5.768 ground false in None shake 0 life 0 time 0 hit true pierced [72951] crit false flame false pierce 0 punch 0 fire -1 burning false removed true
+wall_and_entity mob 0: health 20.00 pos 1885.0000,64.0000,20.5000 vel 0.0000,0.0000,0.0000 fire -1 burning false removed false
+wall_and_entity mob 1: health 17.00 pos 1883.5000,64.0000,28.5000 vel 0.4000,0.0000,0.0000 fire -1 burning false removed false
+wall_and_entity sounds: 3, arrow hits: 2, pitched in range: 2
+near_misses ticks 1-15: f973897e104e15a1
+near_misses ticks 16-30: c23e9bcaca79ae02
+near_misses ticks 31-45: e1c45f0615b41f6c
+near_misses ticks 46-60: 22626309d1088e4a
+near_misses arrow 0: pos 1946.4010,64.8099,19.0000 vel 0.9606,-0.1950,0.0000 rot 90.000,-11.478 ground false in None shake 0 life 0 time 0 hit true pierced [73050] crit false flame false pierce 0 punch 0 fire -1 burning false removed true
+near_misses arrow 1: pos 1949.0130,64.0500,21.6000 vel 0.0000,0.0000,0.0000 rot 90.000,-19.839 ground true in Some((1949, 63, 21)) shake 0 life 53 time 53 hit true pierced [] crit false flame false pierce 0 punch 0 fire -1 burning false removed false
+near_misses arrow 2: pos 1946.4010,64.8099,24.9500 vel 0.9606,-0.1950,0.0000 rot 90.000,-11.478 ground false in None shake 0 life 0 time 0 hit true pierced [73052] crit false flame false pierce 0 punch 0 fire -1 burning false removed true
+near_misses arrow 3: pos 1946.4010,65.7599,28.5000 vel 0.9606,-0.1950,0.0000 rot 90.000,-11.478 ground false in None shake 0 life 0 time 0 hit true pierced [73053] crit false flame false pierce 0 punch 0 fire -1 burning false removed true
+near_misses arrow 4: pos 1952.5341,64.0500,32.4500 vel 0.0000,0.0000,0.0000 rot 90.000,-30.055 ground true in Some((1952, 63, 32)) shake 0 life 49 time 49 hit true pierced [] crit false flame false pierce 0 punch 0 fire -1 burning false removed false
+near_misses arrow 5: pos 1947.7286,64.0500,36.4500 vel 0.0000,0.0000,0.0000 rot 90.000,-14.450 ground true in Some((1947, 63, 36)) shake 0 life 54 time 54 hit true pierced [] crit false flame false pierce 0 punch 0 fire -1 burning false removed false
+near_misses mob 0: health 18.00 pos 1946.5000,64.0000,19.5000 vel 0.0777,0.0000,0.3924 fire -1 burning false removed false
+near_misses mob 1: health 20.00 pos 1946.5000,64.0000,22.5000 vel 0.0000,0.0000,0.0000 fire -1 burning false removed false
+near_misses mob 2: health 18.00 pos 1946.5000,64.0000,25.5000 vel 0.0709,0.0000,0.3937 fire -1 burning false removed false
+near_misses mob 3: health 18.00 pos 1946.5000,64.0000,28.5000 vel 0.4000,0.0000,0.0000 fire -1 burning false removed false
+near_misses mob 4: health 20.00 pos 1946.5000,64.0000,32.5000 vel 0.0000,0.0000,0.0000 fire -1 burning false removed false
+near_misses mob 5: health 20.00 pos 1946.5000,65.0000,36.5000 vel 0.0000,0.0000,0.0000 fire -1 burning false removed false
+near_misses sounds: 9, arrow hits: 6, pitched in range: 6
+arrow_from_a_height ticks 1-15: 4ac422a59de79cf6
+arrow_from_a_height ticks 16-30: 7e6f2dbfb080038b
+arrow_from_a_height ticks 31-45: c9cf35ed9235cc48
+arrow_from_a_height ticks 46-60: 6821cfd644254ab9
+arrow_from_a_height arrow 0: pos 2010.7000,65.5292,20.5000 vel 0.0000,-1.4488,0.0000 rot 0.000,-90.000 ground false in None shake 0 life 0 time 0 hit true pierced [73150] crit false flame false pierce 0 punch 0 fire -1 burning false removed true
+arrow_from_a_height arrow 1: pos 2010.4112,65.3413,28.5000 vel 0.5706,-0.7181,0.0000 rot 90.000,-51.530 ground false in None shake 0 life 0 time 0 hit true pierced [73151] crit false flame false pierce 0 punch 0 fire -1 burning false removed true
+arrow_from_a_height arrow 2: pos 2010.7000,63.9355,36.5000 vel 0.0000,1.4355,0.0000 rot 0.000,90.000 ground false in None shake 0 life 0 time 0 hit true pierced [73152] crit false flame false pierce 0 punch 0 fire -1 burning false removed true
+arrow_from_a_height mob 0: health 17.00 pos 2010.5000,64.0000,20.5000 vel -0.4000,0.0000,0.0000 fire -1 burning false removed false
+arrow_from_a_height mob 1: health 18.00 pos 2010.5000,64.0000,28.5000 vel 0.4000,0.0000,0.0000 fire -1 burning false removed false
+arrow_from_a_height mob 2: health 17.00 pos 2010.5000,62.0000,36.5000 vel -0.4000,0.0000,0.0000 fire -1 burning false removed false
+arrow_from_a_height sounds: 6, arrow hits: 3, pitched in range: 3
+wet_flight ticks 1-15: f1a21c47bea2dd1b
+wet_flight ticks 16-30: da0ed7a358af853f
+wet_flight ticks 31-45: 3921f3bd55496aa3
+wet_flight ticks 46-60: e63ab9652507c332
+wet_flight arrow 0: pos 2071.9500,64.0500,22.4500 vel 0.0000,0.0000,0.0000 rot 90.000,-90.000 ground true in Some((2071, 63, 22)) shake 0 life 21 time 21 hit true pierced [] crit false flame false pierce 0 punch 0 fire -1 burning false removed false
+wet_flight arrow 1: pos 2079.6440,64.0500,38.4500 vel 0.0000,0.0000,0.0000 rot 90.000,-27.625 ground true in Some((2079, 63, 38)) shake 0 life 50 time 50 hit true pierced [] crit false flame true pierce 0 punch 0 fire -1 burning true removed false
+wet_flight arrow 2: pos 2085.4500,64.0500,30.4500 vel 0.0000,0.0000,0.0000 rot 0.000,-90.000 ground true in Some((2085, 63, 30)) shake 0 life 25 time 25 hit true pierced [] crit false flame false pierce 0 punch 0 fire 0 burning true removed false
+wet_flight arrow 3: pos 2071.9500,64.0500,26.4500 vel 0.0000,0.0000,0.0000 rot 90.000,-90.000 ground true in Some((2071, 63, 26)) shake 0 life 25 time 25 hit true pierced [] crit false flame false pierce 0 punch 0 fire 0 burning true removed false
+wet_flight arrow 4: pos 2071.9500,64.0500,30.4500 vel 0.0000,0.0000,0.0000 rot 90.000,-90.000 ground true in Some((2071, 63, 30)) shake 0 life 25 time 25 hit true pierced [] crit false flame false pierce 0 punch 0 fire 0 burning true removed false
+wet_flight arrow 5: pos 2071.9500,64.0500,34.4500 vel 0.0000,0.0000,0.0000 rot 90.000,-90.000 ground true in Some((2071, 63, 34)) shake 0 life 23 time 23 hit true pierced [] crit false flame false pierce 0 punch 0 fire -1 burning false removed false
+wet_flight sounds: 6, arrow hits: 6, pitched in range: 6
+release_speed ticks 1-1: 5c95c61129bac526
+release_speed arrow 0: ground false hit false removed false
+release_speed arrow 1: ground false hit false removed false
+release_speed arrow 0 kept: true true true
+release_speed arrow 1 kept: true - true
+search_box_reach ticks 1-15: 679c98e7b1d1a7b9
+search_box_reach ticks 16-30: 360ed7a66f7ea1af
+search_box_reach ticks 31-45: 46d42c68be05d2b1
+search_box_reach ticks 46-60: 1b00c0cf1e457ff7
+search_box_reach arrow 0: pos 2202.4010,64.8099,20.0000 vel 0.9606,-0.1950,0.0000 rot 90.000,-11.478 ground false in None shake 0 life 0 time 0 hit true pierced [73450] crit false flame false pierce 0 punch 0 fire -1 burning false removed true
+search_box_reach arrow 1: pos 2202.4010,65.6599,28.5000 vel 0.9606,-0.1950,0.0000 rot 90.000,-11.478 ground false in None shake 0 life 0 time 0 hit true pierced [73451] crit false flame false pierce 0 punch 0 fire -1 burning false removed true
+search_box_reach arrow 2: pos 2202.4010,64.8099,37.0000 vel 0.9606,-0.1950,0.0000 rot 90.000,-11.478 ground false in None shake 0 life 0 time 0 hit true pierced [73452] crit false flame false pierce 0 punch 0 fire -1 burning false removed true
+search_box_reach mob 0: health 18.00 pos 2202.5000,64.0000,20.5000 vel 0.0777,0.0000,0.3924 fire -1 burning false removed false
+search_box_reach mob 1: health 18.00 pos 2202.5000,64.0000,28.5000 vel 0.4000,0.0000,0.0000 fire -1 burning false removed false
+search_box_reach mob 2: health 18.00 pos 2202.5000,64.0000,36.5000 vel 0.0777,0.0000,-0.3924 fire -1 burning false removed false
+search_box_reach sounds: 6, arrow hits: 3, pitched in range: 3
+burning_arrow_hits ticks 1-15: 43030db03a275ac4
+burning_arrow_hits ticks 16-30: 68deda8a4b85acc5
+burning_arrow_hits ticks 31-45: 2bac85f049f176e2
+burning_arrow_hits ticks 46-60: 823827d9a992931f
+burning_arrow_hits arrow 0: pos 2266.4010,64.8099,20.5000 vel 0.9606,-0.1950,0.0000 rot 90.000,-11.478 ground false in None shake 0 life 0 time 0 hit true pierced [73550] crit false flame false pierce 0 punch 0 fire 56 burning true removed true
+burning_arrow_hits arrow 1: pos 2266.4010,64.8099,28.5000 vel 0.9606,-0.1950,0.0000 rot 90.000,-11.478 ground false in None shake 0 life 0 time 0 hit true pierced [73551] crit false flame false pierce 0 punch 0 fire 56 burning true removed true
+burning_arrow_hits arrow 2: pos 2266.4010,64.8099,36.5000 vel 0.9606,-0.1950,0.0000 rot 90.000,-11.478 ground false in None shake 0 life 0 time 0 hit true pierced [73552] crit false flame true pierce 0 punch 0 fire -1 burning true removed true
+burning_arrow_hits mob 0: health 18.00 pos 2266.5000,64.0000,20.5000 vel 0.4000,0.0000,0.0000 fire 100 burning true removed false
+burning_arrow_hits mob 1: health 18.00 pos 2266.5000,64.0000,28.5000 vel 0.4000,0.0000,0.0000 fire -1 burning false removed false
+burning_arrow_hits mob 2: health 18.00 pos 2266.5000,64.0000,36.5000 vel 0.4000,0.0000,0.0000 fire 100 burning true removed false
+burning_arrow_hits sounds: 6, arrow hits: 3, pitched in range: 3

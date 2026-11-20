@@ -10,6 +10,8 @@ use std::{
     sync::atomic::{AtomicBool, Ordering},
 };
 pub mod arrow;
+#[cfg(test)]
+mod arrow_tick_golden;
 pub mod egg;
 pub mod ender_pearl;
 pub mod evoker_fangs;

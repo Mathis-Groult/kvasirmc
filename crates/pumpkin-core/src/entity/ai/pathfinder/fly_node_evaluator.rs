@@ -8,6 +8,50 @@ use crate::entity::ai::pathfinder::{
     walk_node_evaluator::WalkNodeEvaluator,
 };
 
+/// One of the 26 steps to a neighboring cell. A diagonal step is only taken when the steps
+/// it is made of (`needs`, indices into `STEPS`) lead to cells the mob may enter.
+struct Step {
+    dx: i32,
+    dy: i32,
+    dz: i32,
+    needs: &'static [usize],
+}
+
+const fn step(dx: i32, dy: i32, dz: i32, needs: &'static [usize]) -> Step {
+    Step { dx, dy, dz, needs }
+}
+
+/// In the order vanilla tries them: the six faces, the edges (up, down, around), then the
+/// corners.
+const STEPS: [Step; 26] = [
+    step(0, 0, 1, &[]),                       // 0 south
+    step(-1, 0, 0, &[]),                      // 1 west
+    step(1, 0, 0, &[]),                       // 2 east
+    step(0, 0, -1, &[]),                      // 3 north
+    step(0, 1, 0, &[]),                       // 4 up
+    step(0, -1, 0, &[]),                      // 5 down
+    step(0, 1, 1, &[0, 4]),                   // 6 south up
+    step(-1, 1, 0, &[1, 4]),                  // 7 west up
+    step(1, 1, 0, &[2, 4]),                   // 8 east up
+    step(0, 1, -1, &[3, 4]),                  // 9 north up
+    step(0, -1, 1, &[0, 5]),                  // 10 south down
+    step(-1, -1, 0, &[1, 5]),                 // 11 west down
+    step(1, -1, 0, &[2, 5]),                  // 12 east down
+    step(0, -1, -1, &[3, 5]),                 // 13 north down
+    step(1, 0, -1, &[3, 2]),                  // 14 north east
+    step(1, 0, 1, &[0, 2]),                   // 15 south east
+    step(-1, 0, -1, &[3, 1]),                 // 16 north west
+    step(-1, 0, 1, &[0, 1]),                  // 17 south west
+    step(1, 1, -1, &[14, 3, 2, 4, 9, 8]),     // 18 north east up
+    step(1, 1, 1, &[15, 0, 2, 4, 6, 8]),      // 19 south east up
+    step(-1, 1, -1, &[16, 3, 1, 4, 9, 7]),    // 20 north west up
+    step(-1, 1, 1, &[17, 0, 1, 4, 6, 7]),     // 21 south west up
+    step(1, -1, -1, &[14, 3, 2, 5, 13, 12]),  // 22 north east down
+    step(1, -1, 1, &[15, 0, 2, 5, 10, 12]),   // 23 south east down
+    step(-1, -1, -1, &[16, 3, 1, 5, 13, 11]), // 24 north west down
+    step(-1, -1, 1, &[17, 0, 1, 5, 10, 11]),  // 25 south west down
+];
+
 pub struct FlyNodeEvaluator {
     pub walk: WalkNodeEvaluator,
     path_types_cache: FxHashMap<Vector3<i32>, PathType>,
@@ -167,264 +211,19 @@ impl NodeEvaluator for FlyNodeEvaluator {
         Target::new(self.walk.base.get_node(pos))
     }
 
-    #[expect(clippy::too_many_lines)]
     fn get_neighbors(&mut self, current: &Node, out: &mut Vec<Node>) {
-        let x = current.pos.0.x;
-        let y = current.pos.0.y;
-        let z = current.pos.0.z;
-
-        let south = self.find_accepted_node(x, y, z + 1);
-        if Self::is_open(south.as_ref())
-            && let Some(n) = south
-        {
-            out.push(n);
-        }
-
-        let west = self.find_accepted_node(x - 1, y, z);
-        if Self::is_open(west.as_ref())
-            && let Some(n) = west
-        {
-            out.push(n);
-        }
-
-        let east = self.find_accepted_node(x + 1, y, z);
-        if Self::is_open(east.as_ref())
-            && let Some(n) = east
-        {
-            out.push(n);
-        }
-
-        let north = self.find_accepted_node(x, y, z - 1);
-        if Self::is_open(north.as_ref())
-            && let Some(n) = north
-        {
-            out.push(n);
-        }
-
-        let up = self.find_accepted_node(x, y + 1, z);
-        if Self::is_open(up.as_ref())
-            && let Some(n) = up
-        {
-            out.push(n);
-        }
-
-        let down = self.find_accepted_node(x, y - 1, z);
-        if Self::is_open(down.as_ref())
-            && let Some(n) = down
-        {
-            out.push(n);
-        }
-
-        let south_up = self.find_accepted_node(x, y + 1, z + 1);
-        if Self::is_open(south_up.as_ref())
-            && Self::has_malus(south.as_ref())
-            && Self::has_malus(up.as_ref())
-            && let Some(n) = south_up
-        {
-            out.push(n);
-        }
-
-        let west_up = self.find_accepted_node(x - 1, y + 1, z);
-        if Self::is_open(west_up.as_ref())
-            && Self::has_malus(west.as_ref())
-            && Self::has_malus(up.as_ref())
-            && let Some(n) = west_up
-        {
-            out.push(n);
-        }
-
-        let east_up = self.find_accepted_node(x + 1, y + 1, z);
-        if Self::is_open(east_up.as_ref())
-            && Self::has_malus(east.as_ref())
-            && Self::has_malus(up.as_ref())
-            && let Some(n) = east_up
-        {
-            out.push(n);
-        }
-
-        let north_up = self.find_accepted_node(x, y + 1, z - 1);
-        if Self::is_open(north_up.as_ref())
-            && Self::has_malus(north.as_ref())
-            && Self::has_malus(up.as_ref())
-            && let Some(n) = north_up
-        {
-            out.push(n);
-        }
-
-        let south_down = self.find_accepted_node(x, y - 1, z + 1);
-        if Self::is_open(south_down.as_ref())
-            && Self::has_malus(south.as_ref())
-            && Self::has_malus(down.as_ref())
-            && let Some(n) = south_down
-        {
-            out.push(n);
-        }
-
-        let west_down = self.find_accepted_node(x - 1, y - 1, z);
-        if Self::is_open(west_down.as_ref())
-            && Self::has_malus(west.as_ref())
-            && Self::has_malus(down.as_ref())
-            && let Some(n) = west_down
-        {
-            out.push(n);
-        }
-
-        let east_down = self.find_accepted_node(x + 1, y - 1, z);
-        if Self::is_open(east_down.as_ref())
-            && Self::has_malus(east.as_ref())
-            && Self::has_malus(down.as_ref())
-            && let Some(n) = east_down
-        {
-            out.push(n);
-        }
-
-        let north_down = self.find_accepted_node(x, y - 1, z - 1);
-        if Self::is_open(north_down.as_ref())
-            && Self::has_malus(north.as_ref())
-            && Self::has_malus(down.as_ref())
-            && let Some(n) = north_down
-        {
-            out.push(n);
-        }
-
-        let north_east = self.find_accepted_node(x + 1, y, z - 1);
-        if Self::is_open(north_east.as_ref())
-            && Self::has_malus(north.as_ref())
-            && Self::has_malus(east.as_ref())
-            && let Some(n) = north_east
-        {
-            out.push(n);
-        }
-
-        let south_east = self.find_accepted_node(x + 1, y, z + 1);
-        if Self::is_open(south_east.as_ref())
-            && Self::has_malus(south.as_ref())
-            && Self::has_malus(east.as_ref())
-            && let Some(n) = south_east
-        {
-            out.push(n);
-        }
-
-        let north_west = self.find_accepted_node(x - 1, y, z - 1);
-        if Self::is_open(north_west.as_ref())
-            && Self::has_malus(north.as_ref())
-            && Self::has_malus(west.as_ref())
-            && let Some(n) = north_west
-        {
-            out.push(n);
-        }
-
-        let south_west = self.find_accepted_node(x - 1, y, z + 1);
-        if Self::is_open(south_west.as_ref())
-            && Self::has_malus(south.as_ref())
-            && Self::has_malus(west.as_ref())
-            && let Some(n) = south_west
-        {
-            out.push(n);
-        }
-
-        let north_east_up = self.find_accepted_node(x + 1, y + 1, z - 1);
-        if Self::is_open(north_east_up.as_ref())
-            && Self::has_malus(north_east.as_ref())
-            && Self::has_malus(north.as_ref())
-            && Self::has_malus(east.as_ref())
-            && Self::has_malus(up.as_ref())
-            && Self::has_malus(north_up.as_ref())
-            && Self::has_malus(east_up.as_ref())
-            && let Some(n) = north_east_up
-        {
-            out.push(n);
-        }
-
-        let south_east_up = self.find_accepted_node(x + 1, y + 1, z + 1);
-        if Self::is_open(south_east_up.as_ref())
-            && Self::has_malus(south_east.as_ref())
-            && Self::has_malus(south.as_ref())
-            && Self::has_malus(east.as_ref())
-            && Self::has_malus(up.as_ref())
-            && Self::has_malus(south_up.as_ref())
-            && Self::has_malus(east_up.as_ref())
-            && let Some(n) = south_east_up
-        {
-            out.push(n);
-        }
-
-        let north_west_up = self.find_accepted_node(x - 1, y + 1, z - 1);
-        if Self::is_open(north_west_up.as_ref())
-            && Self::has_malus(north_west.as_ref())
-            && Self::has_malus(north.as_ref())
-            && Self::has_malus(west.as_ref())
-            && Self::has_malus(up.as_ref())
-            && Self::has_malus(north_up.as_ref())
-            && Self::has_malus(west_up.as_ref())
-            && let Some(n) = north_west_up
-        {
-            out.push(n);
-        }
-
-        let south_west_up = self.find_accepted_node(x - 1, y + 1, z + 1);
-        if Self::is_open(south_west_up.as_ref())
-            && Self::has_malus(south_west.as_ref())
-            && Self::has_malus(south.as_ref())
-            && Self::has_malus(west.as_ref())
-            && Self::has_malus(up.as_ref())
-            && Self::has_malus(south_up.as_ref())
-            && Self::has_malus(west_up.as_ref())
-            && let Some(n) = south_west_up
-        {
-            out.push(n);
-        }
-
-        let north_east_down = self.find_accepted_node(x + 1, y - 1, z - 1);
-        if Self::is_open(north_east_down.as_ref())
-            && Self::has_malus(north_east.as_ref())
-            && Self::has_malus(north.as_ref())
-            && Self::has_malus(east.as_ref())
-            && Self::has_malus(down.as_ref())
-            && Self::has_malus(north_down.as_ref())
-            && Self::has_malus(east_down.as_ref())
-            && let Some(n) = north_east_down
-        {
-            out.push(n);
-        }
-
-        let south_east_down = self.find_accepted_node(x + 1, y - 1, z + 1);
-        if Self::is_open(south_east_down.as_ref())
-            && Self::has_malus(south_east.as_ref())
-            && Self::has_malus(south.as_ref())
-            && Self::has_malus(east.as_ref())
-            && Self::has_malus(down.as_ref())
-            && Self::has_malus(south_down.as_ref())
-            && Self::has_malus(east_down.as_ref())
-            && let Some(n) = south_east_down
-        {
-            out.push(n);
-        }
-
-        let north_west_down = self.find_accepted_node(x - 1, y - 1, z - 1);
-        if Self::is_open(north_west_down.as_ref())
-            && Self::has_malus(north_west.as_ref())
-            && Self::has_malus(north.as_ref())
-            && Self::has_malus(west.as_ref())
-            && Self::has_malus(down.as_ref())
-            && Self::has_malus(north_down.as_ref())
-            && Self::has_malus(west_down.as_ref())
-            && let Some(n) = north_west_down
-        {
-            out.push(n);
-        }
-
-        let south_west_down = self.find_accepted_node(x - 1, y - 1, z + 1);
-        if Self::is_open(south_west_down.as_ref())
-            && Self::has_malus(south_west.as_ref())
-            && Self::has_malus(south.as_ref())
-            && Self::has_malus(west.as_ref())
-            && Self::has_malus(down.as_ref())
-            && Self::has_malus(south_down.as_ref())
-            && Self::has_malus(west_down.as_ref())
-            && let Some(n) = south_west_down
-        {
-            out.push(n);
+        let pos = current.pos.0;
+        let mut found: [Option<Node>; STEPS.len()] = [None; STEPS.len()];
+        for (slot, step) in STEPS.iter().enumerate() {
+            let node = self.find_accepted_node(pos.x + step.dx, pos.y + step.dy, pos.z + step.dz);
+            let reachable = step
+                .needs
+                .iter()
+                .all(|&need| Self::has_malus(found[need].as_ref()));
+            if reachable && Self::is_open(node.as_ref()) {
+                out.extend(node);
+            }
+            found[slot] = node;
         }
     }
 

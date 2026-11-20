@@ -110,3 +110,36 @@ fn snbt_display_is_the_same() -> TestResult {
     }
     script_golden::bless_or_compare("snbt_colorful_display.txt", &now)
 }
+
+/// `/data modify` takes `from` and `string` for every source kind, and `insert <index>` is
+/// followed by `value`, `from` or `string` (vanilla `DataCommands` tree).
+#[tokio::test(flavor = "multi_thread")]
+async fn data_modify_parses_every_source_and_insert_index() -> TestResult {
+    use crate::command::commands::script_golden;
+    use crate::entity::ai::test_support;
+
+    let folder = tempfile::tempdir()?;
+    let server = test_support::server(&folder).await?;
+    let world = server.worlds.load()[0].clone();
+    let online = script_golden::join(&world).await?;
+    let source = online[0].player.clone();
+
+    for step in [
+        "data modify storage gold:t list set value [1, 2, 3]",
+        "data modify storage gold:t list insert 1 value 9",
+        "data modify storage gold:t name set value \"abc\"",
+        "data modify storage gold:t other set from storage gold:t name",
+        "data modify storage gold:t cut set string storage gold:t name 1",
+        "data modify storage gold:t list insert 0 from storage gold:t name",
+        "data modify storage gold:t me set from entity GoldA Health",
+        "data modify storage gold:t me2 set string storage gold:t name 0 2",
+    ] {
+        let result = script_golden::run(&server, &source, step);
+        assert!(!result.starts_with("err"), "{step}: {result}");
+    }
+    let got = script_golden::run(&server, &source, "data get storage gold:t list");
+    // [1, 2, 3] -> [1, 9, 2, 3] -> "abc" inserted first: five elements.
+    assert_eq!(got, "ok 5");
+    script_golden::finish(&server, &world, &online).await;
+    Ok(())
+}

@@ -8,7 +8,7 @@ clear nodes=4 hash=c7aea0775006a2c2
 clone nodes=17 hash=72afe934034ef1c6
 compute nodes=21 hash=fbf02f807af7ea45
 damage nodes=10 hash=1dc032efe231a397
-data nodes=242 hash=3b0e68900c135958
+data nodes=482 hash=0fb2ff5211106e10
 datapack nodes=17 hash=e6ba3c2d1655c5e1
 debug nodes=3 hash=e971fce0ec4d4af7
 defaultgamemode nodes=2 hash=c27a6ee1cbb87c9f
@@ -76,25 +76,25 @@ tag nodes=7 hash=98ecb27ecbed79ec
 team nodes=45 hash=339348acfd811413
 teammsg nodes=2 hash=b2506eb92423c207
 teleport nodes=12 hash=47e28e7bdc51d9a7
-tell nodes=1 hash=ddce06088ca7a635
+tell nodes=1 hash=262e95c77fe8649b
 tellraw nodes=3 hash=807a6cef7f88c58a
 test nodes=8 hash=d5ed1832cd5d2c4b
 tick nodes=12 hash=3655cb799b8aed04
 tickprofile nodes=2 hash=18ba1de7148d224d
 time nodes=37 hash=dbc463a0140328ca
 title nodes=14 hash=98bdd9830fc08b81
-tm nodes=1 hash=831caf27ede43d9e
-tp nodes=1 hash=74bdc2082988c8ed
+tm nodes=1 hash=0d09c63fa1083194
+tp nodes=1 hash=d059c6f33065650b
 tps nodes=1 hash=0ec28e8e758caeec
 transfer nodes=4 hash=d148f0cd387d1385
 trigger nodes=6 hash=a68cea1927d9e712
-version nodes=1 hash=6feb97fffb0a8f2c
-w nodes=1 hash=75f38d390f659387
+version nodes=1 hash=a53901113b5ef0a2
+w nodes=1 hash=06db686aff1938a1
 waypoint nodes=13 hash=4de861733878c025
 weather nodes=7 hash=d583a995d7f6f007
 whitelist nodes=9 hash=6df16b2e57460033
 worldborder nodes=20 hash=533ea78972c8a883
-xp nodes=1 hash=07161cc0cb07a4d3
+xp nodes=1 hash=1800054e5719753c
 ---- execute
 command execute runs=false forks=false modifier=keep redirect=- requirements=1
   literal align runs=false forks=false modifier=keep redirect=- requirements=0

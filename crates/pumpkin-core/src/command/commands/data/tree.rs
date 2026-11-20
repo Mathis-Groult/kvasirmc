@@ -147,33 +147,48 @@ fn modify_mode_node(
     mod_mode: ModifyMode,
     all_target_kinds: &TargetKinds,
 ) -> LiteralArgumentBuilder {
-    let mut mod_node = if mod_name == "insert" {
-        literal("insert").then(argument("index", IntegerArgumentType::any()))
-    } else {
-        literal(mod_name)
-    };
-
     // value <value>
-    mod_node = mod_node.then(literal("value").then(
-        argument("value", NbtTagArgumentType).executes(ModifyExecutor {
-            target_kind,
-            modify_mode: mod_mode,
-            source_kind: None,
-            source_mode: SourceMode::Value,
-        }),
-    ));
+    let mut sources = vec![
+        literal("value").then(
+            argument("value", NbtTagArgumentType).executes(ModifyExecutor {
+                target_kind,
+                modify_mode: mod_mode,
+                source_kind: None,
+                source_mode: SourceMode::Value,
+            }),
+        ),
+    ];
 
-    // from & string sources
+    // `from` and `string` exist once, with one branch per source kind: a second `then` with
+    // the same name replaces the first.
+    let mut from_node = literal("from");
+    let mut string_node = literal("string");
     for &(source_kind, source_name) in all_target_kinds {
-        mod_node = mod_node.then(from_source(target_kind, mod_mode, source_kind, source_name));
-        mod_node = mod_node.then(string_source(
+        from_node = from_node.then(from_source(target_kind, mod_mode, source_kind, source_name));
+        string_node = string_node.then(string_source(
             target_kind,
             mod_mode,
             source_kind,
             source_name,
         ));
     }
-    mod_node
+    sources.push(from_node);
+    sources.push(string_node);
+
+    // insert <index> (value | from | string), the other modes take them directly.
+    if mod_name == "insert" {
+        let mut index = argument("index", IntegerArgumentType::any());
+        for source in sources {
+            index = index.then(source);
+        }
+        literal("insert").then(index)
+    } else {
+        let mut mod_node = literal(mod_name);
+        for source in sources {
+            mod_node = mod_node.then(source);
+        }
+        mod_node
+    }
 }
 
 /// from <source> [<sourcePath>]
@@ -183,24 +198,22 @@ fn from_source(
     source_kind: TargetKind,
     source_name: &'static str,
 ) -> LiteralArgumentBuilder {
-    literal("from").then(
-        literal(source_name).then(
-            make_target_arg(source_kind, "source")
-                .executes(ModifyExecutor {
+    literal(source_name).then(
+        make_target_arg(source_kind, "source")
+            .executes(ModifyExecutor {
+                target_kind,
+                modify_mode: mod_mode,
+                source_kind: Some(source_kind),
+                source_mode: SourceMode::From { has_path: false },
+            })
+            .then(
+                argument("sourcePath", NbtPathArgumentType).executes(ModifyExecutor {
                     target_kind,
                     modify_mode: mod_mode,
                     source_kind: Some(source_kind),
-                    source_mode: SourceMode::From { has_path: false },
-                })
-                .then(
-                    argument("sourcePath", NbtPathArgumentType).executes(ModifyExecutor {
-                        target_kind,
-                        modify_mode: mod_mode,
-                        source_kind: Some(source_kind),
-                        source_mode: SourceMode::From { has_path: true },
-                    }),
-                ),
-        ),
+                    source_mode: SourceMode::From { has_path: true },
+                }),
+            ),
     )
 }
 
@@ -211,57 +224,55 @@ fn string_source(
     source_kind: TargetKind,
     source_name: &'static str,
 ) -> LiteralArgumentBuilder {
-    literal("string").then(
-        literal(source_name).then(
-            make_target_arg(source_kind, "source")
-                .executes(ModifyExecutor {
-                    target_kind,
-                    modify_mode: mod_mode,
-                    source_kind: Some(source_kind),
-                    source_mode: SourceMode::String {
-                        has_path: false,
-                        has_start: false,
-                        has_end: false,
-                    },
-                })
-                .then(
-                    argument("sourcePath", NbtPathArgumentType)
-                        .executes(ModifyExecutor {
-                            target_kind,
-                            modify_mode: mod_mode,
-                            source_kind: Some(source_kind),
-                            source_mode: SourceMode::String {
-                                has_path: true,
-                                has_start: false,
-                                has_end: false,
-                            },
-                        })
-                        .then(
-                            argument("start", IntegerArgumentType::any())
-                                .executes(ModifyExecutor {
+    literal(source_name).then(
+        make_target_arg(source_kind, "source")
+            .executes(ModifyExecutor {
+                target_kind,
+                modify_mode: mod_mode,
+                source_kind: Some(source_kind),
+                source_mode: SourceMode::String {
+                    has_path: false,
+                    has_start: false,
+                    has_end: false,
+                },
+            })
+            .then(
+                argument("sourcePath", NbtPathArgumentType)
+                    .executes(ModifyExecutor {
+                        target_kind,
+                        modify_mode: mod_mode,
+                        source_kind: Some(source_kind),
+                        source_mode: SourceMode::String {
+                            has_path: true,
+                            has_start: false,
+                            has_end: false,
+                        },
+                    })
+                    .then(
+                        argument("start", IntegerArgumentType::any())
+                            .executes(ModifyExecutor {
+                                target_kind,
+                                modify_mode: mod_mode,
+                                source_kind: Some(source_kind),
+                                source_mode: SourceMode::String {
+                                    has_path: true,
+                                    has_start: true,
+                                    has_end: false,
+                                },
+                            })
+                            .then(argument("end", IntegerArgumentType::any()).executes(
+                                ModifyExecutor {
                                     target_kind,
                                     modify_mode: mod_mode,
                                     source_kind: Some(source_kind),
                                     source_mode: SourceMode::String {
                                         has_path: true,
                                         has_start: true,
-                                        has_end: false,
+                                        has_end: true,
                                     },
-                                })
-                                .then(argument("end", IntegerArgumentType::any()).executes(
-                                    ModifyExecutor {
-                                        target_kind,
-                                        modify_mode: mod_mode,
-                                        source_kind: Some(source_kind),
-                                        source_mode: SourceMode::String {
-                                            has_path: true,
-                                            has_start: true,
-                                            has_end: true,
-                                        },
-                                    },
-                                )),
-                        ),
-                ),
-        ),
+                                },
+                            )),
+                    ),
+            ),
     )
 }

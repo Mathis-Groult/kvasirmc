@@ -35,7 +35,7 @@ const SEEDS: [u64; 2] = [1, 20_261_112];
 
 /// The ground a feature is generated on, and where.
 #[derive(Clone, Copy)]
-enum Terrain {
+pub(super) enum Terrain {
     /// Stone, dirt and a grass block top at y = 63; generated at y = 64.
     Grass,
     /// Stone, sand at y = 45..46 and water up to y = 62; generated on the sand.
@@ -50,6 +50,8 @@ enum Terrain {
     /// the others (the feature list again, prefixed `deep`), so the earlier lines stayed as they
     /// were; geodes need stone all around their origin.
     Deep,
+    /// Like `Deep`, with water filling the room around the origin.
+    Wet,
 }
 
 impl Terrain {
@@ -61,7 +63,7 @@ impl Terrain {
         Self::End,
     ];
 
-    const fn name(self) -> &'static str {
+    pub(super) const fn name(self) -> &'static str {
         match self {
             Self::Grass => "grass",
             Self::SeaFloor => "sea",
@@ -69,17 +71,18 @@ impl Terrain {
             Self::Nether => "nether",
             Self::End => "end",
             Self::Deep => "deep",
+            Self::Wet => "wet",
         }
     }
 
-    const fn origin(self) -> BlockPos {
+    pub(super) const fn origin(self) -> BlockPos {
         match self {
             Self::Grass => BlockPos::new(8, 64, 8),
             Self::SeaFloor => BlockPos::new(8, 47, 8),
             Self::Cave => BlockPos::new(8, 36, 8),
             Self::Nether => BlockPos::new(8, 65, 8),
             Self::End => BlockPos::new(8, 61, 8),
-            Self::Deep => BlockPos::new(8, 40, 8),
+            Self::Deep | Self::Wet => BlockPos::new(8, 40, 8),
         }
     }
 
@@ -118,6 +121,15 @@ impl Terrain {
                 10..=90 => Block::STONE.default_state,
                 _ => return None,
             },
+            Self::Wet => match y {
+                10..=90
+                    if (6..11).contains(&x) && (38..43).contains(&y) && (6..11).contains(&z) =>
+                {
+                    Block::WATER.default_state
+                }
+                10..=90 => Block::STONE.default_state,
+                _ => return None,
+            },
         };
         Some(state)
     }
@@ -127,7 +139,10 @@ impl Terrain {
 type Template = HashMap<(i32, i32), ProtoChunk>;
 
 /// The nine chunks of `terrain`, built block by block.
-fn build_terrain(world_gen: &WorldGenerator, terrain: Terrain) -> HashMap<(i32, i32), ProtoChunk> {
+pub(super) fn build_terrain(
+    world_gen: &WorldGenerator,
+    terrain: Terrain,
+) -> HashMap<(i32, i32), ProtoChunk> {
     let mut chunks = HashMap::new();
     for chunk_x in -1..=1 {
         for chunk_z in -1..=1 {
@@ -154,7 +169,7 @@ fn build_terrain(world_gen: &WorldGenerator, terrain: Terrain) -> HashMap<(i32, 
 }
 
 /// A fresh grid holding a copy of `template`'s blocks and heightmaps.
-fn copy_grid(
+pub(super) fn copy_grid(
     world_gen: &WorldGenerator,
     template: &HashMap<(i32, i32), ProtoChunk>,
 ) -> TestGridCache {
@@ -177,7 +192,7 @@ fn copy_grid(
     }
 }
 
-fn fnv(hash: u64, bytes: &[u8]) -> u64 {
+pub(super) fn fnv(hash: u64, bytes: &[u8]) -> u64 {
     let mut hash = hash;
     for &byte in bytes {
         hash = (hash ^ u64::from(byte)).wrapping_mul(0x0100_0000_01b3);
@@ -186,7 +201,7 @@ fn fnv(hash: u64, bytes: &[u8]) -> u64 {
 }
 
 /// The blocks and heightmaps of the nine chunks in a fixed order.
-fn grid_hash(grid: &TestGridCache) -> u64 {
+pub(super) fn grid_hash(grid: &TestGridCache) -> u64 {
     let mut hash = 0xcbf2_9ce4_8422_2325u64;
     for chunk_x in -1..=1 {
         for chunk_z in -1..=1 {

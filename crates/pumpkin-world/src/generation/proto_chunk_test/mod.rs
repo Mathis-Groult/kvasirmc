@@ -7,6 +7,8 @@ pub mod dumps;
 #[cfg(test)]
 pub mod feature_golden;
 #[cfg(test)]
+mod geode_golden;
+#[cfg(test)]
 pub mod piece_golden;
 #[cfg(test)]
 pub mod resume;

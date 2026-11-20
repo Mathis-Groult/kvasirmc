@@ -204,6 +204,11 @@ fn cave_scenes() -> Vec<Scene> {
             kinds: MIXED,
             blocks: ridges,
         },
+    ]
+}
+
+fn roof_scenes() -> Vec<Scene> {
+    vec![
         Scene {
             name: "roof_over_cave",
             kinds: MIXED,
@@ -278,6 +283,7 @@ fn cave_scenes() -> Vec<Scene> {
 fn all_scenes() -> Vec<Scene> {
     let mut all = scenes();
     all.extend(cave_scenes());
+    all.extend(roof_scenes());
     all
 }
 

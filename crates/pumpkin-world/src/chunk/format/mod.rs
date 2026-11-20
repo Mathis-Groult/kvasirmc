@@ -5,9 +5,9 @@ use std::{
 };
 
 use bytes::{BufMut, Bytes};
-use pumpkin_data::{Block, BlockStateId, chunk::ChunkStatus};
+use pumpkin_data::{BlockStateId, chunk::ChunkStatus};
 use pumpkin_nbt::compound::NbtCompound;
-use pumpkin_util::resource_location::{FromResourceLocation, ResourceLocation, ToResourceLocation};
+use pumpkin_util::resource_location::{FromResourceLocation, ResourceLocation};
 
 use crate::{
     chunk::{
@@ -15,7 +15,6 @@ use crate::{
         format::anvil::{SingleChunkDataSerializer, WORLD_DATA_VERSION},
         io::{Dirtiable, file_manager::PathFromLevelFolder},
     },
-    generation::section_coords,
     level::LevelFolder,
     tick::{ScheduledTick, TickPriority},
 };
@@ -206,210 +205,11 @@ where
     })
 }
 
+mod anvil_write;
+
 impl ChunkData {
-    #[allow(clippy::too_many_lines)]
     pub fn internal_to_bytes(&self) -> Bytes {
-        use pumpkin_nbt::tag::NbtTag;
-
-        fn extract_light_ref(light: Option<&LightContainer>) -> Option<&[u8]> {
-            match light {
-                Some(LightContainer::Full(data)) => Some(data.as_ref()),
-                _ => None,
-            }
-        }
-
-        let is_light_correct = self
-            .light_populated
-            .load(std::sync::atomic::Ordering::Relaxed);
-
-        let block_entities_nbt = {
-            let entities_guard = self
-                .pending_block_entities
-                .lock()
-                .unwrap_or_else(std::sync::PoisonError::into_inner);
-            entities_guard.values().cloned().collect::<Vec<_>>()
-        };
-
-        let light_lock = self
-            .light_engine
-            .lock()
-            .unwrap_or_else(std::sync::PoisonError::into_inner);
-        let heightmap_lock = self
-            .heightmap
-            .lock()
-            .unwrap_or_else(std::sync::PoisonError::into_inner);
-        let block_lock = self
-            .section
-            .block_sections
-            .read()
-            .unwrap_or_else(std::sync::PoisonError::into_inner);
-        let biome_lock = self
-            .section
-            .biome_sections
-            .read()
-            .unwrap_or_else(std::sync::PoisonError::into_inner);
-
-        let min_section_y = (self.section.min_y >> 4) as i8;
-
-        let mut root_compound = NbtCompound::new();
-        root_compound.put_int("DataVersion", WORLD_DATA_VERSION);
-        root_compound.put_int("xPos", self.x);
-        root_compound.put_int("zPos", self.z);
-        root_compound.put_int("yPos", section_coords::block_to_section(self.section.min_y));
-
-        let status_str = match self.status {
-            ChunkStatus::Empty => "minecraft:empty",
-            ChunkStatus::StructureStarts => "minecraft:structure_starts",
-            ChunkStatus::StructureReferences => "minecraft:structure_references",
-            ChunkStatus::Biomes => "minecraft:biomes",
-            ChunkStatus::Terrain => "minecraft:terrain",
-            ChunkStatus::Features => "minecraft:features",
-            ChunkStatus::InitializeLight => "minecraft:initialize_light",
-            ChunkStatus::Light => "minecraft:light",
-            ChunkStatus::Spawn => "minecraft:spawn",
-            ChunkStatus::Full => "minecraft:full",
-        };
-        root_compound.put_string("Status", status_str.to_string());
-
-        let mut heightmaps_compound = NbtCompound::new();
-        if let Some(ref arr) = heightmap_lock.world_surface {
-            heightmaps_compound.put("WORLD_SURFACE", NbtTag::LongArray(arr.to_vec()));
-        }
-        if let Some(ref arr) = heightmap_lock.motion_blocking {
-            heightmaps_compound.put("MOTION_BLOCKING", NbtTag::LongArray(arr.to_vec()));
-        }
-        if let Some(ref arr) = heightmap_lock.motion_blocking_no_leaves {
-            heightmaps_compound.put("MOTION_BLOCKING_NO_LEAVES", NbtTag::LongArray(arr.to_vec()));
-        }
-        root_compound.put_compound("Heightmaps", heightmaps_compound);
-
-        let mut sections_list = Vec::new();
-        for i in 0..self.section.count {
-            let mut section_comp = NbtCompound::new();
-            let y_val = i as i8 + min_section_y;
-            section_comp.put_byte("Y", y_val);
-
-            // block_states
-            let block_states_nbt = block_lock[i].to_disk_nbt();
-            let mut bs_comp = NbtCompound::new();
-            if let Some(ref data_arr) = block_states_nbt.data {
-                bs_comp.put("data", NbtTag::LongArray(data_arr.to_vec()));
-            }
-            let palette_tags: Vec<NbtTag> = block_states_nbt
-                .palette
-                .iter()
-                .map(|&id| {
-                    let block = Block::from_state_id(id);
-                    let mut comp = NbtCompound::new();
-                    let name = if block.name.starts_with("minecraft:") {
-                        block.name.to_string()
-                    } else {
-                        format!("minecraft:{}", block.name)
-                    };
-                    comp.put_string("Name", name);
-                    if let Some(props) = block.properties(id) {
-                        let prop_vec = props.to_props();
-                        if !prop_vec.is_empty() {
-                            let mut props_comp = NbtCompound::new();
-                            for p in prop_vec {
-                                props_comp.put_string(p.key_str(), p.value_str().to_string());
-                            }
-                            comp.put_compound("Properties", props_comp);
-                        }
-                    }
-                    NbtTag::Compound(comp)
-                })
-                .collect();
-            bs_comp.put_list("palette", palette_tags);
-            section_comp.put_compound("block_states", bs_comp);
-
-            // biomes
-            let biomes_nbt = biome_lock[i].to_disk_nbt();
-            let mut b_comp = NbtCompound::new();
-            if let Some(ref data_arr) = biomes_nbt.data {
-                b_comp.put("data", NbtTag::LongArray(data_arr.to_vec()));
-            }
-            let biome_palette_tags: Vec<NbtTag> = biomes_nbt
-                .palette
-                .iter()
-                .map(|&val| {
-                    let name = pumpkin_data::biome::Biome::from_id(val)
-                        .map_or("plains", |b| b.registry_id);
-                    let full_name = if name.starts_with("minecraft:") {
-                        name.to_string()
-                    } else {
-                        format!("minecraft:{name}")
-                    };
-                    NbtTag::String(full_name.into())
-                })
-                .collect();
-            b_comp.put_list("palette", biome_palette_tags);
-            section_comp.put_compound("biomes", b_comp);
-
-            // block_light
-            if let Some(light_data) = extract_light_ref(light_lock.block_light.get(i)) {
-                let bytes: Box<[i8]> = light_data.iter().map(|&x| x as i8).collect();
-                section_comp.put("BlockLight", NbtTag::ByteArray(bytes));
-            }
-
-            // sky_light
-            if let Some(light_data) = extract_light_ref(light_lock.sky_light.get(i)) {
-                let bytes: Box<[i8]> = light_data.iter().map(|&x| x as i8).collect();
-                section_comp.put("SkyLight", NbtTag::ByteArray(bytes));
-            }
-
-            sections_list.push(NbtTag::Compound(section_comp));
-        }
-        root_compound.put_list("sections", sections_list);
-
-        let mut block_ticks_list = Vec::new();
-        for tick in self.block_ticks.to_vec() {
-            let mut tick_comp = NbtCompound::new();
-            tick_comp.put_int("x", tick.position.0.x);
-            tick_comp.put_int("y", tick.position.0.y);
-            tick_comp.put_int("z", tick.position.0.z);
-            tick_comp.put_int("t", tick.delay as i32);
-            tick_comp.put_int("p", tick.priority as i32);
-            tick_comp.put_string("i", tick.value.to_resource_location());
-            block_ticks_list.push(NbtTag::Compound(tick_comp));
-        }
-        root_compound.put_list("block_ticks", block_ticks_list);
-
-        let mut fluid_ticks_list = Vec::new();
-        for tick in self.fluid_ticks.to_vec() {
-            let mut tick_comp = NbtCompound::new();
-            tick_comp.put_int("x", tick.position.0.x);
-            tick_comp.put_int("y", tick.position.0.y);
-            tick_comp.put_int("z", tick.position.0.z);
-            tick_comp.put_int("t", tick.delay as i32);
-            tick_comp.put_int("p", tick.priority as i32);
-            tick_comp.put_string("i", tick.value.to_resource_location());
-            fluid_ticks_list.push(NbtTag::Compound(tick_comp));
-        }
-        root_compound.put_list("fluid_ticks", fluid_ticks_list);
-
-        let mut block_entities_list = Vec::new();
-        for entity_comp in block_entities_nbt {
-            block_entities_list.push(NbtTag::Compound(entity_comp));
-        }
-        root_compound.put_list("block_entities", block_entities_list);
-
-        root_compound.put_bool("isLightOn", is_light_correct);
-        root_compound.put_long(
-            "InhabitedTime",
-            self.inhabited_time.load(Ordering::Relaxed) as i64,
-        );
-
-        let custom_data = self
-            .custom_data
-            .lock()
-            .unwrap_or_else(std::sync::PoisonError::into_inner);
-        if !custom_data.is_empty() {
-            root_compound.put_compound("PumpkinCustomData", custom_data.clone());
-        }
-
-        let nbt = pumpkin_nbt::Nbt::from(root_compound);
-        nbt.write()
+        anvil_write::chunk_bytes(self)
     }
 
     #[allow(clippy::too_many_lines)]

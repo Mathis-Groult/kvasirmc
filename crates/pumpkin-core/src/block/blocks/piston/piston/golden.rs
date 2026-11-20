@@ -313,7 +313,37 @@ fn changes(before: &BTreeMap<Rel, String>, now: &BTreeMap<Rel, String>) -> Strin
     parts.join(" ")
 }
 
-fn run_scene(world: &Arc<World>, server: &Arc<Server>, scene: &Scene) -> String {
+/// The packets players online were sent while a scene ran, one line per tick that sent any.
+struct Listeners<'a> {
+    online: &'a mut [script_golden::Online],
+    record: String,
+    /// Each piston sound's id and pitch: the pitch is random, so it is checked, not recorded.
+    pitches: std::cell::RefCell<Vec<(Vec<u8>, f32)>>,
+}
+
+/// A sound packet with its random pitch (kept in `pitches`) and seed blanked.
+fn normalise(pitches: &std::cell::RefCell<Vec<(Vec<u8>, f32)>>, packet: &[u8]) -> Vec<u8> {
+    let mut bytes = script_golden::blank_seed(packet);
+    if packet.len() == SOUND_LEN && packet[0] == SOUND_PACKET_ID {
+        let at = packet.len() - 12;
+        let pitch =
+            f32::from_be_bytes([packet[at], packet[at + 1], packet[at + 2], packet[at + 3]]);
+        pitches.borrow_mut().push((packet[1..3].to_vec(), pitch));
+        bytes[at..at + 4].fill(0);
+    }
+    bytes
+}
+
+/// A sound effect packet for a piston: its length and packet id.
+const SOUND_LEN: usize = 32;
+const SOUND_PACKET_ID: u8 = 119;
+
+fn run_scene(
+    world: &Arc<World>,
+    server: &Arc<Server>,
+    scene: &Scene,
+    mut listeners: Option<&mut Listeners>,
+) -> String {
     load_area(world);
     clear_area(world);
     let frame = Frame::of(scene.facing);
@@ -333,6 +363,9 @@ fn run_scene(world: &Arc<World>, server: &Arc<Server>, scene: &Scene) -> String 
     );
     for (rel, cell) in &scene.cells {
         put(world, &frame.pos(*rel), frame.state(*cell));
+    }
+    if let Some(listeners) = listeners.as_deref_mut() {
+        script_golden::packets(listeners.online);
     }
     let mut out = String::new();
     let mut last = snapshot(world, &frame);
@@ -364,6 +397,13 @@ fn run_scene(world: &Arc<World>, server: &Arc<Server>, scene: &Scene) -> String 
         }
         if tick > 0 {
             run_tick(world, server);
+        }
+        if let Some(listeners) = listeners.as_deref_mut() {
+            let pitches = &listeners.pitches;
+            let sent = script_golden::packets_normalised(listeners.online, &|packet| {
+                normalise(pitches, packet)
+            });
+            let _ = writeln!(listeners.record, "{}: t{tick}{sent}", scene.name);
         }
         let now = snapshot(world, &frame);
         let diff = changes(&last, &now);
@@ -848,7 +888,7 @@ async fn piston_moves_are_the_same() -> TestResult {
 
     let mut now = String::new();
     for scene in scenes() {
-        now.push_str(&run_scene(&world, &server, &scene));
+        now.push_str(&run_scene(&world, &server, &scene, None));
         // Stop at the first scene that differs, not after the whole run.
         if let (false, Some(expected)) = (blessing, expected.as_ref()) {
             assert!(
@@ -861,4 +901,79 @@ async fn piston_moves_are_the_same() -> TestResult {
     script_golden::bless_or_compare("piston_move.txt", &now)?;
     server.stop();
     Ok(())
+}
+
+/// The scenes whose packets are recorded: the sounds, game events and updates a player hears.
+fn heard_scenes() -> Vec<Scene> {
+    scenes()
+        .into_iter()
+        .filter(|scene| {
+            scene.name.starts_with("basic East")
+                || scene.name.starts_with("basic Up")
+                || scene.name.starts_with("group slime_l")
+                || scene.name.starts_with("group slime_honey_line")
+                || scene.name.starts_with("kind poppy")
+                || scene.name.starts_with("kind glass")
+                || scene.name.starts_with("quick off")
+                || scene.name.starts_with("flicker")
+                || scene.name.starts_with("call")
+                || scene.name.starts_with("observed")
+                || scene.name.starts_with("line rest_fwd")
+                || scene.name.starts_with("load 12")
+        })
+        .collect()
+}
+
+#[tokio::test(flavor = "multi_thread")]
+async fn piston_moves_send_the_same_packets() -> TestResult {
+    let folder = tempfile::tempdir()?;
+    let server = test_support::server(&folder).await?;
+    let world = server.worlds.load()[0].clone();
+    let mut online = script_golden::join(&world).await?;
+    online.truncate(3);
+    for who in &online {
+        who.player
+            .living_entity
+            .entity
+            .set_pos(pumpkin_util::math::vector3::Vector3::new(
+                f64::from(ORIGIN.0.x) + 0.5,
+                f64::from(ORIGIN.0.y) + 6.0,
+                f64::from(ORIGIN.0.z) + 0.5,
+            ));
+    }
+    let mut listeners = Listeners {
+        online: &mut online,
+        record: String::new(),
+        pitches: std::cell::RefCell::new(Vec::new()),
+    };
+    for scene in heard_scenes() {
+        run_scene(&world, &server, &scene, Some(&mut listeners));
+    }
+    let record = std::mem::take(&mut listeners.record);
+    check_pitches(&listeners.pitches.borrow());
+    script_golden::bless_or_compare("piston_move_packets.txt", &record)?;
+    for who in &online {
+        world.remove_player(&who.player, false).await;
+    }
+    server.stop();
+    Ok(())
+}
+
+/// A piston's sound pitch is random: between 0.6 and 0.85 when it extends, below 0.75 when it
+/// retracts. Over the many sounds of the run each kind must stay in its range and reach below
+/// 0.65 (so the range cannot start lower, or be a constant).
+fn check_pitches(heard: &[(Vec<u8>, f32)]) {
+    let mut kinds: BTreeMap<&[u8], Vec<f32>> = BTreeMap::new();
+    for (id, pitch) in heard {
+        kinds.entry(id).or_default().push(*pitch);
+    }
+    assert_eq!(kinds.len(), 2, "extend and contract sounds");
+    for (id, pitches) in kinds {
+        let (low, high) = pitches.iter().fold((f32::MAX, f32::MIN), |(low, high), p| {
+            (low.min(*p), high.max(*p))
+        });
+        assert!(pitches.len() >= 40, "{id:?}: {} sounds", pitches.len());
+        assert!(low >= 0.6 && high < 0.85, "{id:?}: pitch {low}..{high}");
+        assert!(low < 0.65, "{id:?}: lowest pitch {low}");
+    }
 }

@@ -9,9 +9,6 @@
 
 use std::fmt::Write;
 
-use pumpkin_data::packet::CURRENT_MC_VERSION;
-use pumpkin_protocol::java::client::play::CSoundEffect;
-use pumpkin_protocol::packet::MultiVersionJavaPacket;
 use pumpkin_util::math::vector3::Vector3;
 
 use crate::command::commands::script_golden::{self, TestResult};
@@ -76,37 +73,6 @@ const STEPS: &[&str] = &[
     "playsound minecraft:block.note_block.harp block @a 300.5 64 -50.5 1 1 0.5",
 ];
 
-/// Reads a `VarInt` at `at`: its value and the index after it.
-fn var_int(bytes: &[u8], mut at: usize) -> Option<(i32, usize)> {
-    let mut value = 0i32;
-    for shift in (0..35).step_by(7) {
-        let byte = *bytes.get(at)?;
-        at += 1;
-        value |= i32::from(byte & 0x7f) << shift;
-        if byte & 0x80 == 0 {
-            return Some((value, at));
-        }
-    }
-    None
-}
-
-/// The packet with the seed of a sound packet blanked (its last 8 bytes), whether or not the
-/// encoded packet starts with its length.
-fn blank_seed(packet: &[u8]) -> Vec<u8> {
-    let mut bytes = packet.to_vec();
-    let id = CSoundEffect::to_id(CURRENT_MC_VERSION);
-    let first = var_int(packet, 0);
-    let is_sound = first.is_some_and(|(value, _)| value == id)
-        || first
-            .and_then(|(_, next)| var_int(packet, next))
-            .is_some_and(|(value, _)| value == id);
-    if is_sound && bytes.len() >= 8 {
-        let end = bytes.len();
-        bytes[end - 8..].fill(0);
-    }
-    bytes
-}
-
 #[tokio::test(flavor = "multi_thread")]
 async fn playsound_command_sends_the_same_packets() -> TestResult {
     let folder = tempfile::tempdir()?;
@@ -125,7 +91,7 @@ async fn playsound_command_sends_the_same_packets() -> TestResult {
     let mut now = String::new();
     for step in STEPS {
         let result = script_golden::run(&server, &source_player, step);
-        let sent = script_golden::packets_normalised(&mut online, &blank_seed);
+        let sent = script_golden::packets_normalised(&mut online, &script_golden::blank_seed);
         writeln!(now, "{step} -> {result};{sent}")?;
     }
 

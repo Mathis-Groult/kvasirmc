@@ -10,6 +10,9 @@ use std::sync::Arc;
 use std::time::Duration;
 
 use bytes::Bytes;
+use pumpkin_data::packet::CURRENT_MC_VERSION;
+use pumpkin_protocol::java::client::play::CSoundEffect;
+use pumpkin_protocol::packet::MultiVersionJavaPacket;
 use pumpkin_util::GameMode;
 use pumpkin_util::PermissionLvl;
 use pumpkin_util::math::vector2::Vector2;
@@ -239,4 +242,35 @@ pub async fn finish(server: &Server, world: &World, online: &[Online]) {
         world.remove_player(&who.player, false).await;
     }
     server.stop();
+}
+
+/// Reads a `VarInt` at `at`: its value and the index after it.
+pub fn var_int(bytes: &[u8], mut at: usize) -> Option<(i32, usize)> {
+    let mut value = 0i32;
+    for shift in (0..35).step_by(7) {
+        let byte = *bytes.get(at)?;
+        at += 1;
+        value |= i32::from(byte & 0x7f) << shift;
+        if byte & 0x80 == 0 {
+            return Some((value, at));
+        }
+    }
+    None
+}
+
+/// The packet with the seed of a sound packet blanked (its last 8 bytes), whether or not the
+/// encoded packet starts with its length.
+pub fn blank_seed(packet: &[u8]) -> Vec<u8> {
+    let mut bytes = packet.to_vec();
+    let id = CSoundEffect::to_id(CURRENT_MC_VERSION);
+    let first = var_int(packet, 0);
+    let is_sound = first.is_some_and(|(value, _)| value == id)
+        || first
+            .and_then(|(_, next)| var_int(packet, next))
+            .is_some_and(|(value, _)| value == id);
+    if is_sound && bytes.len() >= 8 {
+        let end = bytes.len();
+        bytes[end - 8..].fill(0);
+    }
+    bytes
 }

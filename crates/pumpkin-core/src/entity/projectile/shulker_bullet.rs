@@ -17,6 +17,7 @@ use uuid::Uuid;
 use crate::entity::mob::shulker::Axis;
 use crate::entity::{Entity, EntityBase};
 use crate::server::Server;
+use crate::world::World;
 
 // Direction ordinal constants
 const DIR_DOWN: u8 = 0;
@@ -271,39 +272,19 @@ impl ShulkerBulletEntity {
     }
 }
 
-impl EntityBase for ShulkerBulletEntity {
-    fn get_projectile_owner(&self) -> Option<&ProjectileOwner> {
-        Some(&self.owner)
-    }
-
-    fn get_entity(&self) -> &Entity {
-        &self.entity
-    }
-
-    fn get_living_entity(&self) -> Option<&crate::entity::living::LivingEntity> {
-        None
-    }
-    fn cast_any(&self) -> &dyn std::any::Any {
-        self
-    }
-
-    /// Any hit destroys the bullet (melee, arrow, etc.).
-    fn damage_with_context(
-        &self,
-        _caller: &dyn EntityBase,
-        _amount: f32,
-        _damage_type: DamageType,
-        _position: Option<Vector3<f64>>,
-        _source: Option<&dyn EntityBase>,
-        _cause: Option<&dyn EntityBase>,
-    ) -> bool {
-        // Guard against double-hit
+impl ShulkerBulletEntity {
+    /// Pops the bullet: sound and particles, once, then it is removed.
+    fn burst(&self) {
         if self.has_hit.swap(true, Ordering::SeqCst) {
-            return false;
+            return;
         }
-        let entity = &self.entity;
-        let world = entity.world.load();
-        let pos = entity.pos.load();
+        self.pop();
+        self.entity.remove();
+    }
+
+    fn pop(&self) {
+        let world = self.entity.world.load();
+        let pos = self.entity.pos.load();
         world.play_sound_fine(
             Sound::EntityShulkerBulletHit,
             SoundCategory::Hostile,
@@ -318,45 +299,10 @@ impl EntityBase for ShulkerBulletEntity {
             2,
             Particle::Explosion,
         );
-        entity.remove();
-        true
     }
-    #[allow(clippy::too_many_lines)]
-    fn tick(&self, _caller: &dyn EntityBase, _server: &Server) {
-        if self.has_hit.load(Ordering::Relaxed) {
-            return;
-        }
-        self.owner.check_left_owner(&self.entity);
 
-        // Discard bullet after 150 ticks if it never hits anything
-        let age = self.age.fetch_add(1, Ordering::Relaxed) + 1;
-        if age > 150 {
-            if !self.has_hit.swap(true, Ordering::SeqCst) {
-                let entity = &self.entity;
-                let world = entity.world.load();
-                let pos = entity.pos.load();
-                world.play_sound_fine(
-                    Sound::EntityShulkerBulletHit,
-                    SoundCategory::Hostile,
-                    &pos,
-                    1.0,
-                    1.0,
-                );
-                world.spawn_particle(
-                    pos,
-                    Vector3::new(0.2, 0.2, 0.2),
-                    0.0,
-                    2,
-                    Particle::Explosion,
-                );
-                entity.remove();
-            }
-            return;
-        }
-
-        let entity = &self.entity;
-        let world = entity.world.load();
-
+    /// The target, if it is still there and alive; forgets it when it is gone.
+    fn find_target(&self, world: &World) -> (Option<Arc<dyn EntityBase>>, bool) {
         let target_id = self.target_id.load(Ordering::Relaxed);
         let target_opt = if target_id >= 0 {
             world.get_entity_by_id(target_id)
@@ -382,6 +328,12 @@ impl EntityBase for ShulkerBulletEntity {
             }
         }
 
+        (target_opt, target_alive)
+    }
+
+    /// Accelerates toward the target, or falls when there is none.
+    fn steer(&self, target_alive: bool) {
+        let entity = &self.entity;
         if target_alive {
             // Accelerate target deltas x 1.025, clamped
             let mut tdx = (self.target_delta_x.load() * 1.025).clamp(-1.0, 1.0);
@@ -410,37 +362,11 @@ impl EntityBase for ShulkerBulletEntity {
             vel.y -= 0.04;
             entity.velocity.store(vel);
         }
+    }
 
-        let vel = entity.velocity.load();
-        let old_pos = entity.pos.load();
-        let new_pos = old_pos.add(&vel);
-        entity.set_pos(new_pos);
-
-        // Check for block collisions
-        let new_bp = entity.block_pos.load();
-        let state = world.get_block_state(&new_bp);
-        if !state.is_air() && state.is_solid() {
-            if !self.has_hit.swap(true, Ordering::SeqCst) {
-                let pos = entity.pos.load();
-                world.play_sound_fine(
-                    Sound::EntityShulkerBulletHit,
-                    SoundCategory::Hostile,
-                    &pos,
-                    1.0,
-                    1.0,
-                );
-                world.spawn_particle(
-                    pos,
-                    Vector3::new(0.2, 0.2, 0.2),
-                    0.0,
-                    2,
-                    Particle::Explosion,
-                );
-                entity.remove();
-            }
-            return;
-        }
-
+    /// Damages the first living creature the bullet touches and levitates it.
+    fn hit_nearby(&self, world: &Arc<World>) {
+        let entity = &self.entity;
         // Check for entity collisions
         let bullet_bb = entity.bounding_box.load().expand(0.1, 0.1, 0.1);
         let nearby_entities = world.get_entities_at_box(&bullet_bb);
@@ -459,7 +385,7 @@ impl EntityBase for ShulkerBulletEntity {
             if he.entity_id == entity.entity_id {
                 continue;
             }
-            if !self.owner.can_hit(&world, he) {
+            if !self.owner.can_hit(world, he) {
                 continue;
             }
             // Must be alive
@@ -479,7 +405,7 @@ impl EntityBase for ShulkerBulletEntity {
             }
 
             // Deal 4 (MOB_PROJECTILE) damage
-            let owner = self.owner.get(&world);
+            let owner = self.owner.get(world);
             let damaged = hit_entity.damage_with_context(
                 hit_entity.as_ref(),
                 4.0,
@@ -513,13 +439,11 @@ impl EntityBase for ShulkerBulletEntity {
             entity.remove();
             break;
         }
+    }
 
-        if !target_alive || self.has_hit.load(Ordering::Relaxed) {
-            return;
-        }
-
-        let target_pos = target_opt.as_ref().map(|t| t.get_entity().pos.load());
-
+    /// Picks a new axis step when the old one ran out, is blocked or reached the target.
+    fn keep_course(&self, target_pos: Option<Vector3<f64>>, world: &World) {
+        let entity = &self.entity;
         let raw_dir = self.current_dir.load(Ordering::Relaxed);
         let avoid_axis = dir_axis(raw_dir);
 
@@ -534,7 +458,7 @@ impl EntityBase for ShulkerBulletEntity {
         let dir = self.current_dir.load(Ordering::Relaxed);
         if dir != DIR_NONE {
             let cur_bp = entity.block_pos.load();
-            if !is_empty_block(&world, &cur_bp, dir) {
+            if !is_empty_block(world, &cur_bp, dir) {
                 // Solid obstacle -> navigate around it
                 self.select_next_dir(dir_axis(dir), target_pos);
             } else if let Some(tp) = target_pos {
@@ -556,5 +480,79 @@ impl EntityBase for ShulkerBulletEntity {
                 }
             }
         }
+    }
+}
+
+impl EntityBase for ShulkerBulletEntity {
+    fn get_projectile_owner(&self) -> Option<&ProjectileOwner> {
+        Some(&self.owner)
+    }
+
+    fn get_entity(&self) -> &Entity {
+        &self.entity
+    }
+
+    fn get_living_entity(&self) -> Option<&crate::entity::living::LivingEntity> {
+        None
+    }
+    fn cast_any(&self) -> &dyn std::any::Any {
+        self
+    }
+
+    /// Any hit destroys the bullet (melee, arrow, etc.).
+    fn damage_with_context(
+        &self,
+        _caller: &dyn EntityBase,
+        _amount: f32,
+        _damage_type: DamageType,
+        _position: Option<Vector3<f64>>,
+        _source: Option<&dyn EntityBase>,
+        _cause: Option<&dyn EntityBase>,
+    ) -> bool {
+        // Guard against double-hit
+        if self.has_hit.swap(true, Ordering::SeqCst) {
+            return false;
+        }
+        self.pop();
+        self.entity.remove();
+        true
+    }
+    fn tick(&self, _caller: &dyn EntityBase, _server: &Server) {
+        if self.has_hit.load(Ordering::Relaxed) {
+            return;
+        }
+        self.owner.check_left_owner(&self.entity);
+
+        // Discard bullet after 150 ticks if it never hits anything
+        let age = self.age.fetch_add(1, Ordering::Relaxed) + 1;
+        if age > 150 {
+            self.burst();
+            return;
+        }
+
+        let world = self.entity.world.load();
+        let (target_opt, target_alive) = self.find_target(&world);
+        self.steer(target_alive);
+
+        let entity = &self.entity;
+        let vel = entity.velocity.load();
+        entity.set_pos(entity.pos.load().add(&vel));
+
+        // Check for block collisions
+        let state = world.get_block_state(&entity.block_pos.load());
+        if !state.is_air() && state.is_solid() {
+            self.burst();
+            return;
+        }
+
+        self.hit_nearby(&world);
+
+        if !target_alive || self.has_hit.load(Ordering::Relaxed) {
+            return;
+        }
+        self.keep_course(
+            target_opt.as_ref().map(|t| t.get_entity().pos.load()),
+            &world,
+        );
     }
 }

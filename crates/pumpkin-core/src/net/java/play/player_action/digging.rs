@@ -217,6 +217,17 @@ impl JavaClient {
             return;
         }
 
+        // Vanilla `STOP_DESTROY_BLOCK` acts only on the block whose digging started (a creative
+        // break, or a finish with no start, leaves it alone).
+        let started_at = *player
+            .mining_pos
+            .lock()
+            .unwrap_or_else(std::sync::PoisonError::into_inner);
+        if started_at != location {
+            self.update_sequence(player_action.sequence.0);
+            return;
+        }
+
         // Block break & play sound
         let entity = &player.get_entity();
         let world = entity.world.load_full();

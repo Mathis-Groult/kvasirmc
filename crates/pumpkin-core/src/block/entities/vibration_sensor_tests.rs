@@ -8,9 +8,15 @@ use pumpkin_data::block_properties::{SculkSensorLikeProperties, SculkSensorPhase
 use pumpkin_util::math::{position::BlockPos, vector2::Vector2};
 use pumpkin_world::world::BlockFlags;
 
+use pumpkin_util::GameMode;
+use uuid::Uuid;
+
+use crate::block::blocks::sculk::sculk_shrieker::SculkShriekerBlock;
 use crate::command::commands::script_golden::TestResult;
-use crate::entity::ai::test_support;
+use crate::entity::ai::test_support::{self, Identity};
+use crate::entity::player::Player;
 use crate::world::World;
+use crate::world::game_event::GameEventContext;
 
 const X: i32 = 300;
 const Y: i32 = 100;
@@ -223,6 +229,132 @@ async fn a_vibration_in_flight_survives_a_save_and_reload() -> TestResult {
     .await?;
     assert_eq!(before.0, SculkSensorPhase::Inactive);
     // floor(4.0) = 4 travel ticks, one spent in the selecting tick.
+    assert_eq!(after, Some(3));
+    Ok(())
+}
+
+const WALKER: Identity = Identity {
+    name: "Walker",
+    uuid: Uuid::from_u128(0x0000_5c01),
+    entity_id: 9_801,
+};
+
+fn shrieker() -> BlockPos {
+    BlockPos::new(X + 5, Y, 0)
+}
+
+fn is_shrieking(world: &Arc<World>) -> bool {
+    SculkShriekerBlock::is_shrieking(world, &shrieker())
+}
+
+/// A shrieker five blocks from the sensor, ticked with it every tick.
+fn with_shrieker(world: &Arc<World>) {
+    world.set_block_state(
+        &shrieker(),
+        Block::SCULK_SHRIEKER.default_state.id,
+        BlockFlags::NOTIFY_ALL,
+    );
+}
+
+fn tick_both(world: &Arc<World>) {
+    tick(world);
+    if let Some(entity) = world.get_block_entity(&shrieker()) {
+        entity.tick(world);
+    }
+}
+
+/// Ticks until the shrieker shrieks, at most `limit` ticks; returns the ticks used.
+fn ticks_until_shriek(world: &Arc<World>, limit: u32) -> Option<u32> {
+    (1..=limit).find(|_| {
+        tick_both(world);
+        is_shrieking(world)
+    })
+}
+
+/// A survival player joined to the world, as the source entity of events.
+fn walker(world: &Arc<World>) -> Result<Arc<Player>, String> {
+    let (player, _tap) =
+        test_support::java_player_as(world, GameMode::Survival, &WALKER).ok_or("no Java tap")?;
+    world.add_player(&player)?;
+    Ok(player)
+}
+
+fn player_event(world: &Arc<World>, player: &Player, event: &str, dx: i32) {
+    world.emit_game_event_with_context(
+        event,
+        BlockPos::new(X + dx, Y, 0).to_centered_f64(),
+        &GameEventContext {
+            source_entity: Some(player),
+            affected_state: None,
+        },
+    );
+}
+
+#[tokio::test(flavor = "multi_thread")]
+async fn a_player_who_sets_off_a_sensor_next_to_a_shrieker_makes_it_shriek() -> TestResult {
+    let used = with_world(|world| -> Result<_, String> {
+        with_shrieker(world);
+        let player = walker(world)?;
+        player_event(world, &player, "step", 3);
+        // The sensor hears the step (3 ticks), clicks, and the click travels 5 blocks.
+        Ok((ticks_until_active(world, 20), ticks_until_shriek(world, 20)))
+    })
+    .await??;
+    assert_eq!(used, (Some(3), Some(5)));
+    Ok(())
+}
+
+#[tokio::test(flavor = "multi_thread")]
+async fn a_sensor_set_off_by_no_player_leaves_the_shrieker_quiet() -> TestResult {
+    let (clicked, shrieked) = with_world(|world| {
+        with_shrieker(world);
+        step_at(world, "step", 3);
+        (ticks_until_active(world, 20), ticks_until_shriek(world, 20))
+    })
+    .await?;
+    assert_eq!(clicked, Some(3));
+    assert_eq!(shrieked, None);
+    Ok(())
+}
+
+#[tokio::test(flavor = "multi_thread")]
+async fn a_shrieker_does_not_hear_steps_itself() -> TestResult {
+    let shrieked = with_world(|world| -> Result<_, String> {
+        with_shrieker(world);
+        let player = walker(world)?;
+        // Out of the sensor's range (9 > 8) but beside the shrieker.
+        player_event(world, &player, "step", 9);
+        Ok(ticks_until_shriek(world, 30))
+    })
+    .await??;
+    assert_eq!(shrieked, None);
+    Ok(())
+}
+
+#[tokio::test(flavor = "multi_thread")]
+async fn a_calibrated_sensor_saves_the_vibration_in_flight() -> TestResult {
+    use super::BlockEntity;
+    use super::calibrated_sculk_sensor::CalibratedSculkSensorBlockEntity;
+    let after = with_world(|world| {
+        world.set_block_state(
+            &sensor(),
+            Block::CALIBRATED_SCULK_SENSOR.default_state.id,
+            BlockFlags::NOTIFY_ALL,
+        );
+        step_at(world, "step", 4);
+        tick(world);
+        let mut saved = pumpkin_nbt::compound::NbtCompound::new();
+        world
+            .get_block_entity(&sensor())
+            .expect("calibrated sensor")
+            .write_nbt(&mut saved);
+        world.add_block_entity(Arc::new(CalibratedSculkSensorBlockEntity::from_nbt(
+            &saved,
+            sensor(),
+        )));
+        ticks_until_active(world, 20)
+    })
+    .await?;
     assert_eq!(after, Some(3));
     Ok(())
 }

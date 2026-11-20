@@ -1,4 +1,7 @@
-use super::{BlockEntity, vibration_sensor::VibrationSensor};
+use super::{
+    BlockEntity,
+    vibration_sensor::{ListenerKind, VibrationSensor},
+};
 use crate::world::{World, game_event::GameEventListener};
 use pumpkin_nbt::compound::NbtCompound;
 use pumpkin_util::math::position::BlockPos;
@@ -28,7 +31,11 @@ impl BlockEntity for SculkSensorBlockEntity {
         Self {
             position,
             last_vibration_frequency: Mutex::new(last_vibration_frequency),
-            sensor: VibrationSensor::from_nbt(position, false, nbt.get_compound("listener")),
+            sensor: VibrationSensor::from_nbt(
+                position,
+                ListenerKind::Sensor,
+                nbt.get_compound("listener"),
+            ),
         }
     }
 
@@ -68,7 +75,7 @@ impl SculkSensorBlockEntity {
         Self {
             position,
             last_vibration_frequency: Mutex::new(0),
-            sensor: VibrationSensor::new(position, false),
+            sensor: VibrationSensor::new(position, ListenerKind::Sensor),
         }
     }
 }

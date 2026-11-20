@@ -6,11 +6,11 @@ use crate::block::{
     BlockBehaviour, BlockMetadata, GetStateForNeighborUpdateArgs, OnEntityStepArgs, OnPlaceArgs,
     OnScheduledTickArgs, PlacedArgs,
 };
-use crate::entity::Entity;
 use crate::entity::mob::warden::WardenEntity;
 use crate::entity::mob::warden_spawn_tracker::{MAX_WARNING_LEVEL, WardenSpawnTracker};
 use crate::entity::player::Player;
 use crate::entity::spawn_util::{SpawnStrategy, try_spawn_mob};
+use crate::entity::{Entity, EntityBase};
 use crate::world::World;
 use pumpkin_data::{
     Block, BlockId, BlockStateId,
@@ -43,6 +43,21 @@ impl BlockMetadata for SculkShriekerBlock {
 }
 
 impl SculkShriekerBlock {
+    /// Vanilla `SculkShriekerBlockEntity.tryGetPlayer`: the entity itself, its rider, or the
+    /// player who shot or threw it.
+    #[must_use]
+    pub fn player_of(world: &World, entity: &dyn EntityBase) -> Option<Arc<Player>> {
+        Self::try_get_player(world, entity.get_entity()).or_else(|| {
+            let owner = entity.get_owner_entity()?;
+            world.get_player_by_id(owner.get_entity().entity_id)
+        })
+    }
+
+    #[must_use]
+    pub fn is_shrieking(world: &World, pos: &BlockPos) -> bool {
+        SculkShriekerLikeProperties::from_state_id(world.get_block_state(pos).id).shrieking
+    }
+
     fn try_get_player(world: &World, entity: &Entity) -> Option<Arc<Player>> {
         if let Some(player) = world.get_player_by_id(entity.entity_id) {
             return Some(player);
@@ -225,7 +240,7 @@ impl BlockBehaviour for SculkShriekerBlock {
     }
 
     fn on_entity_step(&self, args: OnEntityStepArgs<'_>) {
-        if let Some(player) = Self::try_get_player(args.world, args.entity.get_entity()) {
+        if let Some(player) = Self::player_of(args.world, args.entity) {
             Self::try_shriek(args.world, args.position, &player);
         }
     }

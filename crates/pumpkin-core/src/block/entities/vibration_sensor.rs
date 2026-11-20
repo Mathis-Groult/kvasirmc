@@ -1,5 +1,5 @@
-//! The vibration listener inside a (calibrated) sculk sensor: vanilla 26.3
-//! `VibrationSystem.Listener`/`Ticker` with `SculkSensorBlockEntity$VibrationUser`.
+//! The vibration listener inside a (calibrated) sculk sensor or a sculk shrieker: vanilla 26.3
+//! `VibrationSystem.Listener`/`Ticker` with the block entity's `VibrationUser`.
 
 use std::sync::{Arc, Mutex, PoisonError};
 
@@ -8,6 +8,7 @@ use pumpkin_nbt::{compound::NbtCompound, tag::NbtTag};
 use pumpkin_util::math::{position::BlockPos, vector3::Vector3};
 
 use crate::block::blocks::redstone::sculk_sensor::SculkSensorBlock;
+use crate::block::blocks::sculk::sculk_shrieker::SculkShriekerBlock;
 use crate::world::World;
 use crate::world::game_event::{GameEventContext, GameEventListener};
 use crate::world::vibration::{
@@ -21,6 +22,16 @@ struct Vibration {
     event: GameEvent,
     distance: f32,
     origin: Vector3<f64>,
+    /// Entity id of the event's source entity (vanilla keeps its uuid), looked up on arrival.
+    source: Option<i32>,
+}
+
+/// Which block entity the listener belongs to (its `VibrationUser`).
+#[derive(Clone, Copy, PartialEq, Eq)]
+pub enum ListenerKind {
+    Sensor,
+    Calibrated,
+    Shrieker,
 }
 
 impl Vibration {
@@ -41,6 +52,7 @@ impl Vibration {
             event,
             distance,
             origin,
+            source: None,
         })
     }
 
@@ -70,16 +82,16 @@ struct State {
 
 pub struct VibrationSensor {
     position: BlockPos,
-    calibrated: bool,
+    kind: ListenerKind,
     state: Mutex<State>,
 }
 
 impl VibrationSensor {
     #[must_use]
-    pub const fn new(position: BlockPos, calibrated: bool) -> Self {
+    pub const fn new(position: BlockPos, kind: ListenerKind) -> Self {
         Self {
             position,
-            calibrated,
+            kind,
             state: Mutex::new(State {
                 candidate: None,
                 current: None,
@@ -89,8 +101,8 @@ impl VibrationSensor {
 
     /// A sensor holding the vibrations of a saved `listener` compound (`VibrationSystem.Data`).
     #[must_use]
-    pub fn from_nbt(position: BlockPos, calibrated: bool, nbt: Option<&NbtCompound>) -> Self {
-        let sensor = Self::new(position, calibrated);
+    pub fn from_nbt(position: BlockPos, kind: ListenerKind, nbt: Option<&NbtCompound>) -> Self {
+        let sensor = Self::new(position, kind);
         if let Some(nbt) = nbt
             && let Some(tick) = nbt
                 .get_compound("selector")
@@ -134,11 +146,35 @@ impl VibrationSensor {
     }
 
     const fn range(&self) -> i32 {
-        if self.calibrated { 16 } else { 8 }
+        match self.kind {
+            ListenerKind::Calibrated => 16,
+            ListenerKind::Sensor | ListenerKind::Shrieker => 8,
+        }
+    }
+
+    fn listenable(&self) -> &'static tag::Tag {
+        match self.kind {
+            ListenerKind::Shrieker => &tag::GameEvent::MINECRAFT_SHRIEKER_CAN_LISTEN,
+            ListenerKind::Sensor | ListenerKind::Calibrated => {
+                &tag::GameEvent::MINECRAFT_VIBRATIONS
+            }
+        }
     }
 
     /// `VibrationUser.canReceiveVibration`.
-    fn can_receive(&self, world: &World, source: BlockPos, event: GameEvent) -> bool {
+    fn can_receive(
+        &self,
+        world: &World,
+        source: BlockPos,
+        event: GameEvent,
+        context: &GameEventContext<'_>,
+    ) -> bool {
+        if self.kind == ListenerKind::Shrieker {
+            return !SculkShriekerBlock::is_shrieking(world, &self.position)
+                && context
+                    .source_entity
+                    .is_some_and(|entity| SculkShriekerBlock::player_of(world, entity).is_some());
+        }
         if source == self.position && matches!(event.name(), "block_destroy" | "block_place") {
             return false;
         }
@@ -146,7 +182,7 @@ impl VibrationSensor {
         if frequency == 0 || !SculkSensorBlock::can_activate(world, &self.position) {
             return false;
         }
-        if self.calibrated {
+        if self.kind == ListenerKind::Calibrated {
             let back = SculkSensorBlock::calibrated_input(world, &self.position);
             if back != 0 && back != frequency {
                 return false;
@@ -182,6 +218,16 @@ impl VibrationSensor {
             state.current = None;
             vibration
         };
+        let source = arrived.source.and_then(|id| world.get_entity_by_id(id));
+        if self.kind == ListenerKind::Shrieker {
+            if let Some(player) = source
+                .as_deref()
+                .and_then(|entity| SculkShriekerBlock::player_of(world, entity))
+            {
+                SculkShriekerBlock::try_shriek(world, &self.position, &player);
+            }
+            return;
+        }
         if !SculkSensorBlock::can_activate(world, &self.position) {
             return;
         }
@@ -190,6 +236,7 @@ impl VibrationSensor {
             world,
             &self.position,
             block,
+            source.as_deref(),
             strength_for_distance(arrived.distance, self.range()),
             frequency(arrived.event),
         );
@@ -214,8 +261,8 @@ impl GameEventListener for VibrationSensor {
     ) -> bool {
         let mut state = self.state.lock().unwrap_or_else(PoisonError::into_inner);
         if state.current.is_some()
-            || !is_valid_vibration(&tag::GameEvent::MINECRAFT_VIBRATIONS, event, context)
-            || !self.can_receive(world, BlockPos::floored_v(source_position), event)
+            || !is_valid_vibration(self.listenable(), event, context)
+            || !self.can_receive(world, BlockPos::floored_v(source_position), event, context)
             || is_occluded(world, source_position, self.listener_position())
         {
             return false;
@@ -226,6 +273,9 @@ impl GameEventListener for VibrationSensor {
             event,
             distance: distance.sqrt() as f32,
             origin: source_position,
+            source: context
+                .source_entity
+                .map(|entity| entity.get_entity().entity_id),
         };
         let replaces = state.candidate.is_none_or(|(held, tick)| {
             tick == now

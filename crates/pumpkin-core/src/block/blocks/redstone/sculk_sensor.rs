@@ -7,7 +7,9 @@ use crate::block::{
     GetRedstonePowerArgs, GetStateForNeighborUpdateArgs, OnPlaceArgs, OnScheduledTickArgs,
     OnStateReplacedArgs, PathComputationType, PlacedArgs,
 };
+use crate::entity::EntityBase;
 use crate::world::World;
+use crate::world::game_event::GameEventContext;
 use pumpkin_data::block_properties::{
     CalibratedSculkSensorLikeProperties, HorizontalFacing, SculkSensorLikeProperties,
     SculkSensorPhase,
@@ -84,8 +86,28 @@ impl SculkSensorBlock {
         get_calibrated_sculk_sensor_input_strength(world, pos, props.facing)
     }
 
-    /// Vanilla `SculkSensorBlock.activate(.., power, frequency)`.
-    pub fn activate(world: &Arc<World>, pos: &BlockPos, block: &Block, power: u8, frequency: u8) {
+    /// The `SCULK_SENSOR_TENDRILS_CLICKING` event, caused by the entity whose vibration
+    /// activated the sensor (vanilla `gameEvent(entity, ..)`): shriekers listen for it.
+    fn emit_clicking(world: &World, pos: &BlockPos, source: Option<&dyn EntityBase>) {
+        world.emit_game_event_with_context(
+            GameEvent::SculkSensorTendrilsClicking.name(),
+            pos.to_centered_f64(),
+            &GameEventContext {
+                source_entity: source,
+                affected_state: None,
+            },
+        );
+    }
+
+    /// Vanilla `SculkSensorBlock.activate(entity, .., power, frequency)`.
+    pub fn activate(
+        world: &Arc<World>,
+        pos: &BlockPos,
+        block: &Block,
+        source: Option<&dyn EntityBase>,
+        power: u8,
+        frequency: u8,
+    ) {
         if block.id == BlockId::SCULK_SENSOR {
             let state = world.get_block_state(pos);
             let mut props = SculkSensorLikeProperties::from_state_id(state.id);
@@ -110,10 +132,7 @@ impl SculkSensorBlock {
                         *pos,
                     );
                 }
-                world.emit_game_event(
-                    GameEvent::SculkSensorTendrilsClicking.name(),
-                    pos.to_centered_f64(),
-                );
+                Self::emit_clicking(world, pos, source);
                 world.schedule_block_tick(block, *pos, 30, TickPriority::Normal);
             }
         } else if block.id == BlockId::CALIBRATED_SCULK_SENSOR {
@@ -142,10 +161,7 @@ impl SculkSensorBlock {
                         *pos,
                     );
                 }
-                world.emit_game_event(
-                    GameEvent::SculkSensorTendrilsClicking.name(),
-                    pos.to_centered_f64(),
-                );
+                Self::emit_clicking(world, pos, source);
                 // Vanilla CalibratedSculkSensorBlock.getActiveTicks() is 10 ticks (vs 30 for normal).
                 world.schedule_block_tick(block, *pos, 10, TickPriority::Normal);
             }

@@ -1,6 +1,9 @@
-use super::BlockEntity;
+use super::{
+    BlockEntity,
+    vibration_sensor::{ListenerKind, VibrationSensor},
+};
 use crate::block::blocks::sculk::sculk_shrieker::SculkShriekerBlock;
-use crate::world::World;
+use crate::world::{World, game_event::GameEventListener};
 use pumpkin_nbt::compound::NbtCompound;
 use pumpkin_util::math::position::BlockPos;
 use std::sync::atomic::{AtomicBool, Ordering};
@@ -10,6 +13,7 @@ pub struct SculkShriekerBlockEntity {
     pub position: BlockPos,
     pub warning_level: Mutex<i32>,
     pub shrieking_can_summon: AtomicBool,
+    sensor: VibrationSensor,
 }
 
 impl BlockEntity for SculkShriekerBlockEntity {
@@ -30,6 +34,11 @@ impl BlockEntity for SculkShriekerBlockEntity {
             position,
             warning_level: Mutex::new(warning_level),
             shrieking_can_summon: AtomicBool::new(false),
+            sensor: VibrationSensor::from_nbt(
+                position,
+                ListenerKind::Shrieker,
+                nbt.get_compound("listener"),
+            ),
         }
     }
 
@@ -37,6 +46,15 @@ impl BlockEntity for SculkShriekerBlockEntity {
         if let Ok(warning_level) = self.warning_level.lock() {
             nbt.put_int("warning_level", *warning_level);
         }
+        nbt.put_compound("listener", self.sensor.write_nbt());
+    }
+
+    fn tick(&self, world: &Arc<World>) {
+        self.sensor.tick(world);
+    }
+
+    fn game_event_listener(&self) -> Option<&dyn GameEventListener> {
+        Some(&self.sensor)
     }
 
     fn chunk_data_nbt(&self) -> Option<NbtCompound> {
@@ -68,6 +86,7 @@ impl SculkShriekerBlockEntity {
             position,
             warning_level: Mutex::new(0),
             shrieking_can_summon: AtomicBool::new(false),
+            sensor: VibrationSensor::new(position, ListenerKind::Shrieker),
         }
     }
 }

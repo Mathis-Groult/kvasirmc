@@ -22,6 +22,7 @@ use pumpkin_util::GameMode;
 use pumpkin_util::math::position::BlockPos;
 use pumpkin_util::math::vector2::Vector2;
 use pumpkin_util::math::vector3::Vector3;
+use pumpkin_util::version::JavaMinecraftVersion;
 use pumpkin_world::cylindrical_chunk_iterator::Cylindrical;
 use pumpkin_world::world::BlockFlags;
 use uuid::Uuid;
@@ -121,6 +122,24 @@ const SCENES: &[Scene] = &[
         },
         &[&StatusEffect::SLOWNESS],
         60,
+    ),
+    scene(
+        "shrunk_away",
+        Numbers {
+            radius_on_use: -2.7,
+            ..BASE
+        },
+        &[&StatusEffect::SLOWNESS],
+        30,
+    ),
+    scene(
+        "cut_short",
+        Numbers {
+            duration_on_use: -40,
+            ..BASE
+        },
+        &[&StatusEffect::SLOWNESS],
+        30,
     ),
     scene(
         "grows_on_use",
@@ -343,10 +362,33 @@ struct Cast {
     watcher: Arc<Player>,
 }
 
+/// The tracked data changed since the last look, by a hash of its bytes.
+fn meta_text(entity: &Entity) -> String {
+    let data = &entity.synched_data;
+    let text = data
+        .pack_dirty_for_version(&JavaMinecraftVersion::V_26_3)
+        .map_or_else(
+            || "-".to_owned(),
+            |bytes| {
+                let hash = bytes.iter().fold(0xcbf2_9ce4_8422_2325u64, |hash, byte| {
+                    (hash ^ u64::from(*byte)).wrapping_mul(0x0100_0000_01b3)
+                });
+                format!("{:08x}", hash as u32)
+            },
+        );
+    data.clear_dirty();
+    text
+}
+
 fn tick_text(cast: &Cast, world: &World, tap: &mut PacketTap) -> String {
     let mut text = String::new();
     for cloud in &cast.clouds {
-        let _ = write!(text, "{}|", cloud_text(cloud.as_ref()));
+        let _ = write!(
+            text,
+            "{} meta {}|",
+            cloud_text(cloud.as_ref()),
+            meta_text(cloud.get_entity())
+        );
     }
     for zombie in &cast.zombies {
         let _ = write!(

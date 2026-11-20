@@ -4,6 +4,7 @@ pub mod storage;
 pub use engine::LightEngine;
 
 pub mod runtime;
+mod sky;
 pub use runtime::DynamicLightEngine;
 
 #[cfg(test)]

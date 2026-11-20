@@ -1,6 +1,6 @@
 use super::chunk_holder::ChunkHolder;
 use super::chunk_state::{Chunk, StagedChunkEnum};
-use super::dag::{DAG, EdgeKey, Node, NodeKey};
+use super::dag::{DAG, EdgeKey, NodeKey};
 use super::worker_logic::{RecvChunk, io_read_work, io_write_work};
 use super::{
     ChunkLevel, ChunkListener, ChunkLoading, ChunkPos, HashMapType, HashSetType, IOLock,
@@ -18,6 +18,7 @@ use std::sync::{Arc, Mutex};
 use std::thread;
 use tracing::{debug, error, info};
 
+mod chain;
 mod event_loop;
 mod receive;
 mod resort;
@@ -370,131 +371,6 @@ impl GenerationSchedule {
         }
 
         queue.len()
-    }
-
-    /// Ensure that the dependency chain for `req_stage` exists on `holder` (for chunk at
-    /// `chunk_pos`) and wire it to depend on `dependency_task`.
-    ///
-    /// Bumps `holder.dependency_stage` (NOT `target_stage`) to at least `req_stage` so
-    /// that neighbor chunks pulled in as generation dependencies are not discarded before
-    /// their dependency is satisfied. `target_stage` is left alone so the level-change
-    /// bookkeeping invariant (`old_stage == holder.target_stage`) is never violated.
-    #[allow(clippy::too_many_arguments)]
-    pub(crate) fn ensure_dependency_chain(
-        graph: &mut DAG,
-        queue: &mut BinaryHeap<TaskHeapNode>,
-        last_level: &ChunkLevel,
-        last_high_priority: &[ChunkPos],
-        dependency_task: NodeKey,
-        chunk_pos: ChunkPos,
-        holder: &mut ChunkHolder,
-        req_stage: StagedChunkEnum,
-    ) -> [bool; StagedChunkEnum::COUNT] {
-        // Insert occupied_by edge head
-        holder.occupied_by = graph.edges.insert(crate::chunk_system::dag::Edge::new(
-            dependency_task,
-            holder.occupied_by,
-        ));
-
-        if !holder.occupied.is_null() {
-            graph.add_edge(holder.occupied, dependency_task);
-        }
-
-        // Bump dependency_stage so this chunk's IO/generation tasks are scheduled and
-        // kept alive even if target_stage is None (outside player view radius).
-        // We deliberately do NOT touch target_stage — that field is owned by resort_work
-        // and must match the level-change bookkeeping or the debug_assert will fire.
-        if holder.dependency_stage < req_stage {
-            holder.dependency_stage = req_stage;
-        }
-
-        // Effective target is the max of what the player wants and what dependencies need.
-        let effective_target = holder.target_stage.max(holder.dependency_stage);
-        let mut newly_created = [false; StagedChunkEnum::COUNT];
-
-        // Create any missing tasks from current_stage+1 up to effective_target.
-        // We do this even when current_stage >= req_stage, because dependency_stage may
-        // require tasks beyond req_stage that haven't been created yet.
-        if holder.current_stage < effective_target {
-            let empty = StagedChunkEnum::Empty as usize;
-            let start = (holder.current_stage as usize + 1).max(empty);
-            let end = effective_target as u8 as usize;
-
-            for (i, flag) in newly_created[start..=end].iter_mut().enumerate() {
-                let stage_i = start + i;
-                if holder.tasks[stage_i].is_null() {
-                    let new_node = graph
-                        .nodes
-                        .insert(Node::new(chunk_pos, StagedChunkEnum::from(stage_i as u8)));
-                    holder.tasks[stage_i] = new_node;
-                    *flag = true;
-                    if !holder.occupied.is_null() {
-                        graph.add_edge(holder.occupied, new_node);
-                    }
-                }
-            }
-
-            for stage_i in start..=end {
-                if !newly_created[stage_i] {
-                    continue;
-                }
-                let cur = holder.tasks[stage_i];
-
-                if stage_i > empty {
-                    let prev = holder.tasks[stage_i - 1];
-                    if !prev.is_null() {
-                        graph.add_edge(prev, cur);
-                    }
-                }
-                if stage_i < end {
-                    let next = holder.tasks[stage_i + 1];
-                    if !next.is_null() && !newly_created[stage_i + 1] {
-                        graph.add_edge(cur, next);
-                    }
-                }
-            }
-
-            // Queue the entry task (lowest unblocked stage)
-            let entry_task = holder.tasks[start];
-            if !entry_task.is_null()
-                && let Some(n) = graph.nodes.get_mut(entry_task)
-                && n.in_degree == 0
-                && !n.in_queue
-            {
-                n.in_queue = true;
-                queue.push(TaskHeapNode(
-                    Self::calc_priority(
-                        last_level,
-                        last_high_priority,
-                        chunk_pos,
-                        StagedChunkEnum::from(start as u8),
-                    ),
-                    entry_task,
-                ));
-            }
-        }
-
-        // If req_stage is already satisfied, dependency_task doesn't need to wait —
-        // it was only blocked on `occupied` (handled above) and the stage itself is done.
-        // Do NOT add an edge here: tasks[req_stage] is null (completed and dropped).
-        if holder.current_stage >= req_stage {
-            return newly_created;
-        }
-
-        // Wire req_stage task → dependency_task so dependency_task can't run until
-        // this chunk reaches req_stage. tasks[req_stage] is guaranteed non-null here:
-        // effective_target >= req_stage (we just set dependency_stage = req_stage) and
-        // current_stage < req_stage, so the task was created in the loop above (or
-        // already existed).
-        let req_end = req_stage as u8 as usize;
-        let ano_task = holder.tasks[req_end];
-        debug_assert!(
-            !ano_task.is_null(),
-            "holder.tasks[req_stage] must not be null before adding edge"
-        );
-        graph.add_edge(ano_task, dependency_task);
-
-        newly_created
     }
 
     pub(crate) fn is_features_order_ready(

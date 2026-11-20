@@ -5,7 +5,7 @@ use std::sync::{Arc, Mutex, PoisonError};
 
 use pumpkin_data::{game_event::GameEvent, tag};
 use pumpkin_nbt::{compound::NbtCompound, tag::NbtTag};
-use pumpkin_util::math::{position::BlockPos, vector3::Vector3};
+use pumpkin_util::math::{position::BlockPos, vector2::Vector2, vector3::Vector3};
 
 use crate::block::blocks::redstone::sculk_sensor::SculkSensorBlock;
 use crate::block::blocks::sculk::sculk_shrieker::SculkShriekerBlock;
@@ -152,7 +152,7 @@ impl VibrationSensor {
         }
     }
 
-    fn listenable(&self) -> &'static tag::Tag {
+    const fn listenable(&self) -> &'static tag::Tag {
         match self.kind {
             ListenerKind::Shrieker => &tag::GameEvent::MINECRAFT_SHRIEKER_CAN_LISTEN,
             ListenerKind::Sensor | ListenerKind::Calibrated => {
@@ -191,6 +191,19 @@ impl VibrationSensor {
         true
     }
 
+    /// `Ticker.areAdjacentChunksTicking`: this engine has no separate ticking state, so a
+    /// loaded chunk counts as ticking.
+    fn adjacent_chunks_ready(&self, world: &World) -> bool {
+        let chunk = self.position.chunk_position();
+        (-1..=1).all(|dx| {
+            (-1..=1).all(|dz| {
+                world
+                    .level
+                    .is_chunk_loaded(&Vector2::new(chunk.x + dx, chunk.y + dz))
+            })
+        })
+    }
+
     /// `VibrationSystem.Ticker.tick`.
     pub fn tick(&self, world: &Arc<World>) {
         let now = world.get_world_age();
@@ -213,6 +226,12 @@ impl VibrationSensor {
             let travel = travel - 1;
             if travel > 0 {
                 state.current = Some((vibration, travel));
+                return;
+            }
+            // `Ticker.receiveVibration`: a listener that needs its neighbouring chunks keeps the
+            // arrived vibration until all nine are there.
+            if !self.adjacent_chunks_ready(world) {
+                state.current = Some((vibration, 0));
                 return;
             }
             state.current = None;

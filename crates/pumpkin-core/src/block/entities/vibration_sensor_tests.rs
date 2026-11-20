@@ -358,3 +358,23 @@ async fn a_calibrated_sensor_saves_the_vibration_in_flight() -> TestResult {
     assert_eq!(after, Some(3));
     Ok(())
 }
+
+#[tokio::test(flavor = "multi_thread")]
+async fn a_vibration_waits_until_the_neighbouring_chunks_are_loaded() -> TestResult {
+    let (while_missing, after) = with_world(|world| {
+        let neighbour = Vector2::new(X.div_euclid(16) + 1, 1);
+        world.level.loaded_chunks.remove(&neighbour);
+        step_at(world, "step", 3);
+        let while_missing = ticks_until_active(world, 20);
+        world.level.loaded_chunks.insert(
+            neighbour,
+            pumpkin_world::chunk::ChunkData::empty_sync(neighbour.x, neighbour.y),
+        );
+        (while_missing, ticks_until_active(world, 20))
+    })
+    .await?;
+    assert_eq!(while_missing, None);
+    // The travel time ran out while waiting, so it is delivered on the first tick back.
+    assert_eq!(after, Some(1));
+    Ok(())
+}

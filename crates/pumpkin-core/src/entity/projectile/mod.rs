@@ -12,6 +12,8 @@ use std::{
 pub mod arrow;
 #[cfg(test)]
 mod arrow_tick_golden;
+#[cfg(test)]
+mod shulker_tick_golden;
 pub mod egg;
 pub mod ender_pearl;
 pub mod evoker_fangs;

@@ -920,19 +920,13 @@ pub trait EntityBase: Send + Sync + std::any::Any {
         let is_rideable_minecart = self_entity.entity_type.id == EntityType::MINECART.id;
 
         if push::is_minecart_type(self_entity.entity_type.id) {
-            let is_vehicle = self.is_vehicle();
-
-            let picked_up = is_rideable_minecart
-                && !is_vehicle
-                && push::minecart_pick_up(self_entity, &world, &entity_bb);
-
+            let velocity = self_entity.velocity.load();
             let push = push::MinecartPush {
                 is_rideable_minecart,
-                is_vehicle,
+                is_vehicle: self.is_vehicle(),
+                speed_squared: velocity.x * velocity.x + velocity.z * velocity.z,
             };
-            let pushed = push::minecart_push(self, dyn_self, &world, &entity_bb, push);
-
-            picked_up && !pushed
+            push::minecart_push_and_pickup(self, dyn_self, &world, &entity_bb, push)
         } else {
             push::push_overlapping(dyn_self, self_entity, &world, &entity_bb);
 

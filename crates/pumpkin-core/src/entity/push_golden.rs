@@ -212,6 +212,16 @@ const SCENES: &[Scene] = &[
     // kind as subject and as neighbour, moving minecarts (the only ones that push minecarts),
     // the pickup reach on z and above, boxes touching exactly, and neighbours riding something.
     scene("dead zombie near a zombie", Kind::DeadZombie, NEAR_ZOMBIE),
+    // Vanilla's OldMinecartBehavior: only a cart moving faster than 0.1 picks up mobs.
+    rolling(scene("rolling cart near a zombie", Kind::Cart, NEAR_ZOMBIE)),
+    rolling(scene("rolling cart near a golem", Kind::Cart, NEAR_GOLEM)),
+    rolling(scene("rolling cart near a player", Kind::Cart, NEAR_PLAYER)),
+    rolling(scene("rolling cart in a crowd", Kind::Cart, CROWD)),
+    rolling(scene(
+        "rolling chest cart near a zombie",
+        Kind::ChestCart,
+        NEAR_ZOMBIE,
+    )),
     rolling(scene(
         "rolling cart near every cart",
         Kind::Cart,

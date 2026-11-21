@@ -542,136 +542,152 @@ pub fn transform_block_properties(
         || block_name == "activator_rail";
 
     if is_stairs {
-        let mut facing_opt = None;
-        let mut shape_opt = None;
-        for prop in properties {
-            match *prop {
-                Property::Facing(f) => facing_opt = Some(f),
-                Property::StairsShape(s) => shape_opt = Some(s),
-                _ => {}
-            }
-        }
-
-        let (new_facing, new_shape) = if let Some(mut f) = facing_opt {
-            let mut s = shape_opt.unwrap_or(StairsShape::Straight);
-
-            // Step 1: StairBlock.mirror
-            match mirror {
-                Mirror::LeftRight => {
-                    if matches!(f, Facing::North | Facing::South) {
-                        f = match f {
-                            Facing::North => Facing::South,
-                            Facing::South => Facing::North,
-                            _ => f,
-                        };
-                        s = match s {
-                            StairsShape::Straight => StairsShape::Straight,
-                            StairsShape::OuterLeft => StairsShape::OuterRight,
-                            StairsShape::InnerRight => StairsShape::InnerLeft,
-                            StairsShape::InnerLeft => StairsShape::InnerRight,
-                            StairsShape::OuterRight => StairsShape::OuterLeft,
-                        };
-                    }
-                }
-                Mirror::FrontBack => {
-                    if matches!(f, Facing::East | Facing::West) {
-                        f = match f {
-                            Facing::East => Facing::West,
-                            Facing::West => Facing::East,
-                            _ => f,
-                        };
-                        s = match s {
-                            StairsShape::Straight => StairsShape::Straight,
-                            StairsShape::OuterLeft => StairsShape::OuterRight,
-                            StairsShape::InnerRight => StairsShape::InnerRight,
-                            StairsShape::InnerLeft => StairsShape::InnerLeft,
-                            StairsShape::OuterRight => StairsShape::OuterLeft,
-                        };
-                    }
-                }
-                Mirror::None => {}
-            }
-
-            // Step 2: StairBlock.rotate (only rotates facing)
-            f = rotation.rotate_facing(f);
-
-            (Some(f), Some(s))
-        } else {
-            (None, None)
-        };
-
-        return properties
-            .iter()
-            .map(|prop| match *prop {
-                Property::Facing(_) if new_facing.is_some() => {
-                    Property::Facing(new_facing.unwrap_or(Facing::North))
-                }
-                Property::StairsShape(_) if new_shape.is_some() => {
-                    Property::StairsShape(new_shape.unwrap_or(StairsShape::Straight))
-                }
-                other => other,
-            })
-            .collect();
+        return transform_stairs(properties, rotation, mirror);
     }
-
     if is_door {
-        let mut facing_opt = None;
-        let mut hinge_opt = None;
-        for prop in properties {
-            match *prop {
-                Property::Facing(f) => facing_opt = Some(f),
-                Property::Hinge(h) => hinge_opt = Some(h),
-                _ => {}
+        return transform_door(properties, rotation, mirror);
+    }
+    if is_rail {
+        return transform_rail(properties, rotation, mirror);
+    }
+    transform_general(properties, rotation, mirror)
+}
+
+/// Stairs: facing and shape change together (`StairBlock.mirror`, then `rotate`).
+fn transform_stairs(properties: &[Property], rotation: Rotation, mirror: Mirror) -> Vec<Property> {
+    let mut facing_opt = None;
+    let mut shape_opt = None;
+    for prop in properties {
+        match *prop {
+            Property::Facing(f) => facing_opt = Some(f),
+            Property::StairsShape(s) => shape_opt = Some(s),
+            _ => {}
+        }
+    }
+
+    let (new_facing, new_shape) = if let Some(mut f) = facing_opt {
+        let mut s = shape_opt.unwrap_or(StairsShape::Straight);
+
+        // Step 1: StairBlock.mirror
+        match mirror {
+            Mirror::LeftRight => {
+                if matches!(f, Facing::North | Facing::South) {
+                    f = match f {
+                        Facing::North => Facing::South,
+                        Facing::South => Facing::North,
+                        _ => f,
+                    };
+                    s = match s {
+                        StairsShape::Straight => StairsShape::Straight,
+                        StairsShape::OuterLeft => StairsShape::OuterRight,
+                        StairsShape::InnerRight => StairsShape::InnerLeft,
+                        StairsShape::InnerLeft => StairsShape::InnerRight,
+                        StairsShape::OuterRight => StairsShape::OuterLeft,
+                    };
+                }
             }
+            Mirror::FrontBack => {
+                if matches!(f, Facing::East | Facing::West) {
+                    f = match f {
+                        Facing::East => Facing::West,
+                        Facing::West => Facing::East,
+                        _ => f,
+                    };
+                    s = match s {
+                        StairsShape::Straight => StairsShape::Straight,
+                        StairsShape::OuterLeft => StairsShape::OuterRight,
+                        StairsShape::InnerRight => StairsShape::InnerRight,
+                        StairsShape::InnerLeft => StairsShape::InnerLeft,
+                        StairsShape::OuterRight => StairsShape::OuterLeft,
+                    };
+                }
+            }
+            Mirror::None => {}
         }
 
-        let (new_facing, new_hinge) = if let Some(mut f) = facing_opt {
-            let mut h = hinge_opt.unwrap_or(DoorHinge::Left);
+        // Step 2: StairBlock.rotate (only rotates facing)
+        f = rotation.rotate_facing(f);
 
-            // Step 1: DoorBlock.mirror
-            if mirror != Mirror::None {
-                f = mirror.mirror_facing(f);
-                h = match h {
-                    DoorHinge::Left => DoorHinge::Right,
-                    DoorHinge::Right => DoorHinge::Left,
-                };
+        (Some(f), Some(s))
+    } else {
+        (None, None)
+    };
+
+    properties
+        .iter()
+        .map(|prop| match *prop {
+            Property::Facing(_) if new_facing.is_some() => {
+                Property::Facing(new_facing.unwrap_or(Facing::North))
             }
+            Property::StairsShape(_) if new_shape.is_some() => {
+                Property::StairsShape(new_shape.unwrap_or(StairsShape::Straight))
+            }
+            other => other,
+        })
+        .collect()
+}
 
-            // Step 2: DoorBlock.rotate
-            f = rotation.rotate_facing(f);
-
-            (Some(f), Some(h))
-        } else {
-            (None, None)
-        };
-
-        return properties
-            .iter()
-            .map(|prop| match *prop {
-                Property::Facing(_) if new_facing.is_some() => {
-                    Property::Facing(new_facing.unwrap_or(Facing::North))
-                }
-                Property::Hinge(_) if new_hinge.is_some() => {
-                    Property::Hinge(new_hinge.unwrap_or(DoorHinge::Left))
-                }
-                other => other,
-            })
-            .collect();
+/// Doors: the hinge flips with any mirror (`DoorBlock.mirror`, then `rotate`).
+fn transform_door(properties: &[Property], rotation: Rotation, mirror: Mirror) -> Vec<Property> {
+    let mut facing_opt = None;
+    let mut hinge_opt = None;
+    for prop in properties {
+        match *prop {
+            Property::Facing(f) => facing_opt = Some(f),
+            Property::Hinge(h) => hinge_opt = Some(h),
+            _ => {}
+        }
     }
 
-    if is_rail {
-        return properties
-            .iter()
-            .map(|prop| match *prop {
-                Property::RailShape(s) => {
-                    Property::RailShape(transform_rail_shape(s, rotation, mirror))
-                }
-                other => other,
-            })
-            .collect();
-    }
+    let (new_facing, new_hinge) = if let Some(mut f) = facing_opt {
+        let mut h = hinge_opt.unwrap_or(DoorHinge::Left);
 
-    // General property transformation
+        // Step 1: DoorBlock.mirror
+        if mirror != Mirror::None {
+            f = mirror.mirror_facing(f);
+            h = match h {
+                DoorHinge::Left => DoorHinge::Right,
+                DoorHinge::Right => DoorHinge::Left,
+            };
+        }
+
+        // Step 2: DoorBlock.rotate
+        f = rotation.rotate_facing(f);
+
+        (Some(f), Some(h))
+    } else {
+        (None, None)
+    };
+
+    properties
+        .iter()
+        .map(|prop| match *prop {
+            Property::Facing(_) if new_facing.is_some() => {
+                Property::Facing(new_facing.unwrap_or(Facing::North))
+            }
+            Property::Hinge(_) if new_hinge.is_some() => {
+                Property::Hinge(new_hinge.unwrap_or(DoorHinge::Left))
+            }
+            other => other,
+        })
+        .collect()
+}
+
+/// Rails: only the rail shape changes.
+fn transform_rail(properties: &[Property], rotation: Rotation, mirror: Mirror) -> Vec<Property> {
+    properties
+        .iter()
+        .map(|prop| match *prop {
+            Property::RailShape(s) => {
+                Property::RailShape(transform_rail_shape(s, rotation, mirror))
+            }
+            other => other,
+        })
+        .collect()
+}
+
+/// Every other block: each property is transformed on its own.
+fn transform_general(properties: &[Property], rotation: Rotation, mirror: Mirror) -> Vec<Property> {
     properties
         .iter()
         .map(|prop| match *prop {

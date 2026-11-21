@@ -1,0 +1,259 @@
+axe on acacia_log: Success | stack iron_axex1 dmg 1 | heard 4 | sent [31:id119] | 0,0,0:stripped_acacia_log#187
+axe on acacia_wood: Success | stack iron_axex1 dmg 1 | heard 4 | sent [31:id119] | 0,0,0:stripped_acacia_wood#250
+axe on bamboo_block: Success | stack iron_axex1 dmg 1 | heard 4 | sent [31:id119] | 0,0,0:stripped_bamboo_block#208
+axe on birch_log: Success | stack iron_axex1 dmg 1 | heard 4 | sent [31:id119] | 0,0,0:stripped_birch_log#181
+axe on birch_wood: Success | stack iron_axex1 dmg 1 | heard 4 | sent [31:id119] | 0,0,0:stripped_birch_wood#244
+axe on cherry_log: Success | stack iron_axex1 dmg 1 | heard 4 | sent [31:id119] | 0,0,0:stripped_cherry_log#190
+axe on cherry_wood: Success | stack iron_axex1 dmg 1 | heard 4 | sent [31:id119] | 0,0,0:stripped_cherry_wood#253
+axe on crimson_hyphae: Success | stack iron_axex1 dmg 1 | heard 4 | sent [31:id119] | 0,0,0:stripped_crimson_hyphae#24329
+axe on crimson_stem: Success | stack iron_axex1 dmg 1 | heard 4 | sent [31:id119] | 0,0,0:stripped_crimson_stem#24323
+axe on dark_oak_log: Success | stack iron_axex1 dmg 1 | heard 4 | sent [31:id119] | 0,0,0:stripped_dark_oak_log#193
+axe on dark_oak_wood: Success | stack iron_axex1 dmg 1 | heard 4 | sent [31:id119] | 0,0,0:stripped_dark_oak_wood#256
+axe on exposed_chiseled_copper: Success | stack iron_axex1 dmg 1 | heard 4 | sent [31:id119 18:a826876a] | 0,0,0:chiseled_copper#31157
+axe on exposed_copper: Success | stack iron_axex1 dmg 1 | heard 4 | sent [31:id119 18:3287fad4] | 0,0,0:copper_block#31139
+axe on exposed_copper_bars: Success | stack iron_axex1 dmg 1 | heard 4 | sent [31:id119 18:f7505a3e] | 0,0,0:copper_bars#9755
+axe on exposed_copper_bulb: Success | stack iron_axex1 dmg 1 | heard 4 | sent [31:id119 18:addef2a8] | 0,0,0:copper_bulb#32896
+axe on exposed_copper_chain: Success | stack iron_axex1 dmg 1 | heard 4 | sent [31:id119 18:58e64de2] | 0,0,0:copper_chain#9989
+axe on exposed_copper_chest: Success | stack iron_axex1 dmg 1 | heard 4 | sent [31:id119 18:49dbd24c 12:9450d044] | 0,0,0:copper_chest#32926
+axe on exposed_copper_door: Success | stack iron_axex1 dmg 1 | heard 4 | sent [31:id119 18:006a6ab6] | 0,0,0:copper_door#31864 0,1,0:copper_door#31856
+axe on exposed_copper_golem_statue: Success | stack iron_axex1 dmg 1 | heard 4 | sent [31:id119 18:c532ca20 12:39d2bf8a] | 0,0,0:copper_golem_statue#33118
+axe on exposed_copper_grate: Success | stack iron_axex1 dmg 1 | heard 4 | sent [31:id119 18:958266ba] | 0,0,0:copper_grate#32878
+axe on exposed_copper_lantern: Success | stack iron_axex1 dmg 1 | heard 4 | sent [31:id119 18:1fe3da24] | 0,0,0:copper_lantern#24205
+axe on exposed_copper_trapdoor: Success | stack iron_axex1 dmg 1 | heard 4 | sent [31:id119 18:dd8f560e] | 0,0,0:copper_trapdoor#32380
+axe on exposed_cut_copper: Success | stack iron_axex1 dmg 1 | heard 4 | sent [31:id119 18:a257b578] | 0,0,0:cut_copper#31149
+axe on exposed_cut_copper_slab: Success | stack iron_axex1 dmg 1 | heard 4 | sent [31:id119 18:726f5232] | 0,0,0:cut_copper_slab#31808
+axe on exposed_cut_copper_stairs: Success | stack iron_axex1 dmg 1 | heard 4 | sent [31:id119 18:301ace1c] | 0,0,0:cut_copper_stairs#31176
+axe on exposed_lightning_rod: Success | stack iron_axex1 dmg 1 | heard 4 | sent [31:id119 18:f4e32d86] | 0,0,0:lightning_rod#33392
+axe on jungle_log: Success | stack iron_axex1 dmg 1 | heard 4 | sent [31:id119] | 0,0,0:stripped_jungle_log#184
+axe on jungle_wood: Success | stack iron_axex1 dmg 1 | heard 4 | sent [31:id119] | 0,0,0:stripped_jungle_wood#247
+axe on mangrove_log: Success | stack iron_axex1 dmg 1 | heard 4 | sent [31:id119] | 0,0,0:stripped_mangrove_log#202
+axe on mangrove_wood: Success | stack iron_axex1 dmg 1 | heard 4 | sent [31:id119] | 0,0,0:stripped_mangrove_wood#262
+axe on oak_log: Success | stack iron_axex1 dmg 1 | heard 4 | sent [31:id119] | 0,0,0:stripped_oak_log#199
+axe on oak_wood: Success | stack iron_axex1 dmg 1 | heard 4 | sent [31:id119] | 0,0,0:stripped_oak_wood#238
+axe on oxidized_chiseled_copper: Success | stack iron_axex1 dmg 1 | heard 4 | sent [31:id119 18:1d76ad6c] | 0,0,0:weathered_chiseled_copper#31159
+axe on oxidized_copper: Success | stack iron_axex1 dmg 1 | heard 4 | sent [31:id119 18:e23f0cd6] | 0,0,0:weathered_copper#31141
+axe on oxidized_copper_bars: Success | stack iron_axex1 dmg 1 | heard 4 | sent [31:id119 18:98cda540] | 0,0,0:weathered_copper_bars#9819
+axe on oxidized_copper_bulb: Success | stack iron_axex1 dmg 1 | heard 4 | sent [31:id119 18:440d005a] | 0,0,0:weathered_copper_bulb#32904
+axe on oxidized_copper_chain: Success | stack iron_axex1 dmg 1 | heard 4 | sent [31:id119 18:fa9b98c4] | 0,0,0:weathered_copper_chain#10001
+axe on oxidized_copper_chest: Success | stack iron_axex1 dmg 1 | heard 4 | sent [31:id119 18:bf63f82e 12:1e759a46] | 0,0,0:weathered_copper_chest#32974
+axe on oxidized_copper_door: Success | stack iron_axex1 dmg 1 | heard 4 | sent [31:id119 18:75f29098] | 0,0,0:weathered_copper_door#31992 0,1,0:weathered_copper_door#31984
+axe on oxidized_copper_golem_statue: Success | stack iron_axex1 dmg 1 | heard 4 | sent [31:id119 18:4d2710d2 12:786c7ec8] | 0,0,0:weathered_copper_golem_statue#33182
+axe on oxidized_copper_grate: Success | stack iron_axex1 dmg 1 | heard 4 | sent [31:id119 18:11ef703c] | 0,0,0:weathered_copper_grate#32882
+axe on oxidized_copper_lantern: Success | stack iron_axex1 dmg 1 | heard 4 | sent [31:id119 18:c87e08a6] | 0,0,0:weathered_copper_lantern#24213
+axe on oxidized_copper_trapdoor: Success | stack iron_axex1 dmg 1 | heard 4 | sent [31:id119 18:61194310] | 0,0,0:weathered_copper_trapdoor#32508
+axe on oxidized_cut_copper: Success | stack iron_axex1 dmg 1 | heard 4 | sent [31:id119 18:2a4bfc2a] | 0,0,0:weathered_cut_copper#31151
+axe on oxidized_cut_copper_slab: Success | stack iron_axex1 dmg 1 | heard 4 | sent [31:id119 18:ef145b94] | 0,0,0:weathered_cut_copper_slab#31820
+axe on oxidized_cut_copper_stairs: Success | stack iron_axex1 dmg 1 | heard 4 | sent [31:id119 18:a5a2f3fe] | 0,0,0:weathered_cut_copper_stairs#31336
+axe on oxidized_lightning_rod: Success | stack iron_axex1 dmg 1 | heard 4 | sent [31:id119 18:96987868] | 0,0,0:weathered_lightning_rod#33440
+axe on pale_oak_log: Success | stack iron_axex1 dmg 1 | heard 4 | sent [31:id119] | 0,0,0:stripped_pale_oak_log#196
+axe on pale_oak_wood: Success | stack iron_axex1 dmg 1 | heard 4 | sent [31:id119] | 0,0,0:stripped_pale_oak_wood#259
+axe on poplar_log: Success | stack iron_axex1 dmg 1 | heard 4 | sent [31:id119] | 0,0,0:stripped_poplar_log#205
+axe on poplar_wood: Success | stack iron_axex1 dmg 1 | heard 4 | sent [31:id119] | 0,0,0:stripped_poplar_wood#265
+axe on spruce_log: Success | stack iron_axex1 dmg 1 | heard 4 | sent [31:id119] | 0,0,0:stripped_spruce_log#178
+axe on spruce_wood: Success | stack iron_axex1 dmg 1 | heard 4 | sent [31:id119] | 0,0,0:stripped_spruce_wood#241
+axe on warped_hyphae: Success | stack iron_axex1 dmg 1 | heard 4 | sent [31:id119] | 0,0,0:stripped_warped_hyphae#24312
+axe on warped_stem: Success | stack iron_axex1 dmg 1 | heard 4 | sent [31:id119] | 0,0,0:stripped_warped_stem#24306
+axe on waxed_chiseled_copper: Success | stack iron_axex1 dmg 1 | heard 4 | sent [31:id119 18:07a9ba4b] | 0,0,0:chiseled_copper#31157
+axe on waxed_copper_bars: Success | stack iron_axex1 dmg 1 | heard 4 | sent [31:id119 18:42e15ae1] | 0,0,0:copper_bars#9755
+axe on waxed_copper_block: Success | stack iron_axex1 dmg 1 | heard 4 | sent [31:id119 18:8c52c277] | 0,0,0:copper_block#31139
+axe on waxed_copper_bulb: Success | stack iron_axex1 dmg 1 | heard 4 | sent [31:id119 18:c78a630d] | 0,0,0:copper_bulb#32896
+axe on waxed_copper_chain: Success | stack iron_axex1 dmg 1 | heard 4 | sent [31:id119 18:e4cea5a3] | 0,0,0:copper_chain#9989
+axe on waxed_copper_chest: Success | stack iron_axex1 dmg 1 | heard 4 | sent [31:id119 18:272329b9 12:d0811e1c] | 0,0,0:copper_chest#32926
+axe on waxed_copper_door: Success | stack iron_axex1 dmg 1 | heard 4 | sent [31:id119 18:625aca4f] | 0,0,0:copper_door#31864 0,1,0:copper_door#31856
+axe on waxed_copper_golem_statue: Success | stack iron_axex1 dmg 1 | heard 4 | sent [31:id119 18:abcc31e5 12:19048632] | 0,0,0:copper_golem_statue#33118
+axe on waxed_copper_grate: Success | stack iron_axex1 dmg 1 | heard 4 | sent [31:id119 18:1330f77b] | 0,0,0:copper_grate#32878
+axe on waxed_copper_lantern: Success | stack iron_axex1 dmg 1 | heard 4 | sent [31:id119 18:5ca25f11] | 0,0,0:copper_lantern#24205
+axe on waxed_copper_trapdoor: Success | stack iron_axex1 dmg 1 | heard 4 | sent [31:id119 18:97d9ffa7] | 0,0,0:copper_trapdoor#32380
+axe on waxed_cut_copper: Success | stack iron_axex1 dmg 1 | heard 4 | sent [31:id119 18:b51e423d] | 0,0,0:cut_copper#31149
+axe on waxed_cut_copper_slab: Success | stack iron_axex1 dmg 1 | heard 4 | sent [31:id119 18:f055e2d3] | 0,0,0:cut_copper_slab#31808
+axe on waxed_cut_copper_stairs: Success | stack iron_axex1 dmg 1 | heard 4 | sent [31:id119 18:39c74a69] | 0,0,0:cut_copper_stairs#31176
+axe on waxed_exposed_chiseled_copper: Success | stack iron_axex1 dmg 1 | heard 4 | sent [31:id119 18:74feeaff] | 0,0,0:exposed_chiseled_copper#31158
+axe on waxed_exposed_copper: Success | stack iron_axex1 dmg 1 | heard 4 | sent [31:id119 18:ea9d7795] | 0,0,0:exposed_copper#31140
+axe on waxed_exposed_copper_bars: Success | stack iron_axex1 dmg 1 | heard 4 | sent [31:id119 18:70659aeb] | 0,0,0:exposed_copper_bars#9787
+axe on waxed_exposed_copper_bulb: Success | stack iron_axex1 dmg 1 | heard 4 | sent [31:id119 18:8da9dd81] | 0,0,0:exposed_copper_bulb#32900
+axe on waxed_exposed_copper_chain: Success | stack iron_axex1 dmg 1 | heard 4 | sent [31:id119 18:c8e17e17] | 0,0,0:exposed_copper_chain#9995
+axe on waxed_exposed_copper_chest: Success | stack iron_axex1 dmg 1 | heard 4 | sent [31:id119 18:1252e5ad 12:ea8850e0] | 0,0,0:exposed_copper_chest#32950
+axe on waxed_exposed_copper_door: Success | stack iron_axex1 dmg 1 | heard 4 | sent [31:id119 18:4d8a8643] | 0,0,0:exposed_copper_door#31928 0,1,0:exposed_copper_door#31920
+axe on waxed_exposed_copper_golem_statue: Success | stack iron_axex1 dmg 1 | heard 4 | sent [31:id119 18:c32912d9 12:0b3db06e] | 0,0,0:exposed_copper_golem_statue#33150
+axe on waxed_exposed_copper_grate: Success | stack iron_axex1 dmg 1 | heard 4 | sent [31:id119 18:fe60b36f] | 0,0,0:exposed_copper_grate#32880
+axe on waxed_exposed_copper_lantern: Success | stack iron_axex1 dmg 1 | heard 4 | sent [31:id119 18:47d21b05] | 0,0,0:exposed_copper_lantern#24209
+axe on waxed_exposed_copper_trapdoor: Success | stack iron_axex1 dmg 1 | heard 4 | sent [31:id119 18:56dc969b] | 0,0,0:exposed_copper_trapdoor#32444
+axe on waxed_exposed_cut_copper: Success | stack iron_axex1 dmg 1 | heard 4 | sent [31:id119 18:a04dfe31] | 0,0,0:exposed_cut_copper#31150
+axe on waxed_exposed_cut_copper_slab: Success | stack iron_axex1 dmg 1 | heard 4 | sent [31:id119 18:db859ec7] | 0,0,0:exposed_cut_copper_slab#31814
+axe on waxed_exposed_cut_copper_stairs: Success | stack iron_axex1 dmg 1 | heard 4 | sent [31:id119 18:1dda22dd] | 0,0,0:exposed_cut_copper_stairs#31256
+axe on waxed_exposed_lightning_rod: Success | stack iron_axex1 dmg 1 | heard 4 | sent [31:id119 18:9378af73] | 0,0,0:exposed_lightning_rod#33416
+axe on waxed_lightning_rod: Success | stack iron_axex1 dmg 1 | heard 4 | sent [31:id119 18:ceb05009] | 0,0,0:lightning_rod#33392
+axe on waxed_oxidized_chiseled_copper: Success | stack iron_axex1 dmg 1 | heard 4 | sent [31:id119 18:1821b79f] | 0,0,0:oxidized_chiseled_copper#31160
+axe on waxed_oxidized_copper: Success | stack iron_axex1 dmg 1 | heard 4 | sent [31:id119 18:53595835] | 0,0,0:oxidized_copper#31142
+axe on waxed_oxidized_copper_bars: Success | stack iron_axex1 dmg 1 | heard 4 | sent [31:id119 18:4b1d598b] | 0,0,0:oxidized_copper_bars#9851
+axe on waxed_oxidized_copper_bulb: Success | stack iron_axex1 dmg 1 | heard 4 | sent [31:id119 18:948ec121] | 0,0,0:oxidized_copper_bulb#32908
+axe on waxed_oxidized_copper_chain: Success | stack iron_axex1 dmg 1 | heard 4 | sent [31:id119 18:a3993cb7] | 0,0,0:oxidized_copper_chain#10007
+axe on waxed_oxidized_copper_chest: Success | stack iron_axex1 dmg 1 | heard 4 | sent [31:id119 18:ed0aa44d 12:a693f180] | 0,0,0:oxidized_copper_chest#32998
+axe on waxed_oxidized_copper_door: Success | stack iron_axex1 dmg 1 | heard 4 | sent [31:id119 18:284244e3] | 0,0,0:oxidized_copper_door#32056 0,1,0:oxidized_copper_door#32048
+axe on waxed_oxidized_copper_golem_statue: Success | stack iron_axex1 dmg 1 | heard 4 | sent [31:id119 18:6a96c8f9 12:2300face] | 0,0,0:oxidized_copper_golem_statue#33214
+axe on waxed_oxidized_copper_grate: Success | stack iron_axex1 dmg 1 | heard 4 | sent [31:id119 18:e035558f] | 0,0,0:oxidized_copper_grate#32884
+axe on waxed_oxidized_copper_lantern: Success | stack iron_axex1 dmg 1 | heard 4 | sent [31:id119 18:1b6cf625] | 0,0,0:oxidized_copper_lantern#24217
+axe on waxed_oxidized_copper_trapdoor: Success | stack iron_axex1 dmg 1 | heard 4 | sent [31:id119 18:64de5dbb] | 0,0,0:oxidized_copper_trapdoor#32572
+axe on waxed_oxidized_cut_copper: Success | stack iron_axex1 dmg 1 | heard 4 | sent [31:id119 18:73e8d951] | 0,0,0:oxidized_cut_copper#31152
+axe on waxed_oxidized_cut_copper_slab: Success | stack iron_axex1 dmg 1 | heard 4 | sent [31:id119 18:bd5a40e7] | 0,0,0:oxidized_cut_copper_slab#31826
+axe on waxed_oxidized_cut_copper_stairs: Success | stack iron_axex1 dmg 1 | heard 4 | sent [31:id119 18:f891e17d] | 0,0,0:oxidized_cut_copper_stairs#31416
+axe on waxed_oxidized_lightning_rod: Success | stack iron_axex1 dmg 1 | heard 4 | sent [31:id119 18:42034913] | 0,0,0:oxidized_lightning_rod#33464
+axe on waxed_weathered_chiseled_copper: Success | stack iron_axex1 dmg 1 | heard 4 | sent [31:id119 18:a9680ea9] | 0,0,0:weathered_chiseled_copper#31159
+axe on waxed_weathered_copper: Success | stack iron_axex1 dmg 1 | heard 4 | sent [31:id119 18:f2d9763f] | 0,0,0:weathered_copper#31141
+axe on waxed_weathered_copper_bars: Success | stack iron_axex1 dmg 1 | heard 4 | sent [31:id119 18:2e1116d5] | 0,0,0:weathered_copper_bars#9819
+axe on waxed_weathered_copper_bulb: Success | stack iron_axex1 dmg 1 | heard 4 | sent [31:id119 18:6027e4fa] | 0,0,0:weathered_copper_bulb#32904
+axe on waxed_weathered_copper_chain: Success | stack iron_axex1 dmg 1 | heard 4 | sent [31:id119 18:24f04464] | 0,0,0:weathered_copper_chain#10001
+axe on waxed_weathered_copper_chest: Success | stack iron_axex1 dmg 1 | heard 4 | sent [31:id119 18:e29bc04e 12:cbe12ca3] | 0,0,0:weathered_copper_chest#32974
+axe on waxed_weathered_copper_door: Success | stack iron_axex1 dmg 1 | heard 4 | sent [31:id119 18:6cfd33b8] | 0,0,0:weathered_copper_door#31992 0,1,0:weathered_copper_door#31984
+axe on waxed_weathered_copper_golem_statue: Success | stack iron_axex1 dmg 1 | heard 4 | sent [31:id119 18:31c59322 12:e60bbd19] | 0,0,0:weathered_copper_golem_statue#33182
+axe on waxed_weathered_copper_grate: Success | stack iron_axex1 dmg 1 | heard 4 | sent [31:id119 18:e8542b8c] | 0,0,0:weathered_copper_grate#32882
+axe on waxed_weathered_copper_lantern: Success | stack iron_axex1 dmg 1 | heard 4 | sent [31:id119 18:ad1c8af6] | 0,0,0:weathered_copper_lantern#24213
+axe on waxed_weathered_copper_trapdoor: Success | stack iron_axex1 dmg 1 | heard 4 | sent [31:id119 18:8fd84860] | 0,0,0:weathered_copper_trapdoor#32508
+axe on waxed_weathered_cut_copper: Success | stack iron_axex1 dmg 1 | heard 4 | sent [31:id119 18:72cc05aa] | 0,0,0:weathered_cut_copper#31151
+axe on waxed_weathered_cut_copper_slab: Success | stack iron_axex1 dmg 1 | heard 4 | sent [31:id119 18:37946514] | 0,0,0:weathered_cut_copper_slab#31820
+axe on waxed_weathered_cut_copper_stairs: Success | stack iron_axex1 dmg 1 | heard 4 | sent [31:id119 18:ee22fd7e] | 0,0,0:weathered_cut_copper_stairs#31336
+axe on waxed_weathered_lightning_rod: Success | stack iron_axex1 dmg 1 | heard 4 | sent [31:id119 18:86be37e8] | 0,0,0:weathered_lightning_rod#33440
+axe on weathered_chiseled_copper: Success | stack iron_axex1 dmg 1 | heard 4 | sent [31:id119 18:21581ddb] | 0,0,0:exposed_chiseled_copper#31158
+axe on weathered_copper: Success | stack iron_axex1 dmg 1 | heard 4 | sent [31:id119 18:5c8fbe71] | 0,0,0:exposed_copper#31140
+axe on weathered_copper_bars: Success | stack iron_axex1 dmg 1 | heard 4 | sent [31:id119 18:d22e4b07] | 0,0,0:exposed_copper_bars#9787
+axe on weathered_copper_bulb: Success | stack iron_axex1 dmg 1 | heard 4 | sent [31:id119 18:1482cf1d] | 0,0,0:exposed_copper_bulb#32900
+axe on weathered_copper_chain: Success | stack iron_axex1 dmg 1 | heard 4 | sent [31:id119 18:1eeaf123] | 0,0,0:exposed_copper_chain#9995
+axe on weathered_copper_chest: Success | stack iron_axex1 dmg 1 | heard 4 | sent [31:id119 18:613f7539 12:61acc9c5] | 0,0,0:exposed_copper_chest#32950
+axe on weathered_copper_door: Success | stack iron_axex1 dmg 1 | heard 4 | sent [31:id119 18:9c7715cf] | 0,0,0:exposed_copper_door#31928 0,1,0:exposed_copper_door#31920
+axe on weathered_copper_golem_statue: Success | stack iron_axex1 dmg 1 | heard 4 | sent [31:id119 18:e5e87d65 12:a27c5627] | 0,0,0:exposed_copper_golem_statue#33150
+axe on weathered_copper_grate: Success | stack iron_axex1 dmg 1 | heard 4 | sent [31:id119 18:e96bbbcb] | 0,0,0:exposed_copper_grate#32880
+axe on weathered_copper_lantern: Success | stack iron_axex1 dmg 1 | heard 4 | sent [31:id119 18:24a35c61] | 0,0,0:exposed_copper_lantern#24209
+axe on weathered_copper_trapdoor: Success | stack iron_axex1 dmg 1 | heard 4 | sent [31:id119 18:6e14c3f7] | 0,0,0:exposed_copper_trapdoor#32444
+axe on weathered_cut_copper: Success | stack iron_axex1 dmg 1 | heard 4 | sent [31:id119 18:a94c648d] | 0,0,0:exposed_cut_copper#31150
+axe on weathered_cut_copper_slab: Success | stack iron_axex1 dmg 1 | heard 4 | sent [31:id119 18:2a722e53] | 0,0,0:exposed_cut_copper_slab#31814
+axe on weathered_cut_copper_stairs: Success | stack iron_axex1 dmg 1 | heard 4 | sent [31:id119 18:73e395e9] | 0,0,0:exposed_cut_copper_stairs#31256
+axe on weathered_lightning_rod: Success | stack iron_axex1 dmg 1 | heard 4 | sent [31:id119 18:af1b367f] | 0,0,0:exposed_lightning_rod#33416
+creative axe on an oak log: Success | stack iron_axex1 dmg 0 | heard 4 | sent [31:id119] | 0,0,0:stripped_oak_log#199
+adventure axe on an oak log: Success | stack iron_axex1 dmg 1 | heard 4 | sent [31:id119] | 0,0,0:stripped_oak_log#199
+worn axe on an oak log: Success | stack - | heard 4 | sent [31:id119] | 0,0,0:stripped_oak_log#199
+axe on an oak log, down face: Success | stack iron_axex1 dmg 1 | heard 4 | sent [31:id119] | 0,0,0:stripped_oak_log#199
+axe on an oak log, north face: Success | stack iron_axex1 dmg 1 | heard 4 | sent [31:id119] | 0,0,0:stripped_oak_log#199
+axe on an oak log, east face: Success | stack iron_axex1 dmg 1 | heard 4 | sent [31:id119] | 0,0,0:stripped_oak_log#199
+a stick on an oak log: Pass | stack stickx1 dmg 0 | deaf | sent [] | 0,0,0:oak_log#140
+axe on stone: Pass | stack iron_axex1 dmg 0 | deaf | sent [] | 0,0,0:stone#1
+axe on a normal oak door: Pass | stack iron_axex1 dmg 0 | deaf | sent [] | 0,0,0:oak_door#7254 0,1,0:oak_door#7246
+axe on the lower half of exposed_copper_door with the other half: Success | stack iron_axex1 dmg 1 | heard 4 | sent [31:id119 18:52279c6b 18:936da651 18:dc6ce500 18:1aa4e6c3 32:id119] | 0,0,0:copper_door#31916 0,1,0:copper_door#31908
+axe on the lower half of exposed_copper_door alone: Success | stack iron_axex1 dmg 1 | heard 4 | sent [31:id119 18:c7c62901] | 0,0,0:copper_door#31864 0,1,0:copper_door#31856
+axe on the upper half of exposed_copper_door with the other half: Success | stack iron_axex1 dmg 1 | heard 4 | sent [31:id119 18:02fdc997 32:id119] | 0,-1,0:copper_door#31913 0,0,0:copper_door#31905
+axe on the upper half of exposed_copper_door alone: Success | stack iron_axex1 dmg 1 | heard 4 | sent [31:id119 18:4c6f312d 18:2dc369c3] | 0,0,0:copper_door#31856
+axe on the lower half of waxed_oxidized_copper_door with the other half: Success | stack iron_axex1 dmg 1 | heard 4 | sent [31:id119 18:2f58666a 18:9db8a9df 18:dc88a2ef 18:24851564 32:id119] | 0,0,0:oxidized_copper_door#32108 0,1,0:oxidized_copper_door#32100
+axe on the lower half of waxed_oxidized_copper_door alone: Success | stack iron_axex1 dmg 1 | heard 4 | sent [31:id119 18:b9b9d9d4] | 0,0,0:oxidized_copper_door#32056 0,1,0:oxidized_copper_door#32048
+axe on the upper half of waxed_oxidized_copper_door with the other half: Success | stack iron_axex1 dmg 1 | heard 4 | sent [31:id119 18:7e82393e 32:id119] | 0,-1,0:oxidized_copper_door#32105 0,0,0:oxidized_copper_door#32097
+axe on the upper half of waxed_oxidized_copper_door alone: Success | stack iron_axex1 dmg 1 | heard 4 | sent [31:id119 18:3510d1a8 18:1ee6d020] | 0,0,0:oxidized_copper_door#32048
+axe on a Single exposed_copper_chest facing North, same kind clockwise: Success | stack iron_axex1 dmg 1 | heard 4 | sent [31:id119 18:90f8e21b 12:e9e23a47] | 0,0,0:copper_chest#32926 1,0,0:exposed_copper_chest#32952
+axe on a Single exposed_copper_chest facing North, other kind clockwise: Success | stack iron_axex1 dmg 1 | heard 4 | sent [31:id119 18:da6a49b1 12:a594466d] | 0,0,0:copper_chest#32926 1,0,0:weathered_copper_chest#32976
+axe on a Single exposed_copper_chest facing North, same kind counter-clockwise: Success | stack iron_axex1 dmg 1 | heard 4 | sent [31:id119 18:15a1ea47 12:97482f6b] | -1,0,0:exposed_copper_chest#32952 0,0,0:copper_chest#32926
+axe on a Single exposed_copper_chest facing North, alone: Success | stack iron_axex1 dmg 1 | heard 4 | sent [31:id119 18:57f66e5d 12:03ec3db1] | 0,0,0:copper_chest#32926
+axe on a Left exposed_copper_chest facing North, same kind clockwise: Success | stack iron_axex1 dmg 1 | heard 4 | sent [31:id119 18:625e9063 12:5271d47f 18:3d840623 12:621331bf] | 0,0,0:copper_chest#32928 1,0,0:copper_chest#32930
+axe on a Left exposed_copper_chest facing North, other kind clockwise: Success | stack iron_axex1 dmg 1 | heard 4 | sent [31:id119 18:a4b31479 12:1e21a305] | 0,0,0:copper_chest#32928 1,0,0:weathered_copper_chest#32978
+axe on a Left exposed_copper_chest facing North, same kind counter-clockwise: Success | stack iron_axex1 dmg 1 | heard 4 | sent [31:id119 18:c1f7570f 12:5f3fef03] | -1,0,0:exposed_copper_chest#32954 0,0,0:copper_chest#32928
+axe on a Left exposed_copper_chest facing North, other kind counter-clockwise: Success | stack iron_axex1 dmg 1 | heard 4 | sent [31:id119 18:fd2ef7a5 12:1af1fb29] | -1,0,0:weathered_copper_chest#32978 0,0,0:copper_chest#32928
+axe on a Left exposed_copper_chest facing North, alone: Success | stack iron_axex1 dmg 1 | heard 4 | sent [31:id119 18:2cdf5b0b 12:0cd416b7] | 0,0,0:copper_chest#32928
+axe on a Right exposed_copper_chest facing North, same kind clockwise: Success | stack iron_axex1 dmg 1 | heard 4 | sent [31:id119 18:7650c2a1 12:c88622dd] | 0,0,0:copper_chest#32930 1,0,0:exposed_copper_chest#32952
+axe on a Right exposed_copper_chest facing North, other kind clockwise: Success | stack iron_axex1 dmg 1 | heard 4 | sent [31:id119 18:ddb58837 12:6acfa8db] | 0,0,0:copper_chest#32930 1,0,0:weathered_copper_chest#32976
+axe on a Right exposed_copper_chest facing North, same kind counter-clockwise: Success | stack iron_axex1 dmg 1 | heard 4 | sent [31:id119 18:2726efcd 12:00cc0034 18:0c77d7ec 12:26de1a21] | -1,0,0:copper_chest#32928 0,0,0:copper_chest#32930
+axe on a Right exposed_copper_chest facing North, other kind counter-clockwise: Success | stack iron_axex1 dmg 1 | heard 4 | sent [31:id119 18:7c1f9493 12:90e44a6f] | -1,0,0:weathered_copper_chest#32976 0,0,0:copper_chest#32930
+axe on a Right exposed_copper_chest facing North, alone: Success | stack iron_axex1 dmg 1 | heard 4 | sent [31:id119 18:8b2a1029 12:82af4cb5] | 0,0,0:copper_chest#32930
+axe on a Single exposed_copper_chest facing East, same kind clockwise: Success | stack iron_axex1 dmg 1 | heard 4 | sent [31:id119 18:d49b77bf 12:8e1107b3] | 0,0,0:copper_chest#32944 0,0,1:exposed_copper_chest#32970
+axe on a Single exposed_copper_chest facing East, other kind clockwise: Success | stack iron_axex1 dmg 1 | heard 4 | sent [31:id119 18:0fd31855 12:7f7fa4d9] | 0,0,0:copper_chest#32944 0,0,1:weathered_copper_chest#32994
+axe on a Single exposed_copper_chest facing East, same kind counter-clockwise: Success | stack iron_axex1 dmg 1 | heard 4 | sent [31:id119 18:46a05f3b 12:3ba52f67] | 0,0,-1:exposed_copper_chest#32970 0,0,0:copper_chest#32944
+axe on a Single exposed_copper_chest facing East, alone: Success | stack iron_axex1 dmg 1 | heard 4 | sent [31:id119 18:ae0524d1 12:1235840d] | 0,0,0:copper_chest#32944
+axe on a Left exposed_copper_chest facing East, same kind clockwise: Success | stack iron_axex1 dmg 1 | heard 4 | sent [31:id119 18:f7768c67 12:df8863db 18:0d96d697 12:b47f0a0b] | 0,0,0:copper_chest#32946 0,0,1:copper_chest#32948
+axe on a Left exposed_copper_chest facing East, other kind clockwise: Success | stack iron_axex1 dmg 1 | heard 4 | sent [31:id119 18:32ae2cfd 12:708d7b51] | 0,0,0:copper_chest#32946 0,0,1:weathered_copper_chest#32996
+axe on a Left exposed_copper_chest facing East, same kind counter-clockwise: Success | stack iron_axex1 dmg 1 | heard 4 | sent [31:id119 18:82e50803 12:b5c5805f] | 0,0,-1:exposed_copper_chest#32972 0,0,0:copper_chest#32946
+axe on a Left exposed_copper_chest facing East, other kind counter-clockwise: Success | stack iron_axex1 dmg 1 | heard 4 | sent [31:id119 18:be1ca899 12:58261fa5] | 0,0,-1:weathered_copper_chest#32996 0,0,0:copper_chest#32946
+axe on a Left exposed_copper_chest facing East, alone: Success | stack iron_axex1 dmg 1 | heard 4 | sent [31:id119 18:078e102f 12:2efbc023] | 0,0,0:copper_chest#32946
+axe on a Right exposed_copper_chest facing East, same kind clockwise: Success | stack iron_axex1 dmg 1 | heard 4 | sent [31:id119 18:6ef2d5c5 12:eaadcc49] | 0,0,0:copper_chest#32948 0,0,1:exposed_copper_chest#32970
+axe on a Right exposed_copper_chest facing East, other kind clockwise: Success | stack iron_axex1 dmg 1 | heard 4 | sent [31:id119 18:a5c01cab 12:dc8fe7d7] | 0,0,0:copper_chest#32948 0,0,1:weathered_copper_chest#32994
+axe on a Right exposed_copper_chest facing East, same kind counter-clockwise: Success | stack iron_axex1 dmg 1 | heard 4 | sent [31:id119 18:e0f7bd41 12:1725e68d 18:7a468531 12:e7ac56fd] | 0,0,-1:copper_chest#32946 0,0,0:copper_chest#32948
+axe on a Right exposed_copper_chest facing East, other kind counter-clockwise: Success | stack iron_axex1 dmg 1 | heard 4 | sent [31:id119 18:2a6924d7 12:d9603ffb] | 0,0,-1:weathered_copper_chest#32994 0,0,0:copper_chest#32948
+axe on a Right exposed_copper_chest facing East, alone: Success | stack iron_axex1 dmg 1 | heard 4 | sent [31:id119 18:3973a06d 12:956eb141] | 0,0,0:copper_chest#32948
+axe on a Single exposed_copper_chest facing South, same kind clockwise: Success | stack iron_axex1 dmg 1 | heard 4 | sent [31:id119 18:8e6c4533 12:ff74e18f] | -1,0,0:exposed_copper_chest#32958 0,0,0:copper_chest#32932
+axe on a Single exposed_copper_chest facing South, other kind clockwise: Success | stack iron_axex1 dmg 1 | heard 4 | sent [31:id119 18:d7ddacc9 12:a1d580d5] | -1,0,0:weathered_copper_chest#32982 0,0,0:copper_chest#32932
+axe on a Single exposed_copper_chest facing South, same kind counter-clockwise: Success | stack iron_axex1 dmg 1 | heard 4 | sent [31:id119 18:3f42725f 12:5dccd8d3] | 0,0,0:copper_chest#32932 1,0,0:exposed_copper_chest#32958
+axe on a Single exposed_copper_chest facing South, alone: Success | stack iron_axex1 dmg 1 | heard 4 | sent [31:id119 18:88b3d9f5 12:4f3b75f9] | 0,0,0:copper_chest#32932
+axe on a Left exposed_copper_chest facing South, same kind clockwise: Success | stack iron_axex1 dmg 1 | heard 4 | sent [31:id119 18:b8643d5b 12:db54afaa 18:347546aa 12:0b610087] | -1,0,0:copper_chest#32936 0,0,0:copper_chest#32934
+axe on a Left exposed_copper_chest facing South, other kind clockwise: Success | stack iron_axex1 dmg 1 | heard 4 | sent [31:id119 18:f39bddf1 12:4c3a00ad] | -1,0,0:weathered_copper_chest#32984 0,0,0:copper_chest#32934
+axe on a Left exposed_copper_chest facing South, same kind counter-clockwise: Success | stack iron_axex1 dmg 1 | heard 4 | sent [31:id119 18:10e02087 12:083158ab] | 0,0,0:copper_chest#32934 1,0,0:exposed_copper_chest#32960
+axe on a Left exposed_copper_chest facing South, other kind counter-clockwise: Success | stack iron_axex1 dmg 1 | heard 4 | sent [31:id119 18:5334a49d 12:f9fc5af1] | 0,0,0:copper_chest#32934 1,0,0:weathered_copper_chest#32984
+axe on a Left exposed_copper_chest facing South, alone: Success | stack iron_axex1 dmg 1 | heard 4 | sent [31:id119 18:5d9cc6a3 12:d2fc5aff] | 0,0,0:copper_chest#32934
+axe on a Right exposed_copper_chest facing South, same kind clockwise: Success | stack iron_axex1 dmg 1 | heard 4 | sent [31:id119 18:9ff14ab9 12:c4c75d45] | -1,0,0:exposed_copper_chest#32958 0,0,0:copper_chest#32936
+axe on a Right exposed_copper_chest facing South, other kind clockwise: Success | stack iron_axex1 dmg 1 | heard 4 | sent [31:id119 18:db28eb4f 12:80beb543] | -1,0,0:weathered_copper_chest#32982 0,0,0:copper_chest#32936
+axe on a Right exposed_copper_chest facing South, same kind counter-clockwise: Success | stack iron_axex1 dmg 1 | heard 4 | sent [31:id119 18:249a52e5 12:628bf529 18:75a20225 12:722d5269] | 0,0,0:copper_chest#32936 1,0,0:copper_chest#32934
+axe on a Right exposed_copper_chest facing South, other kind counter-clockwise: Success | stack iron_axex1 dmg 1 | heard 4 | sent [31:id119 18:8077db4b 12:7dbd3ff7] | 0,0,0:copper_chest#32936 1,0,0:weathered_copper_chest#32982
+axe on a Right exposed_copper_chest facing South, alone: Success | stack iron_axex1 dmg 1 | heard 4 | sent [31:id119 18:bbaf7be1 12:6f2bdd1d] | 0,0,0:copper_chest#32936
+axe on a Single exposed_copper_chest facing West, same kind clockwise: Success | stack iron_axex1 dmg 1 | heard 4 | sent [31:id119 18:0520e377 12:2b23351b] | 0,0,-1:exposed_copper_chest#32964 0,0,0:copper_chest#32938
+axe on a Single exposed_copper_chest facing West, other kind clockwise: Success | stack iron_axex1 dmg 1 | heard 4 | sent [31:id119 18:4058840d 12:1cee3761] | 0,0,-1:weathered_copper_chest#32988 0,0,0:copper_chest#32938
+axe on a Single exposed_copper_chest facing West, same kind counter-clockwise: Success | stack iron_axex1 dmg 1 | heard 4 | sent [31:id119 18:692403d3 12:378a04af] | 0,0,0:copper_chest#32938 0,0,1:exposed_copper_chest#32964
+axe on a Single exposed_copper_chest facing West, alone: Success | stack iron_axex1 dmg 1 | heard 4 | sent [31:id119 18:b2956b69 12:f39875f5] | 0,0,0:copper_chest#32938
+axe on a Left exposed_copper_chest facing West, same kind clockwise: Success | stack iron_axex1 dmg 1 | heard 4 | sent [31:id119 18:edcd0bff 12:61f836a3 18:78ce9d8f 12:e54c5ef3] | 0,0,-1:copper_chest#32942 0,0,0:copper_chest#32940
+axe on a Left exposed_copper_chest facing West, other kind clockwise: Success | stack iron_axex1 dmg 1 | heard 4 | sent [31:id119 18:636b9895 12:a0fe6b19] | 0,0,-1:weathered_copper_chest#32990 0,0,0:copper_chest#32940
+axe on a Left exposed_copper_chest facing West, same kind counter-clockwise: Success | stack iron_axex1 dmg 1 | heard 4 | sent [31:id119 18:8bff187b 12:e24ae9a7] | 0,0,0:copper_chest#32940 0,0,1:exposed_copper_chest#32966
+axe on a Left exposed_copper_chest facing West, other kind counter-clockwise: Success | stack iron_axex1 dmg 1 | heard 4 | sent [31:id119 18:d5708011 12:b8db3e4d] | 0,0,0:copper_chest#32940 0,0,1:weathered_copper_chest#32990
+axe on a Left exposed_copper_chest facing West, alone: Success | stack iron_axex1 dmg 1 | heard 4 | sent [31:id119 18:10a820a7 12:74d2964b] | 0,0,0:copper_chest#32940
+axe on a Right exposed_copper_chest facing West, same kind clockwise: Success | stack iron_axex1 dmg 1 | heard 4 | sent [31:id119 18:2dec633d 12:669d9891] | 0,0,-1:exposed_copper_chest#32964 0,0,0:copper_chest#32942
+axe on a Right exposed_copper_chest facing West, other kind clockwise: Success | stack iron_axex1 dmg 1 | heard 4 | sent [31:id119 18:c658a743 12:f7614d9f] | 0,0,-1:weathered_copper_chest#32988 0,0,0:copper_chest#32942
+axe on a Right exposed_copper_chest facing West, same kind counter-clockwise: Success | stack iron_axex1 dmg 1 | heard 4 | sent [31:id119 18:3bf733d9 12:88666515 18:179d22a9 12:b36fbee5] | 0,0,0:copper_chest#32942 0,0,1:copper_chest#32940
+axe on a Right exposed_copper_chest facing West, other kind counter-clockwise: Success | stack iron_axex1 dmg 1 | heard 4 | sent [31:id119 18:772ed46f 12:8a455f63] | 0,0,0:copper_chest#32942 0,0,1:weathered_copper_chest#32988
+axe on a Right exposed_copper_chest facing West, alone: Success | stack iron_axex1 dmg 1 | heard 4 | sent [31:id119 18:c0a03c05 12:2c499989] | 0,0,0:copper_chest#32942
+axe on a Single waxed_oxidized_copper_chest facing North, same kind clockwise: Success | stack iron_axex1 dmg 1 | heard 4 | sent [31:id119 18:77244c62 12:e86f2417] | 0,0,0:oxidized_copper_chest#32998 1,0,0:waxed_oxidized_copper_chest#33096
+axe on a Single waxed_oxidized_copper_chest facing North, other kind clockwise: Success | stack iron_axex1 dmg 1 | heard 4 | sent [31:id119 18:0fbf86cc 12:d9ddc13d] | 0,0,0:oxidized_copper_chest#32998 1,0,0:waxed_exposed_copper_chest#33048
+axe on a Single waxed_oxidized_copper_chest facing North, same kind counter-clockwise: Success | stack iron_axex1 dmg 1 | heard 4 | sent [31:id119 18:c64e1f36 12:95d5193b] | -1,0,0:waxed_oxidized_copper_chest#33096 0,0,0:oxidized_copper_chest#32998
+axe on a Single waxed_oxidized_copper_chest facing North, alone: Success | stack iron_axex1 dmg 1 | heard 4 | sent [31:id119 18:8b167ea0 12:d70a7e81] | 0,0,0:oxidized_copper_chest#32998
+axe on a Left waxed_oxidized_copper_chest facing North, same kind clockwise: Success | stack iron_axex1 dmg 1 | heard 4 | sent [31:id119 18:6e0a3bea 12:e204ee8f 18:92e4c62a 12:4110aecf] | 0,0,0:oxidized_copper_chest#33000 1,0,0:oxidized_copper_chest#33002
+axe on a Left waxed_oxidized_copper_chest facing North, other kind clockwise: Success | stack iron_axex1 dmg 1 | heard 4 | sent [31:id119 18:50c5f954 12:fd1f2015] | 0,0,0:oxidized_copper_chest#33000 1,0,0:waxed_exposed_copper_chest#33050
+axe on a Left waxed_oxidized_copper_chest facing North, same kind counter-clockwise: Success | stack iron_axex1 dmg 1 | heard 4 | sent [31:id119 18:158e58be 12:eed30913] | -1,0,0:waxed_oxidized_copper_chest#33098 0,0,0:oxidized_copper_chest#33000
+axe on a Left waxed_oxidized_copper_chest facing North, other kind counter-clockwise: Success | stack iron_axex1 dmg 1 | heard 4 | sent [31:id119 18:cc1cf128 12:5b1ab239] | -1,0,0:waxed_exposed_copper_chest#33050 0,0,0:oxidized_copper_chest#33000
+axe on a Left waxed_oxidized_copper_chest facing North, alone: Success | stack iron_axex1 dmg 1 | heard 4 | sent [31:id119 18:90e55092 12:4cfccdc7] | 0,0,0:oxidized_copper_chest#33000
+axe on a Right waxed_oxidized_copper_chest facing North, same kind clockwise: Success | stack iron_axex1 dmg 1 | heard 4 | sent [31:id119 18:1b46c3fc 12:08aed9ed] | 0,0,0:oxidized_copper_chest#33002 1,0,0:waxed_oxidized_copper_chest#33096
+axe on a Right waxed_oxidized_copper_chest facing North, other kind clockwise: Success | stack iron_axex1 dmg 1 | heard 4 | sent [31:id119 18:e00f2366 12:fa62c2eb] | 0,0,0:oxidized_copper_chest#33002 1,0,0:waxed_exposed_copper_chest#33048
+axe on a Right waxed_oxidized_copper_chest facing North, same kind counter-clockwise: Success | stack iron_axex1 dmg 1 | heard 4 | sent [31:id119 18:969dbbd0 12:40f4b744 18:2d30d331 12:05db9731] | -1,0,0:oxidized_copper_chest#33000 0,0,0:oxidized_copper_chest#33002
+axe on a Right waxed_oxidized_copper_chest facing North, other kind counter-clockwise: Success | stack iron_axex1 dmg 1 | heard 4 | sent [31:id119 18:624afeda 12:64028b3f] | -1,0,0:waxed_exposed_copper_chest#33048 0,0,0:oxidized_copper_chest#33002
+axe on a Right waxed_oxidized_copper_chest facing North, alone: Success | stack iron_axex1 dmg 1 | heard 4 | sent [31:id119 18:18d99744 12:2010fc85] | 0,0,0:oxidized_copper_chest#33002
+axe on a Single waxed_oxidized_copper_chest facing East, same kind clockwise: Success | stack iron_axex1 dmg 1 | heard 4 | sent [31:id119 18:dda1f6ae 12:c25a8283] | 0,0,0:oxidized_copper_chest#33016 0,0,1:waxed_oxidized_copper_chest#33114
+axe on a Single waxed_oxidized_copper_chest facing East, other kind clockwise: Success | stack iron_axex1 dmg 1 | heard 4 | sent [31:id119 18:94308f18 12:7e0c8ea9] | 0,0,0:oxidized_copper_chest#33016 0,0,1:waxed_exposed_copper_chest#33066
+axe on a Single waxed_oxidized_copper_chest facing East, same kind counter-clockwise: Success | stack iron_axex1 dmg 1 | heard 4 | sent [31:id119 18:2ccbc982 12:6feeaa37] | 0,0,-1:waxed_oxidized_copper_chest#33114 0,0,0:oxidized_copper_chest#33016
+axe on a Single waxed_oxidized_copper_chest facing East, alone: Success | stack iron_axex1 dmg 1 | heard 4 | sent [31:id119 18:e35a61ec 12:2ba0b65d] | 0,0,0:oxidized_copper_chest#33016
+axe on a Left waxed_oxidized_copper_chest facing East, same kind clockwise: Success | stack iron_axex1 dmg 1 | heard 4 | sent [31:id119 18:a822c156 12:41b5a88b 18:c55fef06 12:6cbf025b] | 0,0,0:oxidized_copper_chest#33018 0,0,1:oxidized_copper_chest#33020
+axe on a Left waxed_oxidized_copper_chest facing East, other kind clockwise: Success | stack iron_axex1 dmg 1 | heard 4 | sent [31:id119 18:5eb159c0 12:28cd73a1] | 0,0,0:oxidized_copper_chest#33018 0,0,1:waxed_exposed_copper_chest#33068
+axe on a Left waxed_oxidized_copper_chest facing East, same kind counter-clockwise: Success | stack iron_axex1 dmg 1 | heard 4 | sent [31:id119 18:6dd23c0a 12:92d3a3ef] | 0,0,-1:waxed_oxidized_copper_chest#33116 0,0,0:oxidized_copper_chest#33018
+axe on a Left waxed_oxidized_copper_chest facing East, other kind counter-clockwise: Success | stack iron_axex1 dmg 1 | heard 4 | sent [31:id119 18:329a9b74 12:849ea635] | 0,0,-1:waxed_exposed_copper_chest#33068 0,0,0:oxidized_copper_chest#33018
+axe on a Left waxed_oxidized_copper_chest facing East, alone: Success | stack iron_axex1 dmg 1 | heard 4 | sent [31:id119 18:e92933de 12:f12b9b33] | 0,0,0:oxidized_copper_chest#33018
+axe on a Right waxed_oxidized_copper_chest facing East, same kind clockwise: Success | stack iron_axex1 dmg 1 | heard 4 | sent [31:id119 18:adf19348 12:e29a3859] | 0,0,0:oxidized_copper_chest#33020 0,0,1:waxed_oxidized_copper_chest#33114
+axe on a Right waxed_oxidized_copper_chest facing East, other kind clockwise: Success | stack iron_axex1 dmg 1 | heard 4 | sent [31:id119 18:385306b2 12:9ebfc2e7] | 0,0,0:oxidized_copper_chest#33020 0,0,1:waxed_exposed_copper_chest#33066
+axe on a Right waxed_oxidized_copper_chest facing East, same kind counter-clockwise: Success | stack iron_axex1 dmg 1 | heard 4 | sent [31:id119 18:f5fe829c 12:45d687fd 18:b45d8c0c 12:7550178d] | 0,0,-1:oxidized_copper_chest#33018 0,0,0:oxidized_copper_chest#33020
+axe on a Right waxed_oxidized_copper_chest facing East, other kind counter-clockwise: Success | stack iron_axex1 dmg 1 | heard 4 | sent [31:id119 18:bac6e206 12:b66e638b] | 0,0,-1:waxed_exposed_copper_chest#33066 0,0,0:oxidized_copper_chest#33020
+axe on a Right waxed_oxidized_copper_chest facing East, alone: Success | stack iron_axex1 dmg 1 | heard 4 | sent [31:id119 18:71557a70 12:727cd4d1] | 0,0,0:oxidized_copper_chest#33020
+axe on a Single waxed_oxidized_copper_chest facing South, same kind clockwise: Success | stack iron_axex1 dmg 1 | heard 4 | sent [31:id119 18:e0496ac9 12:912158ac] | -1,0,0:waxed_oxidized_copper_chest#33102 0,0,0:oxidized_copper_chest#33004
+axe on a Single waxed_oxidized_copper_chest facing South, other kind clockwise: Success | stack iron_axex1 dmg 1 | heard 4 | sent [31:id119 18:96d80333 12:4d18b0aa] | -1,0,0:waxed_exposed_copper_chest#33054 0,0,0:oxidized_copper_chest#33004
+axe on a Single waxed_oxidized_copper_chest facing South, same kind counter-clockwise: Success | stack iron_axex1 dmg 1 | heard 4 | sent [31:id119 18:911f97f5 12:e38d30f8] | 0,0,0:oxidized_copper_chest#33004 1,0,0:waxed_oxidized_copper_chest#33102
+axe on a Single waxed_oxidized_copper_chest facing South, alone: Success | stack iron_axex1 dmg 1 | heard 4 | sent [31:id119 18:47ae305f 12:9f565666] | 0,0,0:oxidized_copper_chest#33004
+axe on a Left waxed_oxidized_copper_chest facing South, same kind clockwise: Success | stack iron_axex1 dmg 1 | heard 4 | sent [31:id119 18:fc079bf1 12:139981d5 18:b1871b14 12:81d2ca04] | -1,0,0:oxidized_copper_chest#33008 0,0,0:oxidized_copper_chest#33006
+axe on a Left waxed_oxidized_copper_chest facing South, other kind clockwise: Success | stack iron_axex1 dmg 1 | heard 4 | sent [31:id119 18:c0cffb5b 12:7386b302] | -1,0,0:waxed_exposed_copper_chest#33056 0,0,0:oxidized_copper_chest#33006
+axe on a Left waxed_oxidized_copper_chest facing South, same kind counter-clockwise: Success | stack iron_axex1 dmg 1 | heard 4 | sent [31:id119 18:5ba0629d 12:ef1cead0] | 0,0,0:oxidized_copper_chest#33006 1,0,0:waxed_oxidized_copper_chest#33104
+axe on a Left waxed_oxidized_copper_chest facing South, other kind counter-clockwise: Success | stack iron_axex1 dmg 1 | heard 4 | sent [31:id119 18:194bde87 12:c620bdde] | 0,0,0:oxidized_copper_chest#33006 1,0,0:waxed_exposed_copper_chest#33056
+axe on a Left waxed_oxidized_copper_chest facing South, alone: Success | stack iron_axex1 dmg 1 | heard 4 | sent [31:id119 18:c6886699 12:2c93aefc] | 0,0,0:oxidized_copper_chest#33006
+axe on a Right waxed_oxidized_copper_chest facing South, same kind clockwise: Success | stack iron_axex1 dmg 1 | heard 4 | sent [31:id119 18:8b50c603 12:cedd34fa] | -1,0,0:waxed_oxidized_copper_chest#33102 0,0,0:oxidized_copper_chest#33008
+axe on a Right waxed_oxidized_copper_chest facing South, other kind clockwise: Success | stack iron_axex1 dmg 1 | heard 4 | sent [31:id119 18:775e93c5 12:7eff8748] | -1,0,0:waxed_exposed_copper_chest#33054 0,0,0:oxidized_copper_chest#33008
+axe on a Right waxed_oxidized_copper_chest facing South, same kind counter-clockwise: Success | stack iron_axex1 dmg 1 | heard 4 | sent [31:id119 18:0ff9ce2f 12:c20f1a76 18:61017d6f 12:70853db6] | 0,0,0:oxidized_copper_chest#33008 1,0,0:oxidized_copper_chest#33006
+axe on a Right waxed_oxidized_copper_chest facing South, other kind counter-clockwise: Success | stack iron_axex1 dmg 1 | heard 4 | sent [31:id119 18:e9637b41 12:382368d4] | 0,0,0:oxidized_copper_chest#33008 1,0,0:waxed_exposed_copper_chest#33054
+axe on a Right waxed_oxidized_copper_chest facing South, alone: Success | stack iron_axex1 dmg 1 | heard 4 | sent [31:id119 18:ae2bdaab 12:7941b4d2] | 0,0,0:oxidized_copper_chest#33008
+axe on a Single waxed_oxidized_copper_chest facing West, same kind clockwise: Success | stack iron_axex1 dmg 1 | heard 4 | sent [31:id119 18:41df5e6d 12:8a8f4120] | 0,0,-1:waxed_oxidized_copper_chest#33108 0,0,0:oxidized_copper_chest#33010
+axe on a Single waxed_oxidized_copper_chest facing West, other kind clockwise: Success | stack iron_axex1 dmg 1 | heard 4 | sent [31:id119 18:32d4e2d7 12:7c715cae] | 0,0,-1:waxed_exposed_copper_chest#33060 0,0,0:oxidized_copper_chest#33010
+axe on a Single waxed_oxidized_copper_chest facing West, same kind counter-clockwise: Success | stack iron_axex1 dmg 1 | heard 4 | sent [31:id119 18:bb012969 12:fdc2964c] | 0,0,0:oxidized_copper_chest#33010 0,0,1:waxed_oxidized_copper_chest#33108
+axe on a Single waxed_oxidized_copper_chest facing West, alone: Success | stack iron_axex1 dmg 1 | heard 4 | sent [31:id119 18:718fc1d3 12:6a4f8b4a] | 0,0,0:oxidized_copper_chest#33010
+axe on a Left waxed_oxidized_copper_chest facing West, same kind clockwise: Success | stack iron_axex1 dmg 1 | heard 4 | sent [31:id119 18:6bd75695 12:d38296e8 18:226d03e5 12:502e6e98] | 0,0,-1:oxidized_copper_chest#33014 0,0,0:oxidized_copper_chest#33012
+axe on a Left waxed_oxidized_copper_chest facing West, other kind clockwise: Success | stack iron_axex1 dmg 1 | heard 4 | sent [31:id119 18:f638c9ff 12:0bf79406] | 0,0,-1:waxed_exposed_copper_chest#33062 0,0,0:oxidized_copper_chest#33012
+axe on a Left waxed_oxidized_copper_chest facing West, same kind counter-clockwise: Success | stack iron_axex1 dmg 1 | heard 4 | sent [31:id119 18:dddc3e11 12:09525024] | 0,0,0:oxidized_copper_chest#33012 0,0,1:waxed_oxidized_copper_chest#33110
+axe on a Left waxed_oxidized_copper_chest facing West, other kind counter-clockwise: Success | stack iron_axex1 dmg 1 | heard 4 | sent [31:id119 18:946ad67b 12:14b40b22] | 0,0,0:oxidized_copper_chest#33012 0,0,1:waxed_exposed_copper_chest#33062
+axe on a Left waxed_oxidized_copper_chest facing West, alone: Success | stack iron_axex1 dmg 1 | heard 4 | sent [31:id119 18:3658213d 12:5bbe2870] | 0,0,0:oxidized_copper_chest#33012
+axe on a Right waxed_oxidized_copper_chest facing West, same kind clockwise: Success | stack iron_axex1 dmg 1 | heard 4 | sent [31:id119 18:1913dea7 12:17e3b2fe] | 0,0,-1:waxed_oxidized_copper_chest#33108 0,0,0:oxidized_copper_chest#33014
+axe on a Right waxed_oxidized_copper_chest facing West, other kind clockwise: Success | stack iron_axex1 dmg 1 | heard 4 | sent [31:id119 18:a85d08b9 12:64a8d21c] | 0,0,-1:waxed_exposed_copper_chest#33060 0,0,0:oxidized_copper_chest#33014
+axe on a Right waxed_oxidized_copper_chest facing West, same kind counter-clockwise: Success | stack iron_axex1 dmg 1 | heard 4 | sent [31:id119 18:660884a3 12:6687cc6a 18:48cb56f3 12:3b7e729a] | 0,0,0:oxidized_copper_chest#33014 0,0,1:oxidized_copper_chest#33012
+axe on a Right waxed_oxidized_copper_chest facing West, other kind counter-clockwise: Success | stack iron_axex1 dmg 1 | heard 4 | sent [31:id119 18:2d0610e5 12:067f0d68] | 0,0,0:oxidized_copper_chest#33014 0,0,1:waxed_exposed_copper_chest#33060
+axe on a Right waxed_oxidized_copper_chest facing West, alone: Success | stack iron_axex1 dmg 1 | heard 4 | sent [31:id119 18:e394a94f 12:c24832d6] | 0,0,0:oxidized_copper_chest#33014

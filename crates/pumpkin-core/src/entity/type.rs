@@ -1,6 +1,6 @@
-pub mod spawn_rules;
 #[cfg(test)]
 mod golden;
+pub mod spawn_rules;
 
 use crate::entity::projectile::owner::ProjectileOwner;
 use std::sync::Arc;
@@ -136,164 +136,191 @@ use pumpkin_nbt::compound::NbtCompound;
 use std::sync::atomic::AtomicBool;
 use tracing::{debug, warn};
 
-#[expect(clippy::too_many_lines)]
-pub fn from_type(
-    entity_type: &'static EntityType,
-    position: Vector3<f64>,
-    world: &Arc<World>,
-    uuid: Uuid,
-) -> Arc<dyn EntityBase> {
-    let entity = Entity::from_uuid(uuid, world.clone(), position, entity_type);
+/// Builds the entity of one type from its base `Entity`.
+type Constructor = fn(Entity) -> Arc<dyn EntityBase>;
 
-    let mob: Arc<dyn EntityBase> = match entity_type.id {
-        // Zombie
-        id if id == EntityType::ZOMBIE.id => ZombieEntity::new(entity),
-        id if id == EntityType::DROWNED.id => DrownedEntity::new(entity),
-        id if id == EntityType::HUSK.id => HuskEntity::new(entity),
-        id if id == EntityType::ZOMBIE_VILLAGER.id => ZombieVillagerEntity::new(entity),
-        id if id == EntityType::ZOMBIFIED_PIGLIN.id => ZombifiedPiglinEntity::new(entity),
+/// Zombies, skeletons and the other hostile mobs.
+fn hostile_mob(id: u16) -> Option<Constructor> {
+    match id {
+        id if id == EntityType::ZOMBIE.id => Some(|entity| ZombieEntity::new(entity)),
+        id if id == EntityType::DROWNED.id => Some(|entity| DrownedEntity::new(entity)),
+        id if id == EntityType::HUSK.id => Some(|entity| HuskEntity::new(entity)),
+        id if id == EntityType::ZOMBIE_VILLAGER.id => {
+            Some(|entity| ZombieVillagerEntity::new(entity))
+        }
+        id if id == EntityType::ZOMBIFIED_PIGLIN.id => {
+            Some(|entity| ZombifiedPiglinEntity::new(entity))
+        }
+        id if id == EntityType::SKELETON.id => Some(|entity| SkeletonEntity::new(entity)),
+        id if id == EntityType::BOGGED.id => Some(|entity| BoggedSkeletonEntity::new(entity)),
+        id if id == EntityType::PARCHED.id => Some(|entity| ParchedSkeletonEntity::new(entity)),
+        id if id == EntityType::WITHER_SKELETON.id => {
+            Some(|entity| WitherSkeletonEntity::new(entity))
+        }
+        id if id == EntityType::STRAY.id => Some(|entity| StraySkeletonEntity::new(entity)),
+        id if id == EntityType::BAT.id => Some(|entity| BatEntity::new(entity)),
+        id if id == EntityType::CREEPER.id => Some(|entity| CreeperEntity::new(entity)),
+        id if id == EntityType::ENDERMAN.id => Some(|entity| EndermanEntity::new(entity)),
+        id if id == EntityType::BLAZE.id => Some(|entity| BlazeEntity::new(entity)),
+        id if id == EntityType::SPIDER.id => Some(|entity| SpiderEntity::new(entity)),
+        id if id == EntityType::CAVE_SPIDER.id => Some(|entity| CaveSpiderEntity::new(entity)),
+        id if id == EntityType::GHAST.id => Some(|entity| GhastEntity::new(entity)),
+        id if id == EntityType::MAGMA_CUBE.id => Some(|entity| MagmaCubeEntity::new(entity)),
+        id if id == EntityType::PHANTOM.id => Some(|entity| PhantomEntity::new(entity)),
+        id if id == EntityType::WITCH.id => Some(|entity| WitchEntity::new(entity)),
+        id if id == EntityType::PIGLIN.id => Some(|entity| PiglinEntity::new(entity)),
+        id if id == EntityType::PIGLIN_BRUTE.id => Some(|entity| PiglinBruteEntity::new(entity)),
+        id if id == EntityType::PILLAGER.id => Some(|entity| PillagerEntity::new(entity)),
+        id if id == EntityType::VINDICATOR.id => Some(|entity| VindicatorEntity::new(entity)),
+        id if id == EntityType::EVOKER.id => Some(|entity| EvokerEntity::new(entity)),
+        id if id == EntityType::RAVAGER.id => Some(|entity| RavagerEntity::new(entity)),
+        id if id == EntityType::GUARDIAN.id => Some(|entity| GuardianEntity::new(entity)),
+        id if id == EntityType::ELDER_GUARDIAN.id => {
+            Some(|entity| ElderGuardianEntity::new(entity))
+        }
+        id if id == EntityType::WARDEN.id => Some(|entity| WardenEntity::new(entity)),
+        id if id == EntityType::HOGLIN.id => Some(|entity| HoglinEntity::new(entity)),
+        id if id == EntityType::ZOGLIN.id => Some(|entity| ZoglinEntity::new(entity)),
+        id if id == EntityType::BREEZE.id => Some(|entity| BreezeEntity::new(entity)),
+        id if id == EntityType::CREAKING.id => Some(|entity| CreakingEntity::new(entity)),
+        id if id == EntityType::ILLUSIONER.id => Some(|entity| IllusionerEntity::new(entity)),
+        id if id == EntityType::VEX.id => Some(|entity| VexEntity::new(entity)),
+        id if id == EntityType::ENDERMITE.id => Some(|entity| EndermiteEntity::new(entity)),
+        id if id == EntityType::GIANT.id => Some(|entity| GiantEntity::new(entity)),
+        id if id == EntityType::SILVERFISH.id => Some(|entity| SilverfishEntity::new(entity)),
+        id if id == EntityType::SLIME.id => Some(|entity| SlimeEntity::new(entity)),
+        id if id == EntityType::SHULKER.id => Some(|entity| ShulkerEntity::new(entity)),
+        _ => None,
+    }
+}
 
-        // Skeleton
-        id if id == EntityType::SKELETON.id => SkeletonEntity::new(entity),
-        id if id == EntityType::BOGGED.id => BoggedSkeletonEntity::new(entity),
-        id if id == EntityType::PARCHED.id => ParchedSkeletonEntity::new(entity),
-        id if id == EntityType::WITHER_SKELETON.id => WitherSkeletonEntity::new(entity),
-        id if id == EntityType::STRAY.id => StraySkeletonEntity::new(entity),
+/// Animals, villagers, golems and the bosses.
+fn passive_mob(id: u16) -> Option<Constructor> {
+    match id {
+        id if id == EntityType::CAT.id => Some(|entity| CatEntity::new(entity)),
+        id if id == EntityType::CHICKEN.id => Some(|entity| ChickenEntity::new(entity)),
+        id if id == EntityType::COW.id => Some(|entity| CowEntity::new(entity)),
+        id if id == EntityType::PIG.id => Some(|entity| PigEntity::new(entity)),
+        id if id == EntityType::SHEEP.id => Some(|entity| SheepEntity::new(entity)),
+        id if id == EntityType::WOLF.id => Some(|entity| WolfEntity::new(entity)),
+        id if id == EntityType::FOX.id => Some(|entity| FoxEntity::new(entity)),
+        id if id == EntityType::RABBIT.id => Some(|entity| RabbitEntity::new(entity)),
+        id if id == EntityType::TURTLE.id => Some(|entity| TurtleEntity::new(entity)),
+        id if id == EntityType::VILLAGER.id => Some(|entity| VillagerEntity::new(entity)),
+        id if id == EntityType::SQUID.id => Some(|entity| SquidEntity::new(entity)),
+        id if id == EntityType::HORSE.id => Some(|entity| HorseEntity::new(entity)),
+        id if id == EntityType::DONKEY.id => Some(|entity| DonkeyEntity::new(entity)),
+        id if id == EntityType::MULE.id => Some(|entity| MuleEntity::new(entity)),
+        id if id == EntityType::ZOMBIE_HORSE.id => Some(|entity| ZombieHorseEntity::new(entity)),
+        id if id == EntityType::SKELETON_HORSE.id => {
+            Some(|entity| SkeletonHorseEntity::new(entity))
+        }
+        id if id == EntityType::LLAMA.id => Some(|entity| LlamaEntity::new(entity)),
+        id if id == EntityType::TRADER_LLAMA.id => Some(|entity| TraderLlamaEntity::new(entity)),
+        id if id == EntityType::WANDERING_TRADER.id => {
+            Some(|entity| WanderingTraderEntity::new(entity))
+        }
+        id if id == EntityType::ALLAY.id => Some(|entity| AllayEntity::new(entity)),
+        id if id == EntityType::ARMADILLO.id => Some(|entity| ArmadilloEntity::new(entity)),
+        id if id == EntityType::AXOLOTL.id => Some(|entity| AxolotlEntity::new(entity)),
+        id if id == EntityType::BEE.id => Some(|entity| BeeEntity::new(entity)),
+        id if id == EntityType::CAMEL.id => Some(|entity| CamelEntity::new(entity)),
+        id if id == EntityType::COPPER_GOLEM.id => Some(|entity| CopperGolemEntity::new(entity)),
+        id if id == EntityType::FROG.id => Some(|entity| FrogEntity::new(entity)),
+        id if id == EntityType::GOAT.id => Some(|entity| GoatEntity::new(entity)),
+        id if id == EntityType::HAPPY_GHAST.id => Some(|entity| HappyGhastEntity::new(entity)),
+        id if id == EntityType::MOOSHROOM.id => Some(|entity| MooshroomEntity::new(entity)),
+        id if id == EntityType::OCELOT.id => Some(|entity| OcelotEntity::new(entity)),
+        id if id == EntityType::PANDA.id => Some(|entity| PandaEntity::new(entity)),
+        id if id == EntityType::PARROT.id => Some(|entity| ParrotEntity::new(entity)),
+        id if id == EntityType::POLAR_BEAR.id => Some(|entity| PolarBearEntity::new(entity)),
+        id if id == EntityType::SNIFFER.id => Some(|entity| SnifferEntity::new(entity)),
+        id if id == EntityType::STRIDER.id => Some(|entity| StriderEntity::new(entity)),
+        id if id == EntityType::GLOW_SQUID.id => Some(|entity| GlowSquidEntity::new(entity)),
+        id if id == EntityType::COD.id => Some(|entity| CodEntity::new(entity)),
+        id if id == EntityType::SALMON.id => Some(|entity| SalmonEntity::new(entity)),
+        id if id == EntityType::PUFFERFISH.id => Some(|entity| PufferfishEntity::new(entity)),
+        id if id == EntityType::TROPICAL_FISH.id => Some(|entity| TropicalFishEntity::new(entity)),
+        id if id == EntityType::TADPOLE.id => Some(|entity| TadpoleEntity::new(entity)),
+        id if id == EntityType::DOLPHIN.id => Some(|entity| DolphinEntity::new(entity)),
+        id if id == EntityType::NAUTILUS.id => Some(|entity| NautilusEntity::new(entity)),
+        id if id == EntityType::SNOW_GOLEM.id => Some(|entity| SnowGolemEntity::new(entity)),
+        id if id == EntityType::IRON_GOLEM.id => Some(|entity| IronGolemEntity::new(entity)),
+        id if id == EntityType::WITHER.id => Some(|entity| WitherEntity::new(entity)),
+        id if id == EntityType::ENDER_DRAGON.id => Some(|entity| EnderDragonEntity::new(entity)),
+        _ => None,
+    }
+}
 
-        id if id == EntityType::BAT.id => BatEntity::new(entity),
-        id if id == EntityType::CREEPER.id => CreeperEntity::new(entity),
-        id if id == EntityType::ENDERMAN.id => EndermanEntity::new(entity),
-
-        id if id == EntityType::BLAZE.id => BlazeEntity::new(entity),
-        id if id == EntityType::SPIDER.id => SpiderEntity::new(entity),
-        id if id == EntityType::CAVE_SPIDER.id => CaveSpiderEntity::new(entity),
-        id if id == EntityType::GHAST.id => GhastEntity::new(entity),
-        id if id == EntityType::MAGMA_CUBE.id => MagmaCubeEntity::new(entity),
-        id if id == EntityType::PHANTOM.id => PhantomEntity::new(entity),
-        id if id == EntityType::WITCH.id => WitchEntity::new(entity),
-        id if id == EntityType::PIGLIN.id => PiglinEntity::new(entity),
-        id if id == EntityType::PIGLIN_BRUTE.id => PiglinBruteEntity::new(entity),
-        id if id == EntityType::PILLAGER.id => PillagerEntity::new(entity),
-        id if id == EntityType::VINDICATOR.id => VindicatorEntity::new(entity),
-        id if id == EntityType::EVOKER.id => EvokerEntity::new(entity),
-        id if id == EntityType::RAVAGER.id => RavagerEntity::new(entity),
-        id if id == EntityType::GUARDIAN.id => GuardianEntity::new(entity),
-        id if id == EntityType::ELDER_GUARDIAN.id => ElderGuardianEntity::new(entity),
-        id if id == EntityType::WARDEN.id => WardenEntity::new(entity),
-        id if id == EntityType::HOGLIN.id => HoglinEntity::new(entity),
-        id if id == EntityType::ZOGLIN.id => ZoglinEntity::new(entity),
-        id if id == EntityType::BREEZE.id => BreezeEntity::new(entity),
-        id if id == EntityType::CREAKING.id => CreakingEntity::new(entity),
-        id if id == EntityType::ILLUSIONER.id => IllusionerEntity::new(entity),
-        id if id == EntityType::VEX.id => VexEntity::new(entity),
-        id if id == EntityType::ENDERMITE.id => EndermiteEntity::new(entity),
-        id if id == EntityType::GIANT.id => GiantEntity::new(entity),
-
-        id if id == EntityType::CAT.id => CatEntity::new(entity),
-        id if id == EntityType::CHICKEN.id => ChickenEntity::new(entity),
-        id if id == EntityType::COW.id => CowEntity::new(entity),
-        id if id == EntityType::PIG.id => PigEntity::new(entity),
-        id if id == EntityType::SHEEP.id => SheepEntity::new(entity),
-        id if id == EntityType::WOLF.id => WolfEntity::new(entity),
-        id if id == EntityType::FOX.id => FoxEntity::new(entity),
-        id if id == EntityType::RABBIT.id => RabbitEntity::new(entity),
-        id if id == EntityType::TURTLE.id => TurtleEntity::new(entity),
-        id if id == EntityType::VILLAGER.id => VillagerEntity::new(entity),
-        id if id == EntityType::SQUID.id => SquidEntity::new(entity),
-        id if id == EntityType::HORSE.id => HorseEntity::new(entity),
-        id if id == EntityType::DONKEY.id => DonkeyEntity::new(entity),
-        id if id == EntityType::MULE.id => MuleEntity::new(entity),
-        id if id == EntityType::ZOMBIE_HORSE.id => ZombieHorseEntity::new(entity),
-        id if id == EntityType::SKELETON_HORSE.id => SkeletonHorseEntity::new(entity),
-        id if id == EntityType::LLAMA.id => LlamaEntity::new(entity),
-        id if id == EntityType::TRADER_LLAMA.id => TraderLlamaEntity::new(entity),
-        id if id == EntityType::WANDERING_TRADER.id => WanderingTraderEntity::new(entity),
-        id if id == EntityType::ALLAY.id => AllayEntity::new(entity),
-        id if id == EntityType::ARMADILLO.id => ArmadilloEntity::new(entity),
-        id if id == EntityType::AXOLOTL.id => AxolotlEntity::new(entity),
-        id if id == EntityType::BEE.id => BeeEntity::new(entity),
-        id if id == EntityType::CAMEL.id => CamelEntity::new(entity),
-        id if id == EntityType::COPPER_GOLEM.id => CopperGolemEntity::new(entity),
-        id if id == EntityType::FROG.id => FrogEntity::new(entity),
-        id if id == EntityType::GOAT.id => GoatEntity::new(entity),
-        id if id == EntityType::HAPPY_GHAST.id => HappyGhastEntity::new(entity),
-        id if id == EntityType::MOOSHROOM.id => MooshroomEntity::new(entity),
-        id if id == EntityType::OCELOT.id => OcelotEntity::new(entity),
-        id if id == EntityType::PANDA.id => PandaEntity::new(entity),
-        id if id == EntityType::PARROT.id => ParrotEntity::new(entity),
-        id if id == EntityType::POLAR_BEAR.id => PolarBearEntity::new(entity),
-        id if id == EntityType::SNIFFER.id => SnifferEntity::new(entity),
-        id if id == EntityType::STRIDER.id => StriderEntity::new(entity),
-        id if id == EntityType::GLOW_SQUID.id => GlowSquidEntity::new(entity),
-        id if id == EntityType::COD.id => CodEntity::new(entity),
-        id if id == EntityType::SALMON.id => SalmonEntity::new(entity),
-        id if id == EntityType::PUFFERFISH.id => PufferfishEntity::new(entity),
-        id if id == EntityType::TROPICAL_FISH.id => TropicalFishEntity::new(entity),
-        id if id == EntityType::TADPOLE.id => TadpoleEntity::new(entity),
-        id if id == EntityType::DOLPHIN.id => DolphinEntity::new(entity),
-        id if id == EntityType::NAUTILUS.id => NautilusEntity::new(entity),
-
-        id if id == EntityType::SNOW_GOLEM.id => SnowGolemEntity::new(entity),
-        id if id == EntityType::IRON_GOLEM.id => IronGolemEntity::new(entity),
-
-        id if id == EntityType::WITHER.id => WitherEntity::new(entity),
-        id if id == EntityType::ENDER_DRAGON.id => EnderDragonEntity::new(entity),
-
+/// Armor stands, displays, frames, markers and the other non-mob entities that sit in the world.
+fn decoration(id: u16) -> Option<Constructor> {
+    match id {
         id if id == EntityType::AREA_EFFECT_CLOUD.id => {
-            crate::entity::area_effect_cloud::AreaEffectCloudEntity::new(entity)
+            Some(|entity| crate::entity::area_effect_cloud::AreaEffectCloudEntity::new(entity))
         }
-        id if id == EntityType::ARMOR_STAND.id => Arc::new(ArmorStandEntity::new(entity)),
-        id if id == EntityType::CUSHION.id => Arc::new(CushionEntity::new(entity, 0)),
-        id if id == EntityType::BLOCK_DISPLAY.id => BlockDisplayEntity::new(entity),
-        id if id == EntityType::ITEM_DISPLAY.id => ItemDisplayEntity::new(entity),
-        id if id == EntityType::TEXT_DISPLAY.id => TextDisplayEntity::new(entity),
-        id if id == EntityType::PAINTING.id => Arc::new(PaintingEntity::new(entity)),
-        id if id == EntityType::LEASH_KNOT.id => Arc::new(LeashKnotEntity::new(entity)),
+        id if id == EntityType::ARMOR_STAND.id => {
+            Some(|entity| Arc::new(ArmorStandEntity::new(entity)))
+        }
+        id if id == EntityType::CUSHION.id => {
+            Some(|entity| Arc::new(CushionEntity::new(entity, 0)))
+        }
+        id if id == EntityType::BLOCK_DISPLAY.id => Some(|entity| BlockDisplayEntity::new(entity)),
+        id if id == EntityType::ITEM_DISPLAY.id => Some(|entity| ItemDisplayEntity::new(entity)),
+        id if id == EntityType::TEXT_DISPLAY.id => Some(|entity| TextDisplayEntity::new(entity)),
+        id if id == EntityType::PAINTING.id => Some(|entity| Arc::new(PaintingEntity::new(entity))),
+        id if id == EntityType::LEASH_KNOT.id => {
+            Some(|entity| Arc::new(LeashKnotEntity::new(entity)))
+        }
         id if id == EntityType::ITEM_FRAME.id || id == EntityType::GLOW_ITEM_FRAME.id => {
-            Arc::new(ItemFrameEntity::new(entity))
+            Some(|entity| Arc::new(ItemFrameEntity::new(entity)))
         }
-        id if id == EntityType::EVOKER_FANGS.id => Arc::new(
-            crate::entity::projectile::evoker_fangs::EvokerFangsEntity::new(entity, 0, 0.0, None),
-        ),
-        id if id == EntityType::END_CRYSTAL.id => Arc::new(EndCrystalEntity::new(entity)),
-        id if id == EntityType::ENDER_PEARL.id => Arc::new(EnderPearlEntity::new(entity)),
-        id if id == EntityType::SNOWBALL.id => Arc::new(SnowballEntity::new(entity)),
-        id if id == EntityType::EGG.id => Arc::new(EggEntity::new(entity)),
-        id if id == EntityType::SILVERFISH.id => SilverfishEntity::new(entity),
-        id if id == EntityType::SLIME.id => SlimeEntity::new(entity),
-        id if id == EntityType::SHULKER.id => ShulkerEntity::new(entity),
-        id if id == EntityType::SHULKER_BULLET.id => {
+        id if id == EntityType::END_CRYSTAL.id => {
+            Some(|entity| Arc::new(EndCrystalEntity::new(entity)))
+        }
+        id if id == EntityType::LIGHTNING_BOLT.id => {
+            Some(|entity| Arc::new(LightningBoltEntity::new(entity)))
+        }
+        id if id == EntityType::MARKER.id => Some(|entity| MarkerEntity::new(entity)),
+        id if id == EntityType::INTERACTION.id => Some(|entity| InteractionEntity::new(entity)),
+        _ => None,
+    }
+}
+
+/// Projectiles.
+fn projectile(id: u16) -> Option<Constructor> {
+    match id {
+        id if id == EntityType::EVOKER_FANGS.id => Some(|entity| {
+            Arc::new(
+                crate::entity::projectile::evoker_fangs::EvokerFangsEntity::new(
+                    entity, 0, 0.0, None,
+                ),
+            )
+        }),
+        id if id == EntityType::ENDER_PEARL.id => {
+            Some(|entity| Arc::new(EnderPearlEntity::new(entity)))
+        }
+        id if id == EntityType::SNOWBALL.id => Some(|entity| Arc::new(SnowballEntity::new(entity))),
+        id if id == EntityType::EGG.id => Some(|entity| Arc::new(EggEntity::new(entity))),
+        id if id == EntityType::SHULKER_BULLET.id => Some(|entity| {
             // Shulker bullets are normally spawned by ShulkerEntity directly;
             // when loaded from the world we create a no-target bullet at the given position.
             Arc::new(ShulkerBulletEntity::orphan(entity))
+        }),
+        id if id == EntityType::ARROW.id => Some(|entity| Arc::new(ArrowEntity::new(entity, None))),
+        id if id == EntityType::SPECTRAL_ARROW.id => {
+            Some(|entity| Arc::new(ArrowEntity::new(entity, None)))
         }
-        id if id == EntityType::FALLING_BLOCK.id => {
-            Arc::new(FallingEntity::new(entity, Block::SAND.default_state.id))
+        id if id == EntityType::TRIDENT.id => {
+            Some(|entity| Arc::new(TridentEntity::new(entity, None)))
         }
-        id if id == EntityType::EXPERIENCE_ORB.id => Arc::new(ExperienceOrbEntity::new(entity, 1)),
-        id if id == EntityType::TNT.id => Arc::new(TNTEntity::new(
-            entity,
-            TNTEntity::DEFAULT_POWER,
-            TNTEntity::DEFAULT_FUSE,
-        )),
-        id if id == EntityType::ITEM.id => Arc::new(ItemEntity::new_empty(entity)),
-        id if id == EntityType::ARROW.id => Arc::new(ArrowEntity::new(entity, None)),
-        id if id == EntityType::SPECTRAL_ARROW.id => Arc::new(ArrowEntity::new(entity, None)),
-        id if id == EntityType::TRIDENT.id => Arc::new(TridentEntity::new(entity, None)),
-        id if id == EntityType::MINECART.id
-            || id == EntityType::CHEST_MINECART.id
-            || id == EntityType::FURNACE_MINECART.id
-            || id == EntityType::TNT_MINECART.id
-            || id == EntityType::HOPPER_MINECART.id
-            || id == EntityType::COMMAND_BLOCK_MINECART.id
-            || id == EntityType::SPAWNER_MINECART.id =>
-        {
-            Arc::new(MinecartEntity::new(entity))
+        id if id == EntityType::FIREBALL.id => Some(|entity| Arc::new(FireballEntity::new(entity))),
+        id if id == EntityType::SMALL_FIREBALL.id => {
+            Some(|entity| Arc::new(SmallFireballEntity::new(entity)))
         }
-        id if id == EntityType::FIREBALL.id => Arc::new(FireballEntity::new(entity)),
-        id if id == EntityType::SMALL_FIREBALL.id => Arc::new(SmallFireballEntity::new(entity)),
-        id if id == EntityType::WITHER_SKULL.id => Arc::new(WitherSkullEntity::new(entity)),
-        id if id == EntityType::WIND_CHARGE.id => {
+        id if id == EntityType::WITHER_SKULL.id => {
+            Some(|entity| Arc::new(WitherSkullEntity::new(entity)))
+        }
+        id if id == EntityType::WIND_CHARGE.id => Some(|entity| {
             let thrown = ThrownItemEntity {
                 entity,
                 owner: ProjectileOwner::none(),
@@ -302,8 +329,8 @@ pub fn from_type(
                 gravity: WIND_CHARGE_GRAVITY,
             };
             Arc::new(WindChargeEntity::new_normal(thrown))
-        }
-        id if id == EntityType::BREEZE_WIND_CHARGE.id => {
+        }),
+        id if id == EntityType::BREEZE_WIND_CHARGE.id => Some(|entity| {
             let thrown = ThrownItemEntity {
                 entity,
                 owner: ProjectileOwner::none(),
@@ -312,18 +339,54 @@ pub fn from_type(
                 gravity: WIND_CHARGE_GRAVITY,
             };
             Arc::new(WindChargeEntity::new_breeze(thrown))
+        }),
+        id if id == EntityType::FIREWORK_ROCKET.id => {
+            Some(|entity| Arc::new(FireworkRocketEntity::new(entity)))
         }
-        id if id == EntityType::LIGHTNING_BOLT.id => Arc::new(LightningBoltEntity::new(entity)),
-        id if id == EntityType::MARKER.id => MarkerEntity::new(entity),
-        id if id == EntityType::INTERACTION.id => InteractionEntity::new(entity),
-        id if id == EntityType::FIREWORK_ROCKET.id => Arc::new(FireworkRocketEntity::new(entity)),
-        id if id == EntityType::SPLASH_POTION.id => Arc::new(SplashPotionEntity::new(entity)),
+        id if id == EntityType::SPLASH_POTION.id => {
+            Some(|entity| Arc::new(SplashPotionEntity::new(entity)))
+        }
         id if id == EntityType::EXPERIENCE_BOTTLE.id => {
-            Arc::new(ExperienceBottleEntity::new(entity))
+            Some(|entity| Arc::new(ExperienceBottleEntity::new(entity)))
         }
-        id if id == EntityType::LINGERING_POTION.id => Arc::new(LingeringPotionEntity::new(entity)),
-        id if id == EntityType::LLAMA_SPIT.id => Arc::new(LlamaSpitEntity::new(entity)),
-        id if id == EntityType::EYE_OF_ENDER.id => Arc::new(EyeOfEnder::new(entity)),
+        id if id == EntityType::LINGERING_POTION.id => {
+            Some(|entity| Arc::new(LingeringPotionEntity::new(entity)))
+        }
+        id if id == EntityType::LLAMA_SPIT.id => {
+            Some(|entity| Arc::new(LlamaSpitEntity::new(entity)))
+        }
+        id if id == EntityType::EYE_OF_ENDER.id => Some(|entity| Arc::new(EyeOfEnder::new(entity))),
+        _ => None,
+    }
+}
+
+/// Falling blocks, experience orbs, tnt, items, minecarts and boats.
+fn other_entity(id: u16) -> Option<Constructor> {
+    match id {
+        id if id == EntityType::FALLING_BLOCK.id => {
+            Some(|entity| Arc::new(FallingEntity::new(entity, Block::SAND.default_state.id)))
+        }
+        id if id == EntityType::EXPERIENCE_ORB.id => {
+            Some(|entity| Arc::new(ExperienceOrbEntity::new(entity, 1)))
+        }
+        id if id == EntityType::TNT.id => Some(|entity| {
+            Arc::new(TNTEntity::new(
+                entity,
+                TNTEntity::DEFAULT_POWER,
+                TNTEntity::DEFAULT_FUSE,
+            ))
+        }),
+        id if id == EntityType::ITEM.id => Some(|entity| Arc::new(ItemEntity::new_empty(entity))),
+        id if id == EntityType::MINECART.id
+            || id == EntityType::CHEST_MINECART.id
+            || id == EntityType::FURNACE_MINECART.id
+            || id == EntityType::TNT_MINECART.id
+            || id == EntityType::HOPPER_MINECART.id
+            || id == EntityType::COMMAND_BLOCK_MINECART.id
+            || id == EntityType::SPAWNER_MINECART.id =>
+        {
+            Some(|entity| Arc::new(MinecartEntity::new(entity)))
+        }
         id if id == EntityType::ACACIA_BOAT.id
             || id == EntityType::ACACIA_CHEST_BOAT.id
             || id == EntityType::BIRCH_BOAT.id
@@ -347,19 +410,34 @@ pub fn from_type(
             || id == EntityType::POPLAR_BOAT.id
             || id == EntityType::POPLAR_CHEST_BOAT.id =>
         {
-            Arc::new(BoatEntity::new(entity))
+            Some(|entity| Arc::new(BoatEntity::new(entity)))
         }
-        // Fallback Entity
-        _ => {
-            if entity_type.attributes.is_empty() {
-                Arc::new(entity)
-            } else {
-                Arc::new(LivingEntity::new(entity))
-            }
-        }
-    };
+        _ => None,
+    }
+}
 
-    mob
+pub fn from_type(
+    entity_type: &'static EntityType,
+    position: Vector3<f64>,
+    world: &Arc<World>,
+    uuid: Uuid,
+) -> Arc<dyn EntityBase> {
+    let entity = Entity::from_uuid(uuid, world.clone(), position, entity_type);
+    let id = entity_type.id;
+    let constructor = hostile_mob(id)
+        .or_else(|| passive_mob(id))
+        .or_else(|| decoration(id))
+        .or_else(|| projectile(id))
+        .or_else(|| other_entity(id));
+    if let Some(constructor) = constructor {
+        return constructor(entity);
+    }
+    // Fallback Entity
+    if entity_type.attributes.is_empty() {
+        Arc::new(entity)
+    } else {
+        Arc::new(LivingEntity::new(entity))
+    }
 }
 
 fn create_entity(

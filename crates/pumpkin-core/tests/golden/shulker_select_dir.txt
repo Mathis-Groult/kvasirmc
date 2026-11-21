@@ -1,0 +1,298 @@
+east_avoid3:
+  east share even delta 0.150000,0.000000,0.000000
+  steps {10, 20, 30, 40, 50}
+east_avoid0:
+  down share even delta 0.000000,-0.150000,0.000000
+  up share even delta 0.000000,0.150000,0.000000
+  north share even delta 0.000000,0.000000,-0.150000
+  south share even delta 0.000000,0.000000,0.150000
+  west share even delta -0.150000,0.000000,0.000000
+  east share even delta 0.150000,0.000000,0.000000
+  steps {10, 20, 30, 40, 50}
+east_avoid1:
+  east share even delta 0.150000,0.000000,0.000000
+  steps {10, 20, 30, 40, 50}
+east_avoid2:
+  east share even delta 0.150000,0.000000,0.000000
+  steps {10, 20, 30, 40, 50}
+west_avoid3:
+  west share even delta -0.150000,0.000000,0.000000
+  steps {10, 20, 30, 40, 50}
+west_avoid0:
+  down share even delta 0.000000,-0.150000,0.000000
+  up share even delta 0.000000,0.150000,0.000000
+  north share even delta 0.000000,0.000000,-0.150000
+  south share even delta 0.000000,0.000000,0.150000
+  west share even delta -0.150000,0.000000,0.000000
+  east share even delta 0.150000,0.000000,0.000000
+  steps {10, 20, 30, 40, 50}
+west_avoid1:
+  west share even delta -0.150000,0.000000,0.000000
+  steps {10, 20, 30, 40, 50}
+west_avoid2:
+  west share even delta -0.150000,0.000000,0.000000
+  steps {10, 20, 30, 40, 50}
+up_avoid3:
+  up share even delta 0.000000,0.150000,0.000000
+  steps {10, 20, 30, 40, 50}
+up_avoid0:
+  up share even delta 0.000000,0.150000,0.000000
+  steps {10, 20, 30, 40, 50}
+up_avoid1:
+  down share even delta 0.000000,-0.150000,0.000000
+  up share even delta 0.000000,0.150000,0.000000
+  north share even delta 0.000000,0.000000,-0.150000
+  south share even delta 0.000000,0.000000,0.150000
+  west share even delta -0.150000,0.000000,0.000000
+  east share even delta 0.150000,0.000000,0.000000
+  steps {10, 20, 30, 40, 50}
+up_avoid2:
+  up share even delta 0.000000,0.150000,0.000000
+  steps {10, 20, 30, 40, 50}
+down_avoid3:
+  down share even delta 0.000000,-0.150000,0.000000
+  steps {10, 20, 30, 40, 50}
+down_avoid0:
+  down share even delta 0.000000,-0.150000,0.000000
+  steps {10, 20, 30, 40, 50}
+down_avoid1:
+  down share even delta 0.000000,-0.150000,0.000000
+  up share even delta 0.000000,0.150000,0.000000
+  north share even delta 0.000000,0.000000,-0.150000
+  south share even delta 0.000000,0.000000,0.150000
+  west share even delta -0.150000,0.000000,0.000000
+  east share even delta 0.150000,0.000000,0.000000
+  steps {10, 20, 30, 40, 50}
+down_avoid2:
+  down share even delta 0.000000,-0.150000,0.000000
+  steps {10, 20, 30, 40, 50}
+south_avoid3:
+  south share even delta 0.000000,0.000000,0.150000
+  steps {10, 20, 30, 40, 50}
+south_avoid0:
+  south share even delta 0.000000,0.000000,0.150000
+  steps {10, 20, 30, 40, 50}
+south_avoid1:
+  south share even delta 0.000000,0.000000,0.150000
+  steps {10, 20, 30, 40, 50}
+south_avoid2:
+  down share even delta 0.000000,-0.150000,0.000000
+  up share even delta 0.000000,0.150000,0.000000
+  north share even delta 0.000000,0.000000,-0.150000
+  south share even delta 0.000000,0.000000,0.150000
+  west share even delta -0.150000,0.000000,0.000000
+  east share even delta 0.150000,0.000000,0.000000
+  steps {10, 20, 30, 40, 50}
+north_avoid3:
+  north share even delta 0.000000,0.000000,-0.150000
+  steps {10, 20, 30, 40, 50}
+north_avoid0:
+  north share even delta 0.000000,0.000000,-0.150000
+  steps {10, 20, 30, 40, 50}
+north_avoid1:
+  north share even delta 0.000000,0.000000,-0.150000
+  steps {10, 20, 30, 40, 50}
+north_avoid2:
+  down share even delta 0.000000,-0.150000,0.000000
+  up share even delta 0.000000,0.150000,0.000000
+  north share even delta 0.000000,0.000000,-0.150000
+  south share even delta 0.000000,0.000000,0.150000
+  west share even delta -0.150000,0.000000,0.000000
+  east share even delta 0.150000,0.000000,0.000000
+  steps {10, 20, 30, 40, 50}
+ene_avoid3:
+  up share even delta 0.000000,0.150000,0.000000
+  south share even delta 0.000000,0.000000,0.150000
+  east share even delta 0.150000,0.000000,0.000000
+  steps {10, 20, 30, 40, 50}
+ene_avoid0:
+  up share even delta 0.000000,0.150000,0.000000
+  south share even delta 0.000000,0.000000,0.150000
+  steps {10, 20, 30, 40, 50}
+ene_avoid1:
+  south share even delta 0.000000,0.000000,0.150000
+  east share even delta 0.150000,0.000000,0.000000
+  steps {10, 20, 30, 40, 50}
+ene_avoid2:
+  up share even delta 0.000000,0.150000,0.000000
+  east share even delta 0.150000,0.000000,0.000000
+  steps {10, 20, 30, 40, 50}
+wdn:
+  down share even delta 0.000000,-0.150000,0.000000
+  north share even delta 0.000000,0.000000,-0.150000
+  west share even delta -0.150000,0.000000,0.000000
+  steps {10, 20, 30, 40, 50}
+eds:
+  down share even delta 0.000000,-0.150000,0.000000
+  south share even delta 0.000000,0.000000,0.150000
+  east share even delta 0.150000,0.000000,0.000000
+  steps {10, 20, 30, 40, 50}
+wun:
+  up share even delta 0.000000,0.150000,0.000000
+  north share even delta 0.000000,0.000000,-0.150000
+  west share even delta -0.150000,0.000000,0.000000
+  steps {10, 20, 30, 40, 50}
+one_east_far_up:
+  up share even delta 0.000000,0.150000,0.000000
+  east share even delta 0.150000,0.000000,0.000000
+  steps {10, 20, 30, 40, 50}
+one_south_far_west:
+  south share even delta 0.000000,0.000000,0.150000
+  west share even delta -0.150000,0.000000,0.000000
+  steps {10, 20, 30, 40, 50}
+one_down_far_north:
+  down share even delta 0.000000,-0.150000,0.000000
+  north share even delta 0.000000,0.000000,-0.150000
+  steps {10, 20, 30, 40, 50}
+near_edge_east:
+  none share even delta 0.150000,0.000000,0.000000
+  steps {10, 20, 30, 40, 50}
+far_edge_diag:
+  up share even delta 0.000000,0.150000,0.000000
+  east share even delta 0.150000,0.000000,0.000000
+  steps {10, 20, 30, 40, 50}
+near_diag:
+  none share even delta 0.086603,0.086603,0.086603
+  steps {10, 20, 30, 40, 50}
+on_target:
+  none share even delta 0.000000,0.000000,0.000000
+  steps {10, 20, 30, 40, 50}
+none_centre:
+  none share even delta 0.000000,-0.150000,0.000000
+  steps {10, 20, 30, 40, 50}
+none_fraction:
+  none share even delta -0.066667,-0.116667,0.066667
+  steps {10, 20, 30, 40, 50}
+fraction_far:
+  up share even delta 0.000000,0.150000,0.000000
+  north share even delta 0.000000,0.000000,-0.150000
+  east share even delta 0.150000,0.000000,0.000000
+  steps {10, 20, 30, 40, 50}
+fraction_near:
+  none share even delta 0.129987,-0.037139,0.064993
+  steps {10, 20, 30, 40, 50}
+y_rounds_up:
+  none share even delta 0.000000,0.150000,0.000000
+  steps {10, 20, 30, 40, 50}
+y_rounds_down:
+  none share even delta 0.000000,0.000000,0.000000
+  steps {10, 20, 30, 40, 50}
+negative_far:
+  up share even delta 0.000000,0.150000,0.000000
+  south share even delta 0.000000,0.000000,0.150000
+  west share even delta -0.150000,0.000000,0.000000
+  steps {10, 20, 30, 40, 50}
+negative_near:
+  none share even delta -0.106066,0.000000,0.106066
+  steps {10, 20, 30, 40, 50}
+diag_east_blocked:
+  up share even delta 0.000000,0.150000,0.000000
+  south share even delta 0.000000,0.000000,0.150000
+  steps {10, 20, 30, 40, 50}
+diag_west_blocked:
+  up share even delta 0.000000,0.150000,0.000000
+  south share even delta 0.000000,0.000000,0.150000
+  east share even delta 0.150000,0.000000,0.000000
+  steps {10, 20, 30, 40, 50}
+diag_up_blocked:
+  south share even delta 0.000000,0.000000,0.150000
+  east share even delta 0.150000,0.000000,0.000000
+  steps {10, 20, 30, 40, 50}
+diag_down_blocked:
+  up share even delta 0.000000,0.150000,0.000000
+  south share even delta 0.000000,0.000000,0.150000
+  east share even delta 0.150000,0.000000,0.000000
+  steps {10, 20, 30, 40, 50}
+diag_south_blocked:
+  up share even delta 0.000000,0.150000,0.000000
+  east share even delta 0.150000,0.000000,0.000000
+  steps {10, 20, 30, 40, 50}
+diag_north_blocked:
+  up share even delta 0.000000,0.150000,0.000000
+  south share even delta 0.000000,0.000000,0.150000
+  east share even delta 0.150000,0.000000,0.000000
+  steps {10, 20, 30, 40, 50}
+east_blocked:
+  down share 0.2 delta 0.000000,-0.150000,0.000000
+  up share 0.2 delta 0.000000,0.150000,0.000000
+  north share 0.2 delta 0.000000,0.000000,-0.150000
+  south share 0.2 delta 0.000000,0.000000,0.150000
+  west share 0.2 delta -0.150000,0.000000,0.000000
+  steps {10, 20, 30, 40, 50}
+east_behind_blocked:
+  east share even delta 0.150000,0.000000,0.000000
+  steps {10, 20, 30, 40, 50}
+west_blocked:
+  down share 0.2 delta 0.000000,-0.150000,0.000000
+  up share 0.2 delta 0.000000,0.150000,0.000000
+  north share 0.2 delta 0.000000,0.000000,-0.150000
+  south share 0.2 delta 0.000000,0.000000,0.150000
+  east share 0.2 delta 0.150000,0.000000,0.000000
+  steps {10, 20, 30, 40, 50}
+west_behind_blocked:
+  west share even delta -0.150000,0.000000,0.000000
+  steps {10, 20, 30, 40, 50}
+up_blocked:
+  down share 0.2 delta 0.000000,-0.150000,0.000000
+  north share 0.2 delta 0.000000,0.000000,-0.150000
+  south share 0.2 delta 0.000000,0.000000,0.150000
+  west share 0.2 delta -0.150000,0.000000,0.000000
+  east share 0.2 delta 0.150000,0.000000,0.000000
+  steps {10, 20, 30, 40, 50}
+up_behind_blocked:
+  up share even delta 0.000000,0.150000,0.000000
+  steps {10, 20, 30, 40, 50}
+down_blocked:
+  up share 0.2 delta 0.000000,0.150000,0.000000
+  north share 0.2 delta 0.000000,0.000000,-0.150000
+  south share 0.2 delta 0.000000,0.000000,0.150000
+  west share 0.2 delta -0.150000,0.000000,0.000000
+  east share 0.2 delta 0.150000,0.000000,0.000000
+  steps {10, 20, 30, 40, 50}
+down_behind_blocked:
+  down share even delta 0.000000,-0.150000,0.000000
+  steps {10, 20, 30, 40, 50}
+south_blocked:
+  down share 0.2 delta 0.000000,-0.150000,0.000000
+  up share 0.2 delta 0.000000,0.150000,0.000000
+  north share 0.2 delta 0.000000,0.000000,-0.150000
+  west share 0.2 delta -0.150000,0.000000,0.000000
+  east share 0.2 delta 0.150000,0.000000,0.000000
+  steps {10, 20, 30, 40, 50}
+south_behind_blocked:
+  south share even delta 0.000000,0.000000,0.150000
+  steps {10, 20, 30, 40, 50}
+north_blocked:
+  down share 0.2 delta 0.000000,-0.150000,0.000000
+  up share 0.2 delta 0.000000,0.150000,0.000000
+  south share 0.2 delta 0.000000,0.000000,0.150000
+  west share 0.2 delta -0.150000,0.000000,0.000000
+  east share 0.2 delta 0.150000,0.000000,0.000000
+  steps {10, 20, 30, 40, 50}
+north_behind_blocked:
+  north share even delta 0.000000,0.000000,-0.150000
+  steps {10, 20, 30, 40, 50}
+boxed_east:
+  down share even delta 0.000000,-0.150000,0.000000
+  up share even delta 0.000000,0.150000,0.000000
+  north share even delta 0.000000,0.000000,-0.150000
+  south share even delta 0.000000,0.000000,0.150000
+  west share even delta -0.150000,0.000000,0.000000
+  east share even delta 0.150000,0.000000,0.000000
+  steps {10, 20, 30, 40, 50}
+east_up_blocked:
+  south share even delta 0.000000,0.000000,0.150000
+  steps {10, 20, 30, 40, 50}
+boxed_one_open_up:
+  down share 0.1 delta 0.000000,-0.150000,0.000000
+  up share 0.6 delta 0.000000,0.150000,0.000000
+  north share 0.1 delta 0.000000,0.000000,-0.150000
+  south share 0.1 delta 0.000000,0.000000,0.150000
+  west share 0.1 delta -0.150000,0.000000,0.000000
+  east share 0.1 delta 0.150000,0.000000,0.000000
+  steps {10, 20, 30, 40, 50}
+far_diag:
+  up share even delta 0.000000,0.150000,0.000000
+  south share even delta 0.000000,0.000000,0.150000
+  east share even delta 0.150000,0.000000,0.000000
+  steps {10, 20, 30, 40, 50}

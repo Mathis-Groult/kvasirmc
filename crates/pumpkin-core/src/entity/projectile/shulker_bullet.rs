@@ -50,6 +50,9 @@ pub struct ShulkerBulletEntity {
 
 use std::sync::atomic::AtomicU8;
 
+#[cfg(test)]
+mod select_dir_golden;
+
 impl ShulkerBulletEntity {
     pub fn new(
         owner: &Entity,

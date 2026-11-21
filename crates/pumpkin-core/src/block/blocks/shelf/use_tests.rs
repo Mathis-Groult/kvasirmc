@@ -251,3 +251,18 @@ async fn a_powered_swap_with_nothing_to_move_is_consumed() -> TestResult {
     s.server.stop();
     Ok(())
 }
+
+#[test]
+fn a_swap_is_vibration_silent_only_for_items_with_interact_vibrations_off() {
+    use super::use_item::interact_event;
+    use pumpkin_data::game_event::GameEvent;
+    let event = |item: &'static Item| interact_event(&ItemStack::new(1, item));
+    assert_eq!(event(&Item::STONE), Some(GameEvent::ItemInteractFinish));
+    assert_eq!(event(&Item::APPLE), Some(GameEvent::ItemInteractFinish));
+    assert_eq!(event(&Item::IRON_SPEAR), None);
+    assert_eq!(event(&Item::WOODEN_SPEAR), None);
+    assert_eq!(
+        interact_event(&ItemStack::EMPTY.clone()),
+        Some(GameEvent::ItemInteractFinish)
+    );
+}

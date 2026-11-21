@@ -5,7 +5,7 @@ use std::sync::Arc;
 
 use pumpkin_data::HorizontalFacingExt;
 use pumpkin_data::block_properties::AcaciaShelfLikeProperties;
-use pumpkin_data::data_component_impl::EquipmentSlot;
+use pumpkin_data::data_component_impl::{EquipmentSlot, UseEffectsImpl};
 use pumpkin_data::game_event::GameEvent;
 use pumpkin_data::item_stack::ItemStack;
 use pumpkin_data::sound::{Sound, SoundCategory};
@@ -107,8 +107,9 @@ fn swap_single_item(
     } else {
         old.clone()
     };
+    let event = interact_event(&new_held);
     player.inventory().set_held_item(new_held);
-    changed(world, position, GameEvent::ItemInteractFinish);
+    changed(world, position, event);
     !old.is_empty()
 }
 
@@ -146,7 +147,7 @@ fn swap_hotbar(
                 moved = true;
             }
         }
-        changed(world, pos, GameEvent::EntityInteract);
+        changed(world, pos, Some(GameEvent::EntityInteract));
     }
     if !moved {
         return BlockActionResult::Consume;
@@ -173,7 +174,18 @@ fn has_infinite_materials(player: &Player) -> bool {
     matches!(player.gamemode.load(), GameMode::Creative)
 }
 
-/// `setChanged(event)`: the shelf changed because of the player.
-fn changed(world: &Arc<World>, position: &BlockPos, event: GameEvent) {
-    world.emit_game_event(event.name(), position.to_centered_f64());
+/// The vibration of a swap: `ITEM_INTERACT_FINISH`, unless the stack now in the hand carries
+/// `USE_EFFECTS` with `interact_vibrations` off (spears), which swaps silently.
+pub(super) fn interact_event(new_held: &ItemStack) -> Option<GameEvent> {
+    let silent = new_held
+        .get_data_component::<UseEffectsImpl>()
+        .is_some_and(|effects| !effects.interact_vibrations);
+    (!silent).then_some(GameEvent::ItemInteractFinish)
+}
+
+/// `setChanged(event)`: the shelf changed because of the player; no event, no vibration.
+fn changed(world: &Arc<World>, position: &BlockPos, event: Option<GameEvent>) {
+    if let Some(event) = event {
+        world.emit_game_event(event.name(), position.to_centered_f64());
+    }
 }

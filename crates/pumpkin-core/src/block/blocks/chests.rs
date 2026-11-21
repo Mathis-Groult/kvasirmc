@@ -178,6 +178,62 @@ fn get_chest_comparator_output(args: &GetComparatorOutputArgs<'_>) -> Option<u8>
     }
 }
 
+/// Generates the loot a chest half still owes (taking its table key), for the opening player.
+fn unpack_loot(args: &GetScreenHandlerFactoryArgs<'_>, entity: &Arc<dyn BlockEntity>) {
+    if let Some((loot_key, seed)) = entity.take_loot_table()
+        && let Some(table) = get_loot_table(&loot_key)
+        && let Some(inv) = entity.clone().get_inventory()
+    {
+        args.player.trigger_advancement(
+            crate::entity::player::advancement::trigger::AdvancementTrigger::PlayerGeneratesContainerLoot {
+                loot_table_id: loot_key.clone(),
+            },
+        );
+        fill_chest_inventory_handle(
+            &inv,
+            &crate::world::loot::LootTableHandle::Static(table),
+            seed,
+            &LootContextParameters {
+                world: Some(args.world),
+                position: Some(args.position.to_f64()),
+                this_entity: Some(args.player.as_ref()),
+                luck: args
+                    .player
+                    .living_entity
+                    .get_attribute_value(&pumpkin_data::attributes::Attributes::LUCK)
+                    as f32,
+                ..Default::default()
+            },
+        );
+        inv.mark_dirty();
+    }
+}
+
+/// The inventory the player sees: both halves of a double chest (vanilla's `CompoundContainer`
+/// order), or the clicked half alone when no partner has an inventory.
+fn join_double_inventory(
+    args: &GetScreenHandlerFactoryArgs<'_>,
+    chest_type: ChestType,
+    connected_towards: Option<HorizontalFacing>,
+    first_inventory: Arc<dyn Inventory>,
+) -> Arc<dyn Inventory> {
+    if let Some(direction) = connected_towards
+        && let Some(second_inventory) = args
+            .world
+            .get_block_entity(&args.position.offset(direction.to_offset()))
+            .and_then(BlockEntity::get_inventory)
+    {
+        // Vanilla: chestType == ChestType.RIGHT ? DoubleBlockProperties.Type.FIRST : DoubleBlockProperties.Type.SECOND;
+        if matches!(chest_type, ChestType::Right) {
+            DoubleInventory::new(first_inventory, second_inventory)
+        } else {
+            DoubleInventory::new(second_inventory, first_inventory)
+        }
+    } else {
+        first_inventory
+    }
+}
+
 /// Returns a screen handler factory for opening a chest or double chest inventory.
 ///
 /// Unpacks deferred loot tables on first open (for non-spectator players) and combines
@@ -197,39 +253,9 @@ fn get_chest_screen_handler_factory(
         ChestType::Right => Some(chest_props.facing.rotate_counter_clockwise()),
     };
 
-    let unpack = |entity: &Arc<dyn BlockEntity>| {
-        if let Some((loot_key, seed)) = entity.take_loot_table()
-            && let Some(table) = get_loot_table(&loot_key)
-            && let Some(inv) = entity.clone().get_inventory()
-        {
-            args.player.trigger_advancement(
-                crate::entity::player::advancement::trigger::AdvancementTrigger::PlayerGeneratesContainerLoot {
-                    loot_table_id: loot_key.clone(),
-                },
-            );
-            fill_chest_inventory_handle(
-                &inv,
-                &crate::world::loot::LootTableHandle::Static(table),
-                seed,
-                &LootContextParameters {
-                    world: Some(args.world),
-                    position: Some(args.position.to_f64()),
-                    this_entity: Some(args.player.as_ref()),
-                    luck: args
-                        .player
-                        .living_entity
-                        .get_attribute_value(&pumpkin_data::attributes::Attributes::LUCK)
-                        as f32,
-                    ..Default::default()
-                },
-            );
-            inv.mark_dirty();
-        }
-    };
-
     // Unpack deferred loot table on first open (non-spectator only).
     if !player_is_spectator && let Some(ref entity) = first_chest {
-        unpack(entity);
+        unpack_loot(&args, entity);
     }
 
     let first_loot_pending = first_chest
@@ -255,7 +281,7 @@ fn get_chest_screen_handler_factory(
             .world
             .get_block_entity(&args.position.offset(direction.to_offset()))
     {
-        unpack(&second);
+        unpack_loot(&args, &second);
     }
 
     let loot_pending = first_loot_pending
@@ -265,21 +291,12 @@ fn get_chest_screen_handler_factory(
                 .is_some_and(|second| second.has_loot_table())
         });
 
-    let inventory = if let Some(direction) = connected_towards
-        && let Some(second_inventory) = args
-            .world
-            .get_block_entity(&args.position.offset(direction.to_offset()))
-            .and_then(BlockEntity::get_inventory)
-    {
-        // Vanilla: chestType == ChestType.RIGHT ? DoubleBlockProperties.Type.FIRST : DoubleBlockProperties.Type.SECOND;
-        if matches!(chest_props.r#type, ChestType::Right) {
-            DoubleInventory::new(first_inventory, second_inventory)
-        } else {
-            DoubleInventory::new(second_inventory, first_inventory)
-        }
-    } else {
-        first_inventory
-    };
+    let inventory = join_double_inventory(
+        &args,
+        chest_props.r#type,
+        connected_towards,
+        first_inventory,
+    );
 
     Some(Box::new(ChestScreenFactory {
         inventory,

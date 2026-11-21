@@ -450,3 +450,149 @@ async fn each_display_wrapper_delegates_to_the_shared_display_code() -> TestResu
     server.stop();
     Ok(())
 }
+
+fn own_keys(written: &NbtCompound) -> NbtTag {
+    let mut own = NbtCompound::new();
+    for (key, tag) in &written.child_tags {
+        let shared = [
+            "interpolation_duration",
+            "start_interpolation",
+            "teleport_duration",
+            "view_range",
+            "shadow_radius",
+            "shadow_strength",
+            "width",
+            "height",
+            "glow_color_override",
+            "billboard",
+            "brightness",
+            "transformation",
+        ];
+        if !shared.contains(&&**key) {
+            own.child_tags.insert(key.clone(), tag.clone());
+        }
+    }
+    NbtTag::Compound(own)
+}
+
+fn hex(bytes: &[u8]) -> String {
+    bytes.iter().fold(String::new(), |mut text, byte| {
+        let _ = write!(text, "{byte:02x}");
+        text
+    })
+}
+
+fn wrapper_cases() -> Vec<(&'static str, &'static str, NbtCompound)> {
+    let mut cases = vec![
+        ("block", "empty", NbtCompound::new()),
+        (
+            "block",
+            "state 5",
+            compound(vec![("block_state", NbtTag::Int(5))]),
+        ),
+        ("item", "empty", NbtCompound::new()),
+        ("text", "empty", NbtCompound::new()),
+        (
+            "text",
+            "text json",
+            compound(vec![("text", NbtTag::String("\"hi\"".into()))]),
+        ),
+        (
+            "text",
+            "bad text json",
+            compound(vec![("text", NbtTag::String("{".into()))]),
+        ),
+        (
+            "text",
+            "line width",
+            compound(vec![("line_width", NbtTag::Int(77))]),
+        ),
+        (
+            "text",
+            "background",
+            compound(vec![("background", NbtTag::Int(123_456))]),
+        ),
+        (
+            "text",
+            "opacity",
+            compound(vec![("text_opacity", NbtTag::Byte(-9))]),
+        ),
+    ];
+    for mode in [
+        "thirdperson_lefthand",
+        "thirdperson_righthand",
+        "firstperson_lefthand",
+        "firstperson_righthand",
+        "head",
+        "gui",
+        "ground",
+        "fixed",
+        "none",
+        "bogus",
+    ] {
+        cases.push((
+            "item",
+            mode,
+            compound(vec![("item_display", NbtTag::String(mode.into()))]),
+        ));
+    }
+    for flag in ["shadow", "see_through", "default_background"] {
+        cases.push(("text", flag, compound(vec![(flag, NbtTag::Byte(1))])));
+    }
+    for align in ["left", "right", "center", "bogus"] {
+        cases.push((
+            "text",
+            align,
+            compound(vec![("alignment", NbtTag::String(align.into()))]),
+        ));
+    }
+    cases
+}
+
+fn wrapper_line(
+    wrapper: &dyn crate::entity::EntityBase,
+    entity: &Entity,
+    nbt: &NbtCompound,
+) -> String {
+    wrapper.read_custom_nbt(nbt);
+    let mut written = NbtCompound::new();
+    wrapper.write_custom_nbt(&mut written);
+    wrapper.init_data_tracker();
+    format!(
+        "wrote {} | tracked {}",
+        tag_text(&own_keys(&written)),
+        hex(&tracked_bytes(entity))
+    )
+}
+
+/// The data each wrapper adds to the shared display data: its own NBT keys and tracked values
+/// (card #70: `kvasir-test --extra-mutants` found none of it recorded).
+#[tokio::test(flavor = "multi_thread")]
+async fn display_wrapper_own_nbt_and_tracker_are_the_same() -> TestResult {
+    let folder = tempfile::tempdir()?;
+    let server = test_support::server(&folder).await?;
+    let world = server.worlds.load()[0].clone();
+    let entity = |kind| Entity::new(Arc::clone(&world), Vector3::new(0.5, 64.0, 0.5), kind);
+
+    let mut now = String::new();
+    for (kind, name, nbt) in wrapper_cases() {
+        let line = match kind {
+            "block" => {
+                let w = super::BlockDisplayEntity::new(entity(&EntityType::BLOCK_DISPLAY));
+                wrapper_line(&*w, &w.display.entity, &nbt)
+            }
+            "item" => {
+                let w = super::ItemDisplayEntity::new(entity(&EntityType::ITEM_DISPLAY));
+                wrapper_line(&*w, &w.display.entity, &nbt)
+            }
+            _ => {
+                let w = super::TextDisplayEntity::new(entity(&EntityType::TEXT_DISPLAY));
+                wrapper_line(&*w, &w.display.entity, &nbt)
+            }
+        };
+        writeln!(now, "{kind} {name}: {line}")?;
+    }
+    script_golden::bless_or_compare("display_wrappers.txt", &now)?;
+    server.stop();
+    Ok(())
+}

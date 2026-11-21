@@ -91,98 +91,12 @@ impl JavaClient {
         player: &Arc<Player>,
         chat_message: &SChatMessage<'_>,
     ) -> Result<(), ChatError> {
-        // Check for oversized messages
-        // If we're able to find the 257th UTF-16 character, the message is too big.
-        if chat_message.message.encode_utf16().nth(256).is_some() {
-            return Err(ChatError::OversizedMessage);
-        }
-        // Check for illegal characters
-        if chat_message
-            .message
-            .chars()
-            .any(|c| c == '§' || c < ' ' || c == '\x7F')
-        {
-            return Err(ChatError::IllegalCharacters);
-        }
-        // These checks are only run in secure chat mode
+        check_message_text(chat_message.message)?;
+        // The remaining checks are only run in secure chat mode
         if server.basic_config.allow_chat_reports {
-            // Check for unsigned chat
-            if let Some(signature) = &chat_message.signature {
-                if signature.len() != 256 {
-                    return Err(ChatError::UnsignedChat); // Signature is the wrong length
-                }
-            } else {
-                return Err(ChatError::UnsignedChat); // There is no signature
-            }
-
-            let now = SystemTime::now()
-                .duration_since(UNIX_EPOCH)
-                .unwrap_or_default()
-                .as_millis() as i64;
-
-            // Verify message timestamp
-            if chat_message.timestamp > now || chat_message.timestamp < (now - CHAT_MESSAGE_MAX_AGE)
-            {
-                return Err(ChatError::OutOfOrderChat);
-            }
-
-            // Verify session expiry
-            if player
-                .chat_session
-                .lock()
-                .unwrap_or_else(std::sync::PoisonError::into_inner)
-                .expires_at
-                < now
-            {
-                return Err(ChatError::ExpiredPublicKey);
-            }
-
-            let offset = chat_message.message_count.0;
-            if offset < 0 {
-                return Err(ChatError::ChatValidationFailed);
-            }
-
-            {
-                let mut cache = player
-                    .signature_cache
-                    .lock()
-                    .unwrap_or_else(std::sync::PoisonError::into_inner);
-                if !chat_message.acknowledged.is_empty() {
-                    if cache
-                        .last_seen_validator
-                        .apply_update(offset as usize, chat_message.acknowledged)
-                        .is_err()
-                    {
-                        return Err(ChatError::ChatValidationFailed);
-                    }
-                } else if cache
-                    .last_seen_validator
-                    .apply_offset(offset as usize)
-                    .is_err()
-                {
-                    return Err(ChatError::ChatValidationFailed);
-                }
-
-                if cache.last_seen_validator.tracked_messages_count() > 4096 {
-                    return Err(ChatError::TooManyPendingChats);
-                }
-            }
-
-            // Validate previous signature checksum (new in 1.21.5)
-            // The client can bypass this check by sending 0
-            if chat_message.checksum != 0 {
-                let checksum = polynomial_rolling_hash(
-                    player
-                        .signature_cache
-                        .lock()
-                        .unwrap_or_else(std::sync::PoisonError::into_inner)
-                        .last_seen
-                        .as_ref(),
-                );
-                if checksum != chat_message.checksum {
-                    return Err(ChatError::ChatValidationFailed);
-                }
-            }
+            check_signature(chat_message)?;
+            check_timestamp_and_session(player, chat_message)?;
+            check_last_seen(player, chat_message)?;
         }
         Ok(())
     }
@@ -282,6 +196,114 @@ impl JavaClient {
 
         Ok(())
     }
+}
+
+/// Vanilla's limits on the text itself: at most 256 UTF-16 units, no `§`, no control characters.
+fn check_message_text(message: &str) -> Result<(), ChatError> {
+    // Check for oversized messages
+    // If we're able to find the 257th UTF-16 character, the message is too big.
+    if message.encode_utf16().nth(256).is_some() {
+        return Err(ChatError::OversizedMessage);
+    }
+    // Check for illegal characters
+    if message.chars().any(|c| c == '§' || c < ' ' || c == '\x7F') {
+        return Err(ChatError::IllegalCharacters);
+    }
+    Ok(())
+}
+
+/// Secure chat needs a signature of exactly 256 bytes.
+const fn check_signature(chat_message: &SChatMessage<'_>) -> Result<(), ChatError> {
+    // Check for unsigned chat
+    if let Some(signature) = &chat_message.signature {
+        if signature.len() != 256 {
+            return Err(ChatError::UnsignedChat); // Signature is the wrong length
+        }
+    } else {
+        return Err(ChatError::UnsignedChat); // There is no signature
+    }
+    Ok(())
+}
+
+/// The message must be neither from the future nor older than the maximum age, and the
+/// player's chat session must not have expired.
+fn check_timestamp_and_session(
+    player: &Arc<Player>,
+    chat_message: &SChatMessage<'_>,
+) -> Result<(), ChatError> {
+    let now = SystemTime::now()
+        .duration_since(UNIX_EPOCH)
+        .unwrap_or_default()
+        .as_millis() as i64;
+
+    // Verify message timestamp
+    if chat_message.timestamp > now || chat_message.timestamp < (now - CHAT_MESSAGE_MAX_AGE) {
+        return Err(ChatError::OutOfOrderChat);
+    }
+
+    // Verify session expiry
+    if player
+        .chat_session
+        .lock()
+        .unwrap_or_else(std::sync::PoisonError::into_inner)
+        .expires_at
+        < now
+    {
+        return Err(ChatError::ExpiredPublicKey);
+    }
+    Ok(())
+}
+
+/// Applies the client's last-seen window update to the tracker and checks the previous
+/// signature checksum.
+fn check_last_seen(player: &Arc<Player>, chat_message: &SChatMessage<'_>) -> Result<(), ChatError> {
+    let offset = chat_message.message_count.0;
+    if offset < 0 {
+        return Err(ChatError::ChatValidationFailed);
+    }
+
+    {
+        let mut cache = player
+            .signature_cache
+            .lock()
+            .unwrap_or_else(std::sync::PoisonError::into_inner);
+        if !chat_message.acknowledged.is_empty() {
+            if cache
+                .last_seen_validator
+                .apply_update(offset as usize, chat_message.acknowledged)
+                .is_err()
+            {
+                return Err(ChatError::ChatValidationFailed);
+            }
+        } else if cache
+            .last_seen_validator
+            .apply_offset(offset as usize)
+            .is_err()
+        {
+            return Err(ChatError::ChatValidationFailed);
+        }
+
+        if cache.last_seen_validator.tracked_messages_count() > 4096 {
+            return Err(ChatError::TooManyPendingChats);
+        }
+    }
+
+    // Validate previous signature checksum (new in 1.21.5)
+    // The client can bypass this check by sending 0
+    if chat_message.checksum != 0 {
+        let checksum = polynomial_rolling_hash(
+            player
+                .signature_cache
+                .lock()
+                .unwrap_or_else(std::sync::PoisonError::into_inner)
+                .last_seen
+                .as_ref(),
+        );
+        if checksum != chat_message.checksum {
+            return Err(ChatError::ChatValidationFailed);
+        }
+    }
+    Ok(())
 }
 
 #[cfg(test)]

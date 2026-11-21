@@ -379,6 +379,9 @@ fn append_dynamic_crafting_recipe(
 }
 
 #[cfg(test)]
+mod golden;
+
+#[cfg(test)]
 mod tests {
     use pumpkin_data::recipes::RecipeIngredientTypes;
     use pumpkin_protocol::bedrock::client::{ItemDescriptorCount, RecipeItemDescriptor};

@@ -15,6 +15,8 @@ pub mod blocks;
 pub mod entities;
 pub mod fluid;
 pub mod registry;
+#[cfg(test)]
+mod registry_golden;
 pub mod viewer;
 
 use crate::block::registry::BlockActionResult;

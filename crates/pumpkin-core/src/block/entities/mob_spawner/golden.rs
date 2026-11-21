@@ -62,6 +62,8 @@ struct Scene {
     /// Mobs already there: type and offset of their feet from the spawner block's centre.
     crowd: &'static [(&'static EntityType, f64, f64, f64)],
     stone: bool,
+    /// Water fills the area around the spawner, over a stone floor two blocks below it.
+    water: bool,
     ticks: usize,
     stats: bool,
     /// Adds the mean of the yaw, the pitch and the follow-range spawn bonus to the stats line.
@@ -86,6 +88,7 @@ const fn scene(name: &'static str, delay: i32) -> Scene {
         rule_off: false,
         crowd: &[],
         stone: false,
+        water: false,
         ticks: 3,
         stats: false,
         angles: false,
@@ -103,8 +106,13 @@ const fn player_is(mut scene: Scene, mode: GameMode, dead: bool) -> Scene {
     scene
 }
 
-const fn zombies(mut scene: Scene) -> Scene {
-    scene.entity = Some(ZOMBIE);
+const fn of_type(mut scene: Scene, entity: &'static EntityType) -> Scene {
+    scene.entity = Some(entity);
+    scene
+}
+
+const fn flooded(mut scene: Scene) -> Scene {
+    scene.water = true;
     scene
 }
 
@@ -245,7 +253,16 @@ const SCENES: &[Scene] = &[
         &[(Z, 2.76, 0.0, 0.0)],
     ),
     // The type's own placement rule (light, block below): a zombie spawner in an open, bright area.
-    zombies(scene("zombie spawner in daylight", 0)),
+    of_type(scene("zombie spawner in daylight", 0), ZOMBIE),
+    of_type(
+        flooded(spawning(
+            scene("villager spawner under water", 0),
+            60,
+            0,
+            1000,
+        )),
+        &EntityType::VILLAGER,
+    ),
     rule_off(scene("spawner_blocks_work off", 0)),
     rule_off(scene("spawner_blocks_work off, delay running", 5)),
     player_is(scene("spectator in range", 0), GameMode::Spectator, false),
@@ -291,12 +308,20 @@ fn spawner(position: BlockPos, scene: &Scene) -> MobSpawnerBlockEntity {
 }
 
 fn lay(world: &Arc<World>, pos: BlockPos, scene: &Scene) {
-    for dy in -1..=3 {
+    for dy in -2..=3 {
         for dz in -6..=6 {
             for dx in -6..=6 {
                 let at = BlockPos::new(pos.0.x + dx, pos.0.y + dy, pos.0.z + dz);
-                let state = if scene.stone && (dx, dy, dz) != (0, 0, 0) {
+                let state = if dy == -2 {
+                    if scene.water {
+                        Block::STONE.default_state.id
+                    } else {
+                        Block::AIR.default_state.id
+                    }
+                } else if scene.stone && (dx, dy, dz) != (0, 0, 0) {
                     Block::STONE.default_state.id
+                } else if scene.water {
+                    Block::WATER.default_state.id
                 } else {
                     Block::AIR.default_state.id
                 };

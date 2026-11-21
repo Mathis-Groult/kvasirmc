@@ -79,6 +79,9 @@ cubes past range two edges, cap one: tick 3 delay reset-2 spawned ["sulfur_cube"
 zombie spawner in daylight: tick 1 delay 0 spawned []
 zombie spawner in daylight: tick 2 delay 0 spawned []
 zombie spawner in daylight: tick 3 delay 0 spawned []
+villager spawner under water: tick 1 delay 0 spawned []
+villager spawner under water: tick 2 delay 0 spawned []
+villager spawner under water: tick 3 delay 0 spawned []
 spawner_blocks_work off: tick 1 delay 0 spawned []
 spawner_blocks_work off: tick 2 delay 0 spawned []
 spawner_blocks_work off: tick 3 delay 0 spawned []
@@ -91,10 +94,10 @@ spectator in range: tick 3 delay 0 spawned []
 dead player in range: tick 1 delay 0 spawned []
 dead player in range: tick 2 delay 0 spawned []
 dead player in range: tick 3 delay 0 spawned []
-creative player in range: tick 1 delay reset in min..max spawned ["sulfur_cube", "sulfur_cube", "sulfur_cube", "sulfur_cube"] packet 2f000007d400017a00000080400000000000 x4 packet 0700017a00000080400100f201 x1
+creative player in range: tick 1 delay reset in min..max spawned ["sulfur_cube", "sulfur_cube", "sulfur_cube", "sulfur_cube"] packet 2f000007d400018600000080400000000000 x4 packet 0700018600000080400100f201 x1
 creative player in range: tick 2 delay reset-1 spawned ["sulfur_cube", "sulfur_cube", "sulfur_cube", "sulfur_cube"]
 creative player in range: tick 3 delay reset-2 spawned ["sulfur_cube", "sulfur_cube", "sulfur_cube", "sulfur_cube"]
-600 spawns: tick 1 delay reset in min..max spawned 600 mobs, x mean 0.5+0 sd as expected, z mean 0.5+0 sd as expected, layers ["many", "many", "many"] packet 2f000007d400018600000080400000000000 x600 packet 0700018600000080400100f201 x1
-600 spawns in range two: tick 1 delay reset in min..max spawned 600 mobs, x mean 0.5+0 sd as expected, z mean 0.5+0 sd as expected, layers ["many", "many", "many"] packet 2f000007d400019200000080400000000000 x600 packet 0700019200000080400100f201 x1
+600 spawns: tick 1 delay reset in min..max spawned 600 mobs, x mean 0.5+0 sd as expected, z mean 0.5+0 sd as expected, layers ["many", "many", "many"] packet 2f000007d400019200000080400000000000 x600 packet 0700019200000080400100f201 x1
+600 spawns in range two: tick 1 delay reset in min..max spawned 600 mobs, x mean 0.5+0 sd as expected, z mean 0.5+0 sd as expected, layers ["many", "many", "many"] packet 2f000007d400019e00000080400000000000 x600 packet 0700019e00000080400100f201 x1
 fifty resets: 50 resets, inside true, wide true
-600 spawns, angles: tick 1 delay reset in min..max spawned 600 mobs, x mean 0.5+0 sd as expected, z mean 0.5+0 sd as expected, layers ["many", "many", "many"], yaw mean 2 quarter turns, yaw spread uniform true, pitch zero true, spawn bonus false packet 2f000007d40001aa00000080400000000000 x600 packet 070001aa00000080400100f201 x1
+600 spawns, angles: tick 1 delay reset in min..max spawned 600 mobs, x mean 0.5+0 sd as expected, z mean 0.5+0 sd as expected, layers ["many", "many", "many"], yaw mean 2 quarter turns, yaw spread uniform true, pitch zero true, spawn bonus false packet 2f000007d40001b600000080400000000000 x600 packet 070001b600000080400100f201 x1

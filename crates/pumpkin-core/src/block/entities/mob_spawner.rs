@@ -171,6 +171,12 @@ impl MobSpawnerBlockEntity {
             crate::entity::r#type::from_type(entity_type, spawn_pos, world, uuid::Uuid::new_v4());
         let yaw = rand::random::<f32>() * 360.0;
         entity.get_entity().set_rotation(yaw, 0.0);
+        // `Mob.checkSpawnObstruction`: no liquid in the box and no entity in the way.
+        if let Some(mob) = entity.get_mob()
+            && !mob.check_spawn_obstruction(world)
+        {
+            return SpawnAttempt::Blocked;
+        }
 
         let mut event = crate::plugin::api::events::entity::spawner_spawn::SpawnerSpawnEvent::new(
             entity.get_entity().entity_id,

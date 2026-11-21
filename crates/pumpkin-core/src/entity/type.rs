@@ -1,4 +1,6 @@
 pub mod spawn_rules;
+#[cfg(test)]
+mod golden;
 
 use crate::entity::projectile::owner::ProjectileOwner;
 use std::sync::Arc;

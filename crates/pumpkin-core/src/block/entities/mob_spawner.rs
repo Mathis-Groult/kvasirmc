@@ -13,7 +13,7 @@ use pumpkin_util::{
 
 use crate::{
     block::entities::BlockEntity, entity::EntityBase, entity::mob::spawn::finalize_spawn,
-    world::World,
+    entity::r#type::spawn_rules::check_spawn_rules, world::World,
 };
 
 #[cfg(test)]
@@ -159,6 +159,12 @@ impl MobSpawnerBlockEntity {
             spawn_pos.y,
             spawn_pos.z,
         )) {
+            return SpawnAttempt::Blocked;
+        }
+        // No `custom_spawn_rules` yet: the type's own placement rule decides (light level, block
+        // below), as `SpawnPlacements.checkSpawnRules` does for a spawner.
+        let spot = BlockPos::floored(spawn_pos.x, spawn_pos.y, spawn_pos.z);
+        if !check_spawn_rules(entity_type, world, &spot, world.is_thundering()) {
             return SpawnAttempt::Blocked;
         }
         let entity =

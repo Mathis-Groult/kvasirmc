@@ -73,7 +73,7 @@ struct Scene {
 const fn scene(name: &'static str, delay: i32) -> Scene {
     Scene {
         name,
-        entity: Some(&EntityType::ZOMBIE),
+        entity: Some(Z),
         delay,
         min_delay: 200,
         max_delay: 800,
@@ -100,6 +100,11 @@ const fn player_at(mut scene: Scene, x: f64, y: f64, z: f64) -> Scene {
 
 const fn player_is(mut scene: Scene, mode: GameMode, dead: bool) -> Scene {
     scene.player_state = (mode, dead);
+    scene
+}
+
+const fn zombies(mut scene: Scene) -> Scene {
+    scene.entity = Some(ZOMBIE);
     scene
 }
 
@@ -153,7 +158,10 @@ const fn statistics(mut scene: Scene) -> Scene {
     scene
 }
 
-const Z: &EntityType = &EntityType::ZOMBIE;
+// A sulfur cube: its placement rule is `Always`, so the scenes below test the count, the range and
+// the delay without depending on light or floor (the "zombie spawner" scene tests the rule).
+const Z: &EntityType = &EntityType::SULFUR_CUBE;
+const ZOMBIE: &EntityType = &EntityType::ZOMBIE;
 const S: &EntityType = &EntityType::SKELETON;
 const SIX_NEAR: &[(&EntityType, f64, f64, f64)] = &[
     (Z, 1.0, 0.0, 1.0),
@@ -172,23 +180,23 @@ const FIVE_NEAR: &[(&EntityType, f64, f64, f64)] = &[
 ];
 const OTHER_TYPE: &[(&EntityType, f64, f64, f64)] = &[(S, 1.0, 0.0, 1.0), (S, -1.0, 0.0, 1.0)];
 // Vanilla counts mobs whose box meets the spawner block grown by the spawn range (4 here) on all
-// three axes. Offsets are from the block centre; a zombie is 0.6 wide and 1.95 tall, so its box
-// meets the grown one up to 4.8 sideways, 4.5 above and 6.45 below (feet offset).
+// three axes. Offsets are from the block centre; a sulfur cube's box is 0.49 wide and 0.49 tall, so
+// it meets the grown one up to 4.745 sideways, 4.5 above and 4.99 below (feet offset).
 const EDGES_IN: &[(&EntityType, f64, f64, f64)] = &[
-    (Z, 4.79, 0.0, 0.0),
-    (Z, -4.79, 0.0, 0.0),
-    (Z, 0.0, 0.0, 4.79),
-    (Z, 0.0, 0.0, -4.79),
+    (Z, 4.74, 0.0, 0.0),
+    (Z, -4.74, 0.0, 0.0),
+    (Z, 0.0, 0.0, 4.74),
+    (Z, 0.0, 0.0, -4.74),
     (Z, 0.0, 4.49, 0.0),
-    (Z, 0.0, -6.44, 0.0),
+    (Z, 0.0, -4.98, 0.0),
 ];
 const EDGES_OUT: &[(&EntityType, f64, f64, f64)] = &[
-    (Z, 4.81, 0.0, 0.0),
-    (Z, -4.81, 0.0, 0.0),
-    (Z, 0.0, 0.0, 4.81),
-    (Z, 0.0, 0.0, -4.81),
+    (Z, 4.76, 0.0, 0.0),
+    (Z, -4.76, 0.0, 0.0),
+    (Z, 0.0, 0.0, 4.76),
+    (Z, 0.0, 0.0, -4.76),
     (Z, 0.0, 4.51, 0.0),
-    (Z, 0.0, -6.46, 0.0),
+    (Z, 0.0, -5.01, 0.0),
 ];
 
 const SCENES: &[Scene] = &[
@@ -210,8 +218,8 @@ const SCENES: &[Scene] = &[
     spawning(scene("spawning in range one", 0), 4, 1, 6),
     spawning(scene("spawning in range zero", 0), 3, 0, 6),
     walled(scene("walled in by stone", 0)),
-    crowd(scene("six zombies near", 0), SIX_NEAR),
-    crowd(scene("five zombies near", 0), FIVE_NEAR),
+    crowd(scene("six cubes near", 0), SIX_NEAR),
+    crowd(scene("five cubes near", 0), FIVE_NEAR),
     crowd(
         spawning(scene("five near, cap five", 0), 4, 4, 5),
         FIVE_NEAR,
@@ -221,21 +229,23 @@ const SCENES: &[Scene] = &[
         OTHER_TYPE,
     ),
     crowd(
-        spawning(scene("zombies on the count edges, cap six", 0), 4, 4, 6),
+        spawning(scene("cubes on the count edges, cap six", 0), 4, 4, 6),
         EDGES_IN,
     ),
     crowd(
-        spawning(scene("zombies past the count edges, cap one", 0), 4, 4, 1),
+        spawning(scene("cubes past the count edges, cap one", 0), 4, 4, 1),
         EDGES_OUT,
     ),
     crowd(
-        spawning(scene("zombies at range two edges, cap one", 0), 4, 2, 1),
-        &[(Z, 2.79, 0.0, 0.0)],
+        spawning(scene("cubes at range two edges, cap one", 0), 4, 2, 1),
+        &[(Z, 2.74, 0.0, 0.0)],
     ),
     crowd(
-        spawning(scene("zombie past range two edges, cap one", 0), 4, 2, 1),
-        &[(Z, 2.81, 0.0, 0.0)],
+        spawning(scene("cubes past range two edges, cap one", 0), 4, 2, 1),
+        &[(Z, 2.76, 0.0, 0.0)],
     ),
+    // The type's own placement rule (light, block below): a zombie spawner in an open, bright area.
+    zombies(scene("zombie spawner in daylight", 0)),
     rule_off(scene("spawner_blocks_work off", 0)),
     rule_off(scene("spawner_blocks_work off, delay running", 5)),
     player_is(scene("spectator in range", 0), GameMode::Spectator, false),

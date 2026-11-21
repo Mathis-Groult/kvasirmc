@@ -7,18 +7,18 @@ player out of range: tick 3 delay 0 spawned []
 player at the range: tick 1 delay 0 spawned []
 player at the range: tick 2 delay 0 spawned []
 player at the range: tick 3 delay 0 spawned []
-player above, in range: tick 1 delay reset in min..max spawned ["zombie", "zombie", "zombie", "zombie"] packet 2f000007d400002a00000080400000000000 x4 packet 0700002a00000080400100f201 x1
-player above, in range: tick 2 delay reset-1 spawned ["zombie", "zombie", "zombie", "zombie"]
-player above, in range: tick 3 delay reset-2 spawned ["zombie", "zombie", "zombie", "zombie"]
+player above, in range: tick 1 delay reset in min..max spawned ["sulfur_cube", "sulfur_cube", "sulfur_cube", "sulfur_cube"] packet 2f000007d400002a00000080400000000000 x4 packet 0700002a00000080400100f201 x1
+player above, in range: tick 2 delay reset-1 spawned ["sulfur_cube", "sulfur_cube", "sulfur_cube", "sulfur_cube"]
+player above, in range: tick 3 delay reset-2 spawned ["sulfur_cube", "sulfur_cube", "sulfur_cube", "sulfur_cube"]
 player diagonal, out of range: tick 1 delay 0 spawned []
 player diagonal, out of range: tick 2 delay 0 spawned []
 player diagonal, out of range: tick 3 delay 0 spawned []
 delay counting down: tick 1 delay 1 spawned []
 delay counting down: tick 2 delay 0 spawned []
-delay counting down: tick 3 delay reset in min..max spawned ["zombie", "zombie", "zombie", "zombie"] packet 2f000007d400004200000080400000000000 x4 packet 0700004200000080400100f201 x1
+delay counting down: tick 3 delay reset in min..max spawned ["sulfur_cube", "sulfur_cube", "sulfur_cube", "sulfur_cube"] packet 2f000007d400004200000080400000000000 x4 packet 0700004200000080400100f201 x1
 delay of one: tick 1 delay 0 spawned []
-delay of one: tick 2 delay reset in min..max spawned ["zombie", "zombie", "zombie", "zombie"] packet 2f000007d400004e00000080400000000000 x4 packet 0700004e00000080400100f201 x1
-delay of one: tick 3 delay reset-1 spawned ["zombie", "zombie", "zombie", "zombie"]
+delay of one: tick 2 delay reset in min..max spawned ["sulfur_cube", "sulfur_cube", "sulfur_cube", "sulfur_cube"] packet 2f000007d400004e00000080400000000000 x4 packet 0700004e00000080400100f201 x1
+delay of one: tick 3 delay reset-1 spawned ["sulfur_cube", "sulfur_cube", "sulfur_cube", "sulfur_cube"]
 delay below zero: tick 1 delay reset in min..max spawned [] packet 0700005a00000080400100f201 x1
 delay below zero: tick 2 delay reset-1 spawned []
 delay below zero: tick 3 delay reset-2 spawned []
@@ -34,48 +34,51 @@ delay below zero, max below min: tick 3 delay 298 spawned []
 delay below zero, range of one: tick 1 delay reset in min..max spawned [] packet 0700008a00000080400100f201 x1
 delay below zero, range of one: tick 2 delay reset-1 spawned []
 delay below zero, range of one: tick 3 delay reset-2 spawned []
-spawning in open air: tick 1 delay reset in min..max spawned ["zombie", "zombie", "zombie", "zombie"] packet 2f000007d400009600000080400000000000 x4 packet 0700009600000080400100f201 x1
-spawning in open air: tick 2 delay reset-1 spawned ["zombie", "zombie", "zombie", "zombie"]
-spawning in open air: tick 3 delay reset-2 spawned ["zombie", "zombie", "zombie", "zombie"]
-spawning one: tick 1 delay reset in min..max spawned ["zombie"] packet 2f000007d40000a200000080400000000000 x1 packet 070000a200000080400100f201 x1
-spawning one: tick 2 delay reset-1 spawned ["zombie"]
-spawning one: tick 3 delay reset-2 spawned ["zombie"]
+spawning in open air: tick 1 delay reset in min..max spawned ["sulfur_cube", "sulfur_cube", "sulfur_cube", "sulfur_cube"] packet 2f000007d400009600000080400000000000 x4 packet 0700009600000080400100f201 x1
+spawning in open air: tick 2 delay reset-1 spawned ["sulfur_cube", "sulfur_cube", "sulfur_cube", "sulfur_cube"]
+spawning in open air: tick 3 delay reset-2 spawned ["sulfur_cube", "sulfur_cube", "sulfur_cube", "sulfur_cube"]
+spawning one: tick 1 delay reset in min..max spawned ["sulfur_cube"] packet 2f000007d40000a200000080400000000000 x1 packet 070000a200000080400100f201 x1
+spawning one: tick 2 delay reset-1 spawned ["sulfur_cube"]
+spawning one: tick 3 delay reset-2 spawned ["sulfur_cube"]
 spawning none: tick 1 delay 0 spawned []
 spawning none: tick 2 delay 0 spawned []
 spawning none: tick 3 delay 0 spawned []
-spawning in range one: tick 1 delay reset in min..max spawned ["zombie", "zombie", "zombie", "zombie"] packet 2f000007d40000ba00000080400000000000 x4 packet 070000ba00000080400100f201 x1
-spawning in range one: tick 2 delay reset-1 spawned ["zombie", "zombie", "zombie", "zombie"]
-spawning in range one: tick 3 delay reset-2 spawned ["zombie", "zombie", "zombie", "zombie"]
-spawning in range zero: tick 1 delay reset in min..max spawned ["zombie", "zombie", "zombie"] packet 2f000007d40000c600000080400000000000 x3 packet 070000c600000080400100f201 x1
-spawning in range zero: tick 2 delay reset-1 spawned ["zombie", "zombie", "zombie"]
-spawning in range zero: tick 3 delay reset-2 spawned ["zombie", "zombie", "zombie"]
+spawning in range one: tick 1 delay reset in min..max spawned ["sulfur_cube", "sulfur_cube", "sulfur_cube", "sulfur_cube"] packet 2f000007d40000ba00000080400000000000 x4 packet 070000ba00000080400100f201 x1
+spawning in range one: tick 2 delay reset-1 spawned ["sulfur_cube", "sulfur_cube", "sulfur_cube", "sulfur_cube"]
+spawning in range one: tick 3 delay reset-2 spawned ["sulfur_cube", "sulfur_cube", "sulfur_cube", "sulfur_cube"]
+spawning in range zero: tick 1 delay reset in min..max spawned ["sulfur_cube", "sulfur_cube", "sulfur_cube"] packet 2f000007d40000c600000080400000000000 x3 packet 070000c600000080400100f201 x1
+spawning in range zero: tick 2 delay reset-1 spawned ["sulfur_cube", "sulfur_cube", "sulfur_cube"]
+spawning in range zero: tick 3 delay reset-2 spawned ["sulfur_cube", "sulfur_cube", "sulfur_cube"]
 walled in by stone: tick 1 delay 0 spawned []
 walled in by stone: tick 2 delay 0 spawned []
 walled in by stone: tick 3 delay 0 spawned []
-six zombies near: tick 1 delay reset in min..max spawned [] packet 070000de00000080400100f201 x1
-six zombies near: tick 2 delay reset-1 spawned []
-six zombies near: tick 3 delay reset-2 spawned []
-five zombies near: tick 1 delay reset in min..max spawned ["zombie"] packet 2f000007d40000ea00000080400000000000 x1 packet 070000ea00000080400100f201 x1
-five zombies near: tick 2 delay reset-1 spawned ["zombie"]
-five zombies near: tick 3 delay reset-2 spawned ["zombie"]
+six cubes near: tick 1 delay reset in min..max spawned [] packet 070000de00000080400100f201 x1
+six cubes near: tick 2 delay reset-1 spawned []
+six cubes near: tick 3 delay reset-2 spawned []
+five cubes near: tick 1 delay reset in min..max spawned ["sulfur_cube"] packet 2f000007d40000ea00000080400000000000 x1 packet 070000ea00000080400100f201 x1
+five cubes near: tick 2 delay reset-1 spawned ["sulfur_cube"]
+five cubes near: tick 3 delay reset-2 spawned ["sulfur_cube"]
 five near, cap five: tick 1 delay reset in min..max spawned [] packet 070000f600000080400100f201 x1
 five near, cap five: tick 2 delay reset-1 spawned []
 five near, cap five: tick 3 delay reset-2 spawned []
-other mobs near, cap two: tick 1 delay reset in min..max spawned ["zombie", "zombie"] packet 2f000007d400010200000080400000000000 x2 packet 0700010200000080400100f201 x1
-other mobs near, cap two: tick 2 delay reset-1 spawned ["zombie", "zombie"]
-other mobs near, cap two: tick 3 delay reset-2 spawned ["zombie", "zombie"]
-zombies on the count edges, cap six: tick 1 delay reset in min..max spawned [] packet 0700010e00000080400100f201 x1
-zombies on the count edges, cap six: tick 2 delay reset-1 spawned []
-zombies on the count edges, cap six: tick 3 delay reset-2 spawned []
-zombies past the count edges, cap one: tick 1 delay reset in min..max spawned ["zombie"] packet 2f000007d400011a00000080400000000000 x1 packet 0700011a00000080400100f201 x1
-zombies past the count edges, cap one: tick 2 delay reset-1 spawned ["zombie"]
-zombies past the count edges, cap one: tick 3 delay reset-2 spawned ["zombie"]
-zombies at range two edges, cap one: tick 1 delay reset in min..max spawned [] packet 0700012600000080400100f201 x1
-zombies at range two edges, cap one: tick 2 delay reset-1 spawned []
-zombies at range two edges, cap one: tick 3 delay reset-2 spawned []
-zombie past range two edges, cap one: tick 1 delay reset in min..max spawned ["zombie"] packet 2f000007d400013200000080400000000000 x1 packet 0700013200000080400100f201 x1
-zombie past range two edges, cap one: tick 2 delay reset-1 spawned ["zombie"]
-zombie past range two edges, cap one: tick 3 delay reset-2 spawned ["zombie"]
+other mobs near, cap two: tick 1 delay reset in min..max spawned ["sulfur_cube", "sulfur_cube"] packet 2f000007d400010200000080400000000000 x2 packet 0700010200000080400100f201 x1
+other mobs near, cap two: tick 2 delay reset-1 spawned ["sulfur_cube", "sulfur_cube"]
+other mobs near, cap two: tick 3 delay reset-2 spawned ["sulfur_cube", "sulfur_cube"]
+cubes on the count edges, cap six: tick 1 delay reset in min..max spawned [] packet 0700010e00000080400100f201 x1
+cubes on the count edges, cap six: tick 2 delay reset-1 spawned []
+cubes on the count edges, cap six: tick 3 delay reset-2 spawned []
+cubes past the count edges, cap one: tick 1 delay reset in min..max spawned ["sulfur_cube"] packet 2f000007d400011a00000080400000000000 x1 packet 0700011a00000080400100f201 x1
+cubes past the count edges, cap one: tick 2 delay reset-1 spawned ["sulfur_cube"]
+cubes past the count edges, cap one: tick 3 delay reset-2 spawned ["sulfur_cube"]
+cubes at range two edges, cap one: tick 1 delay reset in min..max spawned [] packet 0700012600000080400100f201 x1
+cubes at range two edges, cap one: tick 2 delay reset-1 spawned []
+cubes at range two edges, cap one: tick 3 delay reset-2 spawned []
+cubes past range two edges, cap one: tick 1 delay reset in min..max spawned ["sulfur_cube"] packet 2f000007d400013200000080400000000000 x1 packet 0700013200000080400100f201 x1
+cubes past range two edges, cap one: tick 2 delay reset-1 spawned ["sulfur_cube"]
+cubes past range two edges, cap one: tick 3 delay reset-2 spawned ["sulfur_cube"]
+zombie spawner in daylight: tick 1 delay 0 spawned []
+zombie spawner in daylight: tick 2 delay 0 spawned []
+zombie spawner in daylight: tick 3 delay 0 spawned []
 spawner_blocks_work off: tick 1 delay 0 spawned []
 spawner_blocks_work off: tick 2 delay 0 spawned []
 spawner_blocks_work off: tick 3 delay 0 spawned []
@@ -88,10 +91,10 @@ spectator in range: tick 3 delay 0 spawned []
 dead player in range: tick 1 delay 0 spawned []
 dead player in range: tick 2 delay 0 spawned []
 dead player in range: tick 3 delay 0 spawned []
-creative player in range: tick 1 delay reset in min..max spawned ["zombie", "zombie", "zombie", "zombie"] packet 2f000007d400016e00000080400000000000 x4 packet 0700016e00000080400100f201 x1
-creative player in range: tick 2 delay reset-1 spawned ["zombie", "zombie", "zombie", "zombie"]
-creative player in range: tick 3 delay reset-2 spawned ["zombie", "zombie", "zombie", "zombie"]
-600 spawns: tick 1 delay reset in min..max spawned 600 mobs, x mean 0.5+0 sd as expected, z mean 0.5+0 sd as expected, layers ["many", "many", "many"] packet 2f000007d400017a00000080400000000000 x600 packet 0700017a00000080400100f201 x1
-600 spawns in range two: tick 1 delay reset in min..max spawned 600 mobs, x mean 0.5+0 sd as expected, z mean 0.5+0 sd as expected, layers ["many", "many", "many"] packet 2f000007d400018600000080400000000000 x600 packet 0700018600000080400100f201 x1
+creative player in range: tick 1 delay reset in min..max spawned ["sulfur_cube", "sulfur_cube", "sulfur_cube", "sulfur_cube"] packet 2f000007d400017a00000080400000000000 x4 packet 0700017a00000080400100f201 x1
+creative player in range: tick 2 delay reset-1 spawned ["sulfur_cube", "sulfur_cube", "sulfur_cube", "sulfur_cube"]
+creative player in range: tick 3 delay reset-2 spawned ["sulfur_cube", "sulfur_cube", "sulfur_cube", "sulfur_cube"]
+600 spawns: tick 1 delay reset in min..max spawned 600 mobs, x mean 0.5+0 sd as expected, z mean 0.5+0 sd as expected, layers ["many", "many", "many"] packet 2f000007d400018600000080400000000000 x600 packet 0700018600000080400100f201 x1
+600 spawns in range two: tick 1 delay reset in min..max spawned 600 mobs, x mean 0.5+0 sd as expected, z mean 0.5+0 sd as expected, layers ["many", "many", "many"] packet 2f000007d400019200000080400000000000 x600 packet 0700019200000080400100f201 x1
 fifty resets: 50 resets, inside true, wide true
-600 spawns, angles: tick 1 delay reset in min..max spawned 600 mobs, x mean 0.5+0 sd as expected, z mean 0.5+0 sd as expected, layers ["many", "many", "many"], yaw mean 2 quarter turns, yaw spread uniform true, pitch zero true, spawn bonus true packet 2f000007d400019e00000080400000000000 x600 packet 0700019e00000080400100f201 x1
+600 spawns, angles: tick 1 delay reset in min..max spawned 600 mobs, x mean 0.5+0 sd as expected, z mean 0.5+0 sd as expected, layers ["many", "many", "many"], yaw mean 2 quarter turns, yaw spread uniform true, pitch zero true, spawn bonus false packet 2f000007d40001aa00000080400000000000 x600 packet 070001aa00000080400100f201 x1

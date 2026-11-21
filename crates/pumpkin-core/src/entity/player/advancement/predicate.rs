@@ -2,6 +2,7 @@ use pumpkin_data::tag::{RegistryKey, get_tag_values};
 use serde_json::Value;
 
 mod data_conversion;
+mod parse_helpers;
 
 pub type ItemEnchantment<'a> = (&'a str, u32);
 pub type InventoryItemSnapshot<'a> = (&'a str, u32, &'a [ItemEnchantment<'a>]);
@@ -1244,7 +1245,6 @@ fn parse_item_pred(val: &Value) -> ItemPredicate {
 
 impl CriterionConditions {
     #[must_use]
-    #[expect(clippy::too_many_lines)]
     pub fn parse(trigger: &str, json_str: &str) -> Self {
         let val: Value = serde_json::from_str(json_str).unwrap_or(Value::Null);
         match trigger {
@@ -1260,37 +1260,13 @@ impl CriterionConditions {
             "minecraft:slept_in_bed" => Self::SleptInBed,
             "minecraft:consume_item" => Self::ConsumeItem(parse_item_pred(&val)),
             "minecraft:placed_block" => Self::PlacedBlock(PlacedBlockPredicate::from_value(&val)),
-            "minecraft:enter_block" => {
-                let block = val
-                    .get("blocks")
-                    .or_else(|| val.get("block"))
-                    .and_then(TagOrIdMatcher::from_value)
-                    .unwrap_or_default();
-                Self::EnterBlock(block)
-            }
+            "minecraft:enter_block" => Self::EnterBlock(parse_helpers::block_matcher(&val)),
             "minecraft:slide_down_block" => {
-                let block = val
-                    .get("blocks")
-                    .or_else(|| val.get("block"))
-                    .and_then(TagOrIdMatcher::from_value)
-                    .unwrap_or_default();
-                Self::SlideDownBlock(block)
+                Self::SlideDownBlock(parse_helpers::block_matcher(&val))
             }
             "minecraft:fishing_rod_hooked" => Self::FishingRodHooked(parse_item_pred(&val)),
             "minecraft:filled_bucket" => Self::FilledBucket(parse_item_pred(&val)),
-            "minecraft:using_item" => {
-                let looking_at = val
-                    .get("player")
-                    .and_then(|p| p.get("predicate"))
-                    .and_then(|pred| pred.get("minecraft:type_specific/player"))
-                    .and_then(|p| p.get("looking_at"))
-                    .and_then(|l| l.get("minecraft:entity_type").or_else(|| l.get("type")))
-                    .and_then(TagOrIdMatcher::from_value);
-                Self::UsingItem {
-                    item: parse_item_pred(&val),
-                    looking_at,
-                }
-            }
+            "minecraft:using_item" => parse_helpers::using_item(&val),
             "minecraft:used_totem" => Self::UsedTotem(parse_item_pred(&val)),
             "minecraft:entity_hurt_player" => {
                 Self::EntityHurtPlayer(DamagePredicate::from_value(&val))
@@ -1320,118 +1296,39 @@ impl CriterionConditions {
             "minecraft:recipe_crafted" => Self::RecipeCrafted(RecipePredicate::from_value(&val)),
             "minecraft:recipe_unlocked" => Self::RecipeUnlocked(RecipePredicate::from_value(&val)),
             "minecraft:player_generates_container_loot" => Self::PlayerGeneratesContainerLoot(
-                val.get("loot_tables")
-                    .and_then(|v| v.as_str())
-                    .unwrap_or("")
-                    .to_string(),
+                parse_helpers::text_or_empty(&val, "loot_tables"),
             ),
             "minecraft:enchanted_item" => Self::EnchantedItem,
             "minecraft:brewed_potion" => Self::BrewedPotion,
-            "minecraft:item_durability_changed" => {
-                let vehicle_type = val
-                    .get("player")
-                    .and_then(|p| p.get("predicate"))
-                    .and_then(|pred| {
-                        pred.get("minecraft:vehicle")
-                            .or_else(|| pred.get("vehicle"))
-                    })
-                    .and_then(|v| v.get("minecraft:entity_type").or_else(|| v.get("type")))
-                    .and_then(TagOrIdMatcher::from_value);
-                Self::ItemDurabilityChanged {
-                    item: parse_item_pred(&val),
-                    vehicle_type,
-                }
-            }
+            "minecraft:item_durability_changed" => Self::ItemDurabilityChanged {
+                item: parse_item_pred(&val),
+                vehicle_type: parse_helpers::vehicle_type(&val),
+            },
             "minecraft:levitation" => Self::Levitation {
-                distance_y: val
-                    .get("distance")
-                    .and_then(|d| d.get("y"))
-                    .and_then(|y| y.get("min"))
-                    .and_then(Value::as_f64)
-                    .map(|min| FloatBounds {
-                        min: Some(min),
-                        max: None,
-                    }),
+                distance_y: parse_helpers::distance_min(&val, "y"),
             },
             "minecraft:fall_from_height" => Self::FallFromHeight {
-                distance_y: val
-                    .get("distance")
-                    .and_then(|d| d.get("y"))
-                    .and_then(|y| y.get("min"))
-                    .and_then(Value::as_f64)
-                    .map(|min| FloatBounds {
-                        min: Some(min),
-                        max: None,
-                    }),
+                distance_y: parse_helpers::distance_min(&val, "y"),
             },
             "minecraft:fall_after_explosion" => Self::FallAfterExplosion {
-                distance_y: val
-                    .get("distance")
-                    .and_then(|d| d.get("y"))
-                    .and_then(|y| y.get("min"))
-                    .and_then(Value::as_f64)
-                    .map(|min| FloatBounds {
-                        min: Some(min),
-                        max: None,
-                    }),
-                cause_entity: val
-                    .get("cause")
-                    .and_then(|c| c.get("predicate"))
-                    .and_then(|p| {
-                        p.get("minecraft:entity_type")
-                            .or_else(|| p.get("entity_type"))
-                    })
-                    .and_then(|v| v.as_str())
-                    .map(ToString::to_string),
+                distance_y: parse_helpers::distance_min(&val, "y"),
+                cause_entity: parse_helpers::cause_entity(&val),
             },
             "minecraft:nether_travel" => Self::NetherTravel {
-                distance_horizontal: val
-                    .get("distance")
-                    .and_then(|d| d.get("horizontal"))
-                    .and_then(|h| h.get("min"))
-                    .and_then(Value::as_f64)
-                    .map(|min| FloatBounds {
-                        min: Some(min),
-                        max: None,
-                    }),
+                distance_horizontal: parse_helpers::distance_min(&val, "horizontal"),
             },
-            "minecraft:ride_entity_in_lava" => {
-                let distance_horizontal = val
-                    .get("distance")
-                    .and_then(|d| d.get("horizontal"))
-                    .and_then(|h| h.get("min"))
-                    .and_then(Value::as_f64)
-                    .map(|min| FloatBounds {
-                        min: Some(min),
-                        max: None,
-                    });
-                let dimension = val
-                    .get("player")
-                    .and_then(|p| p.get("predicate"))
-                    .and_then(|pred| {
-                        pred.get("minecraft:location")
-                            .or_else(|| pred.get("location"))
-                    })
-                    .and_then(|l| l.get("dimension"))
-                    .and_then(Value::as_str)
-                    .map(ToString::to_string);
-                let vehicle_type = val
-                    .get("player")
-                    .and_then(|p| p.get("predicate"))
-                    .and_then(|pred| {
-                        pred.get("minecraft:vehicle")
-                            .or_else(|| pred.get("vehicle"))
-                    })
-                    .and_then(|v| v.get("minecraft:entity_type").or_else(|| v.get("type")))
-                    .and_then(TagOrIdMatcher::from_value);
-                Self::RideEntityInLava {
-                    distance_horizontal,
-                    dimension,
-                    vehicle_type,
-                }
-            }
+            "minecraft:ride_entity_in_lava" => parse_helpers::ride_entity_in_lava(&val),
             "minecraft:shot_crossbow" => Self::ShotCrossbow(parse_item_pred(&val)),
             "minecraft:avoid_vibration" => Self::AvoidVibration,
+            "minecraft:impossible" => Self::Impossible,
+            "minecraft:tick" => Self::Tick,
+            _ => Self::parse_world_triggers(trigger, val),
+        }
+    }
+
+    /// The triggers about entities, lightning and bees; anything else is a custom trigger.
+    fn parse_world_triggers(trigger: &str, val: Value) -> Self {
+        match trigger {
             "minecraft:bee_nest_destroyed" => Self::BeeNestDestroyed {
                 block: val
                     .get("blocks")
@@ -1443,49 +1340,8 @@ impl CriterionConditions {
                     .and_then(Value::as_i64)
                     .map(|v| v as i32),
             },
-            "minecraft:channeled_lightning" => Self::ChanneledLightning {
-                victim_type: val
-                    .get("victims")
-                    .and_then(|v| v.as_array())
-                    .and_then(|a| a.first())
-                    .and_then(|e| e.get("predicate"))
-                    .and_then(|p| {
-                        p.get("minecraft:entity_type")
-                            .or_else(|| p.get("entity_type"))
-                    })
-                    .and_then(|v| v.as_str())
-                    .map(ToString::to_string),
-            },
-            "minecraft:lightning_strike" => {
-                let bystander_type = val
-                    .get("bystander")
-                    .and_then(|b| b.get("predicate"))
-                    .and_then(|p| {
-                        p.get("minecraft:entity_type")
-                            .or_else(|| p.get("entity_type"))
-                    })
-                    .and_then(Value::as_str)
-                    .map(ToString::to_string);
-                let blocks_set_on_fire = val
-                    .get("lightning")
-                    .and_then(|l| l.get("predicate"))
-                    .and_then(|p| p.get("minecraft:type_specific/lightning"))
-                    .and_then(|t| t.get("blocks_set_on_fire"))
-                    .and_then(Value::as_i64)
-                    .map(|v| v as i32);
-                let distance_max = val
-                    .get("lightning")
-                    .and_then(|l| l.get("predicate"))
-                    .and_then(|p| p.get("minecraft:distance"))
-                    .and_then(|d| d.get("absolute"))
-                    .and_then(|a| a.get("max"))
-                    .and_then(Value::as_f64);
-                Self::LightningStrike {
-                    bystander_type,
-                    blocks_set_on_fire,
-                    distance_max,
-                }
-            }
+            "minecraft:channeled_lightning" => parse_helpers::channeled_lightning(&val),
+            "minecraft:lightning_strike" => parse_helpers::lightning_strike(&val),
             "minecraft:kill_mob_near_sculk_catalyst" => Self::KillMobNearSculkCatalyst,
             "minecraft:hero_of_the_village" => Self::HeroOfTheVillage,
             "minecraft:player_interacted_with_entity" => Self::PlayerInteractedWithEntity {
@@ -1518,8 +1374,6 @@ impl CriterionConditions {
             "minecraft:spear_mobs" => Self::SpearMobs {
                 count: val.get("count").and_then(Value::as_i64).map(|v| v as i32),
             },
-            "minecraft:impossible" => Self::Impossible,
-            "minecraft:tick" => Self::Tick,
             _ => Self::Custom {
                 trigger: trigger.to_string(),
                 conditions: val,

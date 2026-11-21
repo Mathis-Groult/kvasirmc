@@ -1,6 +1,9 @@
 //! The cloned default listener table equals the per-advancement registration.
 #![cfg_attr(test, allow(clippy::unwrap_used))]
 
+#[cfg(test)]
+mod parse_golden;
+
 use std::sync::Arc;
 
 use pumpkin_data::{ADVANCEMENT_TREE, Advancement};

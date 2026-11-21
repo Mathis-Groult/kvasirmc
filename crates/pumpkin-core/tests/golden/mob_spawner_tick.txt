@@ -4,9 +4,9 @@ no entity type: tick 3 delay 0 spawned []
 player out of range: tick 1 delay 0 spawned []
 player out of range: tick 2 delay 0 spawned []
 player out of range: tick 3 delay 0 spawned []
-player at the range: tick 1 delay reset in min..max spawned ["zombie", "zombie", "zombie", "zombie"] packet 2f000007d400001e00000080400000000000 x4 packet 0700001e00000080400100f201 x1
-player at the range: tick 2 delay reset-1 spawned ["zombie", "zombie", "zombie", "zombie"]
-player at the range: tick 3 delay reset-2 spawned ["zombie", "zombie", "zombie", "zombie"]
+player at the range: tick 1 delay 0 spawned []
+player at the range: tick 2 delay 0 spawned []
+player at the range: tick 3 delay 0 spawned []
 player above, in range: tick 1 delay reset in min..max spawned ["zombie", "zombie", "zombie", "zombie"] packet 2f000007d400002a00000080400000000000 x4 packet 0700002a00000080400100f201 x1
 player above, in range: tick 2 delay reset-1 spawned ["zombie", "zombie", "zombie", "zombie"]
 player above, in range: tick 3 delay reset-2 spawned ["zombie", "zombie", "zombie", "zombie"]
@@ -55,25 +55,28 @@ walled in by stone: tick 3 delay 0 spawned []
 six zombies near: tick 1 delay reset in min..max spawned [] packet 070000de00000080400100f201 x1
 six zombies near: tick 2 delay reset-1 spawned []
 six zombies near: tick 3 delay reset-2 spawned []
-five zombies near: tick 1 delay reset in min..max spawned ["zombie", "zombie", "zombie", "zombie"] packet 2f000007d40000ea00000080400000000000 x4 packet 070000ea00000080400100f201 x1
-five zombies near: tick 2 delay reset-1 spawned ["zombie", "zombie", "zombie", "zombie"]
-five zombies near: tick 3 delay reset-2 spawned ["zombie", "zombie", "zombie", "zombie"]
+five zombies near: tick 1 delay reset in min..max spawned ["zombie"] packet 2f000007d40000ea00000080400000000000 x1 packet 070000ea00000080400100f201 x1
+five zombies near: tick 2 delay reset-1 spawned ["zombie"]
+five zombies near: tick 3 delay reset-2 spawned ["zombie"]
 five near, cap five: tick 1 delay reset in min..max spawned [] packet 070000f600000080400100f201 x1
 five near, cap five: tick 2 delay reset-1 spawned []
 five near, cap five: tick 3 delay reset-2 spawned []
-other mobs near, cap two: tick 1 delay reset in min..max spawned ["zombie", "zombie", "zombie", "zombie"] packet 2f000007d400010200000080400000000000 x4 packet 0700010200000080400100f201 x1
-other mobs near, cap two: tick 2 delay reset-1 spawned ["zombie", "zombie", "zombie", "zombie"]
-other mobs near, cap two: tick 3 delay reset-2 spawned ["zombie", "zombie", "zombie", "zombie"]
+other mobs near, cap two: tick 1 delay reset in min..max spawned ["zombie", "zombie"] packet 2f000007d400010200000080400000000000 x2 packet 0700010200000080400100f201 x1
+other mobs near, cap two: tick 2 delay reset-1 spawned ["zombie", "zombie"]
+other mobs near, cap two: tick 3 delay reset-2 spawned ["zombie", "zombie"]
 zombies on the count edges, cap four: tick 1 delay reset in min..max spawned [] packet 0700010e00000080400100f201 x1
 zombies on the count edges, cap four: tick 2 delay reset-1 spawned []
 zombies on the count edges, cap four: tick 3 delay reset-2 spawned []
-zombies past the count edges, cap one: tick 1 delay reset in min..max spawned ["zombie", "zombie", "zombie", "zombie"] packet 2f000007d400011a00000080400000000000 x4 packet 0700011a00000080400100f201 x1
-zombies past the count edges, cap one: tick 2 delay reset-1 spawned ["zombie", "zombie", "zombie", "zombie"]
-zombies past the count edges, cap one: tick 3 delay reset-2 spawned ["zombie", "zombie", "zombie", "zombie"]
+zombies past the count edges, cap one: tick 1 delay reset in min..max spawned ["zombie"] packet 2f000007d400011a00000080400000000000 x1 packet 0700011a00000080400100f201 x1
+zombies past the count edges, cap one: tick 2 delay reset-1 spawned ["zombie"]
+zombies past the count edges, cap one: tick 3 delay reset-2 spawned ["zombie"]
 zombies at range two edges, cap one: tick 1 delay reset in min..max spawned [] packet 0700012600000080400100f201 x1
 zombies at range two edges, cap one: tick 2 delay reset-1 spawned []
 zombies at range two edges, cap one: tick 3 delay reset-2 spawned []
-600 spawns: tick 1 delay reset in min..max spawned 600 mobs, x mean 0.5+0 sd as expected, z mean 0.5+0 sd as expected, layers ["many", "many", "many"] packet 2f000007d400013200000080400000000000 x600 packet 0700013200000080400100f201 x1
-600 spawns in range two: tick 1 delay reset in min..max spawned 600 mobs, x mean 0.5+0 sd as expected, z mean 0.5+0 sd as expected, layers ["many", "many", "many"] packet 2f000007d400013e00000080400000000000 x600 packet 0700013e00000080400100f201 x1
+zombie past range two edges, cap one: tick 1 delay reset in min..max spawned ["zombie"] packet 2f000007d400013200000080400000000000 x1 packet 0700013200000080400100f201 x1
+zombie past range two edges, cap one: tick 2 delay reset-1 spawned ["zombie"]
+zombie past range two edges, cap one: tick 3 delay reset-2 spawned ["zombie"]
+600 spawns: tick 1 delay reset in min..max spawned 600 mobs, x mean 0.5+0 sd as expected, z mean 0.5+0 sd as expected, layers ["many", "many", "many"] packet 2f000007d400013e00000080400000000000 x600 packet 0700013e00000080400100f201 x1
+600 spawns in range two: tick 1 delay reset in min..max spawned 600 mobs, x mean 0.5+0 sd as expected, z mean 0.5+0 sd as expected, layers ["many", "many", "many"] packet 2f000007d400014a00000080400000000000 x600 packet 0700014a00000080400100f201 x1
 fifty resets: 50 resets, inside true, wide true
-600 spawns, angles: tick 1 delay reset in min..max spawned 600 mobs, x mean 0.5+0 sd as expected, z mean 0.5+0 sd as expected, layers ["many", "many", "many"], yaw mean 2 quarter turns, yaw spread uniform true, pitch zero true, spawn bonus true packet 2f000007d400015600000080400000000000 x600 packet 0700015600000080400100f201 x1
+600 spawns, angles: tick 1 delay reset in min..max spawned 600 mobs, x mean 0.5+0 sd as expected, z mean 0.5+0 sd as expected, layers ["many", "many", "many"], yaw mean 2 quarter turns, yaw spread uniform true, pitch zero true, spawn bonus true packet 2f000007d400016200000080400000000000 x600 packet 0700016200000080400100f201 x1

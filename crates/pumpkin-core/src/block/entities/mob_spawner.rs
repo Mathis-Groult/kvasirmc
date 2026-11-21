@@ -6,7 +6,10 @@ use std::sync::{
 use crossbeam::atomic::AtomicCell;
 use pumpkin_data::{entity::EntityType, world::WorldEvent};
 use pumpkin_nbt::compound::NbtCompound;
-use pumpkin_util::math::{position::BlockPos, vector3::Vector3};
+use pumpkin_util::{
+    GameMode,
+    math::{boundingbox::BoundingBox, position::BlockPos, vector3::Vector3},
+};
 
 use crate::{
     block::entities::BlockEntity, entity::EntityBase, entity::mob::spawn::finalize_spawn,
@@ -104,37 +107,32 @@ impl MobSpawnerBlockEntity {
         self.entity_type.store(Some(entity_type));
     }
 
-    /// Whether any player stands within the required range of the spawner's centre.
+    /// Whether a living, non-spectating player is strictly closer than the required range to the
+    /// spawner's centre (`Level.hasNearbyAlivePlayer`).
     fn player_nearby(&self, world: &World, center: &Vector3<f64>) -> bool {
-        let max_player_dist_sq = (self.required_player_range as f64).powi(2);
+        let max_player_dist_sq = f64::from(self.required_player_range).powi(2);
         world.players.load().iter().any(|p| {
-            p.get_entity().pos.load().squared_distance_to_vec(center) <= max_player_dist_sq
+            p.gamemode.load() != GameMode::Spectator
+                && p.get_entity().is_alive()
+                && p.living_entity.health.load() > 0.0
+                && p.get_entity().pos.load().squared_distance_to_vec(center) < max_player_dist_sq
         })
     }
 
-    /// The mobs of the spawned type near the spawner, counted against its cap.
-    fn nearby_count(
-        &self,
-        world: &World,
-        entity_type: &EntityType,
-        center: &Vector3<f64>,
-    ) -> usize {
-        let search_radius_horiz = (self.spawn_range * 2) as f64;
-        let search_radius_vert = 4.0;
+    /// The mobs of the spawned type whose box meets the spawner's block grown by the spawn range
+    /// on every axis, spectators excluded (`getEntities(forExactClass, ...)`), counted against
+    /// its cap.
+    fn nearby_count(&self, world: &World, entity_type: &EntityType) -> usize {
+        let range = f64::from(self.spawn_range);
+        let min = self.position.0.to_f64();
+        let area = BoundingBox::new(
+            Vector3::new(min.x - range, min.y - range, min.z - range),
+            Vector3::new(min.x + 1.0 + range, min.y + 1.0 + range, min.z + 1.0 + range),
+        );
         world
-            .entities
-            .load()
+            .get_entities_at_box(&area)
             .iter()
-            .filter(|e| {
-                let ent = e.get_entity();
-                if ent.entity_type.id != entity_type.id {
-                    return false;
-                }
-                let pos = ent.pos.load();
-                (pos.x - center.x).abs() <= search_radius_horiz
-                    && (pos.z - center.z).abs() <= search_radius_horiz
-                    && (pos.y - center.y).abs() <= search_radius_vert
-            })
+            .filter(|e| e.get_entity().entity_type.id == entity_type.id && !e.is_spectator())
             .count()
     }
 
@@ -211,14 +209,13 @@ impl BlockEntity for MobSpawnerBlockEntity {
                 return;
             }
 
-            if self.nearby_count(world, entity_type, &center) as i32 >= self.max_nearby_entities {
-                self.update_spawns(world);
-                return;
-            }
-
-            let mut spawned_any = false;
+                        let mut spawned_any = false;
             let mut cancelled_any = false;
             for _ in 0..self.spawn_count {
+                if self.nearby_count(world, entity_type) as i32 >= self.max_nearby_entities {
+                    self.update_spawns(world);
+                    return;
+                }
                 match self.try_spawn(world, entity_type) {
                     SpawnAttempt::Blocked => {}
                     SpawnAttempt::Cancelled => cancelled_any = true,

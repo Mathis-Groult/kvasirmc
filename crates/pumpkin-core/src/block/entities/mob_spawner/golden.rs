@@ -155,19 +155,22 @@ const FIVE_NEAR: &[(&EntityType, f64, f64, f64)] = &[
     (Z, 2.0, 0.0, 0.0),
 ];
 const OTHER_TYPE: &[(&EntityType, f64, f64, f64)] = &[(S, 1.0, 0.0, 1.0), (S, -1.0, 0.0, 1.0)];
+// Vanilla counts mobs whose box meets the spawner block grown by the spawn range (4 here) on all
+// three axes. Offsets are from the block centre; a zombie is 0.6 wide and 1.95 tall, so its box
+// meets the grown one up to 4.8 sideways, 4.5 above and 6.45 below (feet offset).
 const EDGES_IN: &[(&EntityType, f64, f64, f64)] = &[
-    (Z, 8.0, 0.0, 0.0),
-    (Z, 0.0, 0.0, -8.0),
-    (Z, 0.0, 4.0, 0.0),
-    (Z, 0.0, -4.0, 0.0),
+    (Z, 4.79, 0.0, 0.0),
+    (Z, 0.0, 0.0, -4.79),
+    (Z, 0.0, 4.49, 0.0),
+    (Z, 0.0, -6.44, 0.0),
 ];
 const EDGES_OUT: &[(&EntityType, f64, f64, f64)] = &[
-    (Z, 8.01, 0.0, 0.0),
-    (Z, -8.01, 0.0, 0.0),
-    (Z, 0.0, 0.0, 8.01),
-    (Z, 0.0, 0.0, -8.01),
-    (Z, 0.0, 4.01, 0.0),
-    (Z, 0.0, -4.01, 0.0),
+    (Z, 4.81, 0.0, 0.0),
+    (Z, -4.81, 0.0, 0.0),
+    (Z, 0.0, 0.0, 4.81),
+    (Z, 0.0, 0.0, -4.81),
+    (Z, 0.0, 4.51, 0.0),
+    (Z, 0.0, -6.46, 0.0),
 ];
 
 const SCENES: &[Scene] = &[
@@ -209,7 +212,11 @@ const SCENES: &[Scene] = &[
     ),
     crowd(
         spawning(scene("zombies at range two edges, cap one", 0), 4, 2, 1),
-        &[(Z, 4.0, 0.0, 0.0)],
+        &[(Z, 2.79, 0.0, 0.0)],
+    ),
+    crowd(
+        spawning(scene("zombie past range two edges, cap one", 0), 4, 2, 1),
+        &[(Z, 2.81, 0.0, 0.0)],
     ),
     statistics(spawning(scene("600 spawns", 0), 600, 4, 1000)),
     statistics(spawning(scene("600 spawns in range two", 0), 600, 2, 1000)),

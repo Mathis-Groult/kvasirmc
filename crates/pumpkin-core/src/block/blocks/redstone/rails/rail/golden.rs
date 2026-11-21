@@ -183,3 +183,48 @@ async fn rail_shape_is_the_same() -> TestResult {
     server.stop();
     Ok(())
 }
+
+/// `count_potential_connections` (the `== 3` test of the neighbour update) counts each of the
+/// four sides once: every subset of flat neighbours, plus one rail a block up and one a block down
+/// (card #70: replacing a direction by a duplicate went unseen).
+#[tokio::test(flavor = "multi_thread")]
+async fn each_side_counts_once_as_a_potential_connection() -> TestResult {
+    let folder = tempfile::tempdir()?;
+    let server = test_support::server(&folder).await?;
+    let world = server.worlds.load()[0].clone();
+    for cx in -1..=20 {
+        for cz in -1..=0 {
+            world.level.loaded_chunks.insert(
+                Vector2::new(cx, cz),
+                pumpkin_world::chunk::ChunkData::empty_sync(cx, cz),
+            );
+        }
+    }
+    for mask in 0..16usize {
+        let x = i32::try_from(mask)? * 8;
+        let mut expected = 0;
+        for side in (0..4).filter(|side| mask & (1 << side) != 0) {
+            let (dx, dz) = OFFSETS[side];
+            put(
+                &world,
+                &BlockPos::new(x + dx, 64, dz),
+                rail(toward_centre(side)),
+            );
+            expected += 1;
+        }
+        let counted = super::count_potential_connections(&world, &BlockPos::new(x, 64, 0));
+        assert_eq!(counted, expected, "sides {mask:04b}");
+    }
+    for dy in [1, -1] {
+        let x = 16 * 8 + 8 * (dy + 1);
+        put(
+            &world,
+            &BlockPos::new(x, 64 + dy, -1),
+            rail(RailShape::NorthSouth),
+        );
+        let counted = super::count_potential_connections(&world, &BlockPos::new(x, 64, 0));
+        assert_eq!(counted, 1, "rail at dy {dy}");
+    }
+    server.stop();
+    Ok(())
+}

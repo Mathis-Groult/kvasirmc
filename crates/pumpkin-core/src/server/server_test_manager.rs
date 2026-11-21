@@ -122,6 +122,27 @@ pub fn enqueue_game_test(request: GameTestQueueEntry) {
     PENDING_GAME_TESTS.store(queue.len(), Ordering::Release);
 }
 
+/// The queued requests as text (test id, position, rotation, retry options), for the goldens.
+#[cfg(test)]
+pub(crate) fn queued_game_tests() -> Vec<String> {
+    GAME_TEST_QUEUE
+        .lock()
+        .unwrap_or_else(std::sync::PoisonError::into_inner)
+        .iter()
+        .map(|entry| {
+            format!(
+                "{} @({},{:?},{}) rot {} {:?}",
+                entry.test_id,
+                entry.test_x,
+                entry.test_y,
+                entry.test_z,
+                entry.rotation_steps,
+                entry.retry_options
+            )
+        })
+        .collect()
+}
+
 pub fn stop_game_tests() {
     // Keep the queue mutex held while publishing the stop request. drain_game_test_queue
     // takes the same mutex before consuming STOP_GAME_TESTS, so a stop+new-run command

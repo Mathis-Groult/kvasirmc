@@ -338,3 +338,6 @@ const fn wildcard_match(pattern: &[u8], value: &[u8]) -> bool {
 
     p == pattern.len()
 }
+
+#[cfg(test)]
+mod golden;

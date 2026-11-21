@@ -9,7 +9,9 @@
 
 use std::fmt::Write;
 
-use super::{Mirror, Rotation, transform_block_properties};
+use super::{
+    DoorHinge, Facing, Mirror, Property, Rotation, StairsShape, transform_block_properties,
+};
 use crate::Block;
 use crate::block_properties::BlockProperties;
 
@@ -26,6 +28,52 @@ fn fnv(hash: &mut u64, text: &str) {
         *hash ^= u64::from(byte);
         *hash = hash.wrapping_mul(0x0100_0000_01b3);
     }
+}
+
+/// States with some of the properties a stair or door reads missing, and a trapdoor (a name that
+/// ends in `door` but is not one) given a hinge.
+fn partial(out: &mut String) -> Result<(), std::fmt::Error> {
+    let mut sets: Vec<Vec<Property>> = vec![Vec::new(), vec![Property::Waterlogged(true)]];
+    for facing in [Facing::North, Facing::East, Facing::Up] {
+        sets.push(vec![Property::Facing(facing)]);
+        sets.push(vec![Property::Waterlogged(true), Property::Facing(facing)]);
+    }
+    for shape in [
+        StairsShape::Straight,
+        StairsShape::InnerLeft,
+        StairsShape::OuterRight,
+    ] {
+        sets.push(vec![Property::StairsShape(shape)]);
+        sets.push(vec![
+            Property::Facing(Facing::East),
+            Property::StairsShape(shape),
+        ]);
+    }
+    for hinge in [DoorHinge::Left, DoorHinge::Right] {
+        sets.push(vec![Property::Hinge(hinge)]);
+        sets.push(vec![Property::Facing(Facing::East), Property::Hinge(hinge)]);
+    }
+    for name in [
+        "oak_stairs",
+        "oak_door",
+        "oak_trapdoor",
+        "door",
+        "stairs",
+        "minecraft:iron_door",
+    ] {
+        for props in &sets {
+            for rotation in ROTATIONS {
+                for mirror in MIRRORS {
+                    let now = transform_block_properties(name, props, rotation, mirror);
+                    writeln!(
+                        out,
+                        "partial {name} {props:?} {rotation:?}/{mirror:?} => {now:?}"
+                    )?;
+                }
+            }
+        }
+    }
+    Ok(())
 }
 
 fn record() -> Result<String, std::fmt::Error> {
@@ -71,6 +119,7 @@ fn record() -> Result<String, std::fmt::Error> {
     for (signature, names) in &groups {
         writeln!(out, "{signature}\n  {}", names.join(" "))?;
     }
+    partial(&mut out)?;
     Ok(out)
 }
 

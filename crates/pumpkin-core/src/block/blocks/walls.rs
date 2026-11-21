@@ -16,8 +16,9 @@ use pumpkin_util::math::position::BlockPos;
 use pumpkin_world::tick::TickPriority;
 
 type FenceGateProperties = pumpkin_data::block_properties::OakFenceGateLikeProperties;
-type FenceLikeProperties = pumpkin_data::block_properties::OakFenceLikeProperties;
 type WallProperties = pumpkin_data::block_properties::ResinBrickWallLikeProperties;
+
+mod cover;
 
 #[pumpkin_block_from_tag("minecraft:walls")]
 pub struct WallBlock;
@@ -57,7 +58,9 @@ pub fn compute_wall_state(
     block: &Block,
     block_pos: &BlockPos,
 ) -> BlockStateId {
-    let (block_above, block_above_state) = world.get_block_and_state(&block_pos.up());
+    let above_pos = block_pos.up();
+    let (block_above, block_above_state) = world.get_block_and_state(&above_pos);
+    let face = cover::bottom_face(block_above_state, &above_pos);
 
     for direction in HorizontalFacing::all() {
         let other_block_pos = block_pos.offset(direction.to_offset());
@@ -66,7 +69,7 @@ pub fn compute_wall_state(
         let connected = is_connected(block, direction, other_block, other_block_state);
 
         let shape = if connected {
-            let raise = side_is_tall(direction, block_above, block_above_state);
+            let raise = cover::covers_side(&face, direction);
             if raise {
                 WallShape::Tall
             } else {
@@ -84,92 +87,38 @@ pub fn compute_wall_state(
         }
     }
 
-    wall_props.up = post_is_raised(wall_props, block_above, block_above_state);
+    wall_props.up = post_is_raised(wall_props, block_above, block_above_state, &face);
     wall_props.to_state_id(block)
 }
 
-/// Whether a connected side toward `direction` is tall, from the block above.
-fn side_is_tall(
-    direction: HorizontalFacing,
-    block_above: &Block,
-    block_above_state: &BlockState,
-) -> bool {
-    if block_above_state.is_full_cube() {
-        true
-    } else if block_above.has_tag(&tag::Block::MINECRAFT_WALLS) {
-        let other_props = WallProperties::from_state_id(block_above_state.id);
-        match direction {
-            HorizontalFacing::North => other_props.north != NorthWall::None,
-            HorizontalFacing::South => other_props.south != SouthWall::None,
-            HorizontalFacing::East => other_props.east != EastWall::None,
-            HorizontalFacing::West => other_props.west != WestWall::None,
-        }
-    } else if block_above.has_tag(&tag::Block::C_GLASS_PANES)
-        || block_above.has_tag(&tag::Block::MINECRAFT_FENCES)
-        || block_above.has_tag(&tag::Block::MINECRAFT_BARS)
-    {
-        let other_props = FenceLikeProperties::from_state_id(block_above_state.id);
-        match direction {
-            HorizontalFacing::North => other_props.north,
-            HorizontalFacing::South => other_props.south,
-            HorizontalFacing::East => other_props.east,
-            HorizontalFacing::West => other_props.west,
-        }
-    } else if block_above.has_tag(&tag::Block::MINECRAFT_FENCE_GATES) {
-        let other_props = FenceGateProperties::from_state_id(block_above_state.id);
-        // gate is perp to connected direction
-        let perpendicular_gate = direction == other_props.facing.rotate_clockwise()
-            || direction == other_props.facing.rotate_counter_clockwise();
-
-        perpendicular_gate && !other_props.open
-    } else {
-        false
-    }
-}
-
-/// Whether the wall shows its post, from its sides and the block above.
+/// `WallBlock.shouldRaisePost`: whether the wall shows its post, from its sides and the block above.
 fn post_is_raised(
     wall_props: WallProperties,
     block_above: &Block,
     block_above_state: &BlockState,
+    face: &[cover::Footprint],
 ) -> bool {
-    let connected_north_south = wall_props.north != NorthWall::None
-        && wall_props.south != SouthWall::None
-        && wall_props.east == EastWall::None
-        && wall_props.west == WestWall::None;
-    let connected_east_west = wall_props.north == NorthWall::None
-        && wall_props.south == SouthWall::None
-        && wall_props.east != EastWall::None
-        && wall_props.west != WestWall::None;
-    let cross = wall_props.north != NorthWall::None
-        && wall_props.south != SouthWall::None
-        && wall_props.east != EastWall::None
-        && wall_props.west != WestWall::None;
-    let has_high_wall = wall_props.north == NorthWall::Tall
-        || wall_props.south == SouthWall::Tall
-        || wall_props.east == EastWall::Tall
-        || wall_props.west == WestWall::Tall;
-
-    if !(cross || connected_north_south || connected_east_west)
-        || (block_above.has_tag(&tag::Block::MINECRAFT_WALL_POST_OVERRIDE) && !has_high_wall)
+    if block_above.has_tag(&tag::Block::MINECRAFT_WALLS)
+        && WallProperties::from_state_id(block_above_state.id).up
     {
-        true
-    } else if block_above.has_tag(&tag::Block::MINECRAFT_WALLS) {
-        let other_props = WallProperties::from_state_id(block_above_state.id);
-        other_props.up
-    } else if block_above.has_tag(&tag::Block::MINECRAFT_FENCE_GATES) {
-        let other_props = FenceGateProperties::from_state_id(block_above_state.id);
-        if other_props.open {
-            false
-        } else {
-            match other_props.facing {
-                HorizontalFacing::East | HorizontalFacing::West => connected_east_west,
-                HorizontalFacing::South | HorizontalFacing::North => connected_north_south,
-            }
-        }
-    } else {
-        false
+        return true;
     }
+    let none = (
+        wall_props.north == NorthWall::None,
+        wall_props.south == SouthWall::None,
+        wall_props.east == EastWall::None,
+        wall_props.west == WestWall::None,
+    );
+    let all_none = none.0 && none.1 && none.2 && none.3;
+    if all_none || none.0 != none.1 || none.3 != none.2 {
+        return true;
+    }
+    let tall_pair = (wall_props.north == NorthWall::Tall && wall_props.south == SouthWall::Tall)
+        || (wall_props.east == EastWall::Tall && wall_props.west == WestWall::Tall);
+    if tall_pair {
+        return false;
+    }
+    block_above.has_tag(&tag::Block::MINECRAFT_WALL_POST_OVERRIDE) || cover::covers_post(face)
 }
 
 fn is_connected(

@@ -2,7 +2,7 @@ use std::sync::OnceLock;
 
 use pumpkin_data::{
     item::{Item, JavaToBedrockItemMapping},
-    recipes::{CraftingRecipeTypes, RecipeIngredientTypes, RecipeResultStruct},
+    recipes::{CraftingRecipeTypes, RecipeIngredientTypes, RecipeResultStruct, StonecutterRecipe},
 };
 use pumpkin_protocol::{
     bedrock::{
@@ -155,96 +155,127 @@ fn build() -> Vec<BedrockRecipe> {
                 pattern,
                 result,
                 ..
-            } => {
-                let height = pattern.len() as i32;
-                let width = pattern.iter().map(|row| row.len()).max().unwrap_or(0) as i32;
-                let mut options = Vec::new();
-                for row in *pattern {
-                    for column in 0..width as usize {
-                        let symbol = row.chars().nth(column).unwrap_or(' ');
-                        options.push(if symbol == ' ' {
-                            vec![ItemDescriptorCount::empty()]
-                        } else {
-                            key.iter()
-                                .find(|(key, _)| *key == symbol)
-                                .map_or_else(Vec::new, |(_, ingredient)| {
-                                    ingredient_options(ingredient)
-                                })
-                        });
-                    }
-                }
-
-                let Some(output) = output_descriptor(result) else {
-                    continue;
-                };
-                for input in ingredient_variants(&options) {
-                    recipes.push(BedrockRecipe::Shaped(BedrockShapedRecipe {
-                        recipe_id: format!("pumpkin:recipe_{network_id}"),
-                        width: VarInt(width),
-                        height: VarInt(height),
-                        input,
-                        output: vec![output.clone()],
-                        uuid: Uuid::from_u128(u128::from(network_id)),
-                        block: "crafting_table".to_string(),
-                        priority: VarInt(1),
-                        assume_symmetry: true,
-                        unlock_requirement: RecipeUnlockRequirement { context: 1 },
-                        recipe_network_id: VarUInt(network_id),
-                    }));
-                    network_id += 1;
-                }
-            }
+            } => append_shaped(&mut recipes, &mut network_id, key, pattern, result),
             CraftingRecipeTypes::CraftingShapeless {
                 ingredients,
                 result,
                 ..
-            } => {
-                let options = ingredients
-                    .iter()
-                    .map(ingredient_options)
-                    .collect::<Vec<_>>();
-                let Some(output) = output_descriptor(result) else {
-                    continue;
-                };
-                for input in ingredient_variants(&options) {
-                    recipes.push(BedrockRecipe::Shapeless(BedrockShapelessRecipe {
-                        recipe_id: format!("pumpkin:recipe_{network_id}"),
-                        input,
-                        output: vec![output.clone()],
-                        uuid: Uuid::from_u128(u128::from(network_id)),
-                        block: "crafting_table".to_string(),
-                        priority: VarInt(1),
-                        unlock_requirement: RecipeUnlockRequirement { context: 1 },
-                        recipe_network_id: VarUInt(network_id),
-                    }));
-                    network_id += 1;
-                }
-            }
+            } => append_shapeless(&mut recipes, &mut network_id, ingredients, result),
             _ => {}
         }
     }
 
     for recipe in pumpkin_data::recipes::RECIPES_STONECUTTING {
-        let options = ingredient_options(&recipe.ingredient);
-        let Some(output) = output_descriptor(&recipe.result) else {
-            continue;
-        };
-        for input in ingredient_variants(&[options]) {
-            recipes.push(BedrockRecipe::Shapeless(BedrockShapelessRecipe {
-                recipe_id: format!("pumpkin:stonecutter_{network_id}"),
-                input,
-                output: vec![output.clone()],
-                uuid: Uuid::from_u128(u128::from(network_id)),
-                block: "stonecutter".to_string(),
-                priority: VarInt(1),
-                unlock_requirement: RecipeUnlockRequirement { context: 1 },
-                recipe_network_id: VarUInt(network_id),
-            }));
-            network_id += 1;
-        }
+        append_stonecutting(&mut recipes, &mut network_id, recipe);
     }
 
     recipes
+}
+
+/// The option list of every cell of a shaped recipe's grid, row by row, padded to the widest row.
+fn shaped_options(
+    key: &[(char, RecipeIngredientTypes)],
+    pattern: &[&str],
+    width: i32,
+) -> Vec<Vec<ItemDescriptorCount>> {
+    let mut options = Vec::new();
+    for row in pattern {
+        for column in 0..width as usize {
+            let symbol = row.chars().nth(column).unwrap_or(' ');
+            options.push(if symbol == ' ' {
+                vec![ItemDescriptorCount::empty()]
+            } else {
+                key.iter()
+                    .find(|(key, _)| *key == symbol)
+                    .map_or_else(Vec::new, |(_, ingredient)| ingredient_options(ingredient))
+            });
+        }
+    }
+    options
+}
+
+fn append_shaped(
+    recipes: &mut Vec<BedrockRecipe>,
+    network_id: &mut u32,
+    key: &[(char, RecipeIngredientTypes)],
+    pattern: &[&str],
+    result: &RecipeResultStruct,
+) {
+    let height = pattern.len() as i32;
+    let width = pattern.iter().map(|row| row.len()).max().unwrap_or(0) as i32;
+    let options = shaped_options(key, pattern, width);
+
+    let Some(output) = output_descriptor(result) else {
+        return;
+    };
+    for input in ingredient_variants(&options) {
+        recipes.push(BedrockRecipe::Shaped(BedrockShapedRecipe {
+            recipe_id: format!("pumpkin:recipe_{network_id}"),
+            width: VarInt(width),
+            height: VarInt(height),
+            input,
+            output: vec![output.clone()],
+            uuid: Uuid::from_u128(u128::from(*network_id)),
+            block: "crafting_table".to_string(),
+            priority: VarInt(1),
+            assume_symmetry: true,
+            unlock_requirement: RecipeUnlockRequirement { context: 1 },
+            recipe_network_id: VarUInt(*network_id),
+        }));
+        *network_id += 1;
+    }
+}
+
+fn append_shapeless(
+    recipes: &mut Vec<BedrockRecipe>,
+    network_id: &mut u32,
+    ingredients: &[RecipeIngredientTypes],
+    result: &RecipeResultStruct,
+) {
+    let options = ingredients
+        .iter()
+        .map(ingredient_options)
+        .collect::<Vec<_>>();
+    let Some(output) = output_descriptor(result) else {
+        return;
+    };
+    for input in ingredient_variants(&options) {
+        recipes.push(BedrockRecipe::Shapeless(BedrockShapelessRecipe {
+            recipe_id: format!("pumpkin:recipe_{network_id}"),
+            input,
+            output: vec![output.clone()],
+            uuid: Uuid::from_u128(u128::from(*network_id)),
+            block: "crafting_table".to_string(),
+            priority: VarInt(1),
+            unlock_requirement: RecipeUnlockRequirement { context: 1 },
+            recipe_network_id: VarUInt(*network_id),
+        }));
+        *network_id += 1;
+    }
+}
+
+fn append_stonecutting(
+    recipes: &mut Vec<BedrockRecipe>,
+    network_id: &mut u32,
+    recipe: &StonecutterRecipe,
+) {
+    let options = ingredient_options(&recipe.ingredient);
+    let Some(output) = output_descriptor(&recipe.result) else {
+        return;
+    };
+    for input in ingredient_variants(&[options]) {
+        recipes.push(BedrockRecipe::Shapeless(BedrockShapelessRecipe {
+            recipe_id: format!("pumpkin:stonecutter_{network_id}"),
+            input,
+            output: vec![output.clone()],
+            uuid: Uuid::from_u128(u128::from(*network_id)),
+            block: "stonecutter".to_string(),
+            priority: VarInt(1),
+            unlock_requirement: RecipeUnlockRequirement { context: 1 },
+            recipe_network_id: VarUInt(*network_id),
+        }));
+        *network_id += 1;
+    }
 }
 
 fn owned_ingredient_options(

@@ -34,6 +34,9 @@ use crate::world::World;
 use crate::world::loot::{LootContextParameters, fill_chest_inventory_handle};
 use pumpkin_data::BlockState;
 
+#[cfg(test)]
+mod golden;
+
 struct ChestScreenFactory {
     inventory: Arc<dyn Inventory>,
     loot_pending: bool,

@@ -11,7 +11,7 @@ use std::fmt::Write;
 
 use crate::command::commands::script_golden::{self, TestResult};
 use crate::entity::ai::test_support;
-use crate::server::server_test_manager::queued_game_tests;
+use crate::server::server_test_manager::{queued_game_tests, queued_report_remaining};
 
 /// `(source player index in the online list: 0 = GoldA op, 2 = GoldC non-op, command)`.
 const STEPS: &[(usize, &str)] = &[
@@ -100,6 +100,9 @@ async fn run_and_stop_are_the_same() -> TestResult {
         let queue = queued_game_tests();
         let _ = writeln!(out, "{command} as {}: {result} |{sent}", online[*who].name);
         let _ = writeln!(out, "  queue {}: {}", queue.len(), queue.join(" ; "));
+        let mut remaining = queued_report_remaining();
+        remaining.dedup();
+        let _ = writeln!(out, "  remaining {remaining:?}");
     }
     server.stop();
     script_golden::bless_or_compare("test_command.txt", &out)

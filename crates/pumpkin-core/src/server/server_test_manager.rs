@@ -143,6 +143,17 @@ pub(crate) fn queued_game_tests() -> Vec<String> {
         .collect()
 }
 
+/// How many tests each queued request's batch report still expects, for the goldens.
+#[cfg(test)]
+pub(crate) fn queued_report_remaining() -> Vec<usize> {
+    GAME_TEST_QUEUE
+        .lock()
+        .unwrap_or_else(std::sync::PoisonError::into_inner)
+        .iter()
+        .map(|entry| entry.report.remaining_tests())
+        .collect()
+}
+
 pub fn stop_game_tests() {
     // Keep the queue mutex held while publishing the stop request. drain_game_test_queue
     // takes the same mutex before consuming STOP_GAME_TESTS, so a stop+new-run command

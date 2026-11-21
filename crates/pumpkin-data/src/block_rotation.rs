@@ -721,6 +721,9 @@ pub fn transform_block_properties(
 }
 
 #[cfg(test)]
+mod golden;
+
+#[cfg(test)]
 mod tests {
     use super::*;
 

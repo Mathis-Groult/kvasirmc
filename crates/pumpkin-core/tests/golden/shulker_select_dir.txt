@@ -296,3 +296,6 @@ far_diag:
   south share even delta 0.000000,0.000000,0.150000
   east share even delta 0.150000,0.000000,0.000000
   steps {10, 20, 30, 40, 50}
+on_target_primed:
+  none share even delta 0.000000,0.000000,0.000000
+  steps {10, 20, 30, 40, 50}

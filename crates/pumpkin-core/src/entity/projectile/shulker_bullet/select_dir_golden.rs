@@ -45,6 +45,9 @@ struct Scene {
     stones: Vec<(i32, i32, i32)>,
     /// The choice is uniform over what comes up (else shares are rounded to a tenth).
     even: bool,
+    /// The bullet carries a steering delta before every call (a call that finds itself on its
+    /// target must set it back to zero).
+    primed: bool,
 }
 
 /// The bullet's block is (4, 66, 4) and it sits at that block's centre.
@@ -59,6 +62,7 @@ fn scene(name: &str, base: (f64, f64), at: Vec3, target: Option<Vec3>, avoid: u8
         avoid,
         stones: Vec::new(),
         even: true,
+        primed: false,
     }
 }
 
@@ -238,7 +242,15 @@ fn all_scenes() -> Vec<Scene> {
     scenes.extend(diagonal_scenes());
     scenes.extend(range_scenes());
     scenes.extend(blocked_scenes());
+    scenes.push(primed_scene());
     scenes
+}
+
+/// The bullet is on its target (zero distance) with a delta left from an earlier aim.
+fn primed_scene() -> Scene {
+    let mut on_target = toward("on_target_primed", (0, 0, 0), NO_AVOID);
+    on_target.primed = true;
+    on_target
 }
 
 fn dir_name(dir: u8) -> &'static str {
@@ -263,6 +275,11 @@ fn draw(bullet: &ShulkerBulletEntity, scene: &Scene, target: Option<Vector3<f64>
     let mut dirs: BTreeMap<u8, Seen> = BTreeMap::new();
     let mut steps = BTreeSet::new();
     for _ in 0..DRAWS {
+        if scene.primed {
+            bullet.target_delta_x.store(0.5);
+            bullet.target_delta_y.store(-0.25);
+            bullet.target_delta_z.store(0.125);
+        }
         bullet.select_next_dir(scene.avoid, target);
         let seen = dirs
             .entry(

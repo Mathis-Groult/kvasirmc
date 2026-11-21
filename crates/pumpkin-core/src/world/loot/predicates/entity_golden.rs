@@ -187,6 +187,8 @@ const PREDICATES: &[&str] = &[
     r#"{"distance":{"y":{"min":-1.5,"max":-0.5}}}"#,
     r#"{"distance":{"z":{"min":-1,"max":1}}}"#,
     r#"{"distance":{"x":{"min":-3,"max":-1}}}"#,
+    r#"{"distance":{"x":{"min":1.5,"max":2.5}}}"#,
+    r#"{"distance":{"z":{"min":1.5,"max":2.5}}}"#,
     r#"{"movement":{"minecraft:y":{"max":-0.4}}}"#,
     r#"{"movement":{"z":{"min":0.2}}}"#,
     r#"{"movement":{"z":{"max":0.2}}}"#,
@@ -317,7 +319,7 @@ async fn entity_matches_answers_the_same() -> TestResult {
     ];
     let seen = LootContextParameters {
         world: Some(&world),
-        position: Some(at(0.0, 64.0, 0.0)),
+        position: Some(at(1.0, 64.0, 2.0)),
         ..Default::default()
     };
     // No world and no origin: the entity's own world is used and `distance` cannot match.

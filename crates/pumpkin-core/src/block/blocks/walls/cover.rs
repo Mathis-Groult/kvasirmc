@@ -121,4 +121,13 @@ mod tests {
         let right = [8.5 / 16.0, 0.0, 1.0, 1.0];
         assert!(!covers_post(&[left, right]));
     }
+
+    #[test]
+    fn faces_beyond_the_test_shape_do_not_matter() {
+        let post = [0.4, 0.4, 0.6, 0.6];
+        let far_corner = [0.0, 0.0, 0.1, 0.1];
+        assert!(covers_post(&[post, far_corner]));
+        let other_far_corner = [0.9, 0.9, 1.0, 1.0];
+        assert!(covers_post(&[far_corner, post, other_far_corner]));
+    }
 }

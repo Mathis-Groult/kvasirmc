@@ -103,14 +103,16 @@ fn post_is_raised(
     {
         return true;
     }
-    let none = (
+    let (north, south) = (
         wall_props.north == NorthWall::None,
         wall_props.south == SouthWall::None,
+    );
+    let (east, west) = (
         wall_props.east == EastWall::None,
         wall_props.west == WestWall::None,
     );
-    let all_none = none.0 && none.1 && none.2 && none.3;
-    if all_none || none.0 != none.1 || none.3 != none.2 {
+    // All four sides empty, or the north/south or east/west pair differs.
+    if north != south || east != west || (north && east) {
         return true;
     }
     let tall_pair = (wall_props.north == NorthWall::Tall && wall_props.south == SouthWall::Tall)

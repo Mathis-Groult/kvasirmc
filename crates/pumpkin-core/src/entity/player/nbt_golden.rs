@@ -500,3 +500,46 @@ async fn player_nbt_is_the_same() -> TestResult {
     server.stop();
     script_golden::bless_or_compare("player_nbt.txt", &out)
 }
+
+/// Vanilla 26.3 `Player.readAdditionalSaveData` / `addAdditionalSaveData` keep `XpLevel`, `XpP`
+/// and `XpTotal` as stored: the total is not recomputed from the level and the bar, and the
+/// level is not derived from a total alone. Per scene: `(name, level, bar, total)` written back.
+#[tokio::test(flavor = "multi_thread")]
+async fn experience_is_written_back_as_stored() -> TestResult {
+    let expected = [
+        ("experience total only", 0, 0.0, 100),
+        ("experience level without bar", 30, 0.0, 5),
+        ("experience level with almost full bar", 3, 0.999, 0),
+        ("full modern save", 7, 0.5, 100),
+    ];
+    let folder = tempfile::tempdir()?;
+    let server = test_support::server(&folder).await?;
+    let world = server.worlds.load()[0].clone();
+    let mut failures = Vec::new();
+    for (name, level, bar, total) in expected {
+        let (_, input) = scenes()
+            .into_iter()
+            .find(|(scene, _)| *scene == name)
+            .ok_or(name)?;
+        let player = test_support::java_player(&world, GameMode::Survival);
+        player.read_custom_nbt(&input);
+        let mut written = NbtCompound::new();
+        player.write_custom_nbt(&mut written);
+        let got = (
+            written.get_int("XpLevel"),
+            written.get_float("XpP"),
+            written.get_int("XpTotal"),
+        );
+        if got != (Some(level), Some(bar), Some(total)) {
+            failures.push(format!(
+                "{name}: wrote {got:?}, vanilla keeps ({level}, {bar}, {total})"
+            ));
+        }
+    }
+    server.stop();
+    if failures.is_empty() {
+        Ok(())
+    } else {
+        Err(failures.join("\n").into())
+    }
+}

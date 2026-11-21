@@ -94,3 +94,15 @@ impl DisplayEntity {
         store(&self.right_rotation, normalised(right));
     }
 }
+
+#[cfg(test)]
+mod tests {
+    use super::normalised;
+
+    #[test]
+    fn a_zero_quaternion_stays_zero_and_others_get_unit_length() {
+        assert_eq!(normalised([0.0; 4]), [0.0; 4]);
+        assert_eq!(normalised([0.0, 0.0, 0.0, 2.0]), [0.0, 0.0, 0.0, 1.0]);
+        assert_eq!(normalised([0.0, 0.0, 0.0, 1.0]), [0.0, 0.0, 0.0, 1.0]);
+    }
+}

@@ -13,6 +13,7 @@ use crate::{
     server::Server,
 };
 
+mod light;
 mod serializers;
 pub use serializers::{QuaternionfSerializer, Vector3fSerializer};
 
@@ -469,9 +470,8 @@ impl DisplayEntity {
         nbt.put_string("billboard", billboard_str.into());
 
         let brightness = self.brightness.load(Ordering::Relaxed);
-        if brightness != -1 {
-            let block = brightness & 0xF;
-            let sky = (brightness >> 4) & 0xF;
+        if brightness != light::NO_BRIGHTNESS_OVERRIDE {
+            let (block, sky) = light::unpack(brightness);
             let mut b_compound = NbtCompound::new();
             b_compound.put_int("block", block);
             b_compound.put_int("sky", sky);
@@ -585,12 +585,10 @@ impl DisplayEntity {
             self.billboard.store(mode, Ordering::Relaxed);
         }
 
-        if let Some(b) = nbt.get_compound("brightness") {
-            let block = b.get_int("block").unwrap_or(0);
-            let sky = b.get_int("sky").unwrap_or(0);
-            self.brightness
-                .store((sky << 4) | (block & 0xF), Ordering::Relaxed);
-        }
+        self.brightness
+            .store(light::read_brightness(nbt), Ordering::Relaxed);
+        self.teleport_duration
+            .store(light::read_teleport_duration(nbt), Ordering::Relaxed);
 
         if let Some(transform) = nbt.get_compound("transformation") {
             self.read_transformation(transform);

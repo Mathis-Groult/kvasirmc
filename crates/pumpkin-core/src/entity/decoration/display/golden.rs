@@ -106,6 +106,10 @@ fn cases() -> Vec<(&'static str, NbtCompound)> {
             compound(vec![("brightness", brightness(Some(20), Some(1)))]),
         ),
         (
+            "teleport_duration clamped",
+            compound(vec![("teleport_duration", NbtTag::Int(100))]),
+        ),
+        (
             "glow only",
             compound(vec![("glow_color_override", NbtTag::Int(0x0012_3456))]),
         ),
@@ -325,4 +329,30 @@ async fn display_entity_nbt_and_tracker_are_the_same() -> TestResult {
     script_golden::bless_or_compare("display_entity.txt", &now)?;
     server.stop();
     Ok(())
+}
+
+#[test]
+fn brightness_nbt_is_packed_like_vanilla_and_rejects_invalid_compounds() {
+    let nbt = |block: Option<i32>, sky: Option<i32>| match brightness(block, sky) {
+        NbtTag::Compound(c) => c,
+        _ => NbtCompound::new(),
+    };
+    assert_eq!(
+        super::light::brightness_from_nbt(&nbt(Some(15), Some(15))),
+        Some(15 << 4 | 15 << 20)
+    );
+    assert_eq!(
+        super::light::brightness_from_nbt(&nbt(Some(7), Some(0))),
+        Some(7 << 4)
+    );
+    assert_eq!(super::light::brightness_from_nbt(&nbt(Some(7), None)), None);
+    assert_eq!(super::light::brightness_from_nbt(&nbt(None, Some(9))), None);
+    assert_eq!(
+        super::light::brightness_from_nbt(&nbt(Some(20), Some(1))),
+        None
+    );
+    assert_eq!(
+        super::light::brightness_from_nbt(&nbt(Some(-1), Some(1))),
+        None
+    );
 }

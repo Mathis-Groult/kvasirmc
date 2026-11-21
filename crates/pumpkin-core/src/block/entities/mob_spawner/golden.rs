@@ -64,6 +64,15 @@ struct Scene {
     stone: bool,
     /// Water fills the area around the spawner, over a stone floor two blocks below it.
     water: bool,
+    /// A stone floor two blocks below the spawner under open air: the one layer where a mob that
+    /// needs a solid block below may stand.
+    floor: bool,
+    /// Sky light staged at the one spot a spawn at range zero picks (the floor layer), and
+    /// thunder over the world.
+    sky: Option<u8>,
+    thunder: bool,
+    /// Adds whether every spawned mob got the follow-range spawn bonus to the line.
+    bonus: bool,
     ticks: usize,
     stats: bool,
     /// Adds the mean of the yaw, the pitch and the follow-range spawn bonus to the stats line.
@@ -89,6 +98,10 @@ const fn scene(name: &'static str, delay: i32) -> Scene {
         crowd: &[],
         stone: false,
         water: false,
+        floor: false,
+        sky: None,
+        thunder: false,
+        bonus: false,
         ticks: 3,
         stats: false,
         angles: false,
@@ -113,6 +126,22 @@ const fn of_type(mut scene: Scene, entity: &'static EntityType) -> Scene {
 
 const fn flooded(mut scene: Scene) -> Scene {
     scene.water = true;
+    scene
+}
+
+const fn floored(mut scene: Scene) -> Scene {
+    scene.floor = true;
+    scene
+}
+
+const fn lit_by_sky(mut scene: Scene, level: u8, thunder: bool) -> Scene {
+    scene.sky = Some(level);
+    scene.thunder = thunder;
+    scene
+}
+
+const fn with_bonus(mut scene: Scene) -> Scene {
+    scene.bonus = true;
     scene
 }
 
@@ -170,6 +199,7 @@ const fn statistics(mut scene: Scene) -> Scene {
 // the delay without depending on light or floor (the "zombie spawner" scene tests the rule).
 const Z: &EntityType = &EntityType::SULFUR_CUBE;
 const ZOMBIE: &EntityType = &EntityType::ZOMBIE;
+const VILLAGER: &EntityType = &EntityType::VILLAGER;
 const S: &EntityType = &EntityType::SKELETON;
 const SIX_NEAR: &[(&EntityType, f64, f64, f64)] = &[
     (Z, 1.0, 0.0, 1.0),
@@ -283,6 +313,41 @@ const SCENES: &[Scene] = &[
         4,
         1000,
     ))),
+    // Appended after the second mutation run (card #74): a real mob that passes its placement
+    // rule. Range zero fixes the spot to the spawner's column, so only the floor layer spawns,
+    // and the rule must be asked about exactly that block (a swapped coordinate asks elsewhere).
+    with_bonus(floored(spawning(
+        of_type(scene("villager over a stone floor", 0), VILLAGER),
+        60,
+        0,
+        1000,
+    ))),
+    floored(spawning(
+        of_type(scene("zombie over a stone floor, dark", 0), ZOMBIE),
+        200,
+        0,
+        1000,
+    )),
+    lit_by_sky(
+        floored(spawning(
+            of_type(scene("zombie, sky light 15, clear", 0), ZOMBIE),
+            200,
+            0,
+            1000,
+        )),
+        15,
+        false,
+    ),
+    lit_by_sky(
+        floored(spawning(
+            of_type(scene("zombie, sky light 15, thunder", 0), ZOMBIE),
+            200,
+            0,
+            1000,
+        )),
+        15,
+        true,
+    ),
 ];
 
 fn put(world: &Arc<World>, pos: &BlockPos, state: BlockStateId) {
@@ -313,7 +378,7 @@ fn lay(world: &Arc<World>, pos: BlockPos, scene: &Scene) {
             for dx in -6..=6 {
                 let at = BlockPos::new(pos.0.x + dx, pos.0.y + dy, pos.0.z + dz);
                 let state = if dy == -2 {
-                    if scene.water {
+                    if scene.water || scene.floor {
                         Block::STONE.default_state.id
                     } else {
                         Block::AIR.default_state.id
@@ -521,6 +586,10 @@ fn run(
         pos.chunk_position(),
         NonZero::<u8>::MIN.saturating_add(1),
     ));
+    if let Some(level) = scene.sky {
+        world.set_sky_light_level(&BlockPos::new(pos.0.x, pos.0.y - 1, pos.0.z), level);
+    }
+    world.set_thundering(scene.thunder);
     drop(events(tap));
     let entity = Arc::new(spawner(pos, scene));
     let mut reset = None;
@@ -544,6 +613,11 @@ fn run(
                 .map(|mob| mob_text(mob.as_ref(), pos, scene.spawn_range))
                 .collect();
             format!("{list:?}")
+        };
+        let mobs_text = if scene.bonus {
+            format!("{mobs_text}, spawn bonus {}", spawn_bonus(&mobs))
+        } else {
+            mobs_text
         };
         let _ = writeln!(
             out,
@@ -580,17 +654,9 @@ fn resets_text(entity: &MobSpawnerBlockEntity, world: &Arc<World>, scene: &Scene
     format!("{} resets, inside {inside}, wide {wide}", delays.len())
 }
 
-/// Yaw mean (in quarter turns) and spread, pitches, and the follow-range spawn bonus.
-fn angles_text(mobs: &[Arc<dyn EntityBase>]) -> String {
-    let n = mobs.len() as f64;
-    let yaws: Vec<f64> = mobs
-        .iter()
-        .map(|mob| f64::from(mob.get_entity().yaw.load()))
-        .collect();
-    let mean = yaws.iter().sum::<f64>() / n;
-    let sd = (yaws.iter().map(|v| (v - mean).powi(2)).sum::<f64>() / n).sqrt();
-    let level = mobs.iter().all(|mob| mob.get_entity().pitch.load() == 0.0);
-    let bonus = mobs.iter().all(|mob| {
+/// Every mob carries the follow-range spawn bonus `Mob.finalizeSpawn` adds.
+fn spawn_bonus(mobs: &[Arc<dyn EntityBase>]) -> bool {
+    mobs.iter().all(|mob| {
         mob.get_living_entity().is_some_and(|living| {
             living
                 .attributes
@@ -604,7 +670,20 @@ fn angles_text(mobs: &[Arc<dyn EntityBase>]) -> String {
                         .any(|modifier| modifier.id == "minecraft:random_spawn_bonus")
                 })
         })
-    });
+    })
+}
+
+/// Yaw mean (in quarter turns) and spread, pitches, and the follow-range spawn bonus.
+fn angles_text(mobs: &[Arc<dyn EntityBase>]) -> String {
+    let n = mobs.len() as f64;
+    let yaws: Vec<f64> = mobs
+        .iter()
+        .map(|mob| f64::from(mob.get_entity().yaw.load()))
+        .collect();
+    let mean = yaws.iter().sum::<f64>() / n;
+    let sd = (yaws.iter().map(|v| (v - mean).powi(2)).sum::<f64>() / n).sqrt();
+    let level = mobs.iter().all(|mob| mob.get_entity().pitch.load() == 0.0);
+    let bonus = spawn_bonus(mobs);
     format!(
         ", yaw mean {} quarter turns, yaw spread uniform {}, pitch zero {level}, spawn bonus {bonus}",
         (mean / 90.0).round() as i64,

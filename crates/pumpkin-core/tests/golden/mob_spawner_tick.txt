@@ -101,3 +101,15 @@ creative player in range: tick 3 delay reset-2 spawned ["sulfur_cube", "sulfur_c
 600 spawns in range two: tick 1 delay reset in min..max spawned 600 mobs, x mean 0.5+0 sd as expected, z mean 0.5+0 sd as expected, layers ["many", "many", "many"] packet 2f000007d400019e00000080400000000000 x600 packet 0700019e00000080400100f201 x1
 fifty resets: 50 resets, inside true, wide true
 600 spawns, angles: tick 1 delay reset in min..max spawned 600 mobs, x mean 0.5+0 sd as expected, z mean 0.5+0 sd as expected, layers ["many", "many", "many"], yaw mean 2 quarter turns, yaw spread uniform true, pitch zero true, spawn bonus false packet 2f000007d40001b600000080400000000000 x600 packet 070001b600000080400100f201 x1
+villager over a stone floor: tick 1 delay reset in min..max spawned ["villager"], spawn bonus true packet 2f000007d40001c200000080400000000000 x1 packet 070001c200000080400100f201 x1
+villager over a stone floor: tick 2 delay reset-1 spawned ["villager"], spawn bonus true
+villager over a stone floor: tick 3 delay reset-2 spawned ["villager"], spawn bonus true
+zombie over a stone floor, dark: tick 1 delay 0 spawned []
+zombie over a stone floor, dark: tick 2 delay 0 spawned []
+zombie over a stone floor, dark: tick 3 delay 0 spawned []
+zombie, sky light 15, clear: tick 1 delay 0 spawned []
+zombie, sky light 15, clear: tick 2 delay 0 spawned []
+zombie, sky light 15, clear: tick 3 delay 0 spawned []
+zombie, sky light 15, thunder: tick 1 delay reset in min..max spawned ["zombie"] packet 2f000007d40001e600000080400000000000 x1 packet 070001e600000080400100f201 x1
+zombie, sky light 15, thunder: tick 2 delay reset-1 spawned ["zombie"]
+zombie, sky light 15, thunder: tick 3 delay reset-2 spawned ["zombie"]

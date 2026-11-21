@@ -18,6 +18,9 @@ use serde_json::Value;
 
 use super::{EntityBase, LootContextParameters, LootEntityTarget, Taggable, World, Xoroshiro};
 
+#[cfg(test)]
+mod entity_golden;
+
 pub(super) fn matches_entity(
     target: LootEntityTarget,
     predicate: &Value,

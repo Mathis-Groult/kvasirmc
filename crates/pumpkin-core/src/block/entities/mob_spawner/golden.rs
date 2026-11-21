@@ -57,6 +57,8 @@ struct Scene {
     player: (f64, f64, f64),
     /// The listener's game mode and whether it is dead (zero health) during the scene.
     player_state: (GameMode, bool),
+    /// The `spawner_blocks_work` game rule is switched off for the scene.
+    rule_off: bool,
     /// Mobs already there: type and offset of their feet from the spawner block's centre.
     crowd: &'static [(&'static EntityType, f64, f64, f64)],
     stone: bool,
@@ -81,6 +83,7 @@ const fn scene(name: &'static str, delay: i32) -> Scene {
         player_range: 16,
         player: (0.0, 0.0, 3.0),
         player_state: (GameMode::Survival, false),
+        rule_off: false,
         crowd: &[],
         stone: false,
         ticks: 3,
@@ -97,6 +100,11 @@ const fn player_at(mut scene: Scene, x: f64, y: f64, z: f64) -> Scene {
 
 const fn player_is(mut scene: Scene, mode: GameMode, dead: bool) -> Scene {
     scene.player_state = (mode, dead);
+    scene
+}
+
+const fn rule_off(mut scene: Scene) -> Scene {
+    scene.rule_off = true;
     scene
 }
 
@@ -228,9 +236,15 @@ const SCENES: &[Scene] = &[
         spawning(scene("zombie past range two edges, cap one", 0), 4, 2, 1),
         &[(Z, 2.81, 0.0, 0.0)],
     ),
+    rule_off(scene("spawner_blocks_work off", 0)),
+    rule_off(scene("spawner_blocks_work off, delay running", 5)),
     player_is(scene("spectator in range", 0), GameMode::Spectator, false),
     player_is(scene("dead player in range", 0), GameMode::Survival, true),
-    player_is(scene("creative player in range", 0), GameMode::Creative, false),
+    player_is(
+        scene("creative player in range", 0),
+        GameMode::Creative,
+        false,
+    ),
     statistics(spawning(scene("600 spawns", 0), 600, 4, 1000)),
     statistics(spawning(scene("600 spawns in range two", 0), 600, 2, 1000)),
     // Appended after the first mutation run: the spread of reset delays, and the yaw, pitch
@@ -455,6 +469,11 @@ fn run(
     let centre = pos.to_centered_f64();
     let (px, py, pz) = scene.player;
     let (player, tap) = listener;
+    world.level_info.rcu(|info| {
+        let mut next = (**info).clone();
+        next.game_rules.spawner_blocks_work = !scene.rule_off;
+        Arc::new(next)
+    });
     player.gamemode.store(scene.player_state.0);
     player
         .living_entity

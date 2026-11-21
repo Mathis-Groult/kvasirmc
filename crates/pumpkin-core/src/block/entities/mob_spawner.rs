@@ -127,7 +127,11 @@ impl MobSpawnerBlockEntity {
         let min = self.position.0.to_f64();
         let area = BoundingBox::new(
             Vector3::new(min.x - range, min.y - range, min.z - range),
-            Vector3::new(min.x + 1.0 + range, min.y + 1.0 + range, min.z + 1.0 + range),
+            Vector3::new(
+                min.x + 1.0 + range,
+                min.y + 1.0 + range,
+                min.z + 1.0 + range,
+            ),
         );
         world
             .get_entities_at_box(&area)
@@ -196,7 +200,9 @@ impl BlockEntity for MobSpawnerBlockEntity {
     fn tick(&self, world: &Arc<World>) {
         if let Some(entity_type) = &self.entity_type.load() {
             let center = self.position.to_centered_f64();
-            if !self.player_nearby(world, &center) {
+            if !self.player_nearby(world, &center)
+                || !world.level_info.load().game_rules.spawner_blocks_work
+            {
                 return;
             }
 
@@ -209,7 +215,7 @@ impl BlockEntity for MobSpawnerBlockEntity {
                 return;
             }
 
-                        let mut spawned_any = false;
+            let mut spawned_any = false;
             let mut cancelled_any = false;
             for _ in 0..self.spawn_count {
                 if self.nearby_count(world, entity_type) as i32 >= self.max_nearby_entities {

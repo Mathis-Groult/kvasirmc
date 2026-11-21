@@ -7,6 +7,7 @@
 
 use std::fmt::Write;
 use std::sync::Arc;
+use std::sync::atomic::Ordering;
 
 use pumpkin_data::entity::EntityType;
 use pumpkin_data::tracked_data::display;
@@ -379,6 +380,73 @@ async fn reading_an_empty_compound_resets_every_field_to_its_default() -> TestRe
     assert_ne!(written(&used), written(&new_display()));
     used.read_display_nbt(&NbtCompound::new());
     assert_eq!(written(&used), written(&new_display()));
+    server.stop();
+    Ok(())
+}
+
+/// What `init_data_tracker` of a display entity sends, without its terminating 0xff.
+fn tracked_bytes(entity: &Entity) -> Vec<u8> {
+    let mut bytes = entity
+        .synched_data
+        .pack_dirty_for_version(&JavaMinecraftVersion::V_26_3)
+        .map_or_else(Vec::new, Vec::from);
+    bytes.pop();
+    bytes
+}
+
+/// The Block, Item and Text wrappers must call the shared display NBT read, write and tracker
+/// (`kvasir-test --extra-mutants` deleted each call unseen, card #70), and add their own data.
+#[tokio::test(flavor = "multi_thread")]
+async fn each_display_wrapper_delegates_to_the_shared_display_code() -> TestResult {
+    use crate::entity::EntityBase;
+
+    let folder = tempfile::tempdir()?;
+    let server = test_support::server(&folder).await?;
+    let world = server.worlds.load()[0].clone();
+    let entity = |kind| Entity::new(Arc::clone(&world), Vector3::new(0.5, 64.0, 0.5), kind);
+
+    let plain = DisplayEntity::new(entity(&EntityType::BLOCK_DISPLAY));
+    plain.init_display_data_tracker();
+    let plain_bytes = tracked_bytes(&plain.entity);
+    assert!(!plain_bytes.is_empty());
+
+    let block = super::BlockDisplayEntity::new(entity(&EntityType::BLOCK_DISPLAY));
+    let item = super::ItemDisplayEntity::new(entity(&EntityType::ITEM_DISPLAY));
+    let text = super::TextDisplayEntity::new(entity(&EntityType::TEXT_DISPLAY));
+    let wrappers: [(&str, &dyn EntityBase, &DisplayEntity); 3] = [
+        ("block", &*block, &block.display),
+        ("item", &*item, &item.display),
+        ("text", &*text, &text.display),
+    ];
+    for (name, wrapper, display) in wrappers {
+        wrapper.read_custom_nbt(&full());
+        let mut written = NbtCompound::new();
+        wrapper.write_custom_nbt(&mut written);
+        assert_eq!(
+            written.get_int("interpolation_duration"),
+            Some(7),
+            "{name} write"
+        );
+        assert_eq!(
+            written.get_int("teleport_duration"),
+            Some(5),
+            "{name} write"
+        );
+        assert_eq!(
+            display.interpolation_duration.load(Ordering::Relaxed),
+            7,
+            "{name} read"
+        );
+
+        wrapper.init_data_tracker();
+        let bytes = tracked_bytes(&display.entity);
+        assert!(bytes.len() > plain_bytes.len(), "{name} adds its own data");
+        let view_range = 2.5f32.to_be_bytes();
+        assert!(
+            bytes.windows(4).any(|w| w == view_range),
+            "{name} tracker holds the values read"
+        );
+    }
     server.stop();
     Ok(())
 }

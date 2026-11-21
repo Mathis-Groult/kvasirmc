@@ -34,7 +34,6 @@ pub(super) fn matches_entity(
     entity.is_some_and(|entity| entity_matches(entity, predicate, params))
 }
 
-#[allow(clippy::too_many_lines)]
 fn entity_matches(
     entity: &dyn EntityBase,
     predicate: &Value,
@@ -45,154 +44,15 @@ fn entity_matches(
     };
     properties.iter().all(
         |(key, expected)| match key.strip_prefix("minecraft:").unwrap_or(key) {
-            "entity_type" | "type" => {
-                let matches = |name: &str| {
-                    let kind = entity.get_entity().entity_type;
-                    name.strip_prefix('#').map_or_else(
-                        || kind.resource_name == name.strip_prefix("minecraft:").unwrap_or(name),
-                        |tag| kind.is_tagged_with(tag) == Some(true),
-                    )
-                };
-                holder_set_matches(expected, matches)
-            }
-            "distance" => {
-                let Some(origin) = params.position else {
-                    return false;
-                };
-                let pos = entity.get_entity().pos.load();
-                let dx = pos.x - origin.x;
-                let dy = pos.y - origin.y;
-                let dz = pos.z - origin.z;
-                let horiz = dx.hypot(dz);
-                let abs = (dx * dx + dy * dy + dz * dz).sqrt();
-                expected.as_object().is_some_and(|bounds| {
-                    bounds
-                        .iter()
-                        .all(|(k, v)| match k.strip_prefix("minecraft:").unwrap_or(k) {
-                            "x" => float_matches(dx, v),
-                            "y" => float_matches(dy, v),
-                            "z" => float_matches(dz, v),
-                            "horizontal" => float_matches(horiz, v),
-                            "absolute" => float_matches(abs, v),
-                            _ => true,
-                        })
-                })
-            }
-            "movement" => {
-                let vel = entity.get_entity().velocity.load();
-                let horiz = vel.x.hypot(vel.z);
-                let vert = vel.y.abs();
-                let fall = f64::from(
-                    entity
-                        .get_living_entity()
-                        .map_or(0.0, |l| l.fall_distance.load()),
-                );
-                expected.as_object().is_some_and(|bounds| {
-                    bounds
-                        .iter()
-                        .all(|(k, v)| match k.strip_prefix("minecraft:").unwrap_or(k) {
-                            "x" => float_matches(vel.x, v),
-                            "y" => float_matches(vel.y, v),
-                            "z" => float_matches(vel.z, v),
-                            "horizontal" => float_matches(horiz, v),
-                            "vertical" => float_matches(vert, v),
-                            "fall_distance" => float_matches(fall, v),
-                            _ => true,
-                        })
-                })
-            }
-            "flags" => expected.as_object().is_some_and(|flags| {
-                flags.iter().all(|(flag, expected_val)| {
-                    let Some(expected_val) = expected_val.as_bool() else {
-                        return false;
-                    };
-                    let actual = match flag.strip_prefix("minecraft:").unwrap_or(flag) {
-                        "is_on_fire" => params
-                            .is_on_fire
-                            .unwrap_or_else(|| entity.get_entity().is_on_fire()),
-                        "is_sneaking" => entity.get_entity().sneaking.load(Ordering::Relaxed),
-                        "is_sprinting" => entity.get_entity().sprinting.load(Ordering::Relaxed),
-                        "is_swimming" => entity.get_entity().swimming.load(Ordering::Relaxed),
-                        "is_baby" => {
-                            entity.get_entity().age.load(Ordering::Relaxed) < 0
-                                || entity.get_mob().is_some_and(|m| {
-                                    m.as_ageable()
-                                        .is_some_and(crate::entity::ageable::AgeableMob::is_baby)
-                                })
-                        }
-                        "is_on_ground" => entity.get_entity().on_ground.load(Ordering::Relaxed),
-                        _ => true,
-                    };
-                    actual == expected_val
-                })
-            }),
-            "equipment" => expected.as_object().is_some_and(|slots| {
-                slots.iter().all(|(slot_name, item_pred)| {
-                    let stack = get_entity_equipment_stack(
-                        entity,
-                        slot_name.strip_prefix("minecraft:").unwrap_or(slot_name),
-                    );
-                    item_matches(&stack, item_pred)
-                })
-            }),
-            "slots" => expected.as_object().is_some_and(|slots| {
-                slots.iter().all(|(slot_name, item_pred)| {
-                    let stack = get_entity_equipment_stack(
-                        entity,
-                        slot_name.strip_prefix("minecraft:").unwrap_or(slot_name),
-                    );
-                    item_matches(&stack, item_pred)
-                })
-            }),
-            "location" => {
-                let pos = entity.get_entity().pos.load();
-                let world_arc = entity.get_entity().world.load();
-                let world = params.world.unwrap_or(&world_arc);
-                matches_location(
-                    [0, 0, 0],
-                    expected,
-                    &LootContextParameters {
-                        position: Some(pos),
-                        world: Some(world),
-                        ..params.clone()
-                    },
-                )
-            }
-            "stepping_on" => {
-                let pos = entity.get_entity().pos.load();
-                let stepping_pos = pos.add_raw(0.0, -0.200_000_002_980_232_24, 0.0);
-                let world_arc = entity.get_entity().world.load();
-                let world = params.world.unwrap_or(&world_arc);
-                matches_location(
-                    [0, 0, 0],
-                    expected,
-                    &LootContextParameters {
-                        position: Some(stepping_pos),
-                        world: Some(world),
-                        ..params.clone()
-                    },
-                )
-            }
-            "vehicle" => {
-                let guard = entity
-                    .get_entity()
-                    .vehicle
-                    .lock()
-                    .unwrap_or_else(std::sync::PoisonError::into_inner);
-                guard
-                    .as_ref()
-                    .is_some_and(|v| entity_matches(v.as_ref(), expected, params))
-            }
-            "passenger" => {
-                let guard = entity
-                    .get_entity()
-                    .passengers
-                    .lock()
-                    .unwrap_or_else(std::sync::PoisonError::into_inner);
-                guard
-                    .iter()
-                    .any(|p| entity_matches(p.as_ref(), expected, params))
-            }
+            "entity_type" | "type" => entity_type_matches(entity, expected),
+            "distance" => distance_matches(entity, expected, params),
+            "movement" => movement_matches(entity, expected),
+            "flags" => flags_match(entity, expected, params),
+            "equipment" | "slots" => equipment_matches(entity, expected),
+            "location" => location_matches(entity, expected, params, 0.0),
+            "stepping_on" => location_matches(entity, expected, params, -0.200_000_002_980_232_24),
+            "vehicle" => vehicle_matches(entity, expected, params),
+            "passenger" => passenger_matches(entity, expected, params),
             "targeted_entity" => {
                 let target = entity
                     .get_mob()
@@ -204,29 +64,8 @@ fn entity_matches(
                     .get_team_name()
                     .is_some_and(|actual| actual == name.strip_prefix("minecraft:").unwrap_or(name))
             }),
-            "nbt" => {
-                let Some(expected_tag) = json_to_nbt(expected) else {
-                    return false;
-                };
-                let mut actual_nbt = NbtCompound::new();
-                entity.write_nbt(&mut actual_nbt);
-                matches_nbt(&expected_tag, &NbtTag::Compound(actual_nbt))
-            }
-            "components" => expected.as_object().is_some_and(|components| {
-                components.iter().all(|(key, expected)| {
-                    let Some(component) = DataComponent::try_from_name(key) else {
-                        return false;
-                    };
-                    let Some(actual) = entity.get_component(component) else {
-                        return false;
-                    };
-                    let Some(tag) = json_to_nbt(expected) else {
-                        return false;
-                    };
-                    read_data(component, &tag)
-                        .is_some_and(|expected| actual.equal(expected.as_ref()))
-                })
-            }),
+            "nbt" => nbt_matches(entity, expected),
+            "components" => components_match(entity, expected),
             "type_specific" | "sub_predicate" => expected.as_object().is_some_and(|obj| {
                 let kind = obj
                     .get("type")
@@ -246,6 +85,192 @@ fn entity_matches(
             _ => false,
         },
     )
+}
+
+fn entity_type_matches(entity: &dyn EntityBase, expected: &Value) -> bool {
+    let matches = |name: &str| {
+        let kind = entity.get_entity().entity_type;
+        name.strip_prefix('#').map_or_else(
+            || kind.resource_name == name.strip_prefix("minecraft:").unwrap_or(name),
+            |tag| kind.is_tagged_with(tag) == Some(true),
+        )
+    };
+    holder_set_matches(expected, matches)
+}
+
+fn distance_matches(
+    entity: &dyn EntityBase,
+    expected: &Value,
+    params: &LootContextParameters<'_>,
+) -> bool {
+    let Some(origin) = params.position else {
+        return false;
+    };
+    let pos = entity.get_entity().pos.load();
+    let dx = pos.x - origin.x;
+    let dy = pos.y - origin.y;
+    let dz = pos.z - origin.z;
+    let horiz = dx.hypot(dz);
+    let abs = (dx * dx + dy * dy + dz * dz).sqrt();
+    expected.as_object().is_some_and(|bounds| {
+        bounds
+            .iter()
+            .all(|(k, v)| match k.strip_prefix("minecraft:").unwrap_or(k) {
+                "x" => float_matches(dx, v),
+                "y" => float_matches(dy, v),
+                "z" => float_matches(dz, v),
+                "horizontal" => float_matches(horiz, v),
+                "absolute" => float_matches(abs, v),
+                _ => true,
+            })
+    })
+}
+
+fn movement_matches(entity: &dyn EntityBase, expected: &Value) -> bool {
+    let vel = entity.get_entity().velocity.load();
+    let horiz = vel.x.hypot(vel.z);
+    let vert = vel.y.abs();
+    let fall = f64::from(
+        entity
+            .get_living_entity()
+            .map_or(0.0, |l| l.fall_distance.load()),
+    );
+    expected.as_object().is_some_and(|bounds| {
+        bounds
+            .iter()
+            .all(|(k, v)| match k.strip_prefix("minecraft:").unwrap_or(k) {
+                "x" => float_matches(vel.x, v),
+                "y" => float_matches(vel.y, v),
+                "z" => float_matches(vel.z, v),
+                "horizontal" => float_matches(horiz, v),
+                "vertical" => float_matches(vert, v),
+                "fall_distance" => float_matches(fall, v),
+                _ => true,
+            })
+    })
+}
+
+fn flags_match(
+    entity: &dyn EntityBase,
+    expected: &Value,
+    params: &LootContextParameters<'_>,
+) -> bool {
+    expected.as_object().is_some_and(|flags| {
+        flags.iter().all(|(flag, expected_val)| {
+            let Some(expected_val) = expected_val.as_bool() else {
+                return false;
+            };
+            let actual = match flag.strip_prefix("minecraft:").unwrap_or(flag) {
+                "is_on_fire" => params
+                    .is_on_fire
+                    .unwrap_or_else(|| entity.get_entity().is_on_fire()),
+                "is_sneaking" => entity.get_entity().sneaking.load(Ordering::Relaxed),
+                "is_sprinting" => entity.get_entity().sprinting.load(Ordering::Relaxed),
+                "is_swimming" => entity.get_entity().swimming.load(Ordering::Relaxed),
+                "is_baby" => {
+                    entity.get_entity().age.load(Ordering::Relaxed) < 0
+                        || entity.get_mob().is_some_and(|m| {
+                            m.as_ageable()
+                                .is_some_and(crate::entity::ageable::AgeableMob::is_baby)
+                        })
+                }
+                "is_on_ground" => entity.get_entity().on_ground.load(Ordering::Relaxed),
+                _ => true,
+            };
+            actual == expected_val
+        })
+    })
+}
+
+/// `equipment` and `slots` read the same way: each named slot must hold a matching stack.
+fn equipment_matches(entity: &dyn EntityBase, expected: &Value) -> bool {
+    expected.as_object().is_some_and(|slots| {
+        slots.iter().all(|(slot_name, item_pred)| {
+            let stack = get_entity_equipment_stack(
+                entity,
+                slot_name.strip_prefix("minecraft:").unwrap_or(slot_name),
+            );
+            item_matches(&stack, item_pred)
+        })
+    })
+}
+
+/// `location` (`y_offset` 0) and `stepping_on` (just under the feet) test a block position
+/// around the entity.
+fn location_matches(
+    entity: &dyn EntityBase,
+    expected: &Value,
+    params: &LootContextParameters<'_>,
+    y_offset: f64,
+) -> bool {
+    let pos = entity.get_entity().pos.load().add_raw(0.0, y_offset, 0.0);
+    let world_arc = entity.get_entity().world.load();
+    let world = params.world.unwrap_or(&world_arc);
+    matches_location(
+        [0, 0, 0],
+        expected,
+        &LootContextParameters {
+            position: Some(pos),
+            world: Some(world),
+            ..params.clone()
+        },
+    )
+}
+
+fn vehicle_matches(
+    entity: &dyn EntityBase,
+    expected: &Value,
+    params: &LootContextParameters<'_>,
+) -> bool {
+    let guard = entity
+        .get_entity()
+        .vehicle
+        .lock()
+        .unwrap_or_else(std::sync::PoisonError::into_inner);
+    guard
+        .as_ref()
+        .is_some_and(|v| entity_matches(v.as_ref(), expected, params))
+}
+
+fn passenger_matches(
+    entity: &dyn EntityBase,
+    expected: &Value,
+    params: &LootContextParameters<'_>,
+) -> bool {
+    let guard = entity
+        .get_entity()
+        .passengers
+        .lock()
+        .unwrap_or_else(std::sync::PoisonError::into_inner);
+    guard
+        .iter()
+        .any(|p| entity_matches(p.as_ref(), expected, params))
+}
+
+fn nbt_matches(entity: &dyn EntityBase, expected: &Value) -> bool {
+    let Some(expected_tag) = json_to_nbt(expected) else {
+        return false;
+    };
+    let mut actual_nbt = NbtCompound::new();
+    entity.write_nbt(&mut actual_nbt);
+    matches_nbt(&expected_tag, &NbtTag::Compound(actual_nbt))
+}
+
+fn components_match(entity: &dyn EntityBase, expected: &Value) -> bool {
+    expected.as_object().is_some_and(|components| {
+        components.iter().all(|(key, expected)| {
+            let Some(component) = DataComponent::try_from_name(key) else {
+                return false;
+            };
+            let Some(actual) = entity.get_component(component) else {
+                return false;
+            };
+            let Some(tag) = json_to_nbt(expected) else {
+                return false;
+            };
+            read_data(component, &tag).is_some_and(|expected| actual.equal(expected.as_ref()))
+        })
+    })
 }
 
 fn match_type_specific(

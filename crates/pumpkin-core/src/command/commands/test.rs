@@ -23,6 +23,7 @@ use crate::command::node::{CommandExecutor, CommandExecutorResult};
 use crate::command::string_reader::StringReader;
 use crate::command::suggestion::suggestions::{Suggestions, SuggestionsBuilder};
 use crate::server::server_test_manager::{GameTestQueueEntry, enqueue_game_test, stop_game_tests};
+use crate::world::World;
 
 const DESCRIPTION: &str = "Runs a GameTest test instance.";
 const PERMISSION: &str = "minecraft:command.test";
@@ -114,31 +115,16 @@ impl TestInstanceArgumentType {
     }
 }
 
-struct RunExecutor;
+/// The optional arguments of `/test run`, with vanilla's defaults.
+struct RunOptions {
+    number_of_times: i32,
+    until_failed: bool,
+    rotation_steps: i32,
+    tests_per_row: i32,
+}
 
-impl CommandExecutor for RunExecutor {
-    fn execute(&self, context: &CommandContext) -> CommandExecutorResult {
-        let selector = TestInstanceArgumentType::get(context, ARG_TESTS)?;
-        let selected: Vec<_> = context
-            .server()
-            .datapack_manager
-            .get_test_instance_names()
-            .into_iter()
-            .filter(|name| resource_selector_matches(selector, name))
-            .collect();
-
-        if selected.is_empty() {
-            return Err(TEST_NOT_FOUND_ERROR.create_without_context(
-                TextComponent::text(selector.to_string()),
-                TextComponent::text(TEST_INSTANCE_REGISTRY.to_string()),
-            ));
-        }
-
-        // Vanilla TestCommand::run always clears the current GameTestTicker first.
-        // Without this, issuing another /test run with a different retry mode lets
-        // two runners own the same controller/structure concurrently.
-        stop_game_tests();
-
+impl RunOptions {
+    fn read(context: &CommandContext) -> Result<Self, CommandSyntaxError> {
         let number_was_supplied = context.arguments.contains_key(ARG_NUMBER_OF_TIMES);
         let number_of_times = if number_was_supplied {
             IntegerArgumentType::get(context, ARG_NUMBER_OF_TIMES)?
@@ -166,6 +152,84 @@ impl CommandExecutor for RunExecutor {
             DEFAULT_TESTS_PER_ROW
         }
         .max(1);
+        Ok(Self {
+            number_of_times,
+            until_failed,
+            rotation_steps,
+            tests_per_row,
+        })
+    }
+
+    const fn retry_options(&self) -> GameTestRetryOptions {
+        GameTestRetryOptions::new(self.number_of_times, self.until_failed)
+    }
+}
+
+/// Queues one request per selected test on a grid of `tests_per_row` columns.
+fn queue_tests(
+    options: &RunOptions,
+    world: &Arc<World>,
+    base_x: i32,
+    base_z: i32,
+    selected: Vec<String>,
+    report: &Arc<GameTestBatchReport>,
+) {
+    for (index, test_id) in selected.into_iter().enumerate() {
+        let index = index as i32;
+        let column = index % options.tests_per_row;
+        let row = index / options.tests_per_row;
+        let test_x = base_x + column * TEST_GRID_SPACING;
+        let test_z = base_z + row * TEST_GRID_SPACING;
+
+        enqueue_game_test(GameTestQueueEntry::new(
+            test_id.clone(),
+            world.clone(),
+            test_x,
+            test_z,
+            options.rotation_steps,
+            options.retry_options(),
+            report.clone(),
+        ));
+
+        info!(
+            target: "pumpkin::gametest",
+            test = %test_id,
+            test_x,
+            test_z,
+            number_of_times = options.number_of_times,
+            until_failed = options.until_failed,
+            rotation_steps = options.rotation_steps,
+            "Queued GameTest request"
+        );
+    }
+}
+
+struct RunExecutor;
+
+impl CommandExecutor for RunExecutor {
+    fn execute(&self, context: &CommandContext) -> CommandExecutorResult {
+        let selector = TestInstanceArgumentType::get(context, ARG_TESTS)?;
+        let selected: Vec<_> = context
+            .server()
+            .datapack_manager
+            .get_test_instance_names()
+            .into_iter()
+            .filter(|name| resource_selector_matches(selector, name))
+            .collect();
+
+        if selected.is_empty() {
+            return Err(TEST_NOT_FOUND_ERROR.create_without_context(
+                TextComponent::text(selector.to_string()),
+                TextComponent::text(TEST_INSTANCE_REGISTRY.to_string()),
+            ));
+        }
+
+        // Vanilla TestCommand::run always clears the current GameTestTicker first.
+        // Without this, issuing another /test run with a different retry mode lets
+        // two runners own the same controller/structure concurrently.
+        stop_game_tests();
+
+        let options = RunOptions::read(context)?;
 
         let world = context.world().clone();
         let base_x = context.source.position.x.floor() as i32;
@@ -186,36 +250,7 @@ impl CommandExecutor for RunExecutor {
             selected.len(),
         ));
 
-        let retry_options = GameTestRetryOptions::new(number_of_times, until_failed);
-
-        for (index, test_id) in selected.into_iter().enumerate() {
-            let index = index as i32;
-            let column = index % tests_per_row;
-            let row = index / tests_per_row;
-            let test_x = base_x + column * TEST_GRID_SPACING;
-            let test_z = base_z + row * TEST_GRID_SPACING;
-
-            enqueue_game_test(GameTestQueueEntry::new(
-                test_id.clone(),
-                world.clone(),
-                test_x,
-                test_z,
-                rotation_steps,
-                retry_options,
-                report.clone(),
-            ));
-
-            info!(
-                target: "pumpkin::gametest",
-                test = %test_id,
-                test_x,
-                test_z,
-                number_of_times,
-                until_failed,
-                rotation_steps,
-                "Queued GameTest request"
-            );
-        }
+        queue_tests(&options, &world, base_x, base_z, selected, &report);
 
         Ok(1)
     }

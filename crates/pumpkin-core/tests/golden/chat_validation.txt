@@ -1,0 +1,51 @@
+text ok: ok | tracked 20 kept 0 pending 0
+text empty: ok | tracked 20 kept 0 pending 0
+text 256 chars: ok | tracked 20 kept 0 pending 0
+text 257 chars: OversizedMessage | tracked 20 kept 0 pending 0
+text 128 emoji (256 utf16): ok | tracked 20 kept 0 pending 0
+text 129 emoji (258 utf16): OversizedMessage | tracked 20 kept 0 pending 0
+text 255 chars + emoji (257 utf16): OversizedMessage | tracked 20 kept 0 pending 0
+text section sign: IllegalCharacters | tracked 20 kept 0 pending 0
+text newline: IllegalCharacters | tracked 20 kept 0 pending 0
+text unit separator: IllegalCharacters | tracked 20 kept 0 pending 0
+text space: ok | tracked 20 kept 0 pending 0
+text tilde: ok | tracked 20 kept 0 pending 0
+text delete: IllegalCharacters | tracked 20 kept 0 pending 0
+text accent: ok | tracked 20 kept 0 pending 0
+text tab: IllegalCharacters | tracked 20 kept 0 pending 0
+secure: oversized wins over missing signature: OversizedMessage | tracked 20 kept 0 pending 0
+secure: illegal wins over missing signature: IllegalCharacters | tracked 20 kept 0 pending 0
+secure ok: ok | tracked 20 kept 0 pending 0
+secure unsigned: UnsignedChat | tracked 20 kept 0 pending 0
+secure signature 255: UnsignedChat | tracked 20 kept 0 pending 0
+secure signature 257: UnsignedChat | tracked 20 kept 0 pending 0
+secure signature empty: UnsignedChat | tracked 20 kept 0 pending 0
+secure timestamp in the future: OutOfOrderChat | tracked 20 kept 0 pending 0
+secure timestamp 3 minutes old: OutOfOrderChat | tracked 20 kept 0 pending 0
+secure timestamp 1 minute old: ok | tracked 20 kept 0 pending 0
+secure session expired: ExpiredPublicKey | tracked 20 kept 0 pending 0
+secure unsigned wins over old timestamp: UnsignedChat | tracked 20 kept 0 pending 0
+secure old timestamp wins over expiry: OutOfOrderChat | tracked 20 kept 0 pending 0
+secure expiry wins over negative count: ExpiredPublicKey | tracked 20 kept 0 pending 0
+insecure ignores signature, timestamp and count: ok | tracked 20 kept 0 pending 0
+insecure ignores everything: ok | tracked 20 kept 0 pending 0
+secure negative count: ChatValidationFailed | tracked 20 kept 0 pending 0
+secure count 1 with nothing to drain: ChatValidationFailed | tracked 20 kept 0 pending 0
+secure count 3 with 3 prepared: ok | tracked 20 kept 3 pending 3
+secure count 4 with 3 prepared: ChatValidationFailed | tracked 23 kept 3 pending 3
+secure ack of an unknown message: ChatValidationFailed | tracked 20 kept 0 pending 0
+secure ack of 5 prepared: ok | tracked 20 kept 5 pending 0
+secure ack of 4 of 5 prepared: ok | tracked 20 kept 4 pending 0
+secure ack of 1 of 5 prepared: ok | tracked 20 kept 1 pending 0
+secure empty-looking ack bytes with 5 prepared: ok | tracked 20 kept 0 pending 0
+secure no ack with 5 prepared: ok | tracked 20 kept 5 pending 5
+secure ack with an already acknowledged entry in the window: ok | tracked 20 kept 5 pending 0
+secure ack ignoring an acknowledged entry: ChatValidationFailed | tracked 20 kept 5 pending 4
+secure right checksum: ok | tracked 20 kept 0 pending 0
+secure wrong checksum: ChatValidationFailed | tracked 20 kept 0 pending 0
+secure negative count wins over wrong checksum: ChatValidationFailed | tracked 20 kept 0 pending 0
+secure right checksum after a drain: ok | tracked 20 kept 3 pending 3
+secure 4096 tracked: ok | tracked 4096 kept 0 pending 0
+secure 4097 tracked: TooManyPendingChats | tracked 4097 kept 0 pending 0
+secure 4220 tracked, count 100 drains 100: TooManyPendingChats | tracked 4120 kept 0 pending 0
+secure 4320 tracked, count 100 drains 100 still over: TooManyPendingChats | tracked 4220 kept 0 pending 0

@@ -1,11 +1,11 @@
 pub mod behavior;
 pub mod brain;
 pub mod control;
-pub mod goal;
-pub mod pathfinder;
 #[cfg(test)]
 #[path = "pathfinder/fly_neighbors_golden.rs"]
 mod fly_neighbors_golden;
+pub mod goal;
+pub mod pathfinder;
 pub mod random_pos;
 pub mod sensing;
 pub mod target_match;
@@ -69,6 +69,14 @@ pub(crate) mod test_support {
     pub async fn server(
         folder: &tempfile::TempDir,
     ) -> Result<Arc<Server>, Box<dyn std::error::Error>> {
+        server_with(folder, |_| {}).await
+    }
+
+    /// [`server`] with the basic configuration adjusted by `adjust` before the server starts.
+    pub async fn server_with(
+        folder: &tempfile::TempDir,
+        adjust: impl FnOnce(&mut BasicConfiguration),
+    ) -> Result<Arc<Server>, Box<dyn std::error::Error>> {
         let mut basic = BasicConfiguration {
             default_level_name: folder.path().join("world").to_string_lossy().into_owned(),
             ..BasicConfiguration::default()
@@ -76,6 +84,7 @@ pub(crate) mod test_support {
         // A fixed seed: packets that carry it (Bedrock `StartGame`) are then the same in every
         // run; the default configuration picks a random one.
         basic.seed.0 = 20_261_112;
+        adjust(&mut basic);
         let telemetry = TelemetryConfig {
             enabled: false,
             ..TelemetryConfig::default()

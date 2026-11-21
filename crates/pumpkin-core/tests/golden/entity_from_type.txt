@@ -248,3 +248,12 @@ living=true count=1
   zombie_villager
 living=true count=1
   zombified_piglin
+--- saved state of each type ---
+breeze_wind_charge {"Air": "Short(300)", "Fire": "Short(-1)", "Invulnerable": "Byte(0)", "Motion": "List([Double(0.0), Double(0.0), Double(0.0)])", "OnGround": "Byte(0)", "PortalCooldown": "Int(0)", "id": "String(\"minecraft:breeze_wind_charge\")"}
+cushion {"Air": "Short(300)", "Color": "Byte(0)", "Fire": "Short(-1)", "Invulnerable": "Byte(0)", "Motion": "List([Double(0.0), Double(0.0), Double(0.0)])", "OnGround": "Byte(0)", "PortalCooldown": "Int(0)", "id": "String(\"minecraft:cushion\")"}
+evoker_fangs {"Air": "Short(300)", "Fire": "Short(-1)", "Invulnerable": "Byte(0)", "Motion": "List([Double(0.0), Double(0.0), Double(0.0)])", "OnGround": "Byte(0)", "PortalCooldown": "Int(0)", "Warmup": "Int(0)", "id": "String(\"minecraft:evoker_fangs\")"}
+experience_orb {"Air": "Short(300)", "Fire": "Short(-1)", "Health": "Short(5)", "Invulnerable": "Byte(0)", "Motion": "List([Double(0.0), Double(0.0), Double(0.0)])", "OnGround": "Byte(0)", "PortalCooldown": "Int(0)", "id": "String(\"minecraft:experience_orb\")"}
+falling_block {"Air": "Short(300)", "Fire": "Short(-1)", "Invulnerable": "Byte(0)", "Motion": "List([Double(0.0), Double(0.0), Double(0.0)])", "OnGround": "Byte(0)", "PortalCooldown": "Int(0)", "id": "String(\"minecraft:falling_block\")"}
+shulker_bullet {"Air": "Short(300)", "Fire": "Short(-1)", "Invulnerable": "Byte(0)", "Motion": "List([Double(0.0), Double(0.0), Double(0.0)])", "OnGround": "Byte(0)", "PortalCooldown": "Int(0)", "id": "String(\"minecraft:shulker_bullet\")"}
+tnt {"Air": "Short(300)", "Fire": "Short(-1)", "Invulnerable": "Byte(0)", "Motion": "List([Double(0.0), Double(0.0), Double(0.0)])", "OnGround": "Byte(0)", "PortalCooldown": "Int(0)", "fuse": "Short(80)", "id": "String(\"minecraft:tnt\")"}
+wind_charge {"Air": "Short(300)", "Fire": "Short(-1)", "Invulnerable": "Byte(0)", "Motion": "List([Double(0.0), Double(0.0), Double(0.0)])", "OnGround": "Byte(0)", "PortalCooldown": "Int(0)", "id": "String(\"minecraft:wind_charge\")"}

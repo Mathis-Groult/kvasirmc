@@ -2,7 +2,8 @@
 //! (`tests/golden/loot_entity_matches.txt`; rewrite it on purpose with `KVASIR_BLESS=1`).
 //!
 //! Every predicate below is asked of every entity in the cast; the record has one line per
-//! predicate with a `1` or `0` per entity. The cast is built to differ in the things the
+//! predicate with a `1` or `0` per entity, for three sets of loot parameters (an origin and a
+//! world; neither; and a caller-supplied fire flag). The cast is built to differ in the things the
 //! predicates read: position, motion, flags, equipment, riders, size, shearing.
 
 use std::fmt::Write;
@@ -181,6 +182,31 @@ const PREDICATES: &[&str] = &[
     r#"{"nbt":{"Air":300}}"#,
     r#"{"nbt":{"Invulnerable":false,"Sheared":true}}"#,
     r#"{"movement":{"fall_distance":{"min":2,"max":3}}}"#,
+    r#"{"distance":{"minecraft:x":{"min":2}}}"#,
+    r#"{"distance":{"y":{"max":1.5}}}"#,
+    r#"{"distance":{"y":{"min":-1.5,"max":-0.5}}}"#,
+    r#"{"distance":{"z":{"min":-1,"max":1}}}"#,
+    r#"{"distance":{"x":{"min":-3,"max":-1}}}"#,
+    r#"{"movement":{"minecraft:y":{"max":-0.4}}}"#,
+    r#"{"movement":{"z":{"min":0.2}}}"#,
+    r#"{"movement":{"z":{"max":0.2}}}"#,
+    r#"{"equipment":{"minecraft:head":{"items":"minecraft:diamond_helmet"}}}"#,
+    r#"{"slots":{"minecraft:head":{"items":"minecraft:diamond_helmet"}}}"#,
+    r#"{"location":{"position":{"y":{"min":64,"max":64}}}}"#,
+    r#"{"location":{"position":{"y":{"max":63.9}}}}"#,
+    r#"{"location":{"position":{"x":{"min":0,"max":0},"z":{"min":0,"max":0}}}}"#,
+    r#"{"location":{"position":{"x":{"min":3,"max":3},"z":{"min":4,"max":4}}}}"#,
+    r#"{"location":{"minecraft:position":{"y":{"min":70}}}}"#,
+    r#"{"location":{"dimension":"minecraft:overworld"}}"#,
+    r#"{"location":{"dimension":"overworld"}}"#,
+    r#"{"location":{"dimension":"minecraft:the_nether"}}"#,
+    r#"{"stepping_on":{"position":{"y":{"max":63.9}}}}"#,
+    r#"{"stepping_on":{"position":{"y":{"min":63.7,"max":63.85}}}}"#,
+    r#"{"stepping_on":{"position":{"x":{"min":0,"max":0},"z":{"min":0,"max":0}}}}"#,
+    r#"{"stepping_on":{"position":{"y":{"min":64}}}}"#,
+    r#"{"unknown_key":{}}"#,
+    r#"{"unknown_key/x":{}}"#,
+    r#"{"type_specific":{"size":1}}"#,
 ];
 
 fn put(entity: &dyn EntityBase, slot: &EquipmentSlot, stack: ItemStack) {
@@ -268,6 +294,10 @@ async fn entity_matches_answers_the_same() -> TestResult {
         *vehicle = Some(steed.clone());
     }
     let pillager = make(&EntityType::PILLAGER, 9, at(0.0, 64.0, 0.0));
+    steed.get_entity().age.store(5, Ordering::Relaxed);
+    if let Some(mob) = zombie.get_mob() {
+        *mob.get_mob_entity().target.lock().unwrap() = Some(baby_pig.clone());
+    }
     let lightning = make(&EntityType::LIGHTNING_BOLT, 6, at(0.0, 64.0, 0.0));
     let bobber = make(&EntityType::FISHING_BOBBER, 8, at(0.0, 64.0, 0.0));
 
@@ -285,11 +315,19 @@ async fn entity_matches_answers_the_same() -> TestResult {
         ("lightning", lightning),
         ("bobber", bobber),
     ];
-    let params = LootContextParameters {
+    let seen = LootContextParameters {
         world: Some(&world),
         position: Some(at(0.0, 64.0, 0.0)),
         ..Default::default()
     };
+    // No world and no origin: the entity's own world is used and `distance` cannot match.
+    let bare = LootContextParameters::default();
+    // The caller says whether the victim was on fire, whatever the entity says.
+    let burning = LootContextParameters {
+        is_on_fire: Some(true),
+        ..LootContextParameters::default()
+    };
+    let calls = [&seen, &bare, &burning];
 
     let mut now = String::new();
     writeln!(
@@ -299,17 +337,18 @@ async fn entity_matches_answers_the_same() -> TestResult {
     )?;
     for text in PREDICATES {
         let predicate: Value = serde_json::from_str(text)?;
-        let bits: String = cast
-            .iter()
-            .map(|(_, entity)| {
-                if entity_matches(&**entity, &predicate, &params) {
+        let mut line = String::new();
+        for params in calls {
+            for (_, entity) in &cast {
+                line.push(if entity_matches(&**entity, &predicate, params) {
                     '1'
                 } else {
                     '0'
-                }
-            })
-            .collect();
-        writeln!(now, "{bits} {text}")?;
+                });
+            }
+            line.push(' ');
+        }
+        writeln!(now, "{line}{text}")?;
     }
     let path = std::path::Path::new(env!("CARGO_MANIFEST_DIR"))
         .join("tests/golden/loot_entity_matches.txt");

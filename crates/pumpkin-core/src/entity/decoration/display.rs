@@ -14,6 +14,7 @@ use crate::{
 };
 
 mod light;
+mod nbt_read;
 mod serializers;
 pub use serializers::{QuaternionfSerializer, Vector3fSerializer};
 
@@ -532,117 +533,6 @@ impl DisplayEntity {
             ]),
         );
         nbt.put("transformation", NbtTag::Compound(transform));
-    }
-
-    pub fn read_display_nbt(&self, nbt: &NbtCompound) {
-        if let Some(dur) = nbt.get_int("interpolation_duration") {
-            self.interpolation_duration.store(dur, Ordering::Relaxed);
-        }
-        if let Some(start) = nbt.get_int("start_interpolation") {
-            self.interpolation_start_delta_ticks
-                .store(start, Ordering::Relaxed);
-        }
-        if let Some(vr) = nbt.get_float("view_range") {
-            *self
-                .view_range
-                .lock()
-                .unwrap_or_else(std::sync::PoisonError::into_inner) = vr;
-        }
-        if let Some(sr) = nbt.get_float("shadow_radius") {
-            *self
-                .shadow_radius
-                .lock()
-                .unwrap_or_else(std::sync::PoisonError::into_inner) = sr;
-        }
-        if let Some(ss) = nbt.get_float("shadow_strength") {
-            *self
-                .shadow_strength
-                .lock()
-                .unwrap_or_else(std::sync::PoisonError::into_inner) = ss;
-        }
-        if let Some(w) = nbt.get_float("width") {
-            *self
-                .width
-                .lock()
-                .unwrap_or_else(std::sync::PoisonError::into_inner) = w;
-        }
-        if let Some(h) = nbt.get_float("height") {
-            *self
-                .height
-                .lock()
-                .unwrap_or_else(std::sync::PoisonError::into_inner) = h;
-        }
-        if let Some(glow) = nbt.get_int("glow_color_override") {
-            self.glow_color_override.store(glow, Ordering::Relaxed);
-        }
-        if let Some(bb) = nbt.get_string("billboard") {
-            let mode = match bb {
-                "vertical" => 1,
-                "horizontal" => 2,
-                "center" => 3,
-                _ => 0,
-            };
-            self.billboard.store(mode, Ordering::Relaxed);
-        }
-
-        self.brightness
-            .store(light::read_brightness(nbt), Ordering::Relaxed);
-        self.teleport_duration
-            .store(light::read_teleport_duration(nbt), Ordering::Relaxed);
-
-        if let Some(transform) = nbt.get_compound("transformation") {
-            self.read_transformation(transform);
-        }
-    }
-
-    /// Reads the decomposed transformation lists (too short ones are ignored).
-    fn read_transformation(&self, transform: &NbtCompound) {
-        if let Some(t_list) = transform.get_list("translation")
-            && t_list.len() >= 3
-        {
-            let x = t_list[0].extract_float().unwrap_or(0.0);
-            let y = t_list[1].extract_float().unwrap_or(0.0);
-            let z = t_list[2].extract_float().unwrap_or(0.0);
-            *self
-                .translation
-                .lock()
-                .unwrap_or_else(std::sync::PoisonError::into_inner) = Vector3::new(x, y, z);
-        }
-        if let Some(s_list) = transform.get_list("scale")
-            && s_list.len() >= 3
-        {
-            let x = s_list[0].extract_float().unwrap_or(1.0);
-            let y = s_list[1].extract_float().unwrap_or(1.0);
-            let z = s_list[2].extract_float().unwrap_or(1.0);
-            *self
-                .scale
-                .lock()
-                .unwrap_or_else(std::sync::PoisonError::into_inner) = Vector3::new(x, y, z);
-        }
-        if let Some(lr_list) = transform.get_list("left_rotation")
-            && lr_list.len() >= 4
-        {
-            let x = lr_list[0].extract_float().unwrap_or(0.0);
-            let y = lr_list[1].extract_float().unwrap_or(0.0);
-            let z = lr_list[2].extract_float().unwrap_or(0.0);
-            let w = lr_list[3].extract_float().unwrap_or(1.0);
-            *self
-                .left_rotation
-                .lock()
-                .unwrap_or_else(std::sync::PoisonError::into_inner) = [x, y, z, w];
-        }
-        if let Some(rr_list) = transform.get_list("right_rotation")
-            && rr_list.len() >= 4
-        {
-            let x = rr_list[0].extract_float().unwrap_or(0.0);
-            let y = rr_list[1].extract_float().unwrap_or(0.0);
-            let z = rr_list[2].extract_float().unwrap_or(0.0);
-            let w = rr_list[3].extract_float().unwrap_or(1.0);
-            *self
-                .right_rotation
-                .lock()
-                .unwrap_or_else(std::sync::PoisonError::into_inner) = [x, y, z, w];
-        }
     }
 }
 

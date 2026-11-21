@@ -356,3 +356,29 @@ fn brightness_nbt_is_packed_like_vanilla_and_rejects_invalid_compounds() {
         None
     );
 }
+
+#[tokio::test(flavor = "multi_thread")]
+async fn reading_an_empty_compound_resets_every_field_to_its_default() -> TestResult {
+    let folder = tempfile::tempdir()?;
+    let server = test_support::server(&folder).await?;
+    let world = server.worlds.load()[0].clone();
+    let new_display = || {
+        DisplayEntity::new(Entity::new(
+            Arc::clone(&world),
+            Vector3::new(0.5, 64.0, 0.5),
+            &EntityType::BLOCK_DISPLAY,
+        ))
+    };
+    let written = |display: &DisplayEntity| {
+        let mut out = NbtCompound::new();
+        display.write_display_nbt(&mut out);
+        tag_text(&NbtTag::Compound(out))
+    };
+    let used = new_display();
+    used.read_display_nbt(&full());
+    assert_ne!(written(&used), written(&new_display()));
+    used.read_display_nbt(&NbtCompound::new());
+    assert_eq!(written(&used), written(&new_display()));
+    server.stop();
+    Ok(())
+}

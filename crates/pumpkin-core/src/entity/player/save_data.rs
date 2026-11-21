@@ -15,11 +15,9 @@ use crate::entity::mob::warden_spawn_tracker::WardenSpawnTracker;
 impl Player {
     /// Experience bar, level, total, enchantment seed and score.
     pub(super) fn write_experience_nbt(&self, nbt: &mut NbtCompound) {
-        let total_exp = experience::points_to_level(self.experience_level.load(Ordering::Relaxed))
-            + self.experience_points.load(Ordering::Relaxed);
         nbt.put_float("XpP", self.experience_progress.load());
         nbt.put_int("XpLevel", self.experience_level.load(Ordering::Relaxed));
-        nbt.put_int("XpTotal", total_exp);
+        nbt.put_int("XpTotal", self.xp_state.total.load(Ordering::Relaxed));
         nbt.put_int("XpSeed", self.enchantment_seed.load(Ordering::Relaxed));
         nbt.put_int("Score", self.score.load(Ordering::Relaxed));
     }
@@ -118,25 +116,19 @@ impl Player {
         }
     }
 
-    /// Experience from the level and bar, or from the total when the level is missing; the
-    /// enchantment seed (random when missing) and the score.
+    /// Level, bar and total as stored (vanilla `Player.readAdditionalSaveData`: `getFloatOr`/`getIntOr`
+    /// with default 0, nothing derived from each other); the enchantment seed (random when missing)
+    /// and the score.
     pub(super) fn read_experience_nbt(&self, nbt: &NbtCompound) {
         let xp_p = nbt.get_float("XpP").unwrap_or(0.0);
-        let xp_level = nbt.get_int("XpLevel");
-        let total_exp = nbt.get_int("XpTotal").unwrap_or(0);
-
-        if let Some(level) = xp_level {
-            self.experience_level.store(level, Ordering::Relaxed);
-            self.experience_progress.store(xp_p);
-            let points = (xp_p * experience::points_in_level(level) as f32).round() as i32;
-            self.experience_points.store(points, Ordering::Relaxed);
-        } else {
-            let (level, points) = experience::total_to_level_and_points(total_exp);
-            let progress = experience::progress_in_level(level, points);
-            self.experience_level.store(level, Ordering::Relaxed);
-            self.experience_progress.store(progress);
-            self.experience_points.store(points, Ordering::Relaxed);
-        }
+        let level = nbt.get_int("XpLevel").unwrap_or(0);
+        self.experience_level.store(level, Ordering::Relaxed);
+        self.experience_progress.store(xp_p);
+        let points = (xp_p * experience::points_in_level(level) as f32).round() as i32;
+        self.experience_points.store(points, Ordering::Relaxed);
+        self.xp_state
+            .total
+            .store(nbt.get_int("XpTotal").unwrap_or(0), Ordering::Relaxed);
 
         self.enchantment_seed.store(
             nbt.get_int("XpSeed").unwrap_or_else(rand::random),

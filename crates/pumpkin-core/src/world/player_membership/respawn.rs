@@ -343,7 +343,7 @@ pub(super) fn reset_respawned_player(
     player.hunger_manager.restart();
 
     if !keep_inventory {
-        player.set_experience(0, 0.0, 0);
+        player.reset_experience();
         player.inventory.clear();
     }
 

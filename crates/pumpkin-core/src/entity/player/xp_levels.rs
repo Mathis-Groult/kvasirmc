@@ -15,7 +15,25 @@ use pumpkin_protocol::codec::var_ulong::VarULong;
 use pumpkin_protocol::java::client::play::{CSetExperience, CSetPlayerInventory};
 use pumpkin_util::math::experience;
 use std::sync::Arc;
-use std::sync::atomic::Ordering;
+use std::sync::atomic::{AtomicI32, Ordering};
+
+/// Experience state beside level, bar and points.
+pub struct XpState {
+    /// The level last sent to the client (`-1`: nothing yet).
+    pub last_sent_level: AtomicI32,
+    /// Vanilla `Player.totalExperience`: the save's `XpTotal` as stored, grown by
+    /// `add_experience_points` (clamped to `0..=i32::MAX`), never derived from level and bar.
+    pub total: AtomicI32,
+}
+
+impl XpState {
+    pub const fn new() -> Self {
+        Self {
+            last_sent_level: AtomicI32::new(-1),
+            total: AtomicI32::new(0),
+        }
+    }
+}
 
 impl Player {
     // --- Experience & Leveling API ---
@@ -56,11 +74,13 @@ impl Player {
         }
 
         let level = self.experience_level.load(Ordering::Relaxed);
-        if self.last_sent_xp.load(Ordering::Relaxed) != level {
+        if self.xp_state.last_sent_level.load(Ordering::Relaxed) != level {
             let progress = self.experience_progress.load();
             let points = self.experience_points.load(Ordering::Relaxed);
 
-            self.last_sent_xp.store(level, Ordering::Relaxed);
+            self.xp_state
+                .last_sent_level
+                .store(level, Ordering::Relaxed);
 
             let attribute = |name: &str, current_value, max_value| BedrockAttribute {
                 min_value: 0.0,
@@ -104,7 +124,7 @@ impl Player {
         self.experience_level.store(level, Ordering::Relaxed);
         self.experience_progress.store(progress.clamp(0.0, 1.0));
         self.experience_points.store(points, Ordering::Relaxed);
-        self.last_sent_xp.store(-1, Ordering::Relaxed);
+        self.xp_state.last_sent_level.store(-1, Ordering::Relaxed);
         self.tick_experience();
 
         if self.has_client_loaded() {
@@ -114,6 +134,12 @@ impl Player {
                 points.into(),
             ));
         }
+    }
+
+    /// Back to nothing: level, bar, points and total (a respawn without keeping the inventory).
+    pub fn reset_experience(&self) {
+        self.xp_state.total.store(0, Ordering::Relaxed);
+        self.set_experience(0, 0.0, 0);
     }
 
     /// Sets the player's experience level directly.
@@ -179,6 +205,14 @@ impl Player {
         let total_exp = experience::points_to_level(current_level) as i64 + current_points as i64;
         let new_total_exp = total_exp + added_points as i64;
         let safe_new_total = new_total_exp.clamp(0, i32::MAX as i64) as i32;
+
+        // vanilla `giveExperiencePoints`: totalExperience = clamp(total + points, 0, MAX)
+        let total =
+            i64::from(self.xp_state.total.load(Ordering::Relaxed)) + i64::from(added_points);
+        self.xp_state.total.store(
+            total.clamp(0, i64::from(i32::MAX)) as i32,
+            Ordering::Relaxed,
+        );
 
         let (new_level, new_points) = experience::total_to_level_and_points(safe_new_total);
         let progress = experience::progress_in_level(new_points, new_level);

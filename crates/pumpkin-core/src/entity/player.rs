@@ -436,8 +436,8 @@ pub struct Player {
     pub ping: AtomicU32,
     /// The amount of ticks since the player's last attack.
     pub last_attacked_ticks: AtomicU32,
-    /// The player's last known experience level.
-    pub last_sent_xp: AtomicI32,
+    /// The level last sent to the client and vanilla's `totalExperience`.
+    pub xp_state: xp_levels::XpState,
     pub last_sent_health: AtomicI32,
     pub last_sent_food: AtomicU8,
     pub last_food_saturation: AtomicBool,
@@ -797,7 +797,7 @@ impl Player {
             chunk_listener: Mutex::new(world.level.chunk_listener.add_global_chunk_listener()),
             held_chunk_tickets: Mutex::new(None),
             chunk_send_epoch: AtomicU32::new(0),
-            last_sent_xp: AtomicI32::new(-1),
+            xp_state: xp_levels::XpState::new(),
             last_sent_health: AtomicI32::new(-1),
             last_sent_food: AtomicU8::new(0),
             last_food_saturation: AtomicBool::new(true),

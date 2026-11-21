@@ -122,6 +122,11 @@ fn above_kinds() -> Vec<(&'static str, BlockStateId)> {
             "pane_n",
             fence([true, false, false, false], &Block::GLASS_PANE),
         ),
+        ("oak_slab", Block::OAK_SLAB.default_state.id),
+        ("lantern", Block::LANTERN.default_state.id),
+        ("snow_layer", Block::SNOW.default_state.id),
+        ("trapdoor", Block::OAK_TRAPDOOR.default_state.id),
+        ("hopper", Block::HOPPER.default_state.id),
     ]
 }
 

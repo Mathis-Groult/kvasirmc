@@ -64,9 +64,9 @@ five near, cap five: tick 3 delay reset-2 spawned []
 other mobs near, cap two: tick 1 delay reset in min..max spawned ["zombie", "zombie"] packet 2f000007d400010200000080400000000000 x2 packet 0700010200000080400100f201 x1
 other mobs near, cap two: tick 2 delay reset-1 spawned ["zombie", "zombie"]
 other mobs near, cap two: tick 3 delay reset-2 spawned ["zombie", "zombie"]
-zombies on the count edges, cap four: tick 1 delay reset in min..max spawned [] packet 0700010e00000080400100f201 x1
-zombies on the count edges, cap four: tick 2 delay reset-1 spawned []
-zombies on the count edges, cap four: tick 3 delay reset-2 spawned []
+zombies on the count edges, cap six: tick 1 delay reset in min..max spawned [] packet 0700010e00000080400100f201 x1
+zombies on the count edges, cap six: tick 2 delay reset-1 spawned []
+zombies on the count edges, cap six: tick 3 delay reset-2 spawned []
 zombies past the count edges, cap one: tick 1 delay reset in min..max spawned ["zombie"] packet 2f000007d400011a00000080400000000000 x1 packet 0700011a00000080400100f201 x1
 zombies past the count edges, cap one: tick 2 delay reset-1 spawned ["zombie"]
 zombies past the count edges, cap one: tick 3 delay reset-2 spawned ["zombie"]
@@ -76,7 +76,16 @@ zombies at range two edges, cap one: tick 3 delay reset-2 spawned []
 zombie past range two edges, cap one: tick 1 delay reset in min..max spawned ["zombie"] packet 2f000007d400013200000080400000000000 x1 packet 0700013200000080400100f201 x1
 zombie past range two edges, cap one: tick 2 delay reset-1 spawned ["zombie"]
 zombie past range two edges, cap one: tick 3 delay reset-2 spawned ["zombie"]
-600 spawns: tick 1 delay reset in min..max spawned 600 mobs, x mean 0.5+0 sd as expected, z mean 0.5+0 sd as expected, layers ["many", "many", "many"] packet 2f000007d400013e00000080400000000000 x600 packet 0700013e00000080400100f201 x1
-600 spawns in range two: tick 1 delay reset in min..max spawned 600 mobs, x mean 0.5+0 sd as expected, z mean 0.5+0 sd as expected, layers ["many", "many", "many"] packet 2f000007d400014a00000080400000000000 x600 packet 0700014a00000080400100f201 x1
+spectator in range: tick 1 delay 0 spawned []
+spectator in range: tick 2 delay 0 spawned []
+spectator in range: tick 3 delay 0 spawned []
+dead player in range: tick 1 delay 0 spawned []
+dead player in range: tick 2 delay 0 spawned []
+dead player in range: tick 3 delay 0 spawned []
+creative player in range: tick 1 delay reset in min..max spawned ["zombie", "zombie", "zombie", "zombie"] packet 2f000007d400015600000080400000000000 x4 packet 0700015600000080400100f201 x1
+creative player in range: tick 2 delay reset-1 spawned ["zombie", "zombie", "zombie", "zombie"]
+creative player in range: tick 3 delay reset-2 spawned ["zombie", "zombie", "zombie", "zombie"]
+600 spawns: tick 1 delay reset in min..max spawned 600 mobs, x mean 0.5+0 sd as expected, z mean 0.5+0 sd as expected, layers ["many", "many", "many"] packet 2f000007d400016200000080400000000000 x600 packet 0700016200000080400100f201 x1
+600 spawns in range two: tick 1 delay reset in min..max spawned 600 mobs, x mean 0.5+0 sd as expected, z mean 0.5+0 sd as expected, layers ["many", "many", "many"] packet 2f000007d400016e00000080400000000000 x600 packet 0700016e00000080400100f201 x1
 fifty resets: 50 resets, inside true, wide true
-600 spawns, angles: tick 1 delay reset in min..max spawned 600 mobs, x mean 0.5+0 sd as expected, z mean 0.5+0 sd as expected, layers ["many", "many", "many"], yaw mean 2 quarter turns, yaw spread uniform true, pitch zero true, spawn bonus true packet 2f000007d400016200000080400000000000 x600 packet 0700016200000080400100f201 x1
+600 spawns, angles: tick 1 delay reset in min..max spawned 600 mobs, x mean 0.5+0 sd as expected, z mean 0.5+0 sd as expected, layers ["many", "many", "many"], yaw mean 2 quarter turns, yaw spread uniform true, pitch zero true, spawn bonus true packet 2f000007d400018600000080400000000000 x600 packet 0700018600000080400100f201 x1

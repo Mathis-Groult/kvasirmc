@@ -55,6 +55,8 @@ struct Scene {
     player_range: i32,
     /// Listener offset from the spawner block's centre.
     player: (f64, f64, f64),
+    /// The listener's game mode and whether it is dead (zero health) during the scene.
+    player_state: (GameMode, bool),
     /// Mobs already there: type and offset of their feet from the spawner block's centre.
     crowd: &'static [(&'static EntityType, f64, f64, f64)],
     stone: bool,
@@ -78,6 +80,7 @@ const fn scene(name: &'static str, delay: i32) -> Scene {
         max_nearby: 6,
         player_range: 16,
         player: (0.0, 0.0, 3.0),
+        player_state: (GameMode::Survival, false),
         crowd: &[],
         stone: false,
         ticks: 3,
@@ -89,6 +92,11 @@ const fn scene(name: &'static str, delay: i32) -> Scene {
 
 const fn player_at(mut scene: Scene, x: f64, y: f64, z: f64) -> Scene {
     scene.player = (x, y, z);
+    scene
+}
+
+const fn player_is(mut scene: Scene, mode: GameMode, dead: bool) -> Scene {
+    scene.player_state = (mode, dead);
     scene
 }
 
@@ -160,6 +168,8 @@ const OTHER_TYPE: &[(&EntityType, f64, f64, f64)] = &[(S, 1.0, 0.0, 1.0), (S, -1
 // meets the grown one up to 4.8 sideways, 4.5 above and 6.45 below (feet offset).
 const EDGES_IN: &[(&EntityType, f64, f64, f64)] = &[
     (Z, 4.79, 0.0, 0.0),
+    (Z, -4.79, 0.0, 0.0),
+    (Z, 0.0, 0.0, 4.79),
     (Z, 0.0, 0.0, -4.79),
     (Z, 0.0, 4.49, 0.0),
     (Z, 0.0, -6.44, 0.0),
@@ -203,7 +213,7 @@ const SCENES: &[Scene] = &[
         OTHER_TYPE,
     ),
     crowd(
-        spawning(scene("zombies on the count edges, cap four", 0), 4, 4, 4),
+        spawning(scene("zombies on the count edges, cap six", 0), 4, 4, 6),
         EDGES_IN,
     ),
     crowd(
@@ -218,6 +228,9 @@ const SCENES: &[Scene] = &[
         spawning(scene("zombie past range two edges, cap one", 0), 4, 2, 1),
         &[(Z, 2.81, 0.0, 0.0)],
     ),
+    player_is(scene("spectator in range", 0), GameMode::Spectator, false),
+    player_is(scene("dead player in range", 0), GameMode::Survival, true),
+    player_is(scene("creative player in range", 0), GameMode::Creative, false),
     statistics(spawning(scene("600 spawns", 0), 600, 4, 1000)),
     statistics(spawning(scene("600 spawns in range two", 0), 600, 2, 1000)),
     // Appended after the first mutation run: the spread of reset delays, and the yaw, pitch
@@ -442,6 +455,11 @@ fn run(
     let centre = pos.to_centered_f64();
     let (px, py, pz) = scene.player;
     let (player, tap) = listener;
+    player.gamemode.store(scene.player_state.0);
+    player
+        .living_entity
+        .health
+        .store(if scene.player_state.1 { 0.0 } else { 20.0 });
     player
         .get_entity()
         .set_pos(Vector3::new(centre.x + px, centre.y + py, centre.z + pz));

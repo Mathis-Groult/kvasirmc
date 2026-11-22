@@ -5,10 +5,11 @@
 
 use std::sync::Arc;
 
-use pumpkin_data::{Mirror, Rotation};
+use pumpkin_data::{BlockState, Mirror, Rotation};
+use pumpkin_nbt::compound::NbtCompound;
 use pumpkin_util::{
     math::{block_box::BlockBox, vector3::Vector3},
-    random::RandomGenerator,
+    random::{RandomGenerator, RandomImpl, hash_block_pos, legacy_rand::LegacyRand},
 };
 
 use crate::{
@@ -20,7 +21,9 @@ use crate::{
     world::WorldPortalExt,
 };
 
-use super::{BlockStateResolver, PaletteEntry, StructurePlaceSettings, StructureTemplate};
+use super::{
+    BlockStateResolver, PaletteEntry, StructurePlaceSettings, StructureTemplate, TemplateBlock,
+};
 
 /// A structure piece that places blocks from an NBT template matching vanilla `TemplateStructurePiece`.
 ///
@@ -177,109 +180,114 @@ impl TemplatePiece {
         let box_limit = self.piece.bounding_box;
 
         for block in &self.template.blocks {
-            let palette_entry = &self.template.palette[block.state as usize];
+            self.place_block(chunk, chunk_box, &box_limit, block);
+        }
+    }
 
-            // Structure blocks are data markers
-            if palette_entry.name == "minecraft:structure_block" {
-                continue;
-            }
+    /// The palette entry and block entity data a template block places: `None` for structure
+    /// blocks (data markers), structure voids and a jigsaw whose final state is a void; a
+    /// jigsaw is replaced with its `final_state` and loses its own block entity data.
+    fn placed_entry(&self, block: &TemplateBlock) -> Option<(PaletteEntry, Option<NbtCompound>)> {
+        let palette_entry = &self.template.palette[block.state as usize];
+        if palette_entry.name == "minecraft:structure_block" {
+            return None;
+        }
+        let (placed_entry, block_entity_nbt) = if palette_entry.name == "minecraft:jigsaw" {
+            let final_state = block
+                .nbt
+                .as_ref()
+                .and_then(|nbt| nbt.get_string("final_state"))
+                .unwrap_or("minecraft:air");
+            (PaletteEntry::from_string(final_state), None)
+        } else {
+            (palette_entry.clone(), block.nbt.clone())
+        };
+        if Self::is_structure_void(&placed_entry.name) {
+            return None;
+        }
+        Some((placed_entry, block_entity_nbt))
+    }
 
-            let mut placed_entry = palette_entry.clone();
-            let mut block_entity_nbt = block.nbt.clone();
+    /// Writes one template block: transform, bounds, waterlogging, block state, block entity.
+    fn place_block(
+        &self,
+        chunk: &mut ProtoChunk,
+        chunk_box: &BlockBox,
+        box_limit: &BlockBox,
+        block: &TemplateBlock,
+    ) {
+        let Some((mut placed_entry, block_entity_nbt)) = self.placed_entry(block) else {
+            return;
+        };
+        let rotation = self.place_settings.get_rotation();
+        let mirror = self.place_settings.get_mirror();
+        let Some(mut state) = BlockStateResolver::resolve(&placed_entry, rotation, mirror) else {
+            return;
+        };
 
-            // Jigsaw blocks are replaced with final_state
-            if palette_entry.name == "minecraft:jigsaw" {
-                let final_state = block_entity_nbt
-                    .as_ref()
-                    .and_then(|nbt| nbt.get_string("final_state"))
-                    .unwrap_or("minecraft:air");
-                placed_entry = PaletteEntry::from_string(final_state);
-                block_entity_nbt = None;
-            }
+        let world_pos = self.transform_pos(block.pos);
+        // Both the piece bounding box and the current chunk box limit the write.
+        if !box_limit.contains_pos(&world_pos) || !chunk_box.contains_pos(&world_pos) {
+            return;
+        }
 
-            // Skip structure void blocks
-            if Self::is_structure_void(&placed_entry.name) {
-                continue;
-            }
-
-            // Resolve the block state with rotation/mirror
-            let Some(mut state) = BlockStateResolver::resolve(
-                &placed_entry,
-                self.place_settings.get_rotation(),
-                self.place_settings.get_mirror(),
-            ) else {
-                continue;
-            };
-
-            // Transform position to world coordinates
-            let world_pos = self.transform_pos(block.pos);
-
-            // Check bounds against both the piece bounding box and the current chunk box
-            if !box_limit.contains_pos(&world_pos) || !chunk_box.contains_pos(&world_pos) {
-                continue;
-            }
-
-            // Handle waterlogging if enabled
-            if self.place_settings.should_apply_waterlogging()
-                && chunk.get_block_state(&world_pos).to_block_id() == pumpkin_data::Block::WATER.id
-                && let Some(waterlogged) =
-                    placed_entry.properties.iter_mut().find_map(|p| match p {
-                        pumpkin_data::Property::Waterlogged(w) => Some(w),
-                        _ => None,
-                    })
+        if self.place_settings.should_apply_waterlogging()
+            && chunk.get_block_state(&world_pos).to_block_id() == pumpkin_data::Block::WATER.id
+            && let Some(waterlogged) = placed_entry.properties.iter_mut().find_map(|p| match p {
+                pumpkin_data::Property::Waterlogged(w) => Some(w),
+                _ => None,
+            })
+        {
+            *waterlogged = true;
+            if let Some(waterlogged_state) =
+                BlockStateResolver::resolve(&placed_entry, rotation, mirror)
             {
-                *waterlogged = true;
-                if let Some(waterlogged_state) = BlockStateResolver::resolve(
-                    &placed_entry,
-                    self.place_settings.get_rotation(),
-                    self.place_settings.get_mirror(),
-                ) {
-                    state = waterlogged_state;
-                }
-            }
-
-            // Place the block
-            chunk.set_block_state(world_pos.x, world_pos.y, world_pos.z, state);
-
-            let final_block = pumpkin_data::Block::from_id(state.id.to_block_id());
-            let block_entity_id = super::get_block_entity_id(final_block.name);
-            if block_entity_nbt.is_some() || block_entity_id.is_some() {
-                let fallback_id = block_entity_id.unwrap_or(final_block.name);
-                let mut placed_nbt = pumpkin_nbt::compound::NbtCompound::new();
-
-                placed_nbt.put_string("id", fallback_id.to_string());
-                placed_nbt.put_int("x", world_pos.x);
-                placed_nbt.put_int("y", world_pos.y);
-                placed_nbt.put_int("z", world_pos.z);
-
-                if let Some(template_nbt) = &block_entity_nbt {
-                    for (key, value) in &template_nbt.child_tags {
-                        if key.as_ref() != "x"
-                            && key.as_ref() != "y"
-                            && key.as_ref() != "z"
-                            && key.as_ref() != "id"
-                        {
-                            placed_nbt.child_tags.insert(key.clone(), value.clone());
-                        }
-                    }
-                }
-
-                if placed_nbt.get_string("LootTable").is_some()
-                    && placed_nbt.get_long("LootTableSeed").is_none()
-                {
-                    use pumpkin_util::random::{
-                        RandomImpl, hash_block_pos, legacy_rand::LegacyRand,
-                    };
-                    let mut random =
-                        LegacyRand::from_seed(
-                            hash_block_pos(world_pos.x, world_pos.y, world_pos.z) as u64,
-                        );
-                    placed_nbt.put_long("LootTableSeed", random.next_i64());
-                }
-
-                chunk.add_block_entity(placed_nbt);
+                state = waterlogged_state;
             }
         }
+
+        chunk.set_block_state(world_pos.x, world_pos.y, world_pos.z, state);
+        if let Some(nbt) = Self::block_entity(state, world_pos, block_entity_nbt.as_ref()) {
+            chunk.add_block_entity(nbt);
+        }
+    }
+
+    /// The block entity a placed block gets: the template data without its position and id, a
+    /// loot table without a seed seeded from the position; `None` when the block has neither
+    /// template data nor a block entity type.
+    fn block_entity(
+        state: &BlockState,
+        world_pos: Vector3<i32>,
+        template_nbt: Option<&NbtCompound>,
+    ) -> Option<NbtCompound> {
+        let final_block = pumpkin_data::Block::from_id(state.id.to_block_id());
+        let block_entity_id = super::get_block_entity_id(final_block.name);
+        if template_nbt.is_none() && block_entity_id.is_none() {
+            return None;
+        }
+        let fallback_id = block_entity_id.unwrap_or(final_block.name);
+        let mut placed_nbt = NbtCompound::new();
+        placed_nbt.put_string("id", fallback_id.to_string());
+        placed_nbt.put_int("x", world_pos.x);
+        placed_nbt.put_int("y", world_pos.y);
+        placed_nbt.put_int("z", world_pos.z);
+
+        if let Some(template_nbt) = template_nbt {
+            for (key, value) in &template_nbt.child_tags {
+                if !matches!(key.as_ref(), "x" | "y" | "z" | "id") {
+                    placed_nbt.child_tags.insert(key.clone(), value.clone());
+                }
+            }
+        }
+
+        if placed_nbt.get_string("LootTable").is_some()
+            && placed_nbt.get_long("LootTableSeed").is_none()
+        {
+            let mut random =
+                LegacyRand::from_seed(hash_block_pos(world_pos.x, world_pos.y, world_pos.z) as u64);
+            placed_nbt.put_long("LootTableSeed", random.next_i64());
+        }
+        Some(placed_nbt)
     }
 }
 

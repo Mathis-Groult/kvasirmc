@@ -554,3 +554,5 @@ pub struct LevelDat {
 
 #[cfg(test)]
 mod test;
+#[cfg(test)]
+mod write_golden;

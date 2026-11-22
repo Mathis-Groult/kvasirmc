@@ -3,8 +3,8 @@
 //!
 //! Every scene is built on a 3 x 3 grid of chunks with flat ground: logs, roots, foliage and
 //! decoration lists, plus blocks set by hand (leaves of every state, other blocks, vines). The
-//! scene runs at two origins (one in negative coordinates, both with lines crossing a chunk
-//! edge); seeded random scenes follow the hand-made ones. Each line has the scene name, the list
+//! scene runs at three origins (one in negative x and z, one with y below and above zero; lines
+//! cross a chunk edge); seeded random scenes follow the hand-made ones. Each line has the scene name, the list
 //! sizes, the state of every leaf in the scene's box after the call (block, distance, persistent,
 //! waterlogged) and every block the call changed (before > after).
 
@@ -589,7 +589,7 @@ fn report() -> String {
         "minecraft:plains".to_owned(),
     );
     let mut report = String::new();
-    for (tag, origin) in [("a", (13, 68, 5)), ("b", (-6, 70, -9))] {
+    for (tag, origin) in [("a", (13, 68, 5)), ("b", (-6, 70, -9)), ("c", (20, -2, 19))] {
         let at = move |dx: i32, dy: i32, dz: i32| {
             BlockPos::new(origin.0 + dx, origin.1 + dy, origin.2 + dz)
         };

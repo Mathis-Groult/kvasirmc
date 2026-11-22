@@ -431,77 +431,79 @@ impl StaticChunkNoiseFunctionComponentImpl for Slice {
         buffer: &mut [f32],
         volume: &DensityVolume,
     ) {
-        let input_volume = match self.axis {
-            Axis::X => {
-                if volume.size_x == 1 && volume.min_block_x == self.coordinate {
-                    ChunkNoiseFunctionComponent::sample_volume_from_stack(
-                        &mut component_stack[..=self.input_index],
-                        buffer,
-                        volume,
-                    );
-                    return;
-                }
-                DensityVolume::new(
-                    1,
-                    volume.size_y,
-                    volume.size_z,
-                    self.coordinate,
-                    volume.min_block_y,
-                    volume.min_block_z,
-                    volume.step_block_x,
-                    volume.step_block_y,
-                    volume.step_block_z,
-                )
-            }
-            Axis::Y => {
-                if volume.size_y == 1 && volume.min_block_y == self.coordinate {
-                    ChunkNoiseFunctionComponent::sample_volume_from_stack(
-                        &mut component_stack[..=self.input_index],
-                        buffer,
-                        volume,
-                    );
-                    return;
-                }
-                DensityVolume::new(
-                    volume.size_x,
-                    1,
-                    volume.size_z,
-                    volume.min_block_x,
-                    self.coordinate,
-                    volume.min_block_z,
-                    volume.step_block_x,
-                    volume.step_block_y,
-                    volume.step_block_z,
-                )
-            }
-            Axis::Z => {
-                if volume.size_z == 1 && volume.min_block_z == self.coordinate {
-                    ChunkNoiseFunctionComponent::sample_volume_from_stack(
-                        &mut component_stack[..=self.input_index],
-                        buffer,
-                        volume,
-                    );
-                    return;
-                }
-                DensityVolume::new(
-                    volume.size_x,
-                    volume.size_y,
-                    1,
-                    volume.min_block_x,
-                    volume.min_block_y,
-                    self.coordinate,
-                    volume.step_block_x,
-                    volume.step_block_y,
-                    volume.step_block_z,
-                )
-            }
-        };
+        let input_stack = &mut component_stack[..=self.input_index];
+        if self.is_on_plane(volume) {
+            ChunkNoiseFunctionComponent::sample_volume_from_stack(input_stack, buffer, volume);
+            return;
+        }
+        let input_volume = self.plane_volume(volume);
         let mut input = DensityBuffer::acquire(&input_volume);
         ChunkNoiseFunctionComponent::sample_volume_from_stack(
-            &mut component_stack[..=self.input_index],
+            input_stack,
             &mut input,
             &input_volume,
         );
+        self.spread_plane(&input, &input_volume, buffer, volume);
+    }
+}
+
+impl Slice {
+    /// Whether the volume is one layer thick on the slice axis and already lies on the plane.
+    const fn is_on_plane(&self, volume: &DensityVolume) -> bool {
+        match self.axis {
+            Axis::X => volume.size_x == 1 && volume.min_block_x == self.coordinate,
+            Axis::Y => volume.size_y == 1 && volume.min_block_y == self.coordinate,
+            Axis::Z => volume.size_z == 1 && volume.min_block_z == self.coordinate,
+        }
+    }
+
+    /// The volume with the slice axis collapsed to one layer at the slice coordinate.
+    const fn plane_volume(&self, volume: &DensityVolume) -> DensityVolume {
+        match self.axis {
+            Axis::X => DensityVolume::new(
+                1,
+                volume.size_y,
+                volume.size_z,
+                self.coordinate,
+                volume.min_block_y,
+                volume.min_block_z,
+                volume.step_block_x,
+                volume.step_block_y,
+                volume.step_block_z,
+            ),
+            Axis::Y => DensityVolume::new(
+                volume.size_x,
+                1,
+                volume.size_z,
+                volume.min_block_x,
+                self.coordinate,
+                volume.min_block_z,
+                volume.step_block_x,
+                volume.step_block_y,
+                volume.step_block_z,
+            ),
+            Axis::Z => DensityVolume::new(
+                volume.size_x,
+                volume.size_y,
+                1,
+                volume.min_block_x,
+                volume.min_block_y,
+                self.coordinate,
+                volume.step_block_x,
+                volume.step_block_y,
+                volume.step_block_z,
+            ),
+        }
+    }
+
+    /// Copies the one sampled layer along the slice axis into every layer of `buffer`.
+    fn spread_plane(
+        &self,
+        input: &[f32],
+        input_volume: &DensityVolume,
+        buffer: &mut [f32],
+        volume: &DensityVolume,
+    ) {
         match self.axis {
             Axis::X => {
                 let mut index = 0;

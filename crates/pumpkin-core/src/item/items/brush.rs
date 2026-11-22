@@ -20,6 +20,9 @@ use pumpkin_util::math::position::BlockPos;
 use pumpkin_util::math::vector3::Vector3;
 use pumpkin_world::world::BlockFlags;
 
+#[cfg(test)]
+mod golden;
+
 pub struct BrushItem;
 
 impl ItemMetadata for BrushItem {

@@ -15,7 +15,7 @@ use pumpkin_data::item::Item;
 use pumpkin_data::item_stack::ItemStack;
 use pumpkin_data::sound::{Sound, SoundCategory};
 use pumpkin_data::world::WorldEvent;
-use pumpkin_data::{Block, BlockDirection, BlockId};
+use pumpkin_data::{Block, BlockDirection, BlockId, BlockStateId};
 use pumpkin_util::math::position::BlockPos;
 use pumpkin_util::math::vector3::Vector3;
 use pumpkin_world::world::BlockFlags;
@@ -125,32 +125,11 @@ impl ItemBehaviour for BrushItem {
         let block_center = location.to_centered_f64();
 
         if !(is_sand || is_gravel) {
-            world.play_sound(
-                Sound::ItemBrushBrushingGeneric,
-                SoundCategory::Blocks,
-                &block_center,
-            );
-            player.living_entity.set_active_hand(
-                pumpkin_util::Hand::Right,
-                item.clone(),
-                Self::USE_DURATION,
-            );
-            return BlockActionResult::Consume;
+            return Self::brush_other_block(&world, player, item, &block_center);
         }
 
-        if let Some(player_arc) = player.world().get_player_by_uuid(player.gameprofile.id)
-            && let Some(server) = player.world().server.upgrade()
-        {
-            let mut event = crate::plugin::api::events::block::block_brush::BlockBrushEvent::new(
-                location,
-                world.clone(),
-                player_arc,
-                item.clone(),
-            );
-            server.plugin_manager.fire_blocking(&server, &mut event);
-            if event.cancelled {
-                return BlockActionResult::Fail;
-            }
+        if Self::plugin_cancels(&world, player, location, item) {
+            return BlockActionResult::Fail;
         }
 
         let current_state_id = world.get_block_state_id(&location);
@@ -171,46 +150,15 @@ impl ItemBehaviour for BrushItem {
                 &block_center,
             );
         } else {
-            let loot_item = get_archaeology_loot(is_sand, location, &world, Some(player));
-            world.sync_world_event(
-                WorldEvent::ParticlesAndSoundBrushBlockComplete,
+            Self::finish_block(
+                &world,
+                player,
+                item,
                 location,
-                i32::from(current_state_id.as_u16()),
-            );
-            let replacement_state_id = if is_sand {
-                Block::SAND.default_state.id
-            } else {
-                Block::GRAVEL.default_state.id
-            };
-
-            world.set_block_state(&location, replacement_state_id, BlockFlags::NOTIFY_ALL);
-
-            world.play_sound(
-                if is_sand {
-                    Sound::ItemBrushBrushingSandComplete
-                } else {
-                    Sound::ItemBrushBrushingGravelComplete
-                },
-                SoundCategory::Blocks,
+                current_state_id,
+                is_sand,
                 &block_center,
             );
-
-            if !loot_item.is_empty() {
-                let spawn_pos = Vector3::new(
-                    f64::from(location.0.x) + 0.5,
-                    f64::from(location.0.y) + 1.0,
-                    f64::from(location.0.z) + 0.5,
-                );
-                let item_entity = Arc::new(ItemEntity::new(
-                    Entity::new(world.clone(), spawn_pos, &EntityType::ITEM),
-                    loot_item,
-                ));
-                world.spawn_entity(item_entity);
-            }
-
-            if player.gamemode.load() != pumpkin_util::GameMode::Creative {
-                let _ = item.damage_item(1);
-            }
         }
 
         player.living_entity.set_active_hand(
@@ -233,4 +181,100 @@ impl ItemBehaviour for BrushItem {
 
 impl BrushItem {
     pub const USE_DURATION: i32 = 200;
+
+    /// A block the brush does nothing to: the generic brushing sound, and the arm stays raised.
+    fn brush_other_block(
+        world: &Arc<World>,
+        player: &Player,
+        item: &ItemStack,
+        block_center: &Vector3<f64>,
+    ) -> BlockActionResult {
+        world.play_sound(
+            Sound::ItemBrushBrushingGeneric,
+            SoundCategory::Blocks,
+            block_center,
+        );
+        player.living_entity.set_active_hand(
+            pumpkin_util::Hand::Right,
+            item.clone(),
+            Self::USE_DURATION,
+        );
+        BlockActionResult::Consume
+    }
+
+    /// Lets plugins cancel the brush stroke (`BlockBrushEvent`).
+    fn plugin_cancels(
+        world: &Arc<World>,
+        player: &Player,
+        location: BlockPos,
+        item: &ItemStack,
+    ) -> bool {
+        if let Some(player_arc) = player.world().get_player_by_uuid(player.gameprofile.id)
+            && let Some(server) = player.world().server.upgrade()
+        {
+            let mut event = crate::plugin::api::events::block::block_brush::BlockBrushEvent::new(
+                location,
+                world.clone(),
+                player_arc,
+                item.clone(),
+            );
+            server.plugin_manager.fire_blocking(&server, &mut event);
+            if event.cancelled {
+                return true;
+            }
+        }
+        false
+    }
+
+    /// The last stage: the block turns into plain sand or gravel, the loot drops and the brush wears.
+    fn finish_block(
+        world: &Arc<World>,
+        player: &Player,
+        item: &mut ItemStack,
+        location: BlockPos,
+        current_state_id: BlockStateId,
+        is_sand: bool,
+        block_center: &Vector3<f64>,
+    ) {
+        let loot_item = get_archaeology_loot(is_sand, location, world, Some(player));
+        world.sync_world_event(
+            WorldEvent::ParticlesAndSoundBrushBlockComplete,
+            location,
+            i32::from(current_state_id.as_u16()),
+        );
+        let replacement_state_id = if is_sand {
+            Block::SAND.default_state.id
+        } else {
+            Block::GRAVEL.default_state.id
+        };
+
+        world.set_block_state(&location, replacement_state_id, BlockFlags::NOTIFY_ALL);
+
+        world.play_sound(
+            if is_sand {
+                Sound::ItemBrushBrushingSandComplete
+            } else {
+                Sound::ItemBrushBrushingGravelComplete
+            },
+            SoundCategory::Blocks,
+            block_center,
+        );
+
+        if !loot_item.is_empty() {
+            let spawn_pos = Vector3::new(
+                f64::from(location.0.x) + 0.5,
+                f64::from(location.0.y) + 1.0,
+                f64::from(location.0.z) + 0.5,
+            );
+            let item_entity = Arc::new(ItemEntity::new(
+                Entity::new(world.clone(), spawn_pos, &EntityType::ITEM),
+                loot_item,
+            ));
+            world.spawn_entity(item_entity);
+        }
+
+        if player.gamemode.load() != pumpkin_util::GameMode::Creative {
+            let _ = item.damage_item(1);
+        }
+    }
 }

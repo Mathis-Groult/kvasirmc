@@ -361,6 +361,13 @@ fn celebration_scenes() -> Vec<Scene> {
             })
             .in_raid(&[])
             .raiders(2),
+        over("victory title resets the progress", 3)
+            .setup(|r| {
+                r.status = RaidStatus::Victory;
+                r.bossbar.health = 0.75;
+                r.celebration_ticks = 18;
+            })
+            .in_raid(&[0]),
         over("loss title at the update step", 3)
             .setup(|r| {
                 r.status = RaidStatus::Loss;
@@ -469,8 +476,13 @@ fn rewards(listeners: &[Listener]) -> String {
             .get_effect(&StatusEffect::HERO_OF_THE_VILLAGE)
             .map_or_else(String::new, |e| {
                 format!(
-                    " effect {}/{}/{}/{}/{}",
-                    e.amplifier, e.duration, e.ambient, e.show_particles, e.show_icon
+                    " effect {}/{}/{}/{}/{}{}",
+                    e.amplifier,
+                    e.duration,
+                    e.ambient,
+                    e.show_particles,
+                    e.show_icon,
+                    if e.blend { "" } else { "/noblend" }
                 )
             });
         let stat = player.get_custom_stat(CustomStatistic::RaidWin);

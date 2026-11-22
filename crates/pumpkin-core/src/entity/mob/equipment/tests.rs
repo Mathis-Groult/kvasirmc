@@ -286,6 +286,30 @@ fn equip_never_enchants_when_the_def_is_not_enchanted() {
 }
 
 #[test]
+fn equip_never_enchants_weighted_chance_and_vanilla_when_the_def_is_not_enchanted() {
+    let weighted = def(
+        WeaponConfig::AlwaysWeighted(&SWORD_ONLY),
+        ArmorConfig::None,
+        false,
+    );
+    let chance = def(
+        WeaponConfig::Chance {
+            on_hard: 1.0,
+            otherwise: 1.0,
+            items: &SWORD_ONLY,
+        },
+        ArmorConfig::None,
+        false,
+    );
+    let vanilla = def(WeaponConfig::None, ArmorConfig::Vanilla, false);
+    for d in [&weighted, &chance, &vanilla] {
+        let out = equip(d, Difficulty::Normal, 1000.0);
+        assert!(!out.is_empty());
+        assert!(out.iter().all(|(_, stack, _)| !stack.has_enchantments()));
+    }
+}
+
+#[test]
 fn equip_skips_enchanting_when_the_check_fails() {
     let weighted = def(
         WeaponConfig::AlwaysWeighted(&SWORD_ONLY),
@@ -332,4 +356,27 @@ fn equip_vanilla_armor_enchants_only_some_pieces_at_the_check_chance() {
         enchanted > 0 && plain > 0,
         "enchanted {enchanted}, plain {plain}"
     );
+}
+
+#[test]
+fn equip_never_enchants_weighted_and_chance_weapons_of_plain_defs() {
+    let weighted = def(
+        WeaponConfig::AlwaysWeighted(&SWORD_ONLY),
+        ArmorConfig::None,
+        false,
+    );
+    let chance = def(
+        WeaponConfig::Chance {
+            on_hard: 1.0,
+            otherwise: 1.0,
+            items: &SWORD_ONLY,
+        },
+        ArmorConfig::None,
+        false,
+    );
+    for d in [&weighted, &chance] {
+        let out = equip(d, Difficulty::Normal, 1000.0);
+        assert_eq!(out.len(), 1);
+        assert!(!out[0].1.has_enchantments());
+    }
 }

@@ -87,79 +87,13 @@ impl Player {
         self.increment_stat(statistics::StatisticCategory::Custom, stat as i32, amount);
     }
 
+    /// Vanilla `Player.checkMovementStatistics`: the distance statistic the player's current
+    /// movement counts towards.
     #[must_use]
-    #[allow(clippy::too_many_lines)]
     pub fn get_movement_statistic(&self) -> statistics::CustomStatistic {
         let entity = self.get_entity();
-        if entity.has_vehicle() {
-            let vehicle = entity
-                .vehicle
-                .lock()
-                .unwrap_or_else(std::sync::PoisonError::into_inner);
-            if let Some(vehicle) = vehicle.as_ref() {
-                let entity_type = vehicle.get_entity().entity_type;
-                if entity_type.has_tag(&pumpkin_data::tag::EntityType::MINECRAFT_BOAT)
-                    || entity_type.has_tag(&pumpkin_data::tag::EntityType::C_BOATS)
-                    || entity_type == &EntityType::OAK_BOAT
-                    || entity_type == &EntityType::SPRUCE_BOAT
-                    || entity_type == &EntityType::BIRCH_BOAT
-                    || entity_type == &EntityType::JUNGLE_BOAT
-                    || entity_type == &EntityType::ACACIA_BOAT
-                    || entity_type == &EntityType::DARK_OAK_BOAT
-                    || entity_type == &EntityType::MANGROVE_BOAT
-                    || entity_type == &EntityType::CHERRY_BOAT
-                    || entity_type == &EntityType::PALE_OAK_BOAT
-                    || entity_type == &EntityType::BAMBOO_RAFT
-                    || entity_type == &EntityType::OAK_CHEST_BOAT
-                    || entity_type == &EntityType::SPRUCE_CHEST_BOAT
-                    || entity_type == &EntityType::BIRCH_CHEST_BOAT
-                    || entity_type == &EntityType::JUNGLE_CHEST_BOAT
-                    || entity_type == &EntityType::ACACIA_CHEST_BOAT
-                    || entity_type == &EntityType::DARK_OAK_CHEST_BOAT
-                    || entity_type == &EntityType::MANGROVE_CHEST_BOAT
-                    || entity_type == &EntityType::CHERRY_CHEST_BOAT
-                    || entity_type == &EntityType::PALE_OAK_CHEST_BOAT
-                    || entity_type == &EntityType::BAMBOO_CHEST_RAFT
-                {
-                    return statistics::CustomStatistic::BoatOneCm;
-                }
-                if entity_type.has_tag(&pumpkin_data::tag::EntityType::C_MINECARTS)
-                    || entity_type == &EntityType::MINECART
-                    || entity_type == &EntityType::CHEST_MINECART
-                    || entity_type == &EntityType::FURNACE_MINECART
-                    || entity_type == &EntityType::TNT_MINECART
-                    || entity_type == &EntityType::HOPPER_MINECART
-                    || entity_type == &EntityType::COMMAND_BLOCK_MINECART
-                    || entity_type == &EntityType::SPAWNER_MINECART
-                {
-                    return statistics::CustomStatistic::MinecartOneCm;
-                }
-                if entity_type == &EntityType::HORSE
-                    || entity_type == &EntityType::DONKEY
-                    || entity_type == &EntityType::MULE
-                    || entity_type == &EntityType::SKELETON_HORSE
-                    || entity_type == &EntityType::ZOMBIE_HORSE
-                    || entity_type == &EntityType::CAMEL
-                    || entity_type == &EntityType::LLAMA
-                    || entity_type == &EntityType::TRADER_LLAMA
-                {
-                    return statistics::CustomStatistic::HorseOneCm;
-                }
-                if entity_type == &EntityType::PIG {
-                    return statistics::CustomStatistic::PigOneCm;
-                }
-                if entity_type == &EntityType::STRIDER {
-                    return statistics::CustomStatistic::StriderOneCm;
-                }
-                if entity_type == &EntityType::HAPPY_GHAST {
-                    return statistics::CustomStatistic::HappyGhastOneCm;
-                }
-                if entity_type == &EntityType::NAUTILUS
-                    || entity_type == &EntityType::ZOMBIE_NAUTILUS
-                {
-                    return statistics::CustomStatistic::NautilusOneCm;
-                }
-            }
+        if let Some(stat) = Self::riding_statistic(entity) {
+            return stat;
         }
 
         if self.is_flying() {
@@ -201,6 +135,19 @@ impl Player {
         }
 
         statistics::CustomStatistic::WalkOneCm
+    }
+
+    /// Vanilla `Player.checkRidingStatistics`: the statistic of the vehicle the player sits in.
+    fn riding_statistic(entity: &crate::entity::Entity) -> Option<statistics::CustomStatistic> {
+        if !entity.has_vehicle() {
+            return None;
+        }
+        let vehicle = entity
+            .vehicle
+            .lock()
+            .unwrap_or_else(std::sync::PoisonError::into_inner);
+        let entity_type = vehicle.as_ref()?.get_entity().entity_type;
+        vehicle_statistic(entity_type)
     }
 
     pub fn has_advancement(
@@ -246,6 +193,83 @@ impl Player {
             );
         }
     }
+}
+
+/// The statistic of a vehicle of this type, if it has one.
+fn vehicle_statistic(entity_type: &'static EntityType) -> Option<statistics::CustomStatistic> {
+    if is_boat(entity_type) {
+        return Some(statistics::CustomStatistic::BoatOneCm);
+    }
+    if is_minecart(entity_type) {
+        return Some(statistics::CustomStatistic::MinecartOneCm);
+    }
+    if is_horse_like(entity_type) {
+        return Some(statistics::CustomStatistic::HorseOneCm);
+    }
+    if entity_type == &EntityType::PIG {
+        return Some(statistics::CustomStatistic::PigOneCm);
+    }
+    if entity_type == &EntityType::STRIDER {
+        return Some(statistics::CustomStatistic::StriderOneCm);
+    }
+    if entity_type == &EntityType::HAPPY_GHAST {
+        return Some(statistics::CustomStatistic::HappyGhastOneCm);
+    }
+    if is_nautilus(entity_type) {
+        return Some(statistics::CustomStatistic::NautilusOneCm);
+    }
+    None
+}
+
+fn is_boat(entity_type: &'static EntityType) -> bool {
+    entity_type.has_tag(&pumpkin_data::tag::EntityType::MINECRAFT_BOAT)
+        || entity_type.has_tag(&pumpkin_data::tag::EntityType::C_BOATS)
+        || entity_type == &EntityType::OAK_BOAT
+        || entity_type == &EntityType::SPRUCE_BOAT
+        || entity_type == &EntityType::BIRCH_BOAT
+        || entity_type == &EntityType::JUNGLE_BOAT
+        || entity_type == &EntityType::ACACIA_BOAT
+        || entity_type == &EntityType::DARK_OAK_BOAT
+        || entity_type == &EntityType::MANGROVE_BOAT
+        || entity_type == &EntityType::CHERRY_BOAT
+        || entity_type == &EntityType::PALE_OAK_BOAT
+        || entity_type == &EntityType::BAMBOO_RAFT
+        || entity_type == &EntityType::OAK_CHEST_BOAT
+        || entity_type == &EntityType::SPRUCE_CHEST_BOAT
+        || entity_type == &EntityType::BIRCH_CHEST_BOAT
+        || entity_type == &EntityType::JUNGLE_CHEST_BOAT
+        || entity_type == &EntityType::ACACIA_CHEST_BOAT
+        || entity_type == &EntityType::DARK_OAK_CHEST_BOAT
+        || entity_type == &EntityType::MANGROVE_CHEST_BOAT
+        || entity_type == &EntityType::CHERRY_CHEST_BOAT
+        || entity_type == &EntityType::PALE_OAK_CHEST_BOAT
+        || entity_type == &EntityType::BAMBOO_CHEST_RAFT
+}
+
+fn is_minecart(entity_type: &'static EntityType) -> bool {
+    entity_type.has_tag(&pumpkin_data::tag::EntityType::C_MINECARTS)
+        || entity_type == &EntityType::MINECART
+        || entity_type == &EntityType::CHEST_MINECART
+        || entity_type == &EntityType::FURNACE_MINECART
+        || entity_type == &EntityType::TNT_MINECART
+        || entity_type == &EntityType::HOPPER_MINECART
+        || entity_type == &EntityType::COMMAND_BLOCK_MINECART
+        || entity_type == &EntityType::SPAWNER_MINECART
+}
+
+fn is_horse_like(entity_type: &'static EntityType) -> bool {
+    entity_type == &EntityType::HORSE
+        || entity_type == &EntityType::DONKEY
+        || entity_type == &EntityType::MULE
+        || entity_type == &EntityType::SKELETON_HORSE
+        || entity_type == &EntityType::ZOMBIE_HORSE
+        || entity_type == &EntityType::CAMEL
+        || entity_type == &EntityType::LLAMA
+        || entity_type == &EntityType::TRADER_LLAMA
+}
+
+fn is_nautilus(entity_type: &'static EntityType) -> bool {
+    entity_type == &EntityType::NAUTILUS || entity_type == &EntityType::ZOMBIE_NAUTILUS
 }
 
 #[cfg(test)]

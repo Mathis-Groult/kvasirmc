@@ -504,3 +504,6 @@ impl Player {
         (!state.is_air()).then_some(fallback_pos)
     }
 }
+
+#[cfg(test)]
+mod abilities_golden;

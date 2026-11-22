@@ -18,7 +18,7 @@ use pumpkin_data::placed_feature::PlacedFeature;
 use pumpkin_data::{Block, BlockState, BlockStateId};
 use pumpkin_util::{
     math::{position::BlockPos, vector3::Vector3},
-    random::{RandomGenerator, xoroshiro128::Xoroshiro},
+    random::{RandomGenerator, RandomImpl, xoroshiro128::Xoroshiro},
     world_seed::Seed,
 };
 
@@ -89,22 +89,124 @@ const fn site(
 }
 
 fn sites() -> Vec<Site> {
+    let mut sites = ground_sites();
+    sites.extend(other_sites());
+    sites
+}
+
+fn ground_sites() -> Vec<Site> {
     vec![
-        site("open80", 80, (3, -5), Floor::Snow, (OPEN_ABOVE, MIXED_BELOW), 220),
-        site("solid80", 80, (-6, 7), Floor::Snow, (SOLID_ABOVE, SOFT_BELOW), 140),
-        site("hard80", 80, (5, 4), Floor::Snow, (OPEN_ABOVE, HARD_BELOW), 100),
-        site("soft80", 80, (-3, -9), Floor::Snow, (OPEN_ABOVE, SOFT_BELOW), 140),
-        site("air110", 110, (6, 6), Floor::Snow, (OPEN_ABOVE, AIR_BELOW), 80),
-        site("border", 70, (-2, 14), Floor::Snow, (OPEN_ABOVE, MIXED_BELOW), 100),
-        site("low61", -61, (4, 3), Floor::Snow, (OPEN_ABOVE, MIXED_BELOW), 40),
-        site("low62", -62, (-5, 4), Floor::Snow, (OPEN_ABOVE, MIXED_BELOW), 40),
-        site("low63", -63, (2, -7), Floor::Snow, (OPEN_ABOVE, MIXED_BELOW), 6),
-        site("low40", -40, (-4, -3), Floor::Snow, (SOLID_ABOVE, MIXED_BELOW), 60),
+        site(
+            "open80",
+            80,
+            (3, -5),
+            Floor::Snow,
+            (OPEN_ABOVE, MIXED_BELOW),
+            220,
+        ),
+        site(
+            "solid80",
+            80,
+            (-6, 7),
+            Floor::Snow,
+            (SOLID_ABOVE, SOFT_BELOW),
+            140,
+        ),
+        site(
+            "hard80",
+            80,
+            (5, 4),
+            Floor::Snow,
+            (OPEN_ABOVE, HARD_BELOW),
+            100,
+        ),
+        site(
+            "soft80",
+            80,
+            (-3, -9),
+            Floor::Snow,
+            (OPEN_ABOVE, SOFT_BELOW),
+            140,
+        ),
+        site(
+            "air110",
+            110,
+            (6, 6),
+            Floor::Snow,
+            (OPEN_ABOVE, AIR_BELOW),
+            80,
+        ),
+        site(
+            "border",
+            70,
+            (-2, 14),
+            Floor::Snow,
+            (OPEN_ABOVE, MIXED_BELOW),
+            100,
+        ),
+    ]
+}
+
+fn other_sites() -> Vec<Site> {
+    vec![
+        site(
+            "low61",
+            -61,
+            (4, 3),
+            Floor::Snow,
+            (OPEN_ABOVE, MIXED_BELOW),
+            40,
+        ),
+        site(
+            "low62",
+            -62,
+            (-5, 4),
+            Floor::Snow,
+            (OPEN_ABOVE, MIXED_BELOW),
+            40,
+        ),
+        site(
+            "low63",
+            -63,
+            (2, -7),
+            Floor::Snow,
+            (OPEN_ABOVE, MIXED_BELOW),
+            6,
+        ),
+        site(
+            "low40",
+            -40,
+            (-4, -3),
+            Floor::Snow,
+            (SOLID_ABOVE, MIXED_BELOW),
+            60,
+        ),
         site("none", 0, (1, 1), Floor::None, (OPEN_ABOVE, AIR_BELOW), 4),
-        site("stone", 80, (3, -5), Floor::Stone, (OPEN_ABOVE, MIXED_BELOW), 4),
+        site(
+            "stone",
+            80,
+            (3, -5),
+            Floor::Stone,
+            (OPEN_ABOVE, MIXED_BELOW),
+            4,
+        ),
         site("ice", 80, (3, -5), Floor::Ice, (OPEN_ABOVE, MIXED_BELOW), 4),
-        site("packed", 80, (3, -5), Floor::PackedIce, (OPEN_ABOVE, MIXED_BELOW), 4),
-        site("floating", 80, (-3, 5), Floor::Floating, (OPEN_ABOVE, SOFT_BELOW), 40),
+        site(
+            "packed",
+            80,
+            (3, -5),
+            Floor::PackedIce,
+            (OPEN_ABOVE, MIXED_BELOW),
+            4,
+        ),
+        site(
+            "floating",
+            80,
+            (-3, 5),
+            Floor::Floating,
+            (OPEN_ABOVE, SOFT_BELOW),
+            40,
+        ),
     ]
 }
 
@@ -297,6 +399,65 @@ fn run_seed(
     outcome
 }
 
+/// Seeds whose tall-spike draw (`next_bounded_i32(60) == 0`, after the 4, 4 and 2 draws of a
+/// spike with width above 1) comes out differently for a bound of 59 or 61, found by replaying
+/// those draws. They are rare (about 1 in 3,500), so scanning seeds in order would not hit them.
+fn sliver_seeds() -> Vec<u64> {
+    let draw = |seed: u64, bound: i32| {
+        let mut random = RandomGenerator::Xoroshiro(Xoroshiro::from_seed(seed));
+        let _ = random.next_bounded_i32(4);
+        let height = random.next_bounded_i32(4) + 7;
+        let width = height / 4 + random.next_bounded_i32(2);
+        (width > 1, random.next_bounded_i32(bound) == 0)
+    };
+    let mut classes: [Vec<u64>; 4] = [Vec::new(), Vec::new(), Vec::new(), Vec::new()];
+    for seed in 1000..400_000 {
+        let (wide, at_60) = draw(seed, 60);
+        if !wide {
+            continue;
+        }
+        let at_59 = draw(seed, 59).1;
+        let at_61 = draw(seed, 61).1;
+        let class = match (at_60, at_59, at_61) {
+            (true, false, _) => 0,
+            (false, true, _) => 1,
+            (true, _, false) => 2,
+            (false, _, true) => 3,
+            _ => continue,
+        };
+        if classes[class].len() < 2 {
+            classes[class].push(seed);
+        }
+    }
+    classes.into_iter().flatten().collect()
+}
+
+fn record_site(
+    report: &mut String,
+    world_gen: &WorldGenerator,
+    index: usize,
+    site: &Site,
+    seeds: &[u64],
+) {
+    let mut grid = empty_grid(world_gen);
+    fill_site(&mut grid, index, site);
+    let cells = box_cells(site);
+    let before = snapshot(&grid, &cells);
+    for &seed in seeds {
+        let outcome = run_seed(&mut grid, site, &cells, &before, seed);
+        let _ = writeln!(
+            report,
+            "{} {seed} returned={} changed={} y={}..{} hash={:016x}",
+            site.name,
+            outcome.returned,
+            outcome.changed,
+            outcome.lowest,
+            outcome.highest,
+            outcome.hash
+        );
+    }
+}
+
 fn report() -> String {
     let world_gen = get_world_gen(
         Seed(1),
@@ -306,25 +467,26 @@ fn report() -> String {
         "minecraft:plains".to_owned(),
     );
     let mut report = String::new();
-    for (index, site) in sites().iter().enumerate() {
-        let mut grid = empty_grid(&world_gen);
-        fill_site(&mut grid, index, site);
-        let cells = box_cells(site);
-        let before = snapshot(&grid, &cells);
-        for seed in 0..site.seeds {
-            let outcome = run_seed(&mut grid, site, &cells, &before, seed);
-            let _ = writeln!(
-                report,
-                "{} {seed} returned={} changed={} y={}..{} hash={:016x}",
-                site.name,
-                outcome.returned,
-                outcome.changed,
-                outcome.lowest,
-                outcome.highest,
-                outcome.hash
-            );
-        }
+    let sites = sites();
+    for (index, site) in sites.iter().enumerate() {
+        let seeds: Vec<u64> = (0..site.seeds).collect();
+        record_site(&mut report, &world_gen, index, site, &seeds);
     }
+    let sliver = site(
+        "sliver",
+        80,
+        (-1, 3),
+        Floor::Snow,
+        (OPEN_ABOVE, MIXED_BELOW),
+        0,
+    );
+    record_site(
+        &mut report,
+        &world_gen,
+        sites.len(),
+        &sliver,
+        &sliver_seeds(),
+    );
     report
 }
 

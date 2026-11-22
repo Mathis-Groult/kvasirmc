@@ -980,3 +980,7 @@ floating 36 returned=true changed=138 y=51..95 hash=cc31b696639e937f
 floating 37 returned=true changed=136 y=51..93 hash=ac088fa602711d74
 floating 38 returned=true changed=182 y=71..91 hash=5757893aa4d4f043
 floating 39 returned=true changed=116 y=51..91 hash=5e7281d1bc12e5e4
+sliver 1039 returned=true changed=131 y=67..92 hash=77ffad7ec7d7c2be
+sliver 1350 returned=true changed=222 y=66..90 hash=7434a1088e5326e6
+sliver 10214 returned=true changed=118 y=70..104 hash=baeb7da7b618b724
+sliver 14666 returned=true changed=113 y=85..106 hash=f2e97606eae3e177

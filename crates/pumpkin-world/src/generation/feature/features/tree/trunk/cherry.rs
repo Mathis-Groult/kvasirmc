@@ -41,37 +41,20 @@ impl CherryTrunkPlacer {
             logs.push(start_pos.down());
         }
 
-        let first_branch_offset =
-            (height as i32 - 1 + self.start_offset_from_top.get(random)).max(0);
-        let second_branch_start_offset_from_top = UniformIntProvider::new(
-            self.start_offset_from_top.min_inclusive,
-            self.start_offset_from_top.max_inclusive - 1,
-        );
-        let mut second_branch_offset =
-            (height as i32 - 1 + second_branch_start_offset_from_top.get(random)).max(0);
-
-        if second_branch_offset >= first_branch_offset {
-            second_branch_offset += 1;
-        }
+        let (first_branch_offset, second_branch_offset) = self.branch_offsets(height, random);
 
         let branch_count = self.count.get(random);
         let has_middle_branch = branch_count == 3;
         let has_both_side_branches = branch_count >= 2;
 
-        let trunk_height = if has_middle_branch {
-            height
-        } else if has_both_side_branches {
-            (first_branch_offset.max(second_branch_offset) + 1) as u32
-        } else {
-            (first_branch_offset + 1) as u32
-        };
+        let trunk_height = Self::trunk_height(
+            height,
+            branch_count,
+            first_branch_offset,
+            second_branch_offset,
+        );
 
-        for y in 0..trunk_height {
-            let pos = start_pos.up_height(y as i32);
-            if TrunkPlacer::place(chunk, &pos, trunk_state) {
-                logs.push(pos);
-            }
-        }
+        Self::place_column(chunk, start_pos, trunk_height, trunk_state, &mut logs);
 
         let mut nodes = Vec::new();
         if has_middle_branch {
@@ -82,13 +65,7 @@ impl CherryTrunkPlacer {
             });
         }
 
-        let directions = [
-            BlockPos::new(0, 0, -1), // North
-            BlockPos::new(1, 0, 0),  // East
-            BlockPos::new(0, 0, 1),  // South
-            BlockPos::new(-1, 0, 0), // West
-        ];
-        let branch_direction = directions[random.next_bounded_i32(4) as usize];
+        let branch_direction = Self::pick_direction(random);
 
         let (node1, logs1) = self.generate_branch(
             placer,
@@ -122,6 +99,67 @@ impl CherryTrunkPlacer {
         }
 
         (nodes, logs)
+    }
+
+    /// The heights (from the trunk base) of the two side branches' starts; the first one's
+    /// random is drawn before the second one's.
+    fn branch_offsets(&self, height: u32, random: &mut RandomGenerator) -> (i32, i32) {
+        let first_branch_offset =
+            (height as i32 - 1 + self.start_offset_from_top.get(random)).max(0);
+        let second_branch_start_offset_from_top = UniformIntProvider::new(
+            self.start_offset_from_top.min_inclusive,
+            self.start_offset_from_top.max_inclusive - 1,
+        );
+        let mut second_branch_offset =
+            (height as i32 - 1 + second_branch_start_offset_from_top.get(random)).max(0);
+
+        if second_branch_offset >= first_branch_offset {
+            second_branch_offset += 1;
+        }
+        (first_branch_offset, second_branch_offset)
+    }
+
+    /// How tall the central column is: the full height with a middle branch, else just high
+    /// enough for the side branches to start on it.
+    fn trunk_height(
+        height: u32,
+        branch_count: i32,
+        first_branch_offset: i32,
+        second_branch_offset: i32,
+    ) -> u32 {
+        if branch_count == 3 {
+            height
+        } else if branch_count >= 2 {
+            (first_branch_offset.max(second_branch_offset) + 1) as u32
+        } else {
+            (first_branch_offset + 1) as u32
+        }
+    }
+
+    fn place_column<T: GenerationCache>(
+        chunk: &mut T,
+        start_pos: BlockPos,
+        trunk_height: u32,
+        trunk_state: &BlockState,
+        logs: &mut Vec<BlockPos>,
+    ) {
+        for y in 0..trunk_height {
+            let pos = start_pos.up_height(y as i32);
+            if TrunkPlacer::place(chunk, &pos, trunk_state) {
+                logs.push(pos);
+            }
+        }
+    }
+
+    /// One of the four horizontal directions, drawn from `random`.
+    fn pick_direction(random: &mut RandomGenerator) -> BlockPos {
+        let directions = [
+            BlockPos::new(0, 0, -1), // North
+            BlockPos::new(1, 0, 0),  // East
+            BlockPos::new(0, 0, 1),  // South
+            BlockPos::new(-1, 0, 0), // West
+        ];
+        directions[random.next_bounded_i32(4) as usize]
     }
 
     #[expect(clippy::too_many_arguments)]

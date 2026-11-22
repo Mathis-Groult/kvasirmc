@@ -189,3 +189,33 @@ owner_too_soon t4: pos -4.0242,66.7933,4.5000 last -1.1133,66.8815,4.5000 vel -2
 owner_too_soon t5: pos -6.9060,66.6763,4.5000 last -4.0242,66.7933,4.5000 vel -2.8818,-0.1170,0.0000 rot 0.000,0.000 removed false has_hit false hits [] entities 2 sent [103:10:09ca7e9b]
 owner_too_soon t6: pos -9.7590,66.5307,4.5000 last -6.9060,66.6763,4.5000 vel -2.8530,-0.1456,0.0000 rot 0.000,0.000 removed false has_hit false hits [] entities 2 sent [103:10:d81ccb85]
 owner_too_soon still flying
+corner_west t1: pos 8.9600,66.4703,8.5000 last 5.0000,66.5000,8.5000 vel 3.9600,-0.0297,0.0000 rot 0.000,0.000 removed true has_hit true hits [block 8,66,8 face West at 8.0000,66.4775,8.5000 normal -1.0000,0.0075,-0.0000] entities 0 sent [103:11:b8a95b4a]
+corner_west removed after tick 1
+corner_east t1: pos 8.0400,66.4703,8.5000 last 12.0000,66.5000,8.5000 vel -3.9600,-0.0297,0.0000 rot 0.000,0.000 removed true has_hit true hits [block 8,66,8 face East at 9.0000,66.4775,8.5000 normal 1.0000,0.0075,-0.0000] entities 0 sent [103:11:2a3770f6]
+corner_east removed after tick 1
+corner_down t1: pos 8.5000,68.9303,8.5000 last 8.5000,65.0000,8.5000 vel 0.0000,3.9303,0.0000 rot 0.000,0.000 removed true has_hit true hits [block 8,68,8 face Down at 8.5000,68.0000,8.5000 normal -0.0000,-1.0000,-0.0000] entities 0 sent [103:11:a2f21f73]
+corner_down removed after tick 1
+corner_up t1: pos 8.5000,66.0103,8.5000 last 8.5000,70.0000,8.5000 vel 0.0000,-3.9897,0.0000 rot 0.000,0.000 removed true has_hit true hits [block 8,66,8 face Up at 8.5000,67.0000,8.5000 normal -0.0000,1.0000,-0.0000] entities 0 sent [103:11:6de3d027]
+corner_up removed after tick 1
+corner_north t1: pos 8.5000,66.4703,8.9600 last 8.5000,66.5000,5.0000 vel 0.0000,-0.0297,3.9600 rot 0.000,0.000 removed true has_hit true hits [block 8,66,8 face North at 8.5000,66.4775,8.0000 normal -0.0000,0.0075,-1.0000] entities 0 sent [103:11:021765a0]
+corner_north removed after tick 1
+corner_south t1: pos 8.5000,66.4703,8.0400 last 8.5000,66.5000,12.0000 vel 0.0000,-0.0297,-3.9600 rot 0.000,0.000 removed true has_hit true hits [block 8,66,8 face South at 8.5000,66.4775,9.0000 normal -0.0000,0.0075,1.0000] entities 0 sent [103:11:c9f2a5d1]
+corner_south removed after tick 1
+negative_west t1: pos 8.9600,66.4703,8.5000 last 5.0000,66.5000,8.5000 vel 3.9600,-0.0297,0.0000 rot 0.000,0.000 removed true has_hit true hits [block 8,66,8 face West at 8.0000,66.4775,8.5000 normal -1.0000,0.0075,-0.0000] entities 0 sent [103:11:b8a95b4a]
+negative_west removed after tick 1
+negative_east t1: pos 8.0400,66.4703,8.5000 last 12.0000,66.5000,8.5000 vel -3.9600,-0.0297,0.0000 rot 0.000,0.000 removed true has_hit true hits [block 8,66,8 face East at 9.0000,66.4775,8.5000 normal 1.0000,0.0075,-0.0000] entities 0 sent [103:11:2a3770f6]
+negative_east removed after tick 1
+negative_down t1: pos 8.5000,68.9303,8.5000 last 8.5000,65.0000,8.5000 vel 0.0000,3.9303,0.0000 rot 0.000,0.000 removed true has_hit true hits [block 8,68,8 face Down at 8.5000,68.0000,8.5000 normal -0.0000,-1.0000,-0.0000] entities 0 sent [103:11:a2f21f73]
+negative_down removed after tick 1
+negative_up t1: pos 8.5000,66.0103,8.5000 last 8.5000,70.0000,8.5000 vel 0.0000,-3.9897,0.0000 rot 0.000,0.000 removed true has_hit true hits [block 8,66,8 face Up at 8.5000,67.0000,8.5000 normal -0.0000,1.0000,-0.0000] entities 0 sent [103:11:6de3d027]
+negative_up removed after tick 1
+negative_north t1: pos 8.5000,66.4703,8.9600 last 8.5000,66.5000,5.0000 vel 0.0000,-0.0297,3.9600 rot 0.000,0.000 removed true has_hit true hits [block 8,66,8 face North at 8.5000,66.4775,8.0000 normal -0.0000,0.0075,-1.0000] entities 0 sent [103:11:021765a0]
+negative_north removed after tick 1
+negative_south t1: pos 8.5000,66.4703,8.0400 last 8.5000,66.5000,12.0000 vel 0.0000,-0.0297,-3.9600 rot 0.000,0.000 removed true has_hit true hits [block 8,66,8 face South at 8.5000,66.4775,9.0000 normal -0.0000,0.0075,1.0000] entities 0 sent [103:11:c9f2a5d1]
+negative_south removed after tick 1
+mob_graze_x t1: pos 9.0500,66.7703,8.4600 last 9.0500,66.8000,4.5000 vel 0.0000,-0.0297,3.9600 rot 0.000,0.000 removed true has_hit true hits [entity 91001 at 9.0500,66.7745,7.9000 normal -0.0000,0.0075,-1.0000] mob 91001 health 20.0 removed false entities 1 sent [103:11:021765a0]
+mob_graze_x removed after tick 1
+seam t1: pos 8.9600,67.0000,8.5000 last 5.0000,67.0000,8.5000 vel 3.9600,0.0000,0.0000 rot 0.000,0.000 removed true has_hit true hits [block 8,66,8 face West at 8.0000,67.0000,8.5000 normal -1.0000,-0.0000,-0.0000] entities 0 sent [103:11:be4feded]
+seam removed after tick 1
+twins t1: pos 8.4600,66.7703,8.5000 last 4.5000,66.8000,8.5000 vel 3.9600,-0.0297,0.0000 rot 0.000,0.000 removed true has_hit true hits [entity 91001 at 7.9000,66.7745,8.5000 normal -1.0000,0.0075,-0.0000] mob 91001 health 20.0 removed false mob 91002 health 20.0 removed false entities 2 sent [103:11:b8a95b4a]
+twins removed after tick 1

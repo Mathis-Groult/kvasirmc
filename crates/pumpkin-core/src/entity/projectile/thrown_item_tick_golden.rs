@@ -61,6 +61,18 @@ enum Kind {
     Snowball,
 }
 
+/// Where the scene's area is: the swept box takes `min` and `max` of coordinates of different
+/// sizes, so the same flights are also made where x, y and z are in other orders, and below 0.
+#[derive(Clone, Copy)]
+enum Region {
+    /// x grows with the scene's index: x is far above y and z.
+    Far,
+    /// x and y below z.
+    Corner,
+    /// x, y and z all negative.
+    Negative,
+}
+
 #[derive(Clone, Copy)]
 struct Mob {
     kind: Kind,
@@ -84,6 +96,7 @@ struct Scene {
     collides_with_projectiles: bool,
     /// The real snowball instead of the probe.
     real: bool,
+    region: Region,
 }
 
 const fn scene(name: &'static str, start: Vec3, velocity: Vec3, ticks: usize) -> Scene {
@@ -100,6 +113,7 @@ const fn scene(name: &'static str, start: Vec3, velocity: Vec3, ticks: usize) ->
         pre_hit: false,
         collides_with_projectiles: false,
         real: false,
+        region: Region::Far,
     }
 }
 
@@ -416,9 +430,131 @@ const OWNERS: &[Scene] = &[
     },
 ];
 
+const AT_8_66_8: &[(Solid, i32, i32, i32)] = &[stone(8, 66, 8)];
+const AT_8_68_8: &[(Solid, i32, i32, i32)] = &[stone(8, 68, 8)];
+
+const fn face(
+    name: &'static str,
+    region: Region,
+    blocks: &'static [(Solid, i32, i32, i32)],
+    start: Vec3,
+    velocity: Vec3,
+) -> Scene {
+    Scene {
+        blocks,
+        region,
+        ..scene(name, start, velocity, 3)
+    }
+}
+
+/// The six faces again where the coordinates are in other orders and below 0.
+const REGIONS: &[Scene] = &[
+    face(
+        "corner_west",
+        Region::Corner,
+        AT_8_66_8,
+        (5.0, 66.5, 8.5),
+        (4.0, 0.0, 0.0),
+    ),
+    face(
+        "corner_east",
+        Region::Corner,
+        AT_8_66_8,
+        (12.0, 66.5, 8.5),
+        (-4.0, 0.0, 0.0),
+    ),
+    face(
+        "corner_down",
+        Region::Corner,
+        AT_8_68_8,
+        (8.5, 65.0, 8.5),
+        (0.0, 4.0, 0.0),
+    ),
+    face(
+        "corner_up",
+        Region::Corner,
+        AT_8_66_8,
+        (8.5, 70.0, 8.5),
+        (0.0, -4.0, 0.0),
+    ),
+    face(
+        "corner_north",
+        Region::Corner,
+        AT_8_66_8,
+        (8.5, 66.5, 5.0),
+        (0.0, 0.0, 4.0),
+    ),
+    face(
+        "corner_south",
+        Region::Corner,
+        AT_8_66_8,
+        (8.5, 66.5, 12.0),
+        (0.0, 0.0, -4.0),
+    ),
+    face(
+        "negative_west",
+        Region::Negative,
+        AT_8_66_8,
+        (5.0, 66.5, 8.5),
+        (4.0, 0.0, 0.0),
+    ),
+    face(
+        "negative_east",
+        Region::Negative,
+        AT_8_66_8,
+        (12.0, 66.5, 8.5),
+        (-4.0, 0.0, 0.0),
+    ),
+    face(
+        "negative_down",
+        Region::Negative,
+        AT_8_68_8,
+        (8.5, 65.0, 8.5),
+        (0.0, 4.0, 0.0),
+    ),
+    face(
+        "negative_up",
+        Region::Negative,
+        AT_8_66_8,
+        (8.5, 70.0, 8.5),
+        (0.0, -4.0, 0.0),
+    ),
+    face(
+        "negative_north",
+        Region::Negative,
+        AT_8_66_8,
+        (8.5, 66.5, 5.0),
+        (0.0, 0.0, 4.0),
+    ),
+    face(
+        "negative_south",
+        Region::Negative,
+        AT_8_66_8,
+        (8.5, 66.5, 12.0),
+        (0.0, 0.0, -4.0),
+    ),
+];
+
+/// A graze along x, and ties: two blocks or two mobs at the same distance (the first found
+/// keeps the hit).
+const EDGES: &[Scene] = &[
+    Scene {
+        mobs: &[zombie((8.5, 66.0, 8.5))],
+        ..scene("mob_graze_x", (9.05, 66.8, 4.5), (0.0, 0.0, 4.0), 3)
+    },
+    Scene {
+        blocks: &[stone(8, 66, 8), stone(8, 67, 8)],
+        ..scene("seam", (5.0, 67.0, 8.5), (4.0, 0.03, 0.0), 2)
+    },
+    Scene {
+        mobs: &[zombie((8.5, 66.0, 8.5)), zombie((8.5, 66.0, 8.5))],
+        ..scene("twins", (4.5, 66.8, 8.5), (4.0, 0.0, 0.0), 2)
+    },
+];
+
 fn scenes() -> impl Iterator<Item = &'static Scene> {
     [
-        FLIGHT, FACES, ROWS, SHAPES, TARGETS, BORDERS, MOBS, ORDER, OWNERS,
+        FLIGHT, FACES, ROWS, SHAPES, TARGETS, BORDERS, MOBS, ORDER, OWNERS, REGIONS, EDGES,
     ]
     .into_iter()
     .flatten()
@@ -428,27 +564,51 @@ struct Area<'a> {
     world: &'a Arc<World>,
     x: i32,
     z: i32,
+    dy: i32,
 }
 
-impl Area<'_> {
+impl<'a> Area<'a> {
+    fn new(world: &'a Arc<World>, index: usize, region: Region) -> Self {
+        let (x, z, dy) = match region {
+            Region::Far => (index as i32 * 64 + 16, 16, 0),
+            Region::Corner => (16, 208, 0),
+            Region::Negative => (-112, -48, -80),
+        };
+        Self { world, x, z, dy }
+    }
+
+    /// The four-by-four chunks around the area.
+    fn chunks(&self) -> impl Iterator<Item = Vector2<i32>> {
+        let (x, z) = ((self.x >> 4) - 1, (self.z >> 4) - 1);
+        (x..x + 4).flat_map(move |cx| (z..z + 4).map(move |cz| Vector2::new(cx, cz)))
+    }
+
     fn put(&self, block: &Block, x: i32, y: i32, z: i32) {
         self.world.set_block_state(
-            &BlockPos(Vector3::new(self.x + x, y, self.z + z)),
+            &self.cell((x, y, z)),
             block.default_state.id,
             BlockFlags::FORCE_STATE | BlockFlags::SKIP_BLOCK_ADDED_CALLBACK,
         );
     }
 
     fn point(&self, (x, y, z): Vec3) -> Vector3<f64> {
-        Vector3::new(f64::from(self.x) + x, y, f64::from(self.z) + z)
+        Vector3::new(
+            f64::from(self.x) + x,
+            y + f64::from(self.dy),
+            f64::from(self.z) + z,
+        )
     }
 
     fn relative(&self, v: Vector3<f64>) -> Vec3 {
-        (v.x - f64::from(self.x), v.y, v.z - f64::from(self.z))
+        (
+            v.x - f64::from(self.x),
+            v.y - f64::from(self.dy),
+            v.z - f64::from(self.z),
+        )
     }
 
     fn cell(&self, (x, y, z): (i32, i32, i32)) -> BlockPos {
-        BlockPos(Vector3::new(self.x + x, y, self.z + z))
+        BlockPos(Vector3::new(self.x + x, y + self.dy, self.z + z))
     }
 }
 
@@ -465,7 +625,8 @@ const fn block_of(solid: Solid) -> &'static Block {
 /// A projectile that records the hits it is given.
 struct Probe {
     thrown: ThrownItemEntity,
-    origin: (f64, f64),
+    /// The area's corner: x, y shift and z.
+    origin: (f64, f64, f64),
     hits: Mutex<Vec<String>>,
 }
 
@@ -475,7 +636,11 @@ fn triple((x, y, z): Vec3) -> String {
 
 impl Probe {
     fn at(&self, v: Vector3<f64>) -> String {
-        triple((v.x - self.origin.0, v.y, v.z - self.origin.1))
+        triple((
+            v.x - self.origin.0,
+            v.y - self.origin.1,
+            v.z - self.origin.2,
+        ))
     }
 
     fn describe(&self, hit: &ProjectileHit) -> String {
@@ -485,8 +650,8 @@ impl Probe {
             ProjectileHit::Block { pos, face, .. } => format!(
                 "block {},{},{} face {face:?} at {} normal {normal}",
                 f64::from(pos.0.x) - self.origin.0,
-                pos.0.y,
-                f64::from(pos.0.z) - self.origin.1,
+                f64::from(pos.0.y) - self.origin.1,
+                f64::from(pos.0.z) - self.origin.2,
                 self.at(hit.hit_pos()),
             ),
             ProjectileHit::Entity { entity, .. } => format!(
@@ -618,7 +783,7 @@ fn make_shot(area: &Area<'_>, scene: &Scene, owner: Option<&Arc<LivingEntity>>) 
     } else {
         Shot::Probe(Arc::new(Probe {
             thrown,
-            origin: (f64::from(area.x), f64::from(area.z)),
+            origin: (f64::from(area.x), f64::from(area.dy), f64::from(area.z)),
             hits: Mutex::new(Vec::new()),
         }))
     }
@@ -727,20 +892,13 @@ fn run_scene(
     scene: &Scene,
     report: &mut String,
 ) -> TestResult {
-    let chunk_x = index as i32 * 4;
-    for cx in chunk_x..chunk_x + 4 {
-        for cz in 0..4 {
-            world.level.loaded_chunks.insert(
-                Vector2::new(cx, cz),
-                pumpkin_world::chunk::ChunkData::empty_sync(cx, cz),
-            );
-        }
+    let area = Area::new(world, index, scene.region);
+    for chunk in area.chunks() {
+        world.level.loaded_chunks.insert(
+            chunk,
+            pumpkin_world::chunk::ChunkData::empty_sync(chunk.x, chunk.y),
+        );
     }
-    let area = Area {
-        world,
-        x: chunk_x * 16 + 16,
-        z: 16,
-    };
     for x in 0..24 {
         for z in 0..24 {
             area.put(&Block::STONE, x, FLOOR_Y, z);
@@ -795,10 +953,8 @@ fn run_scene(
     for entity in world.entities.load().iter() {
         world.remove_entity(entity.as_ref());
     }
-    for cx in chunk_x..chunk_x + 4 {
-        for cz in 0..4 {
-            world.level.loaded_chunks.remove(&Vector2::new(cx, cz));
-        }
+    for chunk in area.chunks() {
+        world.level.loaded_chunks.remove(&chunk);
     }
     Ok(())
 }

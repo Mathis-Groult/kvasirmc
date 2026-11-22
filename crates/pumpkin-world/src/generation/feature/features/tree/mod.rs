@@ -116,36 +116,11 @@ impl TreeFeature {
             return;
         }
 
-        let (mut min_x, mut min_y, mut min_z) = (i32::MAX, i32::MAX, i32::MAX);
-        let (mut max_x, mut max_y, mut max_z) = (i32::MIN, i32::MIN, i32::MIN);
-
-        for pos in logs.iter().chain(roots).chain(foliage).chain(decorations) {
-            min_x = min_x.min(pos.0.x);
-            min_y = min_y.min(pos.0.y);
-            min_z = min_z.min(pos.0.z);
-            max_x = max_x.max(pos.0.x);
-            max_y = max_y.max(pos.0.y);
-            max_z = max_z.max(pos.0.z);
-        }
-
-        let (x_span, y_span, z_span) = (
-            (max_x - min_x + 1) as usize,
-            (max_y - min_y + 1) as usize,
-            (max_z - min_z + 1) as usize,
-        );
-        let mut shape = vec![false; x_span * y_span * z_span];
-
-        let get_index = |x: i32, y: i32, z: i32| -> Option<usize> {
-            (x >= min_x && x <= max_x && y >= min_y && y <= max_y && z >= min_z && z <= max_z).then(
-                || {
-                    (((x - min_x) as usize * y_span + (y - min_y) as usize) * z_span)
-                        + (z - min_z) as usize
-                },
-            )
-        };
+        let bounds = ShapeBox::around(logs.iter().chain(roots).chain(foliage).chain(decorations));
+        let mut shape = vec![false; bounds.cell_count()];
 
         for pos in roots.iter().chain(decorations.iter()) {
-            if let Some(idx) = get_index(pos.0.x, pos.0.y, pos.0.z) {
+            if let Some(idx) = bounds.index(pos) {
                 shape[idx] = true;
             }
         }
@@ -161,8 +136,16 @@ impl TreeFeature {
         loop {
             while smallest_distance >= 7 || !to_check[smallest_distance].is_empty() {
                 if smallest_distance >= 7 {
+                    let (x_span, y_span, z_span) = bounds.spans();
                     Self::update_shape_at_edge(
-                        chunk, &shape, min_x, min_y, min_z, x_span, y_span, z_span,
+                        chunk,
+                        &shape,
+                        bounds.min.0,
+                        bounds.min.1,
+                        bounds.min.2,
+                        x_span,
+                        y_span,
+                        z_span,
                     );
                     return;
                 }
@@ -171,53 +154,77 @@ impl TreeFeature {
                     break;
                 };
 
-                if let Some(idx) = get_index(pos.0.x, pos.0.y, pos.0.z) {
-                    if smallest_distance != 0 {
-                        let (block, state) = chunk.get_block_and_state(&pos);
-                        if OakLeavesLikeProperties::handles_block_id(block.id) {
-                            let mut props = OakLeavesLikeProperties::from_state_id(state.id);
-                            props.distance = smallest_distance as u8;
-                            let new_state = &block.states[props.to_index() as usize];
-                            chunk.set_block_state(&pos.0, new_state);
-                        }
-                    }
-
-                    shape[idx] = true;
-
-                    for direction in pumpkin_data::BlockDirection::all() {
-                        let offset = direction.to_offset();
-                        let neighbor_pos = pos.offset(offset);
-                        if let Some(n_idx) =
-                            get_index(neighbor_pos.0.x, neighbor_pos.0.y, neighbor_pos.0.z)
-                            && !shape[n_idx]
-                        {
-                            let (n_block, n_state) = chunk.get_block_and_state(&neighbor_pos);
-                            let distance = if n_block
-                                .has_tag(&tag::Block::MINECRAFT_PREVENTS_NEARBY_LEAF_DECAY)
-                            {
-                                Some(0)
-                            } else if OakLeavesLikeProperties::handles_block_id(n_block.id) {
-                                Some(
-                                    OakLeavesLikeProperties::from_state_id(n_state.id).distance
-                                        as usize,
-                                )
-                            } else {
-                                None
-                            };
-
-                            if let Some(dist) = distance {
-                                let new_distance = dist.min(smallest_distance + 1);
-                                if new_distance < 7 {
-                                    to_check[new_distance].insert(neighbor_pos);
-                                    smallest_distance = smallest_distance.min(new_distance);
-                                }
-                            }
-                        }
-                    }
-                }
+                Self::visit_leaf_position(
+                    chunk,
+                    &bounds,
+                    &mut shape,
+                    &mut to_check,
+                    &mut smallest_distance,
+                    pos,
+                );
             }
 
             smallest_distance += 1;
+        }
+    }
+
+    /// Takes `pos` off the queue of its distance: writes the distance into a leaf there, marks the
+    /// position as part of the shape and queues its unvisited neighbours (logs at distance 0,
+    /// leaves at their own distance), each capped at one more than this distance.
+    fn visit_leaf_position<T: GenerationCache>(
+        chunk: &mut T,
+        bounds: &ShapeBox,
+        shape: &mut [bool],
+        to_check: &mut [JavaBlockPosHashSet; 7],
+        smallest_distance: &mut usize,
+        pos: BlockPos,
+    ) {
+        let Some(idx) = bounds.index(&pos) else {
+            return;
+        };
+
+        if *smallest_distance != 0 {
+            Self::set_leaf_distance(chunk, &pos, *smallest_distance as u8);
+        }
+
+        shape[idx] = true;
+
+        for direction in pumpkin_data::BlockDirection::all() {
+            let neighbor_pos = pos.offset(direction.to_offset());
+            if let Some(n_idx) = bounds.index(&neighbor_pos)
+                && !shape[n_idx]
+                && let Some(dist) = Self::neighbor_leaf_distance(chunk, &neighbor_pos)
+            {
+                let new_distance = dist.min(*smallest_distance + 1);
+                if new_distance < 7 {
+                    to_check[new_distance].insert(neighbor_pos);
+                    *smallest_distance = (*smallest_distance).min(new_distance);
+                }
+            }
+        }
+    }
+
+    /// Writes `distance` into the leaves at `pos`; any other block stays as it is.
+    fn set_leaf_distance<T: GenerationCache>(chunk: &mut T, pos: &BlockPos, distance: u8) {
+        let (block, state) = chunk.get_block_and_state(pos);
+        if OakLeavesLikeProperties::handles_block_id(block.id) {
+            let mut props = OakLeavesLikeProperties::from_state_id(state.id);
+            props.distance = distance;
+            let new_state = &block.states[props.to_index() as usize];
+            chunk.set_block_state(&pos.0, new_state);
+        }
+    }
+
+    /// The distance a block at `pos` starts the spread from: 0 for a block that keeps leaves
+    /// from decaying (logs), a leaf's own distance, nothing for any other block.
+    fn neighbor_leaf_distance<T: GenerationCache>(chunk: &T, pos: &BlockPos) -> Option<usize> {
+        let (block, state) = chunk.get_block_and_state(pos);
+        if block.has_tag(&tag::Block::MINECRAFT_PREVENTS_NEARBY_LEAF_DECAY) {
+            Some(0)
+        } else if OakLeavesLikeProperties::handles_block_id(block.id) {
+            Some(OakLeavesLikeProperties::from_state_id(state.id).distance as usize)
+        } else {
+            None
         }
     }
 
@@ -502,5 +509,61 @@ impl TreeFeature {
             }
         }
         max_tree_height as i32
+    }
+}
+
+/// The box around the positions a tree placed, and where each of its cells sits in the shape grid.
+struct ShapeBox {
+    min: (i32, i32, i32),
+    max: (i32, i32, i32),
+    y_span: usize,
+    z_span: usize,
+}
+
+impl ShapeBox {
+    fn around<'a>(positions: impl Iterator<Item = &'a BlockPos>) -> Self {
+        let (mut min_x, mut min_y, mut min_z) = (i32::MAX, i32::MAX, i32::MAX);
+        let (mut max_x, mut max_y, mut max_z) = (i32::MIN, i32::MIN, i32::MIN);
+
+        for pos in positions {
+            min_x = min_x.min(pos.0.x);
+            min_y = min_y.min(pos.0.y);
+            min_z = min_z.min(pos.0.z);
+            max_x = max_x.max(pos.0.x);
+            max_y = max_y.max(pos.0.y);
+            max_z = max_z.max(pos.0.z);
+        }
+
+        Self {
+            min: (min_x, min_y, min_z),
+            max: (max_x, max_y, max_z),
+            y_span: (max_y - min_y + 1) as usize,
+            z_span: (max_z - min_z + 1) as usize,
+        }
+    }
+
+    const fn spans(&self) -> (usize, usize, usize) {
+        (
+            (self.max.0 - self.min.0 + 1) as usize,
+            self.y_span,
+            self.z_span,
+        )
+    }
+
+    const fn cell_count(&self) -> usize {
+        let (x_span, y_span, z_span) = self.spans();
+        x_span * y_span * z_span
+    }
+
+    fn index(&self, pos: &BlockPos) -> Option<usize> {
+        let (x, y, z) = (pos.0.x, pos.0.y, pos.0.z);
+        let (min_x, min_y, min_z) = self.min;
+        let (max_x, max_y, max_z) = self.max;
+        (x >= min_x && x <= max_x && y >= min_y && y <= max_y && z >= min_z && z <= max_z).then(
+            || {
+                (((x - min_x) as usize * self.y_span + (y - min_y) as usize) * self.z_span)
+                    + (z - min_z) as usize
+            },
+        )
     }
 }

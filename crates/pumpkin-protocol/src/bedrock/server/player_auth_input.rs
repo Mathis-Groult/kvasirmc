@@ -5,6 +5,7 @@ use pumpkin_util::math::{position::BlockPos, vector2::Vector2, vector3::Vector3}
 
 use super::player_action::PlayerActionType;
 use crate::{
+    bedrock::server::item_stack_request::ItemStackRequest,
     codec::{
         bitset::Bitset, var_int::VarInt, var_long::VarLong, var_uint::VarUInt, var_ulong::VarULong,
     },
@@ -59,6 +60,54 @@ pub struct SPlayerAuthInput {
     pub raw_move: Vector2<f32>,
 }
 
+/// The input flag list: a count, then each flag index once, all inside `0..66`.
+fn read_input_flags<R: Read>(reader: &mut R) -> Result<Bitset<66>, Error> {
+    let mut input_data = Bitset::<66>::default();
+    let count = VarUInt::read(reader)?.0;
+    if count > 66 {
+        return Err(Error::new(
+            ErrorKind::InvalidData,
+            format!("too many player input flags: {count}"),
+        ));
+    }
+    for _ in 0..count {
+        let flag = VarInt::read(reader)?.0;
+        if !(0..66).contains(&flag) {
+            return Err(Error::new(
+                ErrorKind::InvalidData,
+                format!("invalid player input flag {flag}"),
+            ));
+        }
+        if input_data.get(flag as usize) {
+            return Err(Error::new(
+                ErrorKind::InvalidData,
+                format!("duplicate player input flag {flag}"),
+            ));
+        }
+        input_data.set(flag as usize, true);
+    }
+    Ok(input_data)
+}
+
+/// The block action list behind its presence bool: a count of at most 1024, then the actions.
+fn read_block_actions<R: Read>(reader: &mut R) -> Result<Option<Vec<PlayerBlockAction>>, Error> {
+    if !bool::read(reader)? {
+        return Ok(None);
+    }
+    let count = VarUInt::read(reader)?.0 as usize;
+    if count > 1024 {
+        return Err(Error::new(
+            ErrorKind::InvalidData,
+            "block_actions count exceeds limit",
+        ));
+    }
+    let mut actions = Vec::with_capacity(count.min(64));
+    for _ in 0..count {
+        actions.push(PlayerBlockAction::read(reader)?);
+    }
+    Ok(Some(actions))
+}
+
 impl PacketRead for SPlayerAuthInput {
     fn read<R: Read>(reader: &mut R) -> Result<Self, Error> {
         let pitch = f32::read(reader)?;
@@ -66,30 +115,7 @@ impl PacketRead for SPlayerAuthInput {
         let position = Vector3::<f32>::read(reader)?;
         let move_vec = Vector2::<f32>::read(reader)?;
         let head_yaw = f32::read(reader)?;
-        let mut input_data = Bitset::<66>::default();
-        let count = VarUInt::read(reader)?.0;
-        if count > 66 {
-            return Err(Error::new(
-                ErrorKind::InvalidData,
-                format!("too many player input flags: {count}"),
-            ));
-        }
-        for _ in 0..count {
-            let flag = VarInt::read(reader)?.0;
-            if !(0..66).contains(&flag) {
-                return Err(Error::new(
-                    ErrorKind::InvalidData,
-                    format!("invalid player input flag {flag}"),
-                ));
-            }
-            if input_data.get(flag as usize) {
-                return Err(Error::new(
-                    ErrorKind::InvalidData,
-                    format!("duplicate player input flag {flag}"),
-                ));
-            }
-            input_data.set(flag as usize, true);
-        }
+        let input_data = read_input_flags(reader)?;
         let input_mode = VarUInt::read(reader)?;
         let play_mode = VarUInt::read(reader)?;
         let interaction_model = VarInt::read(reader)?;
@@ -98,47 +124,14 @@ impl PacketRead for SPlayerAuthInput {
         let tick = VarULong::read(reader)?;
         let delta = Vector3::<f32>::read(reader)?;
 
-        // 1. Perform Item Interaction
-        let item_interaction = if bool::read(reader)? {
-            Some(PlayerInventoryAction::read(reader)?)
-        } else {
-            None
-        };
+        // Optional sections, each behind its own presence bool, in wire order.
+        let item_interaction = Option::<PlayerInventoryAction>::read(reader)?;
+        let item_stack_request = Option::<ItemStackRequest>::read(reader)?;
+        let block_actions = read_block_actions(reader)?;
+        let vehicle_rotation = Option::<Vector2<f32>>::read(reader)?;
+        let vehicle_unique_id = Option::<VarLong>::read(reader)?;
 
-        // 2. Item Stack Request
-        let item_stack_request = if bool::read(reader)? {
-            Some(crate::bedrock::server::item_stack_request::ItemStackRequest::read(reader)?)
-        } else {
-            None
-        };
-
-        // 3. Block Actions
-        let block_actions = if bool::read(reader)? {
-            let count = VarUInt::read(reader)?.0 as usize;
-            if count > 1024 {
-                return Err(Error::new(
-                    ErrorKind::InvalidData,
-                    "block_actions count exceeds limit",
-                ));
-            }
-            let mut actions = Vec::with_capacity(count.min(64));
-            for _ in 0..count {
-                actions.push(PlayerBlockAction::read(reader)?);
-            }
-            Some(actions)
-        } else {
-            None
-        };
-
-        // 4. Vehicle Info (Matches Go logic)
-        let vehicle_rotation = bool::read(reader)?
-            .then(|| Vector2::<f32>::read(reader))
-            .transpose()?;
-        let vehicle_unique_id = bool::read(reader)?
-            .then(|| VarLong::read(reader))
-            .transpose()?;
-
-        // 5. Trailing Data
+        // Trailing data
         let analog_move = Vector2::<f32>::read(reader)?;
         let camera_orientation = Vector3::<f32>::read(reader)?;
         let raw_move = Vector2::<f32>::read(reader)?;

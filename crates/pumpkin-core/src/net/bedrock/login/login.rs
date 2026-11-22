@@ -22,6 +22,70 @@ fn build_username(display_name: &str, prefix: &str, replace_spaces: bool) -> Str
     name
 }
 
+/// Checks the login chain the way the server's mode asks and returns the player it names.
+async fn verify_login_chain(
+    server: &Arc<Server>,
+    auth_payload: &AuthPayload,
+) -> Result<pumpkin_auth::jwt::PlayerClaims, LoginError> {
+    if !server.advanced_config.networking.bedrock.online_mode {
+        return Ok(pumpkin_auth::jwt::extract_oidc_token_player_claims(
+            &auth_payload.token,
+        )?);
+    }
+    match auth_payload.authentication_type {
+        AuthenticationType::Full => {
+            verify_oidc_token_path(server, &auth_payload.token, false).await
+        }
+        AuthenticationType::SelfSigned => {
+            if server
+                .advanced_config
+                .networking
+                .bedrock
+                .authentication
+                .enabled
+            {
+                return Err(LoginError::SelfSignedNotAllowed);
+            }
+            verify_oidc_token_path(server, &auth_payload.token, true).await
+        }
+        AuthenticationType::Guest => Err(LoginError::GuestUnimplemented),
+    }
+}
+
+/// Reads the client data (language, device, ...) from the payload of the raw login token.
+fn parse_client_data(raw_token: &[u8]) -> Result<ClientData, LoginError> {
+    let raw_token_str = std::str::from_utf8(raw_token).map_err(|_| {
+        LoginError::InvalidTokenFormat(serde_json::Error::custom("raw_token is not valid UTF-8"))
+    })?;
+
+    let mut parts = raw_token_str.split('.');
+    let _header = parts.next().ok_or(AuthError::InvalidTokenFormat)?;
+    let payload_b64 = parts.next().ok_or(AuthError::InvalidTokenFormat)?;
+
+    let payload_bytes = pumpkin_auth::jwt::decode_b64_url_nopad(payload_b64)
+        .map_err(|_| LoginError::DecodeExtraError)?;
+    Ok(serde_json::from_slice(&payload_bytes)?)
+}
+
+/// The profile of the player the chain names, under the server's name rules.
+fn build_profile(
+    server: &Arc<Server>,
+    player_data: &pumpkin_auth::jwt::PlayerClaims,
+) -> Result<GameProfile, LoginError> {
+    let bedrock_config = &server.advanced_config.networking.bedrock;
+    let name = build_username(
+        &player_data.display_name,
+        &bedrock_config.username_prefix,
+        bedrock_config.replace_username_spaces,
+    );
+    Ok(GameProfile {
+        id: Uuid::parse_str(&player_data.uuid).map_err(|_| LoginError::InvalidUuid)?,
+        name,
+        properties: ArcSwap::new(Arc::new(Vec::new())),
+        profile_actions: None,
+    })
+}
+
 impl BedrockClient {
     pub async fn handle_login(
         self: &Arc<Self>,
@@ -37,61 +101,30 @@ impl BedrockClient {
         server: &Arc<Server>,
     ) -> Result<PacketHandlerResult, LoginError> {
         let auth_payload: AuthPayload = serde_json::from_slice(&packet.jwt)?;
-        let player_data = if server.advanced_config.networking.bedrock.online_mode {
-            match auth_payload.authentication_type {
-                AuthenticationType::Full => {
-                    verify_oidc_token_path(server, &auth_payload.token, false).await?
-                }
-                AuthenticationType::SelfSigned => {
-                    if server
-                        .advanced_config
-                        .networking
-                        .bedrock
-                        .authentication
-                        .enabled
-                    {
-                        return Err(LoginError::SelfSignedNotAllowed);
-                    }
+        let player_data = verify_login_chain(server, &auth_payload).await?;
+        let client_data = parse_client_data(&packet.raw_token)?;
+        let profile = build_profile(server, &player_data)?;
+        self.check_nethernet_identity(&auth_payload.token)?;
 
-                    verify_oidc_token_path(server, &auth_payload.token, true).await?
-                }
-                AuthenticationType::Guest => {
-                    return Err(LoginError::GuestUnimplemented);
-                }
-            }
-        } else {
-            pumpkin_auth::jwt::extract_oidc_token_player_claims(&auth_payload.token)?
+        if !self.can_complete_login(&profile, server).await {
+            return Ok(PacketHandlerResult::Stop);
+        }
+
+        self.send_login_replies(server).await;
+
+        let new_config = PlayerConfig {
+            locale: client_data.language_code.clone(),
+            ..Default::default()
         };
+        self.client_data
+            .store(std::sync::Arc::new(Some(std::sync::Arc::new(client_data))));
 
-        let raw_token_str = std::str::from_utf8(&packet.raw_token).map_err(|_| {
-            LoginError::InvalidTokenFormat(serde_json::Error::custom(
-                "raw_token is not valid UTF-8",
-            ))
-        })?; // You'll need to add a string conversion error to LoginError, or handle it cleanly.
+        Ok(PacketHandlerResult::ReadyToPlay(profile, new_config))
+    }
 
-        let mut parts = raw_token_str.split('.');
-        let _header = parts.next().ok_or(AuthError::InvalidTokenFormat)?;
-        let payload_b64 = parts.next().ok_or(AuthError::InvalidTokenFormat)?;
-
-        let payload_bytes = pumpkin_auth::jwt::decode_b64_url_nopad(payload_b64)
-            .map_err(|_| LoginError::DecodeExtraError)?;
-        let client_data: ClientData = serde_json::from_slice(&payload_bytes)?;
-
-        let bedrock_config = &server.advanced_config.networking.bedrock;
-        let name = build_username(
-            &player_data.display_name,
-            &bedrock_config.username_prefix,
-            bedrock_config.replace_username_spaces,
-        );
-
-        let profile = GameProfile {
-            id: Uuid::parse_str(&player_data.uuid).map_err(|_| LoginError::InvalidUuid)?,
-            name,
-            properties: ArcSwap::new(Arc::new(Vec::new())),
-            profile_actions: None,
-        };
-
-        let login_public_key = pumpkin_auth::jwt::extract_cpk_from_token(&auth_payload.token)
+    /// The login token must be signed by the key the `NetherNet` session proved, if it did.
+    fn check_nethernet_identity(&self, token: &str) -> Result<(), LoginError> {
+        let login_public_key = pumpkin_auth::jwt::extract_cpk_from_token(token)
             .map_err(LoginError::ChainValidationFailed)?;
         if self
             .nethernet_public_key()
@@ -103,11 +136,11 @@ impl BedrockClient {
                 ),
             ));
         }
+        Ok(())
+    }
 
-        if !self.can_complete_login(&profile, server).await {
-            return Ok(PacketHandlerResult::Stop);
-        }
-
+    /// Tells the client the login worked and which resource packs the server offers.
+    async fn send_login_replies(self: &Arc<Self>, server: &Arc<Server>) {
         self.enqueue_client_packet(&CPlayStatus::LoginSuccess).await;
         let br_config = &server.advanced_config.resource_pack.bedrock;
 
@@ -137,16 +170,6 @@ impl BedrockClient {
             resource_packs: entries,
         };
         self.enqueue_client_packet(&packs_info).await;
-
-        let new_config = PlayerConfig {
-            locale: client_data.language_code.clone(),
-            ..Default::default()
-        };
-
-        self.client_data
-            .store(std::sync::Arc::new(Some(std::sync::Arc::new(client_data))));
-
-        Ok(PacketHandlerResult::ReadyToPlay(profile, new_config))
     }
 
     async fn can_complete_login(

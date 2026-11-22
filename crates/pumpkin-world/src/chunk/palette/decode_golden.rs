@@ -186,6 +186,16 @@ fn wide_minimums(out: &mut String) {
     }
 }
 
+/// Widths over 32 bits: one key per word, so every position reads a new word.
+fn one_key_per_word(out: &mut String) {
+    let palette: Vec<u16> = (1..=3).collect();
+    for min_bits in [33u8, 40, 63] {
+        for (name, data) in shapes(3, min_bits, 64) {
+            line::<u16, 4>(out, "u16", &palette, min_bits, name, &data);
+        }
+    }
+}
+
 /// Palettes with repeated entries and with or without the default value (0).
 fn odd_palettes(out: &mut String) {
     let cases: [(&str, &[u16]); 5] = [
@@ -252,6 +262,7 @@ fn report() -> String {
     wide_minimums(&mut out);
     odd_palettes(&mut out);
     hand_made(&mut out);
+    one_key_per_word(&mut out);
     out
 }
 

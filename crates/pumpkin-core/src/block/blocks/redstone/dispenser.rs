@@ -404,7 +404,7 @@ impl DispenserBlock {
         let is_water = |id: u16| id == Fluid::WATER.id || id == Fluid::FLOWING_WATER.id;
 
         let spawn_pos = if is_water(ctx.world.get_fluid(&target).id) {
-            target.to_f64()
+            Self::boat_pos_in_front(ctx, BoatItem::item_to_entity(item.item))
         } else if ctx.world.get_block_state(&target).is_air()
             && is_water(ctx.world.get_fluid(&target.down()).id)
         {
@@ -419,7 +419,7 @@ impl DispenserBlock {
             entity_type.dimension[1],
             entity_type.eye_height,
         );
-        if !Self::has_room_for(ctx, spawn_pos, &dimensions) {
+        if !Self::boat_has_room_for(ctx, spawn_pos, &dimensions) {
             return false;
         }
 

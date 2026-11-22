@@ -2,13 +2,15 @@
 //! match wins (the order of the vanilla `DispenseItemBehavior` registry as far as it is ported).
 
 use pumpkin_data::Block;
-use pumpkin_data::entity::entity_from_egg;
+use pumpkin_data::entity::{EntityType, entity_from_egg};
 use pumpkin_data::item::Item;
 use pumpkin_data::item_stack::ItemStack;
 use pumpkin_data::tag::{self, Taggable};
 use pumpkin_data::world::WorldEvent;
+use pumpkin_util::math::boundingbox::{BoundingBox, EntityDimensions};
+use pumpkin_util::math::vector3::Vector3;
 
-use super::{DispenseContext, DispenserBlock, is_water_bottle};
+use super::{DispenseContext, DispenserBlock, is_water_bottle, to_normal};
 use crate::block::entities::dispenser::DispenserBlockEntity;
 use crate::item::ItemMetadata;
 use crate::item::items::boat::BoatItem;
@@ -142,5 +144,36 @@ impl DispenserBlock {
             // Default / Drop
             Self::drop_item(ctx, item);
         }
+    }
+}
+
+impl DispenserBlock {
+    /// Vanilla `BoatDispenseItemBehavior` with water in front: the boat spawns at the dispenser
+    /// centre moved by `facing * (0.5625 + width / 2)` (y: `facing.y * 1.125 + 1.0`). The block
+    /// corner used before put the room-check box over the dispenser, so the boat dropped as an item.
+    pub(super) fn boat_pos_in_front(
+        ctx: &DispenseContext<'_>,
+        entity_type: &EntityType,
+    ) -> Vector3<f64> {
+        let facing = to_normal(ctx.facing);
+        let reach = 0.5625 + f64::from(entity_type.dimension[0]) / 2.0;
+        let centre = ctx.position.to_f64();
+        Vector3::new(
+            centre.x + facing.x * reach,
+            centre.y + 0.5 + facing.y * 1.125 + 1.0,
+            centre.z + facing.z * reach,
+        )
+    }
+
+    /// Vanilla `BoatDispenseItemBehavior` never tests the block space (no `isEmpty` check at all),
+    /// so the boat may overlap the dispenser (facing down); only entities already there refuse it
+    /// here (vanilla spawns it anyway: kept so the "boat crowded" golden line stays, a later card).
+    pub(super) fn boat_has_room_for(
+        ctx: &DispenseContext<'_>,
+        spawn_pos: Vector3<f64>,
+        size: &EntityDimensions,
+    ) -> bool {
+        let bounding_box = BoundingBox::new_from_pos(spawn_pos.x, spawn_pos.y, spawn_pos.z, size);
+        ctx.world.get_entities_at_box(&bounding_box).is_empty()
     }
 }

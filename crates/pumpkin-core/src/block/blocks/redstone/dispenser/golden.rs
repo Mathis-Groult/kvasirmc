@@ -831,7 +831,6 @@ async fn dispenser_dispense() -> TestResult {
 /// room check box (1.375 wide, centred on the front block) overlaps the dispenser itself, so the
 /// boat is dropped as an item instead: the scene is red until that is fixed (card on board #18).
 #[tokio::test(flavor = "multi_thread")]
-#[ignore = "red: boat dispensed onto water in front drops as an item (vanilla spawns the boat), board #104"]
 async fn boat_on_water_in_front_spawns_a_boat() -> TestResult {
     let folder = tempfile::tempdir()?;
     let server = test_support::server(&folder).await?;

@@ -2,25 +2,15 @@ use super::{Entity, EntityBase, living::LivingEntity};
 use crate::world::World;
 use pumpkin_data::BlockDirection;
 use pumpkin_data::entity::EntityType;
-use pumpkin_protocol::java::client::play::CEntityVelocity;
 use pumpkin_util::math::boundingbox::BoundingBox;
 use pumpkin_util::math::{position::BlockPos, vector3::Vector3};
-use std::{
-    sync::Arc,
-    sync::atomic::{AtomicBool, Ordering},
-};
-pub mod arrow;
-#[cfg(test)]
-mod arrow_tick_golden;
-#[cfg(test)]
-mod shulker_tick_golden;
-#[cfg(test)]
-mod thrown_item_tick_golden;
-#[cfg(test)]
-mod lingering_potion_golden;
+use std::{sync::Arc, sync::atomic::AtomicBool};
 #[cfg(test)]
 #[path = "../area_effect_cloud_golden.rs"]
 mod area_effect_cloud_golden;
+pub mod arrow;
+#[cfg(test)]
+mod arrow_tick_golden;
 pub mod egg;
 pub mod ender_pearl;
 pub mod evoker_fangs;
@@ -30,12 +20,19 @@ pub mod fireball;
 pub mod firework_rocket;
 pub mod fishing_bobber;
 pub mod lingering_potion;
+#[cfg(test)]
+mod lingering_potion_golden;
 pub mod llama_spit;
 pub mod owner;
 pub mod shulker_bullet;
+#[cfg(test)]
+mod shulker_tick_golden;
 pub mod small_fireball;
 pub mod snowball;
 pub mod splash_potion;
+mod thrown_flight;
+#[cfg(test)]
+mod thrown_item_tick_golden;
 pub mod trident;
 pub mod wind_charge;
 pub mod wither_skull;
@@ -157,114 +154,9 @@ impl ThrownItemEntity {
         self.owner.check_left_owner(entity);
         entity.update_last_pos();
 
-        // Apply gravity and inertia
-        let mut velocity = entity.velocity.load();
-        velocity.y -= self.get_gravity();
-
-        let inertia = if entity.touching_water.load(Ordering::Relaxed) {
-            0.8
-        } else {
-            0.99
-        };
-        velocity = velocity.multiply(inertia, inertia, inertia);
-
-        // Store velocity
-        entity.velocity.store(velocity);
-
-        let start_pos = entity.pos.load();
-        let delta = velocity;
-
-        // Update position
-        let new_pos = start_pos.add(&delta);
-        entity.set_pos(new_pos);
-
-        // Send updated velocity to clients
-        let packet = CEntityVelocity::new(entity.entity_id.into(), velocity);
-        let chunk_pos = entity.chunk_pos.load();
-        world.broadcast_to_chunk(chunk_pos, &packet);
-
-        // Calculate search box for collisions
-        let search_box = BoundingBox::new(
-            Vector3::new(
-                start_pos.x.min(new_pos.x),
-                start_pos.y.min(new_pos.y),
-                start_pos.z.min(new_pos.z),
-            ),
-            Vector3::new(
-                start_pos.x.max(new_pos.x),
-                start_pos.y.max(new_pos.y),
-                start_pos.z.max(new_pos.z),
-            ),
-        )
-        .expand(0.3, 0.3, 0.3);
-
-        let mut closest_t = 1.0f64;
-        let mut hit = None;
-
-        // Block collisions
-        let (block_cols, block_positions) = world.get_block_collisions(search_box, caller);
-        for (idx, bb) in block_cols.iter().enumerate() {
-            if let Some(t) = calculate_ray_intersection(&start_pos, &delta, bb)
-                && t < closest_t
-            {
-                closest_t = t;
-                // Map back to block pos
-                for (len, pos) in &block_positions {
-                    if idx < *len {
-                        let hit_pos = start_pos.add(&delta.multiply(t, t, t));
-                        hit = Some(ProjectileHit::Block {
-                            pos: *pos,
-                            face: get_hit_face(hit_pos, *pos),
-                            hit_pos,
-                            normal: delta.normalize().multiply(-1.0, -1.0, -1.0),
-                        });
-                        break;
-                    }
-                }
-            }
-        }
-
-        // Entity collisions
-        let candidates = world.get_entities_at_box(&search_box);
-        for cand in candidates {
-            if self.should_skip_collision(&world, entity, &cand) {
-                continue;
-            }
-
-            let ebb = cand.get_entity().bounding_box.load().expand(0.3, 0.3, 0.3);
-            if let Some(t) = calculate_ray_intersection(&start_pos, &delta, &ebb)
-                && t < closest_t
-            {
-                closest_t = t;
-                let hit_pos = start_pos.add(&delta.multiply(t, t, t));
-                hit = Some(ProjectileHit::Entity {
-                    entity: cand.clone(),
-                    hit_pos,
-                    normal: delta.normalize().multiply(-1.0, -1.0, -1.0),
-                });
-            }
-        }
-
-        // Handle hit or continue
-        if let Some(h) = hit {
-            // Ensure hit is only processed once per projectile
-            if self.has_hit.swap(true, Ordering::SeqCst) {
-                return;
-            }
-
-            if let ProjectileHit::Block { pos, hit_pos, .. } = &h {
-                let block = world.get_block(pos);
-                let state = world.get_block_state(pos);
-                if let Some(server) = world.server.upgrade() {
-                    world
-                        .block_registry
-                        .on_projectile_hit(block, &world, caller, pos, state, hit_pos, &server);
-                }
-            }
-
-            // Just trigger hit effects and remove
-            caller.on_hit(h);
-            entity.remove();
+        let sweep = self.advance(&world);
+        if let Some(hit) = self.find_hit(&world, caller, &sweep) {
+            self.dispatch_hit(&world, caller, hit);
         }
     }
 

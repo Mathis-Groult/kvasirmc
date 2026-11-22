@@ -13,6 +13,9 @@ use crate::entity::mob::Mob;
 use crate::entity::projectile::arrow::{ArrowEntity, ArrowPickup};
 use crate::entity::{Entity, EntityBase};
 
+#[cfg(test)]
+mod tick_golden;
+
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 enum CrossbowState {
     Uncharged,

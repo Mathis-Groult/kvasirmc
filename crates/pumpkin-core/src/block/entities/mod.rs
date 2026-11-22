@@ -66,6 +66,8 @@ pub mod trial_spawner;
 pub mod vibration_sensor;
 #[cfg(test)]
 mod vibration_sensor_tests;
+#[cfg(test)]
+mod create_golden;
 pub mod vault;
 
 pub use furnace_like_block_entity::ExperienceContainer;

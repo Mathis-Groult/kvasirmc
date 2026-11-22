@@ -1,7 +1,7 @@
 //! Movement state: poses, flying, swimming, speed.
 
 use super::super::EntityBase;
-use super::{Player, statistics};
+use super::{Abilities, Player, statistics};
 use crate::net::ClientPlatform;
 use crate::plugin::api::events::entity::entity_toggle_glide::EntityToggleGlideEvent;
 use crate::server::Server;
@@ -245,111 +245,37 @@ impl Player {
             .unwrap_or_else(std::sync::PoisonError::into_inner);
         match self.client.as_ref() {
             ClientPlatform::Java(java) => {
-                let mut b = 0;
-
-                if abilities.invulnerable {
-                    b |= 1;
-                }
-                if abilities.flying {
-                    b |= 2;
-                }
-                if abilities.allow_flying {
-                    b |= 4;
-                }
-                if abilities.creative {
-                    b |= 8;
-                }
-                let packet = CPlayerAbilities::new(b, abilities.fly_speed, abilities.walk_speed);
+                let packet = CPlayerAbilities::new(
+                    java_ability_flags(&abilities),
+                    abilities.fly_speed,
+                    abilities.walk_speed,
+                );
                 if let Ok(data) = java.serialize_packet(&packet) {
                     java.try_enqueue_packet(data);
                 }
             }
             ClientPlatform::Bedrock(bedrock) => {
-                let is_op = self.permission_lvl.load() == PermissionLvl::Four;
-                let is_spectator = self.gamemode.load() == GameMode::Spectator;
-
-                // 1. Permission Mapping
-                let player_perm = if is_op {
-                    PlayerPermissionLevel::Operator
-                } else {
-                    PlayerPermissionLevel::Member
-                };
-                let command_perm = if is_op {
-                    CommandPermissionLevel::GameDirectors
-                } else {
-                    CommandPermissionLevel::Any
-                };
-
-                // 2. Build the Ability Bitmask
-                let mut ability_value: u32 = 0;
-
-                // Helper closure to set bits using your enum
-                let mut set_ability = |ability: Ability, enabled: bool| {
-                    if enabled {
-                        ability_value |= 1 << (ability as u32);
-                    }
-                };
-
-                // Base Permissions
-                set_ability(Ability::MayFly, abilities.allow_flying);
-                set_ability(Ability::Flying, abilities.flying);
-                set_ability(
-                    Ability::Invulnerable,
-                    abilities.invulnerable || abilities.creative,
-                );
-
-                // Operator Specifics
-                set_ability(Ability::OperatorCommands, is_op);
-                set_ability(Ability::Teleport, is_op);
-
-                // Interaction Permissions (Disabled for Spectators)
-                let can_interact = !is_spectator;
-                set_ability(Ability::Build, can_interact);
-                set_ability(Ability::Mine, can_interact);
-                set_ability(Ability::DoorsAndSwitches, can_interact);
-                set_ability(Ability::OpenContainers, can_interact);
-                set_ability(Ability::AttackPlayers, can_interact);
-                set_ability(Ability::AttackMobs, can_interact);
-
-                // Creative/Spectator Extras
-                set_ability(Ability::Instabuild, abilities.creative);
-                set_ability(Ability::NoClip, is_spectator);
-
-                // 3. Construct the Layers
-                let mut layers = vec![SerializedAbilitiesDataSerializedLayer {
-                    serialized_layer: 0, // LAYER_BASE
-                    // 0x3FFFF defines the first 18 bits as "provided" by this packet
-                    abilities_set: (1 << Ability::AbilityCount as u32) - 1,
-                    ability_value,
-                    fly_speed: 0.05,
-                    vertical_fly_speed: 1.0,
-                    walk_speed: 0.1,
-                }];
-
-                if is_spectator {
-                    layers.push(SerializedAbilitiesDataSerializedLayer {
-                        serialized_layer: 1,
-                        abilities_set: 1 << (Ability::Flying as u32),
-                        ability_value: 1 << (Ability::Flying as u32),
-                        fly_speed: 0.05,
-                        vertical_fly_speed: 1.0,
-                        walk_speed: 0.1,
-                    });
-                }
-
-                let packet = CUpdateAbilities {
-                    data: SerializedAbilitiesData {
-                        target_player_raw_id: self.entity_id().into(),
-                        player_permissions: player_perm,
-                        command_permissions: command_perm,
-                        layers,
-                    },
-                };
-
+                let packet = self.bedrock_abilities_packet(&abilities);
                 if let Ok(data) = bedrock.serialize_packet(&packet) {
                     bedrock.try_enqueue_packet(data);
                 }
             }
+        }
+    }
+
+    /// The Bedrock `UpdateAbilities` packet for this player's current gamemode and permissions.
+    fn bedrock_abilities_packet(&self, abilities: &Abilities) -> CUpdateAbilities {
+        let is_op = self.permission_lvl.load() == PermissionLvl::Four;
+        let is_spectator = self.gamemode.load() == GameMode::Spectator;
+        let (player_permissions, command_permissions) = bedrock_permissions(is_op);
+        let ability_value = bedrock_ability_bits(abilities, is_op, is_spectator);
+        CUpdateAbilities {
+            data: SerializedAbilitiesData {
+                target_player_raw_id: self.entity_id().into(),
+                player_permissions,
+                command_permissions,
+                layers: bedrock_ability_layers(ability_value, is_spectator),
+            },
         }
     }
 
@@ -503,6 +429,103 @@ impl Player {
         let state = world.get_block_state(&fallback_pos);
         (!state.is_air()).then_some(fallback_pos)
     }
+}
+
+/// The Java abilities flags byte: invulnerable 1, flying 2, allow flying 4, creative 8.
+const fn java_ability_flags(abilities: &Abilities) -> i8 {
+    let mut b = 0;
+
+    if abilities.invulnerable {
+        b |= 1;
+    }
+    if abilities.flying {
+        b |= 2;
+    }
+    if abilities.allow_flying {
+        b |= 4;
+    }
+    if abilities.creative {
+        b |= 8;
+    }
+    b
+}
+
+/// The Bedrock player and command permission levels of an operator or a member.
+const fn bedrock_permissions(is_op: bool) -> (PlayerPermissionLevel, CommandPermissionLevel) {
+    if is_op {
+        (
+            PlayerPermissionLevel::Operator,
+            CommandPermissionLevel::GameDirectors,
+        )
+    } else {
+        (PlayerPermissionLevel::Member, CommandPermissionLevel::Any)
+    }
+}
+
+/// The Bedrock ability bitmask.
+fn bedrock_ability_bits(abilities: &Abilities, is_op: bool, is_spectator: bool) -> u32 {
+    let mut ability_value: u32 = 0;
+
+    // Helper closure to set bits using your enum
+    let mut set_ability = |ability: Ability, enabled: bool| {
+        if enabled {
+            ability_value |= 1 << (ability as u32);
+        }
+    };
+
+    // Base Permissions
+    set_ability(Ability::MayFly, abilities.allow_flying);
+    set_ability(Ability::Flying, abilities.flying);
+    set_ability(
+        Ability::Invulnerable,
+        abilities.invulnerable || abilities.creative,
+    );
+
+    // Operator Specifics
+    set_ability(Ability::OperatorCommands, is_op);
+    set_ability(Ability::Teleport, is_op);
+
+    // Interaction Permissions (Disabled for Spectators)
+    let can_interact = !is_spectator;
+    set_ability(Ability::Build, can_interact);
+    set_ability(Ability::Mine, can_interact);
+    set_ability(Ability::DoorsAndSwitches, can_interact);
+    set_ability(Ability::OpenContainers, can_interact);
+    set_ability(Ability::AttackPlayers, can_interact);
+    set_ability(Ability::AttackMobs, can_interact);
+
+    // Creative/Spectator Extras
+    set_ability(Ability::Instabuild, abilities.creative);
+    set_ability(Ability::NoClip, is_spectator);
+    ability_value
+}
+
+/// The Bedrock ability layers: the base layer, and a spectator layer that forces flying.
+fn bedrock_ability_layers(
+    ability_value: u32,
+    is_spectator: bool,
+) -> Vec<SerializedAbilitiesDataSerializedLayer> {
+    let mut layers = vec![SerializedAbilitiesDataSerializedLayer {
+        serialized_layer: 0, // LAYER_BASE
+        // 0x3FFFF defines the first 18 bits as "provided" by this packet
+        abilities_set: (1 << Ability::AbilityCount as u32) - 1,
+        ability_value,
+        fly_speed: 0.05,
+        vertical_fly_speed: 1.0,
+        walk_speed: 0.1,
+    }];
+
+    if is_spectator {
+        layers.push(SerializedAbilitiesDataSerializedLayer {
+            serialized_layer: 1,
+            abilities_set: 1 << (Ability::Flying as u32),
+            ability_value: 1 << (Ability::Flying as u32),
+            fly_speed: 0.05,
+            vertical_fly_speed: 1.0,
+            walk_speed: 0.1,
+        });
+    }
+    layers
 }
 
 #[cfg(test)]

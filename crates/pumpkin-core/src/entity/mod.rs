@@ -5,6 +5,7 @@ mod flags_and_pose;
 mod fluids_and_fire;
 mod leashes;
 mod movement_physics;
+mod placement;
 mod portals_teleport;
 mod position_facing;
 mod push;
@@ -12,6 +13,7 @@ mod riding;
 mod saved_data;
 mod step_effects;
 mod synced_state;
+use self::placement::Placement;
 use crate::{
     entity::item::ItemEntity,
     net::{bedrock::BedrockClient, java::JavaClient},
@@ -48,7 +50,6 @@ use pumpkin_protocol::{
 };
 use pumpkin_util::math::{
     boundingbox::{BoundingBox, EntityDimensions},
-    get_section_cord,
     position::BlockPos,
     vector2::Vector2,
     vector3::Vector3,
@@ -1357,22 +1358,7 @@ impl Entity {
         position: Vector3<f64>,
         entity_type: &'static EntityType,
     ) -> Self {
-        let floor_x = position.x.floor() as i32;
-        let floor_y = position.y.floor() as i32;
-        let floor_z = position.z.floor() as i32;
-
-        let bounding_box_size = Self::type_dimensions(entity_type);
-
-        let current_biome = world
-            .level
-            .get_rough_biome(&BlockPos::new(floor_x, floor_y, floor_z));
-
-        let bounding_box = EntityBoundingBox::new(
-            &world,
-            entity_id,
-            entity_type,
-            BoundingBox::new_from_pos(position.x, position.y, position.z, &bounding_box_size),
-        );
+        let placement = Placement::new(&world, entity_id, entity_type, position);
 
         Self {
             entity_id,
@@ -1388,12 +1374,9 @@ impl Entity {
             pos: AtomicCell::new(position),
             last_pos: AtomicCell::new(position),
             movement: AtomicCell::new(Vector3::default()),
-            block_pos: AtomicCell::new(BlockPos(Vector3::new(floor_x, floor_y, floor_z))),
+            block_pos: AtomicCell::new(placement.block_pos),
             supporting_block_pos: AtomicCell::new(None),
-            chunk_pos: AtomicCell::new(Vector2::new(
-                get_section_cord(floor_x),
-                get_section_cord(floor_z),
-            )),
+            chunk_pos: AtomicCell::new(placement.chunk_pos),
             sneaking: AtomicBool::new(false),
             swimming: AtomicBool::new(false),
             invisible: AtomicBool::new(false),
@@ -1409,8 +1392,8 @@ impl Entity {
             pitch: AtomicCell::new(0.0),
             velocity: AtomicCell::new(Vector3::new(0.0, 0.0, 0.0)),
             pose: AtomicCell::new(EntityPose::Standing),
-            bounding_box,
-            entity_dimension: AtomicCell::new(bounding_box_size),
+            bounding_box: placement.bounding_box,
+            entity_dimension: AtomicCell::new(placement.dimensions),
             default_dimensions: AtomicCell::new(None),
             invulnerable: AtomicBool::new(false),
             damage_immunities: std::sync::Mutex::new(Vec::new()),
@@ -1438,8 +1421,8 @@ impl Entity {
             crystal_sound_intensity: AtomicCell::new(0.0),
             last_crystal_sound_play_tick: AtomicI32::new(0),
             age: AtomicI32::new(0),
-            current_biome: ArcSwap::new(Arc::new(current_biome)),
-            last_biome_update_pos: AtomicCell::new(BlockPos::new(floor_x, floor_y, floor_z)),
+            current_biome: ArcSwap::new(Arc::new(placement.biome)),
+            last_biome_update_pos: AtomicCell::new(placement.block_pos),
             portal_cooldown: AtomicU32::new(0),
             portal_manager: std::sync::Mutex::new(None),
             custom_name: ArcSwap::new(Arc::new(None)),

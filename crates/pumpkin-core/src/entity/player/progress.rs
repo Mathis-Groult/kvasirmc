@@ -247,3 +247,6 @@ impl Player {
         }
     }
 }
+
+#[cfg(test)]
+mod movement_statistic_golden;

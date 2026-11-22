@@ -1,0 +1,1380 @@
+--- every vehicle type, plain ---
+acacia_boat BoatOneCm
+acacia_chest_boat BoatOneCm
+allay WalkOneCm
+area_effect_cloud WalkOneCm
+armadillo WalkOneCm
+armor_stand WalkOneCm
+arrow WalkOneCm
+axolotl WalkOneCm
+bamboo_chest_raft BoatOneCm
+bamboo_raft BoatOneCm
+bat WalkOneCm
+bee WalkOneCm
+birch_boat BoatOneCm
+birch_chest_boat BoatOneCm
+blaze WalkOneCm
+block_display WalkOneCm
+bogged WalkOneCm
+breeze WalkOneCm
+breeze_wind_charge WalkOneCm
+camel HorseOneCm
+camel_husk WalkOneCm
+cat WalkOneCm
+cave_spider WalkOneCm
+cherry_boat BoatOneCm
+cherry_chest_boat BoatOneCm
+chest_minecart MinecartOneCm
+chicken WalkOneCm
+cod WalkOneCm
+command_block_minecart MinecartOneCm
+copper_golem WalkOneCm
+cow WalkOneCm
+creaking WalkOneCm
+creeper WalkOneCm
+cushion WalkOneCm
+dark_oak_boat BoatOneCm
+dark_oak_chest_boat BoatOneCm
+dolphin WalkOneCm
+donkey HorseOneCm
+dragon_fireball WalkOneCm
+drowned WalkOneCm
+egg WalkOneCm
+elder_guardian WalkOneCm
+end_crystal WalkOneCm
+ender_dragon WalkOneCm
+ender_pearl WalkOneCm
+enderman WalkOneCm
+endermite WalkOneCm
+evoker WalkOneCm
+evoker_fangs WalkOneCm
+experience_bottle WalkOneCm
+experience_orb WalkOneCm
+eye_of_ender WalkOneCm
+falling_block WalkOneCm
+fireball WalkOneCm
+firework_rocket WalkOneCm
+fishing_bobber WalkOneCm
+fox WalkOneCm
+frog WalkOneCm
+furnace_minecart MinecartOneCm
+ghast WalkOneCm
+giant WalkOneCm
+glow_item_frame WalkOneCm
+glow_squid WalkOneCm
+goat WalkOneCm
+guardian WalkOneCm
+happy_ghast HappyGhastOneCm
+hoglin WalkOneCm
+hopper_minecart MinecartOneCm
+horse HorseOneCm
+husk WalkOneCm
+illusioner WalkOneCm
+interaction WalkOneCm
+iron_golem WalkOneCm
+item WalkOneCm
+item_display WalkOneCm
+item_frame WalkOneCm
+jungle_boat BoatOneCm
+jungle_chest_boat BoatOneCm
+leash_knot WalkOneCm
+lightning_bolt WalkOneCm
+lingering_potion WalkOneCm
+llama HorseOneCm
+llama_spit WalkOneCm
+magma_cube WalkOneCm
+mangrove_boat BoatOneCm
+mangrove_chest_boat BoatOneCm
+mannequin WalkOneCm
+marker WalkOneCm
+minecart MinecartOneCm
+mooshroom WalkOneCm
+mule HorseOneCm
+nautilus NautilusOneCm
+oak_boat BoatOneCm
+oak_chest_boat BoatOneCm
+ocelot WalkOneCm
+ominous_item_spawner WalkOneCm
+painting WalkOneCm
+pale_oak_boat BoatOneCm
+pale_oak_chest_boat BoatOneCm
+panda WalkOneCm
+parched WalkOneCm
+parrot WalkOneCm
+phantom WalkOneCm
+pig PigOneCm
+piglin WalkOneCm
+piglin_brute WalkOneCm
+pillager WalkOneCm
+player WalkOneCm
+polar_bear WalkOneCm
+poplar_boat BoatOneCm
+poplar_chest_boat WalkOneCm
+pufferfish WalkOneCm
+rabbit WalkOneCm
+ravager WalkOneCm
+salmon WalkOneCm
+sheep WalkOneCm
+shulker WalkOneCm
+shulker_bullet WalkOneCm
+silverfish WalkOneCm
+skeleton WalkOneCm
+skeleton_horse HorseOneCm
+slime WalkOneCm
+small_fireball WalkOneCm
+sniffer WalkOneCm
+snow_golem WalkOneCm
+snowball WalkOneCm
+spawner_minecart MinecartOneCm
+spectral_arrow WalkOneCm
+spider WalkOneCm
+splash_potion WalkOneCm
+spruce_boat BoatOneCm
+spruce_chest_boat BoatOneCm
+squid WalkOneCm
+stray WalkOneCm
+strider StriderOneCm
+sulfur_cube WalkOneCm
+tadpole WalkOneCm
+text_display WalkOneCm
+tnt WalkOneCm
+tnt_minecart MinecartOneCm
+trader_llama HorseOneCm
+trident WalkOneCm
+tropical_fish WalkOneCm
+turtle WalkOneCm
+vex WalkOneCm
+villager WalkOneCm
+vindicator WalkOneCm
+wandering_trader WalkOneCm
+warden WalkOneCm
+wind_charge WalkOneCm
+witch WalkOneCm
+wither WalkOneCm
+wither_skeleton WalkOneCm
+wither_skull WalkOneCm
+wolf WalkOneCm
+zoglin WalkOneCm
+zombie WalkOneCm
+zombie_horse HorseOneCm
+zombie_nautilus NautilusOneCm
+zombie_villager WalkOneCm
+zombified_piglin WalkOneCm
+--- every vehicle type, fly+swim+sneak ---
+acacia_boat BoatOneCm
+acacia_chest_boat BoatOneCm
+allay FlyOneCm
+area_effect_cloud FlyOneCm
+armadillo FlyOneCm
+armor_stand FlyOneCm
+arrow FlyOneCm
+axolotl FlyOneCm
+bamboo_chest_raft BoatOneCm
+bamboo_raft BoatOneCm
+bat FlyOneCm
+bee FlyOneCm
+birch_boat BoatOneCm
+birch_chest_boat BoatOneCm
+blaze FlyOneCm
+block_display FlyOneCm
+bogged FlyOneCm
+breeze FlyOneCm
+breeze_wind_charge FlyOneCm
+camel HorseOneCm
+camel_husk FlyOneCm
+cat FlyOneCm
+cave_spider FlyOneCm
+cherry_boat BoatOneCm
+cherry_chest_boat BoatOneCm
+chest_minecart MinecartOneCm
+chicken FlyOneCm
+cod FlyOneCm
+command_block_minecart MinecartOneCm
+copper_golem FlyOneCm
+cow FlyOneCm
+creaking FlyOneCm
+creeper FlyOneCm
+cushion FlyOneCm
+dark_oak_boat BoatOneCm
+dark_oak_chest_boat BoatOneCm
+dolphin FlyOneCm
+donkey HorseOneCm
+dragon_fireball FlyOneCm
+drowned FlyOneCm
+egg FlyOneCm
+elder_guardian FlyOneCm
+end_crystal FlyOneCm
+ender_dragon FlyOneCm
+ender_pearl FlyOneCm
+enderman FlyOneCm
+endermite FlyOneCm
+evoker FlyOneCm
+evoker_fangs FlyOneCm
+experience_bottle FlyOneCm
+experience_orb FlyOneCm
+eye_of_ender FlyOneCm
+falling_block FlyOneCm
+fireball FlyOneCm
+firework_rocket FlyOneCm
+fishing_bobber FlyOneCm
+fox FlyOneCm
+frog FlyOneCm
+furnace_minecart MinecartOneCm
+ghast FlyOneCm
+giant FlyOneCm
+glow_item_frame FlyOneCm
+glow_squid FlyOneCm
+goat FlyOneCm
+guardian FlyOneCm
+happy_ghast HappyGhastOneCm
+hoglin FlyOneCm
+hopper_minecart MinecartOneCm
+horse HorseOneCm
+husk FlyOneCm
+illusioner FlyOneCm
+interaction FlyOneCm
+iron_golem FlyOneCm
+item FlyOneCm
+item_display FlyOneCm
+item_frame FlyOneCm
+jungle_boat BoatOneCm
+jungle_chest_boat BoatOneCm
+leash_knot FlyOneCm
+lightning_bolt FlyOneCm
+lingering_potion FlyOneCm
+llama HorseOneCm
+llama_spit FlyOneCm
+magma_cube FlyOneCm
+mangrove_boat BoatOneCm
+mangrove_chest_boat BoatOneCm
+mannequin FlyOneCm
+marker FlyOneCm
+minecart MinecartOneCm
+mooshroom FlyOneCm
+mule HorseOneCm
+nautilus NautilusOneCm
+oak_boat BoatOneCm
+oak_chest_boat BoatOneCm
+ocelot FlyOneCm
+ominous_item_spawner FlyOneCm
+painting FlyOneCm
+pale_oak_boat BoatOneCm
+pale_oak_chest_boat BoatOneCm
+panda FlyOneCm
+parched FlyOneCm
+parrot FlyOneCm
+phantom FlyOneCm
+pig PigOneCm
+piglin FlyOneCm
+piglin_brute FlyOneCm
+pillager FlyOneCm
+player FlyOneCm
+polar_bear FlyOneCm
+poplar_boat BoatOneCm
+poplar_chest_boat FlyOneCm
+pufferfish FlyOneCm
+rabbit FlyOneCm
+ravager FlyOneCm
+salmon FlyOneCm
+sheep FlyOneCm
+shulker FlyOneCm
+shulker_bullet FlyOneCm
+silverfish FlyOneCm
+skeleton FlyOneCm
+skeleton_horse HorseOneCm
+slime FlyOneCm
+small_fireball FlyOneCm
+sniffer FlyOneCm
+snow_golem FlyOneCm
+snowball FlyOneCm
+spawner_minecart MinecartOneCm
+spectral_arrow FlyOneCm
+spider FlyOneCm
+splash_potion FlyOneCm
+spruce_boat BoatOneCm
+spruce_chest_boat BoatOneCm
+squid FlyOneCm
+stray FlyOneCm
+strider StriderOneCm
+sulfur_cube FlyOneCm
+tadpole FlyOneCm
+text_display FlyOneCm
+tnt FlyOneCm
+tnt_minecart MinecartOneCm
+trader_llama HorseOneCm
+trident FlyOneCm
+tropical_fish FlyOneCm
+turtle FlyOneCm
+vex FlyOneCm
+villager FlyOneCm
+vindicator FlyOneCm
+wandering_trader FlyOneCm
+warden FlyOneCm
+wind_charge FlyOneCm
+witch FlyOneCm
+wither FlyOneCm
+wither_skeleton FlyOneCm
+wither_skull FlyOneCm
+wolf FlyOneCm
+zoglin FlyOneCm
+zombie FlyOneCm
+zombie_horse HorseOneCm
+zombie_nautilus NautilusOneCm
+zombie_villager FlyOneCm
+zombified_piglin FlyOneCm
+--- flags over air ---
+air none WalkOneCm
+air fly FlyOneCm
+air glide AviateOneCm
+air fly+glide FlyOneCm
+air swim SwimOneCm
+air fly+swim FlyOneCm
+air glide+swim AviateOneCm
+air fly+glide+swim FlyOneCm
+air touch WalkOnWaterOneCm
+air fly+touch FlyOneCm
+air glide+touch AviateOneCm
+air fly+glide+touch FlyOneCm
+air swim+touch SwimOneCm
+air fly+swim+touch FlyOneCm
+air glide+swim+touch AviateOneCm
+air fly+glide+swim+touch FlyOneCm
+air sneak CrouchOneCm
+air fly+sneak FlyOneCm
+air glide+sneak AviateOneCm
+air fly+glide+sneak FlyOneCm
+air swim+sneak SwimOneCm
+air fly+swim+sneak FlyOneCm
+air glide+swim+sneak AviateOneCm
+air fly+glide+swim+sneak FlyOneCm
+air touch+sneak WalkOnWaterOneCm
+air fly+touch+sneak FlyOneCm
+air glide+touch+sneak AviateOneCm
+air fly+glide+touch+sneak FlyOneCm
+air swim+touch+sneak SwimOneCm
+air fly+swim+touch+sneak FlyOneCm
+air glide+swim+touch+sneak AviateOneCm
+air fly+glide+swim+touch+sneak FlyOneCm
+air sprint SprintOneCm
+air fly+sprint FlyOneCm
+air glide+sprint AviateOneCm
+air fly+glide+sprint FlyOneCm
+air swim+sprint SwimOneCm
+air fly+swim+sprint FlyOneCm
+air glide+swim+sprint AviateOneCm
+air fly+glide+swim+sprint FlyOneCm
+air touch+sprint WalkOnWaterOneCm
+air fly+touch+sprint FlyOneCm
+air glide+touch+sprint AviateOneCm
+air fly+glide+touch+sprint FlyOneCm
+air swim+touch+sprint SwimOneCm
+air fly+swim+touch+sprint FlyOneCm
+air glide+swim+touch+sprint AviateOneCm
+air fly+glide+swim+touch+sprint FlyOneCm
+air sneak+sprint CrouchOneCm
+air fly+sneak+sprint FlyOneCm
+air glide+sneak+sprint AviateOneCm
+air fly+glide+sneak+sprint FlyOneCm
+air swim+sneak+sprint SwimOneCm
+air fly+swim+sneak+sprint FlyOneCm
+air glide+swim+sneak+sprint AviateOneCm
+air fly+glide+swim+sneak+sprint FlyOneCm
+air touch+sneak+sprint WalkOnWaterOneCm
+air fly+touch+sneak+sprint FlyOneCm
+air glide+touch+sneak+sprint AviateOneCm
+air fly+glide+touch+sneak+sprint FlyOneCm
+air swim+touch+sneak+sprint SwimOneCm
+air fly+swim+touch+sneak+sprint FlyOneCm
+air glide+swim+touch+sneak+sprint AviateOneCm
+air fly+glide+swim+touch+sneak+sprint FlyOneCm
+air ground WalkOneCm
+air fly+ground FlyOneCm
+air glide+ground AviateOneCm
+air fly+glide+ground FlyOneCm
+air swim+ground SwimOneCm
+air fly+swim+ground FlyOneCm
+air glide+swim+ground AviateOneCm
+air fly+glide+swim+ground FlyOneCm
+air touch+ground WalkOnWaterOneCm
+air fly+touch+ground FlyOneCm
+air glide+touch+ground AviateOneCm
+air fly+glide+touch+ground FlyOneCm
+air swim+touch+ground SwimOneCm
+air fly+swim+touch+ground FlyOneCm
+air glide+swim+touch+ground AviateOneCm
+air fly+glide+swim+touch+ground FlyOneCm
+air sneak+ground CrouchOneCm
+air fly+sneak+ground FlyOneCm
+air glide+sneak+ground AviateOneCm
+air fly+glide+sneak+ground FlyOneCm
+air swim+sneak+ground SwimOneCm
+air fly+swim+sneak+ground FlyOneCm
+air glide+swim+sneak+ground AviateOneCm
+air fly+glide+swim+sneak+ground FlyOneCm
+air touch+sneak+ground WalkOnWaterOneCm
+air fly+touch+sneak+ground FlyOneCm
+air glide+touch+sneak+ground AviateOneCm
+air fly+glide+touch+sneak+ground FlyOneCm
+air swim+touch+sneak+ground SwimOneCm
+air fly+swim+touch+sneak+ground FlyOneCm
+air glide+swim+touch+sneak+ground AviateOneCm
+air fly+glide+swim+touch+sneak+ground FlyOneCm
+air sprint+ground SprintOneCm
+air fly+sprint+ground FlyOneCm
+air glide+sprint+ground AviateOneCm
+air fly+glide+sprint+ground FlyOneCm
+air swim+sprint+ground SwimOneCm
+air fly+swim+sprint+ground FlyOneCm
+air glide+swim+sprint+ground AviateOneCm
+air fly+glide+swim+sprint+ground FlyOneCm
+air touch+sprint+ground WalkOnWaterOneCm
+air fly+touch+sprint+ground FlyOneCm
+air glide+touch+sprint+ground AviateOneCm
+air fly+glide+touch+sprint+ground FlyOneCm
+air swim+touch+sprint+ground SwimOneCm
+air fly+swim+touch+sprint+ground FlyOneCm
+air glide+swim+touch+sprint+ground AviateOneCm
+air fly+glide+swim+touch+sprint+ground FlyOneCm
+air sneak+sprint+ground CrouchOneCm
+air fly+sneak+sprint+ground FlyOneCm
+air glide+sneak+sprint+ground AviateOneCm
+air fly+glide+sneak+sprint+ground FlyOneCm
+air swim+sneak+sprint+ground SwimOneCm
+air fly+swim+sneak+sprint+ground FlyOneCm
+air glide+swim+sneak+sprint+ground AviateOneCm
+air fly+glide+swim+sneak+sprint+ground FlyOneCm
+air touch+sneak+sprint+ground WalkOnWaterOneCm
+air fly+touch+sneak+sprint+ground FlyOneCm
+air glide+touch+sneak+sprint+ground AviateOneCm
+air fly+glide+touch+sneak+sprint+ground FlyOneCm
+air swim+touch+sneak+sprint+ground SwimOneCm
+air fly+swim+touch+sneak+sprint+ground FlyOneCm
+air glide+swim+touch+sneak+sprint+ground AviateOneCm
+air fly+glide+swim+touch+sneak+sprint+ground FlyOneCm
+air fall FallOneCm
+air fly+fall FlyOneCm
+air glide+fall AviateOneCm
+air fly+glide+fall FlyOneCm
+air swim+fall SwimOneCm
+air fly+swim+fall FlyOneCm
+air glide+swim+fall AviateOneCm
+air fly+glide+swim+fall FlyOneCm
+air touch+fall WalkOnWaterOneCm
+air fly+touch+fall FlyOneCm
+air glide+touch+fall AviateOneCm
+air fly+glide+touch+fall FlyOneCm
+air swim+touch+fall SwimOneCm
+air fly+swim+touch+fall FlyOneCm
+air glide+swim+touch+fall AviateOneCm
+air fly+glide+swim+touch+fall FlyOneCm
+air sneak+fall CrouchOneCm
+air fly+sneak+fall FlyOneCm
+air glide+sneak+fall AviateOneCm
+air fly+glide+sneak+fall FlyOneCm
+air swim+sneak+fall SwimOneCm
+air fly+swim+sneak+fall FlyOneCm
+air glide+swim+sneak+fall AviateOneCm
+air fly+glide+swim+sneak+fall FlyOneCm
+air touch+sneak+fall WalkOnWaterOneCm
+air fly+touch+sneak+fall FlyOneCm
+air glide+touch+sneak+fall AviateOneCm
+air fly+glide+touch+sneak+fall FlyOneCm
+air swim+touch+sneak+fall SwimOneCm
+air fly+swim+touch+sneak+fall FlyOneCm
+air glide+swim+touch+sneak+fall AviateOneCm
+air fly+glide+swim+touch+sneak+fall FlyOneCm
+air sprint+fall SprintOneCm
+air fly+sprint+fall FlyOneCm
+air glide+sprint+fall AviateOneCm
+air fly+glide+sprint+fall FlyOneCm
+air swim+sprint+fall SwimOneCm
+air fly+swim+sprint+fall FlyOneCm
+air glide+swim+sprint+fall AviateOneCm
+air fly+glide+swim+sprint+fall FlyOneCm
+air touch+sprint+fall WalkOnWaterOneCm
+air fly+touch+sprint+fall FlyOneCm
+air glide+touch+sprint+fall AviateOneCm
+air fly+glide+touch+sprint+fall FlyOneCm
+air swim+touch+sprint+fall SwimOneCm
+air fly+swim+touch+sprint+fall FlyOneCm
+air glide+swim+touch+sprint+fall AviateOneCm
+air fly+glide+swim+touch+sprint+fall FlyOneCm
+air sneak+sprint+fall CrouchOneCm
+air fly+sneak+sprint+fall FlyOneCm
+air glide+sneak+sprint+fall AviateOneCm
+air fly+glide+sneak+sprint+fall FlyOneCm
+air swim+sneak+sprint+fall SwimOneCm
+air fly+swim+sneak+sprint+fall FlyOneCm
+air glide+swim+sneak+sprint+fall AviateOneCm
+air fly+glide+swim+sneak+sprint+fall FlyOneCm
+air touch+sneak+sprint+fall WalkOnWaterOneCm
+air fly+touch+sneak+sprint+fall FlyOneCm
+air glide+touch+sneak+sprint+fall AviateOneCm
+air fly+glide+touch+sneak+sprint+fall FlyOneCm
+air swim+touch+sneak+sprint+fall SwimOneCm
+air fly+swim+touch+sneak+sprint+fall FlyOneCm
+air glide+swim+touch+sneak+sprint+fall AviateOneCm
+air fly+glide+swim+touch+sneak+sprint+fall FlyOneCm
+air ground+fall WalkOneCm
+air fly+ground+fall FlyOneCm
+air glide+ground+fall AviateOneCm
+air fly+glide+ground+fall FlyOneCm
+air swim+ground+fall SwimOneCm
+air fly+swim+ground+fall FlyOneCm
+air glide+swim+ground+fall AviateOneCm
+air fly+glide+swim+ground+fall FlyOneCm
+air touch+ground+fall WalkOnWaterOneCm
+air fly+touch+ground+fall FlyOneCm
+air glide+touch+ground+fall AviateOneCm
+air fly+glide+touch+ground+fall FlyOneCm
+air swim+touch+ground+fall SwimOneCm
+air fly+swim+touch+ground+fall FlyOneCm
+air glide+swim+touch+ground+fall AviateOneCm
+air fly+glide+swim+touch+ground+fall FlyOneCm
+air sneak+ground+fall CrouchOneCm
+air fly+sneak+ground+fall FlyOneCm
+air glide+sneak+ground+fall AviateOneCm
+air fly+glide+sneak+ground+fall FlyOneCm
+air swim+sneak+ground+fall SwimOneCm
+air fly+swim+sneak+ground+fall FlyOneCm
+air glide+swim+sneak+ground+fall AviateOneCm
+air fly+glide+swim+sneak+ground+fall FlyOneCm
+air touch+sneak+ground+fall WalkOnWaterOneCm
+air fly+touch+sneak+ground+fall FlyOneCm
+air glide+touch+sneak+ground+fall AviateOneCm
+air fly+glide+touch+sneak+ground+fall FlyOneCm
+air swim+touch+sneak+ground+fall SwimOneCm
+air fly+swim+touch+sneak+ground+fall FlyOneCm
+air glide+swim+touch+sneak+ground+fall AviateOneCm
+air fly+glide+swim+touch+sneak+ground+fall FlyOneCm
+air sprint+ground+fall SprintOneCm
+air fly+sprint+ground+fall FlyOneCm
+air glide+sprint+ground+fall AviateOneCm
+air fly+glide+sprint+ground+fall FlyOneCm
+air swim+sprint+ground+fall SwimOneCm
+air fly+swim+sprint+ground+fall FlyOneCm
+air glide+swim+sprint+ground+fall AviateOneCm
+air fly+glide+swim+sprint+ground+fall FlyOneCm
+air touch+sprint+ground+fall WalkOnWaterOneCm
+air fly+touch+sprint+ground+fall FlyOneCm
+air glide+touch+sprint+ground+fall AviateOneCm
+air fly+glide+touch+sprint+ground+fall FlyOneCm
+air swim+touch+sprint+ground+fall SwimOneCm
+air fly+swim+touch+sprint+ground+fall FlyOneCm
+air glide+swim+touch+sprint+ground+fall AviateOneCm
+air fly+glide+swim+touch+sprint+ground+fall FlyOneCm
+air sneak+sprint+ground+fall CrouchOneCm
+air fly+sneak+sprint+ground+fall FlyOneCm
+air glide+sneak+sprint+ground+fall AviateOneCm
+air fly+glide+sneak+sprint+ground+fall FlyOneCm
+air swim+sneak+sprint+ground+fall SwimOneCm
+air fly+swim+sneak+sprint+ground+fall FlyOneCm
+air glide+swim+sneak+sprint+ground+fall AviateOneCm
+air fly+glide+swim+sneak+sprint+ground+fall FlyOneCm
+air touch+sneak+sprint+ground+fall WalkOnWaterOneCm
+air fly+touch+sneak+sprint+ground+fall FlyOneCm
+air glide+touch+sneak+sprint+ground+fall AviateOneCm
+air fly+glide+touch+sneak+sprint+ground+fall FlyOneCm
+air swim+touch+sneak+sprint+ground+fall SwimOneCm
+air fly+swim+touch+sneak+sprint+ground+fall FlyOneCm
+air glide+swim+touch+sneak+sprint+ground+fall AviateOneCm
+air fly+glide+swim+touch+sneak+sprint+ground+fall FlyOneCm
+--- flags over ladder ---
+ladder none ClimbOneCm
+ladder fly FlyOneCm
+ladder glide AviateOneCm
+ladder fly+glide FlyOneCm
+ladder swim SwimOneCm
+ladder fly+swim FlyOneCm
+ladder glide+swim AviateOneCm
+ladder fly+glide+swim FlyOneCm
+ladder touch ClimbOneCm
+ladder fly+touch FlyOneCm
+ladder glide+touch AviateOneCm
+ladder fly+glide+touch FlyOneCm
+ladder swim+touch SwimOneCm
+ladder fly+swim+touch FlyOneCm
+ladder glide+swim+touch AviateOneCm
+ladder fly+glide+swim+touch FlyOneCm
+ladder sneak ClimbOneCm
+ladder fly+sneak FlyOneCm
+ladder glide+sneak AviateOneCm
+ladder fly+glide+sneak FlyOneCm
+ladder swim+sneak SwimOneCm
+ladder fly+swim+sneak FlyOneCm
+ladder glide+swim+sneak AviateOneCm
+ladder fly+glide+swim+sneak FlyOneCm
+ladder touch+sneak ClimbOneCm
+ladder fly+touch+sneak FlyOneCm
+ladder glide+touch+sneak AviateOneCm
+ladder fly+glide+touch+sneak FlyOneCm
+ladder swim+touch+sneak SwimOneCm
+ladder fly+swim+touch+sneak FlyOneCm
+ladder glide+swim+touch+sneak AviateOneCm
+ladder fly+glide+swim+touch+sneak FlyOneCm
+ladder sprint ClimbOneCm
+ladder fly+sprint FlyOneCm
+ladder glide+sprint AviateOneCm
+ladder fly+glide+sprint FlyOneCm
+ladder swim+sprint SwimOneCm
+ladder fly+swim+sprint FlyOneCm
+ladder glide+swim+sprint AviateOneCm
+ladder fly+glide+swim+sprint FlyOneCm
+ladder touch+sprint ClimbOneCm
+ladder fly+touch+sprint FlyOneCm
+ladder glide+touch+sprint AviateOneCm
+ladder fly+glide+touch+sprint FlyOneCm
+ladder swim+touch+sprint SwimOneCm
+ladder fly+swim+touch+sprint FlyOneCm
+ladder glide+swim+touch+sprint AviateOneCm
+ladder fly+glide+swim+touch+sprint FlyOneCm
+ladder sneak+sprint ClimbOneCm
+ladder fly+sneak+sprint FlyOneCm
+ladder glide+sneak+sprint AviateOneCm
+ladder fly+glide+sneak+sprint FlyOneCm
+ladder swim+sneak+sprint SwimOneCm
+ladder fly+swim+sneak+sprint FlyOneCm
+ladder glide+swim+sneak+sprint AviateOneCm
+ladder fly+glide+swim+sneak+sprint FlyOneCm
+ladder touch+sneak+sprint ClimbOneCm
+ladder fly+touch+sneak+sprint FlyOneCm
+ladder glide+touch+sneak+sprint AviateOneCm
+ladder fly+glide+touch+sneak+sprint FlyOneCm
+ladder swim+touch+sneak+sprint SwimOneCm
+ladder fly+swim+touch+sneak+sprint FlyOneCm
+ladder glide+swim+touch+sneak+sprint AviateOneCm
+ladder fly+glide+swim+touch+sneak+sprint FlyOneCm
+ladder ground ClimbOneCm
+ladder fly+ground FlyOneCm
+ladder glide+ground AviateOneCm
+ladder fly+glide+ground FlyOneCm
+ladder swim+ground SwimOneCm
+ladder fly+swim+ground FlyOneCm
+ladder glide+swim+ground AviateOneCm
+ladder fly+glide+swim+ground FlyOneCm
+ladder touch+ground ClimbOneCm
+ladder fly+touch+ground FlyOneCm
+ladder glide+touch+ground AviateOneCm
+ladder fly+glide+touch+ground FlyOneCm
+ladder swim+touch+ground SwimOneCm
+ladder fly+swim+touch+ground FlyOneCm
+ladder glide+swim+touch+ground AviateOneCm
+ladder fly+glide+swim+touch+ground FlyOneCm
+ladder sneak+ground ClimbOneCm
+ladder fly+sneak+ground FlyOneCm
+ladder glide+sneak+ground AviateOneCm
+ladder fly+glide+sneak+ground FlyOneCm
+ladder swim+sneak+ground SwimOneCm
+ladder fly+swim+sneak+ground FlyOneCm
+ladder glide+swim+sneak+ground AviateOneCm
+ladder fly+glide+swim+sneak+ground FlyOneCm
+ladder touch+sneak+ground ClimbOneCm
+ladder fly+touch+sneak+ground FlyOneCm
+ladder glide+touch+sneak+ground AviateOneCm
+ladder fly+glide+touch+sneak+ground FlyOneCm
+ladder swim+touch+sneak+ground SwimOneCm
+ladder fly+swim+touch+sneak+ground FlyOneCm
+ladder glide+swim+touch+sneak+ground AviateOneCm
+ladder fly+glide+swim+touch+sneak+ground FlyOneCm
+ladder sprint+ground ClimbOneCm
+ladder fly+sprint+ground FlyOneCm
+ladder glide+sprint+ground AviateOneCm
+ladder fly+glide+sprint+ground FlyOneCm
+ladder swim+sprint+ground SwimOneCm
+ladder fly+swim+sprint+ground FlyOneCm
+ladder glide+swim+sprint+ground AviateOneCm
+ladder fly+glide+swim+sprint+ground FlyOneCm
+ladder touch+sprint+ground ClimbOneCm
+ladder fly+touch+sprint+ground FlyOneCm
+ladder glide+touch+sprint+ground AviateOneCm
+ladder fly+glide+touch+sprint+ground FlyOneCm
+ladder swim+touch+sprint+ground SwimOneCm
+ladder fly+swim+touch+sprint+ground FlyOneCm
+ladder glide+swim+touch+sprint+ground AviateOneCm
+ladder fly+glide+swim+touch+sprint+ground FlyOneCm
+ladder sneak+sprint+ground ClimbOneCm
+ladder fly+sneak+sprint+ground FlyOneCm
+ladder glide+sneak+sprint+ground AviateOneCm
+ladder fly+glide+sneak+sprint+ground FlyOneCm
+ladder swim+sneak+sprint+ground SwimOneCm
+ladder fly+swim+sneak+sprint+ground FlyOneCm
+ladder glide+swim+sneak+sprint+ground AviateOneCm
+ladder fly+glide+swim+sneak+sprint+ground FlyOneCm
+ladder touch+sneak+sprint+ground ClimbOneCm
+ladder fly+touch+sneak+sprint+ground FlyOneCm
+ladder glide+touch+sneak+sprint+ground AviateOneCm
+ladder fly+glide+touch+sneak+sprint+ground FlyOneCm
+ladder swim+touch+sneak+sprint+ground SwimOneCm
+ladder fly+swim+touch+sneak+sprint+ground FlyOneCm
+ladder glide+swim+touch+sneak+sprint+ground AviateOneCm
+ladder fly+glide+swim+touch+sneak+sprint+ground FlyOneCm
+ladder fall ClimbOneCm
+ladder fly+fall FlyOneCm
+ladder glide+fall AviateOneCm
+ladder fly+glide+fall FlyOneCm
+ladder swim+fall SwimOneCm
+ladder fly+swim+fall FlyOneCm
+ladder glide+swim+fall AviateOneCm
+ladder fly+glide+swim+fall FlyOneCm
+ladder touch+fall ClimbOneCm
+ladder fly+touch+fall FlyOneCm
+ladder glide+touch+fall AviateOneCm
+ladder fly+glide+touch+fall FlyOneCm
+ladder swim+touch+fall SwimOneCm
+ladder fly+swim+touch+fall FlyOneCm
+ladder glide+swim+touch+fall AviateOneCm
+ladder fly+glide+swim+touch+fall FlyOneCm
+ladder sneak+fall ClimbOneCm
+ladder fly+sneak+fall FlyOneCm
+ladder glide+sneak+fall AviateOneCm
+ladder fly+glide+sneak+fall FlyOneCm
+ladder swim+sneak+fall SwimOneCm
+ladder fly+swim+sneak+fall FlyOneCm
+ladder glide+swim+sneak+fall AviateOneCm
+ladder fly+glide+swim+sneak+fall FlyOneCm
+ladder touch+sneak+fall ClimbOneCm
+ladder fly+touch+sneak+fall FlyOneCm
+ladder glide+touch+sneak+fall AviateOneCm
+ladder fly+glide+touch+sneak+fall FlyOneCm
+ladder swim+touch+sneak+fall SwimOneCm
+ladder fly+swim+touch+sneak+fall FlyOneCm
+ladder glide+swim+touch+sneak+fall AviateOneCm
+ladder fly+glide+swim+touch+sneak+fall FlyOneCm
+ladder sprint+fall ClimbOneCm
+ladder fly+sprint+fall FlyOneCm
+ladder glide+sprint+fall AviateOneCm
+ladder fly+glide+sprint+fall FlyOneCm
+ladder swim+sprint+fall SwimOneCm
+ladder fly+swim+sprint+fall FlyOneCm
+ladder glide+swim+sprint+fall AviateOneCm
+ladder fly+glide+swim+sprint+fall FlyOneCm
+ladder touch+sprint+fall ClimbOneCm
+ladder fly+touch+sprint+fall FlyOneCm
+ladder glide+touch+sprint+fall AviateOneCm
+ladder fly+glide+touch+sprint+fall FlyOneCm
+ladder swim+touch+sprint+fall SwimOneCm
+ladder fly+swim+touch+sprint+fall FlyOneCm
+ladder glide+swim+touch+sprint+fall AviateOneCm
+ladder fly+glide+swim+touch+sprint+fall FlyOneCm
+ladder sneak+sprint+fall ClimbOneCm
+ladder fly+sneak+sprint+fall FlyOneCm
+ladder glide+sneak+sprint+fall AviateOneCm
+ladder fly+glide+sneak+sprint+fall FlyOneCm
+ladder swim+sneak+sprint+fall SwimOneCm
+ladder fly+swim+sneak+sprint+fall FlyOneCm
+ladder glide+swim+sneak+sprint+fall AviateOneCm
+ladder fly+glide+swim+sneak+sprint+fall FlyOneCm
+ladder touch+sneak+sprint+fall ClimbOneCm
+ladder fly+touch+sneak+sprint+fall FlyOneCm
+ladder glide+touch+sneak+sprint+fall AviateOneCm
+ladder fly+glide+touch+sneak+sprint+fall FlyOneCm
+ladder swim+touch+sneak+sprint+fall SwimOneCm
+ladder fly+swim+touch+sneak+sprint+fall FlyOneCm
+ladder glide+swim+touch+sneak+sprint+fall AviateOneCm
+ladder fly+glide+swim+touch+sneak+sprint+fall FlyOneCm
+ladder ground+fall ClimbOneCm
+ladder fly+ground+fall FlyOneCm
+ladder glide+ground+fall AviateOneCm
+ladder fly+glide+ground+fall FlyOneCm
+ladder swim+ground+fall SwimOneCm
+ladder fly+swim+ground+fall FlyOneCm
+ladder glide+swim+ground+fall AviateOneCm
+ladder fly+glide+swim+ground+fall FlyOneCm
+ladder touch+ground+fall ClimbOneCm
+ladder fly+touch+ground+fall FlyOneCm
+ladder glide+touch+ground+fall AviateOneCm
+ladder fly+glide+touch+ground+fall FlyOneCm
+ladder swim+touch+ground+fall SwimOneCm
+ladder fly+swim+touch+ground+fall FlyOneCm
+ladder glide+swim+touch+ground+fall AviateOneCm
+ladder fly+glide+swim+touch+ground+fall FlyOneCm
+ladder sneak+ground+fall ClimbOneCm
+ladder fly+sneak+ground+fall FlyOneCm
+ladder glide+sneak+ground+fall AviateOneCm
+ladder fly+glide+sneak+ground+fall FlyOneCm
+ladder swim+sneak+ground+fall SwimOneCm
+ladder fly+swim+sneak+ground+fall FlyOneCm
+ladder glide+swim+sneak+ground+fall AviateOneCm
+ladder fly+glide+swim+sneak+ground+fall FlyOneCm
+ladder touch+sneak+ground+fall ClimbOneCm
+ladder fly+touch+sneak+ground+fall FlyOneCm
+ladder glide+touch+sneak+ground+fall AviateOneCm
+ladder fly+glide+touch+sneak+ground+fall FlyOneCm
+ladder swim+touch+sneak+ground+fall SwimOneCm
+ladder fly+swim+touch+sneak+ground+fall FlyOneCm
+ladder glide+swim+touch+sneak+ground+fall AviateOneCm
+ladder fly+glide+swim+touch+sneak+ground+fall FlyOneCm
+ladder sprint+ground+fall ClimbOneCm
+ladder fly+sprint+ground+fall FlyOneCm
+ladder glide+sprint+ground+fall AviateOneCm
+ladder fly+glide+sprint+ground+fall FlyOneCm
+ladder swim+sprint+ground+fall SwimOneCm
+ladder fly+swim+sprint+ground+fall FlyOneCm
+ladder glide+swim+sprint+ground+fall AviateOneCm
+ladder fly+glide+swim+sprint+ground+fall FlyOneCm
+ladder touch+sprint+ground+fall ClimbOneCm
+ladder fly+touch+sprint+ground+fall FlyOneCm
+ladder glide+touch+sprint+ground+fall AviateOneCm
+ladder fly+glide+touch+sprint+ground+fall FlyOneCm
+ladder swim+touch+sprint+ground+fall SwimOneCm
+ladder fly+swim+touch+sprint+ground+fall FlyOneCm
+ladder glide+swim+touch+sprint+ground+fall AviateOneCm
+ladder fly+glide+swim+touch+sprint+ground+fall FlyOneCm
+ladder sneak+sprint+ground+fall ClimbOneCm
+ladder fly+sneak+sprint+ground+fall FlyOneCm
+ladder glide+sneak+sprint+ground+fall AviateOneCm
+ladder fly+glide+sneak+sprint+ground+fall FlyOneCm
+ladder swim+sneak+sprint+ground+fall SwimOneCm
+ladder fly+swim+sneak+sprint+ground+fall FlyOneCm
+ladder glide+swim+sneak+sprint+ground+fall AviateOneCm
+ladder fly+glide+swim+sneak+sprint+ground+fall FlyOneCm
+ladder touch+sneak+sprint+ground+fall ClimbOneCm
+ladder fly+touch+sneak+sprint+ground+fall FlyOneCm
+ladder glide+touch+sneak+sprint+ground+fall AviateOneCm
+ladder fly+glide+touch+sneak+sprint+ground+fall FlyOneCm
+ladder swim+touch+sneak+sprint+ground+fall SwimOneCm
+ladder fly+swim+touch+sneak+sprint+ground+fall FlyOneCm
+ladder glide+swim+touch+sneak+sprint+ground+fall AviateOneCm
+ladder fly+glide+swim+touch+sneak+sprint+ground+fall FlyOneCm
+--- flags over shallow ---
+shallow none WalkOneCm
+shallow fly FlyOneCm
+shallow glide AviateOneCm
+shallow fly+glide FlyOneCm
+shallow swim SwimOneCm
+shallow fly+swim FlyOneCm
+shallow glide+swim AviateOneCm
+shallow fly+glide+swim FlyOneCm
+shallow touch WalkOnWaterOneCm
+shallow fly+touch FlyOneCm
+shallow glide+touch AviateOneCm
+shallow fly+glide+touch FlyOneCm
+shallow swim+touch SwimOneCm
+shallow fly+swim+touch FlyOneCm
+shallow glide+swim+touch AviateOneCm
+shallow fly+glide+swim+touch FlyOneCm
+shallow sneak CrouchOneCm
+shallow fly+sneak FlyOneCm
+shallow glide+sneak AviateOneCm
+shallow fly+glide+sneak FlyOneCm
+shallow swim+sneak SwimOneCm
+shallow fly+swim+sneak FlyOneCm
+shallow glide+swim+sneak AviateOneCm
+shallow fly+glide+swim+sneak FlyOneCm
+shallow touch+sneak WalkOnWaterOneCm
+shallow fly+touch+sneak FlyOneCm
+shallow glide+touch+sneak AviateOneCm
+shallow fly+glide+touch+sneak FlyOneCm
+shallow swim+touch+sneak SwimOneCm
+shallow fly+swim+touch+sneak FlyOneCm
+shallow glide+swim+touch+sneak AviateOneCm
+shallow fly+glide+swim+touch+sneak FlyOneCm
+shallow sprint SprintOneCm
+shallow fly+sprint FlyOneCm
+shallow glide+sprint AviateOneCm
+shallow fly+glide+sprint FlyOneCm
+shallow swim+sprint SwimOneCm
+shallow fly+swim+sprint FlyOneCm
+shallow glide+swim+sprint AviateOneCm
+shallow fly+glide+swim+sprint FlyOneCm
+shallow touch+sprint WalkOnWaterOneCm
+shallow fly+touch+sprint FlyOneCm
+shallow glide+touch+sprint AviateOneCm
+shallow fly+glide+touch+sprint FlyOneCm
+shallow swim+touch+sprint SwimOneCm
+shallow fly+swim+touch+sprint FlyOneCm
+shallow glide+swim+touch+sprint AviateOneCm
+shallow fly+glide+swim+touch+sprint FlyOneCm
+shallow sneak+sprint CrouchOneCm
+shallow fly+sneak+sprint FlyOneCm
+shallow glide+sneak+sprint AviateOneCm
+shallow fly+glide+sneak+sprint FlyOneCm
+shallow swim+sneak+sprint SwimOneCm
+shallow fly+swim+sneak+sprint FlyOneCm
+shallow glide+swim+sneak+sprint AviateOneCm
+shallow fly+glide+swim+sneak+sprint FlyOneCm
+shallow touch+sneak+sprint WalkOnWaterOneCm
+shallow fly+touch+sneak+sprint FlyOneCm
+shallow glide+touch+sneak+sprint AviateOneCm
+shallow fly+glide+touch+sneak+sprint FlyOneCm
+shallow swim+touch+sneak+sprint SwimOneCm
+shallow fly+swim+touch+sneak+sprint FlyOneCm
+shallow glide+swim+touch+sneak+sprint AviateOneCm
+shallow fly+glide+swim+touch+sneak+sprint FlyOneCm
+shallow ground WalkOneCm
+shallow fly+ground FlyOneCm
+shallow glide+ground AviateOneCm
+shallow fly+glide+ground FlyOneCm
+shallow swim+ground SwimOneCm
+shallow fly+swim+ground FlyOneCm
+shallow glide+swim+ground AviateOneCm
+shallow fly+glide+swim+ground FlyOneCm
+shallow touch+ground WalkOnWaterOneCm
+shallow fly+touch+ground FlyOneCm
+shallow glide+touch+ground AviateOneCm
+shallow fly+glide+touch+ground FlyOneCm
+shallow swim+touch+ground SwimOneCm
+shallow fly+swim+touch+ground FlyOneCm
+shallow glide+swim+touch+ground AviateOneCm
+shallow fly+glide+swim+touch+ground FlyOneCm
+shallow sneak+ground CrouchOneCm
+shallow fly+sneak+ground FlyOneCm
+shallow glide+sneak+ground AviateOneCm
+shallow fly+glide+sneak+ground FlyOneCm
+shallow swim+sneak+ground SwimOneCm
+shallow fly+swim+sneak+ground FlyOneCm
+shallow glide+swim+sneak+ground AviateOneCm
+shallow fly+glide+swim+sneak+ground FlyOneCm
+shallow touch+sneak+ground WalkOnWaterOneCm
+shallow fly+touch+sneak+ground FlyOneCm
+shallow glide+touch+sneak+ground AviateOneCm
+shallow fly+glide+touch+sneak+ground FlyOneCm
+shallow swim+touch+sneak+ground SwimOneCm
+shallow fly+swim+touch+sneak+ground FlyOneCm
+shallow glide+swim+touch+sneak+ground AviateOneCm
+shallow fly+glide+swim+touch+sneak+ground FlyOneCm
+shallow sprint+ground SprintOneCm
+shallow fly+sprint+ground FlyOneCm
+shallow glide+sprint+ground AviateOneCm
+shallow fly+glide+sprint+ground FlyOneCm
+shallow swim+sprint+ground SwimOneCm
+shallow fly+swim+sprint+ground FlyOneCm
+shallow glide+swim+sprint+ground AviateOneCm
+shallow fly+glide+swim+sprint+ground FlyOneCm
+shallow touch+sprint+ground WalkOnWaterOneCm
+shallow fly+touch+sprint+ground FlyOneCm
+shallow glide+touch+sprint+ground AviateOneCm
+shallow fly+glide+touch+sprint+ground FlyOneCm
+shallow swim+touch+sprint+ground SwimOneCm
+shallow fly+swim+touch+sprint+ground FlyOneCm
+shallow glide+swim+touch+sprint+ground AviateOneCm
+shallow fly+glide+swim+touch+sprint+ground FlyOneCm
+shallow sneak+sprint+ground CrouchOneCm
+shallow fly+sneak+sprint+ground FlyOneCm
+shallow glide+sneak+sprint+ground AviateOneCm
+shallow fly+glide+sneak+sprint+ground FlyOneCm
+shallow swim+sneak+sprint+ground SwimOneCm
+shallow fly+swim+sneak+sprint+ground FlyOneCm
+shallow glide+swim+sneak+sprint+ground AviateOneCm
+shallow fly+glide+swim+sneak+sprint+ground FlyOneCm
+shallow touch+sneak+sprint+ground WalkOnWaterOneCm
+shallow fly+touch+sneak+sprint+ground FlyOneCm
+shallow glide+touch+sneak+sprint+ground AviateOneCm
+shallow fly+glide+touch+sneak+sprint+ground FlyOneCm
+shallow swim+touch+sneak+sprint+ground SwimOneCm
+shallow fly+swim+touch+sneak+sprint+ground FlyOneCm
+shallow glide+swim+touch+sneak+sprint+ground AviateOneCm
+shallow fly+glide+swim+touch+sneak+sprint+ground FlyOneCm
+shallow fall FallOneCm
+shallow fly+fall FlyOneCm
+shallow glide+fall AviateOneCm
+shallow fly+glide+fall FlyOneCm
+shallow swim+fall SwimOneCm
+shallow fly+swim+fall FlyOneCm
+shallow glide+swim+fall AviateOneCm
+shallow fly+glide+swim+fall FlyOneCm
+shallow touch+fall WalkOnWaterOneCm
+shallow fly+touch+fall FlyOneCm
+shallow glide+touch+fall AviateOneCm
+shallow fly+glide+touch+fall FlyOneCm
+shallow swim+touch+fall SwimOneCm
+shallow fly+swim+touch+fall FlyOneCm
+shallow glide+swim+touch+fall AviateOneCm
+shallow fly+glide+swim+touch+fall FlyOneCm
+shallow sneak+fall CrouchOneCm
+shallow fly+sneak+fall FlyOneCm
+shallow glide+sneak+fall AviateOneCm
+shallow fly+glide+sneak+fall FlyOneCm
+shallow swim+sneak+fall SwimOneCm
+shallow fly+swim+sneak+fall FlyOneCm
+shallow glide+swim+sneak+fall AviateOneCm
+shallow fly+glide+swim+sneak+fall FlyOneCm
+shallow touch+sneak+fall WalkOnWaterOneCm
+shallow fly+touch+sneak+fall FlyOneCm
+shallow glide+touch+sneak+fall AviateOneCm
+shallow fly+glide+touch+sneak+fall FlyOneCm
+shallow swim+touch+sneak+fall SwimOneCm
+shallow fly+swim+touch+sneak+fall FlyOneCm
+shallow glide+swim+touch+sneak+fall AviateOneCm
+shallow fly+glide+swim+touch+sneak+fall FlyOneCm
+shallow sprint+fall SprintOneCm
+shallow fly+sprint+fall FlyOneCm
+shallow glide+sprint+fall AviateOneCm
+shallow fly+glide+sprint+fall FlyOneCm
+shallow swim+sprint+fall SwimOneCm
+shallow fly+swim+sprint+fall FlyOneCm
+shallow glide+swim+sprint+fall AviateOneCm
+shallow fly+glide+swim+sprint+fall FlyOneCm
+shallow touch+sprint+fall WalkOnWaterOneCm
+shallow fly+touch+sprint+fall FlyOneCm
+shallow glide+touch+sprint+fall AviateOneCm
+shallow fly+glide+touch+sprint+fall FlyOneCm
+shallow swim+touch+sprint+fall SwimOneCm
+shallow fly+swim+touch+sprint+fall FlyOneCm
+shallow glide+swim+touch+sprint+fall AviateOneCm
+shallow fly+glide+swim+touch+sprint+fall FlyOneCm
+shallow sneak+sprint+fall CrouchOneCm
+shallow fly+sneak+sprint+fall FlyOneCm
+shallow glide+sneak+sprint+fall AviateOneCm
+shallow fly+glide+sneak+sprint+fall FlyOneCm
+shallow swim+sneak+sprint+fall SwimOneCm
+shallow fly+swim+sneak+sprint+fall FlyOneCm
+shallow glide+swim+sneak+sprint+fall AviateOneCm
+shallow fly+glide+swim+sneak+sprint+fall FlyOneCm
+shallow touch+sneak+sprint+fall WalkOnWaterOneCm
+shallow fly+touch+sneak+sprint+fall FlyOneCm
+shallow glide+touch+sneak+sprint+fall AviateOneCm
+shallow fly+glide+touch+sneak+sprint+fall FlyOneCm
+shallow swim+touch+sneak+sprint+fall SwimOneCm
+shallow fly+swim+touch+sneak+sprint+fall FlyOneCm
+shallow glide+swim+touch+sneak+sprint+fall AviateOneCm
+shallow fly+glide+swim+touch+sneak+sprint+fall FlyOneCm
+shallow ground+fall WalkOneCm
+shallow fly+ground+fall FlyOneCm
+shallow glide+ground+fall AviateOneCm
+shallow fly+glide+ground+fall FlyOneCm
+shallow swim+ground+fall SwimOneCm
+shallow fly+swim+ground+fall FlyOneCm
+shallow glide+swim+ground+fall AviateOneCm
+shallow fly+glide+swim+ground+fall FlyOneCm
+shallow touch+ground+fall WalkOnWaterOneCm
+shallow fly+touch+ground+fall FlyOneCm
+shallow glide+touch+ground+fall AviateOneCm
+shallow fly+glide+touch+ground+fall FlyOneCm
+shallow swim+touch+ground+fall SwimOneCm
+shallow fly+swim+touch+ground+fall FlyOneCm
+shallow glide+swim+touch+ground+fall AviateOneCm
+shallow fly+glide+swim+touch+ground+fall FlyOneCm
+shallow sneak+ground+fall CrouchOneCm
+shallow fly+sneak+ground+fall FlyOneCm
+shallow glide+sneak+ground+fall AviateOneCm
+shallow fly+glide+sneak+ground+fall FlyOneCm
+shallow swim+sneak+ground+fall SwimOneCm
+shallow fly+swim+sneak+ground+fall FlyOneCm
+shallow glide+swim+sneak+ground+fall AviateOneCm
+shallow fly+glide+swim+sneak+ground+fall FlyOneCm
+shallow touch+sneak+ground+fall WalkOnWaterOneCm
+shallow fly+touch+sneak+ground+fall FlyOneCm
+shallow glide+touch+sneak+ground+fall AviateOneCm
+shallow fly+glide+touch+sneak+ground+fall FlyOneCm
+shallow swim+touch+sneak+ground+fall SwimOneCm
+shallow fly+swim+touch+sneak+ground+fall FlyOneCm
+shallow glide+swim+touch+sneak+ground+fall AviateOneCm
+shallow fly+glide+swim+touch+sneak+ground+fall FlyOneCm
+shallow sprint+ground+fall SprintOneCm
+shallow fly+sprint+ground+fall FlyOneCm
+shallow glide+sprint+ground+fall AviateOneCm
+shallow fly+glide+sprint+ground+fall FlyOneCm
+shallow swim+sprint+ground+fall SwimOneCm
+shallow fly+swim+sprint+ground+fall FlyOneCm
+shallow glide+swim+sprint+ground+fall AviateOneCm
+shallow fly+glide+swim+sprint+ground+fall FlyOneCm
+shallow touch+sprint+ground+fall WalkOnWaterOneCm
+shallow fly+touch+sprint+ground+fall FlyOneCm
+shallow glide+touch+sprint+ground+fall AviateOneCm
+shallow fly+glide+touch+sprint+ground+fall FlyOneCm
+shallow swim+touch+sprint+ground+fall SwimOneCm
+shallow fly+swim+touch+sprint+ground+fall FlyOneCm
+shallow glide+swim+touch+sprint+ground+fall AviateOneCm
+shallow fly+glide+swim+touch+sprint+ground+fall FlyOneCm
+shallow sneak+sprint+ground+fall CrouchOneCm
+shallow fly+sneak+sprint+ground+fall FlyOneCm
+shallow glide+sneak+sprint+ground+fall AviateOneCm
+shallow fly+glide+sneak+sprint+ground+fall FlyOneCm
+shallow swim+sneak+sprint+ground+fall SwimOneCm
+shallow fly+swim+sneak+sprint+ground+fall FlyOneCm
+shallow glide+swim+sneak+sprint+ground+fall AviateOneCm
+shallow fly+glide+swim+sneak+sprint+ground+fall FlyOneCm
+shallow touch+sneak+sprint+ground+fall WalkOnWaterOneCm
+shallow fly+touch+sneak+sprint+ground+fall FlyOneCm
+shallow glide+touch+sneak+sprint+ground+fall AviateOneCm
+shallow fly+glide+touch+sneak+sprint+ground+fall FlyOneCm
+shallow swim+touch+sneak+sprint+ground+fall SwimOneCm
+shallow fly+swim+touch+sneak+sprint+ground+fall FlyOneCm
+shallow glide+swim+touch+sneak+sprint+ground+fall AviateOneCm
+shallow fly+glide+swim+touch+sneak+sprint+ground+fall FlyOneCm
+--- flags over deep ---
+deep none WalkOneCm
+deep fly FlyOneCm
+deep glide AviateOneCm
+deep fly+glide FlyOneCm
+deep swim SwimOneCm
+deep fly+swim FlyOneCm
+deep glide+swim AviateOneCm
+deep fly+glide+swim FlyOneCm
+deep touch WalkUnderWaterOneCm
+deep fly+touch FlyOneCm
+deep glide+touch AviateOneCm
+deep fly+glide+touch FlyOneCm
+deep swim+touch SwimOneCm
+deep fly+swim+touch FlyOneCm
+deep glide+swim+touch AviateOneCm
+deep fly+glide+swim+touch FlyOneCm
+deep sneak CrouchOneCm
+deep fly+sneak FlyOneCm
+deep glide+sneak AviateOneCm
+deep fly+glide+sneak FlyOneCm
+deep swim+sneak SwimOneCm
+deep fly+swim+sneak FlyOneCm
+deep glide+swim+sneak AviateOneCm
+deep fly+glide+swim+sneak FlyOneCm
+deep touch+sneak WalkUnderWaterOneCm
+deep fly+touch+sneak FlyOneCm
+deep glide+touch+sneak AviateOneCm
+deep fly+glide+touch+sneak FlyOneCm
+deep swim+touch+sneak SwimOneCm
+deep fly+swim+touch+sneak FlyOneCm
+deep glide+swim+touch+sneak AviateOneCm
+deep fly+glide+swim+touch+sneak FlyOneCm
+deep sprint SprintOneCm
+deep fly+sprint FlyOneCm
+deep glide+sprint AviateOneCm
+deep fly+glide+sprint FlyOneCm
+deep swim+sprint SwimOneCm
+deep fly+swim+sprint FlyOneCm
+deep glide+swim+sprint AviateOneCm
+deep fly+glide+swim+sprint FlyOneCm
+deep touch+sprint WalkUnderWaterOneCm
+deep fly+touch+sprint FlyOneCm
+deep glide+touch+sprint AviateOneCm
+deep fly+glide+touch+sprint FlyOneCm
+deep swim+touch+sprint SwimOneCm
+deep fly+swim+touch+sprint FlyOneCm
+deep glide+swim+touch+sprint AviateOneCm
+deep fly+glide+swim+touch+sprint FlyOneCm
+deep sneak+sprint CrouchOneCm
+deep fly+sneak+sprint FlyOneCm
+deep glide+sneak+sprint AviateOneCm
+deep fly+glide+sneak+sprint FlyOneCm
+deep swim+sneak+sprint SwimOneCm
+deep fly+swim+sneak+sprint FlyOneCm
+deep glide+swim+sneak+sprint AviateOneCm
+deep fly+glide+swim+sneak+sprint FlyOneCm
+deep touch+sneak+sprint WalkUnderWaterOneCm
+deep fly+touch+sneak+sprint FlyOneCm
+deep glide+touch+sneak+sprint AviateOneCm
+deep fly+glide+touch+sneak+sprint FlyOneCm
+deep swim+touch+sneak+sprint SwimOneCm
+deep fly+swim+touch+sneak+sprint FlyOneCm
+deep glide+swim+touch+sneak+sprint AviateOneCm
+deep fly+glide+swim+touch+sneak+sprint FlyOneCm
+deep ground WalkOneCm
+deep fly+ground FlyOneCm
+deep glide+ground AviateOneCm
+deep fly+glide+ground FlyOneCm
+deep swim+ground SwimOneCm
+deep fly+swim+ground FlyOneCm
+deep glide+swim+ground AviateOneCm
+deep fly+glide+swim+ground FlyOneCm
+deep touch+ground WalkUnderWaterOneCm
+deep fly+touch+ground FlyOneCm
+deep glide+touch+ground AviateOneCm
+deep fly+glide+touch+ground FlyOneCm
+deep swim+touch+ground SwimOneCm
+deep fly+swim+touch+ground FlyOneCm
+deep glide+swim+touch+ground AviateOneCm
+deep fly+glide+swim+touch+ground FlyOneCm
+deep sneak+ground CrouchOneCm
+deep fly+sneak+ground FlyOneCm
+deep glide+sneak+ground AviateOneCm
+deep fly+glide+sneak+ground FlyOneCm
+deep swim+sneak+ground SwimOneCm
+deep fly+swim+sneak+ground FlyOneCm
+deep glide+swim+sneak+ground AviateOneCm
+deep fly+glide+swim+sneak+ground FlyOneCm
+deep touch+sneak+ground WalkUnderWaterOneCm
+deep fly+touch+sneak+ground FlyOneCm
+deep glide+touch+sneak+ground AviateOneCm
+deep fly+glide+touch+sneak+ground FlyOneCm
+deep swim+touch+sneak+ground SwimOneCm
+deep fly+swim+touch+sneak+ground FlyOneCm
+deep glide+swim+touch+sneak+ground AviateOneCm
+deep fly+glide+swim+touch+sneak+ground FlyOneCm
+deep sprint+ground SprintOneCm
+deep fly+sprint+ground FlyOneCm
+deep glide+sprint+ground AviateOneCm
+deep fly+glide+sprint+ground FlyOneCm
+deep swim+sprint+ground SwimOneCm
+deep fly+swim+sprint+ground FlyOneCm
+deep glide+swim+sprint+ground AviateOneCm
+deep fly+glide+swim+sprint+ground FlyOneCm
+deep touch+sprint+ground WalkUnderWaterOneCm
+deep fly+touch+sprint+ground FlyOneCm
+deep glide+touch+sprint+ground AviateOneCm
+deep fly+glide+touch+sprint+ground FlyOneCm
+deep swim+touch+sprint+ground SwimOneCm
+deep fly+swim+touch+sprint+ground FlyOneCm
+deep glide+swim+touch+sprint+ground AviateOneCm
+deep fly+glide+swim+touch+sprint+ground FlyOneCm
+deep sneak+sprint+ground CrouchOneCm
+deep fly+sneak+sprint+ground FlyOneCm
+deep glide+sneak+sprint+ground AviateOneCm
+deep fly+glide+sneak+sprint+ground FlyOneCm
+deep swim+sneak+sprint+ground SwimOneCm
+deep fly+swim+sneak+sprint+ground FlyOneCm
+deep glide+swim+sneak+sprint+ground AviateOneCm
+deep fly+glide+swim+sneak+sprint+ground FlyOneCm
+deep touch+sneak+sprint+ground WalkUnderWaterOneCm
+deep fly+touch+sneak+sprint+ground FlyOneCm
+deep glide+touch+sneak+sprint+ground AviateOneCm
+deep fly+glide+touch+sneak+sprint+ground FlyOneCm
+deep swim+touch+sneak+sprint+ground SwimOneCm
+deep fly+swim+touch+sneak+sprint+ground FlyOneCm
+deep glide+swim+touch+sneak+sprint+ground AviateOneCm
+deep fly+glide+swim+touch+sneak+sprint+ground FlyOneCm
+deep fall FallOneCm
+deep fly+fall FlyOneCm
+deep glide+fall AviateOneCm
+deep fly+glide+fall FlyOneCm
+deep swim+fall SwimOneCm
+deep fly+swim+fall FlyOneCm
+deep glide+swim+fall AviateOneCm
+deep fly+glide+swim+fall FlyOneCm
+deep touch+fall WalkUnderWaterOneCm
+deep fly+touch+fall FlyOneCm
+deep glide+touch+fall AviateOneCm
+deep fly+glide+touch+fall FlyOneCm
+deep swim+touch+fall SwimOneCm
+deep fly+swim+touch+fall FlyOneCm
+deep glide+swim+touch+fall AviateOneCm
+deep fly+glide+swim+touch+fall FlyOneCm
+deep sneak+fall CrouchOneCm
+deep fly+sneak+fall FlyOneCm
+deep glide+sneak+fall AviateOneCm
+deep fly+glide+sneak+fall FlyOneCm
+deep swim+sneak+fall SwimOneCm
+deep fly+swim+sneak+fall FlyOneCm
+deep glide+swim+sneak+fall AviateOneCm
+deep fly+glide+swim+sneak+fall FlyOneCm
+deep touch+sneak+fall WalkUnderWaterOneCm
+deep fly+touch+sneak+fall FlyOneCm
+deep glide+touch+sneak+fall AviateOneCm
+deep fly+glide+touch+sneak+fall FlyOneCm
+deep swim+touch+sneak+fall SwimOneCm
+deep fly+swim+touch+sneak+fall FlyOneCm
+deep glide+swim+touch+sneak+fall AviateOneCm
+deep fly+glide+swim+touch+sneak+fall FlyOneCm
+deep sprint+fall SprintOneCm
+deep fly+sprint+fall FlyOneCm
+deep glide+sprint+fall AviateOneCm
+deep fly+glide+sprint+fall FlyOneCm
+deep swim+sprint+fall SwimOneCm
+deep fly+swim+sprint+fall FlyOneCm
+deep glide+swim+sprint+fall AviateOneCm
+deep fly+glide+swim+sprint+fall FlyOneCm
+deep touch+sprint+fall WalkUnderWaterOneCm
+deep fly+touch+sprint+fall FlyOneCm
+deep glide+touch+sprint+fall AviateOneCm
+deep fly+glide+touch+sprint+fall FlyOneCm
+deep swim+touch+sprint+fall SwimOneCm
+deep fly+swim+touch+sprint+fall FlyOneCm
+deep glide+swim+touch+sprint+fall AviateOneCm
+deep fly+glide+swim+touch+sprint+fall FlyOneCm
+deep sneak+sprint+fall CrouchOneCm
+deep fly+sneak+sprint+fall FlyOneCm
+deep glide+sneak+sprint+fall AviateOneCm
+deep fly+glide+sneak+sprint+fall FlyOneCm
+deep swim+sneak+sprint+fall SwimOneCm
+deep fly+swim+sneak+sprint+fall FlyOneCm
+deep glide+swim+sneak+sprint+fall AviateOneCm
+deep fly+glide+swim+sneak+sprint+fall FlyOneCm
+deep touch+sneak+sprint+fall WalkUnderWaterOneCm
+deep fly+touch+sneak+sprint+fall FlyOneCm
+deep glide+touch+sneak+sprint+fall AviateOneCm
+deep fly+glide+touch+sneak+sprint+fall FlyOneCm
+deep swim+touch+sneak+sprint+fall SwimOneCm
+deep fly+swim+touch+sneak+sprint+fall FlyOneCm
+deep glide+swim+touch+sneak+sprint+fall AviateOneCm
+deep fly+glide+swim+touch+sneak+sprint+fall FlyOneCm
+deep ground+fall WalkOneCm
+deep fly+ground+fall FlyOneCm
+deep glide+ground+fall AviateOneCm
+deep fly+glide+ground+fall FlyOneCm
+deep swim+ground+fall SwimOneCm
+deep fly+swim+ground+fall FlyOneCm
+deep glide+swim+ground+fall AviateOneCm
+deep fly+glide+swim+ground+fall FlyOneCm
+deep touch+ground+fall WalkUnderWaterOneCm
+deep fly+touch+ground+fall FlyOneCm
+deep glide+touch+ground+fall AviateOneCm
+deep fly+glide+touch+ground+fall FlyOneCm
+deep swim+touch+ground+fall SwimOneCm
+deep fly+swim+touch+ground+fall FlyOneCm
+deep glide+swim+touch+ground+fall AviateOneCm
+deep fly+glide+swim+touch+ground+fall FlyOneCm
+deep sneak+ground+fall CrouchOneCm
+deep fly+sneak+ground+fall FlyOneCm
+deep glide+sneak+ground+fall AviateOneCm
+deep fly+glide+sneak+ground+fall FlyOneCm
+deep swim+sneak+ground+fall SwimOneCm
+deep fly+swim+sneak+ground+fall FlyOneCm
+deep glide+swim+sneak+ground+fall AviateOneCm
+deep fly+glide+swim+sneak+ground+fall FlyOneCm
+deep touch+sneak+ground+fall WalkUnderWaterOneCm
+deep fly+touch+sneak+ground+fall FlyOneCm
+deep glide+touch+sneak+ground+fall AviateOneCm
+deep fly+glide+touch+sneak+ground+fall FlyOneCm
+deep swim+touch+sneak+ground+fall SwimOneCm
+deep fly+swim+touch+sneak+ground+fall FlyOneCm
+deep glide+swim+touch+sneak+ground+fall AviateOneCm
+deep fly+glide+swim+touch+sneak+ground+fall FlyOneCm
+deep sprint+ground+fall SprintOneCm
+deep fly+sprint+ground+fall FlyOneCm
+deep glide+sprint+ground+fall AviateOneCm
+deep fly+glide+sprint+ground+fall FlyOneCm
+deep swim+sprint+ground+fall SwimOneCm
+deep fly+swim+sprint+ground+fall FlyOneCm
+deep glide+swim+sprint+ground+fall AviateOneCm
+deep fly+glide+swim+sprint+ground+fall FlyOneCm
+deep touch+sprint+ground+fall WalkUnderWaterOneCm
+deep fly+touch+sprint+ground+fall FlyOneCm
+deep glide+touch+sprint+ground+fall AviateOneCm
+deep fly+glide+touch+sprint+ground+fall FlyOneCm
+deep swim+touch+sprint+ground+fall SwimOneCm
+deep fly+swim+touch+sprint+ground+fall FlyOneCm
+deep glide+swim+touch+sprint+ground+fall AviateOneCm
+deep fly+glide+swim+touch+sprint+ground+fall FlyOneCm
+deep sneak+sprint+ground+fall CrouchOneCm
+deep fly+sneak+sprint+ground+fall FlyOneCm
+deep glide+sneak+sprint+ground+fall AviateOneCm
+deep fly+glide+sneak+sprint+ground+fall FlyOneCm
+deep swim+sneak+sprint+ground+fall SwimOneCm
+deep fly+swim+sneak+sprint+ground+fall FlyOneCm
+deep glide+swim+sneak+sprint+ground+fall AviateOneCm
+deep fly+glide+swim+sneak+sprint+ground+fall FlyOneCm
+deep touch+sneak+sprint+ground+fall WalkUnderWaterOneCm
+deep fly+touch+sneak+sprint+ground+fall FlyOneCm
+deep glide+touch+sneak+sprint+ground+fall AviateOneCm
+deep fly+glide+touch+sneak+sprint+ground+fall FlyOneCm
+deep swim+touch+sneak+sprint+ground+fall SwimOneCm
+deep fly+swim+touch+sneak+sprint+ground+fall FlyOneCm
+deep glide+swim+touch+sneak+sprint+ground+fall AviateOneCm
+deep fly+glide+swim+touch+sneak+sprint+ground+fall FlyOneCm
+--- fall speed ---
+vy 0.1 ground false WalkOneCm
+vy 0.1 ground true WalkOneCm
+vy 0.0 ground false WalkOneCm
+vy 0.0 ground true WalkOneCm
+vy -0.004 ground false WalkOneCm
+vy -0.004 ground true WalkOneCm
+vy -0.0049 ground false WalkOneCm
+vy -0.0049 ground true WalkOneCm
+vy -0.005 ground false WalkOneCm
+vy -0.005 ground true WalkOneCm
+vy -0.0051 ground false FallOneCm
+vy -0.0051 ground true WalkOneCm
+vy -0.006 ground false FallOneCm
+vy -0.006 ground true WalkOneCm
+vy -0.5 ground false FallOneCm
+vy -0.5 ground true WalkOneCm
+vy -3.0 ground false FallOneCm
+vy -3.0 ground true WalkOneCm
+--- eye height over water at y 65 ---
+y 64.0 WalkUnderWaterOneCm
+y 64.2 WalkUnderWaterOneCm
+y 64.26 WalkUnderWaterOneCm
+y 64.27 WalkOnWaterOneCm
+y 64.28 WalkOnWaterOneCm
+y 64.3 WalkOnWaterOneCm
+y 64.6 WalkOnWaterOneCm
+y 65.0 WalkOnWaterOneCm

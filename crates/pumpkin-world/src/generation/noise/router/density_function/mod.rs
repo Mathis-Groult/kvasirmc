@@ -10,6 +10,8 @@ pub(crate) mod noise;
 pub(crate) mod spline;
 
 #[cfg(test)]
+mod slice_golden;
+#[cfg(test)]
 mod test;
 // Helper functions for deserializing unique density functions for testing
 #[cfg(test)]

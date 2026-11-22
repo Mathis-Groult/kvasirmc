@@ -17,6 +17,9 @@ use crate::generation::feature::features::tree::trunk::{
 use crate::generation::proto_chunk::GenerationCache;
 use crate::world::WorldPortalExt;
 
+#[cfg(test)]
+mod dispatch_golden;
+
 pub mod bending;
 pub mod cherry;
 pub mod dark_oak;

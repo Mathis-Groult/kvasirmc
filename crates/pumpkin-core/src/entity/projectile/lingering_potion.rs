@@ -1,12 +1,14 @@
 use crate::entity::projectile::owner::ProjectileOwner;
-use std::sync::RwLock;
 use std::sync::atomic::AtomicBool;
+use std::sync::{Arc, RwLock};
 
 use crate::entity::projectile::splash_potion::extinguish_fire_if_water_potion;
+use crate::world::World;
 use crate::{
     entity::{Entity, EntityBase, projectile::ThrownItemEntity},
     server::Server,
 };
+use pumpkin_data::effect::StatusEffect;
 use pumpkin_data::entity::EntityStatus;
 use pumpkin_data::item_stack::ItemStack;
 use pumpkin_protocol::bedrock::server::actor_event::ActorEventID;
@@ -17,6 +19,10 @@ use pumpkin_util::math::vector3::Vector3;
 use uuid::Uuid;
 
 const GRAVITY: f64 = 0.05;
+
+/// An effect as `PotionContents::read_potion_effects` returns it: type, duration, amplifier,
+/// ambient, show particles, show icon.
+type PotionEffect = (&'static StatusEffect, i32, u8, bool, bool, bool);
 
 pub struct LingeringPotionEntity {
     pub thrown: ThrownItemEntity,
@@ -101,13 +107,7 @@ impl EntityBase for LingeringPotionEntity {
     fn on_hit(&self, hit: crate::entity::projectile::ProjectileHit) {
         let world = self.get_entity().world.load();
         let hit_pos = hit.hit_pos();
-
-        // Read stored item stack and compute potion effects
-        let stack = self
-            .item_stack
-            .read()
-            .unwrap_or_else(std::sync::PoisonError::into_inner)
-            .clone();
+        let stack = self.stack();
 
         // Play impact particles
         world.send_entity_status(self.get_entity(), EntityStatus::Death, ActorEventID::Death);
@@ -120,95 +120,126 @@ impl EntityBase for LingeringPotionEntity {
             return;
         }
 
-        // Play splash/break particles & sound
-        let mut color = 0x385dc6; // default water-like color
-        if let Some(pc) =
-            stack.get_data_component::<pumpkin_data::data_component_impl::PotionContentsImpl>()
-        {
-            if let Some(c) = pc.custom_color {
-                color = c;
-            } else if !effects.is_empty() {
-                let mut r_sum = 0.0;
-                let mut g_sum = 0.0;
-                let mut b_sum = 0.0;
-                let count = effects.len() as f32;
-                for (eff, _, _, _, _, _) in &effects {
-                    let c = eff.color;
-                    r_sum += ((c >> 16) & 0xFF) as f32;
-                    g_sum += ((c >> 8) & 0xFF) as f32;
-                    b_sum += (c & 0xFF) as f32;
-                }
-                let r = (r_sum / count) as i32;
-                let g = (g_sum / count) as i32;
-                let b = (b_sum / count) as i32;
-                color = (r << 16) | (g << 8) | b;
-            }
-        } else if !effects.is_empty() {
-            let mut r_sum = 0.0;
-            let mut g_sum = 0.0;
-            let mut b_sum = 0.0;
-            let count = effects.len() as f32;
-            for (eff, _, _, _, _, _) in &effects {
-                let c = eff.color;
-                r_sum += ((c >> 16) & 0xFF) as f32;
-                g_sum += ((c >> 8) & 0xFF) as f32;
-                b_sum += (c & 0xFF) as f32;
-            }
-            let r = (r_sum / count) as i32;
-            let g = (g_sum / count) as i32;
-            let b = (b_sum / count) as i32;
-            color = (r << 16) | (g << 8) | b;
-        }
-
-        let has_instant = effects.iter().any(|(e, _, _, _, _, _)| {
-            e.id == pumpkin_data::effect::StatusEffect::INSTANT_DAMAGE.id
-                || e.id == pumpkin_data::effect::StatusEffect::INSTANT_HEALTH.id
-        });
-        let event_id = if has_instant { 2007 } else { 2002 };
-        let block_pos = BlockPos(Vector3::new(
-            hit_pos.x.floor() as i32,
-            hit_pos.y.floor() as i32,
-            hit_pos.z.floor() as i32,
-        ));
-        let chunk_pos = to_chunk_pos(&Vector2::new(block_pos.0.x, block_pos.0.z));
-        world.broadcast_to_chunk(
-            chunk_pos,
-            &CWorldEvent::new(event_id, block_pos, color, false),
-        );
-
-        // Spawn and configure an `AreaEffectCloud` entity
+        let block_pos = block_pos_of(hit_pos);
+        broadcast_splash(&world, block_pos, &stack, &effects);
         extinguish_fire_if_water_potion(&world, hit_pos, &stack);
 
-        if let Some(server) = world.server.upgrade() {
-            let mut event = crate::plugin::api::events::entity::lingering_potion_splash::LingeringPotionSplashEvent::new(
-                self.get_entity().entity_id,
-                block_pos,
-                stack.item.registry_key.to_string(),
-            );
-            server.plugin_manager.fire_blocking(&server, &mut event);
-            if event.cancelled {
-                return;
-            }
+        if self.cancelled_by_plugin(&world, block_pos, &stack) {
+            return;
         }
-
-        let cloud_entity = crate::entity::Entity::from_uuid(
-            Uuid::new_v4(),
-            world.clone(),
-            hit_pos,
-            &pumpkin_data::entity::EntityType::AREA_EFFECT_CLOUD,
-        );
-        let cloud = crate::entity::area_effect_cloud::AreaEffectCloudEntity::create(
-            cloud_entity,
-            stack,
-            effects,
-            600,
-            3.0,
-            20,
-            20,
-            -0.5,
-            -100,
-        );
-
-        world.spawn_entity(cloud);
+        spawn_cloud(&world, hit_pos, stack, effects);
     }
+}
+
+impl LingeringPotionEntity {
+    /// A copy of the stored item stack.
+    fn stack(&self) -> ItemStack {
+        self.item_stack
+            .read()
+            .unwrap_or_else(std::sync::PoisonError::into_inner)
+            .clone()
+    }
+
+    /// Fires the splash event and tells whether a plugin cancelled it.
+    fn cancelled_by_plugin(
+        &self,
+        world: &Arc<World>,
+        block_pos: BlockPos,
+        stack: &ItemStack,
+    ) -> bool {
+        let Some(server) = world.server.upgrade() else {
+            return false;
+        };
+        let mut event = crate::plugin::api::events::entity::lingering_potion_splash::LingeringPotionSplashEvent::new(
+            self.get_entity().entity_id,
+            block_pos,
+            stack.item.registry_key.to_string(),
+        );
+        server.plugin_manager.fire_blocking(&server, &mut event);
+        event.cancelled
+    }
+}
+
+/// The block containing the point.
+const fn block_pos_of(hit_pos: Vector3<f64>) -> BlockPos {
+    BlockPos(Vector3::new(
+        hit_pos.x.floor() as i32,
+        hit_pos.y.floor() as i32,
+        hit_pos.z.floor() as i32,
+    ))
+}
+
+/// The colour of the splash particles: the stack's custom colour, else the average of the
+/// effects' colours.
+fn splash_color(stack: &ItemStack, effects: &[PotionEffect]) -> i32 {
+    if let Some(color) = stack
+        .get_data_component::<pumpkin_data::data_component_impl::PotionContentsImpl>()
+        .and_then(|contents| contents.custom_color)
+    {
+        return color;
+    }
+    average_color(effects)
+}
+
+/// The per-channel mean of the effects' colours, each channel cut to a whole number.
+fn average_color(effects: &[PotionEffect]) -> i32 {
+    let count = effects.len() as f32;
+    let (mut r_sum, mut g_sum, mut b_sum) = (0.0, 0.0, 0.0);
+    for (effect, _, _, _, _, _) in effects {
+        let c = effect.color;
+        r_sum += ((c >> 16) & 0xFF) as f32;
+        g_sum += ((c >> 8) & 0xFF) as f32;
+        b_sum += (c & 0xFF) as f32;
+    }
+    let r = (r_sum / count) as i32;
+    let g = (g_sum / count) as i32;
+    let b = (b_sum / count) as i32;
+    (r << 16) | (g << 8) | b
+}
+
+/// Sends the splash world event (2007 for instant effects, else 2002) to the hit chunk.
+fn broadcast_splash(
+    world: &World,
+    block_pos: BlockPos,
+    stack: &ItemStack,
+    effects: &[PotionEffect],
+) {
+    let has_instant = effects.iter().any(|(effect, _, _, _, _, _)| {
+        effect.id == pumpkin_data::effect::StatusEffect::INSTANT_DAMAGE.id
+            || effect.id == pumpkin_data::effect::StatusEffect::INSTANT_HEALTH.id
+    });
+    let event_id = if has_instant { 2007 } else { 2002 };
+    let color = splash_color(stack, effects);
+    let chunk_pos = to_chunk_pos(&Vector2::new(block_pos.0.x, block_pos.0.z));
+    world.broadcast_to_chunk(
+        chunk_pos,
+        &CWorldEvent::new(event_id, block_pos, color, false),
+    );
+}
+
+/// Spawns the lingering cloud the flask leaves behind.
+fn spawn_cloud(
+    world: &Arc<World>,
+    hit_pos: Vector3<f64>,
+    stack: ItemStack,
+    effects: Vec<PotionEffect>,
+) {
+    let cloud_entity = crate::entity::Entity::from_uuid(
+        Uuid::new_v4(),
+        world.clone(),
+        hit_pos,
+        &pumpkin_data::entity::EntityType::AREA_EFFECT_CLOUD,
+    );
+    let cloud = crate::entity::area_effect_cloud::AreaEffectCloudEntity::create(
+        cloud_entity,
+        stack,
+        effects,
+        600,
+        3.0,
+        20,
+        20,
+        -0.5,
+        -100,
+    );
+    world.spawn_entity(cloud);
 }

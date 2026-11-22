@@ -1,9 +1,9 @@
-use pumpkin_data::{dimension::Dimension, packet::clientbound::play::RESPAWN};
+use pumpkin_data::packet::clientbound::play::RESPAWN;
 use pumpkin_macros::java_packet;
 use pumpkin_util::version::JavaMinecraftVersion;
 
 use crate::{
-    ClientPacket, ServerPacket, VarInt,
+    ClientPacket, ServerPacket,
     java::client::play::player_spawn_data::PlayerSpawnData,
     ser::{NetworkReadExt, NetworkWriteExt, ReadingError, WritingError},
 };
@@ -118,109 +118,11 @@ impl ClientPacket for CRespawn {
 
 impl<'a> ServerPacket<'a> for CRespawn {
     fn read(read: &mut &'a [u8], version: &JavaMinecraftVersion) -> Result<Self, ReadingError> {
-        let v1_14 = *version >= JavaMinecraftVersion::V_1_14;
-        let v1_15 = *version >= JavaMinecraftVersion::V_1_15;
-        let v1_16 = *version >= JavaMinecraftVersion::V_1_16;
-        let v1_16_2 = *version >= JavaMinecraftVersion::V_1_16_2;
-        let v1_19 = *version >= JavaMinecraftVersion::V_1_19;
-        let v1_19_3 = *version >= JavaMinecraftVersion::V_1_19_3;
-        let v1_20 = *version >= JavaMinecraftVersion::V_1_20;
-        let v1_20_2 = *version >= JavaMinecraftVersion::V_1_20_2;
-
-        if !v1_16 {
-            let legacy_dim_id = read.get_i32_be()?;
-            let dimension = match legacy_dim_id {
-                -1 => Dimension::THE_NETHER,
-                1 => Dimension::THE_END,
-                _ => Dimension::OVERWORLD,
-            };
-            let hashed_seed = if v1_15 { read.get_i64_be()? } else { 0 };
-            if !v1_14 {
-                let _difficulty = read.get_u8()?;
-            }
-            let game_mode = read.get_u8()?;
-            let level_type = read.get_str()?;
-            let is_flat = &*level_type == "flat";
-            let debug = &*level_type == "debug_all_block_states";
-
-            let player_spawn_info = PlayerSpawnData::new(
-                dimension,
-                hashed_seed,
-                game_mode,
-                -1,
-                debug,
-                is_flat,
-                None,
-                VarInt(0),
-                VarInt(63),
-            );
-
-            return Ok(Self::new(player_spawn_info, Self::KEEP_ALL_DATA));
+        if *version < JavaMinecraftVersion::V_1_16 {
+            return fields::read_before_1_16(read, *version);
         }
-
-        if !v1_20_2 {
-            let dimension = if v1_16_2 && *version < JavaMinecraftVersion::V_1_19 {
-                let mut cursor = std::io::Cursor::new(*read);
-                let mut reader = pumpkin_nbt::deserializer::NbtReadHelperJava::new(&mut cursor);
-                let _nbt = pumpkin_nbt::Nbt::read(&mut reader).map_err(|e| {
-                    ReadingError::Message(format!("Invalid dimension type NBT: {e}"))
-                })?;
-                let bytes_read = cursor.position() as usize;
-                *read = &read[bytes_read..];
-                Dimension::OVERWORLD
-            } else {
-                let dim_name = read.get_str()?;
-                Dimension::from_name(&dim_name)
-                    .cloned()
-                    .unwrap_or(Dimension::OVERWORLD)
-            };
-
-            let _world_name = read.get_str()?;
-            let hashed_seed = read.get_i64_be()?;
-            let game_mode = read.get_u8()?;
-            let previous_gamemode = read.get_i8()?;
-            let debug = read.get_bool()?;
-            let is_flat = read.get_bool()?;
-
-            let data_kept = if v1_19_3 {
-                read.get_u8()?
-            } else if read.get_bool()? {
-                Self::KEEP_ALL_DATA
-            } else {
-                Self::KEEP_ENTITY_DATA
-            };
-
-            let death_dimension_name = if v1_19 {
-                if read.get_bool()? {
-                    let dim = read.get_str()?.into();
-                    let pos = read.get_block_pos(version)?;
-                    Some((dim, pos))
-                } else {
-                    None
-                }
-            } else {
-                None
-            };
-
-            let portal_cooldown = if v1_20 {
-                read.get_var_int()?
-            } else {
-                VarInt(0)
-            };
-
-            let player_spawn_info = PlayerSpawnData::new(
-                dimension,
-                hashed_seed,
-                game_mode,
-                previous_gamemode,
-                debug,
-                is_flat,
-                death_dimension_name,
-                portal_cooldown,
-                VarInt(63),
-            );
-
-            return Ok(Self::new(player_spawn_info, data_kept));
+        if *version < JavaMinecraftVersion::V_1_20_2 {
+            return fields::read_before_1_20_2(read, *version);
         }
 
         let player_spawn_info = PlayerSpawnData::read(read, version)?;
@@ -228,6 +130,8 @@ impl<'a> ServerPacket<'a> for CRespawn {
         Ok(Self::new(player_spawn_info, data_kept))
     }
 }
+
+mod fields;
 
 #[cfg(test)]
 mod golden;

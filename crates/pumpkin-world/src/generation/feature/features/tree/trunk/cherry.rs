@@ -215,3 +215,7 @@ impl CherryTrunkPlacer {
         props.to_state_id(block)
     }
 }
+
+#[cfg(test)]
+#[path = "cherry_golden.rs"]
+mod golden;

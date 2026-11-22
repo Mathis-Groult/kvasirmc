@@ -449,100 +449,110 @@ impl WorldInfoWriter for AnvilLevelInfo {
         level_data.last_played = since_the_epoch.as_millis() as i64;
         stamp_current_version(&mut level_data);
 
-        // ── Write level.dat ───────────────────────────────────────────────────
-        let path = level_folder.join(LEVEL_DAT_FILE_NAME);
-        let path_new = level_folder.join("level.dat_new");
-        let path_old = level_folder.join(LEVEL_DAT_BACKUP_FILE_NAME);
+        write_level_dat(level_folder, &level_data)?;
 
-        let mut root = existing_level_dat_root(&path)?;
-        let mut data_comp = root
-            .get_compound(LEVEL_DATA_TAG)
-            .cloned()
-            .unwrap_or_default();
-        level_data_to_nbt(&level_data, &mut data_comp);
-        root.put_compound(LEVEL_DATA_TAG, data_comp);
-
-        write_gzip_compound_tag(root, File::create(&path_new)?)
-            .map_err(|e| WorldInfoError::SerializationError(e.to_string()))?;
-
-        if path.exists() {
-            fs::copy(&path, &path_old)?;
-        }
-        fs::rename(&path_new, &path)?;
-
+        // data/minecraft/*.dat files: a failure is logged, the save still counts.
         let data_version = level_data.data_version;
-
-        // ── Write data/minecraft/*.dat files ─────────────────────────────────
-
-        // game_rules.dat
-        if let Err(e) = write_game_rules(level_folder, &info.game_rules, data_version) {
-            error!("Failed to write game_rules.dat: {e}");
-        }
-
-        // world_gen_settings.dat
-        if let Err(e) =
-            write_world_gen_settings(level_folder, &info.world_gen_settings, data_version)
-        {
-            error!("Failed to write world_gen_settings.dat: {e}");
-        }
-
-        // world_clocks.dat – persist the overworld day_time; preserve other
-        let mut clocks = read_world_clocks(level_folder);
-        clocks.data_version = data_version;
-        clocks
-            .clocks
-            .entry("minecraft:overworld".to_string())
-            .and_modify(|c| c.total_ticks = info.day_time)
-            .or_insert(crate::world_info::data_files::DimensionClock {
-                total_ticks: info.day_time,
-            });
-
-        if let Err(e) = write_world_clocks(level_folder, &clocks) {
-            error!("Failed to write world_clocks.dat: {e}");
-        }
-
-        // weather.dat
-        let mut weather = read_weather(level_folder);
-        weather.clear_weather_time = info.clear_weather_time;
-        weather.data_version = data_version;
-        if let Err(e) = write_weather(level_folder, &weather) {
-            error!("Failed to write weather.dat: {e}");
-        }
-
-        // wandering_trader.dat (stub / load-save)
-        let mut wandering_trader = read_wandering_trader(level_folder);
-        wandering_trader.data_version = data_version;
-        if let Err(e) = write_wandering_trader(level_folder, &wandering_trader) {
-            error!("Failed to write wandering_trader.dat: {e}");
-        }
-
-        // custom_boss_events.dat
-        if let Err(e) = write_custom_boss_events_stub(level_folder, data_version) {
-            error!("Failed to write custom_boss_events.dat: {e}");
-        }
-
-        // scheduled_events.dat
-        if let Err(e) = write_scheduled_events_stub(level_folder, data_version) {
-            error!("Failed to write scheduled_events.dat: {e}");
-        }
-
-        // random_sequences.dat
-        if let Err(e) = write_random_sequences_stub(level_folder, data_version) {
-            error!("Failed to write random_sequences.dat: {e}");
-        }
-
-        // scoreboard.dat
-        if let Err(e) = write_scoreboard_stub(level_folder, data_version) {
-            error!("Failed to write scoreboard.dat: {e}");
-        }
-
-        // stopwatches.dat
-        if let Err(e) = write_stopwatches_stub(level_folder, data_version) {
-            error!("Failed to write stopwatches.dat: {e}");
-        }
+        write_state_files(level_folder, info, data_version);
+        write_stub_files(level_folder, data_version);
 
         Ok(())
     }
+}
+
+/// Writes `level.dat` through `level.dat_new`, keeping the previous file as the backup and
+/// every tag of the old file this writer does not manage.
+fn write_level_dat(level_folder: &Path, level_data: &LevelData) -> Result<(), WorldInfoError> {
+    let path = level_folder.join(LEVEL_DAT_FILE_NAME);
+    let path_new = level_folder.join("level.dat_new");
+    let path_old = level_folder.join(LEVEL_DAT_BACKUP_FILE_NAME);
+
+    let mut root = existing_level_dat_root(&path)?;
+    let mut data_comp = root
+        .get_compound(LEVEL_DATA_TAG)
+        .cloned()
+        .unwrap_or_default();
+    level_data_to_nbt(level_data, &mut data_comp);
+    root.put_compound(LEVEL_DATA_TAG, data_comp);
+
+    write_gzip_compound_tag(root, File::create(&path_new)?)
+        .map_err(|e| WorldInfoError::SerializationError(e.to_string()))?;
+
+    if path.exists() {
+        fs::copy(&path, &path_old)?;
+    }
+    fs::rename(&path_new, &path)?;
+    Ok(())
+}
+
+/// Logs a failed `data/minecraft/<file>` write; the other files are still written.
+fn log_write_failure(file: &str, result: Result<(), WorldInfoError>) {
+    if let Err(e) = result {
+        error!("Failed to write {file}: {e}");
+    }
+}
+
+/// The files holding world state: game rules, world generation settings, the overworld clock
+/// (other clocks are preserved), weather and the wandering trader (other fields preserved).
+fn write_state_files(level_folder: &Path, info: &LevelData, data_version: i32) {
+    log_write_failure(
+        "game_rules.dat",
+        write_game_rules(level_folder, &info.game_rules, data_version),
+    );
+    log_write_failure(
+        "world_gen_settings.dat",
+        write_world_gen_settings(level_folder, &info.world_gen_settings, data_version),
+    );
+
+    let mut clocks = read_world_clocks(level_folder);
+    clocks.data_version = data_version;
+    clocks
+        .clocks
+        .entry("minecraft:overworld".to_string())
+        .and_modify(|c| c.total_ticks = info.day_time)
+        .or_insert(crate::world_info::data_files::DimensionClock {
+            total_ticks: info.day_time,
+        });
+    log_write_failure(
+        "world_clocks.dat",
+        write_world_clocks(level_folder, &clocks),
+    );
+
+    let mut weather = read_weather(level_folder);
+    weather.clear_weather_time = info.clear_weather_time;
+    weather.data_version = data_version;
+    log_write_failure("weather.dat", write_weather(level_folder, &weather));
+
+    let mut wandering_trader = read_wandering_trader(level_folder);
+    wandering_trader.data_version = data_version;
+    log_write_failure(
+        "wandering_trader.dat",
+        write_wandering_trader(level_folder, &wandering_trader),
+    );
+}
+
+/// The files this engine writes empty (no feature fills them yet).
+fn write_stub_files(level_folder: &Path, data_version: i32) {
+    log_write_failure(
+        "custom_boss_events.dat",
+        write_custom_boss_events_stub(level_folder, data_version),
+    );
+    log_write_failure(
+        "scheduled_events.dat",
+        write_scheduled_events_stub(level_folder, data_version),
+    );
+    log_write_failure(
+        "random_sequences.dat",
+        write_random_sequences_stub(level_folder, data_version),
+    );
+    log_write_failure(
+        "scoreboard.dat",
+        write_scoreboard_stub(level_folder, data_version),
+    );
+    log_write_failure(
+        "stopwatches.dat",
+        write_stopwatches_stub(level_folder, data_version),
+    );
 }
 
 #[derive(Debug, PartialEq, Serialize, Deserialize, Clone)]

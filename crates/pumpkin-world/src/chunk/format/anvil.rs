@@ -25,7 +25,7 @@ pub const REGION_SIZE: usize = 32;
 pub const CHUNK_COUNT: usize = REGION_SIZE * REGION_SIZE;
 
 /// The number of bytes in a sector (4 KiB)
-const SECTOR_BYTES: usize = 4096;
+pub(super) const SECTOR_BYTES: usize = 4096;
 
 // 26.3
 pub const WORLD_DATA_VERSION: i32 = 5023;
@@ -61,9 +61,9 @@ impl<R: Read> Read for CompressionRead<R> {
 
 #[derive(Clone)]
 pub struct AnvilChunkData {
-    compression: Option<Compression>,
+    pub(super) compression: Option<Compression>,
     // Length is always the length of this + compression byte (1) so we dont need to save a length
-    compressed_data: Bytes,
+    pub(super) compressed_data: Bytes,
 }
 
 impl Compression {
@@ -296,14 +296,14 @@ const EXTERNAL_CHUNK_THRESHOLD: u32 = 256;
 /// Set on the compression byte of a record whose data lives in a `.mcc` file.
 const EXTERNAL_STREAM_FLAG: u8 = 128;
 /// Location and timestamp tables.
-const HEADER_BYTES: usize = SECTOR_BYTES * 2;
+pub(super) const HEADER_BYTES: usize = SECTOR_BYTES * 2;
 
 /// Which sectors of a region file are taken, mirroring vanilla's `RegionBitmap`.
 #[derive(Clone, Default)]
 pub(super) struct SectorBitmap(Vec<u64>);
 
 impl SectorBitmap {
-    fn is_used(&self, sector: u32) -> bool {
+    pub(super) fn is_used(&self, sector: u32) -> bool {
         self.0
             .get(sector as usize / 64)
             .is_some_and(|word| word & (1 << (sector % 64)) != 0)
@@ -397,15 +397,15 @@ impl FreeRuns {
     }
 }
 
-const fn sector_offset(location: u32) -> u32 {
+pub(super) const fn sector_offset(location: u32) -> u32 {
     location >> 8
 }
 
-const fn sector_count(location: u32) -> u32 {
+pub(super) const fn sector_count(location: u32) -> u32 {
     location & 0xFF
 }
 
-fn epoch_seconds() -> u32 {
+pub(super) fn epoch_seconds() -> u32 {
     SystemTime::now()
         .duration_since(UNIX_EPOCH)
         .unwrap_or_default()
@@ -418,20 +418,20 @@ fn epoch_seconds() -> u32 {
 /// the header, and frees the old sectors last, so a crash at any point leaves every chunk
 /// readable in either its old or its new version.
 pub struct AnvilRegion {
-    path: PathBuf,
-    region: Vector2<i32>,
+    pub(super) path: PathBuf,
+    pub(super) region: Vector2<i32>,
     file: Option<File>,
-    file_len: u64,
-    locations: Box<[u32]>,
-    timestamps: Box<[u32]>,
-    used_sectors: SectorBitmap,
-    staged: FxHashMap<usize, AnvilChunkData>,
-    pending_external_deletes: Vec<PathBuf>,
-    unsynced: bool,
+    pub(super) file_len: u64,
+    pub(super) locations: Box<[u32]>,
+    pub(super) timestamps: Box<[u32]>,
+    pub(super) used_sectors: SectorBitmap,
+    pub(super) staged: FxHashMap<usize, AnvilChunkData>,
+    pub(super) pending_external_deletes: Vec<PathBuf>,
+    pub(super) unsynced: bool,
 }
 
 impl AnvilRegion {
-    fn flush_with_sync(
+    pub(super) fn flush_with_sync(
         &mut self,
         sync: bool,
         sync_file: impl Fn(&File) -> std::io::Result<()>,
@@ -545,7 +545,7 @@ impl AnvilRegion {
         Ok(())
     }
 
-    fn external_path(&self, index: usize) -> PathBuf {
+    pub(super) fn external_path(&self, index: usize) -> PathBuf {
         let x = self.region.x * REGION_SIZE as i32 + (index % REGION_SIZE) as i32;
         let z = self.region.y * REGION_SIZE as i32 + (index / REGION_SIZE) as i32;
         self.path.with_file_name(format!("c.{x}.{z}.mcc"))

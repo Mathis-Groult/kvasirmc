@@ -1,0 +1,272 @@
+== empty: no file, nothing staged
+-- sync on a region without a file: sync=true fail_sync=false -> ok
+syncs=0 staged=[] unsynced=false file_len=0 used=0-1 end=2
+pending=[]
+locations=
+files=
+disk=absent
+-- unsynced but still no file: sync=true fail_sync=false -> ok
+syncs=0 staged=[] unsynced=true file_len=0 used=0-1 end=2
+pending=[]
+locations=
+files=
+disk=absent
+== empty: unsynced region
+-- first write, no sync: sync=false fail_sync=false -> ok
+syncs=0 staged=[] unsynced=true file_len=12288 used=0-2 end=3
+pending=[]
+locations=2:2+1@T
+files=r.0.0.mca:12288
+disk=len=12288 hash=5e5a15dfa14c1342 records 2=[4085 0x03]
+-- nothing staged, no sync: sync=false fail_sync=false -> ok
+syncs=0 staged=[] unsynced=true file_len=12288 used=0-2 end=3
+pending=[]
+locations=2:2+1@T
+files=r.0.0.mca:12288
+disk=len=12288 hash=5e5a15dfa14c1342 records 2=[4085 0x03]
+-- nothing staged, sync fails: sync=true fail_sync=true -> err Other
+syncs=1 staged=[] unsynced=true file_len=12288 used=0-2 end=3
+pending=[]
+locations=2:2+1@T
+files=r.0.0.mca:12288
+disk=len=12288 hash=5e5a15dfa14c1342 records 2=[4085 0x03]
+-- nothing staged, sync: sync=true fail_sync=false -> ok
+syncs=1 staged=[] unsynced=false file_len=12288 used=0-2 end=3
+pending=[]
+locations=2:2+1@T
+files=r.0.0.mca:12288
+disk=len=12288 hash=5e5a15dfa14c1342 records 2=[4085 0x03]
+-- synced already: sync=true fail_sync=false -> ok
+syncs=0 staged=[] unsynced=false file_len=12288 used=0-2 end=3
+pending=[]
+locations=2:2+1@T
+files=r.0.0.mca:12288
+disk=len=12288 hash=5e5a15dfa14c1342 records 2=[4085 0x03]
+== new chunks, sync=false
+-- one chunk: sync=false fail_sync=false -> ok
+syncs=0 staged=[] unsynced=true file_len=12288 used=0-2 end=3
+pending=[]
+locations=5:2+1@T
+files=r.0.0.mca:12288
+disk=len=12288 hash=6c4e7709257ee1de records 5=[4085 0x03]
+-- a second, two sectors: sync=false fail_sync=false -> ok
+syncs=0 staged=[] unsynced=true file_len=20480 used=0-4 end=5
+pending=[]
+locations=5:2+1@T 700:3+2@T
+files=r.0.0.mca:20480
+disk=len=20480 hash=774d05d1fbcc0149 records 5=[4085 0x03] 700=[8181 0x02]
+-- reopened, nothing staged: sync=false fail_sync=false -> ok
+syncs=0 staged=[] unsynced=false file_len=20480 used=0-4 end=5
+pending=[]
+locations=5:2+1@T 700:3+2@T
+files=r.0.0.mca:20480
+disk=len=20480 hash=774d05d1fbcc0149 records 5=[4085 0x03] 700=[8181 0x02]
+== new chunks, sync=true
+-- one chunk: sync=true fail_sync=false -> ok
+syncs=1 staged=[] unsynced=false file_len=12288 used=0-2 end=3
+pending=[]
+locations=5:2+1@T
+files=r.0.0.mca:12288
+disk=len=12288 hash=6c4e7709257ee1de records 5=[4085 0x03]
+-- a second, two sectors: sync=true fail_sync=false -> ok
+syncs=1 staged=[] unsynced=false file_len=20480 used=0-4 end=5
+pending=[]
+locations=5:2+1@T 700:3+2@T
+files=r.0.0.mca:20480
+disk=len=20480 hash=774d05d1fbcc0149 records 5=[4085 0x03] 700=[8181 0x02]
+-- reopened, nothing staged: sync=true fail_sync=false -> ok
+syncs=0 staged=[] unsynced=false file_len=20480 used=0-4 end=5
+pending=[]
+locations=5:2+1@T 700:3+2@T
+files=r.0.0.mca:20480
+disk=len=20480 hash=774d05d1fbcc0149 records 5=[4085 0x03] 700=[8181 0x02]
+== overwrite with the same size, grow and shrink
+-- two chunks: sync=false fail_sync=false -> ok
+syncs=0 staged=[] unsynced=true file_len=16384 used=0-3 end=4
+pending=[]
+locations=3:2+1@T 4:3+1@T
+files=r.0.0.mca:16384
+disk=len=16384 hash=1907071e8ebdad31 records 3=[4085 0x03] 4=[4085 0x03]
+-- same size: sync=true fail_sync=false -> ok
+syncs=1 staged=[] unsynced=false file_len=20480 used=0-1,3-4 end=5
+pending=[]
+locations=3:4+1@T 4:3+1@T
+files=r.0.0.mca:20480
+disk=len=20480 hash=60aecc851196dd45 records 3=[4085 0x03] 4=[4085 0x03]
+-- grow to 3 sectors: sync=true fail_sync=false -> ok
+syncs=1 staged=[] unsynced=false file_len=32768 used=0-1,3-3,5-7 end=8
+pending=[]
+locations=3:5+3@T 4:3+1@T
+files=r.0.0.mca:32768
+disk=len=32768 hash=a74b611836a65e76 records 3=[12277 0x03] 4=[4085 0x03]
+-- neighbour grows into the hole: sync=false fail_sync=false -> ok
+syncs=0 staged=[] unsynced=true file_len=40960 used=0-1,5-9 end=10
+pending=[]
+locations=3:5+3@T 4:8+2@T
+files=r.0.0.mca:40960
+disk=len=40960 hash=984e50d16b3702d6 records 3=[12277 0x03] 4=[8181 0x03]
+-- shrink to 1 sector: sync=true fail_sync=false -> ok
+syncs=1 staged=[] unsynced=false file_len=40960 used=0-2,8-9 end=10
+pending=[]
+locations=3:2+1@T 4:8+2@T
+files=r.0.0.mca:40960
+disk=len=40960 hash=3a84f8a8ddb52f69 records 3=[4085 0x03] 4=[8181 0x03]
+-- shrink the last one: the tail goes: sync=true fail_sync=false -> ok
+syncs=1 staged=[] unsynced=false file_len=16384 used=0-3 end=4
+pending=[]
+locations=3:2+1@T 4:3+1@T
+files=r.0.0.mca:16384
+disk=len=16384 hash=0b1e496d0dc7690e records 3=[4085 0x03] 4=[4085 0x03]
+== several chunks in one flush, holes reused
+-- six single sectors: sync=false fail_sync=false -> ok
+syncs=0 staged=[] unsynced=true file_len=32768 used=0-7 end=8
+pending=[]
+locations=0:2+1@T 1:3+1@T 2:4+1@T 3:5+1@T 4:6+1@T 5:7+1@T
+files=r.0.0.mca:32768
+disk=len=32768 hash=11e0494d5ca6b698 records 0=[4085 0x03] 1=[4085 0x03] 2=[4085 0x03] 3=[4085 0x03] 4=[4085 0x03] 5=[4085 0x03]
+-- two move, leaving holes at 3 and 5: sync=false fail_sync=false -> ok
+syncs=0 staged=[] unsynced=true file_len=40960 used=0-2,4-4,6-9 end=10
+pending=[]
+locations=0:2+1@T 1:8+1@T 2:4+1@T 3:9+1@T 4:6+1@T 5:7+1@T
+files=r.0.0.mca:40960
+disk=len=40960 hash=b90faccaa52b15bd records 0=[4085 0x03] 1=[4085 0x03] 2=[4085 0x03] 3=[4085 0x03] 4=[4085 0x03] 5=[4085 0x03]
+-- mixed sizes into holes and the end: sync=true fail_sync=false -> ok
+syncs=1 staged=[] unsynced=false file_len=65536 used=0-3,5-5,7-15 end=16
+pending=[]
+locations=0:2+1@T 1:8+1@T 2:3+1@T 3:9+1@T 4:10+2@T 5:7+1@T 900:5+1@T 901:12+1@T 1000:13+3@T
+files=r.0.0.mca:65536
+disk=len=65536 hash=04644cc3201c53c5 records 0=[4085 0x03] 1=[4085 0x03] 2=[4085 0x03] 3=[4085 0x03] 4=[8181 0x03] 5=[4085 0x03] 900=[4085 0x03] 901=[4085 0x03] 1000=[12277 0x03]
+== a file longer than its sectors
+-- one chunk: sync=false fail_sync=false -> ok
+syncs=0 staged=[] unsynced=true file_len=16384 used=0-3 end=4
+pending=[]
+locations=8:2+2@T
+files=r.0.0.mca:16384
+disk=len=16384 hash=e84be7f412d6352f records 8=[8181 0x03]
+-- trailing garbage is cut: sync=false fail_sync=false -> ok
+syncs=0 staged=[] unsynced=true file_len=20480 used=0-4 end=5
+pending=[]
+locations=8:2+2@T 9:4+1@T
+files=r.0.0.mca:20480
+disk=len=20480 hash=e04b7a55d2e38f08 records 8=[8181 0x03] 9=[4085 0x03]
+== oversized chunks go to .mcc files
+-- external gzip chunk: sync=true fail_sync=false -> ok
+syncs=1 staged=[] unsynced=false file_len=12288 used=0-2 end=3
+pending=[]
+locations=7:2+1@T
+files=c.7.0.mcc:1048564 r.0.0.mca:12288
+disk=len=12288 hash=020aeaca767fd856 records 7=[1 0x81]
+-- external uncompressed beside an inline one: sync=false fail_sync=false -> ok
+syncs=0 staged=[] unsynced=true file_len=20480 used=0-4 end=5
+pending=[]
+locations=7:2+1@T 8:3+1@T 9:4+1@T
+files=c.7.0.mcc:1048564 c.8.0.mcc:1048564 r.0.0.mca:20480
+disk=len=20480 hash=cb00a74037985e45 records 7=[1 0x81] 8=[1 0x83] 9=[4085 0x03]
+-- external rewritten: sync=true fail_sync=false -> ok
+syncs=1 staged=[] unsynced=false file_len=24576 used=0-1,3-5 end=6
+pending=[]
+locations=7:5+1@T 8:3+1@T 9:4+1@T
+files=c.7.0.mcc:1048564 c.8.0.mcc:1048564 r.0.0.mca:24576
+disk=len=24576 hash=9009dde389b83f45 records 7=[1 0x84] 8=[1 0x83] 9=[4085 0x03]
+-- external replaced by an inline chunk: sync=true fail_sync=false -> ok
+syncs=1 staged=[] unsynced=false file_len=32768 used=0-1,3-4,6-7 end=8
+pending=[]
+locations=7:6+2@T 8:3+1@T 9:4+1@T
+files=c.8.0.mcc:1048564 r.0.0.mca:32768
+disk=len=32768 hash=fe1d521be8029a93 records 7=[8181 0x03] 8=[1 0x83] 9=[4085 0x03]
+-- second external replaced, no sync: sync=false fail_sync=false -> ok
+syncs=0 staged=[] unsynced=true file_len=32768 used=0-2,4-4,6-7 end=8
+pending=[]
+locations=7:6+2@T 8:2+1@T 9:4+1@T
+files=r.0.0.mca:32768
+disk=len=32768 hash=79b0507bf431c809 records 7=[8181 0x03] 8=[4085 0x03] 9=[4085 0x03]
+== pending .mcc deletes
+-- external chunk: sync=false fail_sync=false -> ok
+syncs=0 staged=[] unsynced=true file_len=12288 used=0-2 end=3
+pending=[]
+locations=7:2+1@T
+files=c.7.0.mcc:1048564 r.0.0.mca:12288
+disk=len=12288 hash=020aeaca767fd856 records 7=[1 0x81]
+-- inline replaces it, sync fails: sync=true fail_sync=true -> err Other
+syncs=1 staged=[7] unsynced=true file_len=16384 used=0-1,3-3 end=4
+pending=["c.7.0.mcc"]
+locations=7:3+1@T
+files=c.7.0.mcc:1048564 r.0.0.mca:16384
+disk=len=16384 hash=40ecd72c1d5c770e records 7=[4085 0x03]
+-- external again: the delete is dropped: sync=true fail_sync=false -> ok
+syncs=1 staged=[] unsynced=false file_len=12288 used=0-2 end=3
+pending=[]
+locations=7:2+1@T
+files=c.7.0.mcc:1048564 r.0.0.mca:12288
+disk=len=12288 hash=020aeaca767fd856 records 7=[1 0x81]
+-- inline again, sync fails: sync=true fail_sync=true -> err Other
+syncs=1 staged=[7] unsynced=true file_len=16384 used=0-1,3-3 end=4
+pending=["c.7.0.mcc"]
+locations=7:3+1@T
+files=c.7.0.mcc:1048564 r.0.0.mca:16384
+disk=len=16384 hash=834f591eabbfad22 records 7=[4085 0x03]
+-- retry: the file goes: sync=true fail_sync=false -> ok
+syncs=1 staged=[] unsynced=false file_len=12288 used=0-2 end=3
+pending=[]
+locations=7:2+1@T
+files=r.0.0.mca:12288
+disk=len=12288 hash=37dea97777020a35 records 7=[4085 0x03]
+== deleting a .mcc that is gone or cannot go
+-- two external chunks: sync=false fail_sync=false -> ok
+syncs=0 staged=[] unsynced=true file_len=16384 used=0-3 end=4
+pending=[]
+locations=7:2+1@T 8:3+1@T
+files=c.7.0.mcc:1048564 c.8.0.mcc:1048564 r.0.0.mca:16384
+disk=len=16384 hash=156a0827d4a020ec records 7=[1 0x83] 8=[1 0x83]
+-- both replaced: one file is gone, one is a directory: sync=true fail_sync=false -> ok
+syncs=1 staged=[] unsynced=false file_len=24576 used=0-1,4-5 end=6
+pending=[]
+locations=7:4+1@T 8:5+1@T
+files=c.8.0.mcc:dir r.0.0.mca:24576
+disk=len=24576 hash=b927641645f6f183 records 7=[4085 0x03] 8=[4085 0x03]
+== sync fails: the flush can be retried
+-- first: sync=false fail_sync=false -> ok
+syncs=0 staged=[] unsynced=true file_len=12288 used=0-2 end=3
+pending=[]
+locations=1:2+1@T
+files=r.0.0.mca:12288
+disk=len=12288 hash=576b1237f6f6822d records 1=[4085 0x03]
+-- rewrite, sync fails: sync=true fail_sync=true -> err Other
+syncs=1 staged=[1, 2] unsynced=true file_len=24576 used=0-1,3-5 end=6
+pending=[]
+locations=1:3+2@T 2:5+1@T
+files=r.0.0.mca:24576
+disk=len=24576 hash=1b3879bfb33d7fef records 1=[8181 0x03] 2=[4085 0x03]
+-- retry: sync=true fail_sync=false -> ok
+syncs=1 staged=[] unsynced=false file_len=32768 used=0-2,6-7 end=8
+pending=[]
+locations=1:6+2@T 2:2+1@T
+files=r.0.0.mca:32768
+disk=len=32768 hash=2261e32424696c88 records 1=[8181 0x03] 2=[4085 0x03]
+== the region file cannot be opened
+-- path is a directory: sync=true fail_sync=false -> err IsADirectory
+syncs=0 staged=[1] unsynced=false file_len=0 used=0-1 end=2
+pending=[]
+locations=
+files=blocked:dir
+disk=absent
+== the .mcc cannot be written
+-- target is a non-empty directory: sync=true fail_sync=false -> err IsADirectory
+syncs=0 staged=[3, 7] unsynced=false file_len=0 used=0-1 end=2
+pending=[]
+locations=
+files=c.7.0.mcc:dir c.7.0.tmp:1048564
+disk=absent
+== a region on disk keeps its old timestamps
+-- two chunks: sync=false fail_sync=false -> ok
+syncs=0 staged=[] unsynced=true file_len=16384 used=0-3 end=4
+pending=[]
+locations=3:2+1@T 4:3+1@T
+files=r.0.0.mca:16384
+disk=len=16384 hash=b987334e0080054f records 3=[4085 0x03] 4=[4085 0x03]
+-- one is rewritten: sync=false fail_sync=false -> ok
+syncs=0 staged=[] unsynced=true file_len=20480 used=0-1,3-4 end=5
+pending=[]
+locations=3:4+1@T 4:3+1@5678
+files=r.0.0.mca:20480
+disk=len=20480 hash=a28902783b6688c8 records 3=[4085 0x03] 4=[4085 0x03]

@@ -917,3 +917,6 @@ mod tests {
         );
     }
 }
+
+#[cfg(test)]
+mod anvil_flush_golden;

@@ -33,6 +33,9 @@ mod wire_power;
 // abstract
 pub mod abstract_redstone_gate;
 pub mod dispenser;
+#[cfg(test)]
+#[path = "dispenser/golden.rs"]
+mod dispenser_golden;
 
 /// Strongest redstone signal (`Redstone.SIGNAL_MAX`).
 pub const SIGNAL_MAX: u8 = 15;

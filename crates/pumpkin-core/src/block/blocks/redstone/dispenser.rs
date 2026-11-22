@@ -108,10 +108,10 @@ pub struct DispenserBlock;
 
 type DispenserLikeProperties = pumpkin_data::block_properties::DispenserLikeProperties;
 
-struct DispenseContext<'a> {
-    world: &'a Arc<World>,
-    position: &'a BlockPos,
-    facing: Facing,
+pub(super) struct DispenseContext<'a> {
+    pub(super) world: &'a Arc<World>,
+    pub(super) position: &'a BlockPos,
+    pub(super) facing: Facing,
 }
 
 fn triangle<R: Rng>(rng: &mut R, min: f64, max: f64) -> f64 {
@@ -296,7 +296,7 @@ impl DispenserBlock {
     const FIREWORK_PROJECTILE_POWER: f64 = 0.5;
     const FIREWORK_PROJECTILE_UNCERTAINTY: f64 = 1.0;
 
-    fn dispense(ctx: &DispenseContext<'_>, dispenser: &DispenserBlockEntity, item: &mut ItemStack) {
+    pub(super) fn dispense(ctx: &DispenseContext<'_>, dispenser: &DispenserBlockEntity, item: &mut ItemStack) {
         let mut event = crate::plugin::api::events::block::block_dispense::BlockDispenseEvent::new(
             *ctx.position,
             item.item.registry_key.to_string(),
@@ -476,7 +476,7 @@ impl DispenserBlock {
         );
     }
 
-    fn target_position(ctx: &DispenseContext<'_>) -> BlockPos {
+    pub(super) fn target_position(ctx: &DispenseContext<'_>) -> BlockPos {
         let facing = to_normal(ctx.facing);
         ctx.position.offset(Vector3::new(
             facing.x as i32,

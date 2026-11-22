@@ -228,3 +228,6 @@ impl<'a> ServerPacket<'a> for CRespawn {
         Ok(Self::new(player_spawn_info, data_kept))
     }
 }
+
+#[cfg(test)]
+mod golden;

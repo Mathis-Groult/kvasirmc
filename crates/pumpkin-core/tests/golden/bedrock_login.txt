@@ -1,0 +1,234 @@
+chain: not JSON
+  result: Err InvalidTokenFormat(Error("expected ident", line: 1, column: 2))
+  client data: none
+  user cache: none
+  sent: []
+  closed: false
+chain: no token field
+  result: Err InvalidTokenFormat(Error("missing field `Token`", line: 1, column: 24))
+  client data: none
+  user cache: none
+  sent: []
+  closed: false
+chain: unknown authentication type
+  result: Err InvalidTokenFormat(Error("invalid value: 9, expected one of: 0, 1, 2", line: 1, column: 23))
+  client data: none
+  user cache: none
+  sent: []
+  closed: false
+offline: plain token
+  result: ReadyToPlay id 058728db-7a88-3a63-af82-7174a02a2e35 name Steve_Smith props 0 actions false locale en_US view 8
+  client data: en_US 1.26.10
+  user cache: 058728db-7a88-3a63-af82-7174a02a2e35
+  sent: ["2:7:a79379ca", "6:25:fc1d60ac"]
+  closed: false
+offline: two-part token
+  result: Err ChainValidationFailed(JsonParse(Error("expected value", line: 1, column: 1)))
+  client data: none
+  user cache: none
+  sent: []
+  closed: false
+offline: token without dots
+  result: Err ChainValidationFailed(InvalidTokenFormat)
+  client data: none
+  user cache: none
+  sent: []
+  closed: false
+offline: payload not base64
+  result: Err ChainValidationFailed(Base64Decode(Invalid symbol 33, offset 0.))
+  client data: none
+  user cache: none
+  sent: []
+  closed: false
+offline: guest type is not checked
+  result: ReadyToPlay id 058728db-7a88-3a63-af82-7174a02a2e35 name Steve_Smith props 0 actions false locale en_US view 8
+  client data: en_US 1.26.10
+  user cache: 058728db-7a88-3a63-af82-7174a02a2e35
+  sent: ["2:7:a79379ca", "6:25:fc1d60ac"]
+  closed: false
+online full: no OIDC keys
+  result: Err ChainValidationFailed(PublicKeyBuild("OIDC keys not initialized"))
+  client data: none
+  user cache: none
+  sent: []
+  closed: false
+online full: signed token, keys loaded
+  result: ReadyToPlay id 058728db-7a88-3a63-af82-7174a02a2e35 name Steve_Smith props 0 actions false locale en_US view 8
+  client data: en_US 1.26.10
+  user cache: 058728db-7a88-3a63-af82-7174a02a2e35
+  sent: ["2:7:a79379ca", "6:25:fc1d60ac"]
+  closed: false
+online full: bad signature
+  result: Err ChainValidationFailed(InvalidSignature)
+  client data: none
+  user cache: none
+  sent: []
+  closed: false
+online guest
+  result: Err GuestUnimplemented
+  client data: none
+  user cache: none
+  sent: []
+  closed: false
+online self-signed while authentication is enforced
+  result: Err SelfSignedNotAllowed
+  client data: none
+  user cache: none
+  sent: []
+  closed: false
+online self-signed: valid
+  result: ReadyToPlay id 058728db-7a88-3a63-af82-7174a02a2e35 name Steve_Smith props 0 actions false locale en_US view 8
+  client data: en_US 1.26.10
+  user cache: 058728db-7a88-3a63-af82-7174a02a2e35
+  sent: ["2:7:a79379ca", "6:25:fc1d60ac"]
+  closed: false
+online self-signed: bad signature
+  result: Err ChainValidationFailed(InvalidSignature)
+  client data: none
+  user cache: none
+  sent: []
+  closed: false
+online self-signed: expired
+  result: Err ChainValidationFailed(PublicKeyBuild("OIDC token expired"))
+  client data: none
+  user cache: none
+  sent: []
+  closed: false
+online self-signed: plain token
+  result: Err ChainValidationFailed(InvalidSignature)
+  client data: none
+  user cache: none
+  sent: []
+  closed: false
+raw token: not UTF-8
+  result: Err InvalidTokenFormat(Error("raw_token is not valid UTF-8", line: 0, column: 0))
+  client data: none
+  user cache: none
+  sent: []
+  closed: false
+raw token: no dot
+  result: Err ChainValidationFailed(InvalidTokenFormat)
+  client data: none
+  user cache: none
+  sent: []
+  closed: false
+raw token: payload not base64
+  result: Err DecodeExtraError
+  client data: none
+  user cache: none
+  sent: []
+  closed: false
+raw token: payload lacks client fields
+  result: Err InvalidTokenFormat(Error("missing field `ClientRandomId`", line: 1, column: 2))
+  client data: none
+  user cache: none
+  sent: []
+  closed: false
+raw token: other language
+  result: ReadyToPlay id 058728db-7a88-3a63-af82-7174a02a2e35 name Steve_Smith props 0 actions false locale fr_FR view 8
+  client data: fr_FR 1.26.10
+  user cache: 058728db-7a88-3a63-af82-7174a02a2e35
+  sent: ["2:7:a79379ca", "6:25:fc1d60ac"]
+  closed: false
+uuid: legacy uuid
+  result: ReadyToPlay id 00000000-0000-0000-0000-0000000000ab name Steve_Smith props 0 actions false locale en_US view 8
+  client data: en_US 1.26.10
+  user cache: 00000000-0000-0000-0000-0000000000ab
+  sent: ["2:7:a79379ca", "6:25:fc1d60ac"]
+  closed: false
+uuid: invalid legacy uuid
+  result: Err InvalidUuid
+  client data: none
+  user cache: none
+  sent: []
+  closed: false
+uuid: anonymous
+  result: ReadyToPlay id 13cec93e-ba60-30df-9f67-b97138b8516d name Steve_Smith props 0 actions false locale en_US view 8
+  client data: en_US 1.26.10
+  user cache: 13cec93e-ba60-30df-9f67-b97138b8516d
+  sent: ["2:7:a79379ca", "6:25:fc1d60ac"]
+  closed: false
+key: token without cpk
+  result: Err ChainValidationFailed(PublicKeyBuild("OIDC payload missing cpk"))
+  client data: none
+  user cache: none
+  sent: []
+  closed: false
+key: token with bad cpk
+  result: Err ChainValidationFailed(Base64Decode(Invalid symbol 33, offset 0.))
+  client data: none
+  user cache: none
+  sent: []
+  closed: false
+name: prefix, spaces replaced
+  result: ReadyToPlay id 058728db-7a88-3a63-af82-7174a02a2e35 name BE_Steve_Smith props 0 actions false locale en_US view 8
+  client data: en_US 1.26.10
+  user cache: 058728db-7a88-3a63-af82-7174a02a2e35
+  sent: ["2:7:a79379ca", "6:25:fc1d60ac"]
+  closed: false
+name: prefix, spaces kept
+  result: ReadyToPlay id 058728db-7a88-3a63-af82-7174a02a2e35 name BE_Steve Smith props 0 actions false locale en_US view 8
+  client data: en_US 1.26.10
+  user cache: none
+  sent: ["2:7:a79379ca", "6:25:fc1d60ac"]
+  closed: false
+name: no spaces
+  result: ReadyToPlay id 058728db-7a88-3a63-af82-7174a02a2e35 name Alex props 0 actions false locale en_US view 8
+  client data: en_US 1.26.10
+  user cache: none
+  sent: ["2:7:a79379ca", "6:25:fc1d60ac"]
+  closed: false
+nethernet: same key
+  result: ReadyToPlay id 058728db-7a88-3a63-af82-7174a02a2e35 name Steve_Smith props 0 actions false locale en_US view 8
+  client data: en_US 1.26.10
+  user cache: 058728db-7a88-3a63-af82-7174a02a2e35
+  sent: ["2:7:a79379ca", "6:25:fc1d60ac"]
+  closed: false
+nethernet: other key
+  result: Err ChainValidationFailed(PublicKeyBuild("NetherNet and Bedrock login identities do not match"))
+  client data: none
+  user cache: none
+  sent: []
+  closed: false
+gate: server full
+  result: Stop
+  client data: none
+  user cache: 058728db-7a88-3a63-af82-7174a02a2e35
+  sent: ["5:77:1d03f113"]
+  closed: true
+gate: one slot left
+  result: ReadyToPlay id 058728db-7a88-3a63-af82-7174a02a2e35 name Steve_Smith props 0 actions false locale en_US view 8
+  client data: en_US 1.26.10
+  user cache: 058728db-7a88-3a63-af82-7174a02a2e35
+  sent: ["2:7:a79379ca", "6:25:fc1d60ac"]
+  closed: false
+gate: not whitelisted
+  result: Stop
+  client data: none
+  user cache: 058728db-7a88-3a63-af82-7174a02a2e35
+  sent: ["5:47:0162e411"]
+  closed: true
+gate: duplicate uuid
+  result: Stop
+  client data: none
+  user cache: 058728db-7a88-3a63-af82-7174a02a2e35
+  sent: ["5:36:ae0fb6b1"]
+  closed: true
+gate: duplicate name
+  result: Stop
+  client data: none
+  user cache: 058728db-7a88-3a63-af82-7174a02a2e35
+  sent: ["5:36:ae0fb6b1"]
+  closed: true
+packs: optional
+  result: ReadyToPlay id 058728db-7a88-3a63-af82-7174a02a2e35 name Steve_Smith props 0 actions false locale en_US view 8
+  client data: en_US 1.26.10
+  user cache: 058728db-7a88-3a63-af82-7174a02a2e35
+  sent: ["2:7:a79379ca", "6:180:cc8f953d"]
+  closed: false
+packs: forced
+  result: ReadyToPlay id 058728db-7a88-3a63-af82-7174a02a2e35 name Steve_Smith props 0 actions false locale en_US view 8
+  client data: en_US 1.26.10
+  user cache: 058728db-7a88-3a63-af82-7174a02a2e35
+  sent: ["2:7:a79379ca", "6:180:c5d79380"]
+  closed: false

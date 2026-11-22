@@ -105,5 +105,7 @@ async fn verify_oidc_token_path(
 
 #[allow(clippy::module_inception)]
 pub mod login;
+#[cfg(test)]
+mod login_golden;
 pub mod request_network_settings;
 pub mod resource_pack_response;

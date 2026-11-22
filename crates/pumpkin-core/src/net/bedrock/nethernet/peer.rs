@@ -301,6 +301,15 @@ fn remove_component_two_candidates(sdp: &str) -> String {
 /// so that a `BedrockClient` can exist in a test. Nothing is ever offered or sent on it.
 #[cfg(test)]
 pub async fn offline_session(address: SocketAddr) -> Result<Arc<NetherNetSession>, String> {
+    offline_session_with_key(address, None).await
+}
+
+/// [`offline_session`] whose client proved the given `NetherNet` identity key.
+#[cfg(test)]
+pub async fn offline_session_with_key(
+    address: SocketAddr,
+    client_public_key: Option<pumpkin_auth::p384::PublicKey>,
+) -> Result<Arc<NetherNetSession>, String> {
     let handler = Arc::new(NetherNetEventHandler {
         session: Mutex::new(None),
         address,
@@ -320,7 +329,10 @@ pub async fn offline_session(address: SocketAddr) -> Result<Arc<NetherNetSession
     );
     let (incoming, _) = tokio::sync::mpsc::channel(1);
     Ok(Arc::new(NetherNetSession::new(
-        peer, None, address, incoming,
+        peer,
+        client_public_key,
+        address,
+        incoming,
     )))
 }
 

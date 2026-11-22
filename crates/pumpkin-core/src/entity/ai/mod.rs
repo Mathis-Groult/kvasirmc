@@ -77,6 +77,16 @@ pub(crate) mod test_support {
         folder: &tempfile::TempDir,
         adjust: impl FnOnce(&mut BasicConfiguration),
     ) -> Result<Arc<Server>, Box<dyn std::error::Error>> {
+        server_with_configs(folder, adjust, |_| {}).await
+    }
+
+    /// [`server_with`] that also adjusts the advanced configuration (networking, resource
+    /// packs) before the server starts.
+    pub async fn server_with_configs(
+        folder: &tempfile::TempDir,
+        adjust: impl FnOnce(&mut BasicConfiguration),
+        adjust_advanced: impl FnOnce(&mut AdvancedConfiguration),
+    ) -> Result<Arc<Server>, Box<dyn std::error::Error>> {
         let mut basic = BasicConfiguration {
             default_level_name: folder.path().join("world").to_string_lossy().into_owned(),
             ..BasicConfiguration::default()
@@ -96,12 +106,14 @@ pub(crate) mod test_support {
             user_cache: std::sync::RwLock::default(),
             whitelist_config: std::sync::RwLock::default(),
         };
+        let mut advanced = AdvancedConfiguration {
+            world: test_level_config(),
+            ..AdvancedConfiguration::default()
+        };
+        adjust_advanced(&mut advanced);
         Ok(Server::new(
             basic,
-            AdvancedConfiguration {
-                world: test_level_config(),
-                ..AdvancedConfiguration::default()
-            },
+            advanced,
             telemetry,
             vanilla,
             Vec::new(),

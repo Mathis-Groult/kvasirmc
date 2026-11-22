@@ -29,6 +29,15 @@ impl BlockWrapper {
     }
 }
 
+/// The five neighbours a spring looks at: west, east, north, south and below.
+const ROCK_SIDES: [BlockDirection; 5] = [
+    BlockDirection::West,
+    BlockDirection::East,
+    BlockDirection::North,
+    BlockDirection::South,
+    BlockDirection::Down,
+];
+
 impl SpringFeatureFeature {
     pub fn generate<T: GenerationCache>(
         &self,
@@ -37,104 +46,53 @@ impl SpringFeatureFeature {
         _random: &mut RandomGenerator,
         pos: BlockPos,
     ) -> bool {
-        let valid_blocks = &self.valid_blocks;
-
-        if !valid_blocks.contains(
-            GenerationCache::get_block_state(chunk, &pos.up().0)
-                .to_block()
-                .name,
-        ) {
+        if !self.may_place(chunk, pos) {
             return false;
         }
-        if self.requires_block_below
-            && !valid_blocks.contains(
-                GenerationCache::get_block_state(
-                    chunk,
-                    &pos.offset(BlockDirection::Down.to_offset()).0,
-                )
-                .to_block()
-                .name,
-            )
-        {
-            return false;
-        }
-        let state = GenerationCache::get_block_state(chunk, &pos.0);
-        if !state.to_state().is_air() && !valid_blocks.contains(state.to_block().name) {
-            return false;
-        }
-
-        let mut valid = 0;
-        if valid_blocks.contains(
-            GenerationCache::get_block_state(
-                chunk,
-                &pos.offset(BlockDirection::West.to_offset()).0,
-            )
-            .to_block()
-            .name,
-        ) {
-            valid += 1;
-        }
-        if valid_blocks.contains(
-            GenerationCache::get_block_state(
-                chunk,
-                &pos.offset(BlockDirection::East.to_offset()).0,
-            )
-            .to_block()
-            .name,
-        ) {
-            valid += 1;
-        }
-        if valid_blocks.contains(
-            GenerationCache::get_block_state(
-                chunk,
-                &pos.offset(BlockDirection::North.to_offset()).0,
-            )
-            .to_block()
-            .name,
-        ) {
-            valid += 1;
-        }
-        if valid_blocks.contains(
-            GenerationCache::get_block_state(
-                chunk,
-                &pos.offset(BlockDirection::South.to_offset()).0,
-            )
-            .to_block()
-            .name,
-        ) {
-            valid += 1;
-        }
-        if valid_blocks.contains(
-            GenerationCache::get_block_state(
-                chunk,
-                &pos.offset(BlockDirection::Down.to_offset()).0,
-            )
-            .to_block()
-            .name,
-        ) {
-            valid += 1;
-        }
-        let mut air = 0;
-        if chunk.is_air(&pos.offset(BlockDirection::West.to_offset()).0) {
-            air += 1;
-        }
-        if chunk.is_air(&pos.offset(BlockDirection::East.to_offset()).0) {
-            air += 1;
-        }
-        if chunk.is_air(&pos.offset(BlockDirection::North.to_offset()).0) {
-            air += 1;
-        }
-        if chunk.is_air(&pos.offset(BlockDirection::South.to_offset()).0) {
-            air += 1;
-        }
-        if chunk.is_air(&pos.offset(BlockDirection::Down.to_offset()).0) {
-            air += 1;
-        }
+        let valid = self.count_valid_neighbours(chunk, pos);
+        let air = Self::count_air_neighbours(chunk, pos);
         if valid == self.rock_count && air == self.hole_count {
             chunk.set_block_state(&pos.0, self.state);
             return true;
         }
         false
+    }
+
+    fn is_valid_at<T: GenerationCache>(&self, chunk: &T, pos: &BlockPos) -> bool {
+        self.valid_blocks.contains(
+            GenerationCache::get_block_state(chunk, &pos.0)
+                .to_block()
+                .name,
+        )
+    }
+
+    /// The block above must be valid, the block below too when required, and the block itself
+    /// air or valid.
+    fn may_place<T: GenerationCache>(&self, chunk: &T, pos: BlockPos) -> bool {
+        if !self.is_valid_at(chunk, &pos.up()) {
+            return false;
+        }
+        if self.requires_block_below
+            && !self.is_valid_at(chunk, &pos.offset(BlockDirection::Down.to_offset()))
+        {
+            return false;
+        }
+        let state = GenerationCache::get_block_state(chunk, &pos.0);
+        state.to_state().is_air() || self.valid_blocks.contains(state.to_block().name)
+    }
+
+    fn count_valid_neighbours<T: GenerationCache>(&self, chunk: &T, pos: BlockPos) -> i32 {
+        ROCK_SIDES
+            .iter()
+            .filter(|side| self.is_valid_at(chunk, &pos.offset(side.to_offset())))
+            .count() as i32
+    }
+
+    fn count_air_neighbours<T: GenerationCache>(chunk: &T, pos: BlockPos) -> i32 {
+        ROCK_SIDES
+            .iter()
+            .filter(|side| chunk.is_air(&pos.offset(side.to_offset()).0))
+            .count() as i32
     }
 }
 

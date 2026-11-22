@@ -27,46 +27,74 @@ impl DarkOakTrunkPlacer {
         below_trunk_provider: &BlockStateProvider,
         trunk_block: &BlockState,
     ) -> (Vec<TreeNode>, Vec<BlockPos>) {
-        let below = start_pos.down();
-        let mut trunk_poses = Vec::new();
-        if TrunkPlacer::set_dirt(block_registry, chunk, random, &below, below_trunk_provider) {
-            trunk_poses.push(below);
-        }
-        if TrunkPlacer::set_dirt(
+        let mut trunk_poses = Self::place_ground(
             block_registry,
             chunk,
             random,
-            &below.east(),
+            start_pos.down(),
             below_trunk_provider,
-        ) {
-            trunk_poses.push(below.east());
-        }
-        if TrunkPlacer::set_dirt(
-            block_registry,
+        );
+        let (tx, tz) = Self::place_leaning_trunk(
             chunk,
             random,
-            &below.south(),
-            below_trunk_provider,
-        ) {
-            trunk_poses.push(below.south());
-        }
-        if TrunkPlacer::set_dirt(
-            block_registry,
-            chunk,
-            random,
-            &below.south().east(),
-            below_trunk_provider,
-        ) {
-            trunk_poses.push(below.south().east());
-        }
+            height,
+            start_pos,
+            trunk_block,
+            &mut trunk_poses,
+        );
 
+        let ey = start_pos.0.y + height as i32 - 1;
+        let mut nodes = vec![TreeNode {
+            center: BlockPos::new(tx, ey, tz),
+            foliage_radius: 0,
+            giant_trunk: true,
+        }];
+        Self::place_branches(
+            chunk,
+            random,
+            start_pos,
+            ey,
+            trunk_block,
+            &mut trunk_poses,
+            &mut nodes,
+        );
+
+        (nodes, trunk_poses)
+    }
+
+    /// Sets the ground below the four trunk columns; the columns it accepted.
+    fn place_ground<T: GenerationCache>(
+        block_registry: &dyn WorldPortalExt,
+        chunk: &mut T,
+        random: &mut RandomGenerator,
+        below: BlockPos,
+        below_trunk_provider: &BlockStateProvider,
+    ) -> Vec<BlockPos> {
+        let mut placed = Vec::new();
+        for pos in [below, below.east(), below.south(), below.south().east()] {
+            if TrunkPlacer::set_dirt(block_registry, chunk, random, &pos, below_trunk_provider) {
+                placed.push(pos);
+            }
+        }
+        placed
+    }
+
+    /// Places the 2x2 trunk layer by layer, leaning one step per layer from the lean height up;
+    /// the x and z of the last layer.
+    fn place_leaning_trunk<T: GenerationCache>(
+        chunk: &mut T,
+        random: &mut RandomGenerator,
+        height: u32,
+        start_pos: BlockPos,
+        trunk_block: &BlockState,
+        trunk_poses: &mut Vec<BlockPos>,
+    ) -> (i32, i32) {
         let lean_direction = BlockDirection::random_horizontal(random);
         let lean_height = height as i32 - random.next_bounded_i32(4);
         let mut lean_steps = 2 - random.next_bounded_i32(3);
 
         let mut tx = start_pos.0.x;
         let mut tz = start_pos.0.z;
-        let ey = start_pos.0.y + height as i32 - 1;
         for dy in 0..height as i32 {
             if dy >= lean_height && lean_steps > 0 {
                 let offset = lean_direction.to_offset();
@@ -75,34 +103,31 @@ impl DarkOakTrunkPlacer {
                 lean_steps -= 1;
             }
 
-            let yy = start_pos.0.y + dy;
-            let pos = BlockPos::new(tx, yy, tz);
-
-            // Check if air or leaves at the main 2x2 position
+            let pos = BlockPos::new(tx, start_pos.0.y + dy, tz);
+            // The layer is only placed when its main position is air or leaves.
             let state = GenerationCache::get_block_state(chunk, &pos.0);
             if TreeFeature::is_air_or_leaves(state.to_state(), state.to_block_id()) {
-                if TrunkPlacer::try_place(chunk, &pos, trunk_block) {
-                    trunk_poses.push(pos);
-                }
-                if TrunkPlacer::try_place(chunk, &pos.east(), trunk_block) {
-                    trunk_poses.push(pos.east());
-                }
-                if TrunkPlacer::try_place(chunk, &pos.south(), trunk_block) {
-                    trunk_poses.push(pos.south());
-                }
-                if TrunkPlacer::try_place(chunk, &pos.east().south(), trunk_block) {
-                    trunk_poses.push(pos.east().south());
+                for column in [pos, pos.east(), pos.south(), pos.east().south()] {
+                    if TrunkPlacer::try_place(chunk, &column, trunk_block) {
+                        trunk_poses.push(column);
+                    }
                 }
             }
         }
+        (tx, tz)
+    }
 
-        let mut nodes = Vec::new();
-        nodes.push(TreeNode {
-            center: BlockPos::new(tx, ey, tz),
-            foliage_radius: 0,
-            giant_trunk: true,
-        });
-
+    /// The branches around the trunk: each of the twelve outer cells draws one, a column hanging
+    /// down from the top of the trunk with a foliage node at its top.
+    fn place_branches<T: GenerationCache>(
+        chunk: &mut T,
+        random: &mut RandomGenerator,
+        start_pos: BlockPos,
+        ey: i32,
+        trunk_block: &BlockState,
+        trunk_poses: &mut Vec<BlockPos>,
+        nodes: &mut Vec<TreeNode>,
+    ) {
         for ox in -1..=2 {
             for oz in -1..=2 {
                 if (!(0..=1).contains(&ox) || !(0..=1).contains(&oz))
@@ -129,8 +154,6 @@ impl DarkOakTrunkPlacer {
                 }
             }
         }
-
-        (nodes, trunk_poses)
     }
 }
 

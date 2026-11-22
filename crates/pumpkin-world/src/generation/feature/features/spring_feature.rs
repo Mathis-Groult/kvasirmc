@@ -137,3 +137,7 @@ impl SpringFeatureFeature {
         false
     }
 }
+
+#[cfg(test)]
+#[path = "spring_feature_golden.rs"]
+mod golden;

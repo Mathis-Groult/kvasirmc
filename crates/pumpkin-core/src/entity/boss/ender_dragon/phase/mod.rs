@@ -5,6 +5,8 @@ use std::sync::Arc;
 mod charging;
 mod circling;
 mod dying;
+#[cfg(test)]
+mod dying_tick_golden;
 mod fly_to_portal;
 mod hovering;
 mod landing;

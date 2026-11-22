@@ -535,122 +535,154 @@ impl Raid {
         health
     }
 
-    #[allow(clippy::too_many_lines)]
     pub fn tick(&mut self, world: &Arc<World>) {
-        if self.is_stopped() {
+        match self.status {
+            RaidStatus::Ongoing => self.tick_ongoing(world),
+            RaidStatus::Victory | RaidStatus::Loss => self.tick_celebration(world),
+            RaidStatus::Stopped => {}
+        }
+    }
+
+    /// Vanilla `Raid.tick` while the raid runs: stop conditions, the countdown before a wave,
+    /// the bossbar refresh every second, wave spawning and the victory check.
+    fn tick_ongoing(&mut self, world: &Arc<World>) {
+        if world.level_info.load().difficulty == Difficulty::Peaceful {
+            self.stop(world);
             return;
         }
 
-        if self.status == RaidStatus::Ongoing {
-            if world.level_info.load().difficulty == Difficulty::Peaceful {
-                self.stop(world);
-                return;
+        self.ticks_active += 1;
+        if self.ticks_active >= 48000 {
+            self.stop(world);
+            return;
+        }
+
+        self.tick_wave_cooldown(world);
+
+        if self.ticks_active.is_multiple_of(20) {
+            self.refresh_bossbar(world);
+        }
+
+        self.spawn_due_groups(world);
+        self.tick_victory(world);
+    }
+
+    /// The countdown to the next wave: it restarts after a wave, looks for the spawn position
+    /// and keeps the bossbar progress and the nearby players up to date.
+    fn tick_wave_cooldown(&mut self, world: &World) {
+        if self.get_total_raiders_alive() != 0 || !self.has_more_waves() {
+            return;
+        }
+
+        if self.raid_cooldown_ticks <= 0 {
+            if self.groups_spawned > 0 {
+                self.raid_cooldown_ticks = 300;
+                self.bossbar.title = TextComponent::translate("event.minecraft.raid", []);
             }
+            return;
+        }
 
-            self.ticks_active += 1;
-            if self.ticks_active >= 48000 {
-                self.stop(world);
-                return;
+        if self.wave_spawn_pos.is_none() && self.raid_cooldown_ticks % 5 == 0 {
+            self.wave_spawn_pos = self.find_random_spawn_pos(8);
+        }
+
+        if self.raid_cooldown_ticks % 20 == 0 {
+            self.update_players(world);
+        }
+
+        self.raid_cooldown_ticks -= 1;
+        self.bossbar.health = ((300 - self.raid_cooldown_ticks) as f32 / 300.0).clamp(0.0, 1.0);
+    }
+
+    /// Once a second: who is in range, which raiders are left, the title and the progress.
+    fn refresh_bossbar(&mut self, world: &World) {
+        self.update_players(world);
+        self.update_living_raiders(world);
+        let alive = self.get_total_raiders_alive();
+        if alive > 0 && alive <= 2 {
+            self.bossbar.title = TextComponent::translate(
+                "event.minecraft.raid.raiders_remaining",
+                [TextComponent::text(alive.to_string())],
+            );
+        } else {
+            self.bossbar.title = TextComponent::translate("event.minecraft.raid", []);
+        }
+        self.update_bossbar(world);
+    }
+
+    fn spawn_due_groups(&mut self, world: &Arc<World>) {
+        while self.should_spawn_group() {
+            let spawn_pos = self
+                .wave_spawn_pos
+                .or_else(|| self.find_random_spawn_pos(20))
+                .unwrap_or(self.center);
+
+            self.started = true;
+            self.spawn_group(world, spawn_pos);
+            self.play_sound(world, spawn_pos);
+        }
+    }
+
+    /// After the last wave is dead the raid waits 40 ticks, then ends in victory.
+    fn tick_victory(&mut self, world: &World) {
+        if !self.is_started() || self.has_more_waves() || self.get_total_raiders_alive() != 0 {
+            return;
+        }
+
+        if self.post_raid_ticks < 40 {
+            self.post_raid_ticks += 1;
+            return;
+        }
+
+        self.status = RaidStatus::Victory;
+        self.reward_heroes(world);
+    }
+
+    /// Hero of the Village, the raid-win statistic and the advancement for every hero online.
+    fn reward_heroes(&self, world: &World) {
+        let effect = Effect {
+            effect_type: &StatusEffect::HERO_OF_THE_VILLAGE,
+            duration: 48000,
+            amplifier: (self.raid_omen_level - 1).max(0) as u8,
+            ambient: false,
+            show_particles: false,
+            show_icon: true,
+            blend: true,
+        };
+        let players = world.players.load();
+        for player in players.iter() {
+            if self.heroes_of_the_village.contains(&player.gameprofile.id) {
+                player.add_effect(effect.clone());
+                player.increment_stat(
+                    pumpkin_data::statistic::StatisticCategory::Custom,
+                    pumpkin_data::statistic::CustomStatistic::RaidWin as i32,
+                    1,
+                );
+                player.trigger_advancement(
+                    crate::entity::player::advancement::trigger::AdvancementTrigger::HeroOfTheVillage,
+                );
             }
+        }
+    }
 
-            let raiders_alive = self.get_total_raiders_alive();
-            if raiders_alive == 0 && self.has_more_waves() {
-                if self.raid_cooldown_ticks <= 0 {
-                    if self.groups_spawned > 0 {
-                        self.raid_cooldown_ticks = 300;
-                        self.bossbar.title = TextComponent::translate("event.minecraft.raid", []);
-                    }
-                } else {
-                    if self.wave_spawn_pos.is_none() && self.raid_cooldown_ticks % 5 == 0 {
-                        self.wave_spawn_pos = self.find_random_spawn_pos(8);
-                    }
+    /// After the raid ended the bossbar shows the result for 600 ticks, then the raid stops.
+    fn tick_celebration(&mut self, world: &World) {
+        self.celebration_ticks += 1;
+        if self.celebration_ticks >= 600 {
+            self.stop(world);
+            return;
+        }
 
-                    if self.raid_cooldown_ticks == 300 || self.raid_cooldown_ticks % 20 == 0 {
-                        self.update_players(world);
-                    }
-
-                    self.raid_cooldown_ticks -= 1;
-                    self.bossbar.health =
-                        ((300 - self.raid_cooldown_ticks) as f32 / 300.0).clamp(0.0, 1.0);
-                }
+        if self.celebration_ticks.is_multiple_of(20) {
+            self.update_players(world);
+            if self.is_victory() {
+                self.bossbar.title =
+                    TextComponent::translate("event.minecraft.raid.victory.full", []);
+            } else {
+                self.bossbar.title =
+                    TextComponent::translate("event.minecraft.raid.defeat.full", []);
             }
-
-            if self.ticks_active.is_multiple_of(20) {
-                self.update_players(world);
-                self.update_living_raiders(world);
-                let alive = self.get_total_raiders_alive();
-                if alive > 0 && alive <= 2 {
-                    self.bossbar.title = TextComponent::translate(
-                        "event.minecraft.raid.raiders_remaining",
-                        [TextComponent::text(alive.to_string())],
-                    );
-                } else {
-                    self.bossbar.title = TextComponent::translate("event.minecraft.raid", []);
-                }
-                self.update_bossbar(world);
-            }
-
-            while self.should_spawn_group() {
-                let spawn_pos = self
-                    .wave_spawn_pos
-                    .or_else(|| self.find_random_spawn_pos(20))
-                    .unwrap_or(self.center);
-
-                self.started = true;
-                self.spawn_group(world, spawn_pos);
-                self.play_sound(world, spawn_pos);
-            }
-
-            let raiders_alive = self.get_total_raiders_alive();
-            if self.is_started() && !self.has_more_waves() && raiders_alive == 0 {
-                if self.post_raid_ticks < 40 {
-                    self.post_raid_ticks += 1;
-                } else {
-                    self.status = RaidStatus::Victory;
-                    let effect = Effect {
-                        effect_type: &StatusEffect::HERO_OF_THE_VILLAGE,
-                        duration: 48000,
-                        amplifier: (self.raid_omen_level - 1).max(0) as u8,
-                        ambient: false,
-                        show_particles: false,
-                        show_icon: true,
-                        blend: true,
-                    };
-                    let players = world.players.load();
-                    for player in players.iter() {
-                        if self.heroes_of_the_village.contains(&player.gameprofile.id) {
-                            player.add_effect(effect.clone());
-                            player.increment_stat(
-                                pumpkin_data::statistic::StatisticCategory::Custom,
-                                pumpkin_data::statistic::CustomStatistic::RaidWin as i32,
-                                1,
-                            );
-                            player.trigger_advancement(
-                                crate::entity::player::advancement::trigger::AdvancementTrigger::HeroOfTheVillage,
-                            );
-                        }
-                    }
-                }
-            }
-        } else if self.is_over() {
-            self.celebration_ticks += 1;
-            if self.celebration_ticks >= 600 {
-                self.stop(world);
-                return;
-            }
-
-            if self.celebration_ticks.is_multiple_of(20) {
-                self.update_players(world);
-                if self.is_victory() {
-                    self.bossbar.health = 0.0;
-                    self.bossbar.title =
-                        TextComponent::translate("event.minecraft.raid.victory.full", []);
-                } else {
-                    self.bossbar.title =
-                        TextComponent::translate("event.minecraft.raid.defeat.full", []);
-                }
-                self.update_bossbar(world);
-            }
+            self.update_bossbar(world);
         }
     }
 }

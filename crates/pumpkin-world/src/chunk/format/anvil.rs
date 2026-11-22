@@ -12,10 +12,12 @@ use std::{
 };
 use tracing::warn;
 
+mod flush;
+
 use crate::chunk::{
     ChunkParsingError, ChunkReadingError, ChunkSerializingError, ChunkWritingError,
     CompressionError,
-    io::{Dirtiable, RegionFile, read_exact_at, write_all_at, write_file_atomically},
+    io::{Dirtiable, RegionFile, read_exact_at},
 };
 
 /// The side size of a region in chunks (one region is 32x32 chunks)
@@ -437,112 +439,19 @@ impl AnvilRegion {
         sync_file: impl Fn(&File) -> std::io::Result<()>,
     ) -> std::io::Result<()> {
         if self.staged.is_empty() {
-            if sync
-                && self.unsynced
-                && let Some(file) = &self.file
-            {
-                sync_file(file)?;
-                self.unsynced = false;
-            }
-            return Ok(());
+            return self.sync_unsynced(sync, sync_file);
         }
-
-        // Plan on copies so a failed write leaves the region as it was, staged chunks included.
-        let mut used_sectors = self.used_sectors.clone();
-        let mut free_runs = self.used_sectors.free_runs();
-        let mut locations = self.locations.clone();
-        let mut timestamps = self.timestamps.clone();
-        let mut freed = Vec::new();
-        let mut stale_external = self.pending_external_deletes.clone();
-        let mut writes = Vec::with_capacity(self.staged.len());
-        let now = epoch_seconds();
-
-        let mut staged: Vec<_> = self.staged.iter().collect();
-        staged.sort_unstable_by_key(|(index, _)| **index);
-        for (&index, chunk) in staged {
-            let (record, count) = if chunk.sector_count() >= EXTERNAL_CHUNK_THRESHOLD {
-                let path = self.external_path(index);
-                write_file_atomically(&path, &chunk.compressed_data, sync)?;
-                stale_external.retain(|pending| pending != &path);
-                let mut stub = Vec::with_capacity(SECTOR_BYTES);
-                stub.put_u32(1);
-                stub.put_u8(
-                    chunk
-                        .compression
-                        .map_or(Compression::NO_COMPRESSION_ID, |c| c as u8)
-                        | EXTERNAL_STREAM_FLAG,
-                );
-                stub.resize(SECTOR_BYTES, 0);
-                (stub, 1)
-            } else {
-                if self.is_external_stub(locations[index])? {
-                    stale_external.push(self.external_path(index));
-                }
-                (chunk.to_record(), chunk.sector_count())
-            };
-
-            let offset = free_runs.allocate(count);
-            used_sectors.set(offset, count, true);
-            if locations[index] != 0 {
-                freed.push(locations[index]);
-            }
-            locations[index] = (offset << 8) | count;
-            timestamps[index] = now;
-            writes.push((offset, record));
-        }
-
-        writes.sort_unstable_by_key(|(offset, _)| *offset);
-        let file = self.file()?;
-        let mut file_end = 0;
-        let mut run_start = 0;
-        let mut run: Vec<u8> = Vec::new();
-        for (offset, record) in writes {
-            let position = u64::from(offset) * SECTOR_BYTES as u64;
-            // Neighbouring records go out in one write.
-            if !run.is_empty() && run_start + run.len() as u64 != position {
-                write_all_at(file, &run, run_start)?;
-                run.clear();
-            }
-            if run.is_empty() {
-                run_start = position;
-            }
-            run.extend_from_slice(&record);
-            file_end = position + record.len() as u64;
-        }
-        if !run.is_empty() {
-            write_all_at(file, &run, run_start)?;
-        }
-
-        let old_locations = std::mem::replace(&mut self.locations, locations);
-        let old_timestamps = std::mem::replace(&mut self.timestamps, timestamps);
-        let header = self.header_bytes();
-        let file = self.file()?;
-        if let Err(err) = write_all_at(file, &header, 0) {
-            self.locations = old_locations;
-            self.timestamps = old_timestamps;
-            return Err(err);
-        }
-        for location in freed {
-            used_sectors.set(sector_offset(location), sector_count(location), false);
-        }
-        self.file_len = self.file_len.max(file_end).max(HEADER_BYTES as u64);
-        self.used_sectors = used_sectors;
-        self.pending_external_deletes = stale_external;
-        self.unsynced = true;
-        if sync && let Some(file) = &self.file {
-            sync_file(file)?;
-            self.unsynced = false;
-        }
-        for path in self.pending_external_deletes.drain(..) {
-            if let Err(err) = std::fs::remove_file(&path)
-                && err.kind() != std::io::ErrorKind::NotFound
-            {
-                warn!("Failed to remove {}: {err}", path.display());
-            }
-        }
-        self.truncate_unused_tail();
-        self.staged.clear();
-        Ok(())
+        let plan = self.plan_flush(sync)?;
+        let file_end = self.write_records(plan.writes)?;
+        self.write_header(plan.locations, plan.timestamps)?;
+        self.commit_flush(
+            plan.used_sectors,
+            plan.freed,
+            plan.stale_external,
+            file_end,
+            sync,
+            sync_file,
+        )
     }
 
     pub(super) fn external_path(&self, index: usize) -> PathBuf {

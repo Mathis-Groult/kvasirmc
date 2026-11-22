@@ -9,12 +9,15 @@
 //! are zeroed (they are the clock and are asserted to lie in the flush's time window instead).
 
 use std::cell::Cell;
-use std::fmt::Write;
+use std::fmt::{Debug, Write};
 use std::path::{Path, PathBuf};
+use std::sync::{Arc, Mutex};
 
 use bytes::Bytes;
 use pumpkin_util::math::vector2::Vector2;
 use tempfile::TempDir;
+use tracing::field::{Field, Visit};
+use tracing::{Event, Level, Metadata, Subscriber, span};
 
 use super::anvil::{
     AnvilChunkData, AnvilRegion, CHUNK_COUNT, Compression, HEADER_BYTES, SECTOR_BYTES,
@@ -55,11 +58,55 @@ fn external_chunk(seed: u64, compression: Option<Compression>) -> AnvilChunkData
     chunk_of(seed, 256, compression)
 }
 
+/// Collects the warnings a flush logs, as `message` text.
+#[derive(Clone, Default)]
+struct Warnings(Arc<Mutex<Vec<String>>>);
+
+struct Message(String);
+
+impl Visit for Message {
+    fn record_debug(&mut self, field: &Field, value: &dyn Debug) {
+        if field.name() == "message" {
+            let _ = write!(self.0, "{value:?}");
+        }
+    }
+}
+
+impl Subscriber for Warnings {
+    fn enabled(&self, _: &Metadata<'_>) -> bool {
+        true
+    }
+
+    fn new_span(&self, _: &span::Attributes<'_>) -> span::Id {
+        span::Id::from_u64(1)
+    }
+
+    fn record(&self, _: &span::Id, _: &span::Record<'_>) {}
+
+    fn record_follows_from(&self, _: &span::Id, _: &span::Id) {}
+
+    fn event(&self, event: &Event<'_>) {
+        if *event.metadata().level() != Level::WARN {
+            return;
+        }
+        let mut message = Message(String::new());
+        event.record(&mut message);
+        if let Ok(mut all) = self.0.lock() {
+            all.push(message.0);
+        }
+    }
+
+    fn enter(&self, _: &span::Id) {}
+
+    fn exit(&self, _: &span::Id) {}
+}
+
 struct Scene {
     dir: TempDir,
     region: AnvilRegion,
     out: String,
     syncs: Cell<u32>,
+    warnings: Warnings,
 }
 
 impl Scene {
@@ -73,6 +120,7 @@ impl Scene {
             region,
             out: format!("== {name}\n"),
             syncs: Cell::new(0),
+            warnings: Warnings::default(),
         }
     }
 
@@ -94,13 +142,16 @@ impl Scene {
         self.syncs.set(0);
         let before = epoch_seconds();
         let syncs = &self.syncs;
-        let result = self.region.flush_with_sync(sync, |_| {
-            syncs.set(syncs.get() + 1);
-            if fail_sync {
-                Err(std::io::Error::other("sync failed"))
-            } else {
-                Ok(())
-            }
+        let region = &mut self.region;
+        let result = tracing::subscriber::with_default(self.warnings.clone(), || {
+            region.flush_with_sync(sync, |_| {
+                syncs.set(syncs.get() + 1);
+                if fail_sync {
+                    Err(std::io::Error::other("sync failed"))
+                } else {
+                    Ok(())
+                }
+            })
         });
         let after = epoch_seconds();
         let _ = writeln!(
@@ -112,6 +163,21 @@ impl Scene {
             }
         );
         self.report(before, after);
+        self.report_warnings();
+    }
+
+    /// The warnings of the last flush, with the temp dir's name taken out.
+    fn report_warnings(&mut self) {
+        let taken: Vec<String> = self
+            .warnings
+            .0
+            .lock()
+            .map(|mut all| std::mem::take(&mut *all))
+            .unwrap_or_default();
+        let dir = self.dir.path().display().to_string();
+        for message in taken {
+            let _ = writeln!(self.out, "warn={}", message.replace(&dir, "<dir>"));
+        }
     }
 
     fn report(&mut self, before: u32, after: u32) {

@@ -224,6 +224,7 @@ pending=[]
 locations=7:4+1@T 8:5+1@T
 files=c.8.0.mcc:dir r.0.0.mca:24576
 disk=len=24576 hash=b927641645f6f183 records 7=[4085 0x03] 8=[4085 0x03]
+warn=Failed to remove <dir>/c.8.0.mcc: Is a directory (os error 21)
 == sync fails: the flush can be retried
 -- first: sync=false fail_sync=false -> ok
 syncs=0 staged=[] unsynced=true file_len=12288 used=0-2 end=3

@@ -50,6 +50,7 @@ use crate::world::villager_poi::profession_for_block;
 
 pub mod data;
 mod tick;
+mod trades;
 pub use data::{
     BREEDING_FOOD_THRESHOLD, GossipType, VillagerData, VillagerProfession, VillagerType,
     get_food_points,
@@ -631,116 +632,8 @@ impl VillagerEntity {
         Some(stack)
     }
 
-    #[allow(clippy::too_many_lines)]
     pub fn add_trades(&self, profession: VillagerProfession, level: i32) {
-        use crate::data::datapack::trade_loader::{DynamicTradeModifier, DynamicVillagerTradeSet};
-        use pumpkin_protocol::codec::item_stack_seralizer::ItemStackSerializer;
-        use rand::seq::IndexedRandom;
-        use rand::{RngExt, SeedableRng, rngs::StdRng};
-        use std::borrow::Cow;
-
-        let villager_type = self
-            .villager_data
-            .lock()
-            .unwrap_or_else(std::sync::PoisonError::into_inner)
-            .type_enum();
-        let mut new_offers = Vec::new();
-
-        let trade_set = self
-            .get_entity()
-            .world
-            .load()
-            .server
-            .upgrade()
-            .and_then(|server| {
-                server
-                    .datapack_manager
-                    .get_villager_trade_set(profession.to_name(), level)
-            })
-            .or_else(|| {
-                profession
-                    .trade_set(level)
-                    .map(DynamicVillagerTradeSet::from)
-            });
-
-        if let Some(trade_set) = trade_set {
-            let mut rng = StdRng::from_rng(&mut rand::rng());
-            let mut remaining_trades = trade_set.trades.clone();
-            let mut added = 0;
-            while added < trade_set.amount && !remaining_trades.is_empty() {
-                let index = rng.random_range(0..remaining_trades.len());
-                let trade = remaining_trades.remove(index);
-                if !trade.allowed_types.is_empty() && !trade.allowed_types.contains(&villager_type)
-                {
-                    continue;
-                }
-                let mut base_cost_a = ItemStack::new(trade.wants.count as u8, trade.wants.item);
-                let mut output = ItemStack::new(trade.gives.count as u8, trade.gives.item);
-                let mut cost_b = trade
-                    .wants_b
-                    .as_ref()
-                    .map(|b| ItemStack::new(b.count as u8, b.item));
-
-                match &trade.modifier {
-                    DynamicTradeModifier::None => {}
-                    DynamicTradeModifier::EnchantRandomly => {
-                        let Some(items) = enchanted_book_offer_items(&mut rng) else {
-                            continue;
-                        };
-                        (base_cost_a, output, cost_b) = items;
-                    }
-                    DynamicTradeModifier::EnchantWithLevels { min, max } => {
-                        let Some((enchanted, additional_cost)) =
-                            enchant_trade_item(&mut rng, trade.gives.item, *min, *max)
-                        else {
-                            continue;
-                        };
-                        output = enchanted;
-                        let count = i32::from(base_cost_a.item_count)
-                            .saturating_add(additional_cost)
-                            .clamp(0, i32::from(base_cost_a.get_max_stack_size()));
-                        if count == 0 {
-                            continue;
-                        }
-                        base_cost_a.set_count(count as u8);
-                    }
-                    DynamicTradeModifier::ExplorationMap { destination } => {
-                        let Some(map) = self.create_explorer_map(destination, &output) else {
-                            continue;
-                        };
-                        output = map;
-                    }
-                    DynamicTradeModifier::RandomDyes => apply_random_dye(&mut rng, &mut output),
-                    DynamicTradeModifier::RandomPotion => {
-                        let Some(potion_name) = pumpkin_data::tag::Potion::MINECRAFT_TRADEABLE
-                            .0
-                            .choose(&mut rng)
-                        else {
-                            continue;
-                        };
-                        apply_potion(&mut output, potion_name);
-                    }
-                    DynamicTradeModifier::SuspiciousStew => {
-                        apply_random_stew_effect(&mut rng, &mut output);
-                    }
-                    DynamicTradeModifier::Potion(potion) => apply_potion(&mut output, potion),
-                }
-                new_offers.push(pumpkin_protocol::java::client::play::MerchantOffer {
-                    base_cost_a: ItemStackSerializer(Cow::Owned(base_cost_a)),
-                    output: ItemStackSerializer(Cow::Owned(output)),
-                    cost_b: cost_b.map(|stack| ItemStackSerializer(Cow::Owned(stack))),
-                    reward_exp: true,
-                    uses: 0,
-                    max_uses: trade.max_uses,
-                    xp: trade.xp,
-                    special_price: 0,
-                    price_multiplier: trade.price_multiplier,
-                    demand: 0,
-                });
-                added += 1;
-            }
-        }
-
+        let new_offers = self.roll_trade_offers(profession, level);
         self.offers
             .lock()
             .unwrap_or_else(std::sync::PoisonError::into_inner)

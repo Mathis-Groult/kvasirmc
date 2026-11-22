@@ -47,6 +47,8 @@ pub mod turtle;
 pub mod villager;
 #[cfg(test)]
 mod villager_tick_golden;
+#[cfg(test)]
+mod villager_trades_golden;
 pub mod wandering_trader;
 pub mod water_animal;
 pub mod wolf;

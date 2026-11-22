@@ -1,0 +1,536 @@
+== shipped trade sets ==
+None level 0 [Desert, Jungle, Plains, Savanna, Snow, Swamp, Taiga]: offers per call {0}
+None level 1 [Desert, Jungle, Plains, Savanna, Snow, Swamp, Taiga]: offers per call {0}
+None level 2 [Desert, Jungle, Plains, Savanna, Snow, Swamp, Taiga]: offers per call {0}
+None level 3 [Desert, Jungle, Plains, Savanna, Snow, Swamp, Taiga]: offers per call {0}
+None level 4 [Desert, Jungle, Plains, Savanna, Snow, Swamp, Taiga]: offers per call {0}
+None level 5 [Desert, Jungle, Plains, Savanna, Snow, Swamp, Taiga]: offers per call {0}
+None level 6 [Desert, Jungle, Plains, Savanna, Snow, Swamp, Taiga]: offers per call {0}
+Armorer level 0 [Desert, Jungle, Plains, Savanna, Snow, Swamp, Taiga]: offers per call {0}
+Armorer level 1 [Desert, Jungle, Plains, Savanna, Snow, Swamp, Taiga]: offers per call {2}
+    coalx? + - -> emeraldx1 | uses 0 max 16 xp 2 special 0 multiplier 0.05 demand 0 reward true
+    emeraldx? + - -> iron_bootsx1 | uses 0 max 12 xp 2 special 0 multiplier 0.2 demand 0 reward true
+    emeraldx? + - -> iron_chestplatex1 | uses 0 max 12 xp 2 special 0 multiplier 0.2 demand 0 reward true
+    emeraldx? + - -> iron_helmetx1 | uses 0 max 12 xp 2 special 0 multiplier 0.2 demand 0 reward true
+    emeraldx? + - -> iron_leggingsx1 | uses 0 max 12 xp 2 special 0 multiplier 0.2 demand 0 reward true
+Armorer level 2 [Desert, Jungle, Plains, Savanna, Snow, Swamp, Taiga]: offers per call {2}
+    emeraldx? + - -> bellx1 | uses 0 max 12 xp 5 special 0 multiplier 0.2 demand 0 reward true
+    emeraldx? + - -> chainmail_bootsx1 | uses 0 max 12 xp 5 special 0 multiplier 0.2 demand 0 reward true
+    emeraldx? + - -> chainmail_leggingsx1 | uses 0 max 12 xp 5 special 0 multiplier 0.2 demand 0 reward true
+    iron_ingotx? + - -> emeraldx1 | uses 0 max 12 xp 10 special 0 multiplier 0.05 demand 0 reward true
+Armorer level 3 [Desert, Jungle, Plains, Savanna, Snow, Swamp, Taiga]: offers per call {2}
+    diamondx? + - -> emeraldx1 | uses 0 max 12 xp 20 special 0 multiplier 0.05 demand 0 reward true
+    emeraldx? + - -> chainmail_chestplatex1 | uses 0 max 12 xp 10 special 0 multiplier 0.2 demand 0 reward true
+    emeraldx? + - -> chainmail_helmetx1 | uses 0 max 12 xp 10 special 0 multiplier 0.2 demand 0 reward true
+    emeraldx? + - -> shieldx1 | uses 0 max 12 xp 10 special 0 multiplier 0.2 demand 0 reward true
+    lava_bucketx? + - -> emeraldx1 | uses 0 max 12 xp 20 special 0 multiplier 0.05 demand 0 reward true
+Armorer level 4 [Desert, Jungle, Plains, Savanna, Snow, Swamp, Taiga]: offers per call {2}
+    emeraldx? + - -> diamond_bootsx1 [enchanted] | uses 0 max 3 xp 15 special 0 multiplier 0.2 demand 0 reward true
+    emeraldx? + - -> diamond_leggingsx1 [enchanted] | uses 0 max 3 xp 15 special 0 multiplier 0.2 demand 0 reward true
+Armorer level 5 [Desert, Jungle, Plains, Savanna, Snow, Swamp, Taiga]: offers per call {2}
+    emeraldx? + - -> diamond_chestplatex1 [enchanted] | uses 0 max 3 xp 30 special 0 multiplier 0.2 demand 0 reward true
+    emeraldx? + - -> diamond_helmetx1 [enchanted] | uses 0 max 3 xp 30 special 0 multiplier 0.2 demand 0 reward true
+Armorer level 6 [Desert, Jungle, Plains, Savanna, Snow, Swamp, Taiga]: offers per call {0}
+Butcher level 0 [Desert, Jungle, Plains, Savanna, Snow, Swamp, Taiga]: offers per call {0}
+Butcher level 1 [Desert, Jungle, Plains, Savanna, Snow, Swamp, Taiga]: offers per call {2}
+    chickenx? + - -> emeraldx1 | uses 0 max 16 xp 2 special 0 multiplier 0.05 demand 0 reward true
+    emeraldx? + - -> rabbit_stewx1 | uses 0 max 12 xp 2 special 0 multiplier 0.05 demand 0 reward true
+    porkchopx? + - -> emeraldx1 | uses 0 max 16 xp 2 special 0 multiplier 0.05 demand 0 reward true
+    rabbitx? + - -> emeraldx1 | uses 0 max 16 xp 2 special 0 multiplier 0.05 demand 0 reward true
+Butcher level 2 [Desert, Jungle, Plains, Savanna, Snow, Swamp, Taiga]: offers per call {2}
+    coalx? + - -> emeraldx1 | uses 0 max 16 xp 2 special 0 multiplier 0.05 demand 0 reward true
+    emeraldx? + - -> cooked_chickenx8 | uses 0 max 16 xp 5 special 0 multiplier 0.05 demand 0 reward true
+    emeraldx? + - -> cooked_porkchopx5 | uses 0 max 16 xp 5 special 0 multiplier 0.05 demand 0 reward true
+Butcher level 3 [Desert, Jungle, Plains, Savanna, Snow, Swamp, Taiga]: offers per call {2}
+    beefx? + - -> emeraldx1 | uses 0 max 16 xp 20 special 0 multiplier 0.05 demand 0 reward true
+    muttonx? + - -> emeraldx1 | uses 0 max 16 xp 20 special 0 multiplier 0.05 demand 0 reward true
+Butcher level 4 [Desert, Jungle, Plains, Savanna, Snow, Swamp, Taiga]: offers per call {1}
+    dried_kelp_blockx? + - -> emeraldx1 | uses 0 max 12 xp 30 special 0 multiplier 0.05 demand 0 reward true
+Butcher level 5 [Desert, Jungle, Plains, Savanna, Snow, Swamp, Taiga]: offers per call {1}
+    sweet_berriesx? + - -> emeraldx1 | uses 0 max 12 xp 30 special 0 multiplier 0.05 demand 0 reward true
+Butcher level 6 [Desert, Jungle, Plains, Savanna, Snow, Swamp, Taiga]: offers per call {0}
+Cartographer level 0 [Desert, Jungle, Plains, Savanna, Snow, Swamp, Taiga]: offers per call {0}
+Cartographer level 1 [Desert, Jungle, Plains, Savanna, Snow, Swamp, Taiga]: offers per call {2}
+    emeraldx? + - -> mapx1 | uses 0 max 12 xp 2 special 0 multiplier 0.05 demand 0 reward true
+    paperx? + - -> emeraldx1 | uses 0 max 12 xp 2 special 0 multiplier 0.05 demand 0 reward true
+Cartographer level 4 [Swamp]: offers per call {2}
+    emeraldx? + - -> black_bannerx1 | uses 0 max 12 xp 15 special 0 multiplier 0.05 demand 0 reward true
+    emeraldx? + - -> item_framex1 | uses 0 max 12 xp 15 special 0 multiplier 0.05 demand 0 reward true
+    emeraldx? + - -> light_blue_bannerx1 | uses 0 max 12 xp 15 special 0 multiplier 0.05 demand 0 reward true
+    emeraldx? + - -> purple_bannerx1 | uses 0 max 12 xp 15 special 0 multiplier 0.05 demand 0 reward true
+Cartographer level 4 [Snow]: offers per call {2}
+    emeraldx? + - -> blue_bannerx1 | uses 0 max 12 xp 15 special 0 multiplier 0.05 demand 0 reward true
+    emeraldx? + - -> cyan_bannerx1 | uses 0 max 12 xp 15 special 0 multiplier 0.05 demand 0 reward true
+    emeraldx? + - -> item_framex1 | uses 0 max 12 xp 15 special 0 multiplier 0.05 demand 0 reward true
+    emeraldx? + - -> light_blue_bannerx1 | uses 0 max 12 xp 15 special 0 multiplier 0.05 demand 0 reward true
+    emeraldx? + - -> red_bannerx1 | uses 0 max 12 xp 15 special 0 multiplier 0.05 demand 0 reward true
+    emeraldx? + - -> white_bannerx1 | uses 0 max 12 xp 15 special 0 multiplier 0.05 demand 0 reward true
+Cartographer level 4 [Taiga]: offers per call {2}
+    emeraldx? + - -> blue_bannerx1 | uses 0 max 12 xp 15 special 0 multiplier 0.05 demand 0 reward true
+    emeraldx? + - -> item_framex1 | uses 0 max 12 xp 15 special 0 multiplier 0.05 demand 0 reward true
+    emeraldx? + - -> lime_bannerx1 | uses 0 max 12 xp 15 special 0 multiplier 0.05 demand 0 reward true
+    emeraldx? + - -> pink_bannerx1 | uses 0 max 12 xp 15 special 0 multiplier 0.05 demand 0 reward true
+    emeraldx? + - -> purple_bannerx1 | uses 0 max 12 xp 15 special 0 multiplier 0.05 demand 0 reward true
+Cartographer level 4 [Jungle]: offers per call {2}
+    emeraldx? + - -> brown_bannerx1 | uses 0 max 12 xp 15 special 0 multiplier 0.05 demand 0 reward true
+    emeraldx? + - -> green_bannerx1 | uses 0 max 12 xp 15 special 0 multiplier 0.05 demand 0 reward true
+    emeraldx? + - -> item_framex1 | uses 0 max 12 xp 15 special 0 multiplier 0.05 demand 0 reward true
+    emeraldx? + - -> yellow_bannerx1 | uses 0 max 12 xp 15 special 0 multiplier 0.05 demand 0 reward true
+Cartographer level 4 [Plains]: offers per call {2}
+    emeraldx? + - -> brown_bannerx1 | uses 0 max 12 xp 15 special 0 multiplier 0.05 demand 0 reward true
+    emeraldx? + - -> item_framex1 | uses 0 max 12 xp 15 special 0 multiplier 0.05 demand 0 reward true
+    emeraldx? + - -> pink_bannerx1 | uses 0 max 12 xp 15 special 0 multiplier 0.05 demand 0 reward true
+    emeraldx? + - -> white_bannerx1 | uses 0 max 12 xp 15 special 0 multiplier 0.05 demand 0 reward true
+    emeraldx? + - -> yellow_bannerx1 | uses 0 max 12 xp 15 special 0 multiplier 0.05 demand 0 reward true
+Cartographer level 4 [Desert]: offers per call {2}
+    emeraldx? + - -> cyan_bannerx1 | uses 0 max 12 xp 15 special 0 multiplier 0.05 demand 0 reward true
+    emeraldx? + - -> gray_bannerx1 | uses 0 max 12 xp 15 special 0 multiplier 0.05 demand 0 reward true
+    emeraldx? + - -> green_bannerx1 | uses 0 max 12 xp 15 special 0 multiplier 0.05 demand 0 reward true
+    emeraldx? + - -> item_framex1 | uses 0 max 12 xp 15 special 0 multiplier 0.05 demand 0 reward true
+    emeraldx? + - -> lime_bannerx1 | uses 0 max 12 xp 15 special 0 multiplier 0.05 demand 0 reward true
+    emeraldx? + - -> orange_bannerx1 | uses 0 max 12 xp 15 special 0 multiplier 0.05 demand 0 reward true
+Cartographer level 4 [Savanna]: offers per call {2}
+    emeraldx? + - -> green_bannerx1 | uses 0 max 12 xp 15 special 0 multiplier 0.05 demand 0 reward true
+    emeraldx? + - -> item_framex1 | uses 0 max 12 xp 15 special 0 multiplier 0.05 demand 0 reward true
+    emeraldx? + - -> magenta_bannerx1 | uses 0 max 12 xp 15 special 0 multiplier 0.05 demand 0 reward true
+    emeraldx? + - -> orange_bannerx1 | uses 0 max 12 xp 15 special 0 multiplier 0.05 demand 0 reward true
+    emeraldx? + - -> red_bannerx1 | uses 0 max 12 xp 15 special 0 multiplier 0.05 demand 0 reward true
+Cartographer level 5 [Desert, Jungle, Plains, Savanna, Snow, Swamp, Taiga]: offers per call {2}
+    emeraldx? + - -> globe_banner_patternx1 | uses 0 max 12 xp 30 special 0 multiplier 0.05 demand 0 reward true
+    emeraldx? + compassx1 -> woodland_mansion_mapx1 [map id] | uses 0 max 12 xp 30 special 0 multiplier 0.2 demand 0 reward true
+Cartographer level 6 [Desert, Jungle, Plains, Savanna, Snow, Swamp, Taiga]: offers per call {0}
+Cleric level 0 [Desert, Jungle, Plains, Savanna, Snow, Swamp, Taiga]: offers per call {0}
+Cleric level 1 [Desert, Jungle, Plains, Savanna, Snow, Swamp, Taiga]: offers per call {2}
+    emeraldx? + - -> redstonex2 | uses 0 max 12 xp 2 special 0 multiplier 0.05 demand 0 reward true
+    rotten_fleshx? + - -> emeraldx1 | uses 0 max 16 xp 2 special 0 multiplier 0.05 demand 0 reward true
+Cleric level 2 [Desert, Jungle, Plains, Savanna, Snow, Swamp, Taiga]: offers per call {2}
+    emeraldx? + - -> lapis_lazulix1 | uses 0 max 12 xp 5 special 0 multiplier 0.05 demand 0 reward true
+    gold_ingotx? + - -> emeraldx1 | uses 0 max 12 xp 10 special 0 multiplier 0.05 demand 0 reward true
+Cleric level 3 [Desert, Jungle, Plains, Savanna, Snow, Swamp, Taiga]: offers per call {2}
+    emeraldx? + - -> glowstonex1 | uses 0 max 12 xp 10 special 0 multiplier 0.05 demand 0 reward true
+    rabbit_footx? + - -> emeraldx1 | uses 0 max 12 xp 20 special 0 multiplier 0.05 demand 0 reward true
+Cleric level 4 [Desert, Jungle, Plains, Savanna, Snow, Swamp, Taiga]: offers per call {2}
+    emeraldx? + - -> ender_pearlx1 | uses 0 max 12 xp 15 special 0 multiplier 0.05 demand 0 reward true
+    glass_bottlex? + - -> emeraldx1 | uses 0 max 12 xp 30 special 0 multiplier 0.05 demand 0 reward true
+    turtle_scutex? + - -> emeraldx1 | uses 0 max 12 xp 30 special 0 multiplier 0.05 demand 0 reward true
+Cleric level 5 [Desert, Jungle, Plains, Savanna, Snow, Swamp, Taiga]: offers per call {2}
+    emeraldx? + - -> experience_bottlex1 | uses 0 max 12 xp 30 special 0 multiplier 0.05 demand 0 reward true
+    nether_wartx? + - -> emeraldx1 | uses 0 max 12 xp 30 special 0 multiplier 0.05 demand 0 reward true
+Cleric level 6 [Desert, Jungle, Plains, Savanna, Snow, Swamp, Taiga]: offers per call {0}
+Farmer level 0 [Desert, Jungle, Plains, Savanna, Snow, Swamp, Taiga]: offers per call {0}
+Farmer level 1 [Desert, Jungle, Plains, Savanna, Snow, Swamp, Taiga]: offers per call {2}
+    beetrootx? + - -> emeraldx1 | uses 0 max 16 xp 2 special 0 multiplier 0.05 demand 0 reward true
+    carrotx? + - -> emeraldx1 | uses 0 max 16 xp 2 special 0 multiplier 0.05 demand 0 reward true
+    emeraldx? + - -> breadx6 | uses 0 max 16 xp 2 special 0 multiplier 0.05 demand 0 reward true
+    potatox? + - -> emeraldx1 | uses 0 max 16 xp 2 special 0 multiplier 0.05 demand 0 reward true
+    wheatx? + - -> emeraldx1 | uses 0 max 16 xp 2 special 0 multiplier 0.05 demand 0 reward true
+Farmer level 2 [Desert, Jungle, Plains, Savanna, Snow, Swamp, Taiga]: offers per call {2}
+    emeraldx? + - -> applex4 | uses 0 max 16 xp 5 special 0 multiplier 0.05 demand 0 reward true
+    emeraldx? + - -> pumpkin_piex4 | uses 0 max 12 xp 5 special 0 multiplier 0.05 demand 0 reward true
+    pumpkinx? + - -> emeraldx1 | uses 0 max 12 xp 10 special 0 multiplier 0.05 demand 0 reward true
+Farmer level 3 [Desert, Jungle, Plains, Savanna, Snow, Swamp, Taiga]: offers per call {2}
+    emeraldx? + - -> cookiex18 | uses 0 max 12 xp 10 special 0 multiplier 0.05 demand 0 reward true
+    melonx? + - -> emeraldx1 | uses 0 max 12 xp 20 special 0 multiplier 0.05 demand 0 reward true
+Farmer level 4 [Desert, Jungle, Plains, Savanna, Snow, Swamp, Taiga]: offers per call {2}
+    emeraldx? + - -> cakex1 | uses 0 max 12 xp 15 special 0 multiplier 0.05 demand 0 reward true
+    emeraldx? + - -> suspicious_stewx1 [stew minecraft:blindness:120] | uses 0 max 12 xp 15 special 0 multiplier 0.05 demand 0 reward true
+    emeraldx? + - -> suspicious_stewx1 [stew minecraft:jump_boost:160] | uses 0 max 12 xp 15 special 0 multiplier 0.05 demand 0 reward true
+    emeraldx? + - -> suspicious_stewx1 [stew minecraft:night_vision:100] | uses 0 max 12 xp 15 special 0 multiplier 0.05 demand 0 reward true
+    emeraldx? + - -> suspicious_stewx1 [stew minecraft:poison:280] | uses 0 max 12 xp 15 special 0 multiplier 0.05 demand 0 reward true
+    emeraldx? + - -> suspicious_stewx1 [stew minecraft:saturation:7] | uses 0 max 12 xp 15 special 0 multiplier 0.05 demand 0 reward true
+    emeraldx? + - -> suspicious_stewx1 [stew minecraft:weakness:140] | uses 0 max 12 xp 15 special 0 multiplier 0.05 demand 0 reward true
+Farmer level 5 [Desert, Jungle, Plains, Savanna, Snow, Swamp, Taiga]: offers per call {2}
+    emeraldx? + - -> glistering_melon_slicex3 | uses 0 max 12 xp 30 special 0 multiplier 0.05 demand 0 reward true
+    emeraldx? + - -> golden_carrotx3 | uses 0 max 12 xp 30 special 0 multiplier 0.05 demand 0 reward true
+Farmer level 6 [Desert, Jungle, Plains, Savanna, Snow, Swamp, Taiga]: offers per call {0}
+Fisherman level 0 [Desert, Jungle, Plains, Savanna, Snow, Swamp, Taiga]: offers per call {0}
+Fisherman level 1 [Desert, Jungle, Plains, Savanna, Snow, Swamp, Taiga]: offers per call {2}
+    coalx? + - -> emeraldx1 | uses 0 max 16 xp 2 special 0 multiplier 0.05 demand 0 reward true
+    codx? + emeraldx1 -> cooked_codx6 | uses 0 max 16 xp 2 special 0 multiplier 0.05 demand 0 reward true
+    emeraldx? + - -> cod_bucketx1 | uses 0 max 16 xp 2 special 0 multiplier 0.05 demand 0 reward true
+    stringx? + - -> emeraldx1 | uses 0 max 16 xp 2 special 0 multiplier 0.05 demand 0 reward true
+Fisherman level 2 [Desert, Jungle, Plains, Savanna, Snow, Swamp, Taiga]: offers per call {2}
+    codx? + - -> emeraldx1 | uses 0 max 16 xp 10 special 0 multiplier 0.05 demand 0 reward true
+    emeraldx? + - -> campfirex1 | uses 0 max 12 xp 5 special 0 multiplier 0.05 demand 0 reward true
+    salmonx? + emeraldx1 -> cooked_salmonx6 | uses 0 max 16 xp 5 special 0 multiplier 0.05 demand 0 reward true
+Fisherman level 3 [Desert, Jungle, Plains, Savanna, Snow, Swamp, Taiga]: offers per call {2}
+    emeraldx? + - -> fishing_rodx1 [enchanted] | uses 0 max 3 xp 10 special 0 multiplier 0.2 demand 0 reward true
+    salmonx? + - -> emeraldx1 | uses 0 max 16 xp 20 special 0 multiplier 0.05 demand 0 reward true
+Fisherman level 4 [Desert, Jungle, Plains, Savanna, Snow, Swamp, Taiga]: offers per call {1}
+    tropical_fishx? + - -> emeraldx1 | uses 0 max 12 xp 30 special 0 multiplier 0.05 demand 0 reward true
+Fisherman level 5 [Savanna]: offers per call {2}
+    acacia_boatx? + - -> emeraldx1 | uses 0 max 12 xp 30 special 0 multiplier 0.05 demand 0 reward true
+    pufferfishx? + - -> emeraldx1 | uses 0 max 12 xp 30 special 0 multiplier 0.05 demand 0 reward true
+Fisherman level 5 [Swamp]: offers per call {2}
+    dark_oak_boatx? + - -> emeraldx1 | uses 0 max 12 xp 30 special 0 multiplier 0.05 demand 0 reward true
+    pufferfishx? + - -> emeraldx1 | uses 0 max 12 xp 30 special 0 multiplier 0.05 demand 0 reward true
+Fisherman level 5 [Desert, Jungle]: offers per call {2}
+    jungle_boatx? + - -> emeraldx1 | uses 0 max 12 xp 30 special 0 multiplier 0.05 demand 0 reward true
+    pufferfishx? + - -> emeraldx1 | uses 0 max 12 xp 30 special 0 multiplier 0.05 demand 0 reward true
+Fisherman level 5 [Plains]: offers per call {2}
+    oak_boatx? + - -> emeraldx1 | uses 0 max 12 xp 30 special 0 multiplier 0.05 demand 0 reward true
+    pufferfishx? + - -> emeraldx1 | uses 0 max 12 xp 30 special 0 multiplier 0.05 demand 0 reward true
+Fisherman level 5 [Snow, Taiga]: offers per call {2}
+    pufferfishx? + - -> emeraldx1 | uses 0 max 12 xp 30 special 0 multiplier 0.05 demand 0 reward true
+    spruce_boatx? + - -> emeraldx1 | uses 0 max 12 xp 30 special 0 multiplier 0.05 demand 0 reward true
+Fisherman level 6 [Desert, Jungle, Plains, Savanna, Snow, Swamp, Taiga]: offers per call {0}
+Fletcher level 0 [Desert, Jungle, Plains, Savanna, Snow, Swamp, Taiga]: offers per call {0}
+Fletcher level 1 [Desert, Jungle, Plains, Savanna, Snow, Swamp, Taiga]: offers per call {2}
+    emeraldx? + - -> arrowx16 | uses 0 max 12 xp 2 special 0 multiplier 0.05 demand 0 reward true
+    gravelx? + emeraldx1 -> flintx10 | uses 0 max 12 xp 2 special 0 multiplier 0.05 demand 0 reward true
+    stickx? + - -> emeraldx1 | uses 0 max 16 xp 2 special 0 multiplier 0.05 demand 0 reward true
+Fletcher level 2 [Desert, Jungle, Plains, Savanna, Snow, Swamp, Taiga]: offers per call {2}
+    emeraldx? + - -> bowx1 | uses 0 max 12 xp 5 special 0 multiplier 0.05 demand 0 reward true
+    flintx? + - -> emeraldx1 | uses 0 max 12 xp 10 special 0 multiplier 0.05 demand 0 reward true
+Fletcher level 3 [Desert, Jungle, Plains, Savanna, Snow, Swamp, Taiga]: offers per call {2}
+    emeraldx? + - -> crossbowx1 | uses 0 max 12 xp 10 special 0 multiplier 0.05 demand 0 reward true
+    stringx? + - -> emeraldx1 | uses 0 max 16 xp 20 special 0 multiplier 0.05 demand 0 reward true
+Fletcher level 4 [Desert, Jungle, Plains, Savanna, Snow, Swamp, Taiga]: offers per call {2}
+    emeraldx? + - -> bowx1 [enchanted] | uses 0 max 3 xp 15 special 0 multiplier 0.05 demand 0 reward true
+    featherx? + - -> emeraldx1 | uses 0 max 16 xp 30 special 0 multiplier 0.05 demand 0 reward true
+Fletcher level 5 [Desert, Jungle, Plains, Savanna, Snow, Swamp, Taiga]: offers per call {2}
+    emeraldx? + - -> crossbowx1 [enchanted] | uses 0 max 3 xp 15 special 0 multiplier 0.05 demand 0 reward true
+    emeraldx? + arrowx5 -> tipped_arrowx5 [potion] | uses 0 max 12 xp 30 special 0 multiplier 0.05 demand 0 reward true
+    tripwire_hookx? + - -> emeraldx1 | uses 0 max 12 xp 30 special 0 multiplier 0.05 demand 0 reward true
+Fletcher level 6 [Desert, Jungle, Plains, Savanna, Snow, Swamp, Taiga]: offers per call {0}
+Leatherworker level 0 [Desert, Jungle, Plains, Savanna, Snow, Swamp, Taiga]: offers per call {0}
+Leatherworker level 1 [Desert, Jungle, Plains, Savanna, Snow, Swamp, Taiga]: offers per call {2}
+    emeraldx? + - -> leather_chestplatex1 [dyed] | uses 0 max 12 xp 2 special 0 multiplier 0.2 demand 0 reward true
+    emeraldx? + - -> leather_leggingsx1 [dyed] | uses 0 max 12 xp 2 special 0 multiplier 0.2 demand 0 reward true
+    leatherx? + - -> emeraldx1 | uses 0 max 16 xp 2 special 0 multiplier 0.05 demand 0 reward true
+Leatherworker level 2 [Desert, Jungle, Plains, Savanna, Snow, Swamp, Taiga]: offers per call {2}
+    emeraldx? + - -> leather_bootsx1 [dyed] | uses 0 max 12 xp 5 special 0 multiplier 0.2 demand 0 reward true
+    emeraldx? + - -> leather_helmetx1 [dyed] | uses 0 max 12 xp 5 special 0 multiplier 0.2 demand 0 reward true
+    flintx? + - -> emeraldx1 | uses 0 max 12 xp 10 special 0 multiplier 0.05 demand 0 reward true
+Leatherworker level 3 [Desert, Jungle, Plains, Savanna, Snow, Swamp, Taiga]: offers per call {2}
+    emeraldx? + - -> leather_chestplatex1 [dyed] | uses 0 max 12 xp 2 special 0 multiplier 0.2 demand 0 reward true
+    rabbit_hidex? + - -> emeraldx1 | uses 0 max 12 xp 20 special 0 multiplier 0.05 demand 0 reward true
+Leatherworker level 4 [Desert, Jungle, Plains, Savanna, Snow, Swamp, Taiga]: offers per call {2}
+    emeraldx? + - -> leather_horse_armorx1 [dyed] | uses 0 max 12 xp 15 special 0 multiplier 0.2 demand 0 reward true
+    turtle_scutex? + - -> emeraldx1 | uses 0 max 12 xp 30 special 0 multiplier 0.05 demand 0 reward true
+Leatherworker level 5 [Desert, Jungle, Plains, Savanna, Snow, Swamp, Taiga]: offers per call {2}
+    emeraldx? + - -> leather_helmetx1 [dyed] | uses 0 max 12 xp 5 special 0 multiplier 0.2 demand 0 reward true
+    emeraldx? + - -> saddlex1 | uses 0 max 12 xp 30 special 0 multiplier 0.2 demand 0 reward true
+Leatherworker level 6 [Desert, Jungle, Plains, Savanna, Snow, Swamp, Taiga]: offers per call {0}
+Librarian level 0 [Desert, Jungle, Plains, Savanna, Snow, Swamp, Taiga]: offers per call {0}
+Librarian level 1 [Desert, Jungle, Plains, Savanna, Snow, Swamp, Taiga]: offers per call {2}
+    emeraldx? + - -> bookshelfx1 | uses 0 max 12 xp 2 special 0 multiplier 0.05 demand 0 reward true
+    emeraldx? + bookx1 -> enchanted_bookx1 [stored enchantment] | uses 0 max 12 xp 2 special 0 multiplier 0.2 demand 0 reward true
+    paperx? + - -> emeraldx1 | uses 0 max 16 xp 2 special 0 multiplier 0.05 demand 0 reward true
+Librarian level 2 [Desert, Jungle, Plains, Savanna, Snow, Swamp, Taiga]: offers per call {2}
+    bookx? + - -> emeraldx1 | uses 0 max 12 xp 10 special 0 multiplier 0.05 demand 0 reward true
+    emeraldx? + - -> lanternx1 | uses 0 max 12 xp 5 special 0 multiplier 0.05 demand 0 reward true
+    emeraldx? + bookx1 -> enchanted_bookx1 [stored enchantment] | uses 0 max 12 xp 5 special 0 multiplier 0.2 demand 0 reward true
+Librarian level 3 [Desert, Jungle, Plains, Savanna, Snow, Swamp, Taiga]: offers per call {2}
+    emeraldx? + - -> glassx4 | uses 0 max 12 xp 10 special 0 multiplier 0.05 demand 0 reward true
+    emeraldx? + bookx1 -> enchanted_bookx1 [stored enchantment] | uses 0 max 12 xp 10 special 0 multiplier 0.2 demand 0 reward true
+    ink_sacx? + - -> emeraldx1 | uses 0 max 12 xp 20 special 0 multiplier 0.05 demand 0 reward true
+Librarian level 4 [Desert, Jungle, Plains, Savanna, Snow, Swamp, Taiga]: offers per call {2}
+    emeraldx? + - -> clockx1 | uses 0 max 12 xp 15 special 0 multiplier 0.05 demand 0 reward true
+    emeraldx? + - -> compassx1 | uses 0 max 12 xp 15 special 0 multiplier 0.05 demand 0 reward true
+    emeraldx? + bookx1 -> enchanted_bookx1 [stored enchantment] | uses 0 max 12 xp 15 special 0 multiplier 0.2 demand 0 reward true
+    writable_bookx? + - -> emeraldx1 | uses 0 max 12 xp 30 special 0 multiplier 0.05 demand 0 reward true
+Librarian level 5 [Desert, Jungle, Plains, Savanna, Snow, Swamp, Taiga]: offers per call {2}
+    emeraldx? + - -> red_candlex1 | uses 0 max 12 xp 30 special 0 multiplier 0.05 demand 0 reward true
+    emeraldx? + - -> yellow_candlex1 | uses 0 max 12 xp 30 special 0 multiplier 0.05 demand 0 reward true
+Librarian level 6 [Desert, Jungle, Plains, Savanna, Snow, Swamp, Taiga]: offers per call {0}
+Mason level 0 [Desert, Jungle, Plains, Savanna, Snow, Swamp, Taiga]: offers per call {0}
+Mason level 1 [Desert, Jungle, Plains, Savanna, Snow, Swamp, Taiga]: offers per call {2}
+    clay_ballx? + - -> emeraldx1 | uses 0 max 16 xp 2 special 0 multiplier 0.05 demand 0 reward true
+    emeraldx? + - -> brickx10 | uses 0 max 16 xp 2 special 0 multiplier 0.05 demand 0 reward true
+Mason level 2 [Desert, Jungle, Plains, Savanna, Snow, Swamp, Taiga]: offers per call {2}
+    emeraldx? + - -> chiseled_stone_bricksx4 | uses 0 max 16 xp 5 special 0 multiplier 0.05 demand 0 reward true
+    stonex? + - -> emeraldx1 | uses 0 max 16 xp 10 special 0 multiplier 0.05 demand 0 reward true
+Mason level 3 [Desert, Jungle, Plains, Savanna, Snow, Swamp, Taiga]: offers per call {2}
+    andesitex? + - -> emeraldx1 | uses 0 max 16 xp 20 special 0 multiplier 0.05 demand 0 reward true
+    dioritex? + - -> emeraldx1 | uses 0 max 16 xp 20 special 0 multiplier 0.05 demand 0 reward true
+    emeraldx? + - -> dripstone_blockx4 | uses 0 max 16 xp 10 special 0 multiplier 0.05 demand 0 reward true
+    emeraldx? + - -> polished_andesitex4 | uses 0 max 16 xp 10 special 0 multiplier 0.05 demand 0 reward true
+    emeraldx? + - -> polished_dioritex4 | uses 0 max 16 xp 10 special 0 multiplier 0.05 demand 0 reward true
+    emeraldx? + - -> polished_granitex4 | uses 0 max 16 xp 10 special 0 multiplier 0.05 demand 0 reward true
+    granitex? + - -> emeraldx1 | uses 0 max 16 xp 20 special 0 multiplier 0.05 demand 0 reward true
+Mason level 4 [Desert, Jungle, Plains, Savanna, Snow, Swamp, Taiga]: offers per call {2}
+    emeraldx? + - -> black_glazed_terracottax1 | uses 0 max 12 xp 15 special 0 multiplier 0.05 demand 0 reward true
+    emeraldx? + - -> black_terracottax1 | uses 0 max 12 xp 15 special 0 multiplier 0.05 demand 0 reward true
+    emeraldx? + - -> blue_glazed_terracottax1 | uses 0 max 12 xp 15 special 0 multiplier 0.05 demand 0 reward true
+    emeraldx? + - -> blue_terracottax1 | uses 0 max 12 xp 15 special 0 multiplier 0.05 demand 0 reward true
+    emeraldx? + - -> brown_glazed_terracottax1 | uses 0 max 12 xp 15 special 0 multiplier 0.05 demand 0 reward true
+    emeraldx? + - -> brown_terracottax1 | uses 0 max 12 xp 15 special 0 multiplier 0.05 demand 0 reward true
+    emeraldx? + - -> cyan_glazed_terracottax1 | uses 0 max 12 xp 15 special 0 multiplier 0.05 demand 0 reward true
+    emeraldx? + - -> cyan_terracottax1 | uses 0 max 12 xp 15 special 0 multiplier 0.05 demand 0 reward true
+    emeraldx? + - -> gray_glazed_terracottax1 | uses 0 max 12 xp 15 special 0 multiplier 0.05 demand 0 reward true
+    emeraldx? + - -> gray_terracottax1 | uses 0 max 12 xp 15 special 0 multiplier 0.05 demand 0 reward true
+    emeraldx? + - -> green_glazed_terracottax1 | uses 0 max 12 xp 15 special 0 multiplier 0.05 demand 0 reward true
+    emeraldx? + - -> green_terracottax1 | uses 0 max 12 xp 15 special 0 multiplier 0.05 demand 0 reward true
+    emeraldx? + - -> light_blue_glazed_terracottax1 | uses 0 max 12 xp 15 special 0 multiplier 0.05 demand 0 reward true
+    emeraldx? + - -> light_blue_terracottax1 | uses 0 max 12 xp 15 special 0 multiplier 0.05 demand 0 reward true
+    emeraldx? + - -> light_gray_glazed_terracottax1 | uses 0 max 12 xp 15 special 0 multiplier 0.05 demand 0 reward true
+    emeraldx? + - -> light_gray_terracottax1 | uses 0 max 12 xp 15 special 0 multiplier 0.05 demand 0 reward true
+    emeraldx? + - -> lime_glazed_terracottax1 | uses 0 max 12 xp 15 special 0 multiplier 0.05 demand 0 reward true
+    emeraldx? + - -> lime_terracottax1 | uses 0 max 12 xp 15 special 0 multiplier 0.05 demand 0 reward true
+    emeraldx? + - -> magenta_glazed_terracottax1 | uses 0 max 12 xp 15 special 0 multiplier 0.05 demand 0 reward true
+    emeraldx? + - -> magenta_terracottax1 | uses 0 max 12 xp 15 special 0 multiplier 0.05 demand 0 reward true
+    emeraldx? + - -> orange_glazed_terracottax1 | uses 0 max 12 xp 15 special 0 multiplier 0.05 demand 0 reward true
+    emeraldx? + - -> orange_terracottax1 | uses 0 max 12 xp 15 special 0 multiplier 0.05 demand 0 reward true
+    emeraldx? + - -> pink_glazed_terracottax1 | uses 0 max 12 xp 15 special 0 multiplier 0.05 demand 0 reward true
+    emeraldx? + - -> pink_terracottax1 | uses 0 max 12 xp 15 special 0 multiplier 0.05 demand 0 reward true
+    emeraldx? + - -> purple_glazed_terracottax1 | uses 0 max 12 xp 15 special 0 multiplier 0.05 demand 0 reward true
+    emeraldx? + - -> purple_terracottax1 | uses 0 max 12 xp 15 special 0 multiplier 0.05 demand 0 reward true
+    emeraldx? + - -> red_glazed_terracottax1 | uses 0 max 12 xp 15 special 0 multiplier 0.05 demand 0 reward true
+    emeraldx? + - -> red_terracottax1 | uses 0 max 12 xp 15 special 0 multiplier 0.05 demand 0 reward true
+    emeraldx? + - -> white_glazed_terracottax1 | uses 0 max 12 xp 15 special 0 multiplier 0.05 demand 0 reward true
+    emeraldx? + - -> white_terracottax1 | uses 0 max 12 xp 15 special 0 multiplier 0.05 demand 0 reward true
+    emeraldx? + - -> yellow_glazed_terracottax1 | uses 0 max 12 xp 15 special 0 multiplier 0.05 demand 0 reward true
+    emeraldx? + - -> yellow_terracottax1 | uses 0 max 12 xp 15 special 0 multiplier 0.05 demand 0 reward true
+    quartzx? + - -> emeraldx1 | uses 0 max 12 xp 30 special 0 multiplier 0.05 demand 0 reward true
+Mason level 5 [Desert, Jungle, Plains, Savanna, Snow, Swamp, Taiga]: offers per call {2}
+    emeraldx? + - -> quartz_blockx1 | uses 0 max 12 xp 30 special 0 multiplier 0.05 demand 0 reward true
+    emeraldx? + - -> quartz_pillarx1 | uses 0 max 12 xp 30 special 0 multiplier 0.05 demand 0 reward true
+Mason level 6 [Desert, Jungle, Plains, Savanna, Snow, Swamp, Taiga]: offers per call {0}
+Nitwit level 0 [Desert, Jungle, Plains, Savanna, Snow, Swamp, Taiga]: offers per call {0}
+Nitwit level 1 [Desert, Jungle, Plains, Savanna, Snow, Swamp, Taiga]: offers per call {0}
+Nitwit level 2 [Desert, Jungle, Plains, Savanna, Snow, Swamp, Taiga]: offers per call {0}
+Nitwit level 3 [Desert, Jungle, Plains, Savanna, Snow, Swamp, Taiga]: offers per call {0}
+Nitwit level 4 [Desert, Jungle, Plains, Savanna, Snow, Swamp, Taiga]: offers per call {0}
+Nitwit level 5 [Desert, Jungle, Plains, Savanna, Snow, Swamp, Taiga]: offers per call {0}
+Nitwit level 6 [Desert, Jungle, Plains, Savanna, Snow, Swamp, Taiga]: offers per call {0}
+Shepherd level 0 [Desert, Jungle, Plains, Savanna, Snow, Swamp, Taiga]: offers per call {0}
+Shepherd level 1 [Desert, Jungle, Plains, Savanna, Snow, Swamp, Taiga]: offers per call {2}
+    black_woolx? + - -> emeraldx1 | uses 0 max 16 xp 2 special 0 multiplier 0.05 demand 0 reward true
+    brown_woolx? + - -> emeraldx1 | uses 0 max 16 xp 2 special 0 multiplier 0.05 demand 0 reward true
+    emeraldx? + - -> shearsx1 | uses 0 max 12 xp 2 special 0 multiplier 0.05 demand 0 reward true
+    gray_woolx? + - -> emeraldx1 | uses 0 max 16 xp 2 special 0 multiplier 0.05 demand 0 reward true
+    white_woolx? + - -> emeraldx1 | uses 0 max 16 xp 2 special 0 multiplier 0.05 demand 0 reward true
+Shepherd level 2 [Desert, Jungle, Plains, Savanna, Snow, Swamp, Taiga]: offers per call {2}
+    black_dyex? + - -> emeraldx1 | uses 0 max 16 xp 10 special 0 multiplier 0.05 demand 0 reward true
+    emeraldx? + - -> black_carpetx4 | uses 0 max 16 xp 5 special 0 multiplier 0.05 demand 0 reward true
+    emeraldx? + - -> black_woolx1 | uses 0 max 16 xp 5 special 0 multiplier 0.05 demand 0 reward true
+    emeraldx? + - -> blue_carpetx4 | uses 0 max 16 xp 5 special 0 multiplier 0.05 demand 0 reward true
+    emeraldx? + - -> blue_woolx1 | uses 0 max 16 xp 5 special 0 multiplier 0.05 demand 0 reward true
+    emeraldx? + - -> brown_carpetx4 | uses 0 max 16 xp 5 special 0 multiplier 0.05 demand 0 reward true
+    emeraldx? + - -> brown_woolx1 | uses 0 max 16 xp 5 special 0 multiplier 0.05 demand 0 reward true
+    emeraldx? + - -> cyan_carpetx4 | uses 0 max 16 xp 5 special 0 multiplier 0.05 demand 0 reward true
+    emeraldx? + - -> cyan_woolx1 | uses 0 max 16 xp 5 special 0 multiplier 0.05 demand 0 reward true
+    emeraldx? + - -> gray_carpetx4 | uses 0 max 16 xp 5 special 0 multiplier 0.05 demand 0 reward true
+    emeraldx? + - -> gray_woolx1 | uses 0 max 16 xp 5 special 0 multiplier 0.05 demand 0 reward true
+    emeraldx? + - -> green_carpetx4 | uses 0 max 16 xp 5 special 0 multiplier 0.05 demand 0 reward true
+    emeraldx? + - -> green_woolx1 | uses 0 max 16 xp 5 special 0 multiplier 0.05 demand 0 reward true
+    emeraldx? + - -> light_blue_carpetx4 | uses 0 max 16 xp 5 special 0 multiplier 0.05 demand 0 reward true
+    emeraldx? + - -> light_blue_woolx1 | uses 0 max 16 xp 5 special 0 multiplier 0.05 demand 0 reward true
+    emeraldx? + - -> light_gray_carpetx4 | uses 0 max 16 xp 5 special 0 multiplier 0.05 demand 0 reward true
+    emeraldx? + - -> light_gray_woolx1 | uses 0 max 16 xp 5 special 0 multiplier 0.05 demand 0 reward true
+    emeraldx? + - -> lime_carpetx4 | uses 0 max 16 xp 5 special 0 multiplier 0.05 demand 0 reward true
+    emeraldx? + - -> lime_woolx1 | uses 0 max 16 xp 5 special 0 multiplier 0.05 demand 0 reward true
+    emeraldx? + - -> magenta_carpetx4 | uses 0 max 16 xp 5 special 0 multiplier 0.05 demand 0 reward true
+    emeraldx? + - -> magenta_woolx1 | uses 0 max 16 xp 5 special 0 multiplier 0.05 demand 0 reward true
+    emeraldx? + - -> orange_carpetx4 | uses 0 max 16 xp 5 special 0 multiplier 0.05 demand 0 reward true
+    emeraldx? + - -> orange_woolx1 | uses 0 max 16 xp 5 special 0 multiplier 0.05 demand 0 reward true
+    emeraldx? + - -> pink_carpetx4 | uses 0 max 16 xp 5 special 0 multiplier 0.05 demand 0 reward true
+    emeraldx? + - -> pink_woolx1 | uses 0 max 16 xp 5 special 0 multiplier 0.05 demand 0 reward true
+    emeraldx? + - -> purple_carpetx4 | uses 0 max 16 xp 5 special 0 multiplier 0.05 demand 0 reward true
+    emeraldx? + - -> purple_woolx1 | uses 0 max 16 xp 5 special 0 multiplier 0.05 demand 0 reward true
+    emeraldx? + - -> red_carpetx4 | uses 0 max 16 xp 5 special 0 multiplier 0.05 demand 0 reward true
+    emeraldx? + - -> red_woolx1 | uses 0 max 16 xp 5 special 0 multiplier 0.05 demand 0 reward true
+    emeraldx? + - -> white_carpetx4 | uses 0 max 16 xp 5 special 0 multiplier 0.05 demand 0 reward true
+    emeraldx? + - -> white_woolx1 | uses 0 max 16 xp 5 special 0 multiplier 0.05 demand 0 reward true
+    emeraldx? + - -> yellow_carpetx4 | uses 0 max 16 xp 5 special 0 multiplier 0.05 demand 0 reward true
+    emeraldx? + - -> yellow_woolx1 | uses 0 max 16 xp 5 special 0 multiplier 0.05 demand 0 reward true
+    gray_dyex? + - -> emeraldx1 | uses 0 max 16 xp 10 special 0 multiplier 0.05 demand 0 reward true
+    light_blue_dyex? + - -> emeraldx1 | uses 0 max 16 xp 10 special 0 multiplier 0.05 demand 0 reward true
+    lime_dyex? + - -> emeraldx1 | uses 0 max 16 xp 10 special 0 multiplier 0.05 demand 0 reward true
+    white_dyex? + - -> emeraldx1 | uses 0 max 16 xp 10 special 0 multiplier 0.05 demand 0 reward true
+Shepherd level 3 [Desert, Jungle, Plains, Savanna, Snow, Swamp, Taiga]: offers per call {2}
+    emeraldx? + - -> black_bedx1 | uses 0 max 12 xp 10 special 0 multiplier 0.05 demand 0 reward true
+    emeraldx? + - -> blue_bedx1 | uses 0 max 12 xp 10 special 0 multiplier 0.05 demand 0 reward true
+    emeraldx? + - -> brown_bedx1 | uses 0 max 12 xp 10 special 0 multiplier 0.05 demand 0 reward true
+    emeraldx? + - -> cyan_bedx1 | uses 0 max 12 xp 10 special 0 multiplier 0.05 demand 0 reward true
+    emeraldx? + - -> gray_bedx1 | uses 0 max 12 xp 10 special 0 multiplier 0.05 demand 0 reward true
+    emeraldx? + - -> green_bedx1 | uses 0 max 12 xp 10 special 0 multiplier 0.05 demand 0 reward true
+    emeraldx? + - -> light_blue_bedx1 | uses 0 max 12 xp 10 special 0 multiplier 0.05 demand 0 reward true
+    emeraldx? + - -> light_gray_bedx1 | uses 0 max 12 xp 10 special 0 multiplier 0.05 demand 0 reward true
+    emeraldx? + - -> lime_bedx1 | uses 0 max 12 xp 10 special 0 multiplier 0.05 demand 0 reward true
+    emeraldx? + - -> magenta_bedx1 | uses 0 max 12 xp 10 special 0 multiplier 0.05 demand 0 reward true
+    emeraldx? + - -> orange_bedx1 | uses 0 max 12 xp 10 special 0 multiplier 0.05 demand 0 reward true
+    emeraldx? + - -> pink_bedx1 | uses 0 max 12 xp 10 special 0 multiplier 0.05 demand 0 reward true
+    emeraldx? + - -> purple_bedx1 | uses 0 max 12 xp 10 special 0 multiplier 0.05 demand 0 reward true
+    emeraldx? + - -> red_bedx1 | uses 0 max 12 xp 10 special 0 multiplier 0.05 demand 0 reward true
+    emeraldx? + - -> white_bedx1 | uses 0 max 12 xp 10 special 0 multiplier 0.05 demand 0 reward true
+    emeraldx? + - -> yellow_bedx1 | uses 0 max 12 xp 10 special 0 multiplier 0.05 demand 0 reward true
+    light_gray_dyex? + - -> emeraldx1 | uses 0 max 16 xp 20 special 0 multiplier 0.05 demand 0 reward true
+    orange_dyex? + - -> emeraldx1 | uses 0 max 16 xp 20 special 0 multiplier 0.05 demand 0 reward true
+    pink_dyex? + - -> emeraldx1 | uses 0 max 16 xp 20 special 0 multiplier 0.05 demand 0 reward true
+    red_dyex? + - -> emeraldx1 | uses 0 max 16 xp 20 special 0 multiplier 0.05 demand 0 reward true
+    yellow_dyex? + - -> emeraldx1 | uses 0 max 16 xp 20 special 0 multiplier 0.05 demand 0 reward true
+Shepherd level 4 [Desert, Jungle, Plains, Savanna, Snow, Swamp, Taiga]: offers per call {2}
+    blue_dyex? + - -> emeraldx1 | uses 0 max 16 xp 30 special 0 multiplier 0.05 demand 0 reward true
+    brown_dyex? + - -> emeraldx1 | uses 0 max 16 xp 30 special 0 multiplier 0.05 demand 0 reward true
+    cyan_dyex? + - -> emeraldx1 | uses 0 max 16 xp 30 special 0 multiplier 0.05 demand 0 reward true
+    emeraldx? + - -> black_bannerx1 | uses 0 max 12 xp 15 special 0 multiplier 0.05 demand 0 reward true
+    emeraldx? + - -> blue_bannerx1 | uses 0 max 12 xp 15 special 0 multiplier 0.05 demand 0 reward true
+    emeraldx? + - -> brown_bannerx1 | uses 0 max 12 xp 15 special 0 multiplier 0.05 demand 0 reward true
+    emeraldx? + - -> cyan_bannerx1 | uses 0 max 12 xp 15 special 0 multiplier 0.05 demand 0 reward true
+    emeraldx? + - -> gray_bannerx1 | uses 0 max 12 xp 15 special 0 multiplier 0.05 demand 0 reward true
+    emeraldx? + - -> green_bannerx1 | uses 0 max 12 xp 15 special 0 multiplier 0.05 demand 0 reward true
+    emeraldx? + - -> light_blue_bannerx1 | uses 0 max 12 xp 15 special 0 multiplier 0.05 demand 0 reward true
+    emeraldx? + - -> light_gray_bannerx1 | uses 0 max 12 xp 15 special 0 multiplier 0.05 demand 0 reward true
+    emeraldx? + - -> lime_bannerx1 | uses 0 max 12 xp 15 special 0 multiplier 0.05 demand 0 reward true
+    emeraldx? + - -> magenta_bannerx1 | uses 0 max 12 xp 15 special 0 multiplier 0.05 demand 0 reward true
+    emeraldx? + - -> orange_bannerx1 | uses 0 max 12 xp 15 special 0 multiplier 0.05 demand 0 reward true
+    emeraldx? + - -> pink_bannerx1 | uses 0 max 12 xp 15 special 0 multiplier 0.05 demand 0 reward true
+    emeraldx? + - -> purple_bannerx1 | uses 0 max 12 xp 15 special 0 multiplier 0.05 demand 0 reward true
+    emeraldx? + - -> red_bannerx1 | uses 0 max 12 xp 15 special 0 multiplier 0.05 demand 0 reward true
+    emeraldx? + - -> white_bannerx1 | uses 0 max 12 xp 15 special 0 multiplier 0.05 demand 0 reward true
+    emeraldx? + - -> yellow_bannerx1 | uses 0 max 12 xp 15 special 0 multiplier 0.05 demand 0 reward true
+    green_dyex? + - -> emeraldx1 | uses 0 max 16 xp 30 special 0 multiplier 0.05 demand 0 reward true
+    magenta_dyex? + - -> emeraldx1 | uses 0 max 16 xp 30 special 0 multiplier 0.05 demand 0 reward true
+    purple_dyex? + - -> emeraldx1 | uses 0 max 16 xp 30 special 0 multiplier 0.05 demand 0 reward true
+Shepherd level 5 [Desert, Jungle, Plains, Savanna, Snow, Swamp, Taiga]: offers per call {1}
+    emeraldx? + - -> paintingx3 | uses 0 max 12 xp 30 special 0 multiplier 0.05 demand 0 reward true
+Shepherd level 6 [Desert, Jungle, Plains, Savanna, Snow, Swamp, Taiga]: offers per call {0}
+Toolsmith level 0 [Desert, Jungle, Plains, Savanna, Snow, Swamp, Taiga]: offers per call {0}
+Toolsmith level 1 [Desert, Jungle, Plains, Savanna, Snow, Swamp, Taiga]: offers per call {2}
+    coalx? + - -> emeraldx1 | uses 0 max 16 xp 2 special 0 multiplier 0.05 demand 0 reward true
+    emeraldx? + - -> stone_axex1 | uses 0 max 12 xp 2 special 0 multiplier 0.2 demand 0 reward true
+    emeraldx? + - -> stone_hoex1 | uses 0 max 12 xp 2 special 0 multiplier 0.2 demand 0 reward true
+    emeraldx? + - -> stone_pickaxex1 | uses 0 max 12 xp 2 special 0 multiplier 0.2 demand 0 reward true
+    emeraldx? + - -> stone_shovelx1 | uses 0 max 12 xp 2 special 0 multiplier 0.2 demand 0 reward true
+Toolsmith level 2 [Desert, Jungle, Plains, Savanna, Snow, Swamp, Taiga]: offers per call {2}
+    emeraldx? + - -> bellx1 | uses 0 max 12 xp 5 special 0 multiplier 0.2 demand 0 reward true
+    iron_ingotx? + - -> emeraldx1 | uses 0 max 12 xp 10 special 0 multiplier 0.05 demand 0 reward true
+Toolsmith level 3 [Desert, Jungle, Plains, Savanna, Snow, Swamp, Taiga]: offers per call {2}
+    emeraldx? + - -> diamond_hoex1 | uses 0 max 3 xp 10 special 0 multiplier 0.2 demand 0 reward true
+    emeraldx? + - -> iron_axex1 [enchanted] | uses 0 max 3 xp 10 special 0 multiplier 0.2 demand 0 reward true
+    emeraldx? + - -> iron_pickaxex1 [enchanted] | uses 0 max 3 xp 10 special 0 multiplier 0.2 demand 0 reward true
+    emeraldx? + - -> iron_shovelx1 [enchanted] | uses 0 max 3 xp 10 special 0 multiplier 0.2 demand 0 reward true
+    flintx? + - -> emeraldx1 | uses 0 max 12 xp 20 special 0 multiplier 0.05 demand 0 reward true
+Toolsmith level 4 [Desert, Jungle, Plains, Savanna, Snow, Swamp, Taiga]: offers per call {2}
+    diamondx? + - -> emeraldx1 | uses 0 max 12 xp 30 special 0 multiplier 0.05 demand 0 reward true
+    emeraldx? + - -> diamond_axex1 [enchanted] | uses 0 max 3 xp 15 special 0 multiplier 0.2 demand 0 reward true
+    emeraldx? + - -> diamond_shovelx1 [enchanted] | uses 0 max 3 xp 15 special 0 multiplier 0.2 demand 0 reward true
+Toolsmith level 5 [Desert, Jungle, Plains, Savanna, Snow, Swamp, Taiga]: offers per call {1}
+    emeraldx? + - -> diamond_pickaxex1 [enchanted] | uses 0 max 3 xp 30 special 0 multiplier 0.2 demand 0 reward true
+Toolsmith level 6 [Desert, Jungle, Plains, Savanna, Snow, Swamp, Taiga]: offers per call {0}
+Weaponsmith level 0 [Desert, Jungle, Plains, Savanna, Snow, Swamp, Taiga]: offers per call {0}
+Weaponsmith level 1 [Desert, Jungle, Plains, Savanna, Snow, Swamp, Taiga]: offers per call {2}
+    coalx? + - -> emeraldx1 | uses 0 max 16 xp 2 special 0 multiplier 0.05 demand 0 reward true
+    emeraldx? + - -> iron_axex1 | uses 0 max 12 xp 2 special 0 multiplier 0.2 demand 0 reward true
+    emeraldx? + - -> iron_swordx1 [enchanted] | uses 0 max 12 xp 2 special 0 multiplier 0.2 demand 0 reward true
+Weaponsmith level 2 [Desert, Jungle, Plains, Savanna, Snow, Swamp, Taiga]: offers per call {2}
+    emeraldx? + - -> bellx1 | uses 0 max 12 xp 5 special 0 multiplier 0.2 demand 0 reward true
+    iron_ingotx? + - -> emeraldx1 | uses 0 max 12 xp 10 special 0 multiplier 0.05 demand 0 reward true
+Weaponsmith level 3 [Desert, Jungle, Plains, Savanna, Snow, Swamp, Taiga]: offers per call {1}
+    flintx? + - -> emeraldx1 | uses 0 max 12 xp 20 special 0 multiplier 0.05 demand 0 reward true
+Weaponsmith level 4 [Desert, Jungle, Plains, Savanna, Snow, Swamp, Taiga]: offers per call {2}
+    diamondx? + - -> emeraldx1 | uses 0 max 12 xp 30 special 0 multiplier 0.05 demand 0 reward true
+    emeraldx? + - -> diamond_axex1 [enchanted] | uses 0 max 3 xp 15 special 0 multiplier 0.2 demand 0 reward true
+Weaponsmith level 5 [Desert, Jungle, Plains, Savanna, Snow, Swamp, Taiga]: offers per call {1}
+    emeraldx? + - -> diamond_swordx1 [enchanted] | uses 0 max 3 xp 30 special 0 multiplier 0.2 demand 0 reward true
+Weaponsmith level 6 [Desert, Jungle, Plains, Savanna, Snow, Swamp, Taiga]: offers per call {0}
+== synthetic datapack sets ==
+plain (amount 1) [Plains]: offers per call {1}
+    emeraldx3 + paperx2 -> breadx5 | uses 0 max 7 xp 4 special 0 multiplier 0.25 demand 0 reward true
+defaults (amount 1) [Plains]: offers per call {1}
+    emeraldx1 + - -> applex1 | uses 0 max 16 xp 2 special 0 multiplier 0.05 demand 0 reward true
+fractional (amount 1) [Plains]: offers per call {1}
+    emeraldx2 + - -> breadx4 | uses 0 max 9 xp 3 special 0 multiplier 0.05 demand 0 reward true
+amount beyond the trades (amount 5) [Plains]: offers per call {2}
+    emeraldx1 + - -> applex1 | uses 0 max 16 xp 2 special 0 multiplier 0.05 demand 0 reward true
+    emeraldx3 + paperx2 -> breadx5 | uses 0 max 7 xp 4 special 0 multiplier 0.25 demand 0 reward true
+amount zero (amount 0) [Plains]: offers per call {0}
+amount 1.5 (amount 1.5) [Plains]: offers per call {2}
+    emeraldx1 + - -> applex1 | uses 0 max 16 xp 2 special 0 multiplier 0.05 demand 0 reward true
+    emeraldx2 + - -> breadx4 | uses 0 max 9 xp 3 special 0 multiplier 0.05 demand 0 reward true
+    emeraldx3 + paperx2 -> breadx5 | uses 0 max 7 xp 4 special 0 multiplier 0.25 demand 0 reward true
+amount 1.4 (amount 1.4) [Plains]: offers per call {1}
+    emeraldx1 + - -> applex1 | uses 0 max 16 xp 2 special 0 multiplier 0.05 demand 0 reward true
+    emeraldx2 + - -> breadx4 | uses 0 max 9 xp 3 special 0 multiplier 0.05 demand 0 reward true
+    emeraldx3 + paperx2 -> breadx5 | uses 0 max 7 xp 4 special 0 multiplier 0.25 demand 0 reward true
+unresolvable trade (amount 2) [Plains]: offers per call {1}
+    emeraldx3 + paperx2 -> breadx5 | uses 0 max 7 xp 4 special 0 multiplier 0.25 demand 0 reward true
+no trades (amount 2) [Plains]: offers per call {0}
+enchanted book (amount 1) [Plains]: offers per call {1}
+    emeraldx? + bookx1 -> enchanted_bookx1 [stored enchantment] | uses 0 max 16 xp 2 special 0 multiplier 0.05 demand 0 reward true
+enchant levels (amount 1) [Plains]: offers per call {1}
+    emeraldx15 + - -> diamond_swordx1 [enchanted] | uses 0 max 16 xp 2 special 0 multiplier 0.05 demand 0 reward true
+enchant levels clamp (amount 1) [Plains]: offers per call {1}
+    emeraldx64 + - -> diamond_pickaxex1 [enchanted] | uses 0 max 16 xp 2 special 0 multiplier 0.05 demand 0 reward true
+enchant levels zero cost (amount 1) [Plains]: offers per call {0}
+enchant nothing fits (amount 1) [Plains]: offers per call {0}
+map (amount 1) [Plains]: offers per call {1}
+    emeraldx1 + - -> mapx1 [map id] | uses 0 max 16 xp 2 special 0 multiplier 0.05 demand 0 reward true
+map, older item (amount 1) [Plains]: offers per call {1}
+    emeraldx1 + - -> filled_mapx1 [name filled_map.monument] [map id] | uses 0 max 16 xp 2 special 0 multiplier 0.05 demand 0 reward true
+map, unknown destination (amount 1) [Plains]: offers per call {0}
+random dyes (amount 1) [Plains]: offers per call {1}
+    emeraldx1 + - -> leather_chestplatex1 [dyed] | uses 0 max 16 xp 2 special 0 multiplier 0.05 demand 0 reward true
+random potion (amount 1) [Plains]: offers per call {1}
+    emeraldx? + - -> potionx1 [potion] | uses 0 max 16 xp 2 special 0 multiplier 0.05 demand 0 reward true
+random potion, ids (amount 1) [Plains]: offers per call {1}
+    emeraldx1 + - -> potionx1 [potion Some(10)] | uses 0 max 16 xp 2 special 0 multiplier 0.05 demand 0 reward true
+    emeraldx1 + - -> potionx1 [potion Some(11)] | uses 0 max 16 xp 2 special 0 multiplier 0.05 demand 0 reward true
+    emeraldx1 + - -> potionx1 [potion Some(12)] | uses 0 max 16 xp 2 special 0 multiplier 0.05 demand 0 reward true
+    emeraldx1 + - -> potionx1 [potion Some(13)] | uses 0 max 16 xp 2 special 0 multiplier 0.05 demand 0 reward true
+    emeraldx1 + - -> potionx1 [potion Some(14)] | uses 0 max 16 xp 2 special 0 multiplier 0.05 demand 0 reward true
+    emeraldx1 + - -> potionx1 [potion Some(15)] | uses 0 max 16 xp 2 special 0 multiplier 0.05 demand 0 reward true
+    emeraldx1 + - -> potionx1 [potion Some(16)] | uses 0 max 16 xp 2 special 0 multiplier 0.05 demand 0 reward true
+    emeraldx1 + - -> potionx1 [potion Some(17)] | uses 0 max 16 xp 2 special 0 multiplier 0.05 demand 0 reward true
+    emeraldx1 + - -> potionx1 [potion Some(18)] | uses 0 max 16 xp 2 special 0 multiplier 0.05 demand 0 reward true
+    emeraldx1 + - -> potionx1 [potion Some(19)] | uses 0 max 16 xp 2 special 0 multiplier 0.05 demand 0 reward true
+    emeraldx1 + - -> potionx1 [potion Some(20)] | uses 0 max 16 xp 2 special 0 multiplier 0.05 demand 0 reward true
+    emeraldx1 + - -> potionx1 [potion Some(21)] | uses 0 max 16 xp 2 special 0 multiplier 0.05 demand 0 reward true
+    emeraldx1 + - -> potionx1 [potion Some(22)] | uses 0 max 16 xp 2 special 0 multiplier 0.05 demand 0 reward true
+    emeraldx1 + - -> potionx1 [potion Some(23)] | uses 0 max 16 xp 2 special 0 multiplier 0.05 demand 0 reward true
+    emeraldx1 + - -> potionx1 [potion Some(24)] | uses 0 max 16 xp 2 special 0 multiplier 0.05 demand 0 reward true
+    emeraldx1 + - -> potionx1 [potion Some(25)] | uses 0 max 16 xp 2 special 0 multiplier 0.05 demand 0 reward true
+    emeraldx1 + - -> potionx1 [potion Some(26)] | uses 0 max 16 xp 2 special 0 multiplier 0.05 demand 0 reward true
+    emeraldx1 + - -> potionx1 [potion Some(27)] | uses 0 max 16 xp 2 special 0 multiplier 0.05 demand 0 reward true
+    emeraldx1 + - -> potionx1 [potion Some(28)] | uses 0 max 16 xp 2 special 0 multiplier 0.05 demand 0 reward true
+    emeraldx1 + - -> potionx1 [potion Some(29)] | uses 0 max 16 xp 2 special 0 multiplier 0.05 demand 0 reward true
+    emeraldx1 + - -> potionx1 [potion Some(30)] | uses 0 max 16 xp 2 special 0 multiplier 0.05 demand 0 reward true
+    emeraldx1 + - -> potionx1 [potion Some(31)] | uses 0 max 16 xp 2 special 0 multiplier 0.05 demand 0 reward true
+    emeraldx1 + - -> potionx1 [potion Some(32)] | uses 0 max 16 xp 2 special 0 multiplier 0.05 demand 0 reward true
+    emeraldx1 + - -> potionx1 [potion Some(33)] | uses 0 max 16 xp 2 special 0 multiplier 0.05 demand 0 reward true
+    emeraldx1 + - -> potionx1 [potion Some(34)] | uses 0 max 16 xp 2 special 0 multiplier 0.05 demand 0 reward true
+    emeraldx1 + - -> potionx1 [potion Some(35)] | uses 0 max 16 xp 2 special 0 multiplier 0.05 demand 0 reward true
+    emeraldx1 + - -> potionx1 [potion Some(36)] | uses 0 max 16 xp 2 special 0 multiplier 0.05 demand 0 reward true
+    emeraldx1 + - -> potionx1 [potion Some(37)] | uses 0 max 16 xp 2 special 0 multiplier 0.05 demand 0 reward true
+    emeraldx1 + - -> potionx1 [potion Some(38)] | uses 0 max 16 xp 2 special 0 multiplier 0.05 demand 0 reward true
+    emeraldx1 + - -> potionx1 [potion Some(4)] | uses 0 max 16 xp 2 special 0 multiplier 0.05 demand 0 reward true
+    emeraldx1 + - -> potionx1 [potion Some(40)] | uses 0 max 16 xp 2 special 0 multiplier 0.05 demand 0 reward true
+    emeraldx1 + - -> potionx1 [potion Some(41)] | uses 0 max 16 xp 2 special 0 multiplier 0.05 demand 0 reward true
+    emeraldx1 + - -> potionx1 [potion Some(42)] | uses 0 max 16 xp 2 special 0 multiplier 0.05 demand 0 reward true
+    emeraldx1 + - -> potionx1 [potion Some(43)] | uses 0 max 16 xp 2 special 0 multiplier 0.05 demand 0 reward true
+    emeraldx1 + - -> potionx1 [potion Some(44)] | uses 0 max 16 xp 2 special 0 multiplier 0.05 demand 0 reward true
+    emeraldx1 + - -> potionx1 [potion Some(45)] | uses 0 max 16 xp 2 special 0 multiplier 0.05 demand 0 reward true
+    emeraldx1 + - -> potionx1 [potion Some(5)] | uses 0 max 16 xp 2 special 0 multiplier 0.05 demand 0 reward true
+    emeraldx1 + - -> potionx1 [potion Some(6)] | uses 0 max 16 xp 2 special 0 multiplier 0.05 demand 0 reward true
+    emeraldx1 + - -> potionx1 [potion Some(7)] | uses 0 max 16 xp 2 special 0 multiplier 0.05 demand 0 reward true
+    emeraldx1 + - -> potionx1 [potion Some(8)] | uses 0 max 16 xp 2 special 0 multiplier 0.05 demand 0 reward true
+    emeraldx1 + - -> potionx1 [potion Some(9)] | uses 0 max 16 xp 2 special 0 multiplier 0.05 demand 0 reward true
+suspicious stew (amount 1) [Plains]: offers per call {1}
+    emeraldx1 + - -> suspicious_stewx1 [stew minecraft:blindness:120] | uses 0 max 16 xp 2 special 0 multiplier 0.05 demand 0 reward true
+    emeraldx1 + - -> suspicious_stewx1 [stew minecraft:jump_boost:160] | uses 0 max 16 xp 2 special 0 multiplier 0.05 demand 0 reward true
+    emeraldx1 + - -> suspicious_stewx1 [stew minecraft:night_vision:100] | uses 0 max 16 xp 2 special 0 multiplier 0.05 demand 0 reward true
+    emeraldx1 + - -> suspicious_stewx1 [stew minecraft:poison:280] | uses 0 max 16 xp 2 special 0 multiplier 0.05 demand 0 reward true
+    emeraldx1 + - -> suspicious_stewx1 [stew minecraft:saturation:7] | uses 0 max 16 xp 2 special 0 multiplier 0.05 demand 0 reward true
+    emeraldx1 + - -> suspicious_stewx1 [stew minecraft:weakness:140] | uses 0 max 16 xp 2 special 0 multiplier 0.05 demand 0 reward true
+potion (amount 1) [Plains]: offers per call {1}
+    emeraldx1 + - -> potionx1 [potion Some(24)] | uses 0 max 16 xp 2 special 0 multiplier 0.05 demand 0 reward true
+unknown potion (amount 1) [Plains]: offers per call {1}
+    emeraldx1 + - -> potionx1 | uses 0 max 16 xp 2 special 0 multiplier 0.05 demand 0 reward true
+type filter (amount 3) [Plains, Savanna, Snow, Taiga]: offers per call {2}
+    emeraldx1 + - -> stickx1 | uses 0 max 16 xp 2 special 0 multiplier 0.05 demand 0 reward true
+    emeraldx3 + paperx2 -> breadx5 | uses 0 max 7 xp 4 special 0 multiplier 0.25 demand 0 reward true
+type filter (amount 3) [Desert]: offers per call {3}
+    emeraldx1 + - -> cactusx1 | uses 0 max 16 xp 2 special 0 multiplier 0.05 demand 0 reward true
+    emeraldx1 + - -> stickx1 | uses 0 max 16 xp 2 special 0 multiplier 0.05 demand 0 reward true
+    emeraldx3 + paperx2 -> breadx5 | uses 0 max 7 xp 4 special 0 multiplier 0.25 demand 0 reward true
+type filter (amount 3) [Jungle, Swamp]: offers per call {3}
+    emeraldx1 + - -> stickx1 | uses 0 max 16 xp 2 special 0 multiplier 0.05 demand 0 reward true
+    emeraldx1 + - -> vinex1 | uses 0 max 16 xp 2 special 0 multiplier 0.05 demand 0 reward true
+    emeraldx3 + paperx2 -> breadx5 | uses 0 max 7 xp 4 special 0 multiplier 0.25 demand 0 reward true
+type filter, amount 1 (amount 1) [Plains, Savanna, Snow, Taiga]: offers per call {0}
+type filter, amount 1 (amount 1) [Desert]: offers per call {1}
+    emeraldx1 + - -> cactusx1 | uses 0 max 16 xp 2 special 0 multiplier 0.05 demand 0 reward true
+type filter, amount 1 (amount 1) [Jungle, Swamp]: offers per call {1}
+    emeraldx1 + - -> vinex1 | uses 0 max 16 xp 2 special 0 multiplier 0.05 demand 0 reward true

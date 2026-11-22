@@ -239,3 +239,60 @@ pub fn to_wasm_status_effect_instance(
         show_icon: effect.show_icon,
     })
 }
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use pumpkin_data::status_effect::EffectType;
+
+    const WIT: &str = include_str!("../../pumpkin-plugin-wit/v0.1/status-effect.wit");
+
+    /// Every variant of the WIT `status-effect-type` enum, as its `snake_case` vanilla name.
+    fn wit_variant_names() -> Vec<String> {
+        WIT.lines()
+            .skip_while(|l| !l.contains("enum status-effect-type"))
+            .skip(1)
+            .take_while(|l| !l.contains('}'))
+            .map(|l| l.trim().trim_end_matches(',').replace('-', "_"))
+            .collect()
+    }
+
+    #[test]
+    fn every_variant_round_trips_with_its_own_name() {
+        let names = wit_variant_names();
+        assert_eq!(names.len(), 39, "WIT variant count changed: {names:?}");
+        for name in names {
+            let effect = EffectType::from_name(&name)
+                .unwrap_or_else(|| panic!("no EffectType for WIT variant {name}"));
+            let wasm = to_wasm_status_effect_type(effect);
+            // Variant names are identical on both sides, so a swapped pair shows here.
+            let wasm_name = format!("{wasm:?}");
+            let wasm_name = wasm_name.trim_start_matches("StatusEffectType::");
+            assert_eq!(wasm_name, format!("{effect:?}"), "to_wasm {name}");
+            assert_eq!(
+                from_wasm_status_effect_type(wasm),
+                effect,
+                "from_wasm {name}"
+            );
+        }
+    }
+
+    #[test]
+    fn pinned_pairs() {
+        let pairs = [
+            (status_effect::StatusEffectType::Speed, EffectType::Speed),
+            (
+                status_effect::StatusEffectType::MiningFatigue,
+                EffectType::MiningFatigue,
+            ),
+            (
+                status_effect::StatusEffectType::Infested,
+                EffectType::Infested,
+            ),
+        ];
+        for (wasm, effect) in pairs {
+            assert_eq!(from_wasm_status_effect_type(wasm), effect);
+            assert_eq!(to_wasm_status_effect_type(effect), wasm);
+        }
+    }
+}

@@ -194,6 +194,12 @@ fn one_key_per_word(out: &mut String) {
             line::<u16, 4>(out, "u16", &palette, min_bits, name, &data);
         }
     }
+    let narrow: Vec<u8> = vec![1, 2, 3];
+    for min_bits in [33u8, 40, 63] {
+        for (name, data) in shapes(3, min_bits, 64) {
+            line::<u8, 4>(out, "u8", &narrow, min_bits, name, &data);
+        }
+    }
 }
 
 /// Palettes with repeated entries and with or without the default value (0).

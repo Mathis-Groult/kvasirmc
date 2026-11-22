@@ -14,6 +14,9 @@ use crate::generation::proto_chunk::GenerationCache;
 use crate::generation::{block_state_provider::BlockStateProvider, feature::size::FeatureSize};
 use crate::world::WorldPortalExt;
 
+#[cfg(test)]
+mod update_leaves_golden;
+
 pub mod decorator;
 pub mod foliage;
 pub mod root;

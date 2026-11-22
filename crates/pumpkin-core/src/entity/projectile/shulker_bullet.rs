@@ -29,6 +29,8 @@ const DIR_EAST: u8 = 5;
 const DIR_NONE: u8 = 255;
 
 const SPEED: f64 = 0.15;
+/// The steering point sits this far above the target block's floor.
+const Y_OFFSET: f64 = 0.5;
 
 pub struct ShulkerBulletEntity {
     pub entity: Entity,
@@ -97,81 +99,17 @@ impl ShulkerBulletEntity {
         bullet
     }
 
-    #[allow(clippy::similar_names)]
+    /// Vanilla `ShulkerBullet.selectNextMoveDirection`.
     fn select_next_dir(&self, avoid_axis: u8, target_pos_opt: Option<Vector3<f64>>) {
-        const Y_OFFSET: f64 = 0.5;
-
         let pos = self.entity.pos.load();
         let cur_bp = self.entity.block_pos.load();
         let world = self.entity.world.load();
 
-        // Compute the target block position
-        let tbp = target_pos_opt.map_or_else(
-            || BlockPos::new(cur_bp.0.x, cur_bp.0.y - 1, cur_bp.0.z), // Default: below
-            |tp| {
-                BlockPos::new(
-                    // Target provided
-                    tp.x.floor() as i32,
-                    (tp.y + Y_OFFSET).floor() as i32,
-                    tp.z.floor() as i32,
-                )
-            },
-        );
+        let tbp = Self::target_block_pos(&cur_bp, target_pos_opt);
 
-        // ... and the "steering" target point.
-        let target_x = f64::from(tbp.0.x) + 0.5;
-        let target_y = f64::from(tbp.0.y) + Y_OFFSET;
-        let target_z = f64::from(tbp.0.z) + 0.5;
-
-        // If target block center is more than 2 blocks from bullet -> pick axis step.
-        let tbp_cx = f64::from(tbp.0.x) + 0.5;
-        let tbp_cy = f64::from(tbp.0.y) + 0.5;
-        let tbp_cz = f64::from(tbp.0.z) + 0.5;
-        let center_dist_sq =
-            (tbp_cx - pos.x).powi(2) + (tbp_cy - pos.y).powi(2) + (tbp_cz - pos.z).powi(2);
-        let target_is_far = center_dist_sq > 4.0;
-
-        let (chosen_tx, chosen_ty, chosen_tz, selected_dir) = if target_is_far {
-            // Pick an axis-aligned direction toward the target
-            let mut options: Vec<u8> = Vec::new();
-
-            if avoid_axis != 0 {
-                if cur_bp.0.x < tbp.0.x && is_empty_block(&world, &cur_bp, DIR_EAST) {
-                    options.push(DIR_EAST);
-                } else if cur_bp.0.x > tbp.0.x && is_empty_block(&world, &cur_bp, DIR_WEST) {
-                    options.push(DIR_WEST);
-                }
-            }
-            if avoid_axis != 1 {
-                if cur_bp.0.y < tbp.0.y && is_empty_block(&world, &cur_bp, DIR_UP) {
-                    options.push(DIR_UP);
-                } else if cur_bp.0.y > tbp.0.y && is_empty_block(&world, &cur_bp, DIR_DOWN) {
-                    options.push(DIR_DOWN);
-                }
-            }
-            if avoid_axis != 2 {
-                if cur_bp.0.z < tbp.0.z && is_empty_block(&world, &cur_bp, DIR_SOUTH) {
-                    options.push(DIR_SOUTH);
-                } else if cur_bp.0.z > tbp.0.z && is_empty_block(&world, &cur_bp, DIR_NORTH) {
-                    options.push(DIR_NORTH);
-                }
-            }
-
-            // If options empty, pick a random direction (up to 5 tries for an
-            // unobstructed one); ignore avoidAxis in this fallback.
-            let sel = if options.is_empty() {
-                let mut r = Self::random_dir();
-                for _ in 0..4 {
-                    if is_empty_block(&world, &cur_bp, r) {
-                        break;
-                    }
-                    r = Self::random_dir();
-                }
-                r
-            } else {
-                options[rand::rng().random_range(0..options.len())]
-            };
-
+        // If the target block center is more than 2 blocks away, pick an axis step.
+        let (chosen_tx, chosen_ty, chosen_tz, selected_dir) = if Self::target_is_far(&pos, &tbp) {
+            let sel = Self::pick_move_direction(&world, &cur_bp, &tbp, avoid_axis);
             (
                 pos.x + f64::from(dir_step_x_s(sel)),
                 pos.y + f64::from(dir_step_y_s(sel)),
@@ -179,29 +117,108 @@ impl ShulkerBulletEntity {
                 sel,
             )
         } else {
-            // If close, set selection=null and aim at the actual target position directly.
-            (target_x, target_y, target_z, DIR_NONE)
+            // Close: no direction, aim at the actual target position.
+            (
+                f64::from(tbp.0.x) + 0.5,
+                f64::from(tbp.0.y) + Y_OFFSET,
+                f64::from(tbp.0.z) + 0.5,
+                DIR_NONE,
+            )
         };
 
-        // Compute normalized steering delta scaled by SPEED.
-        let xa = chosen_tx - pos.x;
-        let ya = chosen_ty - pos.y;
-        let za = chosen_tz - pos.z;
-        let dist = (xa * xa + ya * ya + za * za).sqrt();
-
-        if dist == 0.0 {
-            self.target_delta_x.store(0.0);
-            self.target_delta_y.store(0.0);
-            self.target_delta_z.store(0.0);
-        } else {
-            self.target_delta_x.store(xa / dist * SPEED);
-            self.target_delta_y.store(ya / dist * SPEED);
-            self.target_delta_z.store(za / dist * SPEED);
-        }
+        self.store_target_delta(chosen_tx - pos.x, chosen_ty - pos.y, chosen_tz - pos.z);
 
         self.current_dir.store(selected_dir, Ordering::Relaxed);
         let steps = 10 + rand::rng().random_range(0..5) * 10;
         self.flight_steps.store(steps, Ordering::Relaxed);
+    }
+
+    /// Target block position; default is the block below the bullet.
+    fn target_block_pos(cur_bp: &BlockPos, target_pos_opt: Option<Vector3<f64>>) -> BlockPos {
+        target_pos_opt.map_or_else(
+            || BlockPos::new(cur_bp.0.x, cur_bp.0.y - 1, cur_bp.0.z),
+            |tp| {
+                BlockPos::new(
+                    tp.x.floor() as i32,
+                    (tp.y + Y_OFFSET).floor() as i32,
+                    tp.z.floor() as i32,
+                )
+            },
+        )
+    }
+
+    fn target_is_far(pos: &Vector3<f64>, tbp: &BlockPos) -> bool {
+        let dx = f64::from(tbp.0.x) + 0.5 - pos.x;
+        let dy = f64::from(tbp.0.y) + 0.5 - pos.y;
+        let dz = f64::from(tbp.0.z) + 0.5 - pos.z;
+        dx.powi(2) + dy.powi(2) + dz.powi(2) > 4.0
+    }
+
+    /// Chooses an axis-aligned direction toward the target (random draw when
+    /// no axis helps; `avoid_axis` is ignored in that fallback).
+    fn pick_move_direction(world: &World, cur_bp: &BlockPos, tbp: &BlockPos, avoid_axis: u8) -> u8 {
+        let options = Self::direction_options(world, cur_bp, tbp, avoid_axis);
+        if options.is_empty() {
+            Self::random_open_dir(world, cur_bp)
+        } else {
+            options[rand::rng().random_range(0..options.len())]
+        }
+    }
+
+    fn direction_options(
+        world: &World,
+        cur_bp: &BlockPos,
+        tbp: &BlockPos,
+        avoid_axis: u8,
+    ) -> Vec<u8> {
+        let mut options: Vec<u8> = Vec::new();
+        if avoid_axis != 0 {
+            if cur_bp.0.x < tbp.0.x && is_empty_block(world, cur_bp, DIR_EAST) {
+                options.push(DIR_EAST);
+            } else if cur_bp.0.x > tbp.0.x && is_empty_block(world, cur_bp, DIR_WEST) {
+                options.push(DIR_WEST);
+            }
+        }
+        if avoid_axis != 1 {
+            if cur_bp.0.y < tbp.0.y && is_empty_block(world, cur_bp, DIR_UP) {
+                options.push(DIR_UP);
+            } else if cur_bp.0.y > tbp.0.y && is_empty_block(world, cur_bp, DIR_DOWN) {
+                options.push(DIR_DOWN);
+            }
+        }
+        if avoid_axis != 2 {
+            if cur_bp.0.z < tbp.0.z && is_empty_block(world, cur_bp, DIR_SOUTH) {
+                options.push(DIR_SOUTH);
+            } else if cur_bp.0.z > tbp.0.z && is_empty_block(world, cur_bp, DIR_NORTH) {
+                options.push(DIR_NORTH);
+            }
+        }
+        options
+    }
+
+    /// Random direction, up to 5 tries for an unobstructed one.
+    fn random_open_dir(world: &World, cur_bp: &BlockPos) -> u8 {
+        let mut r = Self::random_dir();
+        for _ in 0..4 {
+            if is_empty_block(world, cur_bp, r) {
+                break;
+            }
+            r = Self::random_dir();
+        }
+        r
+    }
+
+    /// Normalized steering delta scaled by `SPEED`.
+    fn store_target_delta(&self, xa: f64, ya: f64, za: f64) {
+        let dist = (xa * xa + ya * ya + za * za).sqrt();
+        let (dx, dy, dz) = if dist == 0.0 {
+            (0.0, 0.0, 0.0)
+        } else {
+            (xa / dist * SPEED, ya / dist * SPEED, za / dist * SPEED)
+        };
+        self.target_delta_x.store(dx);
+        self.target_delta_y.store(dy);
+        self.target_delta_z.store(dz);
     }
 
     fn random_dir() -> u8 {

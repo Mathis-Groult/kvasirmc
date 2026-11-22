@@ -125,3 +125,7 @@ impl IceSpikeFeature {
         true
     }
 }
+
+#[cfg(test)]
+#[path = "ice_spike_golden.rs"]
+mod golden;

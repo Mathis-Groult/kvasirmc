@@ -18,6 +18,9 @@ use crate::entity::r#type::from_type;
 use crate::world::World;
 use crate::world::bossbar::{Bossbar, BossbarColor, BossbarDivisions};
 
+#[cfg(test)]
+mod golden;
+
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
 pub enum RaidStatus {
     Ongoing,

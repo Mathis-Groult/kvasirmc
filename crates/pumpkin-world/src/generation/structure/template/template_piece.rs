@@ -311,3 +311,7 @@ impl StructurePieceBase for TemplatePiece {
         &mut self.piece
     }
 }
+
+#[cfg(test)]
+#[path = "template_piece_golden.rs"]
+mod golden;

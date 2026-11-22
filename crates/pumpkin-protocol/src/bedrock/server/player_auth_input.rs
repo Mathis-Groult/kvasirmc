@@ -425,3 +425,6 @@ mod tests {
         assert_eq!(error.kind(), ErrorKind::InvalidData);
     }
 }
+
+#[cfg(test)]
+mod golden;

@@ -692,50 +692,52 @@ fn create_equipment_item(item: &'static Item) -> ItemStack {
     ItemStack::new(1, item)
 }
 
-/// Generates the equipment items, slots, and drop chances for a mob definition.
-///
-/// Handles the full weapon + armor selection logic, including enchantment
-/// application when both `def.enchanted` is true and the difficulty-dependent
-/// random check passes.
-#[must_use]
-fn equip_mob_from_def(
+/// Rolls the enchantment check for `stack` and applies vanilla enchantments
+/// when `def.enchanted` and the difficulty-dependent roll both pass.
+fn enchant_if_rolled(
     def: &MobEquipmentDef,
     difficulty: &RegionalDifficulty,
-) -> Vec<(EquipmentSlot, ItemStack, f32)> {
-    let mut changes: Vec<(EquipmentSlot, ItemStack, f32)> = Vec::new();
+    stack: &mut ItemStack,
+    slot: &EquipmentSlot,
+    base_chance: f32,
+) {
+    if def.enchanted && difficulty.should_happen(base_chance) {
+        apply_vanilla_enchantments(stack, slot, difficulty.special_multiplier);
+    }
+}
 
-    // ── Weapon ──
+/// Builds the main-hand entry for `item`, enchanting it when rolled.
+fn weapon_entry(
+    def: &MobEquipmentDef,
+    difficulty: &RegionalDifficulty,
+    item: &'static Item,
+) -> (EquipmentSlot, ItemStack, f32) {
+    let mut stack = create_equipment_item(item);
+    enchant_if_rolled(
+        def,
+        difficulty,
+        &mut stack,
+        &EquipmentSlot::MAIN_HAND,
+        WEAPON_ENCHANT_CHANCE,
+    );
+    (
+        EquipmentSlot::MAIN_HAND,
+        stack,
+        DEFAULT_EQUIPMENT_DROP_CHANCE,
+    )
+}
+
+/// Weapon part of the spawn equipment.
+fn equip_weapon(
+    def: &MobEquipmentDef,
+    difficulty: &RegionalDifficulty,
+    changes: &mut Vec<(EquipmentSlot, ItemStack, f32)>,
+) {
     match def.weapon {
-        WeaponConfig::Always(item) => {
-            let mut stack = create_equipment_item(item);
-            if def.enchanted && difficulty.should_happen(WEAPON_ENCHANT_CHANCE) {
-                apply_vanilla_enchantments(
-                    &mut stack,
-                    &EquipmentSlot::MAIN_HAND,
-                    difficulty.special_multiplier,
-                );
-            }
-            changes.push((
-                EquipmentSlot::MAIN_HAND,
-                stack,
-                DEFAULT_EQUIPMENT_DROP_CHANCE,
-            ));
-        }
+        WeaponConfig::Always(item) => changes.push(weapon_entry(def, difficulty, item)),
         WeaponConfig::AlwaysWeighted(items) => {
             let item = weighted_select_item(items);
-            let mut stack = create_equipment_item(item);
-            if def.enchanted && difficulty.should_happen(WEAPON_ENCHANT_CHANCE) {
-                apply_vanilla_enchantments(
-                    &mut stack,
-                    &EquipmentSlot::MAIN_HAND,
-                    difficulty.special_multiplier,
-                );
-            }
-            changes.push((
-                EquipmentSlot::MAIN_HAND,
-                stack,
-                DEFAULT_EQUIPMENT_DROP_CHANCE,
-            ));
+            changes.push(weapon_entry(def, difficulty, item));
         }
         WeaponConfig::Chance {
             on_hard,
@@ -749,37 +751,24 @@ fn equip_mob_from_def(
             };
             if rand::random::<f32>() < chance {
                 let item = weighted_select_item(items);
-                let mut stack = create_equipment_item(item);
-                if def.enchanted && difficulty.should_happen(WEAPON_ENCHANT_CHANCE) {
-                    apply_vanilla_enchantments(
-                        &mut stack,
-                        &EquipmentSlot::MAIN_HAND,
-                        difficulty.special_multiplier,
-                    );
-                }
-                changes.push((
-                    EquipmentSlot::MAIN_HAND,
-                    stack,
-                    DEFAULT_EQUIPMENT_DROP_CHANCE,
-                ));
+                changes.push(weapon_entry(def, difficulty, item));
             }
         }
         WeaponConfig::None => {}
     }
+}
 
-    // ── Armor ──
+/// Armor part of the spawn equipment.
+fn equip_armor(
+    def: &MobEquipmentDef,
+    difficulty: &RegionalDifficulty,
+    changes: &mut Vec<(EquipmentSlot, ItemStack, f32)>,
+) {
     match def.armor {
         ArmorConfig::Vanilla => {
             if difficulty.should_happen(WEARING_ARMOR_CHANCE) {
-                let armor_pieces = select_vanilla_armor(difficulty);
-                for (slot, mut stack, drop_chance) in armor_pieces {
-                    if def.enchanted && difficulty.should_happen(ARMOR_ENCHANT_CHANCE) {
-                        apply_vanilla_enchantments(
-                            &mut stack,
-                            &slot,
-                            difficulty.special_multiplier,
-                        );
-                    }
+                for (slot, mut stack, drop_chance) in select_vanilla_armor(difficulty) {
+                    enchant_if_rolled(def, difficulty, &mut stack, &slot, ARMOR_ENCHANT_CHANCE);
                     changes.push((slot, stack, drop_chance));
                 }
             }
@@ -788,20 +777,34 @@ fn equip_mob_from_def(
             for entry in entries {
                 if rand::random::<f32>() < entry.chance {
                     let mut stack = create_equipment_item(entry.item);
-                    if def.enchanted && difficulty.should_happen(ARMOR_ENCHANT_CHANCE) {
-                        apply_vanilla_enchantments(
-                            &mut stack,
-                            entry.slot,
-                            difficulty.special_multiplier,
-                        );
-                    }
+                    enchant_if_rolled(
+                        def,
+                        difficulty,
+                        &mut stack,
+                        entry.slot,
+                        ARMOR_ENCHANT_CHANCE,
+                    );
                     changes.push((entry.slot.clone(), stack, DEFAULT_EQUIPMENT_DROP_CHANCE));
                 }
             }
         }
         ArmorConfig::None => {}
     }
+}
 
+/// Generates the equipment items, slots, and drop chances for a mob definition.
+///
+/// Handles the full weapon + armor selection logic, including enchantment
+/// application when both `def.enchanted` is true and the difficulty-dependent
+/// random check passes.
+#[must_use]
+fn equip_mob_from_def(
+    def: &MobEquipmentDef,
+    difficulty: &RegionalDifficulty,
+) -> Vec<(EquipmentSlot, ItemStack, f32)> {
+    let mut changes: Vec<(EquipmentSlot, ItemStack, f32)> = Vec::new();
+    equip_weapon(def, difficulty, &mut changes);
+    equip_armor(def, difficulty, &mut changes);
     changes
 }
 

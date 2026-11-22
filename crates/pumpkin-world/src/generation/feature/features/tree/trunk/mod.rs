@@ -124,7 +124,6 @@ pub enum TrunkType {
 
 impl TrunkType {
     #[expect(clippy::too_many_arguments)]
-    #[expect(clippy::too_many_lines)]
     pub fn generate<T: GenerationCache>(
         &self,
         block_registry: &dyn WorldPortalExt,
@@ -136,107 +135,45 @@ impl TrunkType {
         below_trunk_provider: &BlockStateProvider,
         trunk_state: &BlockState,
     ) -> (Vec<TreeNode>, Vec<BlockPos>) {
+        // Every placer takes the same eight arguments: `Kind::generate` for the settingless kinds,
+        // `settings.generate` for the kinds that carry settings.
+        macro_rules! forward {
+            ($kind:ident :: generate) => {
+                $kind::generate(
+                    block_registry,
+                    placer,
+                    height,
+                    start_pos,
+                    chunk,
+                    random,
+                    below_trunk_provider,
+                    trunk_state,
+                )
+            };
+            ($settings:ident . generate) => {
+                $settings.generate(
+                    block_registry,
+                    placer,
+                    height,
+                    start_pos,
+                    chunk,
+                    random,
+                    below_trunk_provider,
+                    trunk_state,
+                )
+            };
+        }
         match self {
-            Self::Straight(_) => StraightTrunkPlacer::generate(
-                block_registry,
-                placer,
-                height,
-                start_pos,
-                chunk,
-                random,
-                below_trunk_provider,
-                trunk_state,
-            ),
-            Self::Forking(_) => ForkingTrunkPlacer::generate(
-                block_registry,
-                placer,
-                height,
-                start_pos,
-                chunk,
-                random,
-                below_trunk_provider,
-                trunk_state,
-            ),
-            Self::Giant(_) => GiantTrunkPlacer::generate(
-                block_registry,
-                placer,
-                height,
-                start_pos,
-                chunk,
-                random,
-                below_trunk_provider,
-                trunk_state,
-            ),
-            Self::MegaJungle(_) => MegaJungleTrunkPlacer::generate(
-                block_registry,
-                placer,
-                height,
-                start_pos,
-                chunk,
-                random,
-                below_trunk_provider,
-                trunk_state,
-            ),
-            Self::DarkOak(_) => DarkOakTrunkPlacer::generate(
-                block_registry,
-                placer,
-                height,
-                start_pos,
-                chunk,
-                random,
-                below_trunk_provider,
-                trunk_state,
-            ),
-            Self::Fancy(_) => FancyTrunkPlacer::generate(
-                block_registry,
-                placer,
-                height,
-                start_pos,
-                chunk,
-                random,
-                below_trunk_provider,
-                trunk_state,
-            ),
-            Self::Bending(bending) => bending.generate(
-                block_registry,
-                placer,
-                height,
-                start_pos,
-                chunk,
-                random,
-                below_trunk_provider,
-                trunk_state,
-            ),
-            Self::UpwardsBranching(upwards_branching) => upwards_branching.generate(
-                block_registry,
-                placer,
-                height,
-                start_pos,
-                chunk,
-                random,
-                below_trunk_provider,
-                trunk_state,
-            ),
-            Self::Cherry(cherry) => cherry.generate(
-                block_registry,
-                placer,
-                height,
-                start_pos,
-                chunk,
-                random,
-                below_trunk_provider,
-                trunk_state,
-            ),
-            Self::Poplar(poplar) => poplar.generate(
-                block_registry,
-                placer,
-                height,
-                start_pos,
-                chunk,
-                random,
-                below_trunk_provider,
-                trunk_state,
-            ),
+            Self::Straight(_) => forward!(StraightTrunkPlacer::generate),
+            Self::Forking(_) => forward!(ForkingTrunkPlacer::generate),
+            Self::Giant(_) => forward!(GiantTrunkPlacer::generate),
+            Self::MegaJungle(_) => forward!(MegaJungleTrunkPlacer::generate),
+            Self::DarkOak(_) => forward!(DarkOakTrunkPlacer::generate),
+            Self::Fancy(_) => forward!(FancyTrunkPlacer::generate),
+            Self::Bending(bending) => forward!(bending.generate),
+            Self::UpwardsBranching(upwards_branching) => forward!(upwards_branching.generate),
+            Self::Cherry(cherry) => forward!(cherry.generate),
+            Self::Poplar(poplar) => forward!(poplar.generate),
         }
     }
 }

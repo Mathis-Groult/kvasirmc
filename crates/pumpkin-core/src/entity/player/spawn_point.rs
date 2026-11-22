@@ -16,6 +16,9 @@ use pumpkin_util::math::{
 use std::sync::Arc;
 use tracing::debug;
 
+#[cfg(test)]
+mod golden;
+
 impl Player {
     pub fn set_respawn_point(
         &self,

@@ -1,0 +1,126 @@
+bare_stack:
+  sent [34:6:220001482003]
+  fires fire,air,fire,fire,soul_fire,fire,fire
+  entities 2 -> 2 flask removed false
+  clouds
+    
+water:
+  sent [34:6:220001482003]
+  fires air,air,air,air,air,fire,fire
+  entities 2 -> 2 flask removed false
+  clouds
+    
+water_on_zombie:
+  sent [34:6:220001482003]
+  fires air,air,air,air,air,fire,fire
+  entities 2 -> 2 flask removed false
+  clouds
+    
+water_colored:
+  sent [34:6:220001482003]
+  fires air,air,air,air,air,fire,fire
+  entities 2 -> 2 flask removed false
+  clouds
+    
+mundane:
+  sent [34:6:220001482003]
+  fires fire,air,fire,fire,soul_fire,fire,fire
+  entities 2 -> 2 flask removed false
+  clouds
+    
+slowness:
+  sent [34:6:220001482003 47:18:2f000007d2000057000001c040008bafe000 1 101]
+  fires fire,air,fire,fire,soul_fire,fire,fire
+  entities 2 -> 3 flask removed false
+  clouds
+    pos (348.70, 64.90, 28.30) radius 3.0000 duration 600 age 0 delay 20 wait 20 per_tick -0.00500 on_use -0.50 duration_on_use -100 effects [1:1800:0:011] stack lingering_potion x1 potion Some(16) color None custom 0
+slowness_on_zombie:
+  sent [34:6:220001482003 47:18:2f000007d2000067000001c040008bafe000 1 101]
+  fires fire,air,fire,fire,soul_fire,fire,fire
+  entities 2 -> 3 flask removed false
+  clouds
+    pos (412.70, 64.90, 28.30) radius 3.0000 duration 600 age 0 delay 20 wait 20 per_tick -0.00500 on_use -0.50 duration_on_use -100 effects [1:1800:0:011] stack lingering_potion x1 potion Some(16) color None custom 0
+harming:
+  sent [34:6:220001482003 47:18:2f000007d7000077000001c04000a9656a00 1 101]
+  fires fire,air,fire,fire,soul_fire,fire,fire
+  entities 2 -> 3 flask removed false
+  clouds
+    pos (476.70, 64.90, 28.30) radius 3.0000 duration 600 age 0 delay 20 wait 20 per_tick -0.00500 on_use -0.50 duration_on_use -100 effects [6:1:0:011] stack lingering_potion x1 potion Some(26) color None custom 0
+healing:
+  sent [34:6:220001482003 47:18:2f000007d7000087000001c04000f8242300 1 101]
+  fires fire,air,fire,fire,soul_fire,fire,fire
+  entities 2 -> 3 flask removed false
+  clouds
+    pos (540.70, 64.90, 28.30) radius 3.0000 duration 600 age 0 delay 20 wait 20 per_tick -0.00500 on_use -0.50 duration_on_use -100 effects [5:1:0:011] stack lingering_potion x1 potion Some(24) color None custom 0
+poison_colored:
+  sent [34:6:220001482003 47:18:2f000007d2000097000001c0400000ff7f00 1 101]
+  fires fire,air,fire,fire,soul_fire,fire,fire
+  entities 2 -> 3 flask removed false
+  clouds
+    pos (604.70, 64.90, 28.30) radius 3.0000 duration 600 age 0 delay 20 wait 20 per_tick -0.00500 on_use -0.50 duration_on_use -100 effects [18:900:0:011] stack lingering_potion x1 potion Some(28) color Some(65407) custom 0
+swiftness:
+  sent [34:6:220001482003 47:18:2f000007d20000a7000001c0400033ebff00 1 101]
+  fires fire,air,fire,fire,soul_fire,fire,fire
+  entities 2 -> 3 flask removed false
+  clouds
+    pos (668.70, 64.90, 28.30) radius 3.0000 duration 600 age 0 delay 20 wait 20 per_tick -0.00500 on_use -0.50 duration_on_use -100 effects [0:3600:0:011] stack lingering_potion x1 potion Some(13) color None custom 0
+custom_pair:
+  sent [34:6:220001482003 47:18:2f000007d20000b7000001c0400067785500 1 101]
+  fires fire,air,fire,fire,soul_fire,fire,fire
+  entities 2 -> 3 flask removed false
+  clouds
+    pos (732.70, 64.90, 28.30) radius 3.0000 duration 600 age 0 delay 20 wait 20 per_tick -0.00500 on_use -0.50 duration_on_use -100 effects [18:300:1:011,17:300:1:011] stack lingering_potion x1 potion None color None custom 2
+custom_instant_last:
+  sent [34:6:220001482003 47:18:2f000007d70000c7000001c04000c1698100 1 101]
+  fires fire,air,fire,fire,soul_fire,fire,fire
+  entities 2 -> 3 flask removed false
+  clouds
+    pos (796.70, 64.90, 28.30) radius 3.0000 duration 600 age 0 delay 20 wait 20 per_tick -0.00500 on_use -0.50 duration_on_use -100 effects [1:300:1:011,5:300:1:011] stack lingering_potion x1 potion None color None custom 2
+custom_instant_damage_last:
+  sent [34:6:220001482003 47:18:2f000007d70000d7000001c04000bb608a00 1 101]
+  fires fire,air,fire,fire,soul_fire,fire,fire
+  entities 2 -> 3 flask removed false
+  clouds
+    pos (860.70, 64.90, 28.30) radius 3.0000 duration 600 age 0 delay 20 wait 20 per_tick -0.00500 on_use -0.50 duration_on_use -100 effects [9:300:1:011,6:300:1:011] stack lingering_potion x1 potion None color None custom 2
+custom_colored:
+  sent [34:6:220001482003 47:18:2f000007d20000e7000001c0400012345600 1 101]
+  fires fire,air,fire,fire,soul_fire,fire,fire
+  entities 2 -> 3 flask removed false
+  clouds
+    pos (924.70, 64.90, 28.30) radius 3.0000 duration 600 age 0 delay 20 wait 20 per_tick -0.00500 on_use -0.50 duration_on_use -100 effects [18:300:1:011] stack lingering_potion x1 potion None color Some(1193046) custom 1
+water_with_custom:
+  sent [34:6:220001482003 47:18:2f000007d20000f7000001c040008bafe000 1 101]
+  fires air,air,air,air,air,fire,fire
+  entities 2 -> 3 flask removed false
+  clouds
+    pos (988.70, 64.90, 28.30) radius 3.0000 duration 600 age 0 delay 20 wait 20 per_tick -0.00500 on_use -0.50 duration_on_use -100 effects [1:300:1:011] stack lingering_potion x1 potion Some(0) color None custom 1
+potion_and_custom:
+  sent [34:6:220001482003 47:18:2f000007d2000107000001c040005fcdef00 1 101]
+  fires fire,air,fire,fire,soul_fire,fire,fire
+  entities 2 -> 3 flask removed false
+  clouds
+    pos (1052.70, 64.90, 28.30) radius 3.0000 duration 600 age 0 delay 20 wait 20 per_tick -0.00500 on_use -0.50 duration_on_use -100 effects [0:3600:0:011,1:300:1:011] stack lingering_potion x1 potion Some(13) color None custom 1
+unknown_custom_effect:
+  sent [34:6:220001482003]
+  fires fire,air,fire,fire,soul_fire,fire,fire
+  entities 2 -> 2 flask removed false
+  clouds
+    
+empty_potion:
+  sent [34:6:220001482003]
+  fires fire,air,fire,fire,soul_fire,fire,fire
+  entities 2 -> 2 flask removed false
+  clouds
+    
+empty_potion_colored:
+  sent [34:6:220001482003]
+  fires fire,air,fire,fire,soul_fire,fire,fire
+  entities 2 -> 2 flask removed false
+  clouds
+    
+colored_black:
+  sent [34:6:220001482003 47:18:2f000007d2000147000001c0400000000000 1 101]
+  fires fire,air,fire,fire,soul_fire,fire,fire
+  entities 2 -> 3 flask removed false
+  clouds
+    pos (1308.70, 64.90, 28.30) radius 3.0000 duration 600 age 0 delay 20 wait 20 per_tick -0.00500 on_use -0.50 duration_on_use -100 effects [18:300:1:011] stack lingering_potion x1 potion None color Some(0) custom 1

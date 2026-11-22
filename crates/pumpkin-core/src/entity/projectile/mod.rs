@@ -15,6 +15,8 @@ mod arrow_tick_golden;
 #[cfg(test)]
 mod shulker_tick_golden;
 #[cfg(test)]
+mod lingering_potion_golden;
+#[cfg(test)]
 #[path = "../area_effect_cloud_golden.rs"]
 mod area_effect_cloud_golden;
 pub mod egg;

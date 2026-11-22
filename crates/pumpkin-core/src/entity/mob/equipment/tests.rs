@@ -284,3 +284,52 @@ fn equip_never_enchants_when_the_def_is_not_enchanted() {
     assert_eq!(out.len(), 3);
     assert!(out.iter().all(|(_, stack, _)| !stack.has_enchantments()));
 }
+
+#[test]
+fn equip_skips_enchanting_when_the_check_fails() {
+    let weighted = def(
+        WeaponConfig::AlwaysWeighted(&SWORD_ONLY),
+        ArmorConfig::None,
+        true,
+    );
+    let chance = def(
+        WeaponConfig::Chance {
+            on_hard: 1.0,
+            otherwise: 1.0,
+            items: &SWORD_ONLY,
+        },
+        ArmorConfig::None,
+        true,
+    );
+    let custom = def(
+        WeaponConfig::None,
+        ArmorConfig::CustomPerSlot(&GOLD_ARMOR),
+        true,
+    );
+    for d in [&weighted, &chance, &custom] {
+        let out = equip(d, Difficulty::Normal, 0.0);
+        assert!(!out.is_empty());
+        assert!(out.iter().all(|(_, stack, _)| !stack.has_enchantments()));
+    }
+}
+
+#[test]
+fn equip_vanilla_armor_enchants_only_some_pieces_at_the_check_chance() {
+    // multiplier 1.0: pieces appear with chance 0.15 and each is enchanted
+    // with chance 0.5, so 200 pieces without both outcomes has odds of 2^-199.
+    let d = def(WeaponConfig::None, ArmorConfig::Vanilla, true);
+    let (mut enchanted, mut plain) = (0, 0);
+    while enchanted + plain < 200 {
+        for (_, stack, _) in equip(&d, Difficulty::Normal, 1.0) {
+            if stack.has_enchantments() {
+                enchanted += 1;
+            } else {
+                plain += 1;
+            }
+        }
+    }
+    assert!(
+        enchanted > 0 && plain > 0,
+        "enchanted {enchanted}, plain {plain}"
+    );
+}

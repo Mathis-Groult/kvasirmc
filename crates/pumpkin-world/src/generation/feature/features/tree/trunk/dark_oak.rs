@@ -133,3 +133,7 @@ impl DarkOakTrunkPlacer {
         (nodes, trunk_poses)
     }
 }
+
+#[cfg(test)]
+#[path = "dark_oak_golden.rs"]
+mod golden;

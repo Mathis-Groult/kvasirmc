@@ -1,4 +1,6 @@
 #[cfg(test)]
+mod from_uuid_golden;
+#[cfg(test)]
 mod golden;
 pub mod spawn_rules;
 

@@ -47,6 +47,9 @@ pub mod uuid;
 pub mod world;
 
 #[cfg(test)]
+mod mob_data_golden;
+
+#[cfg(test)]
 mod register_player_event_golden;
 
 #[cfg(test)]

@@ -1,0 +1,90 @@
+== dns
+guest report
+env.PATH=-
+env.PROBE_MODE=-
+env.PROBE_INJECTED=-
+fs.read=failed
+fs.write=failed
+tcp.connect_loopback=failed
+tcp.bind_loopback=denied
+tcp.bind_any=denied
+udp.bind_loopback=denied
+udp.bind_any=denied
+udp.send_public=denied
+udp.send_loopback=denied
+dns=allowed
+memory.64mb=allowed
+
+state permissions=["network.dns"] name=Some("dns") server=true http_outbound=false
+== tcp
+guest report
+env.PATH=-
+env.PROBE_MODE=-
+env.PROBE_INJECTED=-
+fs.read=failed
+fs.write=failed
+tcp.connect_loopback=allowed
+tcp.bind_loopback=allowed
+tcp.bind_any=allowed
+udp.bind_loopback=denied
+udp.bind_any=denied
+udp.send_public=denied
+udp.send_loopback=denied
+dns=failed
+memory.64mb=allowed
+
+state permissions=["network.tcp"] name=Some("tcp") server=true http_outbound=false
+== tcp_no_override
+guest report
+env.PATH=-
+env.PROBE_MODE=-
+env.PROBE_INJECTED=-
+fs.read=failed
+fs.write=failed
+tcp.connect_loopback=failed
+tcp.bind_loopback=allowed
+tcp.bind_any=allowed
+udp.bind_loopback=denied
+udp.bind_any=denied
+udp.send_public=denied
+udp.send_loopback=denied
+dns=failed
+memory.64mb=allowed
+
+state permissions=["network.tcp"] name=Some("tcp_no_override") server=true http_outbound=false
+== tcp_connect
+guest report
+env.PATH=-
+env.PROBE_MODE=-
+env.PROBE_INJECTED=-
+fs.read=failed
+fs.write=failed
+tcp.connect_loopback=allowed
+tcp.bind_loopback=denied
+tcp.bind_any=denied
+udp.bind_loopback=denied
+udp.bind_any=denied
+udp.send_public=denied
+udp.send_loopback=denied
+dns=failed
+memory.64mb=allowed
+
+state permissions=["network.tcp.connect"] name=Some("tcp_connect") server=true http_outbound=false
+== tcp_bind
+guest report
+env.PATH=-
+env.PROBE_MODE=-
+env.PROBE_INJECTED=-
+fs.read=failed
+fs.write=failed
+tcp.connect_loopback=denied
+tcp.bind_loopback=allowed
+tcp.bind_any=allowed
+udp.bind_loopback=denied
+udp.bind_any=denied
+udp.send_public=denied
+udp.send_loopback=denied
+dns=failed
+memory.64mb=allowed
+
+state permissions=["network.tcp.bind"] name=Some("tcp_bind") server=true http_outbound=false

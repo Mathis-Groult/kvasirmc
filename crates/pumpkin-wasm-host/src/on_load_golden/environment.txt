@@ -1,0 +1,126 @@
+== config_inherit_env
+guest report
+env.PATH=set
+env.PROBE_MODE=-
+env.PROBE_INJECTED=-
+fs.read=failed
+fs.write=failed
+tcp.connect_loopback=failed
+tcp.bind_loopback=denied
+tcp.bind_any=denied
+udp.bind_loopback=denied
+udp.bind_any=denied
+udp.send_public=denied
+udp.send_loopback=denied
+dns=failed
+memory.64mb=allowed
+
+state permissions=[] name=Some("config_inherit_env") server=true http_outbound=false
+== sys_env
+guest report
+env.PATH=set
+env.PROBE_MODE=-
+env.PROBE_INJECTED=-
+fs.read=failed
+fs.write=failed
+tcp.connect_loopback=failed
+tcp.bind_loopback=denied
+tcp.bind_any=denied
+udp.bind_loopback=denied
+udp.bind_any=denied
+udp.send_public=denied
+udp.send_loopback=denied
+dns=failed
+memory.64mb=allowed
+
+state permissions=["sys.env"] name=Some("sys_env") server=true http_outbound=false
+== sys_env_path
+guest report
+env.PATH=set
+env.PROBE_MODE=-
+env.PROBE_INJECTED=-
+fs.read=failed
+fs.write=failed
+tcp.connect_loopback=failed
+tcp.bind_loopback=denied
+tcp.bind_any=denied
+udp.bind_loopback=denied
+udp.bind_any=denied
+udp.send_public=denied
+udp.send_loopback=denied
+dns=failed
+memory.64mb=allowed
+
+state permissions=["sys.env.PATH"] name=Some("sys_env_path") server=true http_outbound=false
+== sys_env_other
+guest report
+env.PATH=-
+env.PROBE_MODE=-
+env.PROBE_INJECTED=-
+fs.read=failed
+fs.write=failed
+tcp.connect_loopback=failed
+tcp.bind_loopback=denied
+tcp.bind_any=denied
+udp.bind_loopback=denied
+udp.bind_any=denied
+udp.send_public=denied
+udp.send_loopback=denied
+dns=failed
+memory.64mb=allowed
+
+state permissions=["sys.env.NOT_A_VARIABLE"] name=Some("sys_env_other") server=true http_outbound=false
+== sys_env_prefix_only
+guest report
+env.PATH=-
+env.PROBE_MODE=-
+env.PROBE_INJECTED=-
+fs.read=failed
+fs.write=failed
+tcp.connect_loopback=failed
+tcp.bind_loopback=denied
+tcp.bind_any=denied
+udp.bind_loopback=denied
+udp.bind_any=denied
+udp.send_public=denied
+udp.send_loopback=denied
+dns=failed
+memory.64mb=allowed
+
+state permissions=["sys.env."] name=Some("sys_env_prefix_only") server=true http_outbound=false
+== sys_env_path_and_injected
+guest report
+env.PATH=set
+env.PROBE_MODE=-
+env.PROBE_INJECTED=both
+fs.read=failed
+fs.write=failed
+tcp.connect_loopback=denied
+tcp.bind_loopback=denied
+tcp.bind_any=denied
+udp.bind_loopback=denied
+udp.bind_any=denied
+udp.send_public=denied
+udp.send_loopback=denied
+dns=failed
+memory.64mb=allowed
+
+state permissions=["sys.env.PATH"] name=Some("sys_env_path_and_injected") server=true http_outbound=false
+== inherit_env_and_injected
+guest report
+env.PATH=set
+env.PROBE_MODE=-
+env.PROBE_INJECTED=both
+fs.read=failed
+fs.write=failed
+tcp.connect_loopback=denied
+tcp.bind_loopback=denied
+tcp.bind_any=denied
+udp.bind_loopback=denied
+udp.bind_any=denied
+udp.send_public=denied
+udp.send_loopback=denied
+dns=failed
+memory.64mb=allowed
+
+state permissions=[] name=Some("inherit_env_and_injected") server=true http_outbound=false

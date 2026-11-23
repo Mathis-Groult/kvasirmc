@@ -1,0 +1,189 @@
+== bare
+guest report
+env.PATH=-
+env.PROBE_MODE=-
+env.PROBE_INJECTED=-
+fs.read=failed
+fs.write=failed
+tcp.connect_loopback=failed
+tcp.bind_loopback=denied
+tcp.bind_any=denied
+udp.bind_loopback=denied
+udp.bind_any=denied
+udp.send_public=denied
+udp.send_loopback=denied
+dns=failed
+memory.64mb=allowed
+
+state permissions=[] name=Some("bare") server=true http_outbound=false
+== mode_ok
+ok
+state permissions=[] name=Some("mode_ok") server=true http_outbound=false
+== mode_err
+guest error: guest refused to load
+state permissions=[] name=Some("mode_err") server=true http_outbound=false
+== mode_trap
+host error
+state unreadable
+== injected_env
+guest report
+env.PATH=-
+env.PROBE_MODE=-
+env.PROBE_INJECTED=yes
+fs.read=failed
+fs.write=failed
+tcp.connect_loopback=denied
+tcp.bind_loopback=denied
+tcp.bind_any=denied
+udp.bind_loopback=denied
+udp.bind_any=denied
+udp.send_public=denied
+udp.send_loopback=denied
+dns=failed
+memory.64mb=allowed
+
+state permissions=[] name=Some("injected_env") server=true http_outbound=false
+== override_of_other_plugin
+guest report
+env.PATH=-
+env.PROBE_MODE=-
+env.PROBE_INJECTED=-
+fs.read=failed
+fs.write=failed
+tcp.connect_loopback=failed
+tcp.bind_loopback=denied
+tcp.bind_any=denied
+udp.bind_loopback=denied
+udp.bind_any=denied
+udp.send_public=denied
+udp.send_loopback=denied
+dns=failed
+memory.64mb=allowed
+
+state permissions=[] name=Some("override_of_other_plugin") server=true http_outbound=false
+== memory_unlimited
+guest report
+env.PATH=-
+env.PROBE_MODE=-
+env.PROBE_INJECTED=-
+fs.read=failed
+fs.write=failed
+tcp.connect_loopback=denied
+tcp.bind_loopback=denied
+tcp.bind_any=denied
+udp.bind_loopback=denied
+udp.bind_any=denied
+udp.send_public=denied
+udp.send_loopback=denied
+dns=failed
+memory.64mb=allowed
+
+state permissions=[] name=Some("memory_unlimited") server=true http_outbound=false
+== memory_config_small
+guest report
+env.PATH=-
+env.PROBE_MODE=-
+env.PROBE_INJECTED=-
+fs.read=failed
+fs.write=failed
+tcp.connect_loopback=denied
+tcp.bind_loopback=denied
+tcp.bind_any=denied
+udp.bind_loopback=denied
+udp.bind_any=denied
+udp.send_public=denied
+udp.send_loopback=denied
+dns=failed
+memory.64mb=denied
+
+state permissions=[] name=Some("memory_config_small") server=true http_outbound=false
+== memory_config_large
+guest report
+env.PATH=-
+env.PROBE_MODE=-
+env.PROBE_INJECTED=-
+fs.read=failed
+fs.write=failed
+tcp.connect_loopback=denied
+tcp.bind_loopback=denied
+tcp.bind_any=denied
+udp.bind_loopback=denied
+udp.bind_any=denied
+udp.send_public=denied
+udp.send_loopback=denied
+dns=failed
+memory.64mb=allowed
+
+state permissions=[] name=Some("memory_config_large") server=true http_outbound=false
+== memory_override_small
+guest report
+env.PATH=-
+env.PROBE_MODE=-
+env.PROBE_INJECTED=-
+fs.read=failed
+fs.write=failed
+tcp.connect_loopback=denied
+tcp.bind_loopback=denied
+tcp.bind_any=denied
+udp.bind_loopback=denied
+udp.bind_any=denied
+udp.send_public=denied
+udp.send_loopback=denied
+dns=failed
+memory.64mb=denied
+
+state permissions=[] name=Some("memory_override_small") server=true http_outbound=false
+== memory_override_large
+guest report
+env.PATH=-
+env.PROBE_MODE=-
+env.PROBE_INJECTED=-
+fs.read=failed
+fs.write=failed
+tcp.connect_loopback=denied
+tcp.bind_loopback=denied
+tcp.bind_any=denied
+udp.bind_loopback=denied
+udp.bind_any=denied
+udp.send_public=denied
+udp.send_loopback=denied
+dns=failed
+memory.64mb=allowed
+
+state permissions=[] name=Some("memory_override_large") server=true http_outbound=false
+== memory_override_only
+guest report
+env.PATH=-
+env.PROBE_MODE=-
+env.PROBE_INJECTED=-
+fs.read=failed
+fs.write=failed
+tcp.connect_loopback=denied
+tcp.bind_loopback=denied
+tcp.bind_any=denied
+udp.bind_loopback=denied
+udp.bind_any=denied
+udp.send_public=denied
+udp.send_loopback=denied
+dns=failed
+memory.64mb=denied
+
+state permissions=[] name=Some("memory_override_only") server=true http_outbound=false
+== memory_config_no_override
+guest report
+env.PATH=-
+env.PROBE_MODE=-
+env.PROBE_INJECTED=-
+fs.read=failed
+fs.write=failed
+tcp.connect_loopback=failed
+tcp.bind_loopback=denied
+tcp.bind_any=denied
+udp.bind_loopback=denied
+udp.bind_any=denied
+udp.send_public=denied
+udp.send_loopback=denied
+dns=failed
+memory.64mb=denied
+
+state permissions=[] name=Some("memory_config_no_override") server=true http_outbound=false

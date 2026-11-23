@@ -24,6 +24,9 @@ use pumpkin_core::plugin::{
 mod runtime;
 mod scheduler;
 
+#[cfg(test)]
+mod on_load_golden;
+
 /// The plugin handed to the plugin manager for a loaded wasm plugin.
 struct WasmPluginHandle(Arc<WasmPlugin>);
 

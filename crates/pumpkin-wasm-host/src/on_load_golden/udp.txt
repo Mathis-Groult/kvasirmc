@@ -1,0 +1,234 @@
+== udp
+guest report
+env.PATH=-
+env.PROBE_MODE=-
+env.PROBE_INJECTED=-
+fs.read=failed
+fs.write=failed
+tcp.connect_loopback=failed
+tcp.bind_loopback=denied
+tcp.bind_any=denied
+udp.bind_loopback=allowed
+udp.bind_any=allowed
+udp.send_public=allowed
+udp.send_loopback=allowed
+dns=failed
+memory.64mb=allowed
+
+state permissions=["network.udp"] name=Some("udp") server=true http_outbound=false
+== udp_connect
+guest report
+env.PATH=-
+env.PROBE_MODE=-
+env.PROBE_INJECTED=-
+fs.read=failed
+fs.write=failed
+tcp.connect_loopback=failed
+tcp.bind_loopback=denied
+tcp.bind_any=denied
+udp.bind_loopback=denied
+udp.bind_any=allowed
+udp.send_public=allowed
+udp.send_loopback=denied
+dns=failed
+memory.64mb=allowed
+
+state permissions=["network.udp.connect"] name=Some("udp_connect") server=true http_outbound=false
+== udp_bind
+guest report
+env.PATH=-
+env.PROBE_MODE=-
+env.PROBE_INJECTED=-
+fs.read=failed
+fs.write=failed
+tcp.connect_loopback=failed
+tcp.bind_loopback=denied
+tcp.bind_any=denied
+udp.bind_loopback=allowed
+udp.bind_any=allowed
+udp.send_public=denied
+udp.send_loopback=denied
+dns=failed
+memory.64mb=allowed
+
+state permissions=["network.udp.bind"] name=Some("udp_bind") server=true http_outbound=false
+== udp_outgoing
+guest report
+env.PATH=-
+env.PROBE_MODE=-
+env.PROBE_INJECTED=-
+fs.read=failed
+fs.write=failed
+tcp.connect_loopback=failed
+tcp.bind_loopback=denied
+tcp.bind_any=denied
+udp.bind_loopback=denied
+udp.bind_any=allowed
+udp.send_public=allowed
+udp.send_loopback=denied
+dns=failed
+memory.64mb=allowed
+
+state permissions=["network.udp.outgoingdatagram"] name=Some("udp_outgoing") server=true http_outbound=false
+== outbound
+guest report
+env.PATH=-
+env.PROBE_MODE=-
+env.PROBE_INJECTED=-
+fs.read=failed
+fs.write=failed
+tcp.connect_loopback=allowed
+tcp.bind_loopback=denied
+tcp.bind_any=denied
+udp.bind_loopback=denied
+udp.bind_any=allowed
+udp.send_public=allowed
+udp.send_loopback=denied
+dns=failed
+memory.64mb=allowed
+
+state permissions=["network.outbound"] name=Some("outbound") server=true http_outbound=false
+== loopback_perm_only
+guest report
+env.PATH=-
+env.PROBE_MODE=-
+env.PROBE_INJECTED=-
+fs.read=failed
+fs.write=failed
+tcp.connect_loopback=failed
+tcp.bind_loopback=denied
+tcp.bind_any=denied
+udp.bind_loopback=denied
+udp.bind_any=denied
+udp.send_public=denied
+udp.send_loopback=denied
+dns=failed
+memory.64mb=allowed
+
+state permissions=["network.loopback"] name=Some("loopback_perm_only") server=true http_outbound=false
+== tcp_udp_loopback_perm
+guest report
+env.PATH=-
+env.PROBE_MODE=-
+env.PROBE_INJECTED=-
+fs.read=failed
+fs.write=failed
+tcp.connect_loopback=allowed
+tcp.bind_loopback=allowed
+tcp.bind_any=denied
+udp.bind_loopback=allowed
+udp.bind_any=allowed
+udp.send_public=denied
+udp.send_loopback=allowed
+dns=failed
+memory.64mb=allowed
+
+state permissions=["network.tcp", "network.udp", "network.loopback"] name=Some("tcp_udp_loopback_perm") server=true http_outbound=false
+== config_loopback
+guest report
+env.PATH=-
+env.PROBE_MODE=-
+env.PROBE_INJECTED=-
+fs.read=failed
+fs.write=failed
+tcp.connect_loopback=failed
+tcp.bind_loopback=denied
+tcp.bind_any=denied
+udp.bind_loopback=allowed
+udp.bind_any=allowed
+udp.send_public=denied
+udp.send_loopback=allowed
+dns=failed
+memory.64mb=allowed
+
+state permissions=["network.udp"] name=Some("config_loopback") server=true http_outbound=false
+== config_loopback_override_off
+guest report
+env.PATH=-
+env.PROBE_MODE=-
+env.PROBE_INJECTED=-
+fs.read=failed
+fs.write=failed
+tcp.connect_loopback=denied
+tcp.bind_loopback=denied
+tcp.bind_any=denied
+udp.bind_loopback=allowed
+udp.bind_any=allowed
+udp.send_public=allowed
+udp.send_loopback=allowed
+dns=failed
+memory.64mb=allowed
+
+state permissions=["network.udp"] name=Some("config_loopback_override_off") server=true http_outbound=false
+== override_loopback_on
+guest report
+env.PATH=-
+env.PROBE_MODE=-
+env.PROBE_INJECTED=-
+fs.read=failed
+fs.write=failed
+tcp.connect_loopback=denied
+tcp.bind_loopback=denied
+tcp.bind_any=denied
+udp.bind_loopback=allowed
+udp.bind_any=allowed
+udp.send_public=denied
+udp.send_loopback=allowed
+dns=failed
+memory.64mb=allowed
+
+state permissions=["network.udp"] name=Some("override_loopback_on") server=true http_outbound=false
+== override_loopback_off_perm_on
+guest report
+env.PATH=-
+env.PROBE_MODE=-
+env.PROBE_INJECTED=-
+fs.read=failed
+fs.write=failed
+tcp.connect_loopback=denied
+tcp.bind_loopback=denied
+tcp.bind_any=denied
+udp.bind_loopback=allowed
+udp.bind_any=allowed
+udp.send_public=denied
+udp.send_loopback=allowed
+dns=failed
+memory.64mb=allowed
+
+state permissions=["network.udp", "network.loopback"] name=Some("override_loopback_off_perm_on") server=true http_outbound=false
+== override_loopback_unset
+guest report
+env.PATH=-
+env.PROBE_MODE=-
+env.PROBE_INJECTED=-
+fs.read=failed
+fs.write=failed
+tcp.connect_loopback=denied
+tcp.bind_loopback=denied
+tcp.bind_any=denied
+udp.bind_loopback=allowed
+udp.bind_any=allowed
+udp.send_public=denied
+udp.send_loopback=allowed
+dns=failed
+memory.64mb=allowed
+
+state permissions=["network.udp"] name=Some("override_loopback_unset") server=true http_outbound=false
+== http_outbound
+guest report
+env.PATH=-
+env.PROBE_MODE=-
+env.PROBE_INJECTED=-
+fs.read=failed
+fs.write=failed
+tcp.connect_loopback=failed
+tcp.bind_loopback=denied
+tcp.bind_any=denied
+udp.bind_loopback=denied
+udp.bind_any=denied
+udp.send_public=denied
+udp.send_loopback=denied
+dns=failed
+memory.64mb=allowed
+
+state permissions=["http.outbound"] name=Some("http_outbound") server=true http_outbound=true

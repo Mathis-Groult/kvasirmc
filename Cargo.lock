@@ -3381,6 +3381,7 @@ dependencies = [
 name = "pumpkin-wasm-host"
 version = "0.2.1+26.3-26.60"
 dependencies = [
+ "pumpkin-config",
  "pumpkin-core",
  "pumpkin-plugin-runtime",
  "pumpkin-wasm-host-common",

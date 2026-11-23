@@ -85,6 +85,15 @@ impl AllayEntity {
         })
     }
 
+    /// Puts a stack in the allay's hand (read by the death golden).
+    #[cfg(test)]
+    pub(crate) fn hold(&self, stack: ItemStack) {
+        *self
+            .inventory
+            .lock()
+            .unwrap_or_else(std::sync::PoisonError::into_inner) = stack;
+    }
+
     #[must_use]
     pub fn is_dancing(&self) -> bool {
         self.dancing.load(Ordering::Relaxed)

@@ -888,3 +888,38 @@ trials_looting watcher: 32:id119 16:fb03ba47
 trials_looting actor: 32:id119 16:fb03ba47
 trials_looting dropped 9: item carrot total 1; item iron_helmet total 5; item iron_ingot total 3; item potato total 1; item rotten_flesh total 277; item stick total 5; item stone total 5; orb 1 at Vector3 { x: 2006.5, y: 64.0, z: 24.5 } total 10; orb 3 at Vector3 { x: 2006.5, y: 64.0, z: 24.5 } total 5
 trials_looting actor player: stats 6:154=5,8:33=5
+slime_melee victim: dead true pose 7 health 1.0 input Vector3 { x: 0.0, y: 0.0, z: 0.0 } jumping false fire -1 removed false effects
+slime_melee watcher: 32:id119 16:4baa1edc
+slime_melee actor: 32:id119 16:4baa1edc
+slime_melee dropped 3: item iron_helmetx1 at Vector3 { x: 2070, y: 64, z: 24 }; item slime_ballx1 at Vector3 { x: 2070, y: 64, z: 24 }; item stickx1 at Vector3 { x: 2070, y: 64, z: 24 }
+slime_melee actor player: stats 6:120=1,8:33=1
+ghast_fireball victim: dead true pose 7 health 10.0 input Vector3 { x: 0.0, y: 0.0, z: 0.0 } jumping false fire -1 removed false effects
+ghast_fireball watcher: 32:id119 16:cfcdbf3c
+ghast_fireball actor: 32:id119 16:cfcdbf3c
+ghast_fireball dropped 6: item iron_helmetx1 at Vector3 { x: 2134, y: 64, z: 24 }; item music_disc_tearsx1 at Vector3 { x: 2134, y: 64, z: 24 }; item stickx1 at Vector3 { x: 2134, y: 64, z: 24 }; orb 1 at Vector3 { x: 2134.5, y: 64.0, z: 24.5 }; orb 1 at Vector3 { x: 2134.5, y: 64.0, z: 24.5 }; orb 3 at Vector3 { x: 2134.5, y: 64.0, z: 24.5 }
+ghast_fireball actor player: stats 6:58=1,8:33=1
+allay_melee victim: dead true pose 7 health 20.0 input Vector3 { x: 0.0, y: 0.0, z: 0.0 } jumping false fire -1 removed false effects
+allay_melee watcher: 31:id119 16:77592a6d
+allay_melee actor: 31:id119 16:77592a6d
+allay_melee dropped 3: item dirtx1 at Vector3 { x: 2198, y: 64, z: 24 }; item iron_helmetx1 at Vector3 { x: 2198, y: 64, z: 24 }; item stickx1 at Vector3 { x: 2198, y: 64, z: 24 }
+allay_melee actor player: stats 6:2=1,8:33=1
+cow_fire_ticks_0 victim: dead true pose 7 health 10.0 input Vector3 { x: 0.0, y: 0.0, z: 0.0 } jumping false fire 0 removed false effects
+cow_fire_ticks_0 watcher: 32:id119 16:db981404
+cow_fire_ticks_0 actor: 32:id119 16:db981404
+cow_fire_ticks_0 dropped 4: item beefx1 at Vector3 { x: 2262, y: 64, z: 24 }; item iron_helmetx1 at Vector3 { x: 2262, y: 64, z: 24 }; item leatherx1 at Vector3 { x: 2262, y: 64, z: 24 }; item stickx1 at Vector3 { x: 2262, y: 64, z: 24 }
+cow_fire_ticks_0 actor player: stats 
+cow_fire_ticks_1 victim: dead true pose 7 health 10.0 input Vector3 { x: 0.0, y: 0.0, z: 0.0 } jumping false fire 1 removed false effects
+cow_fire_ticks_1 watcher: 32:id119 16:d4bbfb74
+cow_fire_ticks_1 actor: 32:id119 16:d4bbfb74
+cow_fire_ticks_1 dropped 4: item cooked_beefx3 at Vector3 { x: 2326, y: 64, z: 24 }; item iron_helmetx1 at Vector3 { x: 2326, y: 64, z: 24 }; item leatherx2 at Vector3 { x: 2326, y: 64, z: 24 }; item stickx1 at Vector3 { x: 2326, y: 64, z: 24 }
+cow_fire_ticks_1 actor player: stats 
+trials_dirt_bulk victim: dead true pose 7 health 20.0 input Vector3 { x: 0.0, y: 0.0, z: 0.0 } jumping false fire -1 removed false effects
+trials_dirt_bulk watcher: 32:id119 16:a1c2ab21
+trials_dirt_bulk actor: 32:id119 16:a1c2ab21
+trials_dirt_bulk dropped 8: item carrot total 2; item iron_helmet total 150; item iron_ingot total 3; item potato total 1; item rotten_flesh total 152; item stick total 150; orb 1 at Vector3 { x: 2390.5, y: 64.0, z: 24.5 } total 300; orb 3 at Vector3 { x: 2390.5, y: 64.0, z: 24.5 } total 150
+trials_dirt_bulk actor player: stats 6:154=150,8:33=150
+trials_mob_cause_bulk victim: dead true pose 7 health 20.0 input Vector3 { x: 0.0, y: 0.0, z: 0.0 } jumping false fire -1 removed false effects
+trials_mob_cause_bulk watcher: 32:id119 16:9b0dc13c
+trials_mob_cause_bulk actor: 32:id119 16:9b0dc13c
+trials_mob_cause_bulk dropped 3: item iron_helmet total 150; item rotten_flesh total 151; item stick total 150
+trials_mob_cause_bulk actor player: stats 

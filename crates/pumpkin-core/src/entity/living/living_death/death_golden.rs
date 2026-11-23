@@ -48,17 +48,21 @@ use pumpkin_world::cylindrical_chunk_iterator::Cylindrical;
 use pumpkin_world::world::BlockFlags;
 use uuid::Uuid;
 
-use crate::entity::living::LivingEntity;
 use crate::command::commands::script_golden::{self, TestResult};
 use crate::entity::ai::test_support::{self, Identity};
 use crate::entity::experience_orb::ExperienceOrbEntity;
 use crate::entity::item::ItemEntity;
+use crate::entity::living::LivingEntity;
 use crate::entity::mob::creeper::CreeperEntity;
+use crate::entity::mob::ghast::GhastEntity;
 use crate::entity::mob::skeleton::skeleton::SkeletonEntity;
+use crate::entity::mob::slime::SlimeEntity;
 use crate::entity::mob::zombie::zombie::ZombieEntity;
+use crate::entity::passive::allay::AllayEntity;
 use crate::entity::passive::cow::CowEntity;
 use crate::entity::passive::pig::PigEntity;
 use crate::entity::player::Player;
+use crate::entity::projectile::fireball::FireballEntity;
 use crate::entity::{Entity, EntityBase};
 use crate::net::java::PacketTap;
 use crate::server::Server;
@@ -80,6 +84,9 @@ enum Victim {
     Creeper,
     Player,
     ArmorStand,
+    Slime,
+    Ghast,
+    Allay,
 }
 
 /// What actor A, a player, holds in the main hand.
@@ -95,6 +102,7 @@ enum Held {
 enum Mob {
     Zombie,
     Skeleton,
+    Fireball,
 }
 
 /// Which actor a role goes to.
@@ -129,6 +137,10 @@ struct Scene {
     keep_inventory: bool,
     messages: bool,
     burning: bool,
+    /// Fire ticks of the victim when it is not the 100 of `burning` (the edge values 0 and 1).
+    fire: Option<i32>,
+    /// Four more equipment slots with a drop chance of 0, and only the first trial is recorded.
+    bulk: bool,
     oozing: bool,
     twice: bool,
     absent: bool,
@@ -149,6 +161,8 @@ const BASE: Scene = Scene {
     keep_inventory: false,
     messages: true,
     burning: false,
+    fire: None,
+    bulk: false,
     oozing: false,
     twice: false,
     absent: false,
@@ -355,6 +369,53 @@ const SCENES: &[Scene] = &[
         held: Held::Looting,
         ..MELEE
     },
+    Scene {
+        name: "slime_melee",
+        victim: Victim::Slime,
+        ..MELEE
+    },
+    Scene {
+        name: "ghast_fireball",
+        victim: Victim::Ghast,
+        mob: Mob::Fireball,
+        source: Who::Mob,
+        damage: &DamageType::FIREBALL,
+        ..MELEE
+    },
+    Scene {
+        name: "allay_melee",
+        victim: Victim::Allay,
+        ..MELEE
+    },
+    Scene {
+        name: "cow_fire_ticks_0",
+        victim: Victim::Cow,
+        fire: Some(0),
+        ..BASE
+    },
+    Scene {
+        name: "cow_fire_ticks_1",
+        victim: Victim::Cow,
+        fire: Some(1),
+        ..BASE
+    },
+    Scene {
+        name: "trials_dirt_bulk",
+        trials: 150,
+        held: Held::Dirt,
+        bulk: true,
+        ..MELEE
+    },
+    Scene {
+        name: "trials_mob_cause_bulk",
+        trials: 150,
+        bulk: true,
+        source: Who::Mob,
+        cause: Who::Mob,
+        credit: Credit::Mob,
+        damage: &DamageType::MOB_ATTACK,
+        ..BASE
+    },
 ];
 
 /// Entity ids of one scene: fixed, so that the packets that carry them are the same in every
@@ -514,20 +575,29 @@ fn spawn_mob(area: &Area<'_>, world: &Arc<World>, ids: &Ids, kind: Mob) -> Arc<d
     let (entity_type, at) = match kind {
         Mob::Zombie => (&EntityType::ZOMBIE, area.at(2.0)),
         Mob::Skeleton => (&EntityType::SKELETON, area.at(2.0)),
+        Mob::Fireball => (&EntityType::FIREBALL, area.at(2.0)),
     };
     let entity = Entity::from_uuid_with_id(ids.mob(), uuid, world.clone(), at, entity_type);
     match kind {
         Mob::Zombie => ZombieEntity::new(entity),
         Mob::Skeleton => SkeletonEntity::new(entity),
+        Mob::Fireball => Arc::new(FireballEntity::new(entity)),
     }
 }
 
-fn equip(living: &LivingEntity) {
-    let gear = [
+fn equip(living: &LivingEntity, bulk: bool) {
+    let mut gear = vec![
         (EquipmentSlot::HEAD, &Item::IRON_HELMET, 2.0),
         (EquipmentSlot::LEGS, &Item::STONE, 0.0),
         (EquipmentSlot::MAIN_HAND, &Item::STICK, 2.0),
     ];
+    if bulk {
+        gear.extend([
+            (EquipmentSlot::FEET, &Item::STONE, 0.0),
+            (EquipmentSlot::CHEST, &Item::STONE, 0.0),
+            (EquipmentSlot::OFF_HAND, &Item::STONE, 0.0),
+        ]);
+    }
     for (slot, item, chance) in gear {
         living
             .entity_equipment
@@ -561,6 +631,17 @@ fn spawn_victim(
         Victim::Pig => PigEntity::new(entity),
         Victim::Creeper => CreeperEntity::new(entity),
         Victim::ArmorStand => Arc::new(LivingEntity::new(entity)),
+        Victim::Slime => {
+            let slime = SlimeEntity::new(entity);
+            slime.set_size(1, true);
+            slime
+        }
+        Victim::Ghast => GhastEntity::new(entity),
+        Victim::Allay => {
+            let allay = AllayEntity::new(entity);
+            allay.hold(ItemStack::new(1, &Item::DIRT));
+            allay
+        }
         Victim::Player => {
             let (player, tap) = player_at(world, area, "DeathVictim", id, -2.0)?;
             player.experience_level.store(5, Relaxed);
@@ -592,6 +673,9 @@ const fn victim_type(victim: Victim) -> &'static EntityType {
         Victim::Creeper => &EntityType::CREEPER,
         Victim::Player => &EntityType::PLAYER,
         Victim::ArmorStand => &EntityType::ARMOR_STAND,
+        Victim::Slime => &EntityType::SLIME,
+        Victim::Ghast => &EntityType::GHAST,
+        Victim::Allay => &EntityType::ALLAY,
     }
 }
 
@@ -618,7 +702,7 @@ fn prepare(
         return;
     };
     // Only now: a mob that ticks in the live world fits itself out on its first tick.
-    equip(living);
+    equip(living, scene.bulk);
     living.movement_input.store(Vector3::new(0.5, 0.0, -0.25));
     living.jumping.store(true, Relaxed);
     living.add_effect(effect(&StatusEffect::SPEED, 1));
@@ -627,6 +711,9 @@ fn prepare(
     }
     if scene.burning {
         living.entity.fire_ticks.store(100, Relaxed);
+    }
+    if let Some(ticks) = scene.fire {
+        living.entity.fire_ticks.store(ticks, Relaxed);
     }
     living
         .last_hurt_by_player_memory_time
@@ -827,7 +914,9 @@ fn totals(found: &[String]) -> Vec<String> {
             .unwrap_or((text.as_str(), 1));
         *sums.entry(kind.to_owned()).or_default() += count;
     }
-    sums.into_iter().map(|(kind, sum)| format!("{kind} total {sum}")).collect()
+    sums.into_iter()
+        .map(|(kind, sum)| format!("{kind} total {sum}"))
+        .collect()
 }
 
 fn run_scene(
@@ -858,20 +947,30 @@ fn run_scene(
         mob,
     };
     let mut found: Vec<String> = Vec::new();
+    let mut unrecorded = String::new();
     for trial in 0..scene.trials {
         let (victim, mut tap) = spawn_victim(world, &area, scene, ids.victim(trial))?;
         prepare(&victim, &cast.actor.0, &cast.mob, scene);
         let keep = [ids.watcher(), ids.actor(), ids.mob(), ids.victim(trial)];
-        drop(drops(world, &keep));
-        kill(scene, &mut cast, &victim, &mut tap, report);
-        if scene.trials > 1 {
-            // The world ticks on its own: let its item merging finish before the drops are read.
-            std::thread::sleep(std::time::Duration::from_millis(120));
+        if trial == 0 {
+            drop(drops(world, &keep));
         }
-        found.extend(drops(world, &keep));
-        if !scene.absent && trial + 1 < scene.trials {
+        let text = if scene.bulk && trial > 0 {
+            &mut unrecorded
+        } else {
+            &mut *report
+        };
+        kill(scene, &mut cast, &victim, &mut tap, text);
+        if scene.trials == 1 {
+            found.extend(drops(world, &keep));
+        } else if !scene.absent {
             world.remove_entity(victim.as_ref());
         }
+    }
+    if scene.trials > 1 {
+        // The world ticks on its own: let its item merging finish before the drops are read.
+        std::thread::sleep(std::time::Duration::from_millis(500));
+        found.extend(drops(world, &[ids.watcher(), ids.actor(), ids.mob()]));
     }
     found.sort();
     if scene.trials > 1 {

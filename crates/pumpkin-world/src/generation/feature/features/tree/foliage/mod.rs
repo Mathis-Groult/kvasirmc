@@ -22,6 +22,9 @@ use super::{TreeFeature, TreeNode};
 use crate::generation::block_state_provider::BlockStateProvider;
 use crate::generation::proto_chunk::GenerationCache;
 
+#[cfg(test)]
+mod dispatch_golden;
+
 pub mod acacia;
 pub mod blob;
 pub mod bush;

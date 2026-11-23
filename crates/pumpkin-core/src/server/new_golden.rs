@@ -19,6 +19,9 @@ use pumpkin_world::world_info::{LevelData, WorldInfoWriter};
 use super::Server;
 use crate::data::VanillaData;
 
+#[path = "add_player_golden.rs"]
+mod add_player_golden;
+
 type TestResult = Result<(), Box<dyn std::error::Error>>;
 
 const SEED: u64 = 20_261_111;

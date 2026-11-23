@@ -1,0 +1,226 @@
+== loads
+spawn alpha:
+  returned a task, states alpha=Loading
+join alpha: finished, waiter woken=true
+  states alpha=Loaded
+  plugins 1
+    0: alpha v1.2 active=true instance=alpha data=data-alpha path=plugins/alpha.stub
+  call alpha: on_load ctx=alpha/1.2 state=Some(Loading) entry 0 active=false instance=false
+  log INFO Loaded alpha (1.2)
+== loads with permissions
+spawn alpha:
+  returned a task, states alpha=Loading
+join alpha: finished, waiter woken=true
+  states alpha=Loaded
+  plugins 1
+    0: alpha v1.2 active=true instance=alpha data=data-alpha path=plugins/alpha.stub
+  call alpha: on_load ctx=alpha/1.2 state=Some(Loading) entry 0 active=false instance=false
+  log INFO Loaded alpha (1.2)
+  log WARN Plugin "alpha" uses the following permissions: ["fs.read", "net"]
+== fails
+spawn alpha:
+  returned a task, states alpha=Loading
+join alpha: finished, waiter woken=true
+  states alpha=Failed("Initialization failed: boom")
+  plugins 0
+  call alpha: on_load ctx=alpha/1.2 state=Some(Loading) entry 0 active=false instance=false
+  call alpha: on_unload ctx=alpha/1.2
+  call loader.unload data-alpha
+  log ERROR Failed to initialize plugin alpha: Initialization failed: boom
+== fails, the cleanup calls fail too
+spawn alpha:
+  returned a task, states alpha=Loading
+join alpha: finished, waiter woken=true
+  states alpha=Failed("Initialization failed: boom")
+  plugins 0
+  call alpha: on_load ctx=alpha/1.2 state=Some(Loading) entry 0 active=false instance=false
+  call alpha: on_unload ctx=alpha/1.2
+  call loader.unload data-alpha
+  log ERROR Failed to initialize plugin alpha: Initialization failed: boom
+== fails with permissions
+spawn alpha:
+  returned a task, states alpha=Loading
+join alpha: finished, waiter woken=true
+  states alpha=Failed("Initialization failed: denied")
+  plugins 0
+  call alpha: on_load ctx=alpha/1.2 state=Some(Loading) entry 0 active=false instance=false
+  call alpha: on_unload ctx=alpha/1.2
+  call loader.unload data-alpha
+  log ERROR Failed to initialize plugin alpha: Initialization failed: denied
+== panics
+spawn alpha:
+  returned a task, states alpha=Loading
+join alpha: panicked, waiter woken=false
+  states alpha=Loading
+  plugins 1
+    0: alpha v1.2 active=false instance=none data=data-alpha path=plugins/alpha.stub
+  call alpha: on_load ctx=alpha/1.2 state=Some(Loading) entry 0 active=false instance=false
+== an old failed state is replaced by Loading
+spawn alpha:
+  returned a task, states alpha=Loading other=Loaded
+join alpha: finished, waiter woken=true
+  states alpha=Loaded other=Loaded
+  plugins 1
+    0: alpha v1.2 active=true instance=alpha data=data-alpha path=plugins/alpha.stub
+  call alpha: on_load ctx=alpha/1.2 state=Some(Loading) entry 0 active=false instance=false
+  log INFO Loaded alpha (1.2)
+== aborted before it ran
+spawn alpha:
+  returned a task, states alpha=Loading
+join alpha: cancelled, waiter woken=false
+  states alpha=Loading
+  plugins 1
+    0: alpha v1.2 active=false instance=none data=data-alpha path=plugins/alpha.stub
+== aborted while on_load waits
+spawn alpha:
+  returned a task, states alpha=Loading
+  states alpha=Loading
+  plugins 1
+    0: alpha v1.2 active=false instance=none data=data-alpha path=plugins/alpha.stub
+  call alpha: on_load ctx=alpha/1.2 state=Some(Loading) entry 0 active=false instance=false
+join alpha: cancelled, waiter woken=false
+  states alpha=Loading
+  plugins 1
+    0: alpha v1.2 active=false instance=none data=data-alpha path=plugins/alpha.stub
+== list cleared during a successful load
+spawn alpha:
+  returned a task, states alpha=Loading
+join alpha: finished, waiter woken=true
+  states alpha=Loaded
+  plugins 0
+  call alpha: on_load ctx=alpha/1.2 state=Some(Loading) entry 0 active=false instance=false
+  log INFO Loaded alpha (1.2)
+== list cleared during a failing load
+spawn alpha:
+  returned a task, states alpha=Loading
+join alpha: finished, waiter woken=true
+  states alpha=Failed("Initialization failed: boom")
+  plugins 0
+  call alpha: on_load ctx=alpha/1.2 state=Some(Loading) entry 0 active=false instance=false
+  call alpha: on_unload ctx=alpha/1.2
+  log ERROR Failed to initialize plugin alpha: Initialization failed: boom
+== an earlier entry removed during a successful load
+spawn first:
+  returned a task, states first=Loading
+spawn second:
+  returned a task, states first=Loading second=Loading
+spawn third:
+  returned a task, states first=Loading second=Loading third=Loading
+join second: finished, waiter woken=true
+  states first=Loading second=Loaded third=Loading
+  plugins 2
+    0: second v1.2 active=false instance=none data=data-second path=plugins/second.stub
+    1: third v1.2 active=true instance=second data=data-third path=plugins/third.stub
+  call first: on_load ctx=first/1.2 state=Some(Loading) entry 0 active=false instance=false
+  call second: on_load ctx=second/1.2 state=Some(Loading) entry 1 active=false instance=false
+  call third: on_load ctx=third/1.2 state=Some(Loading) entry 1 active=true instance=true
+  log INFO Loaded second (1.2)
+join first: cancelled, waiter woken=false
+  states first=Loading second=Loaded third=Loading
+  plugins 2
+    0: second v1.2 active=false instance=none data=data-second path=plugins/second.stub
+    1: third v1.2 active=true instance=second data=data-third path=plugins/third.stub
+join third: cancelled, waiter woken=false
+  states first=Loading second=Loaded third=Loading
+  plugins 2
+    0: second v1.2 active=false instance=none data=data-second path=plugins/second.stub
+    1: third v1.2 active=true instance=second data=data-third path=plugins/third.stub
+== an earlier entry removed during a failing load
+spawn first:
+  returned a task, states first=Loading
+spawn second:
+  returned a task, states first=Loading second=Loading
+spawn third:
+  returned a task, states first=Loading second=Loading third=Loading
+join second: finished, waiter woken=true
+  states first=Loading second=Failed("Initialization failed: boom") third=Loading
+  plugins 1
+    0: second v1.2 active=false instance=none data=data-second path=plugins/second.stub
+  call first: on_load ctx=first/1.2 state=Some(Loading) entry 0 active=false instance=false
+  call second: on_load ctx=second/1.2 state=Some(Loading) entry 1 active=false instance=false
+  call second: on_unload ctx=second/1.2
+  call loader.unload data-third
+  call third: on_load ctx=third/1.2 state=Some(Loading) no entry
+  log ERROR Failed to initialize plugin second: Initialization failed: boom
+join first: cancelled, waiter woken=false
+  states first=Loading second=Failed("Initialization failed: boom") third=Loading
+  plugins 1
+    0: second v1.2 active=false instance=none data=data-second path=plugins/second.stub
+join third: cancelled, waiter woken=false
+  states first=Loading second=Failed("Initialization failed: boom") third=Loading
+  plugins 1
+    0: second v1.2 active=false instance=none data=data-second path=plugins/second.stub
+== the removing plugin is the last entry
+spawn first:
+  returned a task, states first=Loading
+spawn second:
+  returned a task, states first=Loading second=Loading
+join second: finished, waiter woken=true
+  states first=Loading second=Loaded
+  plugins 1
+    0: second v1.2 active=false instance=none data=data-second path=plugins/second.stub
+  call first: on_load ctx=first/1.2 state=Some(Loading) entry 0 active=false instance=false
+  call second: on_load ctx=second/1.2 state=Some(Loading) entry 1 active=false instance=false
+  log INFO Loaded second (1.2)
+join first: cancelled, waiter woken=false
+  states first=Loading second=Loaded
+  plugins 1
+    0: second v1.2 active=false instance=none data=data-second path=plugins/second.stub
+== three plugins one after the other, the middle one fails
+spawn one:
+  returned a task, states one=Loading
+join one: finished, waiter woken=true
+  states one=Loaded
+  plugins 1
+    0: one v1.2 active=true instance=one data=data-one path=plugins/one.stub
+  call one: on_load ctx=one/1.2 state=Some(Loading) entry 0 active=false instance=false
+  log INFO Loaded one (1.2)
+spawn two:
+  returned a task, states one=Loaded two=Loading
+join two: finished, waiter woken=true
+  states one=Loaded two=Failed("Initialization failed: no")
+  plugins 1
+    0: one v1.2 active=true instance=one data=data-one path=plugins/one.stub
+  call two: on_load ctx=two/1.2 state=Some(Loading) entry 1 active=false instance=false
+  call two: on_unload ctx=two/1.2
+  call loader.unload data-two
+  log ERROR Failed to initialize plugin two: Initialization failed: no
+spawn three:
+  returned a task, states one=Loaded three=Loading two=Failed("Initialization failed: no")
+join three: finished, waiter woken=true
+  states one=Loaded three=Loaded two=Failed("Initialization failed: no")
+  plugins 2
+    0: one v1.2 active=true instance=one data=data-one path=plugins/one.stub
+    1: three v1.2 active=true instance=three data=data-three path=plugins/three.stub
+  call three: on_load ctx=three/1.2 state=Some(Loading) entry 1 active=false instance=false
+  log INFO Loaded three (1.2)
+== three plugins spawned together, the middle one fails
+spawn one:
+  returned a task, states one=Loading
+spawn two:
+  returned a task, states one=Loading two=Loading
+spawn three:
+  returned a task, states one=Loading three=Loading two=Loading
+join one: finished, waiter woken=true
+  states one=Loaded three=Loaded two=Failed("Initialization failed: no")
+  plugins 2
+    0: one v1.2 active=true instance=one data=data-one path=plugins/one.stub
+    1: three v1.2 active=false instance=none data=data-three path=plugins/three.stub
+  call one: on_load ctx=one/1.2 state=Some(Loading) entry 0 active=false instance=false
+  call two: on_load ctx=two/1.2 state=Some(Loading) entry 1 active=false instance=false
+  call two: on_unload ctx=two/1.2
+  call loader.unload data-two
+  call three: on_load ctx=three/1.2 state=Some(Loading) entry 1 active=false instance=false
+  log INFO Loaded one (1.2)
+  log ERROR Failed to initialize plugin two: Initialization failed: no
+  log INFO Loaded three (1.2)
+join two: finished, waiter woken=false
+  states one=Loaded three=Loaded two=Failed("Initialization failed: no")
+  plugins 2
+    0: one v1.2 active=true instance=one data=data-one path=plugins/one.stub
+    1: three v1.2 active=false instance=none data=data-three path=plugins/three.stub
+join three: finished, waiter woken=false
+  states one=Loaded three=Loaded two=Failed("Initialization failed: no")
+  plugins 2
+    0: one v1.2 active=true instance=one data=data-one path=plugins/one.stub
+    1: three v1.2 active=false instance=none data=data-three path=plugins/three.stub

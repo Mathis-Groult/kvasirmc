@@ -46,6 +46,8 @@ const MIXED: Kinds = Kinds([true, false, true, false, false, true, false, true, 
 enum Light {
     Block,
     Sky,
+    /// Sky light, with the finished chunks lit like loaded ground: 15 from y 96 up.
+    SkyLit,
 }
 
 struct Scene {
@@ -400,6 +402,22 @@ fn sky_scenes() -> Vec<Scene> {
             },
             || lamps(&[(7, 90, 7), (4, 61, 4)], &Block::STONE),
         ),
+        scene(
+            "sky_blocks_ring",
+            RING,
+            Light::SkyLit,
+            || floor(30, &Block::STONE),
+            || {
+                let mut out = lamps(&[(8, 150, 8), (-5, 150, 8)], &Block::STICKY_PISTON);
+                out.extend(lamps(
+                    &[(9, 170, 9), (-6, 170, 9)],
+                    &Block::WHITE_WOOL_STAIRS,
+                ));
+                out.extend(lamps(&[(-7, 190, 8)], &Block::STONE));
+                out.extend(lamps(&[(-7, 190, 8)], &Block::AIR));
+                out
+            },
+        ),
     ]
 }
 
@@ -476,7 +494,7 @@ fn build(scene: &Scene, world_gen: &WorldGenerator) -> Cache {
 fn sections(chunk: &Chunk, light: Light) -> Vec<LightContainer> {
     match (chunk, light) {
         (Chunk::Proto(proto), Light::Block) => proto.light.block_light.to_vec(),
-        (Chunk::Proto(proto), Light::Sky) => proto.light.sky_light.to_vec(),
+        (Chunk::Proto(proto), _) => proto.light.sky_light.to_vec(),
         (Chunk::Level(data), which) => {
             let engine = data
                 .light_engine
@@ -611,13 +629,31 @@ fn run_sky_edits(
     out
 }
 
+/// Sky light 15 in every section from y 96 up of the finished chunks.
+fn light_loaded_ground(cache: &Cache) {
+    for chunk in &cache.chunks {
+        let Chunk::Level(data) = chunk else { continue };
+        let mut engine = data
+            .light_engine
+            .lock()
+            .unwrap_or_else(std::sync::PoisonError::into_inner);
+        for section in engine.sky_light.iter_mut().skip(10) {
+            *section = LightContainer::new_filled(15);
+        }
+    }
+}
+
 fn run(scene: &Scene, world_gen: &WorldGenerator) -> String {
     let mut cache = build(scene, world_gen);
     let mut engine = LightEngine::new();
-    let sky = scene.light == Light::Sky;
+    let sky = scene.light != Light::Block;
     engine.initialize_light(&mut cache, &LightingEngineConfig::Default, sky);
+    if scene.light == Light::SkyLit {
+        light_loaded_ground(&cache);
+    }
+    let light = if sky { Light::Sky } else { Light::Block };
     let mut out = String::new();
-    report_step(&mut out, &cache, scene.light);
+    report_step(&mut out, &cache, light);
     let edits = (scene.edits)();
     if sky {
         let mut propagator = SkyLightPropagator::new();

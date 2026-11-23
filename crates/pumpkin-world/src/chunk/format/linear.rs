@@ -1,5 +1,5 @@
 use rustc_hash::FxHashMap;
-use std::io::{ErrorKind, Read};
+use std::io::ErrorKind;
 use std::path::{Path, PathBuf};
 use std::time::{Duration, SystemTime, UNIX_EPOCH};
 
@@ -7,12 +7,13 @@ use crate::chunk::io::{RegionFile, sync_file, write_file_atomically};
 use crate::chunk::{ChunkReadingError, ChunkWritingError};
 use bytes::{Buf, BufMut, Bytes};
 use pumpkin_util::math::vector2::Vector2;
-use ruzstd::decoding::StreamingDecoder;
 use ruzstd::encoding::{CompressionLevel, compress_to_vec};
 use tracing::{error, warn};
 use xxhash_rust::xxh64::xxh64;
 
 use super::anvil::CHUNK_COUNT;
+
+mod sections;
 
 /// The signature used as both header and footer.
 /// <https://gist.github.com/Aaron2550/5701519671253d4c6190bde6706f9f98>
@@ -380,125 +381,6 @@ impl LinearV2File {
         let cx = chunk_index % 32;
         let cz = chunk_index / 32;
         (cz / stride) * grid_size as usize + (cx / stride)
-    }
-
-    fn parse(raw_file: Bytes, path: &Path) -> Result<Self, ChunkReadingError> {
-        let mut buf = raw_file;
-
-        if buf.remaining() < LinearV2Superblock::SIZE {
-            return Err(ChunkReadingError::IoError(std::io::Error::from(
-                ErrorKind::UnexpectedEof,
-            )));
-        }
-        let superblock_bytes = buf.split_to(LinearV2Superblock::SIZE);
-        let superblock = LinearV2Superblock::from_bytes(&superblock_bytes)?;
-        let grid_size = superblock.grid_size;
-        let bucket_count = Self::bucket_count(grid_size);
-
-        if buf.remaining() < ChunkBitmap::SIZE {
-            return Err(ChunkReadingError::IoError(std::io::Error::from(
-                ErrorKind::UnexpectedEof,
-            )));
-        }
-        // We read the bitmap but per the spec it is not yet reliable, so we
-        // do not use it to short-circuit — actual presence is determined by
-        // the per-chunk size field inside each bucket.
-        let mut bitmap_raw = [0u8; ChunkBitmap::SIZE];
-        bitmap_raw.copy_from_slice(&buf.split_to(ChunkBitmap::SIZE));
-        //let _bitmap = ChunkBitmap(bitmap_raw);
-
-        let _features = NbtFeatures::from_bytes(&mut buf)?;
-
-        let total_bucket_meta = bucket_count * BucketSizeEntry::SIZE;
-        if buf.remaining() < total_bucket_meta {
-            return Err(ChunkReadingError::IoError(std::io::Error::from(
-                ErrorKind::UnexpectedEof,
-            )));
-        }
-        let mut bucket_entries: Vec<BucketSizeEntry> = Vec::with_capacity(bucket_count);
-        for _ in 0..bucket_count {
-            bucket_entries.push(BucketSizeEntry::from_bytes(&mut buf)?);
-        }
-
-        // Work out where the footer starts so we can validate it without
-        // consuming the bucket data bytes yet.
-        let total_compressed: usize = bucket_entries.iter().map(|e| e.size as usize).sum();
-        if buf.remaining() < total_compressed + SIGNATURE.len() {
-            return Err(ChunkReadingError::IoError(std::io::Error::from(
-                ErrorKind::UnexpectedEof,
-            )));
-        }
-        let footer_offset = total_compressed;
-        {
-            let footer = &buf[footer_offset..footer_offset + SIGNATURE.len()];
-            if footer != SIGNATURE {
-                error!("Linear v2: invalid footer signature");
-                return Err(ChunkReadingError::InvalidHeader);
-            }
-        }
-
-        let mut timestamps = vec![0u64; CHUNK_COUNT].into_boxed_slice();
-        let mut chunks_data: Box<[Option<Bytes>]> = vec![None; CHUNK_COUNT].into_boxed_slice();
-        let mut buckets = vec![None; bucket_count];
-
-        for (bucket_idx, entry) in bucket_entries.iter().enumerate() {
-            let compressed_size = entry.size as usize;
-
-            let compressed_slice = &buf[..compressed_size];
-            // A corrupt bucket keeps its bytes and stored hash, so a flush writes it back
-            // unchanged until one of its chunks is saved.
-            buckets[bucket_idx] = Some(CompressedBucket {
-                data: Box::from(compressed_slice),
-                compression_level: entry.compression_level,
-                xxhash: entry.xxhash,
-            });
-
-            // xxhash64 integrity check.
-            let actual_hash = xxh64(compressed_slice, 0);
-            if actual_hash != entry.xxhash {
-                error!(
-                    "Linear v2: xxhash mismatch for bucket {bucket_idx} \
-                     (expected {:#x}, got {:#x})",
-                    entry.xxhash, actual_hash
-                );
-                // Skip the corrupted bucket rather than aborting the whole
-                // file — the remaining buckets may be intact.
-                buf.advance(compressed_size);
-                continue;
-            }
-
-            let mut decompressed = Vec::new();
-            {
-                let mut decoder = StreamingDecoder::new(compressed_slice)
-                    .map_err(|_| ChunkReadingError::RegionIsInvalid)?;
-                decoder
-                    .read_to_end(&mut decompressed)
-                    .map_err(ChunkReadingError::IoError)?
-            };
-            buf.advance(compressed_size);
-
-            let mut bucket_buf: Bytes = decompressed.into();
-            let cpb = Self::chunks_per_bucket(grid_size);
-
-            for local in 0..cpb {
-                let chunk_index = Self::global_chunk_index(bucket_idx, local, grid_size);
-                let record = BucketChunkEntry::read_from(&mut bucket_buf)?;
-                timestamps[chunk_index] = record.timestamp;
-                chunks_data[chunk_index] = record.data;
-            }
-        }
-
-        Ok(Self {
-            path: path.to_path_buf(),
-            region_x: superblock.region_x,
-            region_z: superblock.region_z,
-            grid_size,
-            timestamps,
-            chunks_data,
-            buckets,
-            staged: false,
-            unsynced: false,
-        })
     }
 }
 

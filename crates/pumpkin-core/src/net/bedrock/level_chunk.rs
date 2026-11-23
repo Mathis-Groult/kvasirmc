@@ -4,7 +4,7 @@ use xxhash_rust::xxh64::xxh64;
 use pumpkin_nbt::{Nbt, compound::NbtCompound};
 use pumpkin_world::chunk::{
     ChunkData,
-    palette::{BeNetworkSerialization, NetworkPalette},
+    palette::{BeNetworkSerialization, BlockPalette, NetworkPalette},
 };
 
 use pumpkin_protocol::{
@@ -64,6 +64,130 @@ fn encode_block_actors(block_actors: &[NbtCompound]) -> Result<Vec<u8>, Error> {
     Ok(encoded)
 }
 
+fn write_biome_storage(
+    writer: &mut Vec<u8>,
+    network_repr: BeNetworkSerialization<u8>,
+) -> Result<(), Error> {
+    (network_repr.bits_per_entry << 1 | 1).write(writer)?;
+
+    for data in network_repr.packed_data {
+        data.write(writer)?;
+    }
+
+    match network_repr.palette {
+        NetworkPalette::Single(id) => {
+            VarInt(i32::from(id)).write(writer)?;
+        }
+        NetworkPalette::Indirect(palette) => {
+            VarInt(palette.len() as i32).write(writer)?;
+            for id in palette {
+                VarInt(i32::from(id)).write(writer)?;
+            }
+        }
+        NetworkPalette::Direct => (),
+    }
+    Ok(())
+}
+
+/// One sub-chunk: version 9, `[version:byte][num_storages:byte][sub_chunk_index:byte]`, then
+/// the block storage and, when the section holds water, a second storage for it.
+fn encode_subchunk(y: i8, block_palette: &BlockPalette) -> Result<Vec<u8>, Error> {
+    let mut subchunk_buf = Vec::new();
+    let water_layer = block_palette.convert_be_water_network();
+    let num_storages = if water_layer.is_some() { 2 } else { 1 };
+    subchunk_buf.write_all(&[VERSION, num_storages, y as u8])?;
+
+    write_block_storage(&mut subchunk_buf, block_palette.convert_be_network())?;
+    if let Some(water_layer) = water_layer {
+        write_block_storage(&mut subchunk_buf, water_layer)?;
+    }
+    Ok(subchunk_buf)
+}
+
+fn encode_subchunks(chunk: &ChunkData) -> Result<Vec<Vec<u8>>, Error> {
+    let block_sections = chunk
+        .section
+        .block_sections
+        .read()
+        .map_err(|_| Error::other("block_sections read lock poisoned"))?;
+    let min_y_section = (chunk.section.min_y >> 4) as i8;
+
+    block_sections
+        .iter()
+        .enumerate()
+        .map(|(i, block_palette)| encode_subchunk((i as i8) + min_y_section, block_palette))
+        .collect()
+}
+
+/// The biome storages of every section, one after the other (no sub-chunk headers).
+fn encode_biomes(chunk: &ChunkData) -> Result<Vec<u8>, Error> {
+    let biome_sections = chunk
+        .section
+        .biome_sections
+        .read()
+        .map_err(|_| Error::other("biome_sections read lock poisoned"))?;
+
+    let mut biome_buf = Vec::new();
+    for biome_palette in biome_sections.iter() {
+        write_biome_storage(&mut biome_buf, biome_palette.convert_be_network())?;
+    }
+    Ok(biome_buf)
+}
+
+/// Cached mode: the sub-chunks and the biomes travel as blobs, the packet lists their hashes.
+/// Palette data is cached, but the per-chunk border and block actor data is not.
+fn write_cached_payload(
+    writer: &mut Vec<u8>,
+    subchunks: Vec<Vec<u8>>,
+    biome_buf: Vec<u8>,
+    block_actor_bytes: &[u8],
+) -> Result<Vec<ChunkBlob>, Error> {
+    let mut blobs = Vec::new();
+    for subchunk_buf in subchunks {
+        let hash = xxh64(&subchunk_buf, 0);
+        blobs.push((hash, subchunk_buf));
+    }
+    let biome_hash = xxh64(&biome_buf, 0);
+    blobs.push((biome_hash, biome_buf));
+
+    VarUInt(blobs.len() as u32).write(writer)?;
+    for (hash, _) in &blobs {
+        writer.write_all(&hash.to_le_bytes())?;
+    }
+
+    VarUInt(u32::try_from(1 + block_actor_bytes.len()).map_err(|_| {
+        Error::new(
+            std::io::ErrorKind::InvalidData,
+            "Bedrock block actor payload exceeds the packet size limit",
+        )
+    })?)
+    .write(writer)?;
+    writer.write_all(&[0])?;
+    writer.write_all(block_actor_bytes)?;
+    Ok(blobs)
+}
+
+/// Uncached mode: no blobs; sub-chunks, biomes, border count and block actors in one buffer.
+fn write_inline_payload(
+    writer: &mut Vec<u8>,
+    subchunks: Vec<Vec<u8>>,
+    biome_buf: &[u8],
+    block_actor_bytes: &[u8],
+) -> Result<(), Error> {
+    VarUInt(0).write(writer)?;
+
+    let mut chunk_data = Vec::new();
+    for subchunk_buf in subchunks {
+        chunk_data.write_all(&subchunk_buf)?;
+    }
+    chunk_data.write_all(biome_buf)?;
+    chunk_data.write_all(&[0])?;
+    chunk_data.write_all(block_actor_bytes)?;
+
+    VarUInt(chunk_data.len() as u32).write(writer)?;
+    writer.write_all(&chunk_data)
+}
+
 impl CLevelChunk<'_> {
     pub fn encode_chunk(
         chunk: &ChunkData,
@@ -83,102 +207,16 @@ impl CLevelChunk<'_> {
         false.write(&mut writer)?;
         cache_enabled.write(&mut writer)?;
 
-        let mut blobs = Vec::new();
-
-        let block_sections = chunk
-            .section
-            .block_sections
-            .read()
-            .map_err(|_| Error::other("block_sections read lock poisoned"))?;
-        let min_y_section = (chunk.section.min_y >> 4) as i8;
-
-        let mut subchunk_bytes_list = Vec::with_capacity(block_sections.len());
-
-        for (i, block_palette) in block_sections.iter().enumerate() {
-            let mut subchunk_buf = Vec::new();
-            // Version 9: [version:byte][num_storages:byte][sub_chunk_index:byte]
-            let y = (i as i8) + min_y_section;
-            let water_layer = block_palette.convert_be_water_network();
-            let num_storages = if water_layer.is_some() { 2 } else { 1 };
-            subchunk_buf.write_all(&[VERSION, num_storages, y as u8])?;
-
-            write_block_storage(&mut subchunk_buf, block_palette.convert_be_network())?;
-            if let Some(water_layer) = water_layer {
-                write_block_storage(&mut subchunk_buf, water_layer)?;
-            }
-
-            subchunk_bytes_list.push(subchunk_buf);
-        }
-
-        let biome_sections = chunk
-            .section
-            .biome_sections
-            .read()
-            .map_err(|_| Error::other("biome_sections read lock poisoned"))?;
-
-        let mut biome_buf = Vec::new();
-        for biome_palette in biome_sections.iter() {
-            let network_repr = biome_palette.convert_be_network();
-
-            (network_repr.bits_per_entry << 1 | 1).write(&mut biome_buf)?;
-
-            for data in network_repr.packed_data {
-                data.write(&mut biome_buf)?;
-            }
-
-            match network_repr.palette {
-                NetworkPalette::Single(id) => {
-                    VarInt(i32::from(id)).write(&mut biome_buf)?;
-                }
-                NetworkPalette::Indirect(palette) => {
-                    VarInt(palette.len() as i32).write(&mut biome_buf)?;
-                    for id in palette {
-                        VarInt(i32::from(id)).write(&mut biome_buf)?;
-                    }
-                }
-                NetworkPalette::Direct => (),
-            }
-        }
-
+        let subchunks = encode_subchunks(chunk)?;
+        let biome_buf = encode_biomes(chunk)?;
         let block_actor_bytes = encode_block_actors(block_actors)?;
 
-        if cache_enabled {
-            for subchunk_buf in subchunk_bytes_list {
-                let hash = xxh64(&subchunk_buf, 0);
-                blobs.push((hash, subchunk_buf));
-            }
-            let biome_hash = xxh64(&biome_buf, 0);
-            blobs.push((biome_hash, biome_buf));
-
-            VarUInt(blobs.len() as u32).write(&mut writer)?;
-            for (hash, _) in &blobs {
-                writer.write_all(&hash.to_le_bytes())?;
-            }
-
-            // Palette data is cached, but the per-chunk border and block actor data is not.
-            VarUInt(u32::try_from(1 + block_actor_bytes.len()).map_err(|_| {
-                Error::new(
-                    std::io::ErrorKind::InvalidData,
-                    "Bedrock block actor payload exceeds the packet size limit",
-                )
-            })?)
-            .write(&mut writer)?;
-            writer.write_all(&[0])?;
-            writer.write_all(&block_actor_bytes)?;
+        let blobs = if cache_enabled {
+            write_cached_payload(&mut writer, subchunks, biome_buf, &block_actor_bytes)?
         } else {
-            VarUInt(0).write(&mut writer)?;
-
-            let mut chunk_data = Vec::new();
-            for subchunk_buf in subchunk_bytes_list {
-                chunk_data.write_all(&subchunk_buf)?;
-            }
-            chunk_data.write_all(&biome_buf)?;
-            chunk_data.write_all(&[0])?;
-            chunk_data.write_all(&block_actor_bytes)?;
-
-            VarUInt(chunk_data.len() as u32).write(&mut writer)?;
-            writer.write_all(&chunk_data)?;
-        }
+            write_inline_payload(&mut writer, subchunks, &biome_buf, &block_actor_bytes)?;
+            Vec::new()
+        };
 
         // client_biome_update: false
         false.write(&mut writer)?;

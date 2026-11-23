@@ -20,7 +20,6 @@ use pumpkin_inventory::screen_handler::{
     InventoryPlayer, ScreenHandlerFactory, SharedScreenHandler,
 };
 use pumpkin_nbt::compound::NbtCompound;
-use pumpkin_nbt::tag::NbtTag;
 use pumpkin_protocol::bedrock::{
     client::set_actor_data::{MetadataValue, SyncedActorDataList, entity_data_key},
     server::actor_event::ActorEventID,
@@ -49,6 +48,7 @@ use crate::world::World;
 use crate::world::villager_poi::profession_for_block;
 
 pub mod data;
+mod nbt;
 mod tick;
 mod trades;
 pub use data::{
@@ -1471,133 +1471,13 @@ impl VillagerEntity {
 }
 
 impl Mob for VillagerEntity {
-    #[expect(clippy::too_many_lines)]
     fn mob_write_nbt(&self, nbt: &mut NbtCompound) {
-        {
-            let data = self
-                .villager_data
-                .lock()
-                .unwrap_or_else(std::sync::PoisonError::into_inner);
-            let mut villager_data_nbt = NbtCompound::new();
-            villager_data_nbt.put_int("Type", data.r#type.0);
-            villager_data_nbt.put_int("Profession", data.profession.0);
-            villager_data_nbt.put_int("Level", data.level.0);
-            nbt.put_compound("VillagerData", villager_data_nbt);
-        };
-
-        nbt.put_int("FoodLevel", self.food_level.load(Ordering::Relaxed));
-        nbt.put_int("Xp", self.xp.load(Ordering::Relaxed));
-        nbt.put_long(
-            "LastRestock",
-            self.last_restock_time.load(Ordering::Relaxed),
-        );
-        nbt.put_int("RestocksToday", self.restocks_today.load(Ordering::Relaxed));
-        nbt.put_long(
-            "LastGossipDecay",
-            self.last_gossip_decay_time.load(Ordering::Relaxed),
-        );
-
-        let last_gossip_share = self.last_gossip_share_time.load(Ordering::Relaxed);
-        if last_gossip_share > 0 {
-            nbt.put_long("LastGossipShare", last_gossip_share);
-        }
-
-        let last_worked = self.last_worked_at_poi.load(Ordering::Relaxed);
-        if last_worked > 0 {
-            nbt.put_long("LastWorkedAtPoi", last_worked);
-        }
-
-        if let Some(pos) = self.get_job_site() {
-            nbt.put_int("JobSiteX", pos.0.x);
-            nbt.put_int("JobSiteY", pos.0.y);
-            nbt.put_int("JobSiteZ", pos.0.z);
-            nbt.put_bool(
-                "JobSitePending",
-                self.job_site_pending.load(Ordering::Relaxed),
-            );
-        }
-
-        if let Some(pos) = self.get_home() {
-            nbt.put_int("HomeX", pos.0.x);
-            nbt.put_int("HomeY", pos.0.y);
-            nbt.put_int("HomeZ", pos.0.z);
-        }
-
-        let offers = self
-            .offers
-            .lock()
-            .unwrap_or_else(std::sync::PoisonError::into_inner);
-        if !offers.is_empty() {
-            let mut recipes = Vec::new();
-            for offer in offers.iter() {
-                let mut recipe = NbtCompound::new();
-                let mut buy = NbtCompound::new();
-                let mut sell = NbtCompound::new();
-
-                let item_stack: &ItemStack = offer.base_cost_a.0.as_ref();
-                item_stack.write_item_stack(&mut buy);
-                recipe.put_compound("buy", buy);
-
-                let item_stack: &ItemStack = offer.output.0.as_ref();
-                item_stack.write_item_stack(&mut sell);
-                recipe.put_compound("sell", sell);
-
-                if let Some(cost_b) = &offer.cost_b {
-                    let mut buy_b = NbtCompound::new();
-                    let item_stack: &ItemStack = cost_b.0.as_ref();
-                    item_stack.write_item_stack(&mut buy_b);
-                    recipe.put_compound("buyB", buy_b);
-                }
-
-                recipe.put_int("uses", offer.uses);
-                recipe.put_int("maxUses", offer.max_uses);
-                recipe.put_bool("rewardExp", offer.reward_exp);
-                recipe.put_int("xp", offer.xp);
-                recipe.put_float("priceMultiplier", offer.price_multiplier);
-                recipe.put_int("specialPrice", offer.special_price);
-                recipe.put_int("demand", offer.demand);
-
-                recipes.push(NbtTag::Compound(recipe));
-            }
-            let mut offers_compound = NbtCompound::new();
-            offers_compound.put("Recipes", NbtTag::List(recipes));
-            nbt.put_compound("Offers", offers_compound);
-        }
-
-        let inventory = self
-            .inventory
-            .lock()
-            .unwrap_or_else(std::sync::PoisonError::into_inner);
-        if !inventory.is_empty() {
-            let mut inventory_list = Vec::new();
-            for item in inventory.iter() {
-                let mut item_compound = NbtCompound::new();
-                item.write_item_stack(&mut item_compound);
-                inventory_list.push(NbtTag::Compound(item_compound));
-            }
-            nbt.put("Inventory", NbtTag::List(inventory_list));
-        }
-
-        let gossips = self
-            .gossips
-            .lock()
-            .unwrap_or_else(std::sync::PoisonError::into_inner);
-        if !gossips.is_empty() {
-            let mut gossip_list = Vec::new();
-            for (uuid, entries) in gossips.iter() {
-                for (gossip_type, val) in entries {
-                    let mut gossip_nbt = NbtCompound::new();
-                    let (u1, u2) = uuid.as_u64_pair();
-                    let uuid_array =
-                        vec![(u1 >> 32) as i32, u1 as i32, (u2 >> 32) as i32, u2 as i32];
-                    gossip_nbt.put("Target", NbtTag::IntArray(uuid_array));
-                    gossip_nbt.put_string("Type", gossip_type.name().to_string());
-                    gossip_nbt.put_int("Value", *val);
-                    gossip_list.push(NbtTag::Compound(gossip_nbt));
-                }
-            }
-            nbt.put("Gossips", NbtTag::List(gossip_list));
-        }
+        self.write_villager_data(nbt);
+        self.write_counters(nbt);
+        self.write_places(nbt);
+        self.write_offers(nbt);
+        self.write_inventory(nbt);
+        self.write_gossips(nbt);
     }
 
     #[allow(clippy::too_many_lines)]

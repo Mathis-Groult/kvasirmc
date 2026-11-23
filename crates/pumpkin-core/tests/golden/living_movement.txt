@@ -453,3 +453,23 @@ dormant mob between decisions alone:
   2: y 65.000000 vy 0.000000 ground true health 20.0 cooldown 0 age - pos 5784.500000 24.500000 vel 0.000000 0.000000 fall 0.000 jump false input 0.000000 0.000000 0.000000 idle 0 yaw 0.0 body 0.0 head 0.0
   3: y 65.000000 vy 0.000000 ground true health 20.0 cooldown 0 age - pos 5784.500000 24.500000 vel 0.000000 0.000000 fall 0.000 jump false input 0.000000 0.000000 0.000000 idle 0 yaw 0.0 body 0.0 head 0.0
   4: y 65.000000 vy 0.000000 ground true health 20.0 cooldown 0 age - pos 5784.500000 24.500000 vel 0.000000 0.000000 fall 0.000 jump false input 0.000000 0.000000 0.000000 idle 0 yaw 0.0 body 0.0 head 0.0
+cod flopping on land, ground flag:
+  1: health 3.0 cooldown 0 age - idle 0 ground false
+  2: health 3.0 cooldown 0 age - idle 0 ground false
+  3: health 3.0 cooldown 0 age - idle 0 ground false
+  4: health 3.0 cooldown 0 age - idle 0 ground false
+zombie mob without AI, head far turned:
+  1: y 65.000000 vy 0.000000 ground true health 20.0 cooldown 0 age - pos 5912.500000 24.500000 vel 0.000000 0.000000 fall 0.000 jump false input 0.000000 0.000000 0.000000 idle 0 yaw 90.0 body 45.0 head 120.0
+  2: y 65.000000 vy 0.000000 ground true health 20.0 cooldown 0 age - pos 5912.500000 24.500000 vel 0.000000 0.000000 fall 0.000 jump false input 0.000000 0.000000 0.000000 idle 0 yaw 90.0 body 45.0 head 120.0
+  3: y 65.000000 vy 0.000000 ground true health 20.0 cooldown 0 age - pos 5912.500000 24.500000 vel 0.000000 0.000000 fall 0.000 jump false input 0.000000 0.000000 0.000000 idle 0 yaw 90.0 body 45.0 head 120.0
+  4: y 65.000000 vy 0.000000 ground true health 20.0 cooldown 0 age - pos 5912.500000 24.500000 vel 0.000000 0.000000 fall 0.000 jump false input 0.000000 0.000000 0.000000 idle 0 yaw 90.0 body 45.0 head 120.0
+moving zombie mob without AI, head far turned:
+  1: y 65.000000 vy 0.000000 ground true health 20.0 cooldown 0 age - pos 5976.500000 24.500000 vel 0.000000 0.000000 fall 0.000 jump false input 0.000000 0.000000 0.000000 idle 0 yaw 90.0 body 90.0 head 120.0
+  2: y 65.000000 vy 0.000000 ground true health 20.0 cooldown 0 age - pos 5976.500000 24.500000 vel 0.000000 0.000000 fall 0.000 jump false input 0.000000 0.000000 0.000000 idle 0 yaw 90.0 body 90.0 head 120.0
+  3: y 65.000000 vy 0.000000 ground true health 20.0 cooldown 0 age - pos 5976.500000 24.500000 vel 0.000000 0.000000 fall 0.000 jump false input 0.000000 0.000000 0.000000 idle 0 yaw 90.0 body 90.0 head 120.0
+  4: y 65.000000 vy 0.000000 ground true health 20.0 cooldown 0 age - pos 5976.500000 24.500000 vel 0.000000 0.000000 fall 0.000 jump false input 0.000000 0.000000 0.000000 idle 0 yaw 90.0 body 90.0 head 120.0
+moving zombie mob without AI, head turned a little:
+  1: y 65.000000 vy 0.000000 ground true health 20.0 cooldown 0 age - pos 6040.500000 24.500000 vel 0.000000 0.000000 fall 0.000 jump false input 0.000000 0.000000 0.000000 idle 0 yaw 90.0 body 90.0 head 40.0
+  2: y 65.000000 vy 0.000000 ground true health 20.0 cooldown 0 age - pos 6040.500000 24.500000 vel 0.000000 0.000000 fall 0.000 jump false input 0.000000 0.000000 0.000000 idle 0 yaw 90.0 body 90.0 head 40.0
+  3: y 65.000000 vy 0.000000 ground true health 20.0 cooldown 0 age - pos 6040.500000 24.500000 vel 0.000000 0.000000 fall 0.000 jump false input 0.000000 0.000000 0.000000 idle 0 yaw 90.0 body 90.0 head 40.0
+  4: y 65.000000 vy 0.000000 ground true health 20.0 cooldown 0 age - pos 6040.500000 24.500000 vel 0.000000 0.000000 fall 0.000 jump false input 0.000000 0.000000 0.000000 idle 0 yaw 90.0 body 90.0 head 40.0

@@ -81,6 +81,9 @@ struct Scene {
     neighbour: bool,
     age: Option<i32>,
     turned: bool,
+    head: Option<f32>,
+    trailing: bool,
+    ground: bool,
     random: bool,
 }
 
@@ -106,6 +109,9 @@ const fn scene(name: &'static str, kind: Kind) -> Scene {
         neighbour: false,
         age: None,
         turned: false,
+        head: None,
+        trailing: false,
+        ground: false,
         random: false,
     }
 }
@@ -185,6 +191,21 @@ impl Scene {
     }
     const fn turned(mut self) -> Self {
         self.turned = true;
+        self
+    }
+    /// Head turned to `head` degrees against a body and yaw that are not.
+    const fn head(mut self, head: f32) -> Self {
+        self.head = Some(head);
+        self
+    }
+    /// Moved by 0.2 on x and z since the last tick, as far as the body rotation can tell.
+    const fn trailing(mut self) -> Self {
+        self.trailing = true;
+        self
+    }
+    /// A `random` scene that also records the ground flag.
+    const fn ground(mut self) -> Self {
+        self.ground = true;
         self
     }
     const fn random(mut self) -> Self {
@@ -425,6 +446,34 @@ fn mob_scenes() -> Vec<Scene> {
     ]
 }
 
+/// Appended after the first mutation run: a flopping fish (the ground flag it leaves) and the
+/// body rotation of still and moving mobs with the head turned far.
+fn widened_scenes() -> Vec<Scene> {
+    vec![
+        scene("cod flopping on land, ground flag", Kind::Cod)
+            .no_ai()
+            .ground()
+            .random(),
+        scene("zombie mob without AI, head far turned", Kind::Zombie)
+            .no_ai()
+            .head(120.0),
+        scene(
+            "moving zombie mob without AI, head far turned",
+            Kind::Zombie,
+        )
+        .no_ai()
+        .head(120.0)
+        .trailing(),
+        scene(
+            "moving zombie mob without AI, head turned a little",
+            Kind::Zombie,
+        )
+        .no_ai()
+        .head(40.0)
+        .trailing(),
+    ]
+}
+
 fn ageable_scenes() -> Vec<Scene> {
     vec![
         scene("baby cow without AI", Kind::Cow).no_ai().age(-100),
@@ -513,6 +562,7 @@ fn scenes() -> Vec<Scene> {
     all.extend(mob_scenes());
     all.extend(ageable_scenes());
     all.extend(push_scenes());
+    all.extend(widened_scenes());
     all
 }
 
@@ -652,6 +702,17 @@ fn set_up(subject: &Subject, scene: &Scene, id: i32) -> Result<(), String> {
         entity.head_yaw.store(40.0);
         entity.body_yaw.store(0.0);
     }
+    if let Some(head) = scene.head {
+        entity.yaw.store(90.0);
+        entity.head_yaw.store(head);
+        entity.body_yaw.store(0.0);
+    }
+    if scene.trailing {
+        let pos = entity.pos.load();
+        entity
+            .last_pos
+            .store(Vector3::new(pos.x - 0.2, pos.y, pos.z - 0.2));
+    }
     if scene.dead {
         living.health.store(0.0);
     }
@@ -675,6 +736,7 @@ fn state_text(
     subject: &Subject,
     others: &[Arc<LivingEntity>],
     random: bool,
+    ground: bool,
 ) -> Result<String, String> {
     let living = subject.living()?;
     let entity = &living.entity;
@@ -690,6 +752,9 @@ fn state_text(
             age_text(subject),
             living.no_action_time.load(Relaxed),
         );
+        if ground {
+            let _ = write!(text, " ground {}", entity.on_ground.load(Relaxed));
+        }
         return Ok(text);
     }
     let _ = write!(
@@ -789,7 +854,7 @@ fn run_scene(
     let _ = writeln!(report, "{}:", scene.name);
     for tick in 1..=TICKS {
         subject.living()?.tick_movement(subject.base.as_ref());
-        let text = state_text(&subject, &others, scene.random)?;
+        let text = state_text(&subject, &others, scene.random, scene.ground)?;
         let _ = writeln!(report, "  {tick}: {text}");
     }
 

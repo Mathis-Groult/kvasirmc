@@ -864,3 +864,7 @@ mod tests {
         assert!(decoded.data.is_none());
     }
 }
+
+#[cfg(test)]
+#[path = "linear_golden.rs"]
+mod golden;

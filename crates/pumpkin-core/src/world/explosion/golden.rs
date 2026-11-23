@@ -116,6 +116,7 @@ enum Calc {
     Immune,
     NoBlocks,
     Own,
+    Free,
 }
 
 /// A calculator of its own: stone is see-through, water costs nothing, everything else costs
@@ -152,6 +153,22 @@ impl ExplosionDamageCalculator for Own {
     }
 }
 
+/// A calculator where no block costs anything and everything the ray reaches is destroyed.
+struct Free;
+
+impl ExplosionDamageCalculator for Free {
+    fn get_block_explosion_resistance(
+        &self,
+        _explosion: &Explosion,
+        _world: &World,
+        _pos: &BlockPos,
+        _block: &Block,
+        _fluid: &pumpkin_data::fluid::FluidState,
+    ) -> Option<f32> {
+        Some(0.0)
+    }
+}
+
 impl Calc {
     fn build(self) -> Option<Arc<dyn ExplosionDamageCalculator>> {
         match self {
@@ -167,6 +184,7 @@ impl Calc {
                 true, false, None, None,
             ))),
             Self::Own => Some(Arc::new(Own)),
+            Self::Free => Some(Arc::new(Free)),
         }
     }
 }
@@ -301,6 +319,16 @@ fn gap_and_limit_scenes() -> Vec<Scene> {
     ]
 }
 
+/// Rays whose strength is exactly used up by the first block: `0.128_571_44 * 0.7` is
+/// (0 + 0.3) * 0.3 in `f32`, so the strength left is 0.0 (not destroyed) and, one step up in the
+/// last digit, a hair above 0.0 (destroyed).
+fn exact_strength_scenes() -> Vec<Scene> {
+    vec![
+        constant(with_calc(scene(Terrain::Dirt, 0.128_571_44), Calc::Free), 0.0),
+        constant(with_calc(scene(Terrain::Dirt, 0.128_571_45), Calc::Free), 0.0),
+    ]
+}
+
 fn rail_and_calc_scenes() -> Vec<Scene> {
     let rails = at(scene(Terrain::Rails, 4.0), 24.5, 66.5, 24.5);
     let mut scenes = vec![
@@ -318,6 +346,7 @@ fn rail_and_calc_scenes() -> Vec<Scene> {
         scenes.push(with_calc(scene(Terrain::Fluids, power), Calc::Own));
     }
     scenes.push(with_calc(scene(Terrain::Fluids, 10.0), Calc::Immune));
+    scenes.extend(exact_strength_scenes());
     scenes
 }
 
@@ -578,4 +607,38 @@ async fn explosion_blocks_are_the_same() -> TestResult {
     }
     server.stop();
     script_golden::bless_or_compare("explosion_blocks.txt", &out)
+}
+
+/// Air holds no fluid and a waterlogged block is no air: the function skips air states without
+/// looking at their fluid.
+#[test]
+fn air_states_hold_no_fluid() {
+    let mut air_states = 0;
+    for raw in 0..BlockStateId::COUNT {
+        let id = BlockStateId::new_or_air(raw);
+        let (block, state) = pumpkin_data::BlockState::from_id_with_block(id);
+        if !state.is_air() {
+            continue;
+        }
+        air_states += 1;
+        assert!(!block.is_waterlogged(id), "{} is waterlogged air", block.name);
+        let fluid = Fluid::from_state_id(id);
+        assert!(
+            fluid.is_none_or(|fluid| fluid.states[0].is_empty),
+            "{} holds a fluid",
+            block.name
+        );
+    }
+    assert!(air_states >= 3, "{air_states} air states");
+}
+
+/// Every state of flowing water costs and counts the same, so which one the function takes for
+/// a waterlogged block does not matter.
+#[test]
+fn flowing_water_states_are_alike() {
+    let first = &Fluid::FLOWING_WATER.states[0];
+    for state in Fluid::FLOWING_WATER.states {
+        assert!(!state.is_empty);
+        assert_eq!(state.blast_resistance, first.blast_resistance);
+    }
 }

@@ -68,3 +68,5 @@
 67 Fluids power 6 Seeded(11400714819323198485) Own rails false gap None Scene at (24.5, 64.5, 24.5): 292 blocks, 1352 rays, hash 6ceba187a6832646 dirt=68 kelp=36 seagrass=37 water=151
 68 Fluids power 10 Seeded(11400714819323198485) Own rails false gap None Scene at (24.5, 64.5, 24.5): 678 blocks, 1352 rays, hash 60e7946187f2a833 dirt=166 kelp=74 seagrass=91 water=347
 69 Fluids power 10 Seeded(11400714819323198485) Immune rails false gap None Scene at (24.5, 64.5, 24.5): 105 blocks, 1352 rays, hash ca51a1f4e64ef706 dirt=46 kelp=30 seagrass=29
+70 Dirt power 0.12857144 Const(0.0) Free rails false gap None Scene at (24.5, 64.5, 24.5): 0 blocks, 1352 rays, hash cbf29ce484222325
+71 Dirt power 0.12857145 Const(0.0) Free rails false gap None Scene at (24.5, 64.5, 24.5): 1 blocks, 1352 rays, hash 991b220c3632414f dirt=1

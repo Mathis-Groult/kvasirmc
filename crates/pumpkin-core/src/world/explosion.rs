@@ -4,10 +4,12 @@ use pumpkin_data::{
     Block, BlockState, BlockStateId,
     damage::DamageType,
     entity::EntityType,
-    fluid::Fluid,
+    fluid::{Fluid, FluidState},
     tag::{Tag, Taggable},
 };
-use pumpkin_util::math::{boundingbox::BoundingBox, position::BlockPos, vector3::Vector3};
+use pumpkin_util::math::{
+    boundingbox::BoundingBox, position::BlockPos, vector2::Vector2, vector3::Vector3,
+};
 use pumpkin_world::chunk::ChunkData;
 use rustc_hash::FxHashMap;
 
@@ -193,6 +195,9 @@ fn ray_roll() -> f32 {
     rand::random::<f32>()
 }
 
+type ChunkCache = FxHashMap<Vector2<i32>, Option<Arc<ChunkData>>>;
+type DestroyedBlocks = FxHashMap<BlockPos, (&'static Block, &'static BlockState)>;
+
 pub struct Explosion {
     power: f32,
     pos: Vector3<f64>,
@@ -239,17 +244,12 @@ impl Explosion {
             || block.id == Block::ACTIVATOR_RAIL.id
     }
 
-    #[allow(clippy::too_many_lines)]
-    fn get_blocks_to_destroy(
-        &self,
-        world: &World,
-    ) -> FxHashMap<BlockPos, (&'static Block, &'static BlockState)> {
-        let mut map = FxHashMap::default();
-
-        let mut chunk_cache: FxHashMap<
-            pumpkin_util::math::vector2::Vector2<i32>,
-            Option<Arc<ChunkData>>,
-        > = FxHashMap::default();
+    /// Vanilla `ServerExplosion.calculateExplodedPositions`: one ray from the centre through each
+    /// point of the 16 x 16 x 16 cube's surface; every block a ray still has strength for is
+    /// picked.
+    fn get_blocks_to_destroy(&self, world: &World) -> DestroyedBlocks {
+        let mut map = DestroyedBlocks::default();
+        let mut chunk_cache = ChunkCache::default();
 
         let default_calc = DefaultExplosionDamageCalculator;
         let calc: &dyn ExplosionDamageCalculator = match &self.damage_calculator {
@@ -263,102 +263,129 @@ impl Explosion {
                     if x > 0 && x < 15 && y > 0 && y < 15 && z > 0 && z < 15 {
                         continue;
                     }
-
-                    let mut dir_x = f64::from(x) / 7.5 - 1.0;
-                    let mut dir_y = f64::from(y) / 7.5 - 1.0;
-                    let mut dir_z = f64::from(z) / 7.5 - 1.0;
-
-                    let length = (dir_x * dir_x + dir_y * dir_y + dir_z * dir_z).sqrt();
-                    dir_x /= length;
-                    dir_y /= length;
-                    dir_z /= length;
-
-                    let mut pos_x = self.pos.x;
-                    let mut pos_y = self.pos.y;
-                    let mut pos_z = self.pos.z;
-
-                    let random_val = ray_roll();
-                    let mut h = self.power * random_val.mul_add(0.6, 0.7);
-
-                    while h > 0.0 {
-                        let block_pos = BlockPos::floored(pos_x, pos_y, pos_z);
-
-                        if !world.is_in_build_limit(block_pos) {
-                            break;
-                        }
-
-                        let (chunk_pos, relative) = block_pos.chunk_and_chunk_relative_position();
-
-                        let chunk_opt = chunk_cache.entry(chunk_pos).or_insert_with(|| {
-                            world
-                                .level
-                                .read_chunk_sync(&chunk_pos, std::clone::Clone::clone)
-                        });
-
-                        let state_id = if let Some(chunk) = chunk_opt {
-                            chunk
-                                .section
-                                .get_block_absolute_y(
-                                    relative.x as usize,
-                                    block_pos.0.y,
-                                    relative.z as usize,
-                                )
-                                .unwrap_or(Block::AIR.default_state.id)
-                        } else {
-                            Block::AIR.default_state.id
-                        };
-
-                        let (block, state) = BlockState::from_id_with_block(state_id);
-
-                        let (_fluid, fluid_state) = Fluid::from_state_id(state_id).map_or_else(
-                            || {
-                                if block.is_waterlogged(state_id) {
-                                    (&Fluid::FLOWING_WATER, &Fluid::FLOWING_WATER.states[0])
-                                } else {
-                                    (&Fluid::EMPTY, &Fluid::EMPTY.states[0])
-                                }
-                            },
-                            |raw_fluid| {
-                                let f = raw_fluid.to_flowing();
-                                (f, &f.states[0])
-                            },
-                        );
-
-                        if !state.is_air() || !fluid_state.is_empty {
-                            let protects_rail = self.protects_rail(world, &block_pos, block);
-                            let resistance = if protects_rail {
-                                Some(0.0)
-                            } else {
-                                calc.get_block_explosion_resistance(
-                                    self,
-                                    world,
-                                    &block_pos,
-                                    block,
-                                    fluid_state,
-                                )
-                            };
-
-                            if let Some(resistance) = resistance {
-                                h -= (resistance + 0.3) * 0.3;
-                            }
-
-                            if h > 0.0
-                                && !protects_rail
-                                && calc.should_block_explode(self, world, &block_pos, block, h)
-                            {
-                                map.insert(block_pos, (block, state));
-                            }
-                        }
-
-                        pos_x += dir_x * 0.3;
-                        pos_y += dir_y * 0.3;
-                        pos_z += dir_z * 0.3;
-                        h -= 0.225_000_01;
-                    }
+                    let dir = Self::ray_direction(x, y, z);
+                    self.cast_ray(world, calc, dir, &mut chunk_cache, &mut map);
                 }
             }
         }
         map
+    }
+
+    /// The unit vector from the middle of the cube to its point (x, y, z).
+    fn ray_direction(x: i32, y: i32, z: i32) -> Vector3<f64> {
+        let dir_x = f64::from(x) / 7.5 - 1.0;
+        let dir_y = f64::from(y) / 7.5 - 1.0;
+        let dir_z = f64::from(z) / 7.5 - 1.0;
+        let length = (dir_x * dir_x + dir_y * dir_y + dir_z * dir_z).sqrt();
+        Vector3::new(dir_x / length, dir_y / length, dir_z / length)
+    }
+
+    /// Walks one ray in steps of 0.3 blocks from the centre while it has strength left, picking
+    /// the blocks it still has strength for.
+    fn cast_ray(
+        &self,
+        world: &World,
+        calc: &dyn ExplosionDamageCalculator,
+        dir: Vector3<f64>,
+        chunk_cache: &mut ChunkCache,
+        map: &mut DestroyedBlocks,
+    ) {
+        let mut pos_x = self.pos.x;
+        let mut pos_y = self.pos.y;
+        let mut pos_z = self.pos.z;
+
+        let random_val = ray_roll();
+        let mut h = self.power * random_val.mul_add(0.6, 0.7);
+
+        while h > 0.0 {
+            let block_pos = BlockPos::floored(pos_x, pos_y, pos_z);
+
+            if !world.is_in_build_limit(block_pos) {
+                break;
+            }
+
+            let state_id = Self::state_id_at(world, chunk_cache, block_pos);
+            h = self.resist_block(world, calc, block_pos, state_id, h, map);
+
+            pos_x += dir.x * 0.3;
+            pos_y += dir.y * 0.3;
+            pos_z += dir.z * 0.3;
+            h -= 0.225_000_01;
+        }
+    }
+
+    /// The state at `block_pos`; air where the chunk is not loaded.
+    fn state_id_at(
+        world: &World,
+        chunk_cache: &mut ChunkCache,
+        block_pos: BlockPos,
+    ) -> BlockStateId {
+        let (chunk_pos, relative) = block_pos.chunk_and_chunk_relative_position();
+
+        let chunk_opt = chunk_cache.entry(chunk_pos).or_insert_with(|| {
+            world
+                .level
+                .read_chunk_sync(&chunk_pos, std::clone::Clone::clone)
+        });
+
+        if let Some(chunk) = chunk_opt {
+            chunk
+                .section
+                .get_block_absolute_y(relative.x as usize, block_pos.0.y, relative.z as usize)
+                .unwrap_or(Block::AIR.default_state.id)
+        } else {
+            Block::AIR.default_state.id
+        }
+    }
+
+    /// The fluid state of a block state: its own fluid, or water for a waterlogged block.
+    fn fluid_state_of(block: &Block, state_id: BlockStateId) -> &'static FluidState {
+        Fluid::from_state_id(state_id).map_or_else(
+            || {
+                if block.is_waterlogged(state_id) {
+                    &Fluid::FLOWING_WATER.states[0]
+                } else {
+                    &Fluid::EMPTY.states[0]
+                }
+            },
+            |raw_fluid| &raw_fluid.to_flowing().states[0],
+        )
+    }
+
+    /// Vanilla's per-step part of the ray: a block that is not empty takes its resistance off the
+    /// ray's strength `h` and is picked when the ray is still strong. Returns the new strength.
+    fn resist_block(
+        &self,
+        world: &World,
+        calc: &dyn ExplosionDamageCalculator,
+        block_pos: BlockPos,
+        state_id: BlockStateId,
+        mut h: f32,
+        map: &mut DestroyedBlocks,
+    ) -> f32 {
+        let (block, state) = BlockState::from_id_with_block(state_id);
+        // Air holds no fluid, so an air state is empty.
+        if state.is_air() {
+            return h;
+        }
+        let fluid_state = Self::fluid_state_of(block, state_id);
+
+        let protects_rail = self.protects_rail(world, &block_pos, block);
+        let resistance = if protects_rail {
+            Some(0.0)
+        } else {
+            calc.get_block_explosion_resistance(self, world, &block_pos, block, fluid_state)
+        };
+
+        if let Some(resistance) = resistance {
+            h -= (resistance + 0.3) * 0.3;
+        }
+
+        if h > 0.0 && !protects_rail && calc.should_block_explode(self, world, &block_pos, block, h)
+        {
+            map.insert(block_pos, (block, state));
+        }
+        h
     }
 
     /// Returns the knockback of each Java player hit (entity id, knockback), which vanilla

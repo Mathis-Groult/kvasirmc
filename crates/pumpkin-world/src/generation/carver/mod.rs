@@ -1,6 +1,8 @@
 pub mod canyon;
 pub mod cave;
 pub mod mask;
+#[cfg(test)]
+mod carve_golden;
 
 use crate::ProtoChunk;
 use crate::biome::BiomeSupplier;

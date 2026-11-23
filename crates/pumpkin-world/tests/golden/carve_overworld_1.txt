@@ -1,0 +1,15 @@
+overworld_1 seed=1 chunk=(5,-2) carved=986 mask=b7a446cb62c5b6c5 ticks=2 sections=40e1c66c1ea502f3,acac69a2e8f29b6b,193f6a0eafeb9325,fa9115719a5cbe8b,d2ca25ee226f2f39,37df8660ffbf6606,b81495f12fd0e911,1d60c7c0c36a8225
+overworld_1 seed=1 chunk=(-1,-1) carved=1606 mask=9e152d691f4a8f61 ticks=3 sections=f6b9b3f37dc1e513,16f067b64b6b70ab,d2e7ed04762c616b,527ac96f33c7cda8,bbef028c7bccd2a4,a8c9f9acf115a325,56034541d411f87d,1d60c7c0c36a8225
+overworld_1 seed=1 chunk=(3,-5) carved=0 mask=cbf29ce484225325 ticks=0 sections=7b209e972c60a062,193f6a0eafeb9325,31d063d4556b6405,8955e5773faf3a05,5ac1f7481ce57ad8,5054b6dd34793722,4488b0072a8c45ed,1d60c7c0c36a8225
+overworld_1 seed=1 chunk=(-12,7) carved=2988 mask=65cf6cd4a8db8f23 ticks=2 sections=1758e32cdd40bbf3,138080360e8c1c2b,2a706f51e3d25708,951190fee70e9590,f4eeeaf94214a4d5,9b49732ddfc214e5,2b2ed3fb14b4940d,1d60c7c0c36a8225
+overworld_1 seed=1 chunk=(20,-33) carved=697 mask=618d3d7f1ea04347 ticks=22 sections=9575ba0880827bc8,3bbb8dd152f83ce0,354cd38452c3a053,51bdb38cad2c302c,d802cc18eadfa1c3,a8c9f9acf115a325,b16e93e6ef9672db,5e8efb6f998e858b
+overworld_1 seed=1 chunk=(-40,-41) carved=305 mask=164cae7b94689468 ticks=0 sections=e17cd47118a64aa3,193f6a0eafeb9325,05bc6b09302f2ba5,a4ba3e55d9784ccb,4b73cd19186808e5,5e9a3b0b17d3bc60,9930d0468bc4433c,9567f6412fdbbf65,188af2e000d2b21a
+overworld_1 seed=1 chunk=(100,100) carved=1249 mask=170640b31b60943b ticks=2 sections=6d39350b538fe205,ccabd4ba133c5f8b,0e4461f088237ae5,d07fff1a3cff9a8b,3edae7cb6025eb42,bda70abc662c1dbb,ac9f3971e444b595,4c0d33a3f1ae0bcb
+overworld_1 seed=1 chunk=(-7,6) carved=1327 mask=4e546a27199d8c41 ticks=8 sections=e3f680d1c2c66483,cc215e9e8abad10b,bc95c20b5d8a7f9e,c9fc33a0ae5c89a0,49624de692d8338e,a8c9f9acf115a325,1a3aab78e6935825,696d076a22568e25
+overworld_1 seed=1 chunk=(15,15) carved=330 mask=58765aaaefb47184 ticks=0 sections=c9dbc8e6552d1535,5d3f28d3294e25cb,c9050e74a800942b,bde5e32486b8b96b,124545091f7f49cf,2436f52f9e2b5159,fb400419cf9c73aa,b45dc9416c79155e,5069e89e066fd96b
+overworld_1 seed=1 chunk=(-64,3) carved=49 mask=4f05fdb5609a6b8e ticks=0 sections=330a56406faecb83,193f6a0eafeb9325,193f6a0eafeb9325,6a3b46e3974c360b,5d5607b324671707,0f2415c5f31eb6ad,64bffca124f497bd,1d60c7c0c36a8225
+overworld_1 seed=1 chunk=(31,-17) carved=1543 mask=7bb9b2af2b3f0f5a ticks=11 sections=29b50df3f3930fbd,0abea4122388e1cb,70f4e798dd72f0eb,0779c509edd4404b,3129badf7b772c9f,9ee22f075494a1f3,9c681a72dc91c4af,1441844e8b67700c
+overworld_1 seed=1 chunk=(-3,28) carved=944 mask=3bdda3ca3afbe19b ticks=1 sections=9f5b3ed14e53f4e5,35e5517cac751b3b,fed19534fb02fbbd,7d0b86de754337af,efd34e296f4ce777,ea7a8058cf66dcc5,2d9debafc6728383,51da96a85c9d1cfd
+overworld_1 seed=1 chunk=(60,-60) carved=70 mask=c2b5b9bd3f27bc96 ticks=2 sections=b2185ac4952f5e13,193f6a0eafeb9325,193f6a0eafeb9325,e7bdd6860daa2d0b,efe16d4e590eb39b,660610786a71cbf0,febd2212a42fd413,1d60c7c0c36a8225
+overworld_1 seed=1 chunk=(-25,-9) carved=89 mask=f1fc273b597a14e3 ticks=0 sections=dd5b722beed8e1b5,aabaa39cb3894e2b,5423b4baacffb225,eed60f491d4d4005,ee45a960b5dcb180,61ad6bc8b23a7f07,8890341e2181ea33,1d60c7c0c36a8225
+lines 14

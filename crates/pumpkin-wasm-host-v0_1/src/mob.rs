@@ -288,6 +288,112 @@ impl Goal for CustomWasmGoal {
     }
 }
 
+/// The data record of a wolf or a cat.
+fn tamable_mob_data(any: &dyn std::any::Any) -> Option<WitMobData> {
+    if let Some(wolf) = any.downcast_ref::<pumpkin_core::entity::passive::wolf::WolfEntity>() {
+        return Some(WitMobData::Wolf(WitWolfData {
+            is_tamed: wolf.is_tame(),
+            owner: wolf.get_owner().map(|u| Uuid::to_wit(&u)),
+            is_sitting: wolf.is_in_sitting_pose(),
+            collar_color: to_wit_dye_color(wolf.get_collar_color()),
+            is_angry: false,
+            is_begging: false,
+        }));
+    }
+    any.downcast_ref::<pumpkin_core::entity::passive::cat::CatEntity>()
+        .map(|cat| {
+            WitMobData::Cat(WitCatData {
+                is_tamed: cat.is_tame(),
+                owner: cat.get_owner().map(|u| Uuid::to_wit(&u)),
+                is_sitting: cat.is_in_sitting_pose(),
+                collar_color: to_wit_dye_color(cat.get_collar_color()),
+            })
+        })
+}
+
+/// The data record of a sheep, villager, iron golem or fox.
+fn passive_mob_data(any: &dyn std::any::Any) -> Option<WitMobData> {
+    if let Some(sheep) = any.downcast_ref::<pumpkin_core::entity::passive::sheep::SheepEntity>() {
+        return Some(WitMobData::Sheep(WitSheepData {
+            color: to_wit_dye_color(sheep.get_color()),
+            is_sheared: sheep.is_sheared(),
+        }));
+    }
+    if let Some(villager) =
+        any.downcast_ref::<pumpkin_core::entity::passive::villager::VillagerEntity>()
+    {
+        let data = *villager
+            .villager_data
+            .lock()
+            .unwrap_or_else(std::sync::PoisonError::into_inner);
+        return Some(WitMobData::Villager(WitVillagerData {
+            profession: to_wit_villager_profession(data.profession.0),
+            level: (data.level.0).clamp(0, 255) as u8,
+            experience: villager
+                .xp
+                .load(std::sync::atomic::Ordering::Relaxed)
+                .max(0) as u32,
+        }));
+    }
+    if let Some(iron_golem) =
+        any.downcast_ref::<pumpkin_core::entity::passive::iron_golem::IronGolemEntity>()
+    {
+        return Some(WitMobData::IronGolem(WitIronGolemData {
+            is_player_created: iron_golem.is_player_created(),
+        }));
+    }
+    any.downcast_ref::<pumpkin_core::entity::passive::fox::FoxEntity>()
+        .map(|fox| {
+            WitMobData::Fox(WitFoxData {
+                is_sitting: fox.is_sitting(),
+                is_sleeping: fox.is_sleeping(),
+                is_crouching: fox.is_crouching(),
+            })
+        })
+}
+
+/// The data record of a creeper, slime, enderman, shulker or zombie.
+fn hostile_mob_data(any: &dyn std::any::Any) -> Option<WitMobData> {
+    if let Some(creeper) = any.downcast_ref::<pumpkin_core::entity::mob::creeper::CreeperEntity>() {
+        return Some(WitMobData::Creeper(WitCreeperData {
+            is_powered: creeper.is_charged(),
+            fuse: creeper.get_fuse(),
+            is_ignited: creeper.is_ignited(),
+            explosion_radius: creeper.get_explosion_radius().clamp(0, 255) as u8,
+        }));
+    }
+    if let Some(slime) = any.downcast_ref::<pumpkin_core::entity::mob::slime::SlimeEntity>() {
+        return Some(WitMobData::Slime(WitSlimeData {
+            size: slime.get_size(),
+        }));
+    }
+    if let Some(enderman) =
+        any.downcast_ref::<pumpkin_core::entity::mob::enderman::EndermanEntity>()
+    {
+        return Some(WitMobData::Enderman(WitEndermanData {
+            carried_block_state: enderman
+                .get_carried_block()
+                .map(pumpkin_data::BlockStateId::as_u16),
+            is_screaming: enderman.is_creepy(),
+            is_staring: enderman.is_creepy(),
+        }));
+    }
+    if let Some(shulker) = any.downcast_ref::<pumpkin_core::entity::mob::shulker::ShulkerEntity>() {
+        return Some(WitMobData::Shulker(WitShulkerData {
+            attached_face: to_wit_block_direction(shulker.get_attach_face()),
+            peek_amount: shulker.get_raw_peek(),
+            color: shulker.get_color().map(to_wit_dye_color),
+        }));
+    }
+    any.downcast_ref::<pumpkin_core::entity::mob::zombie::zombie::ZombieEntity>()
+        .map(|zombie| {
+            WitMobData::Zombie(WitZombieData {
+                is_baby: zombie.is_baby(),
+                can_break_doors: zombie.can_break_doors(),
+            })
+        })
+}
+
 impl HostMob for PluginHostState {
     fn as_entity(&mut self, this: Resource<WitMob>) -> wasmtime::Result<Resource<Entity>> {
         self.add(self.get(&this)?.clone())
@@ -593,130 +699,27 @@ impl HostMob for PluginHostState {
         Ok(())
     }
 
-    #[allow(clippy::too_many_lines)]
     fn get_mob_data(&mut self, this: Resource<WitMob>) -> wasmtime::Result<WitMobData> {
         let entity = self.get(&this)?;
         let any = entity.cast_any();
 
-        if let Some(sheep) = any.downcast_ref::<pumpkin_core::entity::passive::sheep::SheepEntity>()
+        if let Some(data) = tamable_mob_data(any)
+            .or_else(|| passive_mob_data(any))
+            .or_else(|| hostile_mob_data(any))
         {
-            return Ok(WitMobData::Sheep(WitSheepData {
-                color: to_wit_dye_color(sheep.get_color()),
-                is_sheared: sheep.is_sheared(),
-            }));
+            return Ok(data);
         }
 
-        if let Some(wolf) = any.downcast_ref::<pumpkin_core::entity::passive::wolf::WolfEntity>() {
-            return Ok(WitMobData::Wolf(WitWolfData {
-                is_tamed: wolf.is_tame(),
-                owner: wolf.get_owner().map(|u| Uuid::to_wit(&u)),
-                is_sitting: wolf.is_in_sitting_pose(),
-                collar_color: to_wit_dye_color(wolf.get_collar_color()),
-                is_angry: false,
-                is_begging: false,
-            }));
-        }
-
-        if let Some(cat) = any.downcast_ref::<pumpkin_core::entity::passive::cat::CatEntity>() {
-            return Ok(WitMobData::Cat(WitCatData {
-                is_tamed: cat.is_tame(),
-                owner: cat.get_owner().map(|u| Uuid::to_wit(&u)),
-                is_sitting: cat.is_in_sitting_pose(),
-                collar_color: to_wit_dye_color(cat.get_collar_color()),
-            }));
-        }
-
-        if let Some(villager) =
-            any.downcast_ref::<pumpkin_core::entity::passive::villager::VillagerEntity>()
-        {
-            let data = *villager
-                .villager_data
-                .lock()
-                .unwrap_or_else(std::sync::PoisonError::into_inner);
-            return Ok(WitMobData::Villager(WitVillagerData {
-                profession: to_wit_villager_profession(data.profession.0),
-                level: (data.level.0).clamp(0, 255) as u8,
-                experience: villager
-                    .xp
-                    .load(std::sync::atomic::Ordering::Relaxed)
-                    .max(0) as u32,
-            }));
-        }
-
-        if let Some(creeper) =
-            any.downcast_ref::<pumpkin_core::entity::mob::creeper::CreeperEntity>()
-        {
-            return Ok(WitMobData::Creeper(WitCreeperData {
-                is_powered: creeper.is_charged(),
-                fuse: creeper.get_fuse(),
-                is_ignited: creeper.is_ignited(),
-                explosion_radius: creeper.get_explosion_radius().clamp(0, 255) as u8,
-            }));
-        }
-
-        if let Some(slime) = any.downcast_ref::<pumpkin_core::entity::mob::slime::SlimeEntity>() {
-            return Ok(WitMobData::Slime(WitSlimeData {
-                size: slime.get_size(),
-            }));
-        }
-
-        if let Some(enderman) =
-            any.downcast_ref::<pumpkin_core::entity::mob::enderman::EndermanEntity>()
-        {
-            return Ok(WitMobData::Enderman(WitEndermanData {
-                carried_block_state: enderman
-                    .get_carried_block()
-                    .map(pumpkin_data::BlockStateId::as_u16),
-                is_screaming: enderman.is_creepy(),
-                is_staring: enderman.is_creepy(),
-            }));
-        }
-
-        if let Some(iron_golem) =
-            any.downcast_ref::<pumpkin_core::entity::passive::iron_golem::IronGolemEntity>()
-        {
-            return Ok(WitMobData::IronGolem(WitIronGolemData {
-                is_player_created: iron_golem.is_player_created(),
-            }));
-        }
-
-        if let Some(fox) = any.downcast_ref::<pumpkin_core::entity::passive::fox::FoxEntity>() {
-            return Ok(WitMobData::Fox(WitFoxData {
-                is_sitting: fox.is_sitting(),
-                is_sleeping: fox.is_sleeping(),
-                is_crouching: fox.is_crouching(),
-            }));
-        }
-
-        if let Some(shulker) =
-            any.downcast_ref::<pumpkin_core::entity::mob::shulker::ShulkerEntity>()
-        {
-            return Ok(WitMobData::Shulker(WitShulkerData {
-                attached_face: to_wit_block_direction(shulker.get_attach_face()),
-                peek_amount: shulker.get_raw_peek(),
-                color: shulker.get_color().map(to_wit_dye_color),
-            }));
-        }
-
-        if let Some(zombie) =
-            any.downcast_ref::<pumpkin_core::entity::mob::zombie::zombie::ZombieEntity>()
-        {
-            return Ok(WitMobData::Zombie(WitZombieData {
-                is_baby: zombie.is_baby(),
-                can_break_doors: zombie.can_break_doors(),
-            }));
-        }
-
-        if let Some(living) = entity.get_living_entity() {
-            let age = living.entity.age.load(std::sync::atomic::Ordering::Relaxed);
-            return Ok(WitMobData::Ageable(WitAgeableData {
-                is_baby: age < 0,
-                age,
-                in_love_ticks: 0,
-            }));
-        }
-
-        Ok(WitMobData::Generic)
+        Ok(entity
+            .get_living_entity()
+            .map_or(WitMobData::Generic, |living| {
+                let age = living.entity.age.load(std::sync::atomic::Ordering::Relaxed);
+                WitMobData::Ageable(WitAgeableData {
+                    is_baby: age < 0,
+                    age,
+                    in_love_ticks: 0,
+                })
+            }))
     }
 
     #[allow(clippy::too_many_lines)]

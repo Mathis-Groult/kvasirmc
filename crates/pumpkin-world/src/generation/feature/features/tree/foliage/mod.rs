@@ -3,6 +3,7 @@ use blob::BlobFoliagePlacer;
 use bush::BushFoliagePlacer;
 use cherry::CherryFoliagePlacer;
 use dark_oak::DarkOakFoliagePlacer;
+use dispatch::FoliageCall;
 use fancy::LargeOakFoliagePlacer;
 use jungle::JungleFoliagePlacer;
 use mega_pine::MegaPineFoliagePlacer;
@@ -22,6 +23,7 @@ use super::{TreeFeature, TreeNode};
 use crate::generation::block_state_provider::BlockStateProvider;
 use crate::generation::proto_chunk::GenerationCache;
 
+mod dispatch;
 #[cfg(test)]
 mod dispatch_golden;
 
@@ -295,7 +297,6 @@ pub enum FoliageType {
 
 impl FoliageType {
     #[expect(clippy::too_many_arguments)]
-    #[expect(clippy::too_many_lines)]
     pub fn generate<T: GenerationCache>(
         &self,
         chunk: &mut T,
@@ -306,120 +307,28 @@ impl FoliageType {
         offset: i32,
         foliage_provider: &BlockStateProvider,
     ) -> Vec<BlockPos> {
+        let mut call = FoliageCall {
+            chunk,
+            random,
+            node,
+            foliage_height,
+            radius,
+            offset,
+            foliage_provider,
+        };
         match self {
-            Self::Blob(blob) => blob.generate(
-                chunk,
-                random,
-                node,
-                foliage_height,
-                radius,
-                offset,
-                foliage_provider,
-            ),
-            Self::Spruce(spruce) => spruce.generate(
-                chunk,
-                random,
-                node,
-                foliage_height,
-                radius,
-                offset,
-                foliage_provider,
-            ),
-            Self::Pine(pine) => pine.generate(
-                chunk,
-                random,
-                node,
-                foliage_height,
-                radius,
-                offset,
-                foliage_provider,
-            ),
-            Self::Acacia(acacia) => acacia.generate(
-                chunk,
-                random,
-                node,
-                foliage_height,
-                radius,
-                offset,
-                foliage_provider,
-            ),
-            Self::Bush(bush) => bush.generate(
-                chunk,
-                random,
-                node,
-                foliage_height,
-                radius,
-                offset,
-                foliage_provider,
-            ),
-            Self::Fancy(fancy) => fancy.generate(
-                chunk,
-                random,
-                node,
-                foliage_height,
-                radius,
-                offset,
-                foliage_provider,
-            ),
-            Self::Jungle(jungle) => jungle.generate(
-                chunk,
-                random,
-                node,
-                foliage_height,
-                radius,
-                offset,
-                foliage_provider,
-            ),
-            Self::MegaPine(mega_pine) => mega_pine.generate(
-                chunk,
-                random,
-                node,
-                foliage_height,
-                radius,
-                offset,
-                foliage_provider,
-            ),
-            Self::DarkOak(dark_oak) => dark_oak.generate(
-                chunk,
-                random,
-                node,
-                foliage_height,
-                radius,
-                offset,
-                foliage_provider,
-            ),
-            Self::RandomSpread(random_spread) => random_spread.generate(
-                chunk,
-                random,
-                node,
-                foliage_height,
-                radius,
-                offset,
-                foliage_provider,
-            ),
-            Self::Cherry(cherry) => {
-                let mut positions = Vec::new();
-                cherry.generate(
-                    &mut positions,
-                    chunk,
-                    random,
-                    node,
-                    foliage_height,
-                    radius,
-                    offset,
-                    foliage_provider,
-                );
-                positions
-            }
-            Self::Poplar(poplar) => poplar.generate(
-                chunk,
-                random,
-                node,
-                foliage_height,
-                radius,
-                offset,
-                foliage_provider,
-            ),
+            Self::Blob(blob) => call.blob(blob),
+            Self::Spruce(spruce) => call.spruce(spruce),
+            Self::Pine(pine) => call.pine(pine),
+            Self::Acacia(acacia) => call.acacia(acacia),
+            Self::Bush(bush) => call.bush(bush),
+            Self::Fancy(fancy) => call.fancy(fancy),
+            Self::Jungle(jungle) => call.jungle(jungle),
+            Self::MegaPine(mega_pine) => call.mega_pine(mega_pine),
+            Self::DarkOak(dark_oak) => call.dark_oak(dark_oak),
+            Self::RandomSpread(random_spread) => call.random_spread(random_spread),
+            Self::Cherry(cherry) => call.cherry(cherry),
+            Self::Poplar(poplar) => call.poplar(poplar),
         }
     }
 

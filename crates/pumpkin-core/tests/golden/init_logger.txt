@@ -269,3 +269,19 @@
 == RUST_LOG empty [level=warn;file=latest.log] RUST_LOG="" exit=true
   state: level=error color=true threads=false thread_ids=false target=false timestamp=true readline=false
   logs/latest.log:
+== escape codes in a message [escape_event=true] exit=true
+  <esc>[#m##:##:##<esc>[#m <esc>[##mERROR<esc>[#m an error
+  <esc>[#m##:##:##<esc>[#m <esc>[##m WARN<esc>[#m a warning
+  <esc>[#m##:##:##<esc>[#m <esc>[##m INFO<esc>[#m an info
+  <esc>[#m##:##:##<esc>[#m <esc>[##m INFO<esc>[#m another crate
+  <esc>[#m##:##:##<esc>[#m <esc>[##m INFO<esc>[#m <esc>[##mred<esc>[#m
+  state: level=info color=true threads=false thread_ids=false target=false timestamp=true readline=false
+  logs: none
+== escape codes, no color [escape_event=true;color=false] exit=true
+  ##:##:## ERROR an error
+  ##:##:##  WARN a warning
+  ##:##:##  INFO an info
+  ##:##:##  INFO another crate
+  ##:##:##  INFO <esc>[##mred<esc>[#m
+  state: level=info color=false threads=false thread_ids=false target=false timestamp=true readline=false
+  logs: none

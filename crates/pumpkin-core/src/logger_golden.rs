@@ -68,7 +68,11 @@ const STYLE_SCENES: &[Scene] = &[
 
 const FILE_SCENES: &[Scene] = &[
     ("file", "file=latest.log", None),
-    ("file, no timestamp", "file=latest.log;timestamp=false", None),
+    (
+        "file, no timestamp",
+        "file=latest.log;timestamp=false",
+        None,
+    ),
     ("file, other name", "file=server.log;color=false", None),
     ("file in a missing directory", "file=sub/x.log", None),
 ];
@@ -97,11 +101,7 @@ const ENV_SCENES: &[Scene] = &[
         "level=trace;file=latest.log",
         Some("error"),
     ),
-    (
-        "RUST_LOG off",
-        "level=info;file=latest.log",
-        Some("off"),
-    ),
+    ("RUST_LOG off", "level=info;file=latest.log", Some("off")),
     (
         "RUST_LOG not a level",
         "level=warn;file=latest.log",
@@ -120,6 +120,16 @@ const ENV_SCENES: &[Scene] = &[
     ("RUST_LOG empty", "level=warn;file=latest.log", Some("")),
 ];
 
+/// A message holding escape codes: the console layer must pass it through unchanged.
+const ESCAPE_SCENES: &[Scene] = &[
+    ("escape codes in a message", "escape_event=true", None),
+    (
+        "escape codes, no color",
+        "escape_event=true;color=false",
+        None,
+    ),
+];
+
 /// The part of `init_logger` that runs in the child: one scene, then a report on stdout.
 #[test]
 fn child() {
@@ -128,6 +138,7 @@ fn child() {
     };
     let mut advanced = AdvancedConfiguration::default();
     advanced.logging.file = String::new();
+    let mut escape_event = false;
     for pair in spec.split(';').filter(|pair| !pair.is_empty()) {
         let (key, value) = pair.split_once('=').expect("key=value");
         let logging = &mut advanced.logging;
@@ -142,6 +153,7 @@ fn child() {
             "timestamp_format" => logging.timestamp_format = value.to_string(),
             "file" => logging.file = value.to_string(),
             "use_tty" => advanced.commands.use_tty = value == "true",
+            "escape_event" => escape_event = value == "true",
             other => panic!("unknown key {other}"),
         }
     }
@@ -153,6 +165,9 @@ fn child() {
     tracing::debug!("a debug");
     tracing::trace!("a trace");
     tracing::info!(target: "other_crate", "another crate");
+    if escape_event {
+        tracing::info!("\x1b[31mred\x1b[0m");
+    }
     println!("{}", state());
     print_log_files();
     println!("{END}");
@@ -250,7 +265,9 @@ fn run_scenes(scenes: &[Scene], first_index: usize, now: &mut String) {
             .collect();
         for (scene, (dir, child)) in children {
             let output = child.wait_with_output().expect("wait");
-            let rust_log = scene.2.map_or(String::new(), |v| format!(" RUST_LOG={v:?}"));
+            let rust_log = scene
+                .2
+                .map_or(String::new(), |v| format!(" RUST_LOG={v:?}"));
             writeln!(
                 now,
                 "== {} [{}]{rust_log} exit={}",
@@ -272,7 +289,13 @@ fn init_logger_golden() -> TestResult {
     }
     let mut now = String::new();
     let mut index = 0;
-    for scenes in [STYLE_SCENES, FILE_SCENES, LEVEL_SCENES, ENV_SCENES] {
+    for scenes in [
+        STYLE_SCENES,
+        FILE_SCENES,
+        LEVEL_SCENES,
+        ENV_SCENES,
+        ESCAPE_SCENES,
+    ] {
         run_scenes(scenes, index, &mut now);
         index += scenes.len();
     }

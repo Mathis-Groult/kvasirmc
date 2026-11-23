@@ -35,7 +35,6 @@ impl TextComponent {
     /// # Returns
     /// A `TextComponent` with the parsed formatting applied.
     #[must_use]
-    #[expect(clippy::too_many_lines)]
     pub fn from_legacy_string_with_code(input: &str, code_symbol: char) -> Self {
         let mut root = Self::text("");
         let mut parts = input.split(code_symbol);
@@ -46,12 +45,7 @@ impl TextComponent {
             root = root.add_child(Self::text(first.to_string()));
         }
 
-        let mut current_color: Option<Color> = None;
-        let mut bold = false;
-        let mut italic = false;
-        let mut underlined = false;
-        let mut strikethrough = false;
-        let mut obfuscated = false;
+        let mut style = LegacyStyle::default();
 
         while let Some(part) = parts.next() {
             if part.is_empty() {
@@ -59,102 +53,20 @@ impl TextComponent {
             }
 
             let code = part.chars().next().unwrap_or(' ').to_ascii_lowercase();
-            let remainder = &part[code.len_utf8()..];
+            let mut text = part[code.len_utf8()..].to_string();
 
-            match code {
-                'x' => {
-                    let mut hex = [0u8; 6];
-                    let mut valid_hex = true;
-                    let mut trailing_remainder = String::new();
-                    for hex_byte in &mut hex {
-                        if let Some(next_part) = parts.next() {
-                            if let Some(c) = next_part.chars().next() {
-                                *hex_byte = c as u8;
-                                trailing_remainder.push_str(&next_part[c.len_utf8()..]);
-                            } else {
-                                valid_hex = false;
-                                break;
-                            }
-                        } else {
-                            valid_hex = false;
-                            break;
-                        }
-                    }
-                    if valid_hex && let Ok(hex_str) = std::str::from_utf8(&hex) {
-                        current_color = Color::from_hex_str(hex_str);
-                    }
-                    if !remainder.is_empty() || !trailing_remainder.is_empty() {
-                        let text = format!("{remainder}{trailing_remainder}");
-                        if !text.is_empty() {
-                            let mut child = Self::text(text);
-                            if let Some(c) = current_color {
-                                child = child.color(c);
-                            }
-                            if bold {
-                                child = child.bold();
-                            }
-                            if italic {
-                                child = child.italic();
-                            }
-                            if underlined {
-                                child = child.underlined();
-                            }
-                            if strikethrough {
-                                child = child.strikethrough();
-                            }
-                            if obfuscated {
-                                child = child.obfuscated();
-                            }
-                            root = root.add_child(child);
-                        }
-                    }
-                    continue;
+            if code == 'x' {
+                let (update, trailing) = read_hex_run(&mut parts);
+                if let ColorUpdate::Set(color) = update {
+                    style.color = color;
                 }
-                '0'..='9' | 'a'..='f' => {
-                    current_color = Color::from_legacy_code(code);
-                    bold = false;
-                    italic = false;
-                    underlined = false;
-                    strikethrough = false;
-                    obfuscated = false;
-                }
-                'l' => bold = true,
-                'o' => italic = true,
-                'n' => underlined = true,
-                'm' => strikethrough = true,
-                'k' => obfuscated = true,
-                'r' => {
-                    current_color = None;
-                    bold = false;
-                    italic = false;
-                    underlined = false;
-                    strikethrough = false;
-                    obfuscated = false;
-                }
-                _ => {}
+                text.push_str(&trailing);
+            } else {
+                style.apply(code);
             }
 
-            if !remainder.is_empty() {
-                let mut child = Self::text(remainder.to_string());
-                if let Some(c) = current_color {
-                    child = child.color(c);
-                }
-                if bold {
-                    child = child.bold();
-                }
-                if italic {
-                    child = child.italic();
-                }
-                if underlined {
-                    child = child.underlined();
-                }
-                if strikethrough {
-                    child = child.strikethrough();
-                }
-                if obfuscated {
-                    child = child.obfuscated();
-                }
-                root = root.add_child(child);
+            if !text.is_empty() {
+                root = root.add_child(style.text(text));
             }
         }
 
@@ -304,6 +216,91 @@ impl TextComponent {
 
         text
     }
+}
+
+/// The colour and styles that the legacy codes read so far have switched on.
+#[derive(Default)]
+struct LegacyStyle {
+    color: Option<Color>,
+    bold: bool,
+    italic: bool,
+    underlined: bool,
+    strikethrough: bool,
+    obfuscated: bool,
+}
+
+impl LegacyStyle {
+    /// Applies one code character: a colour code replaces the whole style, `r` clears it, the
+    /// format codes add to it and any other character changes nothing.
+    fn apply(&mut self, code: char) {
+        match code {
+            '0'..='9' | 'a'..='f' => {
+                *self = Self {
+                    color: Color::from_legacy_code(code),
+                    ..Self::default()
+                };
+            }
+            'l' => self.bold = true,
+            'o' => self.italic = true,
+            'n' => self.underlined = true,
+            'm' => self.strikethrough = true,
+            'k' => self.obfuscated = true,
+            'r' => *self = Self::default(),
+            _ => {}
+        }
+    }
+
+    /// A text component carrying `text` in this style.
+    fn text(&self, text: String) -> TextComponent {
+        let mut child = TextComponent::text(text);
+        if let Some(color) = self.color {
+            child = child.color(color);
+        }
+        for (on, apply) in [
+            (
+                self.bold,
+                TextComponent::bold as fn(TextComponent) -> TextComponent,
+            ),
+            (self.italic, TextComponent::italic),
+            (self.underlined, TextComponent::underlined),
+            (self.strikethrough, TextComponent::strikethrough),
+            (self.obfuscated, TextComponent::obfuscated),
+        ] {
+            if on {
+                child = apply(child);
+            }
+        }
+        child
+    }
+}
+
+/// What a `§x` run does to the current colour.
+enum ColorUpdate {
+    /// The run was cut off, or its digits are not text: the colour stays.
+    Keep,
+    /// The six digits were read: the colour becomes this (`None` when they are not hex digits).
+    Set(Option<Color>),
+}
+
+/// Reads the six `§R` digit parts that follow `§x`. Returns the colour change and the text that
+/// followed each digit, which belongs to the next component.
+fn read_hex_run(parts: &mut std::str::Split<'_, char>) -> (ColorUpdate, String) {
+    let mut digits = Vec::with_capacity(6);
+    let mut trailing = String::new();
+    for _ in 0..6 {
+        let Some(c) = parts.next().and_then(|part| {
+            let c = part.chars().next()?;
+            trailing.push_str(&part[c.len_utf8()..]);
+            Some(c)
+        }) else {
+            return (ColorUpdate::Keep, trailing);
+        };
+        digits.push(c as u8);
+    }
+    let update = std::str::from_utf8(&digits).map_or(ColorUpdate::Keep, |hex| {
+        ColorUpdate::Set(Color::from_hex_str(hex))
+    });
+    (update, trailing)
 }
 
 #[cfg(test)]

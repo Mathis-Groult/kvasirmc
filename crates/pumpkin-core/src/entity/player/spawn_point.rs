@@ -8,7 +8,7 @@ use pumpkin_data::block_properties::HorizontalFacing;
 use pumpkin_data::dimension::Dimension;
 use pumpkin_data::entity::EntityPose;
 use pumpkin_data::tag::Taggable;
-use pumpkin_data::{Block, tag};
+use pumpkin_data::{Block, BlockStateId, tag};
 use pumpkin_protocol::java::client::play::{Animation, CEntityAnimation, CPlayerSpawnPosition};
 use pumpkin_util::math::{
     boundingbox::BoundingBox, position::BlockPos, vector2::Vector2, vector3::Vector3,
@@ -109,9 +109,6 @@ impl Player {
     /// This function does NOT send any packets. The caller is responsible for
     /// sending `NoRespawnBlockAvailable` if this returns `None`.
     pub async fn calculate_respawn_point(&self) -> Option<CalculatedRespawnPoint> {
-        type BedProperties = pumpkin_data::block_properties::WhiteBedLikeProperties;
-        type AnchorProperties = pumpkin_data::block_properties::RespawnAnchorLikeProperties;
-
         let respawn_point = {
             let respawn_guard = self
                 .respawn_point
@@ -119,16 +116,41 @@ impl Player {
                 .unwrap_or_else(std::sync::PoisonError::into_inner);
             respawn_guard.clone()?
         };
-        let world = if self.world().dimension == respawn_point.dimension {
-            self.world()
-        } else if let Some(server) = self.world().server.upgrade() {
-            server.get_world_from_dimension(&respawn_point.dimension)
-        } else {
-            self.world()
-        };
+        let world = self.respawn_world(&respawn_point.dimension);
         let pos = &respawn_point.position;
 
-        // Ensure chunks around the spawn position are fetched
+        Self::fetch_chunks_around(&world, pos).await;
+
+        // If force is set (from /spawnpoint command), validate position is safe
+        if respawn_point.force {
+            return Self::forced_respawn_point(&world, &respawn_point);
+        }
+
+        let (block, state_id) = world.get_block_and_state_id(pos);
+        if block.has_tag(&tag::Block::MINECRAFT_BEDS) {
+            return Self::bed_respawn_point(&world, &respawn_point, state_id);
+        }
+        if block == &Block::RESPAWN_ANCHOR {
+            return Self::anchor_respawn_point(&world, &respawn_point, state_id);
+        }
+
+        None
+    }
+
+    /// The world the respawn point lives in: this player's own when the dimension matches, else
+    /// the server's world for that dimension (this player's own without a server).
+    fn respawn_world(&self, dimension: &Dimension) -> Arc<crate::world::World> {
+        if self.world().dimension == *dimension {
+            self.world()
+        } else if let Some(server) = self.world().server.upgrade() {
+            server.get_world_from_dimension(dimension)
+        } else {
+            self.world()
+        }
+    }
+
+    /// Ensure chunks around the spawn position are fetched.
+    async fn fetch_chunks_around(world: &Arc<crate::world::World>, pos: &BlockPos) {
         let min_chunk_x = (pos.0.x - 2) >> 4;
         let max_chunk_x = (pos.0.x + 2) >> 4;
         let min_chunk_z = (pos.0.z - 2) >> 4;
@@ -141,90 +163,88 @@ impl Player {
                     .await;
             }
         }
+    }
 
-        let (block, state_id) = world.get_block_and_state_id(pos);
+    /// A forced point (from /spawnpoint) holds while both the block and the block above allow a
+    /// mob to stand there (neither is solid).
+    fn forced_respawn_point(
+        world: &Arc<crate::world::World>,
+        respawn_point: &RespawnPoint,
+    ) -> Option<CalculatedRespawnPoint> {
+        let pos = &respawn_point.position;
+        if world.get_block_state(pos).is_solid() || world.get_block_state(&pos.up()).is_solid() {
+            return None;
+        }
+        let position = Vector3::new(
+            f64::from(pos.0.x) + 0.5,
+            f64::from(pos.0.y) + 0.1,
+            f64::from(pos.0.z) + 0.5,
+        );
+        debug!(
+            "Returning forced spawn point at {:?}, dimension: {:?}",
+            position, respawn_point.dimension
+        );
+        Some(Self::respawn_point_at(respawn_point, position))
+    }
 
-        // If force is set (from /spawnpoint command), validate position is safe
-        if respawn_point.force {
-            // For forced spawn, check if both the block and block above allow mob spawn
-            let block_state = world.get_block_state(pos);
-            let above_state = world.get_block_state(&pos.up());
+    /// A bed point: the bed's facing picks the cells tried around it.
+    fn bed_respawn_point(
+        world: &Arc<crate::world::World>,
+        respawn_point: &RespawnPoint,
+        state_id: BlockStateId,
+    ) -> Option<CalculatedRespawnPoint> {
+        type BedProperties = pumpkin_data::block_properties::WhiteBedLikeProperties;
 
-            // Check if blocks are passable (non-solid or air)
-            let block_safe = block_state.is_air() || !block_state.is_solid();
-            let above_safe = above_state.is_air() || !above_state.is_solid();
+        let facing = BedProperties::from_state_id(state_id).facing;
 
-            if block_safe && above_safe {
-                let position = Vector3::new(
-                    f64::from(pos.0.x) + 0.5,
-                    f64::from(pos.0.y) + 0.1,
-                    f64::from(pos.0.z) + 0.5,
-                );
-                debug!(
-                    "Returning forced spawn point at {:?}, dimension: {:?}",
-                    position, respawn_point.dimension
-                );
-                return Some(CalculatedRespawnPoint {
-                    position,
-                    yaw: respawn_point.yaw,
-                    pitch: 0.0,
-                    dimension: respawn_point.dimension.clone(),
-                });
-            }
+        // Try positions around the bed based on facing direction
+        // Vanilla tries multiple offset patterns; we use a simplified version
+        let spawn_pos = Self::find_bed_spawn_position(world, &respawn_point.position, facing)?;
+        Some(Self::respawn_point_at(respawn_point, spawn_pos))
+    }
+
+    /// An anchor point: needs a charge and a free cell around it, and uses one charge up.
+    fn anchor_respawn_point(
+        world: &Arc<crate::world::World>,
+        respawn_point: &RespawnPoint,
+        state_id: BlockStateId,
+    ) -> Option<CalculatedRespawnPoint> {
+        type AnchorProperties = pumpkin_data::block_properties::RespawnAnchorLikeProperties;
+
+        let pos = &respawn_point.position;
+        let anchor_props = AnchorProperties::from_state_id(state_id);
+        let charges = anchor_props.charges;
+
+        // Anchor needs at least 1 charge to work
+        if charges == 0 {
             return None;
         }
 
-        // Handle bed respawn
-        if block.has_tag(&tag::Block::MINECRAFT_BEDS) {
-            let bed_props = BedProperties::from_state_id(state_id);
-            let facing = bed_props.facing;
+        // Try positions around the anchor
+        let spawn_pos = Self::find_anchor_spawn_position(world, pos)?;
 
-            // Try positions around the bed based on facing direction
-            // Vanilla tries multiple offset patterns; we use a simplified version
-            if let Some(spawn_pos) = Self::find_bed_spawn_position(&world, pos, facing) {
-                return Some(CalculatedRespawnPoint {
-                    position: spawn_pos,
-                    yaw: respawn_point.yaw,
-                    pitch: 0.0,
-                    dimension: respawn_point.dimension.clone(),
-                });
-            }
-            return None;
+        // Decrement charges after successful respawn position found
+        let mut new_props = anchor_props;
+        new_props.charges = charges - 1;
+        world.set_block_state(
+            pos,
+            new_props.to_state_id(&Block::RESPAWN_ANCHOR),
+            pumpkin_world::world::BlockFlags::NOTIFY_ALL,
+        );
+
+        Some(Self::respawn_point_at(respawn_point, spawn_pos))
+    }
+
+    fn respawn_point_at(
+        respawn_point: &RespawnPoint,
+        position: Vector3<f64>,
+    ) -> CalculatedRespawnPoint {
+        CalculatedRespawnPoint {
+            position,
+            yaw: respawn_point.yaw,
+            pitch: 0.0,
+            dimension: respawn_point.dimension.clone(),
         }
-
-        // Handle respawn anchor (Nether)
-        if block == &Block::RESPAWN_ANCHOR {
-            let anchor_props = AnchorProperties::from_state_id(state_id);
-            let charges = anchor_props.charges;
-
-            // Anchor needs at least 1 charge to work
-            if charges == 0 {
-                return None;
-            }
-
-            // Try positions around the anchor
-            if let Some(spawn_pos) = Self::find_anchor_spawn_position(&world, pos) {
-                // Decrement charges after successful respawn position found
-                let new_charges = charges - 1;
-                let mut new_props = anchor_props;
-                new_props.charges = new_charges;
-                world.set_block_state(
-                    pos,
-                    new_props.to_state_id(block),
-                    pumpkin_world::world::BlockFlags::NOTIFY_ALL,
-                );
-
-                return Some(CalculatedRespawnPoint {
-                    position: spawn_pos,
-                    yaw: respawn_point.yaw,
-                    pitch: 0.0,
-                    dimension: respawn_point.dimension.clone(),
-                });
-            }
-            return None;
-        }
-
-        None
     }
 
     /// Find a valid spawn position around a bed.

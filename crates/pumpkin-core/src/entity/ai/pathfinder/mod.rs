@@ -12,6 +12,7 @@ use crate::entity::ai::pathfinder::node::PathType;
 use crate::entity::ai::pathfinder::node_evaluator::{BaseNodeEvaluator, MobData, NodeEvaluator};
 use crate::entity::ai::pathfinder::path::Path;
 use crate::entity::ai::pathfinder::pathfinding_context::PathfindingContext;
+use crate::entity::ai::pathfinder::search::{SearchLimits, TargetEntry};
 use crate::entity::ai::pathfinder::swim_node_evaluator::SwimNodeEvaluator;
 use crate::entity::ai::pathfinder::walk_node_evaluator::WalkNodeEvaluator;
 use pumpkin_data::attributes::Attributes;
@@ -27,6 +28,7 @@ pub mod node_evaluator;
 pub mod path;
 pub mod path_type_cache;
 pub mod pathfinding_context;
+mod search;
 pub mod swim_node_evaluator;
 pub mod walk_node_evaluator;
 
@@ -77,7 +79,6 @@ impl PathFinder {
         )
     }
 
-    #[allow(clippy::too_many_lines)]
     pub fn find_path(
         &mut self,
         evaluator: &mut EvaluatorKind,
@@ -87,123 +88,29 @@ impl PathFinder {
         max_visited_nodes_multiplier: f32,
     ) -> Option<Path> {
         self.open_set.clear();
-        self.neighbors_buf.clear();
         if targets.is_empty() {
             return None;
         }
 
         let mut from = evaluator.get_start()?;
+        let mut target_entries: Vec<TargetEntry> = targets
+            .iter()
+            .map(|&pos| (evaluator.get_target(pos), pos))
+            .collect();
+        self.seed_open_set(evaluator, &mut from, &mut target_entries);
 
-        let mut target_entries: Vec<(crate::entity::ai::pathfinder::node::Target, BlockPos)> =
-            targets
-                .iter()
-                .map(|&pos| (evaluator.get_target(pos), pos))
-                .collect();
-
-        from.g = 0.0;
-        from.h = Self::get_best_h(&from, &mut target_entries);
-        from.f = from.h;
-        from.walked_dist = 0.0;
-        from.came_from = None;
-        from.closed = false;
-
-        evaluator.base_mut().update_node(from);
-        self.open_set.insert(from);
-
-        let mut count = 0usize;
-        let mut reached_targets: Vec<usize> = Vec::new();
-        let max_visited_nodes_adjusted =
-            (self.max_visited_nodes as f32 * max_visited_nodes_multiplier) as usize;
-
-        while !self.open_set.is_empty() {
-            count += 1;
-            if count >= max_visited_nodes_adjusted {
-                break;
-            }
-
-            let Some(mut current) = self.open_set.pop() else {
-                break;
-            };
-
-            current = evaluator.base_mut().get_node(current.pos);
-            current.closed = true;
-            evaluator.base_mut().update_node(current);
-
-            for (idx, (target, _)) in target_entries.iter_mut().enumerate() {
-                if current.distance_manhattan_node(&target.node) <= reach_range as f32 {
-                    target.set_reached();
-                    if !reached_targets.contains(&idx) {
-                        reached_targets.push(idx);
-                    }
-                }
-            }
-
-            if !reached_targets.is_empty() {
-                break;
-            }
-
-            if current.distance_to_node(&from) < max_path_length {
-                self.neighbors_buf.clear();
-                evaluator.get_neighbors(&current, &mut self.neighbors_buf);
-
-                for neighbor in self.neighbors_buf.drain(..) {
-                    let mut neighbor = evaluator.base_mut().get_node(neighbor.pos);
-                    if neighbor.closed {
-                        continue;
-                    }
-                    let distance = current.distance_to_node(&neighbor);
-                    neighbor.walked_dist = current.walked_dist + distance;
-                    let tentative_g = current.g + distance + neighbor.cost_malus;
-
-                    let in_open = self.open_set.contains(&neighbor);
-                    let is_better = !in_open || tentative_g < neighbor.g;
-
-                    if neighbor.walked_dist < max_path_length && is_better {
-                        neighbor.came_from = Some(current.pos.0);
-                        neighbor.g = tentative_g;
-                        neighbor.h = Self::get_best_h(&neighbor, &mut target_entries)
-                            * TARGET_DISTANCE_MULTIPLIER;
-                        neighbor.f = neighbor.g + neighbor.h;
-
-                        if in_open {
-                            self.open_set.update_node(&neighbor, neighbor);
-                        } else {
-                            self.open_set.insert(neighbor);
-                        }
-                    }
-                    evaluator.base_mut().update_node(neighbor);
-                }
-            }
-        }
-
-        let all_nodes = &evaluator.base_mut().nodes;
-
-        if reached_targets.is_empty() {
-            target_entries
-                .into_iter()
-                .filter_map(|(target, target_pos)| {
-                    target
-                        .get_best_node()
-                        .and_then(|pos| all_nodes.get(&pos.0))
-                        .map(|best| Self::reconstruct_path(best, target_pos, false, all_nodes))
-                })
-                .min_by(|a, b| {
-                    a.get_dist_to_target()
-                        .total_cmp(&b.get_dist_to_target())
-                        .then_with(|| a.get_node_count().cmp(&b.get_node_count()))
-                })
-        } else {
-            reached_targets
-                .into_iter()
-                .filter_map(|idx| {
-                    let (target, target_pos) = &target_entries[idx];
-                    target
-                        .get_best_node()
-                        .and_then(|pos| all_nodes.get(&pos.0))
-                        .map(|best| Self::reconstruct_path(best, *target_pos, true, all_nodes))
-                })
-                .min_by_key(Path::get_node_count)
-        }
+        let limits = SearchLimits {
+            max_path_length,
+            reach_range,
+            max_visited_nodes: (self.max_visited_nodes as f32 * max_visited_nodes_multiplier)
+                as usize,
+        };
+        let reached_targets = self.search(evaluator, &from, &mut target_entries, limits);
+        Self::choose_path(
+            &evaluator.base_mut().nodes,
+            target_entries,
+            &reached_targets,
+        )
     }
 
     fn reconstruct_path(

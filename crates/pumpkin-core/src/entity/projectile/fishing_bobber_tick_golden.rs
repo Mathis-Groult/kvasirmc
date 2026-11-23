@@ -21,6 +21,7 @@ use pumpkin_util::GameMode;
 use pumpkin_util::math::position::BlockPos;
 use pumpkin_util::math::vector2::Vector2;
 use pumpkin_util::math::vector3::Vector3;
+use pumpkin_util::version::JavaMinecraftVersion;
 use pumpkin_world::cylindrical_chunk_iterator::Cylindrical;
 use pumpkin_world::world::BlockFlags;
 use uuid::Uuid;
@@ -58,6 +59,8 @@ enum Kind {
     Zombie,
     /// Marked removed, but still in the world's lists.
     Removed,
+    /// Flagged removed, but still found by its id.
+    Doomed,
     Cloud,
     /// A projectile, standing still.
     Snowball,
@@ -112,6 +115,8 @@ struct Scene {
     blocks: &'static [(Solid, i32, i32, i32)],
     mobs: &'static [Mob],
     region: Region,
+    /// The entity id of the scene's owner (slot 0); mob `n` has this id plus `n`.
+    mob_base: i32,
     /// Restart the wait this many times instead of ticking `ticks` times.
     samples: usize,
 }
@@ -132,6 +137,7 @@ const fn scene(name: &'static str, start: Vec3, velocity: Vec3, ticks: usize) ->
         blocks: &[],
         mobs: &[],
         region: Region::Far,
+        mob_base: MOB_ID,
         samples: 0,
     }
 }
@@ -302,16 +308,66 @@ const FACES: &[Scene] = &[
 
 /// The faces again where the coordinates are in other orders and below 0.
 const REGIONS: &[Scene] = &[
-    region_face("corner_west", Region::Corner, (5.0, 66.5, 8.5), (2.0, 0.0, 0.0)),
-    region_face("corner_east", Region::Corner, (12.0, 66.5, 8.5), (-2.0, 0.0, 0.0)),
-    region_face("corner_up", Region::Corner, (8.5, 70.0, 8.5), (0.0, -2.0, 0.0)),
-    region_face("corner_north", Region::Corner, (8.5, 66.5, 5.0), (0.0, 0.0, 2.0)),
-    region_face("corner_south", Region::Corner, (8.5, 66.5, 12.0), (0.0, 0.0, -2.0)),
-    region_face("negative_west", Region::Negative, (5.0, 66.5, 8.5), (2.0, 0.0, 0.0)),
-    region_face("negative_east", Region::Negative, (12.0, 66.5, 8.5), (-2.0, 0.0, 0.0)),
-    region_face("negative_up", Region::Negative, (8.5, 70.0, 8.5), (0.0, -2.0, 0.0)),
-    region_face("negative_north", Region::Negative, (8.5, 66.5, 5.0), (0.0, 0.0, 2.0)),
-    region_face("negative_south", Region::Negative, (8.5, 66.5, 12.0), (0.0, 0.0, -2.0)),
+    region_face(
+        "corner_west",
+        Region::Corner,
+        (5.0, 66.5, 8.5),
+        (2.0, 0.0, 0.0),
+    ),
+    region_face(
+        "corner_east",
+        Region::Corner,
+        (12.0, 66.5, 8.5),
+        (-2.0, 0.0, 0.0),
+    ),
+    region_face(
+        "corner_up",
+        Region::Corner,
+        (8.5, 70.0, 8.5),
+        (0.0, -2.0, 0.0),
+    ),
+    region_face(
+        "corner_north",
+        Region::Corner,
+        (8.5, 66.5, 5.0),
+        (0.0, 0.0, 2.0),
+    ),
+    region_face(
+        "corner_south",
+        Region::Corner,
+        (8.5, 66.5, 12.0),
+        (0.0, 0.0, -2.0),
+    ),
+    region_face(
+        "negative_west",
+        Region::Negative,
+        (5.0, 66.5, 8.5),
+        (2.0, 0.0, 0.0),
+    ),
+    region_face(
+        "negative_east",
+        Region::Negative,
+        (12.0, 66.5, 8.5),
+        (-2.0, 0.0, 0.0),
+    ),
+    region_face(
+        "negative_up",
+        Region::Negative,
+        (8.5, 70.0, 8.5),
+        (0.0, -2.0, 0.0),
+    ),
+    region_face(
+        "negative_north",
+        Region::Negative,
+        (8.5, 66.5, 5.0),
+        (0.0, 0.0, 2.0),
+    ),
+    region_face(
+        "negative_south",
+        Region::Negative,
+        (8.5, 66.5, 12.0),
+        (0.0, 0.0, -2.0),
+    ),
 ];
 
 const fn region_face(name: &'static str, region: Region, start: Vec3, velocity: Vec3) -> Scene {
@@ -468,8 +524,40 @@ const OWNERS: &[Scene] = &[
     },
 ];
 
+/// Round 2 (added after a mutation run): owners hooked once left (in water, so the bobber does
+/// not fall past them), a target flagged removed but still found, entity id 1, tracked data.
+const WIDEN: &[Scene] = &[
+    Scene {
+        owner: Owner::At((4.5, 66.0, 4.5)),
+        water: true,
+        turn: Some((8, (-0.6, 0.0, 0.0))),
+        ..scene("owner_back_water", (4.5, 67.0, 4.5), (0.3, 0.0, 0.0), 22)
+    },
+    Scene {
+        owner: Owner::At((4.5, 66.0, 4.5)),
+        water: true,
+        ..scene("owner_inside_water", (4.5, 67.0, 4.5), (0.01, 0.0, 0.0), 6)
+    },
+    Scene {
+        mobs: &[mob(Kind::Doomed, (8.5, 66.0, 8.5))],
+        hook: Hook::Mob(0),
+        ..scene("hooked_doomed", (4.5, 70.0, 4.5), (0.5, 0.2, 0.1), 4)
+    },
+    Scene {
+        mobs: ZOMBIE_AT_8,
+        hook: Hook::Mob(0),
+        mob_base: 0,
+        ..scene("hooked_id_one", (4.5, 70.0, 4.5), (0.5, 0.2, 0.1), 3)
+    },
+    Scene {
+        mobs: ZOMBIE_AT_8,
+        mob_base: 0,
+        ..scene("hook_id_one", (6.5, 66.8, 8.5), (1.0, 0.0, 0.0), 4)
+    },
+];
+
 fn scenes() -> impl Iterator<Item = &'static Scene> {
-    [FLIGHT, WATER, FACES, REGIONS, MOBS, HOOKS, OWNERS]
+    [FLIGHT, WATER, FACES, REGIONS, MOBS, HOOKS, OWNERS, WIDEN]
         .into_iter()
         .flatten()
 }
@@ -539,11 +627,11 @@ fn triple((x, y, z): Vec3) -> String {
     format!("{x:.4},{y:.4},{z:.4}")
 }
 
-fn spawn_mob(area: &Area<'_>, slot: usize, mob: Mob) -> Option<Arc<LivingEntity>> {
-    let id = MOB_ID + slot as i32;
+fn spawn_mob(area: &Area<'_>, base: i32, slot: usize, mob: Mob) -> Option<Arc<LivingEntity>> {
+    let id = base + slot as i32;
     let uuid = Uuid::from_u128(0x4669_7368_0000_0000 + slot as u128);
     let r#type = match mob.kind {
-        Kind::Zombie | Kind::Removed => &EntityType::ZOMBIE,
+        Kind::Zombie | Kind::Removed | Kind::Doomed => &EntityType::ZOMBIE,
         Kind::Cloud => &EntityType::AREA_EFFECT_CLOUD,
         Kind::Snowball => &EntityType::SNOWBALL,
     };
@@ -560,12 +648,14 @@ fn spawn_mob(area: &Area<'_>, slot: usize, mob: Mob) -> Option<Arc<LivingEntity>
             area.world.spawn_entity_non_save(base);
             None
         }
-        Kind::Zombie | Kind::Removed => {
+        Kind::Zombie | Kind::Removed | Kind::Doomed => {
             let living = Arc::new(LivingEntity::new(entity));
             let base: Arc<dyn EntityBase> = living.clone();
             area.world.spawn_entity_non_save(base);
-            if matches!(mob.kind, Kind::Removed) {
-                living.get_entity().remove();
+            match mob.kind {
+                Kind::Removed => living.get_entity().remove(),
+                Kind::Doomed => living.get_entity().removed.store(true, Ordering::Relaxed),
+                _ => {}
             }
             Some(living)
         }
@@ -577,7 +667,7 @@ fn make_owner(area: &Area<'_>, scene: &Scene) -> (ProjectileOwner, Option<Arc<Li
     match scene.owner {
         Owner::None => (ProjectileOwner::new(None), None),
         Owner::At(at) => {
-            let living = spawn_mob(area, 0, zombie(at));
+            let living = spawn_mob(area, scene.mob_base, 0, zombie(at));
             let owner = ProjectileOwner::new(living.as_ref().map(|owner| owner.get_entity()));
             (owner, living)
         }
@@ -594,11 +684,7 @@ fn make_owner(area: &Area<'_>, scene: &Scene) -> (ProjectileOwner, Option<Arc<Li
     }
 }
 
-fn make_bobber(
-    area: &Area<'_>,
-    scene: &Scene,
-    owner: ProjectileOwner,
-) -> Arc<FishingBobberEntity> {
+fn make_bobber(area: &Area<'_>, scene: &Scene, owner: ProjectileOwner) -> Arc<FishingBobberEntity> {
     let entity = Entity::from_uuid_with_id(
         BOBBER_ID,
         Uuid::from_u128(0x4669_7368_0000_9999),
@@ -614,7 +700,7 @@ fn make_bobber(
     entity.touching_water.store(scene.water, Ordering::Relaxed);
     let hooked = match scene.hook {
         Hook::None => 0,
-        Hook::Mob(slot) => MOB_ID + 1 + slot as i32,
+        Hook::Mob(slot) => scene.mob_base + 1 + slot as i32,
         Hook::Missing => MOB_ID + 700,
     };
     Arc::new(FishingBobberEntity {
@@ -654,6 +740,17 @@ fn wait_text(wait: i32) -> String {
     } else {
         wait.to_string()
     }
+}
+
+/// The tracked data changed since the last look, by a hash of its bytes.
+fn meta_text(entity: &Entity) -> Option<String> {
+    let data = &entity.synched_data;
+    let bytes = data.pack_dirty_for_version(&JavaMinecraftVersion::V_26_3)?;
+    data.clear_dirty();
+    let hash = bytes.iter().fold(0xcbf2_9ce4_8422_2325u64, |hash, byte| {
+        (hash ^ u64::from(*byte)).wrapping_mul(0x0100_0000_01b3)
+    });
+    Some(format!("{:08x}", hash as u32))
 }
 
 struct Watch<'a> {
@@ -717,6 +814,9 @@ fn fly(server: &Arc<Server>, watch: &Watch<'_>, tap: &mut PacketTap, report: &mu
         EntityBase::tick(base.as_ref(), base.as_ref(), server);
         let text = watch.state(&tap.drain());
         let _ = writeln!(report, "{} t{tick}: {text}", watch.scene.name);
+        if let Some(meta) = meta_text(&watch.bobber.entity) {
+            let _ = writeln!(report, "{} t{tick} meta {meta}", watch.scene.name);
+        }
     }
     let _ = writeln!(report, "{} done", watch.scene.name);
 }
@@ -789,7 +889,7 @@ fn run_scene(
         .mobs
         .iter()
         .enumerate()
-        .filter_map(|(slot, mob)| spawn_mob(&area, slot + 1, *mob))
+        .filter_map(|(slot, mob)| spawn_mob(&area, scene.mob_base, slot + 1, *mob))
         .collect();
     let bobber = make_bobber(&area, scene, owner);
     let base: Arc<dyn EntityBase> = bobber.clone();

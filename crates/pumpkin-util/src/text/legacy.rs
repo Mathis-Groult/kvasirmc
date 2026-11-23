@@ -4,6 +4,9 @@ use crate::text::color::Color;
 use crate::text::{TextComponent, TextContent};
 use crate::translation::{Locale, get_translation_text};
 
+#[cfg(test)]
+mod golden;
+
 impl TextComponent {
     /// Parses a legacy Minecraft formatted string (using section signs '§' by default) into a text component.
     ///

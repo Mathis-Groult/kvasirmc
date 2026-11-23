@@ -1,0 +1,208 @@
+color|§|"§0text"|root "" None|"text" Some(Named(Black))
+color|&|"§0text"|root "" None|"text" Some(Named(Black))
+color|§|"§1text"|root "" None|"text" Some(Named(DarkBlue))
+color|&|"§1text"|root "" None|"text" Some(Named(DarkBlue))
+color|§|"§2text"|root "" None|"text" Some(Named(DarkGreen))
+color|&|"§2text"|root "" None|"text" Some(Named(DarkGreen))
+color|§|"§3text"|root "" None|"text" Some(Named(DarkAqua))
+color|&|"§3text"|root "" None|"text" Some(Named(DarkAqua))
+color|§|"§4text"|root "" None|"text" Some(Named(DarkRed))
+color|&|"§4text"|root "" None|"text" Some(Named(DarkRed))
+color|§|"§5text"|root "" None|"text" Some(Named(DarkPurple))
+color|&|"§5text"|root "" None|"text" Some(Named(DarkPurple))
+color|§|"§6text"|root "" None|"text" Some(Named(Gold))
+color|&|"§6text"|root "" None|"text" Some(Named(Gold))
+color|§|"§7text"|root "" None|"text" Some(Named(Gray))
+color|&|"§7text"|root "" None|"text" Some(Named(Gray))
+color|§|"§8text"|root "" None|"text" Some(Named(DarkGray))
+color|&|"§8text"|root "" None|"text" Some(Named(DarkGray))
+color|§|"§9text"|root "" None|"text" Some(Named(Blue))
+color|&|"§9text"|root "" None|"text" Some(Named(Blue))
+color|§|"§atext"|root "" None|"text" Some(Named(Green))
+color|&|"§atext"|root "" None|"text" Some(Named(Green))
+color|§|"§btext"|root "" None|"text" Some(Named(Aqua))
+color|&|"§btext"|root "" None|"text" Some(Named(Aqua))
+color|§|"§ctext"|root "" None|"text" Some(Named(Red))
+color|&|"§ctext"|root "" None|"text" Some(Named(Red))
+color|§|"§dtext"|root "" None|"text" Some(Named(LightPurple))
+color|&|"§dtext"|root "" None|"text" Some(Named(LightPurple))
+color|§|"§etext"|root "" None|"text" Some(Named(Yellow))
+color|&|"§etext"|root "" None|"text" Some(Named(Yellow))
+color|§|"§ftext"|root "" None|"text" Some(Named(White))
+color|&|"§ftext"|root "" None|"text" Some(Named(White))
+color|§|"§Atext"|root "" None|"text" Some(Named(Green))
+color|&|"§Atext"|root "" None|"text" Some(Named(Green))
+color|§|"§Btext"|root "" None|"text" Some(Named(Aqua))
+color|&|"§Btext"|root "" None|"text" Some(Named(Aqua))
+color|§|"§Ctext"|root "" None|"text" Some(Named(Red))
+color|&|"§Ctext"|root "" None|"text" Some(Named(Red))
+color|§|"§Dtext"|root "" None|"text" Some(Named(LightPurple))
+color|&|"§Dtext"|root "" None|"text" Some(Named(LightPurple))
+color|§|"§Etext"|root "" None|"text" Some(Named(Yellow))
+color|&|"§Etext"|root "" None|"text" Some(Named(Yellow))
+color|§|"§Ftext"|root "" None|"text" Some(Named(White))
+color|&|"§Ftext"|root "" None|"text" Some(Named(White))
+format|§|"§ctext §lafter"|root "" None|"text " Some(Named(Red)) ; "after" Some(Named(Red))B
+format|&|"§ctext §lafter"|root "" None|"text " Some(Named(Red)) ; "after" Some(Named(Red))B
+format|§|"§ctext §oafter"|root "" None|"text " Some(Named(Red)) ; "after" Some(Named(Red))I
+format|&|"§ctext §oafter"|root "" None|"text " Some(Named(Red)) ; "after" Some(Named(Red))I
+format|§|"§ctext §nafter"|root "" None|"text " Some(Named(Red)) ; "after" Some(Named(Red))U
+format|&|"§ctext §nafter"|root "" None|"text " Some(Named(Red)) ; "after" Some(Named(Red))U
+format|§|"§ctext §mafter"|root "" None|"text " Some(Named(Red)) ; "after" Some(Named(Red))S
+format|&|"§ctext §mafter"|root "" None|"text " Some(Named(Red)) ; "after" Some(Named(Red))S
+format|§|"§ctext §kafter"|root "" None|"text " Some(Named(Red)) ; "after" Some(Named(Red))O
+format|&|"§ctext §kafter"|root "" None|"text " Some(Named(Red)) ; "after" Some(Named(Red))O
+format|§|"§ctext §rafter"|root "" None|"text " Some(Named(Red)) ; "after" None
+format|&|"§ctext §rafter"|root "" None|"text " Some(Named(Red)) ; "after" None
+format|§|"§ctext §Lafter"|root "" None|"text " Some(Named(Red)) ; "after" Some(Named(Red))B
+format|&|"§ctext §Lafter"|root "" None|"text " Some(Named(Red)) ; "after" Some(Named(Red))B
+format|§|"§ctext §Oafter"|root "" None|"text " Some(Named(Red)) ; "after" Some(Named(Red))I
+format|&|"§ctext §Oafter"|root "" None|"text " Some(Named(Red)) ; "after" Some(Named(Red))I
+format|§|"§ctext §Nafter"|root "" None|"text " Some(Named(Red)) ; "after" Some(Named(Red))U
+format|&|"§ctext §Nafter"|root "" None|"text " Some(Named(Red)) ; "after" Some(Named(Red))U
+format|§|"§ctext §Mafter"|root "" None|"text " Some(Named(Red)) ; "after" Some(Named(Red))S
+format|&|"§ctext §Mafter"|root "" None|"text " Some(Named(Red)) ; "after" Some(Named(Red))S
+format|§|"§ctext §Kafter"|root "" None|"text " Some(Named(Red)) ; "after" Some(Named(Red))O
+format|&|"§ctext §Kafter"|root "" None|"text " Some(Named(Red)) ; "after" Some(Named(Red))O
+format|§|"§ctext §Rafter"|root "" None|"text " Some(Named(Red)) ; "after" None
+format|&|"§ctext §Rafter"|root "" None|"text " Some(Named(Red)) ; "after" None
+format_first|§|"§lafter"|root "" None|"after" NoneB
+format_first|&|"§lafter"|root "" None|"after" NoneB
+format_first|§|"§oafter"|root "" None|"after" NoneI
+format_first|&|"§oafter"|root "" None|"after" NoneI
+format_first|§|"§nafter"|root "" None|"after" NoneU
+format_first|&|"§nafter"|root "" None|"after" NoneU
+format_first|§|"§mafter"|root "" None|"after" NoneS
+format_first|&|"§mafter"|root "" None|"after" NoneS
+format_first|§|"§kafter"|root "" None|"after" NoneO
+format_first|&|"§kafter"|root "" None|"after" NoneO
+format_first|§|"§rafter"|root "" None|"after" None
+format_first|&|"§rafter"|root "" None|"after" None
+empty|§|""|root "" None|
+empty|&|""|root "" None|
+plain|§|"plain text"|root "" None|"plain text" None
+plain|&|"plain text"|root "" None|"plain text" None
+only_code_char|§|"§"|root "" None|
+only_code_char|&|"§"|root "" None|
+two_code_chars|§|"§§"|root "" None|
+two_code_chars|&|"§§"|root "" None|
+three_code_chars|§|"§§§a"|root "" None|
+three_code_chars|&|"§§§a"|root "" None|
+trailing_code_char|§|"text§"|root "" None|"text" None
+trailing_code_char|&|"text§"|root "" None|"text" None
+trailing_code_after_color|§|"§ctext§"|root "" None|"text" Some(Named(Red))
+trailing_code_after_color|&|"§ctext§"|root "" None|"text" Some(Named(Red))
+leading_text|§|"lead§ctext"|root "" None|"lead" None ; "text" Some(Named(Red))
+leading_text|&|"lead§ctext"|root "" None|"lead" None ; "text" Some(Named(Red))
+leading_empty_then_code|§|"§ctext"|root "" None|"text" Some(Named(Red))
+leading_empty_then_code|&|"§ctext"|root "" None|"text" Some(Named(Red))
+code_without_text|§|"§c"|root "" None|
+code_without_text|&|"§c"|root "" None|
+codes_in_a_row|§|"§a§b§ctext"|root "" None|"text" Some(Named(Red))
+codes_in_a_row|&|"§a§b§ctext"|root "" None|"text" Some(Named(Red))
+styles_in_a_row|§|"§l§o§n§m§ktext"|root "" None|"text" NoneBIUSO
+styles_in_a_row|&|"§l§o§n§m§ktext"|root "" None|"text" NoneBIUSO
+style_then_color|§|"§lbold§ccolor resets the style"|root "" None|"bold" NoneB ; "color resets the style" Some(Named(Red))
+style_then_color|&|"§lbold§ccolor resets the style"|root "" None|"bold" NoneB ; "color resets the style" Some(Named(Red))
+color_then_style|§|"§cred§lbold stays red"|root "" None|"red" Some(Named(Red)) ; "bold stays red" Some(Named(Red))B
+color_then_style|&|"§cred§lbold stays red"|root "" None|"red" Some(Named(Red)) ; "bold stays red" Some(Named(Red))B
+reset_after_style|§|"§c§lboth§rplain"|root "" None|"both" Some(Named(Red))B ; "plain" None
+reset_after_style|&|"§c§lboth§rplain"|root "" None|"both" Some(Named(Red))B ; "plain" None
+reset_in_a_row|§|"§c§l§rplain"|root "" None|"plain" None
+reset_in_a_row|&|"§c§l§rplain"|root "" None|"plain" None
+reset_no_text|§|"§ctext§r"|root "" None|"text" Some(Named(Red))
+reset_no_text|&|"§ctext§r"|root "" None|"text" Some(Named(Red))
+styles_survive_style|§|"§lbold§oboth§nthree§mfour§kfive"|root "" None|"bold" NoneB ; "both" NoneBI ; "three" NoneBIU ; "four" NoneBIUS ; "five" NoneBIUSO
+styles_survive_style|&|"§lbold§oboth§nthree§mfour§kfive"|root "" None|"bold" NoneB ; "both" NoneBI ; "three" NoneBIU ; "four" NoneBIUS ; "five" NoneBIUSO
+color_resets_every_style|§|"§l§o§n§m§kx§ay"|root "" None|"x" NoneBIUSO ; "y" Some(Named(Green))
+color_resets_every_style|&|"§l§o§n§m§kx§ay"|root "" None|"x" NoneBIUSO ; "y" Some(Named(Green))
+reset_clears_every_style|§|"§l§o§n§m§kx§ry"|root "" None|"x" NoneBIUSO ; "y" None
+reset_clears_every_style|&|"§l§o§n§m§kx§ry"|root "" None|"x" NoneBIUSO ; "y" None
+unknown_code|§|"§ztext after unknown"|root "" None|"text after unknown" None
+unknown_code|&|"§ztext after unknown"|root "" None|"text after unknown" None
+unknown_keeps_state|§|"§c§lbold§ztext"|root "" None|"bold" Some(Named(Red))B ; "text" Some(Named(Red))B
+unknown_keeps_state|&|"§c§lbold§ztext"|root "" None|"bold" Some(Named(Red))B ; "text" Some(Named(Red))B
+unknown_only|§|"§z"|root "" None|
+unknown_only|&|"§z"|root "" None|
+space_code|§|"§ text"|root "" None|"text" None
+space_code|&|"§ text"|root "" None|"text" None
+digit_remainder|§|"§1234"|root "" None|"234" Some(Named(DarkBlue))
+digit_remainder|&|"§1234"|root "" None|"234" Some(Named(DarkBlue))
+repeated_text|§|"a§cb§cc§rd"|root "" None|"a" None ; "b" Some(Named(Red)) ; "c" Some(Named(Red)) ; "d" None
+repeated_text|&|"a§cb§cc§rd"|root "" None|"a" None ; "b" Some(Named(Red)) ; "c" Some(Named(Red)) ; "d" None
+non_ascii_text|§|"héllo §c日本語 ▽ 🙂"|root "" None|"héllo " None ; "日本語 ▽ 🙂" Some(Named(Red))
+non_ascii_text|&|"héllo §c日本語 ▽ 🙂"|root "" None|"héllo " None ; "日本語 ▽ 🙂" Some(Named(Red))
+non_ascii_code|§|"§étext"|root "" None|"text" None
+non_ascii_code|&|"§étext"|root "" None|"text" None
+non_ascii_code_wide|§|"§▽text"|root "" None|"text" None
+non_ascii_code_wide|&|"§▽text"|root "" None|"text" None
+non_ascii_emoji_code|§|"§🙂text"|root "" None|"text" None
+non_ascii_emoji_code|&|"§🙂text"|root "" None|"text" None
+non_ascii_leading|§|"日本語§c語"|root "" None|"日本語" None ; "語" Some(Named(Red))
+non_ascii_leading|&|"日本語§c語"|root "" None|"日本語" None ; "語" Some(Named(Red))
+ampersand_in_section_input|§|"&cplain §ared"|root "" None|"&cplain " None ; "red" Some(Named(Green))
+ampersand_in_section_input|&|"&cplain §ared"|root "" None|"plain " Some(Named(Red)) ; "red" Some(Named(Green))
+color_after_text_chain|§|"one§c two§l three§a four§r five"|root "" None|"one" None ; " two" Some(Named(Red)) ; " three" Some(Named(Red))B ; " four" Some(Named(Green)) ; " five" None
+color_after_text_chain|&|"one§c two§l three§a four§r five"|root "" None|"one" None ; " two" Some(Named(Red)) ; " three" Some(Named(Red))B ; " four" Some(Named(Green)) ; " five" None
+sectionless|§|"&cplain"|root "" None|"&cplain" None
+sectionless|&|"&cplain"|root "" None|"plain" Some(Named(Red))
+hex|§|"§x§f§c§0§0§0§0Test String ▽"|root "" None|"Test String ▽" Some(Rgb(RGBColor { red: 252, green: 0, blue: 0 }))
+hex|&|"§x§f§c§0§0§0§0Test String ▽"|root "" None|"Test String ▽" Some(Rgb(RGBColor { red: 252, green: 0, blue: 0 }))
+hex_upper_x|§|"§X§f§c§0§0§0§0Test"|root "" None|"Test" Some(Rgb(RGBColor { red: 252, green: 0, blue: 0 }))
+hex_upper_x|&|"§X§f§c§0§0§0§0Test"|root "" None|"Test" Some(Rgb(RGBColor { red: 252, green: 0, blue: 0 }))
+hex_upper_digits|§|"§x§F§C§A§B§0§1Test"|root "" None|"Test" Some(Rgb(RGBColor { red: 252, green: 171, blue: 1 }))
+hex_upper_digits|&|"§x§F§C§A§B§0§1Test"|root "" None|"Test" Some(Rgb(RGBColor { red: 252, green: 171, blue: 1 }))
+hex_no_text|§|"§x§f§c§0§0§0§0"|root "" None|
+hex_no_text|&|"§x§f§c§0§0§0§0"|root "" None|
+hex_then_text_then_color|§|"§x§1§2§3§4§5§6hex§ared"|root "" None|"hex" Some(Rgb(RGBColor { red: 18, green: 52, blue: 86 })) ; "red" Some(Named(Green))
+hex_then_text_then_color|&|"§x§1§2§3§4§5§6hex§ared"|root "" None|"hex" Some(Rgb(RGBColor { red: 18, green: 52, blue: 86 })) ; "red" Some(Named(Green))
+hex_remainder_on_x|§|"§xlead§1§2§3§4§5§6tail"|root "" None|"leadtail" Some(Rgb(RGBColor { red: 18, green: 52, blue: 86 }))
+hex_remainder_on_x|&|"§xlead§1§2§3§4§5§6tail"|root "" None|"leadtail" Some(Rgb(RGBColor { red: 18, green: 52, blue: 86 }))
+hex_remainder_on_digits|§|"§x1a§2b§3c§4d§5e§6ftail"|root "" None|"1abcdeftail" None
+hex_remainder_on_digits|&|"§x1a§2b§3c§4d§5e§6ftail"|root "" None|"1abcdeftail" None
+hex_remainder_on_last_only|§|"§x§1§2§3§4§5§6tail"|root "" None|"tail" Some(Rgb(RGBColor { red: 18, green: 52, blue: 86 }))
+hex_remainder_on_last_only|&|"§x§1§2§3§4§5§6tail"|root "" None|"tail" Some(Rgb(RGBColor { red: 18, green: 52, blue: 86 }))
+hex_remainder_on_first_only|§|"§x§1x§2§3§4§5§6"|root "" None|"x" Some(Rgb(RGBColor { red: 18, green: 52, blue: 86 }))
+hex_remainder_on_first_only|&|"§x§1x§2§3§4§5§6"|root "" None|"x" Some(Rgb(RGBColor { red: 18, green: 52, blue: 86 }))
+hex_keeps_styles|§|"§l§ctext§x§1§2§3§4§5§6hex"|root "" None|"text" Some(Named(Red)) ; "hex" Some(Rgb(RGBColor { red: 18, green: 52, blue: 86 }))
+hex_keeps_styles|&|"§l§ctext§x§1§2§3§4§5§6hex"|root "" None|"text" Some(Named(Red)) ; "hex" Some(Rgb(RGBColor { red: 18, green: 52, blue: 86 }))
+hex_then_style|§|"§x§1§2§3§4§5§6§lbold"|root "" None|"bold" Some(Rgb(RGBColor { red: 18, green: 52, blue: 86 }))B
+hex_then_style|&|"§x§1§2§3§4§5§6§lbold"|root "" None|"bold" Some(Rgb(RGBColor { red: 18, green: 52, blue: 86 }))B
+hex_all_styles|§|"§l§o§n§m§k§x§1§2§3§4§5§6all"|root "" None|"all" Some(Rgb(RGBColor { red: 18, green: 52, blue: 86 }))BIUSO
+hex_all_styles|&|"§l§o§n§m§k§x§1§2§3§4§5§6all"|root "" None|"all" Some(Rgb(RGBColor { red: 18, green: 52, blue: 86 }))BIUSO
+hex_after_named|§|"§cred§x§1§2§3§4§5§6hex"|root "" None|"red" Some(Named(Red)) ; "hex" Some(Rgb(RGBColor { red: 18, green: 52, blue: 86 }))
+hex_after_named|&|"§cred§x§1§2§3§4§5§6hex"|root "" None|"red" Some(Named(Red)) ; "hex" Some(Rgb(RGBColor { red: 18, green: 52, blue: 86 }))
+hex_invalid_digits|§|"§x§g§g§g§g§g§gtext"|root "" None|"text" None
+hex_invalid_digits|&|"§x§g§g§g§g§g§gtext"|root "" None|"text" None
+hex_invalid_keeps_color|§|"§c§x§g§g§g§g§g§gtext"|root "" None|"text" None
+hex_invalid_keeps_color|&|"§c§x§g§g§g§g§g§gtext"|root "" None|"text" None
+hex_invalid_keeps_no_color|§|"§x§g§1§2§3§4§5text"|root "" None|"text" None
+hex_invalid_keeps_no_color|&|"§x§g§1§2§3§4§5text"|root "" None|"text" None
+hex_multibyte_digit|§|"§x§é§1§2§3§4§5text"|root "" None|"text" None
+hex_multibyte_digit|&|"§x§é§1§2§3§4§5text"|root "" None|"text" None
+hex_truncated_none|§|"§x"|root "" None|
+hex_truncated_none|&|"§x"|root "" None|
+hex_truncated_text|§|"§xtext"|root "" None|"text" None
+hex_truncated_text|&|"§xtext"|root "" None|"text" None
+hex_truncated_one|§|"§x§1text"|root "" None|"text" None
+hex_truncated_one|&|"§x§1text"|root "" None|"text" None
+hex_truncated_five|§|"§x§1§2§3§4§5"|root "" None|
+hex_truncated_five|&|"§x§1§2§3§4§5"|root "" None|
+hex_truncated_five_text|§|"§x§1§2§3§4§5tail"|root "" None|"tail" None
+hex_truncated_five_text|&|"§x§1§2§3§4§5tail"|root "" None|"tail" None
+hex_empty_part|§|"§x§1§§2§3§4§5§6text"|root "" None|"text" Some(Named(Gold))
+hex_empty_part|&|"§x§1§§2§3§4§5§6text"|root "" None|"text" Some(Named(Gold))
+hex_empty_last_part|§|"§x§1§2§3§4§5§"|root "" None|
+hex_empty_last_part|&|"§x§1§2§3§4§5§"|root "" None|
+hex_empty_first_part|§|"§x§§1§2§3§4§5text"|root "" None|"text" Some(Named(DarkPurple))
+hex_empty_first_part|&|"§x§§1§2§3§4§5text"|root "" None|"text" Some(Named(DarkPurple))
+hex_two_in_a_row|§|"§x§1§2§3§4§5§6a§x§a§b§c§d§e§fb"|root "" None|"a" Some(Rgb(RGBColor { red: 18, green: 52, blue: 86 })) ; "b" Some(Rgb(RGBColor { red: 171, green: 205, blue: 239 }))
+hex_two_in_a_row|&|"§x§1§2§3§4§5§6a§x§a§b§c§d§e§fb"|root "" None|"a" Some(Rgb(RGBColor { red: 18, green: 52, blue: 86 })) ; "b" Some(Rgb(RGBColor { red: 171, green: 205, blue: 239 }))
+hex_then_reset|§|"§x§1§2§3§4§5§6hex§rplain"|root "" None|"hex" Some(Rgb(RGBColor { red: 18, green: 52, blue: 86 })) ; "plain" None
+hex_then_reset|&|"§x§1§2§3§4§5§6hex§rplain"|root "" None|"hex" Some(Rgb(RGBColor { red: 18, green: 52, blue: 86 })) ; "plain" None
+hex_inside_unknown|§|"§z§x§1§2§3§4§5§6hex"|root "" None|"hex" Some(Rgb(RGBColor { red: 18, green: 52, blue: 86 }))
+hex_inside_unknown|&|"§z§x§1§2§3§4§5§6hex"|root "" None|"hex" Some(Rgb(RGBColor { red: 18, green: 52, blue: 86 }))
+hex_wide_digits|§|"§x§12§34§56§78§9a§bctext"|root "" None|"2468actext" Some(Rgb(RGBColor { red: 19, green: 87, blue: 155 }))
+hex_wide_digits|&|"§x§12§34§56§78§9a§bctext"|root "" None|"2468actext" Some(Rgb(RGBColor { red: 19, green: 87, blue: 155 }))
+hex_wide_digits_remainders|§|"§xa§1bb§2cc§3dd§4ee§5ff§6gg"|root "" None|"abbccddeeffgg" Some(Rgb(RGBColor { red: 18, green: 52, blue: 86 }))
+hex_wide_digits_remainders|&|"§xa§1bb§2cc§3dd§4ee§5ff§6gg"|root "" None|"abbccddeeffgg" Some(Rgb(RGBColor { red: 18, green: 52, blue: 86 }))

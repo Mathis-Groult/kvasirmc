@@ -209,3 +209,6 @@ async fn handle_packet(
     }
     Ok(())
 }
+
+#[cfg(test)]
+mod golden;

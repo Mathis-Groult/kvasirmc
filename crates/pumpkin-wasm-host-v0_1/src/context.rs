@@ -28,6 +28,8 @@ fn register_typed_event<E: pumpkin_core::plugin::Payload + ToFromWasmEvent + Clo
 
 mod player_events;
 pub(crate) use player_events::register_player_event;
+mod world_events;
+pub(crate) use world_events::register_world_event;
 
 #[allow(clippy::too_many_lines)]
 fn register_entity_event(
@@ -380,129 +382,6 @@ fn register_enchantment_event(
             tracing::error!(
                 "non-enchantment event should not be routed to register_enchantment_event"
             );
-        }
-    }
-}
-
-#[allow(clippy::too_many_lines)]
-pub(crate) fn register_world_event(
-    resource: &Context,
-    handler: &Arc<WasmPluginEventHandler>,
-    priority: pumpkin_core::plugin::EventPriority,
-    blocking: bool,
-    event_type: EventType,
-) {
-    use pumpkin_core::plugin::world::{
-        chunk_load::ChunkLoad, chunk_save::ChunkSave, chunk_send::ChunkSend,
-        spawn_change::SpawnChangeEvent,
-    };
-
-    match event_type {
-        EventType::SpawnChangeEvent => {
-            register_typed_event::<SpawnChangeEvent>(resource, handler, priority, blocking);
-        }
-        EventType::ChunkLoadEvent => {
-            register_typed_event::<ChunkLoad>(resource, handler, priority, blocking);
-        }
-        EventType::ChunkSaveEvent => {
-            register_typed_event::<ChunkSave>(resource, handler, priority, blocking);
-        }
-        EventType::ChunkSendEvent => {
-            register_typed_event::<ChunkSend>(resource, handler, priority, blocking);
-        }
-        EventType::WeatherChangeEvent => {
-            register_typed_event::<
-                pumpkin_core::plugin::api::events::world::weather_change::WeatherChangeEvent,
-            >(resource, handler, priority, blocking);
-        }
-        EventType::ThunderChangeEvent => {
-            register_typed_event::<
-                pumpkin_core::plugin::api::events::world::weather_change::ThunderChangeEvent,
-            >(resource, handler, priority, blocking);
-        }
-        EventType::WorldLoadEvent => {
-            register_typed_event::<
-                pumpkin_core::plugin::api::events::world::world_load::WorldLoadEvent,
-            >(resource, handler, priority, blocking);
-        }
-        EventType::WorldUnloadEvent => {
-            register_typed_event::<
-                pumpkin_core::plugin::api::events::world::world_load::WorldUnloadEvent,
-            >(resource, handler, priority, blocking);
-        }
-        EventType::AsyncStructureGenerateEvent => {
-            register_typed_event::<
-                pumpkin_core::plugin::api::events::world::async_structure_generate::AsyncStructureGenerateEvent,
-            >(resource, handler, priority, blocking)
-            ;
-        }
-        EventType::AsyncStructureSpawnEvent => {
-            register_typed_event::<
-                pumpkin_core::plugin::api::events::world::async_structure_spawn::AsyncStructureSpawnEvent,
-            >(resource, handler, priority, blocking);
-        }
-        EventType::ChunkPopulateEvent => {
-            register_typed_event::<
-                pumpkin_core::plugin::api::events::world::chunk_populate::ChunkPopulateEvent,
-            >(resource, handler, priority, blocking);
-        }
-        EventType::ChunkUnloadEvent => {
-            register_typed_event::<
-                pumpkin_core::plugin::api::events::world::chunk_unload::ChunkUnloadEvent,
-            >(resource, handler, priority, blocking);
-        }
-        EventType::EntitiesLoadEvent => {
-            register_typed_event::<
-                pumpkin_core::plugin::api::events::world::entities_load::EntitiesLoadEvent,
-            >(resource, handler, priority, blocking);
-        }
-        EventType::EntitiesUnloadEvent => {
-            register_typed_event::<
-                pumpkin_core::plugin::api::events::world::entities_unload::EntitiesUnloadEvent,
-            >(resource, handler, priority, blocking);
-        }
-        EventType::GenericGameEvent => {
-            register_typed_event::<
-                pumpkin_core::plugin::api::events::world::generic_game::GenericGameEvent,
-            >(resource, handler, priority, blocking);
-        }
-        EventType::LootGenerateEvent => {
-            register_typed_event::<
-                pumpkin_core::plugin::api::events::world::loot_generate::LootGenerateEvent,
-            >(resource, handler, priority, blocking);
-        }
-        EventType::PortalCreateEvent => {
-            register_typed_event::<
-                pumpkin_core::plugin::api::events::world::portal_create::PortalCreateEvent,
-            >(resource, handler, priority, blocking);
-        }
-        EventType::StructureGrowEvent => {
-            register_typed_event::<
-                pumpkin_core::plugin::api::events::world::structure_grow::StructureGrowEvent,
-            >(resource, handler, priority, blocking);
-        }
-        EventType::TimeSkipEvent => {
-            register_typed_event::<
-                pumpkin_core::plugin::api::events::world::time_skip::TimeSkipEvent,
-            >(resource, handler, priority, blocking);
-        }
-        EventType::WorldInitEvent => {
-            register_typed_event::<
-                pumpkin_core::plugin::api::events::world::world_init::WorldInitEvent,
-            >(resource, handler, priority, blocking);
-        }
-        EventType::WorldSaveEvent => {
-            register_typed_event::<
-                pumpkin_core::plugin::api::events::world::world_save::WorldSaveEvent,
-            >(resource, handler, priority, blocking);
-        }
-        EventType::LightningStrikeEvent => {
-            register_typed_event::<
-                pumpkin_core::plugin::api::events::world::lightning_strike::LightningStrikeEvent,
-            >(resource, handler, priority, blocking);
-        }
-        _ => {
-            tracing::error!("non-world event should not be routed to register_world_event");
         }
     }
 }

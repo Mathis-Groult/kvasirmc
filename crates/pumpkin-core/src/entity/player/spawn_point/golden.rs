@@ -497,6 +497,10 @@ fn chunk_scenes() -> Vec<Scene> {
         ("chunks around (18, -7)", BlockPos::new(18, 65, -7)),
         ("chunks around (-3, 3)", BlockPos::new(-3, 65, 3)),
         ("chunks around (-17, -17)", BlockPos::new(-17, 65, -17)),
+        ("chunks around (17, 17)", BlockPos::new(17, 65, 17)),
+        ("chunks around (17, 18)", BlockPos::new(17, 65, 18)),
+        ("chunks around (14, 14)", BlockPos::new(14, 65, 14)),
+        ("chunks around (14, 13)", BlockPos::new(14, 65, 13)),
     ]
     .into_iter()
     .map(|(name, at)| {

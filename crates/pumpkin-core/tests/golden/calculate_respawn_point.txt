@@ -44,3 +44,7 @@ chunks around (-1, 16): None | stored block air state BlockStateId(0 = "air") | 
 chunks around (18, -7): None | stored block air state BlockStateId(0 = "air") | server linked true | chunks [(1, -1)]
 chunks around (-3, 3): None | stored block air state BlockStateId(0 = "air") | server linked true | chunks [(-1, 0)]
 chunks around (-17, -17): None | stored block air state BlockStateId(0 = "air") | server linked true | chunks [(-2, -2), (-2, -1), (-1, -2), (-1, -1)]
+chunks around (17, 17): None | stored block air state BlockStateId(0 = "air") | server linked true | chunks [(0, 0), (0, 1), (1, 0), (1, 1)]
+chunks around (17, 18): None | stored block air state BlockStateId(0 = "air") | server linked true | chunks [(0, 1), (1, 1)]
+chunks around (14, 14): None | stored block air state BlockStateId(0 = "air") | server linked true | chunks [(0, 0), (0, 1), (1, 0), (1, 1)]
+chunks around (14, 13): None | stored block air state BlockStateId(0 = "air") | server linked true | chunks [(0, 0), (1, 0)]

@@ -20,6 +20,7 @@ use tracing::{debug, error, info, warn};
 
 pub mod api;
 pub mod cache;
+mod initialization;
 pub mod loader;
 /// Constants for plugin permissions.
 ///
@@ -551,7 +552,6 @@ impl PluginManager {
     }
 
     /// Spawn initialization for a single plugin
-    #[allow(clippy::too_many_lines)]
     async fn spawn_plugin_initialization(
         self: &Arc<Self>,
         server: Arc<Server>,
@@ -561,11 +561,7 @@ impl PluginManager {
         loader: Arc<dyn PluginLoader>,
         path: PathBuf,
     ) -> Result<tokio::task::JoinHandle<()>, ManagerError> {
-        // Mark plugin as loading
-        self.plugin_states
-            .write()
-            .await
-            .insert(metadata.name.clone(), PluginState::Loading);
+        self.set_state(&metadata.name, PluginState::Loading).await;
 
         let context = Arc::new(Context::new(
             metadata.clone(),
@@ -575,105 +571,22 @@ impl PluginManager {
             Arc::clone(&LOGGER_IMPL),
         ));
 
-        // Create the plugin structure first
-        let plugin = LoadedPlugin {
+        // The entry is created first: its instance and active flag are set after a successful load
+        let plugin_index = self.register_loading(LoadedPlugin {
             metadata: metadata.clone(),
-            instance: None, // Will be set after successful initialization
+            instance: None,
             loader: loader.clone(),
             loader_data: Some(loader_data),
-            is_active: false, // Will be set to true after successful initialization
+            is_active: false,
             context: context.clone(),
             path,
-        };
+        });
 
-        let plugin_index = {
-            let mut plugins = self
-                .plugins
-                .write()
-                .unwrap_or_else(std::sync::PoisonError::into_inner);
-            plugins.push(plugin);
-            plugins.len() - 1
-        };
-
-        // Spawn async task for plugin initialization
-        let self_ref_clone = Arc::clone(self);
-        let state_notify = Arc::clone(&self.state_notify);
-        let plugin_name = metadata.name.clone();
-        let loader_clone = loader.clone();
-
+        let manager = Arc::clone(self);
         let task = server.spawn_task(async move {
-            // Initialize the plugin
-            match instance.on_load(context.clone()).await {
-                Ok(()) => {
-                    // Update plugin state to loaded
-                    {
-                        let mut plugins = self_ref_clone
-                            .plugins
-                            .write()
-                            .unwrap_or_else(std::sync::PoisonError::into_inner);
-                        if let Some(plugin) = plugins.get_mut(plugin_index) {
-                            plugin.instance = Some(instance);
-                            plugin.is_active = true;
-                        }
-                    }
-                    self_ref_clone
-                        .plugin_states
-                        .write()
-                        .await
-                        .insert(plugin_name.clone(), PluginState::Loaded);
-                    state_notify.notify_waiters();
-
-                    info!("Loaded {} ({})", metadata.name, metadata.version);
-
-                    if !metadata.permissions.is_empty() {
-                        warn!(
-                            "Plugin \"{}\" uses the following permissions: {:?}",
-                            metadata.name, metadata.permissions
-                        );
-                    }
-                }
-                Err(e) => {
-                    // Handle initialization failure
-                    let error_msg = format!("Initialization failed: {e}");
-                    let _ = instance.on_unload(context).await;
-
-                    // Get the loader data before removing the plugin
-                    let loader_data: Option<Box<dyn Any + Send + Sync>> = {
-                        let mut plugins = self_ref_clone
-                            .plugins
-                            .write()
-                            .unwrap_or_else(std::sync::PoisonError::into_inner);
-                        if let Some(plugin) = plugins.get_mut(plugin_index) {
-                            plugin.loader_data.take()
-                        } else {
-                            None
-                        }
-                    };
-
-                    // Try to unload the plugin data
-                    if let Some(data) = loader_data {
-                        loader_clone.unload(data).await.ok();
-                    }
-
-                    {
-                        let mut plugins = self_ref_clone
-                            .plugins
-                            .write()
-                            .unwrap_or_else(std::sync::PoisonError::into_inner);
-                        if plugin_index < plugins.len() {
-                            plugins.remove(plugin_index);
-                        }
-                    };
-                    self_ref_clone
-                        .plugin_states
-                        .write()
-                        .await
-                        .insert(plugin_name.clone(), PluginState::Failed(error_msg.clone()));
-                    state_notify.notify_waiters();
-
-                    error!("Failed to initialize plugin {plugin_name}: {error_msg}",);
-                }
-            }
+            manager
+                .initialize_plugin(plugin_index, instance, context, metadata, loader)
+                .await;
         });
 
         Ok(task)

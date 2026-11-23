@@ -231,6 +231,110 @@ impl VisitedBitSet {
     }
 }
 
+/// Where a cache sits in the world, read once per `propagate`.
+struct Frame {
+    cache_x: i32,
+    cache_z: i32,
+    size: i32,
+    min_y: i32,
+    max_y: i32,
+}
+
+impl Frame {
+    fn of(cache: &Cache) -> Self {
+        let min_y = cache.bottom_y() as i32;
+        Self {
+            cache_x: cache.x,
+            cache_z: cache.z,
+            size: cache.size,
+            min_y,
+            max_y: min_y + cache.height() as i32,
+        }
+    }
+}
+
+/// A block position inside the cache, split into the chunk it is in and the place in that chunk.
+struct Cell {
+    pos: BlockPos,
+    chunk_idx: usize,
+    section_idx: usize,
+    local_x: usize,
+    local_y: usize,
+    local_z: usize,
+}
+
+impl Cell {
+    /// `pos` must be inside the cache.
+    const fn at(frame: &Frame, pos: BlockPos) -> Self {
+        let Vector3 { x, y, z } = pos.0;
+        let rel_x = (x >> 4) - frame.cache_x;
+        let rel_z = (z >> 4) - frame.cache_z;
+        Self {
+            pos,
+            chunk_idx: (rel_x * frame.size + rel_z) as usize,
+            section_idx: ((y - frame.min_y) >> 4) as usize,
+            local_x: (x & 15) as usize,
+            local_y: (y & 15) as usize,
+            local_z: (z & 15) as usize,
+        }
+    }
+
+    /// The light opacity of the block here and the light it has now.
+    fn read<P: LightProvider>(&self, cache: &Cache) -> (u8, u8) {
+        match &cache.chunks[self.chunk_idx] {
+            Chunk::Proto(c) => {
+                let state_id = c.get_block_state_raw(
+                    self.local_x as i32,
+                    self.pos.0.y - cache.bottom_y() as i32,
+                    self.local_z as i32,
+                );
+                let light = P::get_light_proto(
+                    c,
+                    self.section_idx,
+                    self.local_x,
+                    self.local_y,
+                    self.local_z,
+                );
+                (light_opacity(state_id), light)
+            }
+            Chunk::Level(lvl) => {
+                let state_id = lvl
+                    .section
+                    .get_block_absolute_y(self.local_x, self.pos.0.y, self.local_z)
+                    .unwrap_or(BlockStateId::AIR);
+                (light_opacity(state_id), P::get_light(cache, self.pos))
+            }
+        }
+    }
+
+    fn write<P: LightProvider>(&self, cache: &mut Cache, level: u8) {
+        match &mut cache.chunks[self.chunk_idx] {
+            Chunk::Proto(c) => P::set_light_proto(
+                c,
+                self.section_idx,
+                self.local_x,
+                self.local_y,
+                self.local_z,
+                level,
+            ),
+            Chunk::Level(_) => P::set_light(cache, self.pos, level),
+        }
+    }
+}
+
+/// How much light the block of `state_id` takes out of what passes through it.
+fn light_opacity(state_id: BlockStateId) -> u8 {
+    if state_id == BlockStateId::AIR {
+        return 0;
+    }
+    let state = state_id.to_state();
+    if state.can_occlude() {
+        state.opacity.max(1)
+    } else {
+        state.opacity
+    }
+}
+
 pub struct LightPropagator<P: LightProvider> {
     pub(crate) queue: VecDeque<PropagationEntry>,
     pub(crate) visited: VisitedBitSet,
@@ -255,127 +359,63 @@ impl<P: LightProvider> LightPropagator<P> {
         self.decrease_queue.clear();
     }
 
-    #[expect(clippy::too_many_lines)]
+    /// Spreads the light of every queued cell to its neighbours, until the queue is empty.
     pub fn propagate(&mut self, cache: &mut Cache) {
-        let cache_x = cache.x;
-        let cache_z = cache.z;
-        let cache_size = cache.size;
-        let min_y = cache.bottom_y() as i32;
-        let max_y = min_y + cache.height() as i32;
-
-        let min_x = cache_x * 16;
-        let min_z = cache_z * 16;
-        let size_x = (cache_size * 16) as usize;
-        let size_z = (cache_size * 16) as usize;
-        let size_y = (max_y - min_y) as usize;
-        self.visited
-            .ensure_capacity(min_x, min_y, min_z, size_x, size_y, size_z);
+        let frame = Frame::of(cache);
+        self.visited.ensure_capacity(
+            frame.cache_x * 16,
+            frame.min_y,
+            frame.cache_z * 16,
+            (frame.size * 16) as usize,
+            (frame.max_y - frame.min_y) as usize,
+            (frame.size * 16) as usize,
+        );
 
         while let Some(entry) = self.queue.pop_front() {
-            let pos = entry.pos;
-
-            let current_light = P::get_light(cache, pos);
+            let current_light = P::get_light(cache, entry.pos);
             if current_light <= 1 {
                 continue;
             }
 
             for dir in BlockDirection::all() {
-                if let Some(skip_dir) = entry.skip_direction
-                    && dir == skip_dir
-                {
+                if entry.skip_direction == Some(dir) {
                     continue;
                 }
-
-                let neighbor_pos = pos.offset(dir.to_offset());
-                let nx = neighbor_pos.0.x;
-                let ny = neighbor_pos.0.y;
-                let nz = neighbor_pos.0.z;
-
-                if self.visited.is_visited(nx, ny, nz) {
-                    continue;
-                }
-
-                if ny < min_y || ny >= max_y {
-                    continue;
-                }
-
-                let rel_x = (nx >> 4) - cache_x;
-                let rel_z = (nz >> 4) - cache_z;
-                if rel_x < 0 || rel_x >= cache_size || rel_z < 0 || rel_z >= cache_size {
-                    continue;
-                }
-
-                let chunk_idx = (rel_x * cache_size + rel_z) as usize;
-                let local_x = (nx & 15) as usize;
-                let local_z = (nz & 15) as usize;
-
-                let section_idx = ((ny - min_y) >> 4) as usize;
-                let local_y = (ny & 15) as usize;
-
-                let (opacity, neighbor_light) = match &cache.chunks[chunk_idx] {
-                    Chunk::Proto(c) => {
-                        let local_y_proto = ny - min_y;
-                        let state_id =
-                            c.get_block_state_raw(local_x as i32, local_y_proto, local_z as i32);
-                        let op = if state_id == BlockStateId::AIR {
-                            0
-                        } else {
-                            let s = state_id.to_state();
-                            if s.can_occlude() {
-                                s.opacity.max(1)
-                            } else {
-                                s.opacity
-                            }
-                        };
-                        let light = P::get_light_proto(c, section_idx, local_x, local_y, local_z);
-                        (op, light)
-                    }
-                    Chunk::Level(lvl) => {
-                        let state_id = lvl
-                            .section
-                            .get_block_absolute_y(local_x, ny, local_z)
-                            .unwrap_or(BlockStateId::AIR);
-                        let op = if state_id == BlockStateId::AIR {
-                            0
-                        } else {
-                            let s = state_id.to_state();
-                            if s.can_occlude() {
-                                s.opacity.max(1)
-                            } else {
-                                s.opacity
-                            }
-                        };
-                        (op, P::get_light(cache, neighbor_pos))
-                    }
-                };
-
-                let new_level = P::propagate_level(current_light, opacity, dir);
-
-                if new_level > neighbor_light {
-                    match &mut cache.chunks[chunk_idx] {
-                        Chunk::Proto(c) => {
-                            P::set_light_proto(
-                                c,
-                                section_idx,
-                                local_x,
-                                local_y,
-                                local_z,
-                                new_level,
-                            );
-                        }
-                        Chunk::Level(_) => {
-                            P::set_light(cache, neighbor_pos, new_level);
-                        }
-                    }
-
-                    if new_level > 1 && self.visited.test_and_set(nx, ny, nz) {
-                        self.queue.push_back(PropagationEntry {
-                            pos: neighbor_pos,
-                            skip_direction: Some(dir.opposite()),
-                        });
-                    }
-                }
+                self.spread(cache, &frame, entry.pos, current_light, dir);
             }
+        }
+    }
+
+    /// One step of `propagate`: lights the neighbour of `pos` in direction `dir` when the light
+    /// that reaches it is brighter than what it has, and queues it. A neighbour outside the cache
+    /// counts as visited, so it is never reached here.
+    fn spread(
+        &mut self,
+        cache: &mut Cache,
+        frame: &Frame,
+        pos: BlockPos,
+        current_light: u8,
+        dir: BlockDirection,
+    ) {
+        let neighbor_pos = pos.offset(dir.to_offset());
+        let Vector3 { x, y, z } = neighbor_pos.0;
+        if self.visited.is_visited(x, y, z) {
+            return;
+        }
+
+        let cell = Cell::at(frame, neighbor_pos);
+        let (opacity, neighbor_light) = cell.read::<P>(cache);
+        let new_level = P::propagate_level(current_light, opacity, dir);
+        if new_level <= neighbor_light {
+            return;
+        }
+
+        cell.write::<P>(cache, new_level);
+        if new_level > 1 && self.visited.test_and_set(x, y, z) {
+            self.queue.push_back(PropagationEntry {
+                pos: neighbor_pos,
+                skip_direction: Some(dir.opposite()),
+            });
         }
     }
 

@@ -59,6 +59,7 @@ pub mod enchantment;
 mod key_store;
 #[cfg(test)]
 mod new_golden;
+mod player_join;
 pub mod pregen;
 pub mod recipe;
 pub mod scheduler;
@@ -534,23 +535,7 @@ impl Server {
 
         let first_world = self.worlds.load().first().cloned()?;
 
-        let (world, nbt) = if let Ok(Some(data)) = self.player_data_storage.load_data(&profile.id) {
-            if let Some(dimension_key) = data.get_string("Dimension") {
-                if let Some(dimension) = Dimension::from_name(dimension_key) {
-                    let world = self.get_world_from_dimension(dimension);
-                    (world, Some(data))
-                } else {
-                    warn!("Invalid dimension key in player data: {dimension_key}");
-                    (first_world, Some(data))
-                }
-            } else {
-                // Player data exists but doesn't have a "Dimension" key.
-                (first_world, Some(data))
-            }
-        } else {
-            // No player data found or an error occurred, default to the Overworld.
-            (first_world, None)
-        };
+        let (world, nbt) = self.saved_player(&profile.id, first_world);
 
         let mut player = Player::new(
             client,
@@ -569,28 +554,8 @@ impl Server {
 
         // Wrap in Arc after data is loaded
         let player = Arc::new(player);
-        let player_clone = player.clone();
-        self.spawn_task(async move {
-            let properties = player_clone.gameprofile.properties.load().clone();
-            if let Some(mut skin) = Player::fetch_skin(&properties).await {
-                if skin.skin_id == "Standard_Custom" {
-                    let skin_id = format!("pumpkin:{}", player_clone.gameprofile.id);
-                    skin.skin_id.clone_from(&skin_id);
-                    skin.full_id = skin_id;
-                }
-                player_clone.bedrock_skin.store(Arc::new(skin));
-            }
-        });
-        {
-            let mut advancements = player
-                .advancements
-                .lock()
-                .unwrap_or_else(std::sync::PoisonError::into_inner);
-            if let Err(e) = advancements.load() {
-                warn!("Error loading player {}: {e}", player.gameprofile.id);
-            }
-            advancements.player = Arc::downgrade(&player);
-        };
+        self.spawn_skin_fetch(&player);
+        Self::load_advancements(&player);
 
         send_cancellable_blocking! {{
             self;
@@ -601,35 +566,8 @@ impl Server {
                     player.kick(DisconnectReason::Shutdown, &TextComponent::text("Server stopped"));
                     return None;
                 }
-                Some({
-                    {
-                        let mut user_cache = self
-                            .data
-                            .user_cache
-                            .write()
-                            .unwrap_or_else(std::sync::PoisonError::into_inner);
-                        user_cache.upsert(player.gameprofile.id, player.gameprofile.name.clone());
-                    };
-
-                    // TODO: Config if we want increase online
-                    if let Some(config) = config {
-                        // TODO: Config so we can also just ignore this hehe
-                        if config.server_listing {
-                            self.listing
-                                .lock()
-                                .unwrap_or_else(std::sync::PoisonError::into_inner)
-                                .add_player(&player);
-                        }
-                    }
-
-                    let player_dto = crate::net::management::dto::PlayerDto::new(
-                        Some(player.gameprofile.id),
-                        Some(player.gameprofile.name.clone()),
-                    );
-                    self.management_hub.broadcast_player_joined(&player_dto);
-
-                    (player, world)
-                })
+                self.register_player(&player, config);
+                Some((player, world))
             }
 
             'cancelled: {

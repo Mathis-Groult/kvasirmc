@@ -58,6 +58,8 @@ pub mod enchantment;
 pub mod entity;
 pub mod error;
 pub mod item;
+#[cfg(test)]
+mod logger_golden;
 pub mod logging;
 pub mod net;
 pub mod plugin;

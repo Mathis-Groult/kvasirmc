@@ -1,0 +1,271 @@
+== defaults [] exit=true
+  <esc>[#m##:##:##<esc>[#m <esc>[##mERROR<esc>[#m an error
+  <esc>[#m##:##:##<esc>[#m <esc>[##m WARN<esc>[#m a warning
+  <esc>[#m##:##:##<esc>[#m <esc>[##m INFO<esc>[#m an info
+  <esc>[#m##:##:##<esc>[#m <esc>[##m INFO<esc>[#m another crate
+  state: level=info color=true threads=false thread_ids=false target=false timestamp=true readline=false
+  logs: none
+== no color [color=false] exit=true
+  ##:##:## ERROR an error
+  ##:##:##  WARN a warning
+  ##:##:##  INFO an info
+  ##:##:##  INFO another crate
+  state: level=info color=false threads=false thread_ids=false target=false timestamp=true readline=false
+  logs: none
+== target [target=true] exit=true
+  <esc>[#m##:##:##<esc>[#m <esc>[##mERROR<esc>[#m <esc>[#mpumpkin_core::logger_golden<esc>[#m<esc>[#m:<esc>[#m an error
+  <esc>[#m##:##:##<esc>[#m <esc>[##m WARN<esc>[#m <esc>[#mpumpkin_core::logger_golden<esc>[#m<esc>[#m:<esc>[#m a warning
+  <esc>[#m##:##:##<esc>[#m <esc>[##m INFO<esc>[#m <esc>[#mpumpkin_core::logger_golden<esc>[#m<esc>[#m:<esc>[#m an info
+  <esc>[#m##:##:##<esc>[#m <esc>[##m INFO<esc>[#m <esc>[#mother_crate<esc>[#m<esc>[#m:<esc>[#m another crate
+  state: level=info color=true threads=false thread_ids=false target=true timestamp=true readline=false
+  logs: none
+== threads [threads=true] exit=true
+  <esc>[#m##:##:##<esc>[#m <esc>[##mERROR<esc>[#m logger_golden::child an error
+  <esc>[#m##:##:##<esc>[#m <esc>[##m WARN<esc>[#m logger_golden::child a warning
+  <esc>[#m##:##:##<esc>[#m <esc>[##m INFO<esc>[#m logger_golden::child an info
+  <esc>[#m##:##:##<esc>[#m <esc>[##m INFO<esc>[#m logger_golden::child another crate
+  state: level=info color=true threads=true thread_ids=false target=false timestamp=true readline=false
+  logs: none
+== thread ids [thread_ids=true] exit=true
+  <esc>[#m##:##:##<esc>[#m <esc>[##mERROR<esc>[#m ThreadId(##) an error
+  <esc>[#m##:##:##<esc>[#m <esc>[##m WARN<esc>[#m ThreadId(##) a warning
+  <esc>[#m##:##:##<esc>[#m <esc>[##m INFO<esc>[#m ThreadId(##) an info
+  <esc>[#m##:##:##<esc>[#m <esc>[##m INFO<esc>[#m ThreadId(##) another crate
+  state: level=info color=true threads=false thread_ids=true target=false timestamp=true readline=false
+  logs: none
+== all on, no color [color=false;target=true;threads=true;thread_ids=true] exit=true
+  ##:##:## ERROR logger_golden::child ThreadId(##) pumpkin_core::logger_golden: an error
+  ##:##:##  WARN logger_golden::child ThreadId(##) pumpkin_core::logger_golden: a warning
+  ##:##:##  INFO logger_golden::child ThreadId(##) pumpkin_core::logger_golden: an info
+  ##:##:##  INFO logger_golden::child ThreadId(##) other_crate: another crate
+  state: level=info color=false threads=true thread_ids=true target=true timestamp=true readline=false
+  logs: none
+== all off [color=false;target=false;threads=false;thread_ids=false;timestamp=false] exit=true
+  ERROR an error
+   WARN a warning
+   INFO an info
+   INFO another crate
+  state: level=info color=false threads=false thread_ids=false target=false timestamp=false readline=false
+  logs: none
+== no timestamp [timestamp=false] exit=true
+  <esc>[##mERROR<esc>[#m an error
+  <esc>[##m WARN<esc>[#m a warning
+  <esc>[##m INFO<esc>[#m an info
+  <esc>[##m INFO<esc>[#m another crate
+  state: level=info color=true threads=false thread_ids=false target=false timestamp=false readline=false
+  logs: none
+== no timestamp, format ignored [timestamp=false;timestamp_format=[year]-[month]] exit=true
+  <esc>[##mERROR<esc>[#m an error
+  <esc>[##m WARN<esc>[#m a warning
+  <esc>[##m INFO<esc>[#m an info
+  <esc>[##m INFO<esc>[#m another crate
+  state: level=info color=true threads=false thread_ids=false target=false timestamp=false readline=false
+  logs: none
+== custom timestamp format [timestamp_format=[year]-[month]-[day]] exit=true
+  <esc>[#m####-##-##<esc>[#m <esc>[##mERROR<esc>[#m an error
+  <esc>[#m####-##-##<esc>[#m <esc>[##m WARN<esc>[#m a warning
+  <esc>[#m####-##-##<esc>[#m <esc>[##m INFO<esc>[#m an info
+  <esc>[#m####-##-##<esc>[#m <esc>[##m INFO<esc>[#m another crate
+  state: level=info color=true threads=false thread_ids=false target=false timestamp=true readline=false
+  logs: none
+== bad timestamp format [timestamp_format=[bogus]] exit=true
+  <esc>[#m##:##:##<esc>[#m <esc>[##mERROR<esc>[#m an error
+  <esc>[#m##:##:##<esc>[#m <esc>[##m WARN<esc>[#m a warning
+  <esc>[#m##:##:##<esc>[#m <esc>[##m INFO<esc>[#m an info
+  <esc>[#m##:##:##<esc>[#m <esc>[##m INFO<esc>[#m another crate
+  state: level=info color=true threads=false thread_ids=false target=false timestamp=true readline=false
+  logs: none
+== no timestamp with target and threads [timestamp=false;target=true;threads=true;thread_ids=true] exit=true
+  <esc>[##mERROR<esc>[#m logger_golden::child ThreadId(##) <esc>[#mpumpkin_core::logger_golden<esc>[#m<esc>[#m:<esc>[#m an error
+  <esc>[##m WARN<esc>[#m logger_golden::child ThreadId(##) <esc>[#mpumpkin_core::logger_golden<esc>[#m<esc>[#m:<esc>[#m a warning
+  <esc>[##m INFO<esc>[#m logger_golden::child ThreadId(##) <esc>[#mpumpkin_core::logger_golden<esc>[#m<esc>[#m:<esc>[#m an info
+  <esc>[##m INFO<esc>[#m logger_golden::child ThreadId(##) <esc>[#mother_crate<esc>[#m<esc>[#m:<esc>[#m another crate
+  state: level=info color=true threads=true thread_ids=true target=true timestamp=false readline=false
+  logs: none
+== tty requested, stdin is not a tty [use_tty=true] exit=true
+  <esc>[#m##:##:##<esc>[#m <esc>[##mERROR<esc>[#m an error
+  <esc>[#m##:##:##<esc>[#m <esc>[##m WARN<esc>[#m a warning
+  <esc>[#m##:##:##<esc>[#m <esc>[##m INFO<esc>[#m an info
+  <esc>[#m##:##:##<esc>[#m <esc>[##m INFO<esc>[#m another crate
+  state: level=info color=true threads=false thread_ids=false target=false timestamp=true readline=false
+  logs: none
+== disabled [enabled=false] exit=true
+  state: logger off
+  logs: none
+== disabled with file [enabled=false;file=latest.log] exit=true
+  state: logger off
+  logs: none
+== file [file=latest.log] exit=true
+  <esc>[#m##:##:##<esc>[#m <esc>[##mERROR<esc>[#m an error
+  <esc>[#m##:##:##<esc>[#m <esc>[##m WARN<esc>[#m a warning
+  <esc>[#m##:##:##<esc>[#m <esc>[##m INFO<esc>[#m an info
+  <esc>[#m##:##:##<esc>[#m <esc>[##m INFO<esc>[#m another crate
+  state: level=info color=true threads=false thread_ids=false target=false timestamp=true readline=false
+  logs/latest.log:
+    [ERROR] an error
+    [WARN] a warning
+    [INFO] an info
+    [INFO] another crate
+== file, no timestamp [file=latest.log;timestamp=false] exit=true
+  <esc>[##mERROR<esc>[#m an error
+  <esc>[##m WARN<esc>[#m a warning
+  <esc>[##m INFO<esc>[#m an info
+  <esc>[##m INFO<esc>[#m another crate
+  state: level=info color=true threads=false thread_ids=false target=false timestamp=false readline=false
+  logs/latest.log:
+    [ERROR] an error
+    [WARN] a warning
+    [INFO] an info
+    [INFO] another crate
+== file, other name [file=server.log;color=false] exit=true
+  ##:##:## ERROR an error
+  ##:##:##  WARN a warning
+  ##:##:##  INFO an info
+  ##:##:##  INFO another crate
+  state: level=info color=false threads=false thread_ids=false target=false timestamp=true readline=false
+  logs/server.log:
+    [ERROR] an error
+    [WARN] a warning
+    [INFO] an info
+    [INFO] another crate
+== file in a missing directory [file=sub/x.log] exit=true
+  <esc>[#m##:##:##<esc>[#m <esc>[##mERROR<esc>[#m an error
+  <esc>[#m##:##:##<esc>[#m <esc>[##m WARN<esc>[#m a warning
+  <esc>[#m##:##:##<esc>[#m <esc>[##m INFO<esc>[#m an info
+  <esc>[#m##:##:##<esc>[#m <esc>[##m INFO<esc>[#m another crate
+  state: level=info color=true threads=false thread_ids=false target=false timestamp=true readline=false
+== level off [level=off;file=latest.log] exit=true
+  state: level=off color=true threads=false thread_ids=false target=false timestamp=true readline=false
+  logs/latest.log:
+== level error [level=error;file=latest.log] exit=true
+  <esc>[#m##:##:##<esc>[#m <esc>[##mERROR<esc>[#m an error
+  state: level=error color=true threads=false thread_ids=false target=false timestamp=true readline=false
+  logs/latest.log:
+    [ERROR] an error
+== level warn [level=warn;file=latest.log] exit=true
+  <esc>[#m##:##:##<esc>[#m <esc>[##mERROR<esc>[#m an error
+  <esc>[#m##:##:##<esc>[#m <esc>[##m WARN<esc>[#m a warning
+  state: level=warn color=true threads=false thread_ids=false target=false timestamp=true readline=false
+  logs/latest.log:
+    [ERROR] an error
+    [WARN] a warning
+== level info [level=info;file=latest.log] exit=true
+  <esc>[#m##:##:##<esc>[#m <esc>[##mERROR<esc>[#m an error
+  <esc>[#m##:##:##<esc>[#m <esc>[##m WARN<esc>[#m a warning
+  <esc>[#m##:##:##<esc>[#m <esc>[##m INFO<esc>[#m an info
+  <esc>[#m##:##:##<esc>[#m <esc>[##m INFO<esc>[#m another crate
+  state: level=info color=true threads=false thread_ids=false target=false timestamp=true readline=false
+  logs/latest.log:
+    [ERROR] an error
+    [WARN] a warning
+    [INFO] an info
+    [INFO] another crate
+== level debug [level=debug;file=latest.log] exit=true
+  <esc>[#m##:##:##<esc>[#m <esc>[##mERROR<esc>[#m an error
+  <esc>[#m##:##:##<esc>[#m <esc>[##m WARN<esc>[#m a warning
+  <esc>[#m##:##:##<esc>[#m <esc>[##m INFO<esc>[#m an info
+  <esc>[#m##:##:##<esc>[#m <esc>[##mDEBUG<esc>[#m a debug
+  <esc>[#m##:##:##<esc>[#m <esc>[##m INFO<esc>[#m another crate
+  state: level=debug color=true threads=false thread_ids=false target=false timestamp=true readline=false
+  logs/latest.log:
+    [ERROR] an error
+    [WARN] a warning
+    [INFO] an info
+    [DEBUG] a debug
+    [INFO] another crate
+== level trace [level=trace;file=latest.log] exit=true
+  <esc>[#m##:##:##<esc>[#m <esc>[##mERROR<esc>[#m an error
+  <esc>[#m##:##:##<esc>[#m <esc>[##m WARN<esc>[#m a warning
+  <esc>[#m##:##:##<esc>[#m <esc>[##m INFO<esc>[#m an info
+  <esc>[#m##:##:##<esc>[#m <esc>[##mDEBUG<esc>[#m a debug
+  <esc>[#m##:##:##<esc>[#m <esc>[##mTRACE<esc>[#m a trace
+  <esc>[#m##:##:##<esc>[#m <esc>[##m INFO<esc>[#m another crate
+  state: level=trace color=true threads=false thread_ids=false target=false timestamp=true readline=false
+  logs/latest.log:
+    [ERROR] an error
+    [WARN] a warning
+    [INFO] an info
+    [DEBUG] a debug
+    [TRACE] a trace
+    [INFO] another crate
+== level upper case [level=WARN;file=latest.log] exit=true
+  <esc>[#m##:##:##<esc>[#m <esc>[##mERROR<esc>[#m an error
+  <esc>[#m##:##:##<esc>[#m <esc>[##m WARN<esc>[#m a warning
+  state: level=warn color=true threads=false thread_ids=false target=false timestamp=true readline=false
+  logs/latest.log:
+    [ERROR] an error
+    [WARN] a warning
+== level number [level=2;file=latest.log] exit=true
+  <esc>[#m##:##:##<esc>[#m <esc>[##mERROR<esc>[#m an error
+  <esc>[#m##:##:##<esc>[#m <esc>[##m WARN<esc>[#m a warning
+  state: level=warn color=true threads=false thread_ids=false target=false timestamp=true readline=false
+  logs/latest.log:
+    [ERROR] an error
+    [WARN] a warning
+== level unknown [level=bogus;file=latest.log] exit=true
+  <esc>[#m##:##:##<esc>[#m <esc>[##mERROR<esc>[#m an error
+  <esc>[#m##:##:##<esc>[#m <esc>[##m WARN<esc>[#m a warning
+  <esc>[#m##:##:##<esc>[#m <esc>[##m INFO<esc>[#m an info
+  <esc>[#m##:##:##<esc>[#m <esc>[##m INFO<esc>[#m another crate
+  state: level=info color=true threads=false thread_ids=false target=false timestamp=true readline=false
+  logs/latest.log:
+    [ERROR] an error
+    [WARN] a warning
+    [INFO] an info
+    [INFO] another crate
+== level empty [level=;file=latest.log] exit=true
+  <esc>[#m##:##:##<esc>[#m <esc>[##mERROR<esc>[#m an error
+  state: level=error color=true threads=false thread_ids=false target=false timestamp=true readline=false
+  logs/latest.log:
+    [ERROR] an error
+== RUST_LOG debug over level error [level=error;file=latest.log] RUST_LOG="debug" exit=true
+  <esc>[#m##:##:##<esc>[#m <esc>[##mERROR<esc>[#m an error
+  <esc>[#m##:##:##<esc>[#m <esc>[##m WARN<esc>[#m a warning
+  <esc>[#m##:##:##<esc>[#m <esc>[##m INFO<esc>[#m an info
+  <esc>[#m##:##:##<esc>[#m <esc>[##mDEBUG<esc>[#m a debug
+  <esc>[#m##:##:##<esc>[#m <esc>[##m INFO<esc>[#m another crate
+  state: level=debug color=true threads=false thread_ids=false target=false timestamp=true readline=false
+  logs/latest.log:
+    [ERROR] an error
+    [WARN] a warning
+    [INFO] an info
+    [DEBUG] a debug
+    [INFO] another crate
+== RUST_LOG error over level trace [level=trace;file=latest.log] RUST_LOG="error" exit=true
+  <esc>[#m##:##:##<esc>[#m <esc>[##mERROR<esc>[#m an error
+  state: level=error color=true threads=false thread_ids=false target=false timestamp=true readline=false
+  logs/latest.log:
+    [ERROR] an error
+== RUST_LOG off [level=info;file=latest.log] RUST_LOG="off" exit=true
+  state: level=off color=true threads=false thread_ids=false target=false timestamp=true readline=false
+  logs/latest.log:
+== RUST_LOG not a level [level=warn;file=latest.log] RUST_LOG="garbage[=" exit=true
+  <esc>[#m##:##:##<esc>[#m <esc>[##mERROR<esc>[#m an error
+  <esc>[#m##:##:##<esc>[#m <esc>[##m WARN<esc>[#m a warning
+  <esc>[#m##:##:##<esc>[#m <esc>[##m INFO<esc>[#m an info
+  <esc>[#m##:##:##<esc>[#m <esc>[##m INFO<esc>[#m another crate
+  state: level=info color=true threads=false thread_ids=false target=false timestamp=true readline=false
+  logs/latest.log:
+    [ERROR] an error
+    [WARN] a warning
+    [INFO] an info
+    [INFO] another crate
+== RUST_LOG directive for this crate [level=warn;file=latest.log] RUST_LOG="pumpkin_core=trace" exit=true
+  <esc>[#m##:##:##<esc>[#m <esc>[##mERROR<esc>[#m an error
+  <esc>[#m##:##:##<esc>[#m <esc>[##m WARN<esc>[#m a warning
+  <esc>[#m##:##:##<esc>[#m <esc>[##m INFO<esc>[#m an info
+  <esc>[#m##:##:##<esc>[#m <esc>[##mDEBUG<esc>[#m a debug
+  <esc>[#m##:##:##<esc>[#m <esc>[##mTRACE<esc>[#m a trace
+  state: level=info color=true threads=false thread_ids=false target=false timestamp=true readline=false
+  logs/latest.log:
+    [ERROR] an error
+    [WARN] a warning
+    [INFO] an info
+== RUST_LOG directive for another crate [level=trace;file=latest.log] RUST_LOG="other_crate=trace" exit=true
+  <esc>[#m##:##:##<esc>[#m <esc>[##m INFO<esc>[#m another crate
+  state: level=info color=true threads=false thread_ids=false target=false timestamp=true readline=false
+  logs/latest.log:
+    [INFO] another crate
+== RUST_LOG empty [level=warn;file=latest.log] RUST_LOG="" exit=true
+  state: level=error color=true threads=false thread_ids=false target=false timestamp=true readline=false
+  logs/latest.log:

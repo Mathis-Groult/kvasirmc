@@ -383,3 +383,14 @@ real -553,174 Full: stage Full chunk -553,174 h384 b-64
   motion_blocking_no_leaves 6f4199a59580cb25 first [62, 62, 62, 62]
   light 24 a09d945a1cd8d6e5 / 24 a09d945a1cd8d6e5
   blending none | entities  | fluid_ticks 0
+noise skewed heightmaps: stage Full chunk -14,21 h384 b-64
+  starts [] refs []
+  blocks 98304 213410699f117e25 biomes b1bff18b700653a3
+  surface 5ae0e312cb3089b3 first [100, 101, 102, 103]
+  ocean_floor e26c1f5565b28325 first [319, 319, 319, 319]
+  surface_wg 5ae0e312cb3089b3 first [100, 101, 102, 103]
+  ocean_floor_wg e26c1f5565b28325 first [319, 319, 319, 319]
+  motion_blocking 18eeb4d5b70f88ae first [90, 97, 104, 94]
+  motion_blocking_no_leaves 02d4531148b7aacb first [80, 81, 82, 83]
+  light 0 cbf29ce484222325 / 0 cbf29ce484222325
+  blending none | entities  | fluid_ticks 0

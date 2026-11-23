@@ -164,6 +164,40 @@ fn fill_heightmaps(chunk: &ChunkData, which: [bool; 3]) {
     }
 }
 
+/// Heightmaps whose three types all differ between a column and its mirror (x and z swapped).
+fn fill_skewed_heightmaps(chunk: &ChunkData) {
+    let min_y = chunk.section.min_y;
+    let mut maps = chunk
+        .heightmap
+        .lock()
+        .unwrap_or_else(std::sync::PoisonError::into_inner);
+    for x in 0..16 {
+        for z in 0..16 {
+            maps.set(
+                ChunkHeightmapType::WorldSurface,
+                x,
+                z,
+                100 + (x * 5 + z) % 13,
+                min_y,
+            );
+            maps.set(
+                ChunkHeightmapType::MotionBlocking,
+                x,
+                z,
+                90 + (x * 3 + z * 7) % 17,
+                min_y,
+            );
+            maps.set(
+                ChunkHeightmapType::MotionBlockingNoLeaves,
+                x,
+                z,
+                80 + (x * 5 + z) % 13,
+                min_y,
+            );
+        }
+    }
+}
+
 fn light_of(count: usize, seed: usize) -> Box<[LightContainer]> {
     (0..count)
         .map(|i| match (i + seed) % 3 {
@@ -511,12 +545,27 @@ fn real_scenes(report: &mut String) -> Res {
     Ok(())
 }
 
+/// Appended in the widening round: heightmaps that are not symmetric in x and z.
+fn skewed_scenes(report: &mut String) -> Res {
+    let noise = get_world_gen(
+        Seed(11),
+        Dimension::OVERWORLD,
+        false,
+        Vec::new(),
+        String::new(),
+    );
+    let chunk = chunk_with(-14, 21, sections(&kinds_24(), 24, -64));
+    fill_skewed_heightmaps(&chunk);
+    resume(report, "noise skewed heightmaps", &chunk, &noise)
+}
+
 #[test]
 fn from_chunk_data() -> Res {
     let mut report = String::new();
     hand_scenes(&mut report)?;
     other_generators(&mut report)?;
     real_scenes(&mut report)?;
+    skewed_scenes(&mut report)?;
 
     let path = std::path::Path::new(env!("CARGO_MANIFEST_DIR"))
         .join("tests/golden")

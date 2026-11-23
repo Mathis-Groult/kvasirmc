@@ -7,7 +7,6 @@ use super::{
 };
 use crate::entity::attributes::Modifier;
 use crate::entity::attributes::ModifierOperation;
-use kvasir_tickprof::parts::Part;
 use pumpkin_data::attributes::Attributes;
 use pumpkin_data::damage::DamageType;
 use pumpkin_data::effect::StatusEffect;
@@ -21,6 +20,7 @@ use rand::RngExt;
 use std::sync::Arc;
 use std::sync::atomic::Ordering::{Relaxed, SeqCst};
 
+mod movement;
 #[cfg(test)]
 mod movement_golden;
 
@@ -73,128 +73,19 @@ impl LivingEntity {
         if let Some(mob) = caller.get_mob() {
             mob.before_mob_ai_step();
         }
-        if self.jumping_cooldown.load(Relaxed) != 0 {
-            self.jumping_cooldown.fetch_sub(1, Relaxed);
-        }
+        self.count_down_jump_cooldown();
 
         let should_swim_in_fluids = caller.get_player().is_none_or(|player| !player.is_flying());
 
         self.entity.check_zero_velo();
-
-        let mut movement_input = self.movement_input.load();
-
-        movement_input.x *= 0.98;
-
-        movement_input.z *= 0.98;
-
-        self.movement_input.store(movement_input);
-
-        if caller.is_immobile() {
-            self.jumping.store(false, Relaxed);
-            let input = self.movement_input.load();
-            self.movement_input.store(Vector3::new(0.0, input.y, 0.0));
-        } else if let Some(mob) = caller.get_mob()
-            && !mob.get_mob_entity().is_no_ai()
-        {
-            // Prepare old motion before controllers produce this tick's inputs.
-            Part::AiStep.time(|| mob.get_mob_entity().server_ai_step(mob, caller));
-        }
-
-        if self.jumping.load(SeqCst) && should_swim_in_fluids {
-            let in_lava = self.entity.touching_lava.load(SeqCst);
-
-            let in_water = self.entity.touching_water.load(SeqCst);
-
-            let fluid_height = if in_lava {
-                self.entity.lava_height.load()
-            } else {
-                self.entity.water_height.load()
-            };
-
-            let swim_height = self.get_swim_height();
-
-            let on_ground = self.entity.on_ground.load(SeqCst);
-
-            if (in_water || in_lava) && (!on_ground || fluid_height > swim_height) {
-                // Swim upward
-
-                let mut velo = self.entity.velocity.load();
-
-                velo.y += 0.04;
-
-                self.entity.velocity.store(velo);
-            } else if (on_ground || in_water && fluid_height <= swim_height)
-                && self.jumping_cooldown.load(SeqCst) == 0
-            {
-                self.jump();
-
-                self.jumping_cooldown.store(10, SeqCst);
-            }
-        } else {
-            self.jumping_cooldown.store(0, SeqCst);
-        }
-
-        if self.has_effect(&StatusEffect::SLOW_FALLING)
-            || self.has_effect(&StatusEffect::LEVITATION)
-        {
-            self.fall_distance.store(0.0);
-        }
-
-        let touching_water = self.entity.touching_water.load(SeqCst);
-
-        // Vanilla Mob.isEffectiveAi: NoAI mobs don't travel, so they neither move nor fall.
-        let effective_ai = caller
-            .get_mob()
-            .is_none_or(|mob| !mob.get_mob_entity().is_no_ai());
-
-        // Strider is the only entity that has canWalkOnFluid = false
-
-        Part::Travel.time(|| {
-            if !effective_ai || caller.get_mob().is_some_and(|mob| mob.travel(caller)) {
-            } else if (touching_water || self.entity.touching_lava.load(SeqCst))
-                && should_swim_in_fluids
-                && self.entity.entity_type != &EntityType::STRIDER
-            {
-                self.travel_in_fluid(caller, touching_water);
-            } else {
-                // TODO: Gliding
-
-                self.travel_in_air(caller);
-            }
-        });
-
-        let suffocating = Part::BlockCollisions.time(|| self.entity.tick_block_collisions(caller));
-
-        if suffocating {
-            caller.damage(caller, 1.0, DamageType::IN_WALL);
-        }
-
-        // Pushing apart is only skipped between ticks of a dormant mob: nobody sees it.
-        let dormant_off_tick = caller.get_mob().is_some_and(|mob| {
-            let mob = mob.get_mob_entity();
-            mob.is_dormant() && !mob.is_decision_tick()
-        });
-        if !dormant_off_tick {
-            Part::PushEntities.time(|| self.push_entities(caller));
-        }
-
-        Part::MobAiStepEnd.time(|| {
-            if let Some(ageable) = caller.get_mob().and_then(|mob| mob.as_ageable())
-                && self.entity.is_alive()
-                && !self.is_dead_or_dying()
-            {
-                ageable.ageable_ai_step();
-            }
-
-            if let Some(mob) = caller.get_mob() {
-                mob.mob_ai_step();
-                mob.get_mob_entity()
-                    .body_rotation_control
-                    .lock()
-                    .unwrap_or_else(std::sync::PoisonError::into_inner)
-                    .client_tick(mob);
-            }
-        });
+        self.damp_movement_input();
+        self.ai_step_inputs(caller);
+        self.apply_jump_input(should_swim_in_fluids);
+        self.reset_fall_distance_when_floating();
+        self.travel_this_tick(caller, should_swim_in_fluids);
+        self.collide_with_blocks(caller);
+        self.push_unless_dormant(caller);
+        self.end_mob_ai_step(caller);
     }
 
     pub(super) fn push_entities(&self, dyn_self: &dyn EntityBase) {

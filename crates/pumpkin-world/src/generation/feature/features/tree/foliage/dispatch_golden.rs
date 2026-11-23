@@ -5,7 +5,7 @@
 //! two origins (one in negative coordinates), over two seeds and six (height, radius, offset,
 //! giant trunk) edge sets. Each line has the variant, the origin, the seed, the parameters, every
 //! position returned, how many blocks the call changed with a hash of them, and the next random
-//! number.
+//! number. A last block adds two tall-foliage-over-small-radius sets at one origin and seed.
 
 use std::fmt::Write;
 
@@ -63,6 +63,10 @@ const PARAMS: [(i32, i32, i32, bool); 6] = [
     (5, 3, 2, true),
     (2, 1, 0, true),
 ];
+
+/// Appended in a second round: a tall foliage over a small radius, so that a call mixing the two
+/// arguments up shows (a cap of `radius + node radius` that does not bind with the other value).
+const TALL_PARAMS: [(i32, i32, i32, bool); 2] = [(7, 1, 0, false), (6, 0, 1, true)];
 
 const fn uniform(min: i32, max: i32) -> IntProvider {
     IntProvider::Object(NormalIntProvider::Uniform(UniformIntProvider {
@@ -138,7 +142,7 @@ fn state_id(grid: &TestGridCache, x: i32, y: i32, z: i32) -> u16 {
 /// How many blocks differ between `after` and `before` around the origin, and a hash of them.
 fn changes(before: &TestGridCache, after: &TestGridCache, origin: (i32, i32)) -> String {
     let mut count = 0u32;
-    let mut hash = 0xcbf2_9ce4_8422_2325_u64;
+    let mut hash = 0xcbf2_9ce4_8422_2325u64;
     for x in origin.0 - 14..origin.0 + 15 {
         for z in origin.1 - 14..origin.1 + 15 {
             for y in GROUND - 3..GROUND + 30 {
@@ -235,6 +239,17 @@ fn report() -> String {
                     report.push_str(&run_case(&world_gen, &leaves, case));
                 }
             }
+        }
+    }
+    for index in 0..NAMES.len() {
+        for params in TALL_PARAMS {
+            let case = Case {
+                index,
+                origin: (8, 8),
+                seed: 1,
+                params,
+            };
+            report.push_str(&run_case(&world_gen, &leaves, case));
         }
     }
     report

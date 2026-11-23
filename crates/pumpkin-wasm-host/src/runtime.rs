@@ -1,8 +1,8 @@
 #![allow(clippy::unwrap_used, clippy::expect_used, clippy::panic)]
 
-use std::{any::Any, fs, net::SocketAddr, path::Path, sync::Arc};
+use std::{any::Any, collections::HashMap, fs, net::SocketAddr, path::Path, sync::Arc};
 use wasmtime::{Cache, CacheConfig, Engine, component::Component, component::Linker};
-use wasmtime_wasi::{FsPerms, WasiCtxBuilder, sockets::SocketAddrUse};
+use wasmtime_wasi::{FsPerms, WasiCtx, WasiCtxBuilder, sockets::SocketAddrUse};
 
 use pumpkin_core::plugin::{Context, PluginMetadata, cache::calculate_hash_for_bytes, permissions};
 use pumpkin_plugin_runtime::RuntimeSpawner;
@@ -317,7 +317,75 @@ pub fn guest_exports<T: 'static>(instance: &Arc<dyn Any + Send + Sync>) -> wasmt
         .ok_or_else(|| wasmtime::Error::msg("Plugin exports do not match its API version"))
 }
 
-#[allow(clippy::too_many_lines)]
+/// Opens the plugin's own sockets to the policy its permissions and the loopback setting allow.
+fn allow_sockets(
+    builder: &mut WasiCtxBuilder,
+    has_permission: impl Fn(&str) -> bool,
+    loopback_only: bool,
+) {
+    let socket_policy = socket_policy_for_permissions(has_permission, loopback_only);
+
+    builder.allow_tcp(socket_policy.tcp_connect || socket_policy.tcp_bind);
+    builder.allow_udp(socket_policy.udp_send || socket_policy.udp_bind);
+    builder.socket_addr_check(move |addr, reason| {
+        Box::pin(async move { socket_policy.allows(addr, reason) })
+    });
+}
+
+/// Gives the plugin the host environment variables it may read, then the variables its override
+/// injects.
+fn set_environment(
+    builder: &mut WasiCtxBuilder,
+    inherit_env: bool,
+    injected: Option<&HashMap<String, String>>,
+    has_permission: impl Fn(&str) -> bool,
+) {
+    if inherit_env || has_permission(permissions::SYS_ENV) {
+        builder.inherit_env();
+    } else {
+        for (key, value) in std::env::vars() {
+            let perm = format!("{}{}", permissions::SYS_ENV_PREFIX, key);
+            if has_permission(&perm) {
+                builder.env(key, value);
+            }
+        }
+    }
+
+    for (key, value) in injected.into_iter().flatten() {
+        builder.env(key, value);
+    }
+}
+
+/// Mounts the plugin's data folder as `data`, read-only unless it may write.
+fn mount_data_folder(
+    builder: &mut WasiCtxBuilder,
+    context: &Context,
+    has_permission: impl Fn(&str) -> bool,
+) -> wasmtime::Result<()> {
+    let may_write_data = has_permission(permissions::FS_WRITE_DATA);
+    let may_read_data = has_permission(permissions::FS_READ_DATA);
+    if may_read_data || may_write_data {
+        builder.preopened_dir(
+            context.get_data_folder(),
+            "data",
+            if may_write_data {
+                FsPerms::ReadWrite
+            } else {
+                FsPerms::ReadOnly
+            },
+        )?;
+    }
+    Ok(())
+}
+
+/// What `on_load` hands the guest's store before it calls the guest.
+struct GuestSetup {
+    max_memory_mb: Option<u64>,
+    permissions: Vec<String>,
+    wasi_ctx: WasiCtx,
+    allow_http_outbound: bool,
+}
+
 pub async fn on_load(
     wasm_plugin: &WasmPlugin,
     context: Arc<Context>,
@@ -353,59 +421,37 @@ pub async fn on_load(
         .and_then(|o| o.loopback_only)
         .unwrap_or(plugin_config.loopback_only)
         || has_permission(permissions::NETWORK_LOOPBACK);
-
-    let socket_policy = socket_policy_for_permissions(has_permission, loopback_only);
-
-    builder.allow_tcp(socket_policy.tcp_connect || socket_policy.tcp_bind);
-    builder
-        .allow_udp(socket_policy.udp_send || socket_policy.udp_receive || socket_policy.udp_bind);
-    builder.socket_addr_check(move |addr, reason| {
-        Box::pin(async move { socket_policy.allows(addr, reason) })
-    });
+    allow_sockets(&mut builder, has_permission, loopback_only);
 
     let allow_http_outbound = has_permission(permissions::HTTP_OUTBOUND);
-
-    // --- System Permissions & Environment Variables ---
-
-    // Environment Variables
-    if plugin_config.inherit_env || has_permission(permissions::SYS_ENV) {
-        builder.inherit_env();
-    } else {
-        for (key, value) in std::env::vars() {
-            let perm = format!("{}{}", permissions::SYS_ENV_PREFIX, key);
-            if has_permission(&perm) {
-                builder.env(key, value);
-            }
-        }
-    }
-
-    // Injected environment variables from plugin override
-    if let Some(plugin_override) = plugin_override {
-        for (key, value) in &plugin_override.environment {
-            builder.env(key, value);
-        }
-    }
-
-    let may_write_data = has_permission(permissions::FS_WRITE_DATA);
-    let may_read_data = has_permission(permissions::FS_READ_DATA);
-    if may_read_data || may_write_data {
-        builder.preopened_dir(
-            context.get_data_folder(),
-            "data",
-            if may_write_data {
-                FsPerms::ReadWrite
-            } else {
-                FsPerms::ReadOnly
-            },
-        )?;
-    }
+    set_environment(
+        &mut builder,
+        plugin_config.inherit_env,
+        plugin_override.map(|o| &o.environment),
+        has_permission,
+    );
+    mount_data_folder(&mut builder, &context, has_permission)?;
 
     let max_memory_mb = plugin_override
         .and_then(|o| o.max_memory_mb)
         .or(plugin_config.max_memory_mb);
-    let wasi_ctx = builder.build();
+    let setup = GuestSetup {
+        max_memory_mb,
+        permissions: filtered_permissions,
+        wasi_ctx: builder.build(),
+        allow_http_outbound,
+    };
+    call_guest_on_load(wasm_plugin, context, setup).await
+}
+
+/// Fills the guest's store from `setup`, then calls the guest's `on-load` with the context.
+async fn call_guest_on_load(
+    wasm_plugin: &WasmPlugin,
+    context: Arc<Context>,
+    setup: GuestSetup,
+) -> Result<Result<(), String>, wasmtime::Error> {
     let server = context.server.clone();
-    let name = metadata.name.clone();
+    let name = context.get_metadata().name.clone();
 
     let plugin_instance = wasm_plugin.plugin_instance.clone();
     let api_version = wasm_plugin.api_version;
@@ -414,16 +460,16 @@ pub async fn on_load(
         .call_guest(move |mut guest| {
             Box::pin(async move {
                 guest.with(|mut store| {
-                    if let Some(mb) = max_memory_mb {
+                    if let Some(mb) = setup.max_memory_mb {
                         let limit_bytes = (mb as usize).saturating_mul(1024 * 1024);
                         store.data_mut().limits = wasmtime::StoreLimitsBuilder::new()
                             .memory_size(limit_bytes)
                             .build();
                     }
 
-                    store.data_mut().permissions = filtered_permissions;
-                    store.data_mut().wasi_ctx = wasi_ctx;
-                    store.data_mut().wasi_http_hooks.allow_outbound = allow_http_outbound;
+                    store.data_mut().permissions = setup.permissions;
+                    store.data_mut().wasi_ctx = setup.wasi_ctx;
+                    store.data_mut().wasi_http_hooks.allow_outbound = setup.allow_http_outbound;
                     store.data_mut().server = Some(server);
                     store.data_mut().name = Some(name);
                 });

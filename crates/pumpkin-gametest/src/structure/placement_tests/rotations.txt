@@ -1,76 +1,76 @@
 == None
-ok controller=(10,70,20) origin=(10,71,21) source=[2, 1, 3] size=[2, 1, 3] rotation=None
-  clear_entities (10,71,21)..(12,72,24)
-  air-clear x6 first set (10,71,21) state=0 flags=0xaa last set (11,71,23) state=0 flags=0xaa
+ok controller=(10,70,20) origin=(10,71,21) source=[2, 4, 3] size=[2, 4, 3] rotation=None
+  clear_entities (10,71,21)..(12,75,24)
+  air-clear x24 first set (10,71,21) state=0 flags=0xaa last set (11,74,23) state=0 flags=0xaa
   set (10,70,20) state=25099 flags=0x3
-  nbt (10,70,20) data={ignore_entities=Byte(0),rotation=String("none"),size=IntArray([2, 1, 3]),status=String("cleared"),test=String("pumpkin:demo")},id=String("minecraft:test_instance_block")
+  nbt (10,70,20) data={ignore_entities=Byte(0),rotation=String("none"),size=IntArray([2, 4, 3]),status=String("cleared"),test=String("pumpkin:demo")},id=String("minecraft:test_instance_block")
   rotate 1 None -> 1001
   set (10,71,21) state=1001 flags=0xb2
   rotate 2 None -> 1002
-  set (11,71,23) state=1002 flags=0xb2
-  nbt (11,71,23) id=String("minecraft:chest"),marker=Int(7)
+  set (11,73,23) state=1002 flags=0xb2
+  nbt (11,73,23) id=String("minecraft:chest"),marker=Int(7)
   rotate 4 None -> 1004
-  set (10,71,22) state=1004 flags=0xb2
-  nbt (10,71,22) id=String("minecraft:test_block"),message=String(""),mode=String("accept"),powered=Byte(0)
+  set (10,74,22) state=1004 flags=0xb2
+  nbt (10,74,22) id=String("minecraft:test_block"),message=String(""),mode=String("accept"),powered=Byte(0)
   rotate 6 None -> 1006
   set (11,71,21) state=1006 flags=0xb2
   nbt (11,71,21) id=String("minecraft:sign")
-  clear_ticks (10,71,21)..(12,72,24)
-  clear_events (10,71,21)..(12,72,24)
+  clear_ticks (10,71,21)..(12,75,24)
+  clear_events (10,71,21)..(12,75,24)
 == Clockwise90
-ok controller=(10,70,20) origin=(10,71,21) source=[2, 1, 3] size=[3, 1, 2] rotation=Clockwise90
-  clear_entities (10,71,21)..(13,72,23)
-  air-clear x6 first set (10,71,21) state=0 flags=0xaa last set (12,71,22) state=0 flags=0xaa
+ok controller=(10,70,20) origin=(10,71,21) source=[2, 4, 3] size=[3, 4, 2] rotation=Clockwise90
+  clear_entities (10,71,21)..(13,75,23)
+  air-clear x24 first set (10,71,21) state=0 flags=0xaa last set (12,74,22) state=0 flags=0xaa
   set (10,70,20) state=25099 flags=0x3
-  nbt (10,70,20) data={ignore_entities=Byte(0),rotation=String("none"),size=IntArray([2, 1, 3]),status=String("cleared"),test=String("pumpkin:demo")},id=String("minecraft:test_instance_block")
+  nbt (10,70,20) data={ignore_entities=Byte(0),rotation=String("none"),size=IntArray([2, 4, 3]),status=String("cleared"),test=String("pumpkin:demo")},id=String("minecraft:test_instance_block")
   rotate 1 Clockwise90 -> 2001
   set (12,71,21) state=2001 flags=0xb2
   rotate 2 Clockwise90 -> 2002
-  set (10,71,22) state=2002 flags=0xb2
-  nbt (10,71,22) id=String("minecraft:chest"),marker=Int(7)
+  set (10,73,22) state=2002 flags=0xb2
+  nbt (10,73,22) id=String("minecraft:chest"),marker=Int(7)
   rotate 4 Clockwise90 -> 2004
-  set (11,71,21) state=2004 flags=0xb2
-  nbt (11,71,21) id=String("minecraft:test_block"),message=String(""),mode=String("accept"),powered=Byte(0)
+  set (11,74,21) state=2004 flags=0xb2
+  nbt (11,74,21) id=String("minecraft:test_block"),message=String(""),mode=String("accept"),powered=Byte(0)
   rotate 6 Clockwise90 -> 2006
   set (12,71,22) state=2006 flags=0xb2
   nbt (12,71,22) id=String("minecraft:sign")
-  clear_ticks (10,71,21)..(13,72,23)
-  clear_events (10,71,21)..(13,72,23)
+  clear_ticks (10,71,21)..(13,75,23)
+  clear_events (10,71,21)..(13,75,23)
 == Clockwise180
-ok controller=(10,70,20) origin=(10,71,21) source=[2, 1, 3] size=[2, 1, 3] rotation=Clockwise180
-  clear_entities (10,71,21)..(12,72,24)
-  air-clear x6 first set (10,71,21) state=0 flags=0xaa last set (11,71,23) state=0 flags=0xaa
+ok controller=(10,70,20) origin=(10,71,21) source=[2, 4, 3] size=[2, 4, 3] rotation=Clockwise180
+  clear_entities (10,71,21)..(12,75,24)
+  air-clear x24 first set (10,71,21) state=0 flags=0xaa last set (11,74,23) state=0 flags=0xaa
   set (10,70,20) state=25099 flags=0x3
-  nbt (10,70,20) data={ignore_entities=Byte(0),rotation=String("none"),size=IntArray([2, 1, 3]),status=String("cleared"),test=String("pumpkin:demo")},id=String("minecraft:test_instance_block")
+  nbt (10,70,20) data={ignore_entities=Byte(0),rotation=String("none"),size=IntArray([2, 4, 3]),status=String("cleared"),test=String("pumpkin:demo")},id=String("minecraft:test_instance_block")
   rotate 1 Clockwise180 -> 3001
   set (11,71,23) state=3001 flags=0xb2
   rotate 2 Clockwise180 -> 3002
-  set (10,71,21) state=3002 flags=0xb2
-  nbt (10,71,21) id=String("minecraft:chest"),marker=Int(7)
+  set (10,73,21) state=3002 flags=0xb2
+  nbt (10,73,21) id=String("minecraft:chest"),marker=Int(7)
   rotate 4 Clockwise180 -> 3004
-  set (11,71,22) state=3004 flags=0xb2
-  nbt (11,71,22) id=String("minecraft:test_block"),message=String(""),mode=String("accept"),powered=Byte(0)
+  set (11,74,22) state=3004 flags=0xb2
+  nbt (11,74,22) id=String("minecraft:test_block"),message=String(""),mode=String("accept"),powered=Byte(0)
   rotate 6 Clockwise180 -> 3006
   set (10,71,23) state=3006 flags=0xb2
   nbt (10,71,23) id=String("minecraft:sign")
-  clear_ticks (10,71,21)..(12,72,24)
-  clear_events (10,71,21)..(12,72,24)
+  clear_ticks (10,71,21)..(12,75,24)
+  clear_events (10,71,21)..(12,75,24)
 == Counterclockwise90
-ok controller=(10,70,20) origin=(10,71,21) source=[2, 1, 3] size=[3, 1, 2] rotation=Counterclockwise90
-  clear_entities (10,71,21)..(13,72,23)
-  air-clear x6 first set (10,71,21) state=0 flags=0xaa last set (12,71,22) state=0 flags=0xaa
+ok controller=(10,70,20) origin=(10,71,21) source=[2, 4, 3] size=[3, 4, 2] rotation=Counterclockwise90
+  clear_entities (10,71,21)..(13,75,23)
+  air-clear x24 first set (10,71,21) state=0 flags=0xaa last set (12,74,22) state=0 flags=0xaa
   set (10,70,20) state=25099 flags=0x3
-  nbt (10,70,20) data={ignore_entities=Byte(0),rotation=String("none"),size=IntArray([2, 1, 3]),status=String("cleared"),test=String("pumpkin:demo")},id=String("minecraft:test_instance_block")
+  nbt (10,70,20) data={ignore_entities=Byte(0),rotation=String("none"),size=IntArray([2, 4, 3]),status=String("cleared"),test=String("pumpkin:demo")},id=String("minecraft:test_instance_block")
   rotate 1 Counterclockwise90 -> 4001
   set (10,71,22) state=4001 flags=0xb2
   rotate 2 Counterclockwise90 -> 4002
-  set (12,71,21) state=4002 flags=0xb2
-  nbt (12,71,21) id=String("minecraft:chest"),marker=Int(7)
+  set (12,73,21) state=4002 flags=0xb2
+  nbt (12,73,21) id=String("minecraft:chest"),marker=Int(7)
   rotate 4 Counterclockwise90 -> 4004
-  set (11,71,22) state=4004 flags=0xb2
-  nbt (11,71,22) id=String("minecraft:test_block"),message=String(""),mode=String("accept"),powered=Byte(0)
+  set (11,74,22) state=4004 flags=0xb2
+  nbt (11,74,22) id=String("minecraft:test_block"),message=String(""),mode=String("accept"),powered=Byte(0)
   rotate 6 Counterclockwise90 -> 4006
   set (10,71,21) state=4006 flags=0xb2
   nbt (10,71,21) id=String("minecraft:sign")
-  clear_ticks (10,71,21)..(13,72,23)
-  clear_events (10,71,21)..(13,72,23)
+  clear_ticks (10,71,21)..(13,75,23)
+  clear_events (10,71,21)..(13,75,23)

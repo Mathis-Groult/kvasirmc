@@ -227,7 +227,7 @@ fn block(position: [i32; 3], state: BlockStateId) -> GameTestStructureBlock {
     }
 }
 
-/// 2x1x3 template with a plain block, a block entity, a test block and a block that
+/// 2x4x3 template with a plain block, a block entity, a test block and a block that
 /// carries both NBT and a test mode (the NBT wins).
 fn mixed_template() -> GameTestStructureTemplate {
     let stone = Block::STONE.default_state.id;
@@ -240,16 +240,16 @@ fn mixed_template() -> GameTestStructureTemplate {
     let mut both_nbt = NbtCompound::new();
     both_nbt.put_string("id", "minecraft:sign".to_string());
 
-    let mut chest = block([1, 0, 2], granite);
+    let mut chest = block([1, 2, 2], granite);
     chest.nbt = Some(chest_nbt);
-    let mut accept = block([0, 0, 1], diorite);
+    let mut accept = block([0, 3, 1], diorite);
     accept.test_mode = Some(TestBlockMode::Accept);
     let mut both = block([1, 0, 0], andesite);
     both.nbt = Some(both_nbt);
     both.test_mode = Some(TestBlockMode::Fail);
 
     GameTestStructureTemplate::new(
-        [2, 1, 3],
+        [2, 4, 3],
         vec![block([0, 0, 0], stone), chest, accept, both],
     )
     .expect("mixed template is valid")

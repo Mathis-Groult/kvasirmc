@@ -1,0 +1,385 @@
+noise mixed: stage Full chunk 5,-7 h384 b-64
+  starts [] refs []
+  blocks 98304 213410699f117e25 biomes b1bff18b700653a3
+  surface 33480eb42eba65a5 first [60, 62, 64, 66]
+  ocean_floor e26c1f5565b28325 first [319, 319, 319, 319]
+  surface_wg 33480eb42eba65a5 first [60, 62, 64, 66]
+  ocean_floor_wg e26c1f5565b28325 first [319, 319, 319, 319]
+  motion_blocking b9de2a705df5e625 first [40, 41, 42, 43]
+  motion_blocking_no_leaves d879766011b0855c first [20, 20, 20, 20]
+  light 24 97ffd0f372999a4d / 24 567faee0ac871da5
+  blending -64..320 h[63.5, 70.25, 80.0, 12.125, -3.0] d[0.5, -0.25, 1.75] b[41, 15, 36] | entities minecraft:barrel@95,20,-112 minecraft:chest@82,65,-109 minecraft:furnace@89,70,-100 | fluid_ticks 0
+noise few_biomes: stage Features chunk -3,11 h384 b-64
+  starts [] refs []
+  blocks 98304 213410699f117e25 biomes 46777a42281de2a5
+  surface 33480eb42eba65a5 first [60, 62, 64, 66]
+  ocean_floor e26c1f5565b28325 first [319, 319, 319, 319]
+  surface_wg 33480eb42eba65a5 first [60, 62, 64, 66]
+  ocean_floor_wg e26c1f5565b28325 first [319, 319, 319, 319]
+  motion_blocking b9de2a705df5e625 first [40, 41, 42, 43]
+  motion_blocking_no_leaves d879766011b0855c first [20, 20, 20, 20]
+  light 0 cbf29ce484222325 / 0 cbf29ce484222325
+  blending none | entities  | fluid_ticks 0
+noise empty: stage Full chunk 8,2 h384 b-64
+  starts [] refs []
+  blocks 0 cbf29ce484222325 biomes b1bff18b700653a3
+  surface c787fb606038dd25 first [-65, -65, -65, -65]
+  ocean_floor c787fb606038dd25 first [-65, -65, -65, -65]
+  surface_wg c787fb606038dd25 first [-65, -65, -65, -65]
+  ocean_floor_wg c787fb606038dd25 first [-65, -65, -65, -65]
+  motion_blocking c787fb606038dd25 first [-65, -65, -65, -65]
+  motion_blocking_no_leaves c787fb606038dd25 first [-65, -65, -65, -65]
+  light 0 cbf29ce484222325 / 0 cbf29ce484222325
+  blending none | entities  | fluid_ticks 0
+noise full: stage Full chunk -9,-4 h384 b-64
+  starts [] refs []
+  blocks 98304 302acd32c3c02325 biomes b1bff18b700653a3
+  surface 33480eb42eba65a5 first [60, 62, 64, 66]
+  ocean_floor e26c1f5565b28325 first [319, 319, 319, 319]
+  surface_wg 33480eb42eba65a5 first [60, 62, 64, 66]
+  ocean_floor_wg e26c1f5565b28325 first [319, 319, 319, 319]
+  motion_blocking c787fb606038dd25 first [-65, -65, -65, -65]
+  motion_blocking_no_leaves c787fb606038dd25 first [-65, -65, -65, -65]
+  light 0 cbf29ce484222325 / 0 cbf29ce484222325
+  blending none | entities  | fluid_ticks 0
+noise partial_heightmaps: stage Full chunk 13,6 h384 b-64
+  starts [] refs []
+  blocks 98304 213410699f117e25 biomes b1bff18b700653a3
+  surface c787fb606038dd25 first [-65, -65, -65, -65]
+  ocean_floor e26c1f5565b28325 first [319, 319, 319, 319]
+  surface_wg c787fb606038dd25 first [-65, -65, -65, -65]
+  ocean_floor_wg e26c1f5565b28325 first [319, 319, 319, 319]
+  motion_blocking b9de2a705df5e625 first [40, 41, 42, 43]
+  motion_blocking_no_leaves c787fb606038dd25 first [-65, -65, -65, -65]
+  light 0 cbf29ce484222325 / 0 cbf29ce484222325
+  blending none | entities  | fluid_ticks 0
+noise shifted_min_y: stage Full chunk 2,9 h384 b-64
+  starts [] refs []
+  blocks 98304 d29ea8546af2be25 biomes b1bff18b700653a3
+  surface 33480eb42eba65a5 first [60, 62, 64, 66]
+  ocean_floor 7022dcdbf0314725 first [319, 319, 318, 319]
+  surface_wg 33480eb42eba65a5 first [60, 62, 64, 66]
+  ocean_floor_wg 7022dcdbf0314725 first [319, 319, 318, 319]
+  motion_blocking b9de2a705df5e625 first [40, 41, 42, 43]
+  motion_blocking_no_leaves d879766011b0855c first [20, 20, 20, 20]
+  light 0 cbf29ce484222325 / 0 cbf29ce484222325
+  blending none | entities  | fluid_ticks 0
+nether tall data: stage Full chunk -6,3 h256 b0
+  starts [] refs []
+  blocks 65536 8ce9645d495e3125 biomes 1e929204eae2eea2
+  surface 33480eb42eba65a5 first [60, 62, 64, 66]
+  ocean_floor 84b7089d85c84525 first [254, 255, 255, 255]
+  surface_wg 33480eb42eba65a5 first [60, 62, 64, 66]
+  ocean_floor_wg 84b7089d85c84525 first [254, 255, 255, 255]
+  motion_blocking b9de2a705df5e625 first [40, 41, 42, 43]
+  motion_blocking_no_leaves d879766011b0855c first [20, 20, 20, 20]
+  light 0 cbf29ce484222325 / 0 cbf29ce484222325
+  blending none | entities  | fluid_ticks 0
+flat mixed StructureStarts: stage StructureStart chunk 5,-7 h384 b-64
+  starts [] refs []
+  blocks 98304 213410699f117e25 biomes b1bff18b700653a3
+  surface 33480eb42eba65a5 first [60, 62, 64, 66]
+  ocean_floor e26c1f5565b28325 first [319, 319, 319, 319]
+  surface_wg 33480eb42eba65a5 first [60, 62, 64, 66]
+  ocean_floor_wg e26c1f5565b28325 first [319, 319, 319, 319]
+  motion_blocking b9de2a705df5e625 first [40, 41, 42, 43]
+  motion_blocking_no_leaves d879766011b0855c first [20, 20, 20, 20]
+  light 0 cbf29ce484222325 / 0 cbf29ce484222325
+  blending none | entities  | fluid_ticks 0
+custom mixed StructureStarts: stage StructureStart chunk 5,-7 h384 b-64
+  starts [] refs []
+  blocks 98304 213410699f117e25 biomes b1bff18b700653a3
+  surface 33480eb42eba65a5 first [60, 62, 64, 66]
+  ocean_floor e26c1f5565b28325 first [319, 319, 319, 319]
+  surface_wg 33480eb42eba65a5 first [60, 62, 64, 66]
+  ocean_floor_wg e26c1f5565b28325 first [319, 319, 319, 319]
+  motion_blocking b9de2a705df5e625 first [40, 41, 42, 43]
+  motion_blocking_no_leaves d879766011b0855c first [20, 20, 20, 20]
+  light 0 cbf29ce484222325 / 0 cbf29ce484222325
+  blending none | entities  | fluid_ticks 0
+flat mixed StructureReferences: stage StructureReferences chunk 5,-7 h384 b-64
+  starts [] refs []
+  blocks 98304 213410699f117e25 biomes b1bff18b700653a3
+  surface 33480eb42eba65a5 first [60, 62, 64, 66]
+  ocean_floor e26c1f5565b28325 first [319, 319, 319, 319]
+  surface_wg 33480eb42eba65a5 first [60, 62, 64, 66]
+  ocean_floor_wg e26c1f5565b28325 first [319, 319, 319, 319]
+  motion_blocking b9de2a705df5e625 first [40, 41, 42, 43]
+  motion_blocking_no_leaves d879766011b0855c first [20, 20, 20, 20]
+  light 0 cbf29ce484222325 / 0 cbf29ce484222325
+  blending none | entities  | fluid_ticks 0
+custom mixed StructureReferences: stage StructureReferences chunk 5,-7 h384 b-64
+  starts [] refs []
+  blocks 98304 213410699f117e25 biomes b1bff18b700653a3
+  surface 33480eb42eba65a5 first [60, 62, 64, 66]
+  ocean_floor e26c1f5565b28325 first [319, 319, 319, 319]
+  surface_wg 33480eb42eba65a5 first [60, 62, 64, 66]
+  ocean_floor_wg e26c1f5565b28325 first [319, 319, 319, 319]
+  motion_blocking b9de2a705df5e625 first [40, 41, 42, 43]
+  motion_blocking_no_leaves d879766011b0855c first [20, 20, 20, 20]
+  light 0 cbf29ce484222325 / 0 cbf29ce484222325
+  blending none | entities  | fluid_ticks 0
+flat mixed Terrain: stage Noise chunk 5,-7 h384 b-64
+  starts [] refs []
+  blocks 98304 213410699f117e25 biomes b1bff18b700653a3
+  surface 33480eb42eba65a5 first [60, 62, 64, 66]
+  ocean_floor e26c1f5565b28325 first [319, 319, 319, 319]
+  surface_wg 33480eb42eba65a5 first [60, 62, 64, 66]
+  ocean_floor_wg e26c1f5565b28325 first [319, 319, 319, 319]
+  motion_blocking b9de2a705df5e625 first [40, 41, 42, 43]
+  motion_blocking_no_leaves d879766011b0855c first [20, 20, 20, 20]
+  light 0 cbf29ce484222325 / 0 cbf29ce484222325
+  blending none | entities  | fluid_ticks 0
+custom mixed Terrain: stage Noise chunk 5,-7 h384 b-64
+  starts [] refs []
+  blocks 98304 213410699f117e25 biomes b1bff18b700653a3
+  surface 33480eb42eba65a5 first [60, 62, 64, 66]
+  ocean_floor e26c1f5565b28325 first [319, 319, 319, 319]
+  surface_wg 33480eb42eba65a5 first [60, 62, 64, 66]
+  ocean_floor_wg e26c1f5565b28325 first [319, 319, 319, 319]
+  motion_blocking b9de2a705df5e625 first [40, 41, 42, 43]
+  motion_blocking_no_leaves d879766011b0855c first [20, 20, 20, 20]
+  light 0 cbf29ce484222325 / 0 cbf29ce484222325
+  blending none | entities  | fluid_ticks 0
+flat mixed Full: stage Full chunk 5,-7 h384 b-64
+  starts [] refs []
+  blocks 98304 213410699f117e25 biomes b1bff18b700653a3
+  surface 33480eb42eba65a5 first [60, 62, 64, 66]
+  ocean_floor e26c1f5565b28325 first [319, 319, 319, 319]
+  surface_wg 33480eb42eba65a5 first [60, 62, 64, 66]
+  ocean_floor_wg e26c1f5565b28325 first [319, 319, 319, 319]
+  motion_blocking b9de2a705df5e625 first [40, 41, 42, 43]
+  motion_blocking_no_leaves d879766011b0855c first [20, 20, 20, 20]
+  light 0 cbf29ce484222325 / 0 cbf29ce484222325
+  blending none | entities  | fluid_ticks 0
+custom mixed Full: stage Full chunk 5,-7 h384 b-64
+  starts [] refs []
+  blocks 98304 213410699f117e25 biomes b1bff18b700653a3
+  surface 33480eb42eba65a5 first [60, 62, 64, 66]
+  ocean_floor e26c1f5565b28325 first [319, 319, 319, 319]
+  surface_wg 33480eb42eba65a5 first [60, 62, 64, 66]
+  ocean_floor_wg e26c1f5565b28325 first [319, 319, 319, 319]
+  motion_blocking b9de2a705df5e625 first [40, 41, 42, 43]
+  motion_blocking_no_leaves d879766011b0855c first [20, 20, 20, 20]
+  light 0 cbf29ce484222325 / 0 cbf29ce484222325
+  blending none | entities  | fluid_ticks 0
+real -553,173 Empty: stage Empty chunk -553,173 h384 b-64
+  starts [] refs []
+  blocks 32768 8668862ec5dbfa85 biomes 516024527b1ff325
+  surface 6f4199a59580cb25 first [62, 62, 62, 62]
+  ocean_floor 8fac9ca6066a6735 first [7, 6, 6, 5]
+  surface_wg 6f4199a59580cb25 first [62, 62, 62, 62]
+  ocean_floor_wg 8fac9ca6066a6735 first [7, 6, 6, 5]
+  motion_blocking 6f4199a59580cb25 first [62, 62, 62, 62]
+  motion_blocking_no_leaves 6f4199a59580cb25 first [62, 62, 62, 62]
+  light 24 a09d945a1cd8d6e5 / 24 a09d945a1cd8d6e5
+  blending none | entities  | fluid_ticks 0
+real -553,173 StructureStarts: stage StructureStart chunk -553,173 h384 b-64
+  starts ["Monument"] refs []
+  blocks 32768 8668862ec5dbfa85 biomes 516024527b1ff325
+  surface 6f4199a59580cb25 first [62, 62, 62, 62]
+  ocean_floor 8fac9ca6066a6735 first [7, 6, 6, 5]
+  surface_wg 6f4199a59580cb25 first [62, 62, 62, 62]
+  ocean_floor_wg 8fac9ca6066a6735 first [7, 6, 6, 5]
+  motion_blocking 6f4199a59580cb25 first [62, 62, 62, 62]
+  motion_blocking_no_leaves 6f4199a59580cb25 first [62, 62, 62, 62]
+  light 24 a09d945a1cd8d6e5 / 24 a09d945a1cd8d6e5
+  blending none | entities  | fluid_ticks 0
+real -553,173 StructureReferences: stage StructureReferences chunk -553,173 h384 b-64
+  starts ["Monument"] refs ["Monument"]
+  blocks 32768 8668862ec5dbfa85 biomes 516024527b1ff325
+  surface 6f4199a59580cb25 first [62, 62, 62, 62]
+  ocean_floor 8fac9ca6066a6735 first [7, 6, 6, 5]
+  surface_wg 6f4199a59580cb25 first [62, 62, 62, 62]
+  ocean_floor_wg 8fac9ca6066a6735 first [7, 6, 6, 5]
+  motion_blocking 6f4199a59580cb25 first [62, 62, 62, 62]
+  motion_blocking_no_leaves 6f4199a59580cb25 first [62, 62, 62, 62]
+  light 24 a09d945a1cd8d6e5 / 24 a09d945a1cd8d6e5
+  blending none | entities  | fluid_ticks 0
+real -553,173 Biomes: stage Biomes chunk -553,173 h384 b-64
+  starts [] refs []
+  blocks 32768 8668862ec5dbfa85 biomes 516024527b1ff325
+  surface 6f4199a59580cb25 first [62, 62, 62, 62]
+  ocean_floor 8fac9ca6066a6735 first [7, 6, 6, 5]
+  surface_wg 6f4199a59580cb25 first [62, 62, 62, 62]
+  ocean_floor_wg 8fac9ca6066a6735 first [7, 6, 6, 5]
+  motion_blocking 6f4199a59580cb25 first [62, 62, 62, 62]
+  motion_blocking_no_leaves 6f4199a59580cb25 first [62, 62, 62, 62]
+  light 24 a09d945a1cd8d6e5 / 24 a09d945a1cd8d6e5
+  blending none | entities  | fluid_ticks 0
+real -553,173 Terrain: stage Noise chunk -553,173 h384 b-64
+  starts ["Monument"] refs ["Monument"]
+  blocks 32768 8668862ec5dbfa85 biomes 516024527b1ff325
+  surface 6f4199a59580cb25 first [62, 62, 62, 62]
+  ocean_floor 8fac9ca6066a6735 first [7, 6, 6, 5]
+  surface_wg 6f4199a59580cb25 first [62, 62, 62, 62]
+  ocean_floor_wg 8fac9ca6066a6735 first [7, 6, 6, 5]
+  motion_blocking 6f4199a59580cb25 first [62, 62, 62, 62]
+  motion_blocking_no_leaves 6f4199a59580cb25 first [62, 62, 62, 62]
+  light 24 a09d945a1cd8d6e5 / 24 a09d945a1cd8d6e5
+  blending none | entities  | fluid_ticks 0
+real -553,173 Features: stage Features chunk -553,173 h384 b-64
+  starts [] refs []
+  blocks 32768 8668862ec5dbfa85 biomes 516024527b1ff325
+  surface 6f4199a59580cb25 first [62, 62, 62, 62]
+  ocean_floor 8fac9ca6066a6735 first [7, 6, 6, 5]
+  surface_wg 6f4199a59580cb25 first [62, 62, 62, 62]
+  ocean_floor_wg 8fac9ca6066a6735 first [7, 6, 6, 5]
+  motion_blocking 6f4199a59580cb25 first [62, 62, 62, 62]
+  motion_blocking_no_leaves 6f4199a59580cb25 first [62, 62, 62, 62]
+  light 24 a09d945a1cd8d6e5 / 24 a09d945a1cd8d6e5
+  blending none | entities  | fluid_ticks 0
+real -553,173 InitializeLight: stage Lighting chunk -553,173 h384 b-64
+  starts [] refs []
+  blocks 32768 8668862ec5dbfa85 biomes 516024527b1ff325
+  surface 6f4199a59580cb25 first [62, 62, 62, 62]
+  ocean_floor 8fac9ca6066a6735 first [7, 6, 6, 5]
+  surface_wg 6f4199a59580cb25 first [62, 62, 62, 62]
+  ocean_floor_wg 8fac9ca6066a6735 first [7, 6, 6, 5]
+  motion_blocking 6f4199a59580cb25 first [62, 62, 62, 62]
+  motion_blocking_no_leaves 6f4199a59580cb25 first [62, 62, 62, 62]
+  light 24 a09d945a1cd8d6e5 / 24 a09d945a1cd8d6e5
+  blending none | entities  | fluid_ticks 0
+real -553,173 Light: stage Lighting chunk -553,173 h384 b-64
+  starts [] refs []
+  blocks 32768 8668862ec5dbfa85 biomes 516024527b1ff325
+  surface 6f4199a59580cb25 first [62, 62, 62, 62]
+  ocean_floor 8fac9ca6066a6735 first [7, 6, 6, 5]
+  surface_wg 6f4199a59580cb25 first [62, 62, 62, 62]
+  ocean_floor_wg 8fac9ca6066a6735 first [7, 6, 6, 5]
+  motion_blocking 6f4199a59580cb25 first [62, 62, 62, 62]
+  motion_blocking_no_leaves 6f4199a59580cb25 first [62, 62, 62, 62]
+  light 24 a09d945a1cd8d6e5 / 24 a09d945a1cd8d6e5
+  blending none | entities  | fluid_ticks 0
+real -553,173 Spawn: stage Spawn chunk -553,173 h384 b-64
+  starts [] refs []
+  blocks 32768 8668862ec5dbfa85 biomes 516024527b1ff325
+  surface 6f4199a59580cb25 first [62, 62, 62, 62]
+  ocean_floor 8fac9ca6066a6735 first [7, 6, 6, 5]
+  surface_wg 6f4199a59580cb25 first [62, 62, 62, 62]
+  ocean_floor_wg 8fac9ca6066a6735 first [7, 6, 6, 5]
+  motion_blocking 6f4199a59580cb25 first [62, 62, 62, 62]
+  motion_blocking_no_leaves 6f4199a59580cb25 first [62, 62, 62, 62]
+  light 24 a09d945a1cd8d6e5 / 24 a09d945a1cd8d6e5
+  blending none | entities  | fluid_ticks 0
+real -553,173 Full: stage Full chunk -553,173 h384 b-64
+  starts [] refs []
+  blocks 32768 8668862ec5dbfa85 biomes 516024527b1ff325
+  surface 6f4199a59580cb25 first [62, 62, 62, 62]
+  ocean_floor 8fac9ca6066a6735 first [7, 6, 6, 5]
+  surface_wg 6f4199a59580cb25 first [62, 62, 62, 62]
+  ocean_floor_wg 8fac9ca6066a6735 first [7, 6, 6, 5]
+  motion_blocking 6f4199a59580cb25 first [62, 62, 62, 62]
+  motion_blocking_no_leaves 6f4199a59580cb25 first [62, 62, 62, 62]
+  light 24 a09d945a1cd8d6e5 / 24 a09d945a1cd8d6e5
+  blending none | entities  | fluid_ticks 0
+real -553,174 Empty: stage Empty chunk -553,174 h384 b-64
+  starts [] refs []
+  blocks 32768 b8df66f95e89ebad biomes 516024527b1ff325
+  surface 6f4199a59580cb25 first [62, 62, 62, 62]
+  ocean_floor 75fed03de5cee8ee first [34, 34, 34, 35]
+  surface_wg 6f4199a59580cb25 first [62, 62, 62, 62]
+  ocean_floor_wg 75fed03de5cee8ee first [34, 34, 34, 35]
+  motion_blocking 6f4199a59580cb25 first [62, 62, 62, 62]
+  motion_blocking_no_leaves 6f4199a59580cb25 first [62, 62, 62, 62]
+  light 24 a09d945a1cd8d6e5 / 24 a09d945a1cd8d6e5
+  blending none | entities  | fluid_ticks 0
+real -553,174 StructureStarts: stage StructureStart chunk -553,174 h384 b-64
+  starts [] refs []
+  blocks 32768 b8df66f95e89ebad biomes 516024527b1ff325
+  surface 6f4199a59580cb25 first [62, 62, 62, 62]
+  ocean_floor 75fed03de5cee8ee first [34, 34, 34, 35]
+  surface_wg 6f4199a59580cb25 first [62, 62, 62, 62]
+  ocean_floor_wg 75fed03de5cee8ee first [34, 34, 34, 35]
+  motion_blocking 6f4199a59580cb25 first [62, 62, 62, 62]
+  motion_blocking_no_leaves 6f4199a59580cb25 first [62, 62, 62, 62]
+  light 24 a09d945a1cd8d6e5 / 24 a09d945a1cd8d6e5
+  blending none | entities  | fluid_ticks 0
+real -553,174 StructureReferences: stage StructureReferences chunk -553,174 h384 b-64
+  starts ["Monument"] refs ["Monument"]
+  blocks 32768 b8df66f95e89ebad biomes 516024527b1ff325
+  surface 6f4199a59580cb25 first [62, 62, 62, 62]
+  ocean_floor 75fed03de5cee8ee first [34, 34, 34, 35]
+  surface_wg 6f4199a59580cb25 first [62, 62, 62, 62]
+  ocean_floor_wg 75fed03de5cee8ee first [34, 34, 34, 35]
+  motion_blocking 6f4199a59580cb25 first [62, 62, 62, 62]
+  motion_blocking_no_leaves 6f4199a59580cb25 first [62, 62, 62, 62]
+  light 24 a09d945a1cd8d6e5 / 24 a09d945a1cd8d6e5
+  blending none | entities  | fluid_ticks 0
+real -553,174 Biomes: stage Biomes chunk -553,174 h384 b-64
+  starts [] refs []
+  blocks 32768 b8df66f95e89ebad biomes 516024527b1ff325
+  surface 6f4199a59580cb25 first [62, 62, 62, 62]
+  ocean_floor 75fed03de5cee8ee first [34, 34, 34, 35]
+  surface_wg 6f4199a59580cb25 first [62, 62, 62, 62]
+  ocean_floor_wg 75fed03de5cee8ee first [34, 34, 34, 35]
+  motion_blocking 6f4199a59580cb25 first [62, 62, 62, 62]
+  motion_blocking_no_leaves 6f4199a59580cb25 first [62, 62, 62, 62]
+  light 24 a09d945a1cd8d6e5 / 24 a09d945a1cd8d6e5
+  blending none | entities  | fluid_ticks 0
+real -553,174 Terrain: stage Noise chunk -553,174 h384 b-64
+  starts ["Monument"] refs ["Monument"]
+  blocks 32768 b8df66f95e89ebad biomes 516024527b1ff325
+  surface 6f4199a59580cb25 first [62, 62, 62, 62]
+  ocean_floor 75fed03de5cee8ee first [34, 34, 34, 35]
+  surface_wg 6f4199a59580cb25 first [62, 62, 62, 62]
+  ocean_floor_wg 75fed03de5cee8ee first [34, 34, 34, 35]
+  motion_blocking 6f4199a59580cb25 first [62, 62, 62, 62]
+  motion_blocking_no_leaves 6f4199a59580cb25 first [62, 62, 62, 62]
+  light 24 a09d945a1cd8d6e5 / 24 a09d945a1cd8d6e5
+  blending none | entities  | fluid_ticks 0
+real -553,174 Features: stage Features chunk -553,174 h384 b-64
+  starts [] refs []
+  blocks 32768 b8df66f95e89ebad biomes 516024527b1ff325
+  surface 6f4199a59580cb25 first [62, 62, 62, 62]
+  ocean_floor 75fed03de5cee8ee first [34, 34, 34, 35]
+  surface_wg 6f4199a59580cb25 first [62, 62, 62, 62]
+  ocean_floor_wg 75fed03de5cee8ee first [34, 34, 34, 35]
+  motion_blocking 6f4199a59580cb25 first [62, 62, 62, 62]
+  motion_blocking_no_leaves 6f4199a59580cb25 first [62, 62, 62, 62]
+  light 24 a09d945a1cd8d6e5 / 24 a09d945a1cd8d6e5
+  blending none | entities  | fluid_ticks 0
+real -553,174 InitializeLight: stage Lighting chunk -553,174 h384 b-64
+  starts [] refs []
+  blocks 32768 b8df66f95e89ebad biomes 516024527b1ff325
+  surface 6f4199a59580cb25 first [62, 62, 62, 62]
+  ocean_floor 75fed03de5cee8ee first [34, 34, 34, 35]
+  surface_wg 6f4199a59580cb25 first [62, 62, 62, 62]
+  ocean_floor_wg 75fed03de5cee8ee first [34, 34, 34, 35]
+  motion_blocking 6f4199a59580cb25 first [62, 62, 62, 62]
+  motion_blocking_no_leaves 6f4199a59580cb25 first [62, 62, 62, 62]
+  light 24 a09d945a1cd8d6e5 / 24 a09d945a1cd8d6e5
+  blending none | entities  | fluid_ticks 0
+real -553,174 Light: stage Lighting chunk -553,174 h384 b-64
+  starts [] refs []
+  blocks 32768 b8df66f95e89ebad biomes 516024527b1ff325
+  surface 6f4199a59580cb25 first [62, 62, 62, 62]
+  ocean_floor 75fed03de5cee8ee first [34, 34, 34, 35]
+  surface_wg 6f4199a59580cb25 first [62, 62, 62, 62]
+  ocean_floor_wg 75fed03de5cee8ee first [34, 34, 34, 35]
+  motion_blocking 6f4199a59580cb25 first [62, 62, 62, 62]
+  motion_blocking_no_leaves 6f4199a59580cb25 first [62, 62, 62, 62]
+  light 24 a09d945a1cd8d6e5 / 24 a09d945a1cd8d6e5
+  blending none | entities  | fluid_ticks 0
+real -553,174 Spawn: stage Spawn chunk -553,174 h384 b-64
+  starts [] refs []
+  blocks 32768 b8df66f95e89ebad biomes 516024527b1ff325
+  surface 6f4199a59580cb25 first [62, 62, 62, 62]
+  ocean_floor 75fed03de5cee8ee first [34, 34, 34, 35]
+  surface_wg 6f4199a59580cb25 first [62, 62, 62, 62]
+  ocean_floor_wg 75fed03de5cee8ee first [34, 34, 34, 35]
+  motion_blocking 6f4199a59580cb25 first [62, 62, 62, 62]
+  motion_blocking_no_leaves 6f4199a59580cb25 first [62, 62, 62, 62]
+  light 24 a09d945a1cd8d6e5 / 24 a09d945a1cd8d6e5
+  blending none | entities  | fluid_ticks 0
+real -553,174 Full: stage Full chunk -553,174 h384 b-64
+  starts [] refs []
+  blocks 32768 b8df66f95e89ebad biomes 516024527b1ff325
+  surface 6f4199a59580cb25 first [62, 62, 62, 62]
+  ocean_floor 75fed03de5cee8ee first [34, 34, 34, 35]
+  surface_wg 6f4199a59580cb25 first [62, 62, 62, 62]
+  ocean_floor_wg 75fed03de5cee8ee first [34, 34, 34, 35]
+  motion_blocking 6f4199a59580cb25 first [62, 62, 62, 62]
+  motion_blocking_no_leaves 6f4199a59580cb25 first [62, 62, 62, 62]
+  light 24 a09d945a1cd8d6e5 / 24 a09d945a1cd8d6e5
+  blending none | entities  | fluid_ticks 0

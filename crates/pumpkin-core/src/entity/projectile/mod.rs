@@ -36,6 +36,8 @@ mod thrown_flight;
 #[cfg(test)]
 mod thrown_item_tick_golden;
 pub mod trident;
+#[cfg(test)]
+mod trident_tick_golden;
 pub mod wind_charge;
 pub mod wither_skull;
 

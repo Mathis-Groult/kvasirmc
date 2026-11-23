@@ -1,0 +1,407 @@
+fall t1: pos 4.9950,70.1485,4.5990 last 4.5000,70.0000,4.5000 vel 0.4950,0.1485,0.0990 rot 78.690,16.393 removed false has_hit false ground false ground_time 0 life 0 shake 0 hits [] entities 1 sent [103:10:a6e801b4]
+fall t2: pos 5.4851,70.2460,4.6970 last 4.5000,70.0000,4.5000 vel 0.4900,0.0975,0.0980 rot 78.690,11.041 removed false has_hit false ground false ground_time 0 life 0 shake 0 hits [] entities 1 sent [103:10:5803bbf7]
+fall t3: pos 5.9702,70.2931,4.7940 last 4.5000,70.0000,4.5000 vel 0.4851,0.0470,0.0970 rot 78.690,5.431 removed false has_hit false ground false ground_time 0 life 0 shake 0 hits [] entities 1 sent [103:10:5a1b7365]
+fall t4: pos 6.4505,70.2901,4.8901 last 4.5000,70.0000,4.5000 vel 0.4803,-0.0029,0.0961 rot 78.690,-0.343 removed false has_hit false ground false ground_time 0 life 0 shake 0 hits [] entities 1 sent [103:10:f06c1eca]
+fall t5: pos 6.9260,70.2377,4.9852 last 4.5000,70.0000,4.5000 vel 0.4755,-0.0524,0.0951 rot 78.690,-6.168 removed false has_hit false ground false ground_time 0 life 0 shake 0 hits [] entities 1 sent [103:10:2f252e1d]
+fall t6: pos 7.3967,70.1363,5.0793 last 4.5000,70.0000,4.5000 vel 0.4707,-0.1014,0.0941 rot 78.690,-11.924 removed false has_hit false ground false ground_time 0 life 0 shake 0 hits [] entities 1 sent [103:10:0d13f150]
+fall t7: pos 7.8628,69.9865,5.1726 last 4.5000,70.0000,4.5000 vel 0.4660,-0.1499,0.0932 rot 78.690,-17.502 removed false has_hit false ground false ground_time 0 life 0 shake 0 hits [] entities 1 sent [103:10:21be63a0]
+fall t8: pos 8.3241,69.7886,5.2648 last 4.5000,70.0000,4.5000 vel 0.4614,-0.1979,0.0923 rot 78.690,-22.808 removed false has_hit false ground false ground_time 0 life 0 shake 0 hits [] entities 1 sent [103:10:1ddc0734]
+fall still flying
+water t1: pos 4.9500,70.1350,4.5900 last 4.5000,70.0000,4.5000 vel 0.4500,0.1350,0.0900 rot 78.690,16.393 removed false has_hit false ground false ground_time 0 life 0 shake 0 hits [] entities 1 sent [103:10:0bfebd2e]
+water t2: pos 5.3550,70.2115,4.6710 last 4.5000,70.0000,4.5000 vel 0.4050,0.0765,0.0810 rot 78.690,10.493 removed false has_hit false ground false ground_time 0 life 0 shake 0 hits [] entities 1 sent [103:10:9449525b]
+water t3: pos 5.7195,70.2353,4.7439 last 4.5000,70.0000,4.5000 vel 0.3645,0.0239,0.0729 rot 78.690,3.671 removed false has_hit false ground false ground_time 0 life 0 shake 0 hits [] entities 1 sent [103:10:9cd67ae4]
+water t4: pos 6.0476,70.2118,4.8095 last 4.5000,70.0000,4.5000 vel 0.3281,-0.0235,0.0656 rot 78.690,-4.024 removed false has_hit false ground false ground_time 0 life 0 shake 0 hits [] entities 1 sent [103:10:7a325d34]
+water t5: pos 6.3428,70.1456,4.8686 last 4.5000,70.0000,4.5000 vel 0.2952,-0.0662,0.0590 rot 78.690,-12.397 removed false has_hit false ground false ground_time 0 life 0 shake 0 hits [] entities 1 sent [103:10:12ab4869]
+water t6: pos 6.6085,70.0411,4.9217 last 4.5000,70.0000,4.5000 vel 0.2657,-0.1046,0.0531 rot 78.690,-21.100 removed false has_hit false ground false ground_time 0 life 0 shake 0 hits [] entities 1 sent [103:10:40fc72c7]
+water t7: pos 6.8477,69.9020,4.9695 last 4.5000,70.0000,4.5000 vel 0.2391,-0.1391,0.0478 rot 78.690,-29.700 removed false has_hit false ground false ground_time 0 life 0 shake 0 hits [] entities 1 sent [103:10:bd93d542]
+water t8: pos 7.0629,69.7318,5.0126 last 4.5000,70.0000,4.5000 vel 0.2152,-0.1702,0.0430 rot 78.690,-37.790 removed false has_hit false ground false ground_time 0 life 0 shake 0 hits [] entities 1 sent [103:10:eeef59df]
+water still flying
+reverse t1: pos 10.0050,69.7525,10.2030 last 10.5000,70.0000,10.5000 vel -0.4950,-0.2475,-0.2970 rot -120.964,-23.207 removed false has_hit false ground false ground_time 0 life 0 shake 0 hits [] entities 1 sent [103:10:bd337edc]
+reverse t2: pos 9.5149,69.4580,9.9090 last 10.5000,70.0000,10.5000 vel -0.4900,-0.2945,-0.2940 rot -120.964,-27.265 removed false has_hit false ground false ground_time 0 life 0 shake 0 hits [] entities 1 sent [103:10:39c85540]
+reverse t3: pos 9.0298,69.1169,9.6179 last 10.5000,70.0000,10.5000 vel -0.4851,-0.3411,-0.2911 rot -120.964,-31.084 removed false has_hit false ground false ground_time 0 life 0 shake 0 hits [] entities 1 sent [103:10:2886fdb6]
+reverse t4: pos 8.5495,68.7297,9.3297 last 10.5000,70.0000,10.5000 vel -0.4803,-0.3872,-0.2882 rot -120.964,-34.653 removed false has_hit false ground false ground_time 0 life 0 shake 0 hits [] entities 1 sent [103:10:4d02d294]
+reverse t5: pos 8.0740,68.2969,9.0444 last 10.5000,70.0000,10.5000 vel -0.4755,-0.4328,-0.2853 rot -120.964,-37.972 removed false has_hit false ground false ground_time 0 life 0 shake 0 hits [] entities 1 sent [103:10:a316b2d9]
+reverse t6: pos 7.6033,67.8190,8.7620 last 10.5000,70.0000,10.5000 vel -0.4707,-0.4780,-0.2824 rot -120.964,-41.045 removed false has_hit false ground false ground_time 0 life 0 shake 0 hits [] entities 1 sent [103:10:2015a7e1]
+reverse t7: pos 7.1372,67.2963,8.4823 last 10.5000,70.0000,10.5000 vel -0.4660,-0.5227,-0.2796 rot -120.964,-43.883 removed false has_hit false ground false ground_time 0 life 0 shake 0 hits [] entities 1 sent [103:10:37cef64c]
+reverse t8: pos 6.6759,66.7293,8.2055 last 10.5000,70.0000,10.5000 vel -0.4614,-0.5670,-0.2768 rot -120.964,-46.499 removed false has_hit false ground false ground_time 0 life 0 shake 0 hits [] entities 1 sent [103:10:b43e7b82]
+reverse still flying
+chunk_cross t1: pos 15.3910,69.9505,15.3910 last 14.5000,70.0000,14.5000 vel 0.8910,-0.0495,0.8910 rot 45.000,-2.250 removed false has_hit false ground false ground_time 0 life 0 shake 0 hits [] entities 1 sent [103:10:83748dae]
+chunk_cross t2: pos 16.2731,69.8520,16.2731 last 14.5000,70.0000,14.5000 vel 0.8821,-0.0985,0.8821 rot 45.000,-4.515 removed false has_hit false ground false ground_time 0 life 0 shake 0 hits [] entities 1 sent [103:10:8a260d50]
+chunk_cross t3: pos 17.1464,69.7050,17.1464 last 14.5000,70.0000,14.5000 vel 0.8733,-0.1470,0.8733 rot 45.000,-6.789 removed false has_hit false ground false ground_time 0 life 0 shake 0 hits [] entities 1 sent [103:10:af295f27]
+chunk_cross t4: pos 18.0109,69.5099,18.0109 last 14.5000,70.0000,14.5000 vel 0.8645,-0.1950,0.8645 rot 45.000,-9.064 removed false has_hit false ground false ground_time 0 life 0 shake 0 hits [] entities 1 sent [103:10:4b4c438f]
+chunk_cross t5: pos 18.8668,69.2673,18.8668 last 14.5000,70.0000,14.5000 vel 0.8559,-0.2426,0.8559 rot 45.000,-11.333 removed false has_hit false ground false ground_time 0 life 0 shake 0 hits [] entities 1 sent [103:10:1b62293b]
+chunk_cross t6: pos 19.7141,68.9777,19.7141 last 14.5000,70.0000,14.5000 vel 0.8473,-0.2897,0.8473 rot 45.000,-13.590 removed false has_hit false ground false ground_time 0 life 0 shake 0 hits [] entities 1 sent [103:10:a818a8cf]
+chunk_cross still flying
+chunk_cross_neg t1: pos 16.6090,69.9505,16.6090 last 17.5000,70.0000,17.5000 vel -0.8910,-0.0495,-0.8910 rot -135.000,-2.250 removed false has_hit false ground false ground_time 0 life 0 shake 0 hits [] entities 1 sent [103:10:80bc52f1]
+chunk_cross_neg t2: pos 15.7269,69.8520,15.7269 last 17.5000,70.0000,17.5000 vel -0.8821,-0.0985,-0.8821 rot -135.000,-4.515 removed false has_hit false ground false ground_time 0 life 0 shake 0 hits [] entities 1 sent [103:10:4e2a6283]
+chunk_cross_neg t3: pos 14.8536,69.7050,14.8536 last 17.5000,70.0000,17.5000 vel -0.8733,-0.1470,-0.8733 rot -135.000,-6.789 removed false has_hit false ground false ground_time 0 life 0 shake 0 hits [] entities 1 sent [103:10:5edd1108]
+chunk_cross_neg t4: pos 13.9891,69.5099,13.9891 last 17.5000,70.0000,17.5000 vel -0.8645,-0.1950,-0.8645 rot -135.000,-9.064 removed false has_hit false ground false ground_time 0 life 0 shake 0 hits [] entities 1 sent [103:10:12b83c18]
+chunk_cross_neg t5: pos 13.1332,69.2673,13.1332 last 17.5000,70.0000,17.5000 vel -0.8559,-0.2426,-0.8559 rot -135.000,-11.333 removed false has_hit false ground false ground_time 0 life 0 shake 0 hits [] entities 1 sent [103:10:f848f2f4]
+chunk_cross_neg t6: pos 12.2859,68.9777,12.2859 last 17.5000,70.0000,17.5000 vel -0.8473,-0.2897,-0.8473 rot -135.000,-13.590 removed false has_hit false ground false ground_time 0 life 0 shake 0 hits [] entities 1 sent [103:10:1b755280]
+chunk_cross_neg still flying
+straight_up t1: pos 4.5000,67.4355,4.5000 last 4.5000,66.0000,4.5000 vel 0.0000,1.4355,0.0000 rot 0.000,90.000 removed false has_hit false ground false ground_time 0 life 0 shake 0 hits [] entities 1 sent [103:10:3f626702]
+straight_up t2: pos 4.5000,68.8071,4.5000 last 4.5000,66.0000,4.5000 vel 0.0000,1.3716,0.0000 rot 0.000,90.000 removed false has_hit false ground false ground_time 0 life 0 shake 0 hits [] entities 1 sent [103:10:3f495d8e]
+straight_up t3: pos 4.5000,70.1156,4.5000 last 4.5000,66.0000,4.5000 vel 0.0000,1.3084,0.0000 rot 0.000,90.000 removed false has_hit false ground false ground_time 0 life 0 shake 0 hits [] entities 1 sent [103:10:3f33981e]
+straight_up t4: pos 4.5000,71.3614,4.5000 last 4.5000,66.0000,4.5000 vel 0.0000,1.2458,0.0000 rot 0.000,90.000 removed false has_hit false ground false ground_time 0 life 0 shake 0 hits [] entities 1 sent [103:10:3f1cbc02]
+straight_up t5: pos 4.5000,72.5453,4.5000 last 4.5000,66.0000,4.5000 vel 0.0000,1.1839,0.0000 rot 0.000,90.000 removed false has_hit false ground false ground_time 0 life 0 shake 0 hits [] entities 1 sent [103:10:3f04041e]
+straight_up t6: pos 4.5000,73.6679,4.5000 last 4.5000,66.0000,4.5000 vel 0.0000,1.1225,0.0000 rot 0.000,90.000 removed false has_hit false ground false ground_time 0 life 0 shake 0 hits [] entities 1 sent [103:10:3eeee89a]
+straight_up still flying
+diagonal t1: pos 4.1040,66.6435,5.3910 last 4.5000,66.0000,4.5000 vel -0.3960,0.6435,0.8910 rot -23.962,33.424 removed false has_hit false ground false ground_time 0 life 0 shake 0 hits [] entities 1 sent [103:10:3bc255db]
+diagonal t2: pos 3.7120,67.2311,6.2731 last 4.5000,66.0000,4.5000 vel -0.3920,0.5876,0.8821 rot -23.962,31.329 removed false has_hit false ground false ground_time 0 life 0 shake 0 hits [] entities 1 sent [103:10:3838ac29]
+diagonal t3: pos 3.3238,67.7633,7.1464 last 4.5000,66.0000,4.5000 vel -0.3881,0.5322,0.8733 rot -23.962,29.113 removed false has_hit false ground false ground_time 0 life 0 shake 0 hits [] entities 1 sent [103:10:cc31554e]
+diagonal t4: pos 2.9396,68.2406,8.0109 last 4.5000,66.0000,4.5000 vel -0.3842,0.4774,0.8645 rot -23.962,26.774 removed false has_hit false ground false ground_time 0 life 0 shake 0 hits [] entities 1 sent [103:10:17f8de71]
+diagonal t5: pos 2.5592,68.6637,8.8668 last 4.5000,66.0000,4.5000 vel -0.3804,0.4231,0.8559 rot -23.962,24.310 removed false has_hit false ground false ground_time 0 life 0 shake 0 hits [] entities 1 sent [103:10:ddf6f932]
+diagonal t6: pos 2.1826,69.0331,9.7141 last 4.5000,66.0000,4.5000 vel -0.3766,0.3694,0.8473 rot -23.962,21.719 removed false has_hit false ground false ground_time 0 life 0 shake 0 hits [] entities 1 sent [103:10:2126c97f]
+diagonal still flying
+face_west t1: pos 8.9600,66.4505,8.5000 last 5.0000,66.5000,8.5000 vel 3.9600,-0.0495,0.0000 rot 90.000,-0.716 removed false has_hit true ground false ground_time 0 life 0 shake 0 hits [block 8,66,8 face West at 8.0000,66.4625,8.5000 normal -0.9999,0.0125,-0.0000] entities 1 sent [103:11:b0a75794]
+face_west t2: pos 12.8804,66.3520,8.5000 last 5.0000,66.5000,8.5000 vel 3.9204,-0.0985,0.0000 rot 90.000,-1.439 removed false has_hit true ground false ground_time 0 life 0 shake 0 hits [] entities 1 sent [103:11:b5f181d8]
+face_west t3: pos 16.7616,66.2050,8.5000 last 5.0000,66.5000,8.5000 vel 3.8812,-0.1470,0.0000 rot 90.000,-2.169 removed false has_hit true ground false ground_time 0 life 0 shake 0 hits [] entities 1 sent [103:11:565188d0]
+face_west still flying
+face_east t1: pos 8.0400,66.4505,8.5000 last 12.0000,66.5000,8.5000 vel -3.9600,-0.0495,0.0000 rot -90.000,-0.716 removed false has_hit true ground false ground_time 0 life 0 shake 0 hits [block 8,66,8 face East at 9.0000,66.4625,8.5000 normal 0.9999,0.0125,-0.0000] entities 1 sent [103:11:22f9c424]
+face_east t2: pos 4.1196,66.3520,8.5000 last 12.0000,66.5000,8.5000 vel -3.9204,-0.0985,0.0000 rot -90.000,-1.439 removed false has_hit true ground false ground_time 0 life 0 shake 0 hits [] entities 1 sent [103:11:4a1b8ea8]
+face_east t3: pos 0.2384,66.2050,8.5000 last 12.0000,66.5000,8.5000 vel -3.8812,-0.1470,0.0000 rot -90.000,-2.169 removed false has_hit true ground false ground_time 0 life 0 shake 0 hits [] entities 1 sent [103:11:97aa1704]
+face_east still flying
+face_down t1: pos 8.5000,68.9105,8.5000 last 8.5000,65.0000,8.5000 vel 0.0000,3.9105,0.0000 rot 0.000,90.000 removed false has_hit true ground false ground_time 0 life 0 shake 0 hits [block 8,68,8 face Down at 8.5000,68.0000,8.5000 normal -0.0000,-1.0000,-0.0000] entities 1 sent [103:11:9cfab454]
+face_down t2: pos 8.5000,72.7324,8.5000 last 8.5000,65.0000,8.5000 vel 0.0000,3.8219,0.0000 rot 0.000,90.000 removed false has_hit true ground false ground_time 0 life 0 shake 0 hits [] entities 1 sent [103:11:a4e59ec2]
+face_down t3: pos 8.5000,76.4666,8.5000 last 8.5000,65.0000,8.5000 vel 0.0000,3.7342,0.0000 rot 0.000,90.000 removed false has_hit true ground false ground_time 0 life 0 shake 0 hits [] entities 1 sent [103:11:d4c948c8]
+face_down still flying
+face_up t1: pos 8.5000,65.9905,8.5000 last 8.5000,70.0000,8.5000 vel 0.0000,-4.0095,0.0000 rot 0.000,-90.000 removed false has_hit true ground false ground_time 0 life 0 shake 0 hits [block 8,66,8 face Up at 8.5000,67.0000,8.5000 normal -0.0000,1.0000,-0.0000] entities 1 sent [103:11:46c4c902]
+face_up t2: pos 8.5000,61.9716,8.5000 last 8.5000,70.0000,8.5000 vel 0.0000,-4.0189,0.0000 rot 0.000,-90.000 removed false has_hit true ground false ground_time 0 life 0 shake 0 hits [] entities 1 sent [103:11:453c1b3a]
+face_up t3: pos 8.5000,57.9434,8.5000 last 8.5000,70.0000,8.5000 vel 0.0000,-4.0282,0.0000 rot 0.000,-90.000 removed false has_hit true ground false ground_time 0 life 0 shake 0 hits [] entities 1 sent [103:11:55f60d23]
+face_up still flying
+face_north t1: pos 8.5000,66.4505,8.9600 last 8.5000,66.5000,5.0000 vel 0.0000,-0.0495,3.9600 rot 0.000,-0.716 removed false has_hit true ground false ground_time 0 life 0 shake 0 hits [block 8,66,8 face North at 8.5000,66.4625,8.0000 normal -0.0000,0.0125,-0.9999] entities 1 sent [103:11:f79a2aae]
+face_north t2: pos 8.5000,66.3520,12.8804 last 8.5000,66.5000,5.0000 vel 0.0000,-0.0985,3.9204 rot 0.000,-1.439 removed false has_hit true ground false ground_time 0 life 0 shake 0 hits [] entities 1 sent [103:11:34fd3f74]
+face_north t3: pos 8.5000,66.2050,16.7616 last 8.5000,66.5000,5.0000 vel 0.0000,-0.1470,3.8812 rot 0.000,-2.169 removed false has_hit true ground false ground_time 0 life 0 shake 0 hits [] entities 1 sent [103:11:ea2b720c]
+face_north still flying
+face_south t1: pos 8.5000,66.4505,8.0400 last 8.5000,66.5000,12.0000 vel 0.0000,-0.0495,-3.9600 rot 180.000,-0.716 removed false has_hit true ground false ground_time 0 life 0 shake 0 hits [block 8,66,8 face South at 8.5000,66.4625,9.0000 normal -0.0000,0.0125,0.9999] entities 1 sent [103:11:d4cc45e3]
+face_south t2: pos 8.5000,66.3520,4.1196 last 8.5000,66.5000,12.0000 vel 0.0000,-0.0985,-3.9204 rot 180.000,-1.439 removed false has_hit true ground false ground_time 0 life 0 shake 0 hits [] entities 1 sent [103:11:36b86d7d]
+face_south t3: pos 8.5000,66.2050,0.2384 last 8.5000,66.5000,12.0000 vel 0.0000,-0.1470,-3.8812 rot 180.000,-2.169 removed false has_hit true ground false ground_time 0 life 0 shake 0 hits [] entities 1 sent [103:11:21545bed]
+face_south still flying
+approach t1: pos 5.9850,66.4505,8.5000 last 4.5000,66.5000,8.5000 vel 1.4850,-0.0495,0.0000 rot 90.000,-1.909 removed false has_hit false ground false ground_time 0 life 0 shake 0 hits [] entities 1 sent [103:10:aed7a8a0]
+approach t2: pos 7.4552,66.3520,8.5000 last 4.5000,66.5000,8.5000 vel 1.4701,-0.0985,0.0000 rot 90.000,-3.833 removed false has_hit false ground false ground_time 0 life 0 shake 0 hits [] entities 1 sent [103:10:46570baa]
+approach t3: pos 8.9106,66.2050,8.5000 last 4.5000,66.5000,8.5000 vel 1.4554,-0.1470,0.0000 rot 90.000,-5.768 removed false has_hit true ground false ground_time 0 life 0 shake 0 hits [block 8,66,8 face West at 8.0000,66.2970,8.5000 normal -0.9949,0.1005,-0.0000] entities 1 sent [103:10:90157460]
+approach t4: pos 10.3515,66.0099,8.5000 last 4.5000,66.5000,8.5000 vel 1.4409,-0.1950,0.0000 rot 90.000,-7.709 removed false has_hit true ground false ground_time 0 life 0 shake 0 hits [] entities 1 sent [103:10:a35f4eca]
+approach t5: pos 11.7780,65.7673,8.5000 last 4.5000,66.5000,8.5000 vel 1.4265,-0.2426,0.0000 rot 90.000,-9.652 removed false has_hit true ground false ground_time 0 life 0 shake 0 hits [] entities 1 sent [103:10:67db55ee]
+approach still flying
+inside t1: pos 8.9950,66.4505,8.5000 last 8.5000,66.5000,8.5000 vel 0.4950,-0.0495,0.0000 rot 90.000,-5.711 removed false has_hit true ground false ground_time 0 life 0 shake 0 hits [block 8,66,8 face South at 8.5000,66.5000,8.5000 normal -0.9950,0.0995,-0.0000] entities 1 sent [103:10:1df30fa5]
+inside t2: pos 9.4851,66.3520,8.5000 last 8.5000,66.5000,8.5000 vel 0.4900,-0.0985,0.0000 rot 90.000,-11.366 removed false has_hit true ground false ground_time 0 life 0 shake 0 hits [] entities 1 sent [103:10:b853c94d]
+inside t3: pos 9.9702,66.2050,8.5000 last 8.5000,66.5000,8.5000 vel 0.4851,-0.1470,0.0000 rot 90.000,-16.859 removed false has_hit true ground false ground_time 0 life 0 shake 0 hits [] entities 1 sent [103:10:2afed56b]
+inside still flying
+graze t1: pos 8.4600,66.4505,9.2000 last 4.5000,66.5000,9.2000 vel 3.9600,-0.0495,0.0000 rot 90.000,-0.716 removed false has_hit false ground false ground_time 0 life 0 shake 0 hits [] entities 1 sent [103:11:b0a75794]
+graze t2: pos 12.3804,66.3520,9.2000 last 4.5000,66.5000,9.2000 vel 3.9204,-0.0985,0.0000 rot 90.000,-1.439 removed false has_hit false ground false ground_time 0 life 0 shake 0 hits [] entities 1 sent [103:11:b5f181d8]
+graze t3: pos 16.2616,66.2050,9.2000 last 4.5000,66.5000,9.2000 vel 3.8812,-0.1470,0.0000 rot 90.000,-2.169 removed false has_hit false ground false ground_time 0 life 0 shake 0 hits [] entities 1 sent [103:11:565188d0]
+graze still flying
+pre_hit t1: pos 8.9600,66.4505,8.5000 last 5.0000,66.5000,8.5000 vel 3.9600,-0.0495,0.0000 rot 90.000,-0.716 removed false has_hit true ground false ground_time 0 life 0 shake 0 hits [] entities 1 sent [103:11:b0a75794]
+pre_hit t2: pos 12.8804,66.3520,8.5000 last 5.0000,66.5000,8.5000 vel 3.9204,-0.0985,0.0000 rot 90.000,-1.439 removed false has_hit true ground false ground_time 0 life 0 shake 0 hits [] entities 1 sent [103:11:b5f181d8]
+pre_hit t3: pos 16.7616,66.2050,8.5000 last 5.0000,66.5000,8.5000 vel 3.8812,-0.1470,0.0000 rot 90.000,-2.169 removed false has_hit true ground false ground_time 0 life 0 shake 0 hits [] entities 1 sent [103:11:565188d0]
+pre_hit still flying
+water_hit t1: pos 8.6000,66.4550,8.5000 last 5.0000,66.5000,8.5000 vel 3.6000,-0.0450,0.0000 rot 90.000,-0.716 removed false has_hit true ground false ground_time 0 life 0 shake 0 hits [block 8,66,8 face West at 8.0000,66.4625,8.5000 normal -0.9999,0.0125,-0.0000] entities 1 sent [103:11:0a607b61]
+water_hit t2: pos 11.8400,66.3695,8.5000 last 5.0000,66.5000,8.5000 vel 3.2400,-0.0855,0.0000 rot 90.000,-1.512 removed false has_hit true ground false ground_time 0 life 0 shake 0 hits [] entities 1 sent [103:11:9559f372]
+water_hit t3: pos 14.7560,66.2476,8.5000 last 5.0000,66.5000,8.5000 vel 2.9160,-0.1220,0.0000 rot 90.000,-2.395 removed false has_hit true ground false ground_time 0 life 0 shake 0 hits [] entities 1 sent [103:10:8a3a786a]
+water_hit still flying
+row_east t1: pos 10.9400,66.4505,8.5000 last 5.0000,66.5000,8.5000 vel 5.9400,-0.0495,0.0000 rot 90.000,-0.477 removed false has_hit true ground false ground_time 0 life 0 shake 0 hits [block 8,66,8 face West at 8.0000,66.4750,8.5000 normal -1.0000,0.0083,-0.0000] entities 1 sent [103:11:8121c339]
+row_east t2: pos 16.8206,66.3520,8.5000 last 5.0000,66.5000,8.5000 vel 5.8806,-0.0985,0.0000 rot 90.000,-0.960 removed false has_hit true ground false ground_time 0 life 0 shake 0 hits [] entities 1 sent [103:11:09734374]
+row_east still flying
+row_west t1: pos 7.0600,66.4505,8.5000 last 13.0000,66.5000,8.5000 vel -5.9400,-0.0495,0.0000 rot -90.000,-0.477 removed false has_hit true ground false ground_time 0 life 0 shake 0 hits [block 10,66,8 face East at 11.0000,66.4833,8.5000 normal 1.0000,0.0083,-0.0000] entities 1 sent [103:11:e73308d1]
+row_west t2: pos 1.1794,66.3520,8.5000 last 13.0000,66.5000,8.5000 vel -5.8806,-0.0985,0.0000 rot -90.000,-0.960 removed false has_hit true ground false ground_time 0 life 0 shake 0 hits [] entities 1 sent [103:11:a092fea0]
+row_west still flying
+row_up t1: pos 8.5000,66.0205,8.5000 last 8.5000,73.0000,8.5000 vel 0.0000,-6.9795,0.0000 rot 0.000,-90.000 removed false has_hit true ground false ground_time 0 life 0 shake 0 hits [block 8,68,8 face Up at 8.5000,69.0000,8.5000 normal -0.0000,1.0000,-0.0000] entities 1 sent [103:11:d67badaa]
+row_up t2: pos 8.5000,59.0613,8.5000 last 8.5000,73.0000,8.5000 vel 0.0000,-6.9592,0.0000 rot 0.000,-90.000 removed false has_hit true ground false ground_time 0 life 0 shake 0 hits [] entities 1 sent [103:11:ded736bd]
+row_up still flying
+row_down t1: pos 8.5000,70.3905,8.5000 last 8.5000,64.5000,8.5000 vel 0.0000,5.8905,0.0000 rot 0.000,90.000 removed false has_hit true ground false ground_time 0 life 0 shake 0 hits [block 8,66,8 face Down at 8.5000,66.0000,8.5000 normal -0.0000,-1.0000,-0.0000] entities 1 sent [103:11:f1b2aab5]
+row_down t2: pos 8.5000,76.1726,8.5000 last 8.5000,64.5000,8.5000 vel 0.0000,5.7821,0.0000 rot 0.000,90.000 removed false has_hit true ground false ground_time 0 life 0 shake 0 hits [] entities 1 sent [103:11:002b1dca]
+row_down still flying
+row_south t1: pos 8.5000,66.4505,10.9400 last 8.5000,66.5000,5.0000 vel 0.0000,-0.0495,5.9400 rot 0.000,-0.477 removed false has_hit true ground false ground_time 0 life 0 shake 0 hits [block 8,66,8 face North at 8.5000,66.4750,8.0000 normal -0.0000,0.0083,-1.0000] entities 1 sent [103:11:0e0a5bbf]
+row_south t2: pos 8.5000,66.3520,16.8206 last 8.5000,66.5000,5.0000 vel 0.0000,-0.0985,5.8806 rot 0.000,-0.960 removed false has_hit true ground false ground_time 0 life 0 shake 0 hits [] entities 1 sent [103:11:09d2a810]
+row_south still flying
+row_north t1: pos 8.5000,66.4505,7.0600 last 8.5000,66.5000,13.0000 vel 0.0000,-0.0495,-5.9400 rot 180.000,-0.477 removed false has_hit true ground false ground_time 0 life 0 shake 0 hits [block 8,66,10 face South at 8.5000,66.4833,11.0000 normal -0.0000,0.0083,1.0000] entities 1 sent [103:11:f5c7d2a2]
+row_north t2: pos 8.5000,66.3520,1.1794 last 8.5000,66.5000,13.0000 vel 0.0000,-0.0985,-5.8806 rot 180.000,-0.960 removed false has_hit true ground false ground_time 0 life 0 shake 0 hits [] entities 1 sent [103:11:a8fd6fc1]
+row_north still flying
+shapes_east t1: pos 12.9200,66.3505,8.5000 last 5.0000,66.4000,8.5000 vel 7.9200,-0.0495,0.0000 rot 90.000,-0.358 removed false has_hit true ground false ground_time 0 life 0 shake 0 hits [block 8,66,8 face West at 8.0000,66.3813,8.5000 normal -1.0000,0.0062,-0.0000] entities 1 sent [103:11:b8e318cb]
+shapes_east t2: pos 20.7608,66.2520,8.5000 last 5.0000,66.4000,8.5000 vel 7.8408,-0.0985,0.0000 rot 90.000,-0.720 removed false has_hit true ground false ground_time 0 life 0 shake 0 hits [] entities 1 sent [103:11:cc3241ee]
+shapes_east still flying
+shapes_west t1: pos 7.0800,66.3505,8.5000 last 15.0000,66.4000,8.5000 vel -7.9200,-0.0495,0.0000 rot -90.000,-0.358 removed false has_hit true ground false ground_time 0 life 0 shake 0 hits [block 12,66,8 face East at 13.0000,66.3875,8.5000 normal 1.0000,0.0062,-0.0000] entities 1 sent [103:11:2b9d771f]
+shapes_west t2: pos -0.7608,66.2520,8.5000 last 15.0000,66.4000,8.5000 vel -7.8408,-0.0985,0.0000 rot -90.000,-0.720 removed false has_hit true ground false ground_time 0 life 0 shake 0 hits [] entities 1 sent [103:11:580f38de]
+shapes_west still flying
+stair_top t1: pos 8.9000,65.9905,8.5000 last 8.9000,70.0000,8.5000 vel 0.0000,-4.0095,0.0000 rot 0.000,-90.000 removed false has_hit true ground false ground_time 0 life 0 shake 0 hits [block 8,66,8 face Up at 8.9000,67.0000,8.5000 normal -0.0000,1.0000,-0.0000] entities 1 sent [103:11:46c4c902]
+stair_top t2: pos 8.9000,61.9716,8.5000 last 8.9000,70.0000,8.5000 vel 0.0000,-4.0189,0.0000 rot 0.000,-90.000 removed false has_hit true ground false ground_time 0 life 0 shake 0 hits [] entities 1 sent [103:11:453c1b3a]
+stair_top still flying
+fence_high t1: pos 12.9200,67.1505,8.5000 last 5.0000,67.2000,8.5000 vel 7.9200,-0.0495,0.0000 rot 90.000,-0.358 removed false has_hit true ground false ground_time 0 life 0 shake 0 hits [block 8,66,8 face Up at 8.3750,67.1789,8.5000 normal -1.0000,0.0062,-0.0000] entities 1 sent [103:11:b8e318cb]
+fence_high t2: pos 20.7608,67.0520,8.5000 last 5.0000,67.2000,8.5000 vel 7.8408,-0.0985,0.0000 rot 90.000,-0.720 removed false has_hit true ground false ground_time 0 life 0 shake 0 hits [] entities 1 sent [103:11:cc3241ee]
+fence_high still flying
+target_centre t1: pos 8.9600,66.4505,8.5000 last 5.0000,66.5000,8.5000 vel 3.9600,-0.0495,0.0000 rot 90.000,-0.716 removed false has_hit true ground false ground_time 0 life 0 shake 0 hits [block 8,66,8 face West at 8.0000,66.4625,8.5000 normal -0.9999,0.0125,-0.0000] target BlockStateId(25109 = "target") entities 1 sent [103:11:b0a75794]
+target_centre t2: pos 12.8804,66.3520,8.5000 last 5.0000,66.5000,8.5000 vel 3.9204,-0.0985,0.0000 rot 90.000,-1.439 removed false has_hit true ground false ground_time 0 life 0 shake 0 hits [] target BlockStateId(25109 = "target") entities 1 sent [103:11:b5f181d8]
+target_centre t3: pos 16.7616,66.2050,8.5000 last 5.0000,66.5000,8.5000 vel 3.8812,-0.1470,0.0000 rot 90.000,-2.169 removed false has_hit true ground false ground_time 0 life 0 shake 0 hits [] target BlockStateId(25109 = "target") entities 1 sent [103:11:565188d0]
+target_centre still flying
+target_edge t1: pos 8.9600,66.9005,8.0500 last 5.0000,66.9500,8.0500 vel 3.9600,-0.0495,0.0000 rot 90.000,-0.716 removed false has_hit true ground false ground_time 0 life 0 shake 0 hits [block 8,66,8 face West at 8.0000,66.9125,8.0500 normal -0.9999,0.0125,-0.0000] target BlockStateId(25109 = "target") entities 1 sent [103:11:b0a75794]
+target_edge t2: pos 12.8804,66.8020,8.0500 last 5.0000,66.9500,8.0500 vel 3.9204,-0.0985,0.0000 rot 90.000,-1.439 removed false has_hit true ground false ground_time 0 life 0 shake 0 hits [] target BlockStateId(25109 = "target") entities 1 sent [103:11:b5f181d8]
+target_edge t3: pos 16.7616,66.6550,8.0500 last 5.0000,66.9500,8.0500 vel 3.8812,-0.1470,0.0000 rot 90.000,-2.169 removed false has_hit true ground false ground_time 0 life 0 shake 0 hits [] target BlockStateId(25109 = "target") entities 1 sent [103:11:565188d0]
+target_edge still flying
+target_top t1: pos 8.2000,65.9905,8.8000 last 8.2000,70.0000,8.8000 vel 0.0000,-4.0095,0.0000 rot 0.000,-90.000 removed false has_hit true ground false ground_time 0 life 0 shake 0 hits [block 8,66,8 face Up at 8.2000,67.0000,8.8000 normal -0.0000,1.0000,-0.0000] target BlockStateId(25109 = "target") entities 1 sent [103:11:46c4c902]
+target_top t2: pos 8.2000,61.9716,8.8000 last 8.2000,70.0000,8.8000 vel 0.0000,-4.0189,0.0000 rot 0.000,-90.000 removed false has_hit true ground false ground_time 0 life 0 shake 0 hits [] target BlockStateId(25109 = "target") entities 1 sent [103:11:453c1b3a]
+target_top t3: pos 8.2000,57.9434,8.8000 last 8.2000,70.0000,8.8000 vel 0.0000,-4.0282,0.0000 rot 0.000,-90.000 removed false has_hit true ground false ground_time 0 life 0 shake 0 hits [] target BlockStateId(25109 = "target") entities 1 sent [103:11:55f60d23]
+target_top still flying
+border_east t1: pos 16.9500,66.4505,8.5000 last 12.0000,66.5000,8.5000 vel 4.9500,-0.0495,0.0000 rot 90.000,-0.573 removed false has_hit true ground false ground_time 0 life 0 shake 0 hits [block 16,66,8 face West at 16.0000,66.4600,8.5000 normal -1.0000,0.0100,-0.0000] entities 1 sent [103:11:7be5bdd8]
+border_east t2: pos 21.8505,66.3520,8.5000 last 12.0000,66.5000,8.5000 vel 4.9005,-0.0985,0.0000 rot 90.000,-1.152 removed false has_hit true ground false ground_time 0 life 0 shake 0 hits [] entities 1 sent [103:11:dc1c6be2]
+border_east t3: pos 26.7020,66.2050,8.5000 last 12.0000,66.5000,8.5000 vel 4.8515,-0.1470,0.0000 rot 90.000,-1.736 removed false has_hit true ground false ground_time 0 life 0 shake 0 hits [] entities 1 sent [103:11:6ab4468d]
+border_east still flying
+border_west t1: pos 15.0500,66.4505,8.5000 last 20.0000,66.5000,8.5000 vel -4.9500,-0.0495,0.0000 rot -90.000,-0.573 removed false has_hit true ground false ground_time 0 life 0 shake 0 hits [block 15,66,8 face East at 16.0000,66.4600,8.5000 normal 1.0000,0.0100,-0.0000] entities 1 sent [103:11:dbfd6b38]
+border_west t2: pos 10.1495,66.3520,8.5000 last 20.0000,66.5000,8.5000 vel -4.9005,-0.0985,0.0000 rot -90.000,-1.152 removed false has_hit true ground false ground_time 0 life 0 shake 0 hits [] entities 1 sent [103:11:6c177126]
+border_west t3: pos 5.2980,66.2050,8.5000 last 20.0000,66.5000,8.5000 vel -4.8515,-0.1470,0.0000 rot -90.000,-1.736 removed false has_hit true ground false ground_time 0 life 0 shake 0 hits [] entities 1 sent [103:11:08a14b45]
+border_west still flying
+border_south t1: pos 8.5000,66.4505,16.9500 last 8.5000,66.5000,12.0000 vel 0.0000,-0.0495,4.9500 rot 0.000,-0.573 removed false has_hit true ground false ground_time 0 life 0 shake 0 hits [block 8,66,16 face North at 8.5000,66.4600,16.0000 normal -0.0000,0.0100,-1.0000] entities 1 sent [103:11:928dc7f2]
+border_south t2: pos 8.5000,66.3520,21.8505 last 8.5000,66.5000,12.0000 vel 0.0000,-0.0985,4.9005 rot 0.000,-1.152 removed false has_hit true ground false ground_time 0 life 0 shake 0 hits [] entities 1 sent [103:11:362942ce]
+border_south t3: pos 8.5000,66.2050,26.7020 last 8.5000,66.5000,12.0000 vel 0.0000,-0.1470,4.8515 rot 0.000,-1.736 removed false has_hit true ground false ground_time 0 life 0 shake 0 hits [] entities 1 sent [103:11:f53595c5]
+border_south still flying
+border_north t1: pos 8.5000,66.4505,15.0500 last 8.5000,66.5000,20.0000 vel 0.0000,-0.0495,-4.9500 rot 180.000,-0.573 removed false has_hit true ground false ground_time 0 life 0 shake 0 hits [block 8,66,15 face South at 8.5000,66.4600,16.0000 normal -0.0000,0.0100,1.0000] entities 1 sent [103:11:65ea8f17]
+border_north t2: pos 8.5000,66.3520,10.1495 last 8.5000,66.5000,20.0000 vel 0.0000,-0.0985,-4.9005 rot 180.000,-1.152 removed false has_hit true ground false ground_time 0 life 0 shake 0 hits [] entities 1 sent [103:11:679d8373]
+border_north t3: pos 8.5000,66.2050,5.2980 last 8.5000,66.5000,20.0000 vel 0.0000,-0.1470,-4.8515 rot 180.000,-1.736 removed false has_hit true ground false ground_time 0 life 0 shake 0 hits [] entities 1 sent [103:11:9c1fc07c]
+border_north still flying
+border_corner t1: pos 15.9700,66.4505,15.9700 last 13.0000,66.5000,13.0000 vel 2.9700,-0.0495,2.9700 rot 45.000,-0.675 removed false has_hit true ground false ground_time 0 life 0 shake 0 hits [block 15,66,15 face West at 15.0000,66.4667,15.0000 normal -0.7071,0.0118,-0.7071] entities 1 sent [103:10:92a43c66]
+border_corner t2: pos 18.9103,66.3520,18.9103 last 13.0000,66.5000,13.0000 vel 2.9403,-0.0985,2.9403 rot 45.000,-1.357 removed false has_hit true ground false ground_time 0 life 0 shake 0 hits [] entities 1 sent [103:10:90fef3b8]
+border_corner t3: pos 21.8212,66.2050,21.8212 last 13.0000,66.5000,13.0000 vel 2.9109,-0.1470,2.9109 rot 45.000,-2.045 removed false has_hit true ground false ground_time 0 life 0 shake 0 hits [] entities 1 sent [103:10:d5b90464]
+border_corner still flying
+border_mob t1: pos 16.9500,66.7505,8.5000 last 12.0000,66.8000,8.5000 vel 4.9500,-0.0495,0.0000 rot 90.000,-0.573 removed false has_hit true ground false ground_time 0 life 0 shake 0 hits [entity 91001 at 15.4000,66.7660,8.5000 normal -1.0000,0.0100,-0.0000] mob 91001 health 20.0 removed false entities 2 sent [103:11:7be5bdd8]
+border_mob t2: pos 21.8505,66.6520,8.5000 last 12.0000,66.8000,8.5000 vel 4.9005,-0.0985,0.0000 rot 90.000,-1.152 removed false has_hit true ground false ground_time 0 life 0 shake 0 hits [] mob 91001 health 20.0 removed false entities 2 sent [103:11:dc1c6be2]
+border_mob t3: pos 26.7020,66.5050,8.5000 last 12.0000,66.8000,8.5000 vel 4.8515,-0.1470,0.0000 rot 90.000,-1.736 removed false has_hit true ground false ground_time 0 life 0 shake 0 hits [] mob 91001 health 20.0 removed false entities 2 sent [103:11:6ab4468d]
+border_mob still flying
+mob_west t1: pos 8.4600,66.7505,8.5000 last 4.5000,66.8000,8.5000 vel 3.9600,-0.0495,0.0000 rot 90.000,-0.716 removed false has_hit true ground false ground_time 0 life 0 shake 0 hits [entity 91001 at 7.9000,66.7575,8.5000 normal -0.9999,0.0125,-0.0000] mob 91001 health 20.0 removed false entities 2 sent [103:11:b0a75794]
+mob_west t2: pos 12.3804,66.6520,8.5000 last 4.5000,66.8000,8.5000 vel 3.9204,-0.0985,0.0000 rot 90.000,-1.439 removed false has_hit true ground false ground_time 0 life 0 shake 0 hits [] mob 91001 health 20.0 removed false entities 2 sent [103:11:b5f181d8]
+mob_west t3: pos 16.2616,66.5050,8.5000 last 4.5000,66.8000,8.5000 vel 3.8812,-0.1470,0.0000 rot 90.000,-2.169 removed false has_hit true ground false ground_time 0 life 0 shake 0 hits [] mob 91001 health 20.0 removed false entities 2 sent [103:11:565188d0]
+mob_west still flying
+mob_east t1: pos 8.5400,66.7505,8.5000 last 12.5000,66.8000,8.5000 vel -3.9600,-0.0495,0.0000 rot -90.000,-0.716 removed false has_hit true ground false ground_time 0 life 0 shake 0 hits [entity 91001 at 9.1000,66.7575,8.5000 normal 0.9999,0.0125,-0.0000] mob 91001 health 20.0 removed false entities 2 sent [103:11:22f9c424]
+mob_east t2: pos 4.6196,66.6520,8.5000 last 12.5000,66.8000,8.5000 vel -3.9204,-0.0985,0.0000 rot -90.000,-1.439 removed false has_hit true ground false ground_time 0 life 0 shake 0 hits [] mob 91001 health 20.0 removed false entities 2 sent [103:11:4a1b8ea8]
+mob_east t3: pos 0.7384,66.5050,8.5000 last 12.5000,66.8000,8.5000 vel -3.8812,-0.1470,0.0000 rot -90.000,-2.169 removed false has_hit true ground false ground_time 0 life 0 shake 0 hits [] mob 91001 health 20.0 removed false entities 2 sent [103:11:97aa1704]
+mob_east still flying
+mob_top t1: pos 8.5000,67.9905,8.5000 last 8.5000,72.0000,8.5000 vel 0.0000,-4.0095,0.0000 rot 0.000,-90.000 removed false has_hit true ground false ground_time 0 life 0 shake 0 hits [entity 91001 at 8.5000,68.2500,8.5000 normal -0.0000,1.0000,-0.0000] mob 91001 health 20.0 removed false entities 2 sent [103:11:46c4c902]
+mob_top t2: pos 8.5000,63.9716,8.5000 last 8.5000,72.0000,8.5000 vel 0.0000,-4.0189,0.0000 rot 0.000,-90.000 removed false has_hit true ground false ground_time 0 life 0 shake 0 hits [] mob 91001 health 20.0 removed false entities 2 sent [103:11:453c1b3a]
+mob_top t3: pos 8.5000,59.9434,8.5000 last 8.5000,72.0000,8.5000 vel 0.0000,-4.0282,0.0000 rot 0.000,-90.000 removed false has_hit true ground false ground_time 0 life 0 shake 0 hits [] mob 91001 health 20.0 removed false entities 2 sent [103:11:55f60d23]
+mob_top still flying
+mob_below t1: pos 8.5000,68.1105,8.5000 last 8.5000,64.2000,8.5000 vel 0.0000,3.9105,0.0000 rot 0.000,90.000 removed false has_hit true ground false ground_time 0 life 0 shake 0 hits [entity 91001 at 8.5000,65.7000,8.5000 normal -0.0000,-1.0000,-0.0000] mob 91001 health 20.0 removed false entities 2 sent [103:11:9cfab454]
+mob_below t2: pos 8.5000,71.9324,8.5000 last 8.5000,64.2000,8.5000 vel 0.0000,3.8219,0.0000 rot 0.000,90.000 removed false has_hit true ground false ground_time 0 life 0 shake 0 hits [] mob 91001 health 20.0 removed false entities 2 sent [103:11:a4e59ec2]
+mob_below t3: pos 8.5000,75.6666,8.5000 last 8.5000,64.2000,8.5000 vel 0.0000,3.7342,0.0000 rot 0.000,90.000 removed false has_hit true ground false ground_time 0 life 0 shake 0 hits [] mob 91001 health 20.0 removed false entities 2 sent [103:11:d4c948c8]
+mob_below still flying
+mob_north t1: pos 8.5000,66.7505,8.9600 last 8.5000,66.8000,5.0000 vel 0.0000,-0.0495,3.9600 rot 0.000,-0.716 removed false has_hit true ground false ground_time 0 life 0 shake 0 hits [entity 91001 at 8.5000,66.7638,7.9000 normal -0.0000,0.0125,-0.9999] mob 91001 health 20.0 removed false entities 2 sent [103:11:f79a2aae]
+mob_north t2: pos 8.5000,66.6520,12.8804 last 8.5000,66.8000,5.0000 vel 0.0000,-0.0985,3.9204 rot 0.000,-1.439 removed false has_hit true ground false ground_time 0 life 0 shake 0 hits [] mob 91001 health 20.0 removed false entities 2 sent [103:11:34fd3f74]
+mob_north t3: pos 8.5000,66.5050,16.7616 last 8.5000,66.8000,5.0000 vel 0.0000,-0.1470,3.8812 rot 0.000,-2.169 removed false has_hit true ground false ground_time 0 life 0 shake 0 hits [] mob 91001 health 20.0 removed false entities 2 sent [103:11:ea2b720c]
+mob_north still flying
+mob_south t1: pos 8.5000,66.7505,8.0400 last 8.5000,66.8000,12.0000 vel 0.0000,-0.0495,-3.9600 rot 180.000,-0.716 removed false has_hit true ground false ground_time 0 life 0 shake 0 hits [entity 91001 at 8.5000,66.7638,9.1000 normal -0.0000,0.0125,0.9999] mob 91001 health 20.0 removed false entities 2 sent [103:11:d4cc45e3]
+mob_south t2: pos 8.5000,66.6520,4.1196 last 8.5000,66.8000,12.0000 vel 0.0000,-0.0985,-3.9204 rot 180.000,-1.439 removed false has_hit true ground false ground_time 0 life 0 shake 0 hits [] mob 91001 health 20.0 removed false entities 2 sent [103:11:36b86d7d]
+mob_south t3: pos 8.5000,66.5050,0.2384 last 8.5000,66.8000,12.0000 vel 0.0000,-0.1470,-3.8812 rot 180.000,-2.169 removed false has_hit true ground false ground_time 0 life 0 shake 0 hits [] mob 91001 health 20.0 removed false entities 2 sent [103:11:21545bed]
+mob_south still flying
+mob_graze t1: pos 8.4600,66.7505,9.0500 last 4.5000,66.8000,9.0500 vel 3.9600,-0.0495,0.0000 rot 90.000,-0.716 removed false has_hit true ground false ground_time 0 life 0 shake 0 hits [entity 91001 at 7.9000,66.7575,9.0500 normal -0.9999,0.0125,-0.0000] mob 91001 health 20.0 removed false entities 2 sent [103:11:b0a75794]
+mob_graze t2: pos 12.3804,66.6520,9.0500 last 4.5000,66.8000,9.0500 vel 3.9204,-0.0985,0.0000 rot 90.000,-1.439 removed false has_hit true ground false ground_time 0 life 0 shake 0 hits [] mob 91001 health 20.0 removed false entities 2 sent [103:11:b5f181d8]
+mob_graze t3: pos 16.2616,66.5050,9.0500 last 4.5000,66.8000,9.0500 vel 3.8812,-0.1470,0.0000 rot 90.000,-2.169 removed false has_hit true ground false ground_time 0 life 0 shake 0 hits [] mob 91001 health 20.0 removed false entities 2 sent [103:11:565188d0]
+mob_graze still flying
+mob_miss t1: pos 8.4600,66.7505,9.2500 last 4.5000,66.8000,9.2500 vel 3.9600,-0.0495,0.0000 rot 90.000,-0.716 removed false has_hit false ground false ground_time 0 life 0 shake 0 hits [] mob 91001 health 20.0 removed false entities 2 sent [103:11:b0a75794]
+mob_miss t2: pos 12.3804,66.6520,9.2500 last 4.5000,66.8000,9.2500 vel 3.9204,-0.0985,0.0000 rot 90.000,-1.439 removed false has_hit false ground false ground_time 0 life 0 shake 0 hits [] mob 91001 health 20.0 removed false entities 2 sent [103:11:b5f181d8]
+mob_miss t3: pos 16.2616,66.5050,9.2500 last 4.5000,66.8000,9.2500 vel 3.8812,-0.1470,0.0000 rot 90.000,-2.169 removed false has_hit false ground false ground_time 0 life 0 shake 0 hits [] mob 91001 health 20.0 removed false entities 2 sent [103:11:565188d0]
+mob_miss still flying
+mob_with_owner t1: pos 8.4600,66.7505,8.5000 last 4.5000,66.8000,8.5000 vel 3.9600,-0.0495,0.0000 rot 90.000,-0.716 removed false has_hit true ground false ground_time 0 life 0 shake 0 hits [entity 91001 at 7.9000,66.7575,8.5000 normal -0.9999,0.0125,-0.0000] mob 91001 health 20.0 removed false entities 3 sent [103:11:b0a75794]
+mob_with_owner t2: pos 12.3804,66.6520,8.5000 last 4.5000,66.8000,8.5000 vel 3.9204,-0.0985,0.0000 rot 90.000,-1.439 removed false has_hit true ground false ground_time 0 life 0 shake 0 hits [] mob 91001 health 20.0 removed false entities 3 sent [103:11:b5f181d8]
+mob_with_owner t3: pos 16.2616,66.5050,8.5000 last 4.5000,66.8000,8.5000 vel 3.8812,-0.1470,0.0000 rot 90.000,-2.169 removed false has_hit true ground false ground_time 0 life 0 shake 0 hits [] mob 91001 health 20.0 removed false entities 3 sent [103:11:565188d0]
+mob_with_owner still flying
+mob_removed t1: pos 12.4200,66.7505,8.5000 last 4.5000,66.8000,8.5000 vel 7.9200,-0.0495,0.0000 rot 90.000,-0.358 removed false has_hit true ground false ground_time 0 life 0 shake 0 hits [entity 91002 at 10.9000,66.7600,8.5000 normal -1.0000,0.0062,-0.0000] mob 91001 health 20.0 removed true mob 91002 health 20.0 removed false entities 2 sent [103:11:b8e318cb]
+mob_removed t2: pos 20.2608,66.6520,8.5000 last 4.5000,66.8000,8.5000 vel 7.8408,-0.0985,0.0000 rot 90.000,-0.720 removed false has_hit true ground false ground_time 0 life 0 shake 0 hits [] mob 91001 health 20.0 removed true mob 91002 health 20.0 removed false entities 2 sent [103:11:cc3241ee]
+mob_removed t3: pos 28.0232,66.5050,8.5000 last 4.5000,66.8000,8.5000 vel 7.7624,-0.1470,0.0000 rot 90.000,-1.085 removed false has_hit true ground false ground_time 0 life 0 shake 0 hits [] mob 91001 health 20.0 removed true mob 91002 health 20.0 removed false entities 2 sent [103:11:6cc07b76]
+mob_removed still flying
+cloud_hit t1: pos 12.4200,66.7505,8.5000 last 4.5000,66.8000,8.5000 vel 7.9200,-0.0495,0.0000 rot 90.000,-0.358 removed false has_hit true ground false ground_time 0 life 0 shake 0 hits [entity 91001 at 5.2000,66.7956,8.5000 normal -1.0000,0.0062,-0.0000] mob 91002 health 20.0 removed false entities 3 sent [103:11:b8e318cb]
+cloud_hit t2: pos 20.2608,66.6520,8.5000 last 4.5000,66.8000,8.5000 vel 7.8408,-0.0985,0.0000 rot 90.000,-0.720 removed false has_hit true ground false ground_time 0 life 0 shake 0 hits [] mob 91002 health 20.0 removed false entities 3 sent [103:11:cc3241ee]
+cloud_hit t3: pos 28.0232,66.5050,8.5000 last 4.5000,66.8000,8.5000 vel 7.7624,-0.1470,0.0000 rot 90.000,-1.085 removed false has_hit true ground false ground_time 0 life 0 shake 0 hits [] mob 91002 health 20.0 removed false entities 3 sent [103:11:6cc07b76]
+cloud_hit still flying
+mobs_east t1: pos 12.9200,66.7505,8.5000 last 5.0000,66.8000,8.5000 vel 7.9200,-0.0495,0.0000 rot 90.000,-0.358 removed false has_hit true ground false ground_time 0 life 0 shake 0 hits [entity 91001 at 7.9000,66.7819,8.5000 normal -1.0000,0.0062,-0.0000] mob 91001 health 20.0 removed false mob 91002 health 20.0 removed false entities 3 sent [103:11:b8e318cb]
+mobs_east t2: pos 20.7608,66.6520,8.5000 last 5.0000,66.8000,8.5000 vel 7.8408,-0.0985,0.0000 rot 90.000,-0.720 removed false has_hit true ground false ground_time 0 life 0 shake 0 hits [] mob 91001 health 20.0 removed false mob 91002 health 20.0 removed false entities 3 sent [103:11:cc3241ee]
+mobs_east still flying
+mobs_west t1: pos 7.0800,66.7505,8.5000 last 15.0000,66.8000,8.5000 vel -7.9200,-0.0495,0.0000 rot -90.000,-0.358 removed false has_hit true ground false ground_time 0 life 0 shake 0 hits [entity 91002 at 12.1000,66.7819,8.5000 normal 1.0000,0.0062,-0.0000] mob 91001 health 20.0 removed false mob 91002 health 20.0 removed false entities 3 sent [103:11:2b9d771f]
+mobs_west t2: pos -0.7608,66.6520,8.5000 last 15.0000,66.8000,8.5000 vel -7.8408,-0.0985,0.0000 rot -90.000,-0.720 removed false has_hit true ground false ground_time 0 life 0 shake 0 hits [] mob 91001 health 20.0 removed false mob 91002 health 20.0 removed false entities 3 sent [103:11:580f38de]
+mobs_west still flying
+mob_before_block t1: pos 12.9200,66.7505,8.5000 last 5.0000,66.8000,8.5000 vel 7.9200,-0.0495,0.0000 rot 90.000,-0.358 removed false has_hit true ground false ground_time 0 life 0 shake 0 hits [entity 91001 at 7.9000,66.7819,8.5000 normal -1.0000,0.0062,-0.0000] mob 91001 health 20.0 removed false entities 2 sent [103:11:b8e318cb]
+mob_before_block t2: pos 20.7608,66.6520,8.5000 last 5.0000,66.8000,8.5000 vel 7.8408,-0.0985,0.0000 rot 90.000,-0.720 removed false has_hit true ground false ground_time 0 life 0 shake 0 hits [] mob 91001 health 20.0 removed false entities 2 sent [103:11:cc3241ee]
+mob_before_block still flying
+block_before_mob t1: pos 12.9200,66.7505,8.5000 last 5.0000,66.8000,8.5000 vel 7.9200,-0.0495,0.0000 rot 90.000,-0.358 removed false has_hit true ground false ground_time 0 life 0 shake 0 hits [block 8,66,8 face West at 8.0000,66.7812,8.5000 normal -1.0000,0.0062,-0.0000] mob 91001 health 20.0 removed false entities 2 sent [103:11:b8e318cb]
+block_before_mob t2: pos 20.7608,66.6520,8.5000 last 5.0000,66.8000,8.5000 vel 7.8408,-0.0985,0.0000 rot 90.000,-0.720 removed false has_hit true ground false ground_time 0 life 0 shake 0 hits [] mob 91001 health 20.0 removed false entities 2 sent [103:11:cc3241ee]
+block_before_mob still flying
+block_after_mob_west t1: pos 6.0800,66.7505,8.5000 last 14.0000,66.8000,8.5000 vel -7.9200,-0.0495,0.0000 rot -90.000,-0.358 removed false has_hit true ground false ground_time 0 life 0 shake 0 hits [block 11,66,8 face East at 12.0000,66.7875,8.5000 normal 1.0000,0.0062,-0.0000] mob 91001 health 20.0 removed false entities 2 sent [103:11:2b9d771f]
+block_after_mob_west t2: pos -1.7608,66.6520,8.5000 last 14.0000,66.8000,8.5000 vel -7.8408,-0.0985,0.0000 rot -90.000,-0.720 removed false has_hit true ground false ground_time 0 life 0 shake 0 hits [] mob 91001 health 20.0 removed false entities 2 sent [103:11:580f38de]
+block_after_mob_west still flying
+mob_after_block_west t1: pos 6.0800,66.7505,8.5000 last 14.0000,66.8000,8.5000 vel -7.9200,-0.0495,0.0000 rot -90.000,-0.358 removed false has_hit true ground false ground_time 0 life 0 shake 0 hits [entity 91001 at 12.1000,66.7881,8.5000 normal 1.0000,0.0062,-0.0000] mob 91001 health 20.0 removed false entities 2 sent [103:11:2b9d771f]
+mob_after_block_west t2: pos -1.7608,66.6520,8.5000 last 14.0000,66.8000,8.5000 vel -7.8408,-0.0985,0.0000 rot -90.000,-0.720 removed false has_hit true ground false ground_time 0 life 0 shake 0 hits [] mob 91001 health 20.0 removed false entities 2 sent [103:11:580f38de]
+mob_after_block_west still flying
+arrow_skipped t1: pos 8.4600,66.7505,8.5000 last 4.5000,66.8000,8.5000 vel 3.9600,-0.0495,0.0000 rot 90.000,-0.716 removed false has_hit false ground false ground_time 0 life 0 shake 0 hits [] entities 2 sent [103:11:b0a75794]
+arrow_skipped t2: pos 12.3804,66.6520,8.5000 last 4.5000,66.8000,8.5000 vel 3.9204,-0.0985,0.0000 rot 90.000,-1.439 removed false has_hit false ground false ground_time 0 life 0 shake 0 hits [] entities 2 sent [103:11:b5f181d8]
+arrow_skipped t3: pos 16.2616,66.5050,8.5000 last 4.5000,66.8000,8.5000 vel 3.8812,-0.1470,0.0000 rot 90.000,-2.169 removed false has_hit false ground false ground_time 0 life 0 shake 0 hits [] entities 2 sent [103:11:565188d0]
+arrow_skipped still flying
+trident_skipped t1: pos 8.4600,66.7505,8.5000 last 4.5000,66.8000,8.5000 vel 3.9600,-0.0495,0.0000 rot 90.000,-0.716 removed false has_hit false ground false ground_time 0 life 0 shake 0 hits [] entities 2 sent [103:11:b0a75794]
+trident_skipped t2: pos 12.3804,66.6520,8.5000 last 4.5000,66.8000,8.5000 vel 3.9204,-0.0985,0.0000 rot 90.000,-1.439 removed false has_hit false ground false ground_time 0 life 0 shake 0 hits [] entities 2 sent [103:11:b5f181d8]
+trident_skipped t3: pos 16.2616,66.5050,8.5000 last 4.5000,66.8000,8.5000 vel 3.8812,-0.1470,0.0000 rot 90.000,-2.169 removed false has_hit false ground false ground_time 0 life 0 shake 0 hits [] entities 2 sent [103:11:565188d0]
+trident_skipped still flying
+item_skipped t1: pos 8.4600,66.7505,8.5000 last 4.5000,66.8000,8.5000 vel 3.9600,-0.0495,0.0000 rot 90.000,-0.716 removed false has_hit false ground false ground_time 0 life 0 shake 0 hits [] entities 2 sent [103:11:b0a75794]
+item_skipped t2: pos 12.3804,66.6520,8.5000 last 4.5000,66.8000,8.5000 vel 3.9204,-0.0985,0.0000 rot 90.000,-1.439 removed false has_hit false ground false ground_time 0 life 0 shake 0 hits [] entities 2 sent [103:11:b5f181d8]
+item_skipped t3: pos 16.2616,66.5050,8.5000 last 4.5000,66.8000,8.5000 vel 3.8812,-0.1470,0.0000 rot 90.000,-2.169 removed false has_hit false ground false ground_time 0 life 0 shake 0 hits [] entities 2 sent [103:11:565188d0]
+item_skipped still flying
+falling_block_skipped t1: pos 8.4600,66.7505,8.5000 last 4.5000,66.8000,8.5000 vel 3.9600,-0.0495,0.0000 rot 90.000,-0.716 removed false has_hit false ground false ground_time 0 life 0 shake 0 hits [] entities 2 sent [103:11:b0a75794]
+falling_block_skipped t2: pos 12.3804,66.6520,8.5000 last 4.5000,66.8000,8.5000 vel 3.9204,-0.0985,0.0000 rot 90.000,-1.439 removed false has_hit false ground false ground_time 0 life 0 shake 0 hits [] entities 2 sent [103:11:b5f181d8]
+falling_block_skipped t3: pos 16.2616,66.5050,8.5000 last 4.5000,66.8000,8.5000 vel 3.8812,-0.1470,0.0000 rot 90.000,-2.169 removed false has_hit false ground false ground_time 0 life 0 shake 0 hits [] entities 2 sent [103:11:565188d0]
+falling_block_skipped still flying
+snowball_hit t1: pos 8.4600,66.7505,8.5000 last 4.5000,66.8000,8.5000 vel 3.9600,-0.0495,0.0000 rot 90.000,-0.716 removed false has_hit true ground false ground_time 0 life 0 shake 0 hits [entity 91001 at 8.0750,66.7553,8.5000 normal -0.9999,0.0125,-0.0000] entities 2 sent [103:11:b0a75794]
+snowball_hit t2: pos 12.3804,66.6520,8.5000 last 4.5000,66.8000,8.5000 vel 3.9204,-0.0985,0.0000 rot 90.000,-1.439 removed false has_hit true ground false ground_time 0 life 0 shake 0 hits [] entities 2 sent [103:11:b5f181d8]
+snowball_hit t3: pos 16.2616,66.5050,8.5000 last 4.5000,66.8000,8.5000 vel 3.8812,-0.1470,0.0000 rot 90.000,-2.169 removed false has_hit true ground false ground_time 0 life 0 shake 0 hits [] entities 2 sent [103:11:565188d0]
+snowball_hit still flying
+owner_inside t1: pos 4.5990,66.9505,4.5000 last 4.5000,67.0000,4.5000 vel 0.0990,-0.0495,0.0000 rot 90.000,-26.565 removed false has_hit false ground false ground_time 0 life 0 shake 0 hits [] entities 2 sent [103:10:1b13c218]
+owner_inside t2: pos 4.6970,66.8520,4.5000 last 4.5000,67.0000,4.5000 vel 0.0980,-0.0985,0.0000 rot 90.000,-45.144 removed false has_hit false ground false ground_time 0 life 0 shake 0 hits [] entities 2 sent [103:10:3719d155]
+owner_inside t3: pos 4.7940,66.7050,4.5000 last 4.5000,67.0000,4.5000 vel 0.0970,-0.1470,0.0000 rot 90.000,-56.576 removed false has_hit false ground false ground_time 0 life 0 shake 0 hits [] entities 2 sent [103:10:9650db44]
+owner_inside t4: pos 4.8901,66.5099,4.5000 last 4.5000,67.0000,4.5000 vel 0.0961,-0.1950,0.0000 rot 90.000,-63.780 removed false has_hit false ground false ground_time 0 life 0 shake 0 hits [] entities 2 sent [103:10:882d7b94]
+owner_inside t5: pos 4.9852,66.2673,4.5000 last 4.5000,67.0000,4.5000 vel 0.0951,-0.2426,0.0000 rot 90.000,-68.595 removed false has_hit false ground false ground_time 0 life 0 shake 0 hits [] entities 2 sent [103:10:b58081ec]
+owner_inside still flying
+owner_pass t1: pos 5.4900,66.9505,4.5000 last 4.5000,67.0000,4.5000 vel 0.9900,-0.0495,0.0000 rot 90.000,-2.862 removed false has_hit false ground false ground_time 0 life 0 shake 0 hits [] entities 2 sent [103:10:c25c6a8b]
+owner_pass t2: pos 6.4701,66.8520,4.5000 last 4.5000,67.0000,4.5000 vel 0.9801,-0.0985,0.0000 rot 90.000,-5.739 removed false has_hit false ground false ground_time 0 life 0 shake 0 hits [] entities 2 sent [103:10:928eb963]
+owner_pass t3: pos 7.4404,66.7050,4.5000 last 4.5000,67.0000,4.5000 vel 0.9703,-0.1470,0.0000 rot 90.000,-8.616 removed false has_hit false ground false ground_time 0 life 0 shake 0 hits [] entities 2 sent [103:10:a205c4b0]
+owner_pass t4: pos 8.4010,66.5099,4.5000 last 4.5000,67.0000,4.5000 vel 0.9606,-0.1950,0.0000 rot 90.000,-11.478 removed false has_hit false ground false ground_time 0 life 0 shake 0 hits [] entities 2 sent [103:10:7c91eac1]
+owner_pass t5: pos 9.3520,66.2673,4.5000 last 4.5000,67.0000,4.5000 vel 0.9510,-0.2426,0.0000 rot 90.000,-14.311 removed false has_hit false ground false ground_time 0 life 0 shake 0 hits [] entities 2 sent [103:10:f67a0b79]
+owner_pass still flying
+owner_back t1: pos 7.4700,66.9505,4.5000 last 4.5000,67.0000,4.5000 vel 2.9700,-0.0495,0.0000 rot 90.000,-0.955 removed false has_hit false ground false ground_time 0 life 0 shake 0 hits [] entities 2 sent [103:10:4ba58d19]
+owner_back t2: pos 10.4103,66.8520,4.5000 last 4.5000,67.0000,4.5000 vel 2.9403,-0.0985,0.0000 rot 90.000,-1.919 removed false has_hit false ground false ground_time 0 life 0 shake 0 hits [] entities 2 sent [103:10:97f0e030]
+owner_back t3: pos 13.3212,66.7050,4.5000 last 4.5000,67.0000,4.5000 vel 2.9109,-0.1470,0.0000 rot 90.000,-2.891 removed false has_hit false ground false ground_time 0 life 0 shake 0 hits [] entities 2 sent [103:10:8222562f]
+owner_back t4: pos 10.3512,66.6555,4.5000 last 4.5000,67.0000,4.5000 vel -2.9700,-0.0495,0.0000 rot -90.000,-0.955 removed false has_hit false ground false ground_time 0 life 0 shake 0 hits [] entities 2 sent [103:10:1afd68f5]
+owner_back t5: pos 7.4109,66.5570,4.5000 last 4.5000,67.0000,4.5000 vel -2.9403,-0.0985,0.0000 rot -90.000,-1.919 removed false has_hit false ground false ground_time 0 life 0 shake 0 hits [] entities 2 sent [103:10:27d4bf0c]
+owner_back t6: pos 4.5000,66.4100,4.5000 last 4.5000,67.0000,4.5000 vel -2.9109,-0.1470,0.0000 rot -90.000,-2.891 removed false has_hit true ground false ground_time 0 life 0 shake 0 hits [entity 91000 at 5.1000,66.4403,4.5000 normal 0.9987,0.0504,-0.0000] entities 2 sent [103:10:94c327cb]
+owner_back t7: pos 1.6182,66.2149,4.5000 last 4.5000,67.0000,4.5000 vel -2.8818,-0.1950,0.0000 rot -90.000,-3.872 removed false has_hit true ground false ground_time 0 life 0 shake 0 hits [] entities 2 sent [103:10:0a0d61a2]
+owner_back t8: pos -1.2348,65.9723,4.5000 last 4.5000,67.0000,4.5000 vel -2.8530,-0.2426,0.0000 rot -90.000,-4.860 removed false has_hit true ground false ground_time 0 life 0 shake 0 hits [] entities 2 sent [103:10:d83385a5]
+owner_back still flying
+owner_too_soon t1: pos 4.7970,66.9505,4.5000 last 4.5000,67.0000,4.5000 vel 0.2970,-0.0495,0.0000 rot 90.000,-9.462 removed false has_hit false ground false ground_time 0 life 0 shake 0 hits [] entities 2 sent [103:10:10ed954e]
+owner_too_soon t2: pos 1.8270,66.9010,4.5000 last 4.5000,67.0000,4.5000 vel -2.9700,-0.0495,0.0000 rot -90.000,-0.955 removed false has_hit false ground false ground_time 0 life 0 shake 0 hits [] entities 2 sent [103:10:1afd68f5]
+owner_too_soon t3: pos -1.1133,66.8025,4.5000 last 4.5000,67.0000,4.5000 vel -2.9403,-0.0985,0.0000 rot -90.000,-1.919 removed false has_hit false ground false ground_time 0 life 0 shake 0 hits [] entities 2 sent [103:10:27d4bf0c]
+owner_too_soon t4: pos -4.0242,66.6555,4.5000 last 4.5000,67.0000,4.5000 vel -2.9109,-0.1470,0.0000 rot -90.000,-2.891 removed false has_hit false ground false ground_time 0 life 0 shake 0 hits [] entities 2 sent [103:10:94c327cb]
+owner_too_soon t5: pos -6.9060,66.4604,4.5000 last 4.5000,67.0000,4.5000 vel -2.8818,-0.1950,0.0000 rot -90.000,-3.872 removed false has_hit false ground false ground_time 0 life 0 shake 0 hits [] entities 2 sent [103:10:0a0d61a2]
+owner_too_soon t6: pos -9.7590,66.2178,4.5000 last 4.5000,67.0000,4.5000 vel -2.8530,-0.2426,0.0000 rot -90.000,-4.860 removed false has_hit false ground false ground_time 0 life 0 shake 0 hits [] entities 2 sent [103:10:d83385a5]
+owner_too_soon still flying
+corner_west t1: pos 8.9600,66.4505,8.5000 last 5.0000,66.5000,8.5000 vel 3.9600,-0.0495,0.0000 rot 90.000,-0.716 removed false has_hit true ground false ground_time 0 life 0 shake 0 hits [block 8,66,8 face West at 8.0000,66.4625,8.5000 normal -0.9999,0.0125,-0.0000] entities 1 sent [103:11:b0a75794]
+corner_west t2: pos 12.8804,66.3520,8.5000 last 5.0000,66.5000,8.5000 vel 3.9204,-0.0985,0.0000 rot 90.000,-1.439 removed false has_hit true ground false ground_time 0 life 0 shake 0 hits [] entities 1 sent [103:11:b5f181d8]
+corner_west t3: pos 16.7616,66.2050,8.5000 last 5.0000,66.5000,8.5000 vel 3.8812,-0.1470,0.0000 rot 90.000,-2.169 removed false has_hit true ground false ground_time 0 life 0 shake 0 hits [] entities 1 sent [103:11:565188d0]
+corner_west still flying
+corner_east t1: pos 8.0400,66.4505,8.5000 last 12.0000,66.5000,8.5000 vel -3.9600,-0.0495,0.0000 rot -90.000,-0.716 removed false has_hit true ground false ground_time 0 life 0 shake 0 hits [block 8,66,8 face East at 9.0000,66.4625,8.5000 normal 0.9999,0.0125,-0.0000] entities 1 sent [103:11:22f9c424]
+corner_east t2: pos 4.1196,66.3520,8.5000 last 12.0000,66.5000,8.5000 vel -3.9204,-0.0985,0.0000 rot -90.000,-1.439 removed false has_hit true ground false ground_time 0 life 0 shake 0 hits [] entities 1 sent [103:11:4a1b8ea8]
+corner_east t3: pos 0.2384,66.2050,8.5000 last 12.0000,66.5000,8.5000 vel -3.8812,-0.1470,0.0000 rot -90.000,-2.169 removed false has_hit true ground false ground_time 0 life 0 shake 0 hits [] entities 1 sent [103:11:97aa1704]
+corner_east still flying
+corner_down t1: pos 8.5000,68.9105,8.5000 last 8.5000,65.0000,8.5000 vel 0.0000,3.9105,0.0000 rot 0.000,90.000 removed false has_hit true ground false ground_time 0 life 0 shake 0 hits [block 8,68,8 face Down at 8.5000,68.0000,8.5000 normal -0.0000,-1.0000,-0.0000] entities 1 sent [103:11:9cfab454]
+corner_down t2: pos 8.5000,72.7324,8.5000 last 8.5000,65.0000,8.5000 vel 0.0000,3.8219,0.0000 rot 0.000,90.000 removed false has_hit true ground false ground_time 0 life 0 shake 0 hits [] entities 1 sent [103:11:a4e59ec2]
+corner_down t3: pos 8.5000,76.4666,8.5000 last 8.5000,65.0000,8.5000 vel 0.0000,3.7342,0.0000 rot 0.000,90.000 removed false has_hit true ground false ground_time 0 life 0 shake 0 hits [] entities 1 sent [103:11:d4c948c8]
+corner_down still flying
+corner_up t1: pos 8.5000,65.9905,8.5000 last 8.5000,70.0000,8.5000 vel 0.0000,-4.0095,0.0000 rot 0.000,-90.000 removed false has_hit true ground false ground_time 0 life 0 shake 0 hits [block 8,66,8 face Up at 8.5000,67.0000,8.5000 normal -0.0000,1.0000,-0.0000] entities 1 sent [103:11:46c4c902]
+corner_up t2: pos 8.5000,61.9716,8.5000 last 8.5000,70.0000,8.5000 vel 0.0000,-4.0189,0.0000 rot 0.000,-90.000 removed false has_hit true ground false ground_time 0 life 0 shake 0 hits [] entities 1 sent [103:11:453c1b3a]
+corner_up t3: pos 8.5000,57.9434,8.5000 last 8.5000,70.0000,8.5000 vel 0.0000,-4.0282,0.0000 rot 0.000,-90.000 removed false has_hit true ground false ground_time 0 life 0 shake 0 hits [] entities 1 sent [103:11:55f60d23]
+corner_up still flying
+corner_north t1: pos 8.5000,66.4505,8.9600 last 8.5000,66.5000,5.0000 vel 0.0000,-0.0495,3.9600 rot 0.000,-0.716 removed false has_hit true ground false ground_time 0 life 0 shake 0 hits [block 8,66,8 face North at 8.5000,66.4625,8.0000 normal -0.0000,0.0125,-0.9999] entities 1 sent [103:11:f79a2aae]
+corner_north t2: pos 8.5000,66.3520,12.8804 last 8.5000,66.5000,5.0000 vel 0.0000,-0.0985,3.9204 rot 0.000,-1.439 removed false has_hit true ground false ground_time 0 life 0 shake 0 hits [] entities 1 sent [103:11:34fd3f74]
+corner_north t3: pos 8.5000,66.2050,16.7616 last 8.5000,66.5000,5.0000 vel 0.0000,-0.1470,3.8812 rot 0.000,-2.169 removed false has_hit true ground false ground_time 0 life 0 shake 0 hits [] entities 1 sent [103:11:ea2b720c]
+corner_north still flying
+corner_south t1: pos 8.5000,66.4505,8.0400 last 8.5000,66.5000,12.0000 vel 0.0000,-0.0495,-3.9600 rot 180.000,-0.716 removed false has_hit true ground false ground_time 0 life 0 shake 0 hits [block 8,66,8 face South at 8.5000,66.4625,9.0000 normal -0.0000,0.0125,0.9999] entities 1 sent [103:11:d4cc45e3]
+corner_south t2: pos 8.5000,66.3520,4.1196 last 8.5000,66.5000,12.0000 vel 0.0000,-0.0985,-3.9204 rot 180.000,-1.439 removed false has_hit true ground false ground_time 0 life 0 shake 0 hits [] entities 1 sent [103:11:36b86d7d]
+corner_south t3: pos 8.5000,66.2050,0.2384 last 8.5000,66.5000,12.0000 vel 0.0000,-0.1470,-3.8812 rot 180.000,-2.169 removed false has_hit true ground false ground_time 0 life 0 shake 0 hits [] entities 1 sent [103:11:21545bed]
+corner_south still flying
+negative_west t1: pos 8.9600,66.4505,8.5000 last 5.0000,66.5000,8.5000 vel 3.9600,-0.0495,0.0000 rot 90.000,-0.716 removed false has_hit true ground false ground_time 0 life 0 shake 0 hits [block 8,66,8 face West at 8.0000,66.4625,8.5000 normal -0.9999,0.0125,-0.0000] entities 1 sent [103:11:b0a75794]
+negative_west t2: pos 12.8804,66.3520,8.5000 last 5.0000,66.5000,8.5000 vel 3.9204,-0.0985,0.0000 rot 90.000,-1.439 removed false has_hit true ground false ground_time 0 life 0 shake 0 hits [] entities 1 sent [103:11:b5f181d8]
+negative_west t3: pos 16.7616,66.2050,8.5000 last 5.0000,66.5000,8.5000 vel 3.8812,-0.1470,0.0000 rot 90.000,-2.169 removed false has_hit true ground false ground_time 0 life 0 shake 0 hits [] entities 1 sent [103:11:565188d0]
+negative_west still flying
+negative_east t1: pos 8.0400,66.4505,8.5000 last 12.0000,66.5000,8.5000 vel -3.9600,-0.0495,0.0000 rot -90.000,-0.716 removed false has_hit true ground false ground_time 0 life 0 shake 0 hits [block 8,66,8 face East at 9.0000,66.4625,8.5000 normal 0.9999,0.0125,-0.0000] entities 1 sent [103:11:22f9c424]
+negative_east t2: pos 4.1196,66.3520,8.5000 last 12.0000,66.5000,8.5000 vel -3.9204,-0.0985,0.0000 rot -90.000,-1.439 removed false has_hit true ground false ground_time 0 life 0 shake 0 hits [] entities 1 sent [103:11:4a1b8ea8]
+negative_east t3: pos 0.2384,66.2050,8.5000 last 12.0000,66.5000,8.5000 vel -3.8812,-0.1470,0.0000 rot -90.000,-2.169 removed false has_hit true ground false ground_time 0 life 0 shake 0 hits [] entities 1 sent [103:11:97aa1704]
+negative_east still flying
+negative_down t1: pos 8.5000,68.9105,8.5000 last 8.5000,65.0000,8.5000 vel 0.0000,3.9105,0.0000 rot 0.000,90.000 removed false has_hit true ground false ground_time 0 life 0 shake 0 hits [block 8,68,8 face Down at 8.5000,68.0000,8.5000 normal -0.0000,-1.0000,-0.0000] entities 1 sent [103:11:9cfab454]
+negative_down t2: pos 8.5000,72.7324,8.5000 last 8.5000,65.0000,8.5000 vel 0.0000,3.8219,0.0000 rot 0.000,90.000 removed false has_hit true ground false ground_time 0 life 0 shake 0 hits [] entities 1 sent [103:11:a4e59ec2]
+negative_down t3: pos 8.5000,76.4666,8.5000 last 8.5000,65.0000,8.5000 vel 0.0000,3.7342,0.0000 rot 0.000,90.000 removed false has_hit true ground false ground_time 0 life 0 shake 0 hits [] entities 1 sent [103:11:d4c948c8]
+negative_down still flying
+negative_up t1: pos 8.5000,65.9905,8.5000 last 8.5000,70.0000,8.5000 vel 0.0000,-4.0095,0.0000 rot 0.000,-90.000 removed false has_hit true ground false ground_time 0 life 0 shake 0 hits [block 8,66,8 face Up at 8.5000,67.0000,8.5000 normal -0.0000,1.0000,-0.0000] entities 1 sent [103:11:46c4c902]
+negative_up t2: pos 8.5000,61.9716,8.5000 last 8.5000,70.0000,8.5000 vel 0.0000,-4.0189,0.0000 rot 0.000,-90.000 removed false has_hit true ground false ground_time 0 life 0 shake 0 hits [] entities 1 sent [103:11:453c1b3a]
+negative_up t3: pos 8.5000,57.9434,8.5000 last 8.5000,70.0000,8.5000 vel 0.0000,-4.0282,0.0000 rot 0.000,-90.000 removed false has_hit true ground false ground_time 0 life 0 shake 0 hits [] entities 1 sent [103:11:55f60d23]
+negative_up still flying
+negative_north t1: pos 8.5000,66.4505,8.9600 last 8.5000,66.5000,5.0000 vel 0.0000,-0.0495,3.9600 rot 0.000,-0.716 removed false has_hit true ground false ground_time 0 life 0 shake 0 hits [block 8,66,8 face North at 8.5000,66.4625,8.0000 normal -0.0000,0.0125,-0.9999] entities 1 sent [103:11:f79a2aae]
+negative_north t2: pos 8.5000,66.3520,12.8804 last 8.5000,66.5000,5.0000 vel 0.0000,-0.0985,3.9204 rot 0.000,-1.439 removed false has_hit true ground false ground_time 0 life 0 shake 0 hits [] entities 1 sent [103:11:34fd3f74]
+negative_north t3: pos 8.5000,66.2050,16.7616 last 8.5000,66.5000,5.0000 vel 0.0000,-0.1470,3.8812 rot 0.000,-2.169 removed false has_hit true ground false ground_time 0 life 0 shake 0 hits [] entities 1 sent [103:11:ea2b720c]
+negative_north still flying
+negative_south t1: pos 8.5000,66.4505,8.0400 last 8.5000,66.5000,12.0000 vel 0.0000,-0.0495,-3.9600 rot 180.000,-0.716 removed false has_hit true ground false ground_time 0 life 0 shake 0 hits [block 8,66,8 face South at 8.5000,66.4625,9.0000 normal -0.0000,0.0125,0.9999] entities 1 sent [103:11:d4cc45e3]
+negative_south t2: pos 8.5000,66.3520,4.1196 last 8.5000,66.5000,12.0000 vel 0.0000,-0.0985,-3.9204 rot 180.000,-1.439 removed false has_hit true ground false ground_time 0 life 0 shake 0 hits [] entities 1 sent [103:11:36b86d7d]
+negative_south t3: pos 8.5000,66.2050,0.2384 last 8.5000,66.5000,12.0000 vel 0.0000,-0.1470,-3.8812 rot 180.000,-2.169 removed false has_hit true ground false ground_time 0 life 0 shake 0 hits [] entities 1 sent [103:11:21545bed]
+negative_south still flying
+mob_graze_x t1: pos 9.0500,66.7505,8.4600 last 9.0500,66.8000,4.5000 vel 0.0000,-0.0495,3.9600 rot 0.000,-0.716 removed false has_hit true ground false ground_time 0 life 0 shake 0 hits [entity 91001 at 9.0500,66.7575,7.9000 normal -0.0000,0.0125,-0.9999] mob 91001 health 20.0 removed false entities 2 sent [103:11:f79a2aae]
+mob_graze_x t2: pos 9.0500,66.6520,12.3804 last 9.0500,66.8000,4.5000 vel 0.0000,-0.0985,3.9204 rot 0.000,-1.439 removed false has_hit true ground false ground_time 0 life 0 shake 0 hits [] mob 91001 health 20.0 removed false entities 2 sent [103:11:34fd3f74]
+mob_graze_x t3: pos 9.0500,66.5050,16.2616 last 9.0500,66.8000,4.5000 vel 0.0000,-0.1470,3.8812 rot 0.000,-2.169 removed false has_hit true ground false ground_time 0 life 0 shake 0 hits [] mob 91001 health 20.0 removed false entities 2 sent [103:11:ea2b720c]
+mob_graze_x still flying
+seam t1: pos 8.9600,66.9802,8.5000 last 5.0000,67.0000,8.5000 vel 3.9600,-0.0198,0.0000 rot 90.000,-0.286 removed false has_hit true ground false ground_time 0 life 0 shake 0 hits [block 8,66,8 face West at 8.0000,66.9850,8.5000 normal -1.0000,0.0050,-0.0000] entities 1 sent [103:11:b6e6ee4e]
+seam t2: pos 12.8804,66.9111,8.5000 last 5.0000,67.0000,8.5000 vel 3.9204,-0.0691,0.0000 rot 90.000,-1.010 removed false has_hit true ground false ground_time 0 life 0 shake 0 hits [] entities 1 sent [103:11:bd2f2eaa]
+seam still flying
+twins t1: pos 8.4600,66.7505,8.5000 last 4.5000,66.8000,8.5000 vel 3.9600,-0.0495,0.0000 rot 90.000,-0.716 removed false has_hit true ground false ground_time 0 life 0 shake 0 hits [entity 91001 at 7.9000,66.7575,8.5000 normal -0.9999,0.0125,-0.0000] mob 91001 health 20.0 removed false mob 91002 health 20.0 removed false entities 3 sent [103:11:b0a75794]
+twins t2: pos 12.3804,66.6520,8.5000 last 4.5000,66.8000,8.5000 vel 3.9204,-0.0985,0.0000 rot 90.000,-1.439 removed false has_hit true ground false ground_time 0 life 0 shake 0 hits [] mob 91001 health 20.0 removed false mob 91002 health 20.0 removed false entities 3 sent [103:11:b5f181d8]
+twins still flying
+shake_flight t1: pos 4.9950,70.1485,4.5990 last 4.5000,70.0000,4.5000 vel 0.4950,0.1485,0.0990 rot 78.690,16.393 removed false has_hit false ground false ground_time 0 life 0 shake 2 hits [] entities 1 sent [103:10:a6e801b4]
+shake_flight t2: pos 5.4851,70.2460,4.6970 last 4.5000,70.0000,4.5000 vel 0.4900,0.0975,0.0980 rot 78.690,11.041 removed false has_hit false ground false ground_time 0 life 0 shake 1 hits [] entities 1 sent [103:10:5803bbf7]
+shake_flight t3: pos 5.9702,70.2931,4.7940 last 4.5000,70.0000,4.5000 vel 0.4851,0.0470,0.0970 rot 78.690,5.431 removed false has_hit false ground false ground_time 0 life 0 shake 0 hits [] entities 1 sent [103:10:5a1b7365]
+shake_flight t4: pos 6.4505,70.2901,4.8901 last 4.5000,70.0000,4.5000 vel 0.4803,-0.0029,0.0961 rot 78.690,-0.343 removed false has_hit false ground false ground_time 0 life 0 shake 0 hits [] entities 1 sent [103:10:f06c1eca]
+shake_flight t5: pos 6.9260,70.2377,4.9852 last 4.5000,70.0000,4.5000 vel 0.4755,-0.0524,0.0951 rot 78.690,-6.168 removed false has_hit false ground false ground_time 0 life 0 shake 0 hits [] entities 1 sent [103:10:2f252e1d]
+shake_flight still flying
+shake_one t1: pos 4.9950,70.1485,4.5990 last 4.5000,70.0000,4.5000 vel 0.4950,0.1485,0.0990 rot 78.690,16.393 removed false has_hit false ground false ground_time 0 life 0 shake 0 hits [] entities 1 sent [103:10:a6e801b4]
+shake_one t2: pos 5.4851,70.2460,4.6970 last 4.5000,70.0000,4.5000 vel 0.4900,0.0975,0.0980 rot 78.690,11.041 removed false has_hit false ground false ground_time 0 life 0 shake 0 hits [] entities 1 sent [103:10:5803bbf7]
+shake_one t3: pos 5.9702,70.2931,4.7940 last 4.5000,70.0000,4.5000 vel 0.4851,0.0470,0.0970 rot 78.690,5.431 removed false has_hit false ground false ground_time 0 life 0 shake 0 hits [] entities 1 sent [103:10:5a1b7365]
+shake_one still flying
+ground_shake t1: pos 4.5000,66.0000,4.5000 last 4.5000,66.0000,4.5000 vel 0.5000,0.2000,0.1000 rot 0.000,0.000 removed false has_hit false ground true ground_time 1 life 1 shake 2 hits [] entities 1 sent []
+ground_shake t2: pos 4.5000,66.0000,4.5000 last 4.5000,66.0000,4.5000 vel 0.5000,0.2000,0.1000 rot 0.000,0.000 removed false has_hit false ground true ground_time 2 life 2 shake 1 hits [] entities 1 sent []
+ground_shake t3: pos 4.5000,66.0000,4.5000 last 4.5000,66.0000,4.5000 vel 0.5000,0.2000,0.1000 rot 0.000,0.000 removed false has_hit false ground true ground_time 3 life 3 shake 0 hits [] entities 1 sent []
+ground_shake t4: pos 4.5000,66.0000,4.5000 last 4.5000,66.0000,4.5000 vel 0.5000,0.2000,0.1000 rot 0.000,0.000 removed false has_hit false ground true ground_time 4 life 4 shake 0 hits [] entities 1 sent []
+ground_shake t5: pos 4.5000,66.0000,4.5000 last 4.5000,66.0000,4.5000 vel 0.5000,0.2000,0.1000 rot 0.000,0.000 removed false has_hit false ground true ground_time 5 life 5 shake 0 hits [] entities 1 sent []
+ground_shake still flying
+ground_idle t1: pos 4.5000,66.0000,4.5000 last 4.5000,66.0000,4.5000 vel 0.5000,0.2000,0.1000 rot 0.000,0.000 removed false has_hit false ground true ground_time 1 life 1 shake 0 hits [] entities 1 sent []
+ground_idle t2: pos 4.5000,66.0000,4.5000 last 4.5000,66.0000,4.5000 vel 0.5000,0.2000,0.1000 rot 0.000,0.000 removed false has_hit false ground true ground_time 2 life 2 shake 0 hits [] entities 1 sent []
+ground_idle t3: pos 4.5000,66.0000,4.5000 last 4.5000,66.0000,4.5000 vel 0.5000,0.2000,0.1000 rot 0.000,0.000 removed false has_hit false ground true ground_time 3 life 3 shake 0 hits [] entities 1 sent []
+ground_idle still flying
+ground_despawn t1: pos 4.5000,66.0000,4.5000 last 4.5000,66.0000,4.5000 vel 0.0000,0.0000,0.0000 rot 0.000,0.000 removed false has_hit false ground true ground_time 1 life 1198 shake 0 hits [] entities 1 sent []
+ground_despawn t2: pos 4.5000,66.0000,4.5000 last 4.5000,66.0000,4.5000 vel 0.0000,0.0000,0.0000 rot 0.000,0.000 removed false has_hit false ground true ground_time 2 life 1199 shake 0 hits [] entities 1 sent []
+ground_despawn t3: pos 4.5000,66.0000,4.5000 last 4.5000,66.0000,4.5000 vel 0.0000,0.0000,0.0000 rot 0.000,0.000 removed false has_hit false ground true ground_time 3 life 1200 shake 0 hits [] entities 1 sent []
+ground_despawn t4: pos 4.5000,66.0000,4.5000 last 4.5000,66.0000,4.5000 vel 0.0000,0.0000,0.0000 rot 0.000,0.000 removed true has_hit false ground true ground_time 4 life 1201 shake 0 hits [] entities 0 sent []
+ground_despawn removed after tick 4
+ground_edge t1: pos 4.5000,66.0000,4.5000 last 4.5000,66.0000,4.5000 vel 0.0000,0.0000,0.0000 rot 0.000,0.000 removed false has_hit false ground true ground_time 1 life 1200 shake 0 hits [] entities 1 sent []
+ground_edge t2: pos 4.5000,66.0000,4.5000 last 4.5000,66.0000,4.5000 vel 0.0000,0.0000,0.0000 rot 0.000,0.000 removed true has_hit false ground true ground_time 2 life 1201 shake 0 hits [] entities 0 sent []
+ground_edge removed after tick 2
+ground_over t1: pos 4.5000,66.0000,4.5000 last 4.5000,66.0000,4.5000 vel 0.0000,0.0000,0.0000 rot 0.000,0.000 removed true has_hit false ground true ground_time 1 life 1201 shake 0 hits [] entities 0 sent []
+ground_over removed after tick 1
+flight_old t1: pos 4.9950,70.1485,4.5990 last 4.5000,70.0000,4.5000 vel 0.4950,0.1485,0.0990 rot 78.690,16.393 removed false has_hit false ground false ground_time 0 life 1200 shake 0 hits [] entities 1 sent [103:10:a6e801b4]
+flight_old t2: pos 5.4851,70.2460,4.6970 last 4.5000,70.0000,4.5000 vel 0.4900,0.0975,0.0980 rot 78.690,11.041 removed false has_hit false ground false ground_time 0 life 1200 shake 0 hits [] entities 1 sent [103:10:5803bbf7]
+flight_old t3: pos 5.9702,70.2931,4.7940 last 4.5000,70.0000,4.5000 vel 0.4851,0.0470,0.0970 rot 78.690,5.431 removed false has_hit false ground false ground_time 0 life 1200 shake 0 hits [] entities 1 sent [103:10:5a1b7365]
+flight_old still flying
+real_block t1: pos 8.0000,66.4625,8.5000 last 5.0000,66.5000,8.5000 vel 0.0000,0.0000,0.0000 rot 90.000,-0.716 removed false has_hit true ground true ground_time 0 life 0 shake 7 stuck 8.0000,66.0000,8.0000 hits [] entities 1 sent [103:11:b0a75794 119:32]
+real_block t2: pos 8.0000,66.4625,8.5000 last 5.0000,66.5000,8.5000 vel 0.0000,0.0000,0.0000 rot 90.000,-0.716 removed false has_hit true ground true ground_time 1 life 1 shake 6 stuck 8.0000,66.0000,8.0000 hits [] entities 1 sent []
+real_block t3: pos 8.0000,66.4625,8.5000 last 5.0000,66.5000,8.5000 vel 0.0000,0.0000,0.0000 rot 90.000,-0.716 removed false has_hit true ground true ground_time 2 life 2 shake 5 stuck 8.0000,66.0000,8.0000 hits [] entities 1 sent []
+real_block t4: pos 8.0000,66.4625,8.5000 last 5.0000,66.5000,8.5000 vel 0.0000,0.0000,0.0000 rot 90.000,-0.716 removed false has_hit true ground true ground_time 3 life 3 shake 4 stuck 8.0000,66.0000,8.0000 hits [] entities 1 sent []
+real_block t5: pos 8.0000,66.4625,8.5000 last 5.0000,66.5000,8.5000 vel 0.0000,0.0000,0.0000 rot 90.000,-0.716 removed false has_hit true ground true ground_time 4 life 4 shake 3 stuck 8.0000,66.0000,8.0000 hits [] entities 1 sent []
+real_block t6: pos 8.0000,66.4625,8.5000 last 5.0000,66.5000,8.5000 vel 0.0000,0.0000,0.0000 rot 90.000,-0.716 removed false has_hit true ground true ground_time 5 life 5 shake 2 stuck 8.0000,66.0000,8.0000 hits [] entities 1 sent []
+real_block t7: pos 8.0000,66.4625,8.5000 last 5.0000,66.5000,8.5000 vel 0.0000,0.0000,0.0000 rot 90.000,-0.716 removed false has_hit true ground true ground_time 6 life 6 shake 1 stuck 8.0000,66.0000,8.0000 hits [] entities 1 sent []
+real_block t8: pos 8.0000,66.4625,8.5000 last 5.0000,66.5000,8.5000 vel 0.0000,0.0000,0.0000 rot 90.000,-0.716 removed false has_hit true ground true ground_time 7 life 7 shake 0 stuck 8.0000,66.0000,8.0000 hits [] entities 1 sent []
+real_block t9: pos 8.0000,66.4625,8.5000 last 5.0000,66.5000,8.5000 vel 0.0000,0.0000,0.0000 rot 90.000,-0.716 removed false has_hit true ground true ground_time 8 life 8 shake 0 stuck 8.0000,66.0000,8.0000 hits [] entities 1 sent []
+real_block t10: pos 8.0000,66.4625,8.5000 last 5.0000,66.5000,8.5000 vel 0.0000,0.0000,0.0000 rot 90.000,-0.716 removed false has_hit true ground true ground_time 9 life 9 shake 0 stuck 8.0000,66.0000,8.0000 hits [] entities 1 sent []
+real_block t11: pos 8.0000,66.4625,8.5000 last 5.0000,66.5000,8.5000 vel 0.0000,0.0000,0.0000 rot 90.000,-0.716 removed false has_hit true ground true ground_time 10 life 10 shake 0 stuck 8.0000,66.0000,8.0000 hits [] entities 1 sent []
+real_block t12: pos 8.0000,66.4625,8.5000 last 5.0000,66.5000,8.5000 vel 0.0000,0.0000,0.0000 rot 90.000,-0.716 removed false has_hit true ground true ground_time 11 life 11 shake 0 stuck 8.0000,66.0000,8.0000 hits [] entities 1 sent []
+real_block still flying
+real_target t1: pos 8.0000,66.4625,8.5000 last 5.0000,66.5000,8.5000 vel 0.0000,0.0000,0.0000 rot 90.000,-0.716 removed false has_hit true ground true ground_time 0 life 0 shake 7 stuck 8.0000,66.0000,8.0000 hits [] target BlockStateId(25123 = "target") entities 1 sent [103:11:b0a75794 119:32]
+real_target t2: pos 8.0000,66.4625,8.5000 last 5.0000,66.5000,8.5000 vel 0.0000,0.0000,0.0000 rot 90.000,-0.716 removed false has_hit true ground true ground_time 1 life 1 shake 6 stuck 8.0000,66.0000,8.0000 hits [] target BlockStateId(25123 = "target") entities 1 sent []
+real_target t3: pos 8.0000,66.4625,8.5000 last 5.0000,66.5000,8.5000 vel 0.0000,0.0000,0.0000 rot 90.000,-0.716 removed false has_hit true ground true ground_time 2 life 2 shake 5 stuck 8.0000,66.0000,8.0000 hits [] target BlockStateId(25123 = "target") entities 1 sent []
+real_target t4: pos 8.0000,66.4625,8.5000 last 5.0000,66.5000,8.5000 vel 0.0000,0.0000,0.0000 rot 90.000,-0.716 removed false has_hit true ground true ground_time 3 life 3 shake 4 stuck 8.0000,66.0000,8.0000 hits [] target BlockStateId(25123 = "target") entities 1 sent []
+real_target still flying
+real_mob t1: pos 8.4600,66.7505,8.5000 last 4.5000,66.8000,8.5000 vel 0.0000,-0.1000,0.0000 rot 90.000,-0.716 removed false has_hit false ground false ground_time 0 life 0 shake 0 hits [] mob 91001 health 12.0 removed false entities 2 sent [103:11:b0a75794 119:32 119:32]
+real_mob t2: pos 8.4600,66.6020,8.5000 last 4.5000,66.8000,8.5000 vel 0.0000,-0.1000,0.0000 rot 0.000,-90.000 removed false has_hit false ground false ground_time 0 life 0 shake 0 hits [] mob 91001 health 12.0 removed false entities 2 sent [103:10:f633a774 119:32]
+real_mob t3: pos 8.4600,66.4535,8.5000 last 4.5000,66.8000,8.5000 vel 0.0000,-0.1000,0.0000 rot 0.000,-90.000 removed false has_hit false ground false ground_time 0 life 0 shake 0 hits [] mob 91001 health 12.0 removed false entities 2 sent [103:10:f633a774 119:32]
+real_mob t4: pos 8.4600,66.3050,8.5000 last 4.5000,66.8000,8.5000 vel 0.0000,-0.1000,0.0000 rot 0.000,-90.000 removed false has_hit false ground false ground_time 0 life 0 shake 0 hits [] mob 91001 health 12.0 removed false entities 2 sent [103:10:f633a774 119:32]
+real_mob t5: pos 8.4600,66.1565,8.5000 last 4.5000,66.8000,8.5000 vel 0.0000,-0.1000,0.0000 rot 0.000,-90.000 removed false has_hit false ground false ground_time 0 life 0 shake 0 hits [] mob 91001 health 12.0 removed false entities 2 sent [103:10:f633a774 119:32]
+real_mob t6: pos 8.4600,66.0080,8.5000 last 4.5000,66.8000,8.5000 vel 0.0000,-0.1000,0.0000 rot 0.000,-90.000 removed false has_hit false ground false ground_time 0 life 0 shake 0 hits [] mob 91001 health 12.0 removed false entities 2 sent [103:10:f633a774 119:32]
+real_mob t7: pos 8.4600,65.8595,8.5000 last 4.5000,66.8000,8.5000 vel 0.0000,-0.1000,0.0000 rot 0.000,-90.000 removed false has_hit false ground false ground_time 0 life 0 shake 0 hits [] mob 91001 health 12.0 removed false entities 2 sent [103:10:f633a774 119:32]
+real_mob t8: pos 8.4600,65.7110,8.5000 last 4.5000,66.8000,8.5000 vel 0.0000,-0.1000,0.0000 rot 0.000,-90.000 removed false has_hit false ground false ground_time 0 life 0 shake 0 hits [] mob 91001 health 12.0 removed false entities 2 sent [103:10:f633a774 119:32]
+real_mob still flying
+real_blaze t1: pos 8.4600,66.7505,8.5000 last 4.5000,66.8000,8.5000 vel 0.0000,-0.1000,0.0000 rot 90.000,-0.716 removed false has_hit false ground false ground_time 0 life 0 shake 0 hits [] mob 91001 health 12.0 removed false entities 2 sent [103:11:b0a75794 119:32 119:32]
+real_blaze t2: pos 8.4600,66.6020,8.5000 last 4.5000,66.8000,8.5000 vel 0.0000,-0.1000,0.0000 rot 0.000,-90.000 removed false has_hit false ground false ground_time 0 life 0 shake 0 hits [] mob 91001 health 12.0 removed false entities 2 sent [103:10:f633a774 119:32]
+real_blaze t3: pos 8.4600,66.4535,8.5000 last 4.5000,66.8000,8.5000 vel 0.0000,-0.1000,0.0000 rot 0.000,-90.000 removed false has_hit false ground false ground_time 0 life 0 shake 0 hits [] mob 91001 health 12.0 removed false entities 2 sent [103:10:f633a774 119:32]
+real_blaze still flying
+real_fall t1: pos 4.5000,66.4535,4.5000 last 4.5000,66.8000,4.5000 vel 0.0000,-0.3465,0.0000 rot 0.000,-90.000 removed false has_hit false ground false ground_time 0 life 0 shake 0 hits [] entities 1 sent [103:10:f6c398b6]
+real_fall t2: pos 4.5000,66.0610,4.5000 last 4.5000,66.8000,4.5000 vel 0.0000,-0.3925,0.0000 rot 0.000,-90.000 removed false has_hit false ground false ground_time 0 life 0 shake 0 hits [] entities 1 sent [103:10:f6e505fa]
+real_fall t3: pos 4.5000,65.6229,4.5000 last 4.5000,66.8000,4.5000 vel 0.0000,-0.4381,0.0000 rot 0.000,-90.000 removed false has_hit false ground false ground_time 0 life 0 shake 0 hits [] entities 1 sent [103:10:f709eda2]
+real_fall t4: pos 4.5000,65.1396,4.5000 last 4.5000,66.8000,4.5000 vel 0.0000,-0.4832,0.0000 rot 0.000,-90.000 removed false has_hit false ground false ground_time 0 life 0 shake 0 hits [] entities 1 sent [103:10:f7220ae5]
+real_fall t5: pos 4.5000,64.6117,4.5000 last 4.5000,66.8000,4.5000 vel 0.0000,-0.5279,0.0000 rot 0.000,-90.000 removed false has_hit false ground false ground_time 0 life 0 shake 0 hits [] entities 1 sent [103:10:f744b0d1]
+real_fall t6: pos 4.5000,64.0396,4.5000 last 4.5000,66.8000,4.5000 vel 0.0000,-0.5721,0.0000 rot 0.000,-90.000 removed false has_hit false ground false ground_time 0 life 0 shake 0 hits [] entities 1 sent [103:10:f769c9c0]
+real_fall still flying

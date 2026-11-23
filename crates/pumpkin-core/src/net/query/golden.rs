@@ -401,6 +401,10 @@ async fn filling_server(out: &mut String) -> TestResult {
     state_scenes(&wire, "three plugins", ipv4, out).await;
     plugin(&server, "Bad\0Plugin.stub").await;
     state_scenes(&wire, "nul plugin", ipv4, out).await;
+    // A server with no world at all names the map "world".
+    let _ = server.plugin_manager.unload_plugin("Bad\0Plugin").await;
+    server.worlds.store(Arc::new(Vec::new()));
+    state_scenes(&wire, "no worlds", ipv4, out).await;
     server.stop();
     Ok(())
 }

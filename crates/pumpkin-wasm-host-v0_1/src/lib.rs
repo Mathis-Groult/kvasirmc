@@ -49,6 +49,9 @@ pub mod world;
 #[cfg(test)]
 mod register_player_event_golden;
 
+#[cfg(test)]
+mod register_world_event_golden;
+
 pub use crate::bindings::{Plugin, pumpkin};
 
 mod resource_with {

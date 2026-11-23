@@ -385,7 +385,7 @@ fn register_enchantment_event(
 }
 
 #[allow(clippy::too_many_lines)]
-fn register_world_event(
+pub(crate) fn register_world_event(
     resource: &Context,
     handler: &Arc<WasmPluginEventHandler>,
     priority: pumpkin_core::plugin::EventPriority,

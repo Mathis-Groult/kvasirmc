@@ -4,12 +4,14 @@ use super::super::EntityBase;
 use super::super::experience_orb::ExperienceOrbEntity;
 use super::LivingEntity;
 use crate::entity::player::statistics::{CustomStatistic, StatisticCategory};
+use crate::world::World;
 use crate::world::loot::LootContextParameters;
 use pumpkin_data::Enchantment;
 use pumpkin_data::damage::DamageType;
 use pumpkin_data::data_component_impl::{DeathProtectionImpl, EquipmentSlot};
 use pumpkin_data::effect::StatusEffect;
 use pumpkin_data::entity::{EntityPose, EntityStatus, EntityType};
+use pumpkin_data::item_stack::ItemStack;
 use pumpkin_data::potion::Effect;
 use pumpkin_protocol::bedrock::server::actor_event::ActorEventID;
 use pumpkin_util::Hand;
@@ -92,7 +94,6 @@ impl LivingEntity {
     /// flow: stop movement input, attribute the kill, drop loot, broadcast the
     /// `Death` (3) entity event, and hand out XP. Safe to call on every lethal
     /// damage event; only the first call has an effect.
-    #[allow(clippy::too_many_lines)]
     pub fn on_death(
         &self,
         damage_type: DamageType,
@@ -106,117 +107,134 @@ impl LivingEntity {
         if self
             .dead
             .compare_exchange(false, true, Relaxed, Relaxed)
-            .is_ok()
+            .is_err()
         {
-            self.movement_input.store(Vector3::default());
-            self.jumping.store(false, Relaxed);
+            return;
+        }
+        self.movement_input.store(Vector3::default());
+        self.jumping.store(false, Relaxed);
 
-            // Like vanilla, stats go to the kill credit, loot and XP to the killing blow.
-            let kill_credit = self.get_kill_credit();
-            let killer = cause.or(source);
+        // Like vanilla, stats go to the kill credit, loot and XP to the killing blow.
+        let kill_credit = self.get_kill_credit();
+        let killer = cause.or(source);
 
-            self.update_death_stats(&*dyn_self, kill_credit.as_deref());
+        self.update_death_stats(&*dyn_self, kill_credit.as_deref());
 
-            self.make_voice_sound(&*dyn_self, self.death_sound(&*dyn_self));
-            world.send_entity_status(&self.entity, EntityStatus::Death, ActorEventID::Death);
-            let looting_level;
-            let tool = if let Some(cause_ent) = cause {
-                if let Some(player) = cause_ent
-                    .cast_any()
-                    .downcast_ref::<crate::entity::player::Player>()
-                {
-                    let hand_stack = player
-                        .inventory()
-                        .get_stack_in_hand(pumpkin_util::Hand::Right);
-                    looting_level = hand_stack
-                        .get_enchantment_level(&Enchantment::LOOTING)
-                        .max(0) as u32;
-                    (!hand_stack.is_empty()).then(|| hand_stack.clone())
-                } else {
-                    looting_level = 0;
-                    None
-                }
-            } else {
-                looting_level = 0;
-                None
-            };
+        self.make_voice_sound(&*dyn_self, self.death_sound(&*dyn_self));
+        world.send_entity_status(&self.entity, EntityStatus::Death, ActorEventID::Death);
+        let (looting_level, tool) = Self::killing_blow_weapon(cause);
 
-            let is_raining = world.is_raining();
-            let is_thundering = world.is_thundering();
+        let has_player_kill = self.last_hurt_by_player_memory_time.load(Relaxed) > 0;
+        let mut params = self.death_loot_parameters(
+            &world,
+            dyn_self.as_ref(),
+            [killer, source],
+            damage_type,
+            has_player_kill,
+        );
+        params.tool = tool;
 
-            let has_player_kill = self.last_hurt_by_player_memory_time.load(Relaxed) > 0;
+        let should_drop_loot = dyn_self.should_drop_loot();
+        if should_drop_loot {
+            self.drop_loot(&*dyn_self, &params);
+        }
 
-            let params = LootContextParameters {
-                killed_by_player: Some(has_player_kill),
-                world: Some(&world),
-                this_entity: Some(dyn_self.as_ref()),
-                killer_entity: killer,
-                direct_killer_entity: source,
-                position: Some(self.entity.pos.load()),
-                world_time: world.level_info.load().day_time as u64,
-                damage_type: Some(damage_type),
-                tool,
-                is_raining: Some(is_raining),
-                is_thundering: Some(is_thundering),
-                is_on_fire: Some(
-                    self.entity
-                        .fire_ticks
-                        .load(std::sync::atomic::Ordering::Relaxed)
-                        > 0,
-                ),
-                direct_attacker_weapon: source.and_then(|direct| {
-                    direct
-                        .get_living_entity()
-                        .map(|living| living.held_item(direct))
-                }),
-                ..Default::default()
-            };
+        if has_player_kill
+            && world.level_info.load().game_rules.mob_drops
+            && dyn_self.should_drop_experience()
+        {
+            let amount = dyn_self.get_experience_reward(killer);
+            ExperienceOrbEntity::spawn(&world, self.entity.pos.load(), amount);
+        }
+        self.entity.pose.store(EntityPose::Dying);
 
-            let should_drop_loot = dyn_self.should_drop_loot();
-            if should_drop_loot {
-                self.drop_loot(&*dyn_self, &params);
+        if should_drop_loot {
+            self.drop_equipment(looting_level);
+        }
+        if let Some(mob) = dyn_self.get_mob() {
+            mob.drop_inventory();
+        }
+
+        // Broadcast death message if it's a player and the gamerule is enabled
+        self.broadcast_death_message(&*dyn_self, damage_type, source, cause);
+
+        self.notify_effects_of_death(damage_type);
+        self.reset_effects_and_attributes();
+    }
+
+    /// The looting level and the tool of the killing blow: a player's main hand, nothing for a
+    /// mob or for no cause.
+    fn killing_blow_weapon(cause: Option<&dyn EntityBase>) -> (u32, Option<ItemStack>) {
+        let Some(player) = cause.and_then(|cause| {
+            cause
+                .cast_any()
+                .downcast_ref::<crate::entity::player::Player>()
+        }) else {
+            return (0, None);
+        };
+        let hand_stack = player.inventory().get_stack_in_hand(Hand::Right);
+        let looting_level = hand_stack
+            .get_enchantment_level(&Enchantment::LOOTING)
+            .max(0) as u32;
+        (
+            looting_level,
+            (!hand_stack.is_empty()).then(|| hand_stack.clone()),
+        )
+    }
+
+    /// The loot context of a death; the caller adds the tool. `killer_and_source` is the
+    /// killing blow's entity and the direct source.
+    fn death_loot_parameters<'a>(
+        &self,
+        world: &'a World,
+        dyn_self: &'a dyn EntityBase,
+        killer_and_source: [Option<&'a dyn EntityBase>; 2],
+        damage_type: DamageType,
+        killed_by_player: bool,
+    ) -> LootContextParameters<'a> {
+        let [killer, source] = killer_and_source;
+        LootContextParameters {
+            killed_by_player: Some(killed_by_player),
+            world: Some(world),
+            this_entity: Some(dyn_self),
+            killer_entity: killer,
+            direct_killer_entity: source,
+            position: Some(self.entity.pos.load()),
+            world_time: world.level_info.load().day_time as u64,
+            damage_type: Some(damage_type),
+            is_raining: Some(world.is_raining()),
+            is_thundering: Some(world.is_thundering()),
+            is_on_fire: Some(
+                self.entity
+                    .fire_ticks
+                    .load(std::sync::atomic::Ordering::Relaxed)
+                    > 0,
+            ),
+            direct_attacker_weapon: source.and_then(|direct| {
+                direct
+                    .get_living_entity()
+                    .map(|living| living.held_item(direct))
+            }),
+            ..Default::default()
+        }
+    }
+
+    /// Trigger `on_mob_death` for the active status effects.
+    fn notify_effects_of_death(&self, damage_type: DamageType) {
+        let active_effects_vec: Vec<_> = {
+            let effects = self
+                .active_effects
+                .lock()
+                .unwrap_or_else(std::sync::PoisonError::into_inner);
+            effects
+                .values()
+                .map(|e| (e.effect_type, e.amplifier))
+                .collect()
+        };
+        for (effect_type, amplifier) in active_effects_vec {
+            if let Some(mob_effect) = crate::entity::effect::get_mob_effect(effect_type) {
+                mob_effect.on_mob_death(self, amplifier, &damage_type);
             }
-
-            // Award experience
-            if params.killed_by_player.unwrap_or(false)
-                && world.level_info.load().game_rules.mob_drops
-                && dyn_self.should_drop_experience()
-            {
-                let amount = dyn_self.get_experience_reward(killer);
-                if amount > 0 {
-                    ExperienceOrbEntity::spawn(&world, self.entity.pos.load(), amount);
-                }
-            }
-            self.entity.pose.store(EntityPose::Dying);
-
-            if should_drop_loot {
-                self.drop_equipment(looting_level);
-            }
-            if let Some(mob) = dyn_self.get_mob() {
-                mob.drop_inventory();
-            }
-
-            // Broadcast death message if it's a player and the gamerule is enabled
-            self.broadcast_death_message(&*dyn_self, damage_type, source, cause);
-
-            // Trigger on_mob_death for active status effects
-            let active_effects_vec: Vec<_> = {
-                let effects = self
-                    .active_effects
-                    .lock()
-                    .unwrap_or_else(std::sync::PoisonError::into_inner);
-                effects
-                    .values()
-                    .map(|e| (e.effect_type, e.amplifier))
-                    .collect()
-            };
-            for (effect_type, amplifier) in active_effects_vec {
-                if let Some(mob_effect) = crate::entity::effect::get_mob_effect(effect_type) {
-                    mob_effect.on_mob_death(self, amplifier, &damage_type);
-                }
-            }
-
-            self.reset_effects_and_attributes();
         }
     }
 

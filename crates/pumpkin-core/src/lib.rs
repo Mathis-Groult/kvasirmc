@@ -9,9 +9,7 @@ extern crate pumpkin_macros;
 
 use crate::crash::CrashReport;
 use crate::data::VanillaData;
-use crate::logging::{
-    ConsoleWriter, GzipRollingLogger, PumpkinCommandCompleter, ReadlineLogWrapper,
-};
+use crate::logging::{PumpkinCommandCompleter, ReadlineLogWrapper};
 use crate::net::bedrock::{
     BedrockClient,
     nethernet::{IceSocket, NetherNetListener, load_or_create_identity_key},
@@ -29,12 +27,11 @@ use pumpkin_util::text::TextComponent;
 use pumpkin_util::text::color::{Color, NamedColor};
 use pumpkin_world::world_info::WorldInfoError;
 use rustyline::Editor;
+use rustyline::error::ReadlineError;
 use rustyline::history::FileHistory;
-use rustyline::{Config, error::ReadlineError};
 use std::collections::HashMap;
-use std::io::{ErrorKind, IsTerminal, stdin};
+use std::io::{ErrorKind, stdin};
 use std::process::exit;
-use std::str::FromStr;
 use std::sync::atomic::{AtomicBool, AtomicI32, Ordering};
 use std::sync::{Arc, OnceLock};
 use std::time::Duration;
@@ -47,8 +44,6 @@ use tokio_util::sync::CancellationToken;
 use tokio_util::task::TaskTracker;
 use tracing::{debug, error, info, warn};
 use tracing_subscriber::filter::LevelFilter;
-use tracing_subscriber::layer::SubscriberExt;
-use tracing_subscriber::util::SubscriberInitExt;
 
 pub mod block;
 pub mod command;
@@ -60,6 +55,7 @@ pub mod error;
 pub mod item;
 #[cfg(test)]
 mod logger_golden;
+mod logger_setup;
 pub mod logging;
 pub mod net;
 pub mod plugin;
@@ -79,127 +75,22 @@ pub type LoggerOption = Option<(ReadlineLogWrapper, LevelFilter, LoggingConfig)>
 pub static LOGGER_IMPL: LazyLock<Arc<OnceLock<LoggerOption>>> =
     LazyLock::new(|| Arc::new(OnceLock::new()));
 
-#[expect(clippy::print_stderr, clippy::too_many_lines)]
 pub fn init_logger(advanced_config: &AdvancedConfiguration) {
-    use tracing_subscriber::EnvFilter;
-    use tracing_subscriber::fmt;
-
-    let logger = advanced_config.logging.enabled.then(|| {
-        let level = std::env::var("RUST_LOG")
-            .ok()
-            .as_deref()
-            .or(Some(advanced_config.logging.level.as_str()))
-            .map(LevelFilter::from_str)
-            .and_then(Result::ok)
-            .unwrap_or(LevelFilter::INFO);
-
-        let env_filter = EnvFilter::try_from_default_env().unwrap_or_else(|_| {
-            let level_str = match level {
-                LevelFilter::OFF => "off",
-                LevelFilter::ERROR => "error",
-                LevelFilter::WARN => "warn",
-                LevelFilter::INFO => "info",
-                LevelFilter::DEBUG => "debug",
-                LevelFilter::TRACE => "trace",
-            };
-            EnvFilter::new(level_str)
-        });
-
-        let file_logger: Option<GzipRollingLogger> = if advanced_config.logging.file.is_empty() {
-            None
-        } else {
-            match GzipRollingLogger::new(level, advanced_config.logging.file.clone()) {
-                Ok(logger) => Some(logger),
-                Err(err) => {
-                    error!("Failed to initialize file logger: {err}");
-                    None
-                }
-            }
-        };
-
-        let (logger, rl): (
-            ConsoleWriter,
-            Option<Editor<PumpkinCommandCompleter, FileHistory>>,
-        ) = if advanced_config.commands.use_tty && stdin().is_terminal() {
-            let rl_config = Config::builder()
-                .auto_add_history(true)
-                .completion_type(rustyline::CompletionType::List)
-                .edit_mode(rustyline::EditMode::Emacs)
-                .build();
-            let helper = PumpkinCommandCompleter::new();
-
-            match Editor::with_config(rl_config) {
-                Ok(mut rl) => {
-                    rl.set_helper(Some(helper));
-                    let printer = rl.create_external_printer().ok().map(|p| {
-                        let boxed: Box<dyn rustyline::ExternalPrinter + Send> = Box::new(p);
-                        boxed
-                    });
-                    (ConsoleWriter::new(printer), Some(rl))
-                }
-                Err(e) => {
-                    eprintln!(
-                        "Failed to initialize console input ({e}); falling back to simple logger"
-                    );
-                    (ConsoleWriter::new(None), None)
-                }
-            }
-        } else {
-            (ConsoleWriter::new(None), None)
-        };
-
-        let fmt_layer = fmt::layer()
-            .with_writer(std::sync::Mutex::new(logger))
-            .with_ansi(advanced_config.logging.color)
-            .with_ansi_sanitization(false)
-            .with_target(advanced_config.logging.target)
-            .with_thread_names(advanced_config.logging.threads)
-            .with_thread_ids(advanced_config.logging.thread_ids);
-
-        if advanced_config.logging.timestamp {
-            let local_offset =
-                time::UtcOffset::current_local_offset().unwrap_or(time::UtcOffset::UTC);
-            let format_str: &'static str = Box::leak(
-                advanced_config
-                    .logging
-                    .timestamp_format
-                    .clone()
-                    .into_boxed_str(),
-            );
-            let timer_format = time::format_description::parse(format_str).unwrap_or_else(|_| {
-                time::macros::format_description!("[hour]:[minute]:[second]").to_vec()
-            });
-            let fmt_layer =
-                fmt_layer.with_timer(fmt::time::OffsetTime::new(local_offset, timer_format));
-            let registry = tracing_subscriber::registry()
-                .with(env_filter)
-                .with(fmt_layer);
-            if let Some(file_logger) = file_logger {
-                registry.with(file_logger).init();
-            } else {
-                registry.init();
-            }
-        } else {
-            let fmt_layer = fmt_layer.without_time();
-            let registry = tracing_subscriber::registry()
-                .with(env_filter)
-                .with(fmt_layer);
-            if let Some(file_logger) = file_logger {
-                registry.with(file_logger).init();
-            } else {
-                registry.init();
-            }
-        }
-
-        let logging_config = LoggingConfig {
-            color: advanced_config.logging.color,
-            threads: advanced_config.logging.threads,
-            thread_ids: advanced_config.logging.thread_ids,
-            target: advanced_config.logging.target,
-            timestamp: advanced_config.logging.timestamp,
-        };
-
-        (ReadlineLogWrapper::new(rl), level, logging_config)
+    let logging = &advanced_config.logging;
+    let logger = logging.enabled.then(|| {
+        let level = logger_setup::resolve_level(
+            std::env::var("RUST_LOG").ok().as_deref(),
+            logging.level.as_str(),
+        );
+        let env_filter = logger_setup::env_filter(level);
+        let file_logger = logger_setup::open_file_logger(level, &logging.file);
+        let (console, rl) = logger_setup::console(advanced_config.commands.use_tty);
+        logger_setup::install(logging, console, env_filter, file_logger);
+        (
+            ReadlineLogWrapper::new(rl),
+            level,
+            logger_setup::logging_config(logging),
+        )
     });
 
     assert!(

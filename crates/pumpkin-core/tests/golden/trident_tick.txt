@@ -405,3 +405,9 @@ real_fall t4: pos 4.5000,65.1396,4.5000 last 4.5000,66.8000,4.5000 vel 0.0000,-0
 real_fall t5: pos 4.5000,64.6117,4.5000 last 4.5000,66.8000,4.5000 vel 0.0000,-0.5279,0.0000 rot 0.000,-90.000 removed false has_hit false ground false ground_time 0 life 0 shake 0 hits [] entities 1 sent [103:10:f744b0d1]
 real_fall t6: pos 4.5000,64.0396,4.5000 last 4.5000,66.8000,4.5000 vel 0.0000,-0.5721,0.0000 rot 0.000,-90.000 removed false has_hit false ground false ground_time 0 life 0 shake 0 hits [] entities 1 sent [103:10:f769c9c0]
 real_fall still flying
+seam_z t1: pos 8.9600,66.4505,9.0000 last 5.0000,66.5000,9.0000 vel 3.9600,-0.0495,0.0000 rot 90.000,-0.716 removed false has_hit true ground false ground_time 0 life 0 shake 0 hits [block 8,66,8 face West at 8.0000,66.4625,9.0000 normal -0.9999,0.0125,-0.0000] entities 1 sent [103:11:b0a75794]
+seam_z t2: pos 12.8804,66.3520,9.0000 last 5.0000,66.5000,9.0000 vel 3.9204,-0.0985,0.0000 rot 90.000,-1.439 removed false has_hit true ground false ground_time 0 life 0 shake 0 hits [] entities 1 sent [103:11:b5f181d8]
+seam_z still flying
+seam_x t1: pos 9.0000,66.4505,8.9600 last 9.0000,66.5000,5.0000 vel 0.0000,-0.0495,3.9600 rot 0.000,-0.716 removed false has_hit true ground false ground_time 0 life 0 shake 0 hits [block 8,66,8 face East at 9.0000,66.4625,8.0000 normal -0.0000,0.0125,-0.9999] entities 1 sent [103:11:f79a2aae]
+seam_x t2: pos 9.0000,66.3520,12.8804 last 9.0000,66.5000,5.0000 vel 0.0000,-0.0985,3.9204 rot 0.000,-1.439 removed false has_hit true ground false ground_time 0 life 0 shake 0 hits [] entities 1 sent [103:11:34fd3f74]
+seam_x still flying

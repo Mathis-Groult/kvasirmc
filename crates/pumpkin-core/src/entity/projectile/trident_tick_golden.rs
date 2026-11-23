@@ -518,6 +518,19 @@ const REAL: &[Scene] = &[
     },
 ];
 
+/// Two blocks the path touches at the same distance (along the seam between them): the first
+/// found keeps the hit.
+const TIES: &[Scene] = &[
+    Scene {
+        blocks: &[stone(8, 66, 8), stone(8, 66, 9)],
+        ..scene("seam_z", (5.0, 66.5, 9.0), (4.0, 0.0, 0.0), 2)
+    },
+    Scene {
+        blocks: &[stone(8, 66, 8), stone(9, 66, 8)],
+        ..scene("seam_x", (9.0, 66.5, 5.0), (0.0, 0.0, 4.0), 2)
+    },
+];
+
 const AT_8_66_8: &[(Solid, i32, i32, i32)] = &[stone(8, 66, 8)];
 const AT_8_68_8: &[(Solid, i32, i32, i32)] = &[stone(8, 68, 8)];
 
@@ -643,7 +656,7 @@ const EDGES: &[Scene] = &[
 fn scenes() -> impl Iterator<Item = &'static Scene> {
     [
         FLIGHT, FACES, ROWS, SHAPES, TARGETS, BORDERS, MOBS, ORDER, OWNERS, REGIONS, EDGES, GROUND,
-        REAL,
+        REAL, TIES,
     ]
     .into_iter()
     .flatten()

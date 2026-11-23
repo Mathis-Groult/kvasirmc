@@ -48,6 +48,8 @@ pub mod explosion;
 #[cfg(test)]
 mod explosion_knockback_tests;
 #[cfg(test)]
+mod natural_spawner_golden;
+#[cfg(test)]
 mod piston_slime_tests;
 pub mod game_event;
 pub mod generation_cache;

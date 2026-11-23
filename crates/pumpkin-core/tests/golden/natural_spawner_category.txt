@@ -1,0 +1,56 @@
+no_player_monster: spawned false in_range true
+no_player_creature: spawned false in_range true
+spectator_only_monster: spawned false in_range true
+spectator_only_creature: spawned false in_range true
+survival_far: spawned true types {"creeper", "enderman", "skeleton", "spider", "witch", "zombie", "zombie_horse", "zombie_villager"} in_range true
+second_player_too_near: spawned false in_range true
+player_25_above: spawned true in_range true
+player_25_below: spawned true in_range true
+player_x_offset: spawned true in_range true
+spectator_near_ignored: spawned true in_range true
+monster_player_200_away: spawned false in_range true
+player_20_behind: spawned true in_range true rate_ok true
+block_stone_stone: spawned false in_range true
+block_glass_glass: spawned false in_range true
+block_slab_oak_slab: spawned true in_range true
+block_torch_torch: spawned true in_range true
+block_solid_not_full_soul_sand: spawned false in_range true
+other_chunk_active: spawned true in_range true
+inactive_own_chunk: spawned true in_range true
+other_chunk_inactive: spawned false in_range true
+tiny_border: spawned false in_range true
+sky_15: spawned false in_range true
+sky_15_thunder: spawned true in_range true
+block_light_15: spawned false in_range true
+plains_creature_dry: spawned true types {"chicken", "cow", "donkey", "horse", "pig", "sheep"} in_range true largest ["chicken=4", "cow=4", "donkey=6", "horse=6", "pig=4", "sheep=4"] mean_x_ok true mean_z_ok true std_x_ok true std_z_ok true yaw_ok true yaw_max_350 true pitch_zero true
+plains_ambient_dry: spawned false in_range true
+plains_water_creature_dry: spawned false in_range true
+plains_water_ambient_dry: spawned false in_range true
+plains_underground_water_dry: spawned false in_range true
+plains_axolotls_dry: spawned false in_range true
+mushroom_monster_empty: spawned false in_range true
+mushroom_creature: spawned false in_range true
+soul_sand_valley_monster: spawned true types {"ghast"} in_range true largest ["ghast=1"] total_under_100 true
+soul_sand_valley_charged: spawned false in_range true
+jungle_creature_near: spawned true in_range true
+jungle_creature_200_away: spawned true in_range true
+jungle_creature_128_away: spawned true in_range true parrot_at_exact true
+ocean_water_creature_wet: spawned true types {"dolphin", "nautilus", "squid"} in_range true
+ocean_water_ambient_wet: spawned true types {"cod"} in_range true
+ocean_monster_wet: spawned true types {"drowned"} in_range true
+ocean_water_creature_dry: spawned false types {} in_range true
+ocean_water_ambient_dry: spawned false types {} in_range true
+ocean_monster_dry: spawned true types {"creeper", "enderman", "skeleton", "spider", "witch", "zombie", "zombie_villager"} in_range true
+lush_caves_axolotls_wet: spawned false types {} in_range true
+lush_caves_ambient_wet: spawned false types {} in_range true
+lush_caves_underground_water_wet: spawned true types {"glow_squid"} in_range true
+lush_caves_axolotls_dry: spawned false types {} in_range true
+lush_caves_ambient_dry: spawned true types {"bat"} in_range true
+lush_caves_underground_water_dry: spawned false types {} in_range true
+dripstone_caves_underground_water_wet: spawned true types {"glow_squid"} in_range true
+dripstone_caves_ambient_wet: spawned false types {} in_range true
+dripstone_caves_monster_wet: spawned true types {"drowned"} in_range true
+dripstone_caves_underground_water_dry: spawned false types {} in_range true
+dripstone_caves_ambient_dry: spawned true types {"bat"} in_range true
+dripstone_caves_monster_dry: spawned true types {"creeper", "enderman", "skeleton", "spider", "witch", "zombie", "zombie_villager"} in_range true
+river_water_ambient_wet: spawned true types {"salmon"} in_range true rate_ok true

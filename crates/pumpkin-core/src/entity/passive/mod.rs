@@ -46,6 +46,8 @@ pub mod tropical_fish;
 pub mod turtle;
 pub mod villager;
 #[cfg(test)]
+mod villager_nbt_golden;
+#[cfg(test)]
 mod villager_tick_golden;
 #[cfg(test)]
 mod villager_trades_golden;

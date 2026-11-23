@@ -554,6 +554,18 @@ const WIDEN: &[Scene] = &[
         mob_base: 0,
         ..scene("hook_id_one", (6.5, 66.8, 8.5), (1.0, 0.0, 0.0), 4)
     },
+    Scene {
+        owner: Owner::At((4.5, 66.0, 4.5)),
+        water: true,
+        turn: Some((4, (-1.2, 0.0, 0.0))),
+        ..scene("owner_back_fast", (4.5, 67.0, 4.5), (1.2, 0.0, 0.0), 10)
+    },
+    Scene {
+        owner: Owner::At((4.5, 66.0, 4.5)),
+        water: true,
+        turn: Some((3, (-1.2, 0.0, 0.0))),
+        ..scene("owner_back_early", (4.5, 67.0, 4.5), (1.2, 0.0, 0.0), 10)
+    },
 ];
 
 fn scenes() -> impl Iterator<Item = &'static Scene> {

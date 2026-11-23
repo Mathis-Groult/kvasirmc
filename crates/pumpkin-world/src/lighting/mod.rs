@@ -9,3 +9,6 @@ pub use runtime::DynamicLightEngine;
 
 #[cfg(test)]
 mod sky_golden;
+
+#[cfg(test)]
+mod propagate_golden;

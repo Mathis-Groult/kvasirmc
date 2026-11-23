@@ -1,0 +1,32 @@
+== controller None
+ok controller=(-4,5,9) origin=(-4,6,10) source=[3, 2, 1] size=[1, 2, 3] rotation=Clockwise90
+  clear_entities (-4,6,10)..(-3,8,13)
+  air-clear x6 first set (-4,6,10) state=0 flags=0xaa last set (-4,7,12) state=0 flags=0xaa
+  set (-4,5,9) state=25099 flags=0x3
+  nbt (-4,5,9) data={ignore_entities=Byte(0),rotation=String("none"),size=IntArray([3, 2, 1]),status=String("cleared"),test=String("pumpkin:demo")},id=String("minecraft:test_instance_block")
+  clear_ticks (-4,6,10)..(-3,8,13)
+  clear_events (-4,6,10)..(-3,8,13)
+== controller Clockwise90
+ok controller=(-4,5,9) origin=(-4,6,10) source=[3, 2, 1] size=[1, 2, 3] rotation=Clockwise90
+  clear_entities (-4,6,10)..(-3,8,13)
+  air-clear x6 first set (-4,6,10) state=0 flags=0xaa last set (-4,7,12) state=0 flags=0xaa
+  set (-4,5,9) state=25099 flags=0x3
+  nbt (-4,5,9) data={ignore_entities=Byte(0),rotation=String("clockwise_90"),size=IntArray([3, 2, 1]),status=String("cleared"),test=String("pumpkin:demo")},id=String("minecraft:test_instance_block")
+  clear_ticks (-4,6,10)..(-3,8,13)
+  clear_events (-4,6,10)..(-3,8,13)
+== controller Clockwise180
+ok controller=(-4,5,9) origin=(-4,6,10) source=[3, 2, 1] size=[1, 2, 3] rotation=Clockwise90
+  clear_entities (-4,6,10)..(-3,8,13)
+  air-clear x6 first set (-4,6,10) state=0 flags=0xaa last set (-4,7,12) state=0 flags=0xaa
+  set (-4,5,9) state=25099 flags=0x3
+  nbt (-4,5,9) data={ignore_entities=Byte(0),rotation=String("180"),size=IntArray([3, 2, 1]),status=String("cleared"),test=String("pumpkin:demo")},id=String("minecraft:test_instance_block")
+  clear_ticks (-4,6,10)..(-3,8,13)
+  clear_events (-4,6,10)..(-3,8,13)
+== controller Counterclockwise90
+ok controller=(-4,5,9) origin=(-4,6,10) source=[3, 2, 1] size=[1, 2, 3] rotation=Clockwise90
+  clear_entities (-4,6,10)..(-3,8,13)
+  air-clear x6 first set (-4,6,10) state=0 flags=0xaa last set (-4,7,12) state=0 flags=0xaa
+  set (-4,5,9) state=25099 flags=0x3
+  nbt (-4,5,9) data={ignore_entities=Byte(0),rotation=String("counterclockwise_90"),size=IntArray([3, 2, 1]),status=String("cleared"),test=String("pumpkin:demo")},id=String("minecraft:test_instance_block")
+  clear_ticks (-4,6,10)..(-3,8,13)
+  clear_events (-4,6,10)..(-3,8,13)

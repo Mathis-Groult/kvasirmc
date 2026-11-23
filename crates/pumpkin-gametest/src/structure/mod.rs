@@ -1,4 +1,6 @@
 mod placement;
+#[cfg(test)]
+mod placement_tests;
 mod template;
 
 pub use placement::{

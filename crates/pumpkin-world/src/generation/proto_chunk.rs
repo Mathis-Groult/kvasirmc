@@ -37,7 +37,7 @@ use super::{
 use crate::biome::BiomeSupplier;
 use crate::chunk::format::LightContainer;
 use crate::chunk::palette::BlockPalette;
-use crate::chunk::{ChunkData, ChunkHeightmapType, ChunkLight};
+use crate::chunk::{ChunkData, ChunkLight};
 use crate::chunk_system::{StagedChunkEnum, generation_cache::SurfaceBiomeNeighborhood};
 use crate::generation::height_limit::HeightLimitView;
 use crate::generation::noise::aquifer_sampler::{FluidLevel, FluidLevelSamplerImpl};
@@ -66,6 +66,8 @@ use pumpkin_nbt::compound::NbtCompound;
 
 use crate::generation::structure::template::BlockPlacer;
 use crate::tick::{ScheduledTick, TickPriority};
+
+mod resume;
 
 pub trait GenerationCache: HeightLimitView + BlockAccessor {
     fn get_center_chunk_mut(&mut self) -> &mut ProtoChunk;
@@ -284,131 +286,15 @@ impl ProtoChunk {
     }
 
     #[must_use]
-    #[expect(clippy::too_many_lines)]
     pub fn from_chunk_data(
         chunk_data: &ChunkData,
         generator: &super::generator::WorldGenerator,
     ) -> Self {
         let mut proto_chunk = Self::new(chunk_data.x, chunk_data.z, generator);
-
-        proto_chunk.light = chunk_data
-            .light_engine
-            .lock()
-            .unwrap_or_else(std::sync::PoisonError::into_inner)
-            .clone();
-        proto_chunk
-            .blending_data
-            .clone_from(&chunk_data.blending_data);
-
-        // Chunks loaded from disk carry their block entities in the chunk data.
-        // Keep them so the world can create the block entities when the chunk
-        // becomes active, and so saving the chunk again does not drop them.
-        proto_chunk.pending_block_entities = chunk_data
-            .pending_block_entities
-            .lock()
-            .unwrap_or_else(std::sync::PoisonError::into_inner)
-            .values()
-            .cloned()
-            .collect();
-
-        let section_data = &chunk_data.section;
-        let heightmap_data = chunk_data
-            .heightmap
-            .lock()
-            .unwrap_or_else(std::sync::PoisonError::into_inner);
-
-        let block_sections_guard = section_data
-            .block_sections
-            .read()
-            .unwrap_or_else(std::sync::PoisonError::into_inner);
-        let biome_sections_guard = section_data
-            .biome_sections
-            .read()
-            .unwrap_or_else(std::sync::PoisonError::into_inner);
-
-        for (section_idx, block_palette) in block_sections_guard.iter().enumerate() {
-            let section_base_y = section_idx as i32 * 16;
-
-            if section_base_y >= proto_chunk.height() as i32 {
-                continue;
-            }
-
-            for x in 0..16 {
-                for y in 0..16 {
-                    for z in 0..16 {
-                        let block_state_id = block_palette.get(x, y, z);
-                        let block_state = BlockState::from_id(block_state_id);
-                        let absolute_y = section_base_y + y as i32 + section_data.min_y;
-
-                        proto_chunk.set_block_state(x as i32, absolute_y, z as i32, block_state);
-                    }
-                }
-            }
-
-            if let Some(biome_palette) = biome_sections_guard.get(section_idx) {
-                for x in 0..4 {
-                    for y in 0..4 {
-                        for z in 0..4 {
-                            let biome_id = biome_palette.get(x, y, z);
-                            let biome_y_idx = (section_idx * 4) + y;
-                            let index = proto_chunk.local_biome_pos_to_biome_index(
-                                x as i32,
-                                biome_y_idx as i32,
-                                z as i32,
-                            );
-                            proto_chunk.flat_biome_map[index] = biome_id;
-                        }
-                    }
-                }
-            }
-        }
-        drop(block_sections_guard);
-        drop(biome_sections_guard);
-
-        for z in 0..16 {
-            for x in 0..16 {
-                let index = Self::local_position_to_height_map_index(x, z);
-
-                proto_chunk.flat_motion_blocking_height_map[index] = heightmap_data.get(
-                    ChunkHeightmapType::MotionBlocking,
-                    x,
-                    z,
-                    section_data.min_y,
-                ) as i16;
-
-                proto_chunk.flat_motion_blocking_no_leaves_height_map[index] = heightmap_data.get(
-                    ChunkHeightmapType::MotionBlockingNoLeaves,
-                    x,
-                    z,
-                    section_data.min_y,
-                )
-                    as i16;
-
-                let surface_height =
-                    heightmap_data.get(ChunkHeightmapType::WorldSurface, x, z, section_data.min_y)
-                        as i16;
-                proto_chunk.flat_surface_height_map[index] = surface_height;
-                proto_chunk.flat_surface_wg_height_map[index] = surface_height;
-                proto_chunk.flat_ocean_floor_wg_height_map[index] =
-                    proto_chunk.flat_ocean_floor_height_map[index];
-            }
-        }
-
-        let saved_stage = StagedChunkEnum::from(chunk_data.status);
-        proto_chunk.stage = saved_stage;
-        if let super::generator::WorldGenerator::Noise(generator) = generator
-            && (StagedChunkEnum::StructureStart..StagedChunkEnum::Features).contains(&saved_stage)
-        {
-            // Structure starts and references are currently transient proto-chunk data.
-            // Rebuild them when resuming a partially generated chunk so structures that
-            // cross chunk boundaries are not truncated at the unload boundary.
-            proto_chunk.stage = StagedChunkEnum::Biomes;
-            proto_chunk.set_structure_starts(generator);
-            if saved_stage >= StagedChunkEnum::StructureReferences {
-                proto_chunk.set_structure_references(generator);
-            }
-            proto_chunk.stage = saved_stage;
-        }
+        proto_chunk.restore_saved_parts(chunk_data);
+        proto_chunk.restore_sections(&chunk_data.section);
+        proto_chunk.restore_height_maps(chunk_data);
+        proto_chunk.resume_stage(StagedChunkEnum::from(chunk_data.status), generator);
         proto_chunk
     }
 

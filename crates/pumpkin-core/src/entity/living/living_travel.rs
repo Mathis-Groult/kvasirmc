@@ -21,6 +21,9 @@ use rand::RngExt;
 use std::sync::Arc;
 use std::sync::atomic::Ordering::{Relaxed, SeqCst};
 
+#[cfg(test)]
+mod movement_golden;
+
 impl LivingEntity {
     pub fn get_speed(&self) -> f32 {
         self.speed.load()

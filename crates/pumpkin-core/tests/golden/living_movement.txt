@@ -1,0 +1,455 @@
+zombie at rest:
+  1: y 65.000000 vy -0.078400 ground true health 20.0 cooldown 0 age - pos 24.500000 24.500000 vel 0.000000 0.000000 fall 0.000 jump false input 0.000000 0.000000 0.000000 idle 0 yaw 0.0 body 0.0 head 0.0
+  2: y 65.000000 vy -0.078400 ground true health 20.0 cooldown 0 age - pos 24.500000 24.500000 vel 0.000000 0.000000 fall 0.000 jump false input 0.000000 0.000000 0.000000 idle 0 yaw 0.0 body 0.0 head 0.0
+  3: y 65.000000 vy -0.078400 ground true health 20.0 cooldown 0 age - pos 24.500000 24.500000 vel 0.000000 0.000000 fall 0.000 jump false input 0.000000 0.000000 0.000000 idle 0 yaw 0.0 body 0.0 head 0.0
+  4: y 65.000000 vy -0.078400 ground true health 20.0 cooldown 0 age - pos 24.500000 24.500000 vel 0.000000 0.000000 fall 0.000 jump false input 0.000000 0.000000 0.000000 idle 0 yaw 0.0 body 0.0 head 0.0
+zombie with input:
+  1: y 65.078053 vy -0.001908 ground false health 20.0 cooldown 0 age - pos 88.652983 24.347017 vel 0.083529 -0.083529 fall 0.000 jump false input 0.980000 0.500000 -0.980000 idle 0 yaw 0.0 body 0.0 head 0.0
+  2: y 65.084962 vy -0.071629 ground false health 20.0 cooldown 0 age - pos 88.749784 24.250216 vel 0.088088 -0.088088 fall 0.000 jump false input 0.960400 0.500000 -0.960400 idle 0 yaw 0.0 body 0.0 head 0.0
+  3: y 65.020366 vy -0.141704 ground false health 20.0 cooldown 0 age - pos 88.851111 24.148889 vel 0.092208 -0.092208 fall 0.065 jump false input 0.941192 0.500000 -0.941192 idle 0 yaw 0.0 body 0.0 head 0.0
+  4: y 65.000000 vy -0.078400 ground true health 20.0 cooldown 0 age - pos 88.956524 24.043476 vel 0.095926 -0.095926 fall 0.000 jump false input 0.922368 0.500000 -0.922368 idle 0 yaw 0.0 body 0.0 head 0.0
+zombie tiny motion:
+  1: y 65.000000 vy -0.078400 ground true health 20.0 cooldown 0 age - pos 152.500000 24.500000 vel 0.000000 0.000000 fall 0.000 jump false input 0.000000 0.000000 0.000000 idle 0 yaw 0.0 body 0.0 head 0.0
+  2: y 65.000000 vy -0.078400 ground true health 20.0 cooldown 0 age - pos 152.500000 24.500000 vel 0.000000 0.000000 fall 0.000 jump false input 0.000000 0.000000 0.000000 idle 0 yaw 0.0 body 0.0 head 0.0
+  3: y 65.000000 vy -0.078400 ground true health 20.0 cooldown 0 age - pos 152.500000 24.500000 vel 0.000000 0.000000 fall 0.000 jump false input 0.000000 0.000000 0.000000 idle 0 yaw 0.0 body 0.0 head 0.0
+  4: y 65.000000 vy -0.078400 ground true health 20.0 cooldown 0 age - pos 152.500000 24.500000 vel 0.000000 0.000000 fall 0.000 jump false input 0.000000 0.000000 0.000000 idle 0 yaw 0.0 body 0.0 head 0.0
+zombie small motion:
+  1: y 65.004000 vy -0.074480 ground false health 20.0 cooldown 0 age - pos 216.504000 24.504000 vel 0.002184 0.002184 fall 0.000 jump false input 0.000000 0.000000 0.000000 idle 0 yaw 0.0 body 0.0 head 0.0
+  2: y 65.000000 vy -0.078400 ground true health 20.0 cooldown 0 age - pos 216.504000 24.504000 vel 0.000000 0.000000 fall 0.000 jump false input 0.000000 0.000000 0.000000 idle 0 yaw 0.0 body 0.0 head 0.0
+  3: y 65.000000 vy -0.078400 ground true health 20.0 cooldown 0 age - pos 216.504000 24.504000 vel 0.000000 0.000000 fall 0.000 jump false input 0.000000 0.000000 0.000000 idle 0 yaw 0.0 body 0.0 head 0.0
+  4: y 65.000000 vy -0.078400 ground true health 20.0 cooldown 0 age - pos 216.504000 24.504000 vel 0.000000 0.000000 fall 0.000 jump false input 0.000000 0.000000 0.000000 idle 0 yaw 0.0 body 0.0 head 0.0
+zombie tiny x only:
+  1: y 65.000000 vy -0.078400 ground false health 20.0 cooldown 0 age - pos 280.500000 24.504000 vel 0.000000 0.002184 fall 0.000 jump false input 0.000000 0.000000 0.000000 idle 0 yaw 0.0 body 0.0 head 0.0
+  2: y 65.000000 vy -0.078400 ground true health 20.0 cooldown 0 age - pos 280.500000 24.504000 vel 0.000000 0.000000 fall 0.000 jump false input 0.000000 0.000000 0.000000 idle 0 yaw 0.0 body 0.0 head 0.0
+  3: y 65.000000 vy -0.078400 ground true health 20.0 cooldown 0 age - pos 280.500000 24.504000 vel 0.000000 0.000000 fall 0.000 jump false input 0.000000 0.000000 0.000000 idle 0 yaw 0.0 body 0.0 head 0.0
+  4: y 65.000000 vy -0.078400 ground true health 20.0 cooldown 0 age - pos 280.500000 24.504000 vel 0.000000 0.000000 fall 0.000 jump false input 0.000000 0.000000 0.000000 idle 0 yaw 0.0 body 0.0 head 0.0
+zombie tiny z only:
+  1: y 65.000000 vy -0.078400 ground false health 20.0 cooldown 0 age - pos 344.504000 24.500000 vel 0.002184 0.000000 fall 0.000 jump false input 0.000000 0.000000 0.000000 idle 0 yaw 0.0 body 0.0 head 0.0
+  2: y 65.000000 vy -0.078400 ground true health 20.0 cooldown 0 age - pos 344.504000 24.500000 vel 0.000000 0.000000 fall 0.000 jump false input 0.000000 0.000000 0.000000 idle 0 yaw 0.0 body 0.0 head 0.0
+  3: y 65.000000 vy -0.078400 ground true health 20.0 cooldown 0 age - pos 344.504000 24.500000 vel 0.000000 0.000000 fall 0.000 jump false input 0.000000 0.000000 0.000000 idle 0 yaw 0.0 body 0.0 head 0.0
+  4: y 65.000000 vy -0.078400 ground true health 20.0 cooldown 0 age - pos 344.504000 24.500000 vel 0.000000 0.000000 fall 0.000 jump false input 0.000000 0.000000 0.000000 idle 0 yaw 0.0 body 0.0 head 0.0
+player tiny motion:
+  1: y 65.000000 vy 0.000000 ground true health 20.0 cooldown 0 age - pos 408.500000 24.500000 vel 0.000000 0.000000 fall 0.000 jump false input 0.000000 0.000000 0.000000 idle 0 yaw 0.0 body 0.0 head 0.0
+  2: y 65.000000 vy 0.000000 ground true health 20.0 cooldown 0 age - pos 408.500000 24.500000 vel 0.000000 0.000000 fall 0.000 jump false input 0.000000 0.000000 0.000000 idle 0 yaw 0.0 body 0.0 head 0.0
+  3: y 65.000000 vy 0.000000 ground true health 20.0 cooldown 0 age - pos 408.500000 24.500000 vel 0.000000 0.000000 fall 0.000 jump false input 0.000000 0.000000 0.000000 idle 0 yaw 0.0 body 0.0 head 0.0
+  4: y 65.000000 vy 0.000000 ground true health 20.0 cooldown 0 age - pos 408.500000 24.500000 vel 0.000000 0.000000 fall 0.000 jump false input 0.000000 0.000000 0.000000 idle 0 yaw 0.0 body 0.0 head 0.0
+player small motion:
+  1: y 65.000000 vy 0.000000 ground true health 20.0 cooldown 0 age - pos 472.500000 24.500000 vel 0.001092 0.001365 fall 0.000 jump false input 0.000000 0.000000 0.000000 idle 0 yaw 0.0 body 0.0 head 0.0
+  2: y 65.000000 vy 0.000000 ground true health 20.0 cooldown 0 age - pos 472.500000 24.500000 vel 0.000000 0.000000 fall 0.000 jump false input 0.000000 0.000000 0.000000 idle 0 yaw 0.0 body 0.0 head 0.0
+  3: y 65.000000 vy 0.000000 ground true health 20.0 cooldown 0 age - pos 472.500000 24.500000 vel 0.000000 0.000000 fall 0.000 jump false input 0.000000 0.000000 0.000000 idle 0 yaw 0.0 body 0.0 head 0.0
+  4: y 65.000000 vy 0.000000 ground true health 20.0 cooldown 0 age - pos 472.500000 24.500000 vel 0.000000 0.000000 fall 0.000 jump false input 0.000000 0.000000 0.000000 idle 0 yaw 0.0 body 0.0 head 0.0
+player with input:
+  1: y 65.000000 vy 0.066064 ground true health 20.0 cooldown 0 age - pos 536.500000 24.500000 vel 0.018035 0.036071 fall 0.000 jump false input 0.490000 1.000000 0.980000 idle 0 yaw 0.0 body 0.0 head 0.0
+  2: y 65.000000 vy 0.131532 ground true health 20.0 cooldown 0 age - pos 536.500000 24.500000 vel 0.027716 0.055432 fall 0.000 jump false input 0.480200 1.000000 0.960400 idle 0 yaw 0.0 body 0.0 head 0.0
+  3: y 65.000000 vy 0.196411 ground true health 20.0 cooldown 0 age - pos 536.500000 24.500000 vel 0.032833 0.065666 fall 0.000 jump false input 0.470596 1.000000 0.941192 idle 0 yaw 0.0 body 0.0 head 0.0
+  4: y 65.000000 vy 0.260705 ground true health 20.0 cooldown 0 age - pos 536.500000 24.500000 vel 0.035456 0.070913 fall 0.000 jump false input 0.461184 1.000000 0.922368 idle 0 yaw 0.0 body 0.0 head 0.0
+zombie slow falling:
+  1: y 65.000000 vy -0.009800 ground false health 20.0 cooldown 0 age - pos 600.500000 24.500000 vel 0.000000 0.000000 fall 0.000 jump false input 0.000000 0.000000 0.000000 idle 0 yaw 0.0 body 0.0 head 0.0
+  2: y 65.000000 vy -0.009800 ground true health 20.0 cooldown 0 age - pos 600.500000 24.500000 vel 0.000000 0.000000 fall 0.000 jump false input 0.000000 0.000000 0.000000 idle 0 yaw 0.0 body 0.0 head 0.0
+  3: y 65.000000 vy -0.009800 ground true health 20.0 cooldown 0 age - pos 600.500000 24.500000 vel 0.000000 0.000000 fall 0.000 jump false input 0.000000 0.000000 0.000000 idle 0 yaw 0.0 body 0.0 head 0.0
+  4: y 65.000000 vy -0.009800 ground true health 20.0 cooldown 0 age - pos 600.500000 24.500000 vel 0.000000 0.000000 fall 0.000 jump false input 0.000000 0.000000 0.000000 idle 0 yaw 0.0 body 0.0 head 0.0
+zombie levitating:
+  1: y 65.000000 vy 0.009800 ground false health 20.0 cooldown 0 age - pos 664.500000 24.500000 vel 0.000000 0.000000 fall 0.000 jump false input 0.000000 0.000000 0.000000 idle 0 yaw 0.0 body 0.0 head 0.0
+  2: y 65.009800 vy 0.017483 ground false health 20.0 cooldown 0 age - pos 664.500000 24.500000 vel 0.000000 0.000000 fall 0.000 jump false input 0.000000 0.000000 0.000000 idle 0 yaw 0.0 body 0.0 head 0.0
+  3: y 65.027283 vy 0.023507 ground false health 20.0 cooldown 0 age - pos 664.500000 24.500000 vel 0.000000 0.000000 fall 0.000 jump false input 0.000000 0.000000 0.000000 idle 0 yaw 0.0 body 0.0 head 0.0
+  4: y 65.050790 vy 0.028229 ground false health 20.0 cooldown 0 age - pos 664.500000 24.500000 vel 0.000000 0.000000 fall 0.000 jump false input 0.000000 0.000000 0.000000 idle 0 yaw 0.0 body 0.0 head 0.0
+zombie falling without effect:
+  1: y 65.000000 vy -0.078400 ground false health 20.0 cooldown 0 age - pos 728.500000 24.500000 vel 0.000000 0.000000 fall 5.000 jump false input 0.000000 0.000000 0.000000 idle 0 yaw 0.0 body 0.0 head 0.0
+  2: y 65.000000 vy -0.078400 ground true health 18.0 cooldown 0 age - pos 728.500000 24.500000 vel 0.000000 0.000000 fall 0.000 jump false input 0.000000 0.000000 0.000000 idle 0 yaw 0.0 body 0.0 head 0.0
+  3: y 65.000000 vy -0.078400 ground true health 18.0 cooldown 0 age - pos 728.500000 24.500000 vel 0.000000 0.000000 fall 0.000 jump false input 0.000000 0.000000 0.000000 idle 0 yaw 0.0 body 0.0 head 0.0
+  4: y 65.000000 vy -0.078400 ground true health 18.0 cooldown 0 age - pos 728.500000 24.500000 vel 0.000000 0.000000 fall 0.000 jump false input 0.000000 0.000000 0.000000 idle 0 yaw 0.0 body 0.0 head 0.0
+zombie in stone:
+  1: y 65.000000 vy -0.078400 ground true health 19.0 cooldown 0 age - pos 792.500000 24.500000 vel 0.000000 0.000000 fall 0.000 jump false input 0.000000 0.000000 0.000000 idle 0 yaw 0.0 body 0.0 head 0.0
+  2: y 65.000000 vy -0.078400 ground true health 19.0 cooldown 0 age - pos 792.500000 24.500000 vel 0.000000 0.000000 fall 0.000 jump false input 0.000000 0.000000 0.000000 idle 0 yaw 0.0 body 0.0 head 0.0
+  3: y 65.000000 vy -0.078400 ground true health 19.0 cooldown 0 age - pos 792.500000 24.500000 vel 0.000000 0.000000 fall 0.000 jump false input 0.000000 0.000000 0.000000 idle 0 yaw 0.0 body 0.0 head 0.0
+  4: y 65.000000 vy -0.078400 ground true health 19.0 cooldown 0 age - pos 792.500000 24.500000 vel 0.000000 0.000000 fall 0.000 jump false input 0.000000 0.000000 0.000000 idle 0 yaw 0.0 body 0.0 head 0.0
+player in stone:
+  1: y 65.000000 vy 0.000000 ground true health 19.0 cooldown 0 age - pos 856.500000 24.500000 vel 0.000000 0.000000 fall 0.000 jump false input 0.000000 0.000000 0.000000 idle 0 yaw 0.0 body 0.0 head 0.0
+  2: y 65.000000 vy 0.000000 ground true health 19.0 cooldown 0 age - pos 856.500000 24.500000 vel 0.000000 0.000000 fall 0.000 jump false input 0.000000 0.000000 0.000000 idle 0 yaw 0.0 body 0.0 head 0.0
+  3: y 65.000000 vy 0.000000 ground true health 19.0 cooldown 0 age - pos 856.500000 24.500000 vel 0.000000 0.000000 fall 0.000 jump false input 0.000000 0.000000 0.000000 idle 0 yaw 0.0 body 0.0 head 0.0
+  4: y 65.000000 vy 0.000000 ground true health 19.0 cooldown 0 age - pos 856.500000 24.500000 vel 0.000000 0.000000 fall 0.000 jump false input 0.000000 0.000000 0.000000 idle 0 yaw 0.0 body 0.0 head 0.0
+zombie jumps on ground:
+  1: y 65.420000 vy 0.333200 ground false health 20.0 cooldown 10 age - pos 920.500000 24.500000 vel 0.000000 0.000000 fall 0.000 jump true input 0.000000 0.000000 0.000000 idle 0 yaw 0.0 body 0.0 head 0.0
+  2: y 65.753200 vy 0.248136 ground false health 20.0 cooldown 9 age - pos 920.500000 24.500000 vel 0.000000 0.000000 fall 0.000 jump true input 0.000000 0.000000 0.000000 idle 0 yaw 0.0 body 0.0 head 0.0
+  3: y 66.001336 vy 0.164773 ground false health 20.0 cooldown 8 age - pos 920.500000 24.500000 vel 0.000000 0.000000 fall 0.000 jump true input 0.000000 0.000000 0.000000 idle 0 yaw 0.0 body 0.0 head 0.0
+  4: y 66.166109 vy 0.083078 ground false health 20.0 cooldown 7 age - pos 920.500000 24.500000 vel 0.000000 0.000000 fall 0.000 jump true input 0.000000 0.000000 0.000000 idle 0 yaw 0.0 body 0.0 head 0.0
+zombie jumping in the air:
+  1: y 65.000000 vy -0.078400 ground false health 20.0 cooldown 0 age - pos 984.500000 24.500000 vel 0.000000 0.000000 fall 0.000 jump true input 0.000000 0.000000 0.000000 idle 0 yaw 0.0 body 0.0 head 0.0
+  2: y 65.000000 vy -0.078400 ground true health 20.0 cooldown 0 age - pos 984.500000 24.500000 vel 0.000000 0.000000 fall 0.000 jump true input 0.000000 0.000000 0.000000 idle 0 yaw 0.0 body 0.0 head 0.0
+  3: y 65.420000 vy 0.333200 ground false health 20.0 cooldown 10 age - pos 984.500000 24.500000 vel 0.000000 0.000000 fall 0.000 jump true input 0.000000 0.000000 0.000000 idle 0 yaw 0.0 body 0.0 head 0.0
+  4: y 65.753200 vy 0.248136 ground false health 20.0 cooldown 9 age - pos 984.500000 24.500000 vel 0.000000 0.000000 fall 0.000 jump true input 0.000000 0.000000 0.000000 idle 0 yaw 0.0 body 0.0 head 0.0
+zombie jumping with cooldown 3:
+  1: y 65.000000 vy -0.078400 ground true health 20.0 cooldown 2 age - pos 1048.500000 24.500000 vel 0.000000 0.000000 fall 0.000 jump true input 0.000000 0.000000 0.000000 idle 0 yaw 0.0 body 0.0 head 0.0
+  2: y 65.000000 vy -0.078400 ground true health 20.0 cooldown 1 age - pos 1048.500000 24.500000 vel 0.000000 0.000000 fall 0.000 jump true input 0.000000 0.000000 0.000000 idle 0 yaw 0.0 body 0.0 head 0.0
+  3: y 65.420000 vy 0.333200 ground false health 20.0 cooldown 10 age - pos 1048.500000 24.500000 vel 0.000000 0.000000 fall 0.000 jump true input 0.000000 0.000000 0.000000 idle 0 yaw 0.0 body 0.0 head 0.0
+  4: y 65.753200 vy 0.248136 ground false health 20.0 cooldown 9 age - pos 1048.500000 24.500000 vel 0.000000 0.000000 fall 0.000 jump true input 0.000000 0.000000 0.000000 idle 0 yaw 0.0 body 0.0 head 0.0
+zombie cooldown 3 but not jumping:
+  1: y 65.000000 vy -0.078400 ground true health 20.0 cooldown 0 age - pos 1112.500000 24.500000 vel 0.000000 0.000000 fall 0.000 jump false input 0.000000 0.000000 0.000000 idle 0 yaw 0.0 body 0.0 head 0.0
+  2: y 65.000000 vy -0.078400 ground true health 20.0 cooldown 0 age - pos 1112.500000 24.500000 vel 0.000000 0.000000 fall 0.000 jump false input 0.000000 0.000000 0.000000 idle 0 yaw 0.0 body 0.0 head 0.0
+  3: y 65.000000 vy -0.078400 ground true health 20.0 cooldown 0 age - pos 1112.500000 24.500000 vel 0.000000 0.000000 fall 0.000 jump false input 0.000000 0.000000 0.000000 idle 0 yaw 0.0 body 0.0 head 0.0
+  4: y 65.000000 vy -0.078400 ground true health 20.0 cooldown 0 age - pos 1112.500000 24.500000 vel 0.000000 0.000000 fall 0.000 jump false input 0.000000 0.000000 0.000000 idle 0 yaw 0.0 body 0.0 head 0.0
+zombie cooldown 1 in the air:
+  1: y 65.000000 vy -0.078400 ground false health 20.0 cooldown 0 age - pos 1176.500000 24.500000 vel 0.000000 0.000000 fall 0.000 jump true input 0.000000 0.000000 0.000000 idle 0 yaw 0.0 body 0.0 head 0.0
+  2: y 65.000000 vy -0.078400 ground true health 20.0 cooldown 0 age - pos 1176.500000 24.500000 vel 0.000000 0.000000 fall 0.000 jump true input 0.000000 0.000000 0.000000 idle 0 yaw 0.0 body 0.0 head 0.0
+  3: y 65.420000 vy 0.333200 ground false health 20.0 cooldown 10 age - pos 1176.500000 24.500000 vel 0.000000 0.000000 fall 0.000 jump true input 0.000000 0.000000 0.000000 idle 0 yaw 0.0 body 0.0 head 0.0
+  4: y 65.753200 vy 0.248136 ground false health 20.0 cooldown 9 age - pos 1176.500000 24.500000 vel 0.000000 0.000000 fall 0.000 jump true input 0.000000 0.000000 0.000000 idle 0 yaw 0.0 body 0.0 head 0.0
+zombie jumping with input:
+  1: y 65.420000 vy 0.333200 ground false health 20.0 cooldown 10 age - pos 1240.662635 24.662635 vel 0.088798 0.088798 fall 0.000 jump true input 0.980000 0.000000 0.980000 idle 0 yaw 0.0 body 0.0 head 0.0
+  2: y 65.753200 vy 0.248136 ground false health 20.0 cooldown 9 age - pos 1240.765575 24.765575 vel 0.093676 0.093676 fall 0.000 jump true input 0.960400 0.000000 0.960400 idle 0 yaw 0.0 body 0.0 head 0.0
+  3: y 66.001336 vy 0.164773 ground false health 20.0 cooldown 8 age - pos 1240.873393 24.873393 vel 0.098114 0.098114 fall 0.000 jump true input 0.941192 0.000000 0.941192 idle 0 yaw 0.0 body 0.0 head 0.0
+  4: y 66.166109 vy 0.083078 ground false health 20.0 cooldown 7 age - pos 1240.985650 24.985650 vel 0.102154 0.102154 fall 0.000 jump true input 0.922368 0.000000 0.922368 idle 0 yaw 0.0 body 0.0 head 0.0
+survival player jumps:
+  1: y 65.000000 vy 0.411600 ground true health 20.0 cooldown 10 age - pos 1304.500000 24.500000 vel 0.000000 0.000000 fall 0.000 jump true input 0.000000 0.000000 0.000000 idle 0 yaw 0.0 body 0.0 head 0.0
+  2: y 65.000000 vy 0.403368 ground true health 20.0 cooldown 9 age - pos 1304.500000 24.500000 vel 0.000000 0.000000 fall 0.000 jump true input 0.000000 0.000000 0.000000 idle 0 yaw 0.0 body 0.0 head 0.0
+  3: y 65.000000 vy 0.395301 ground true health 20.0 cooldown 8 age - pos 1304.500000 24.500000 vel 0.000000 0.000000 fall 0.000 jump true input 0.000000 0.000000 0.000000 idle 0 yaw 0.0 body 0.0 head 0.0
+  4: y 65.000000 vy 0.387395 ground true health 20.0 cooldown 7 age - pos 1304.500000 24.500000 vel 0.000000 0.000000 fall 0.000 jump true input 0.000000 0.000000 0.000000 idle 0 yaw 0.0 body 0.0 head 0.0
+survival player jumping with cooldown 2:
+  1: y 65.000000 vy 0.000000 ground true health 20.0 cooldown 1 age - pos 1368.500000 24.500000 vel 0.000000 0.000000 fall 0.000 jump true input 0.000000 0.000000 0.000000 idle 0 yaw 0.0 body 0.0 head 0.0
+  2: y 65.000000 vy 0.411600 ground true health 20.0 cooldown 10 age - pos 1368.500000 24.500000 vel 0.000000 0.000000 fall 0.000 jump true input 0.000000 0.000000 0.000000 idle 0 yaw 0.0 body 0.0 head 0.0
+  3: y 65.000000 vy 0.403368 ground true health 20.0 cooldown 9 age - pos 1368.500000 24.500000 vel 0.000000 0.000000 fall 0.000 jump true input 0.000000 0.000000 0.000000 idle 0 yaw 0.0 body 0.0 head 0.0
+  4: y 65.000000 vy 0.395301 ground true health 20.0 cooldown 8 age - pos 1368.500000 24.500000 vel 0.000000 0.000000 fall 0.000 jump true input 0.000000 0.000000 0.000000 idle 0 yaw 0.0 body 0.0 head 0.0
+flying player jumping on ground:
+  1: y 65.000000 vy 0.000000 ground true health 20.0 cooldown 0 age - pos 1432.500000 24.500000 vel 0.000000 0.000000 fall 0.000 jump true input 0.000000 0.000000 0.000000 idle 0 yaw 0.0 body 0.0 head 0.0
+  2: y 65.000000 vy 0.000000 ground true health 20.0 cooldown 0 age - pos 1432.500000 24.500000 vel 0.000000 0.000000 fall 0.000 jump true input 0.000000 0.000000 0.000000 idle 0 yaw 0.0 body 0.0 head 0.0
+  3: y 65.000000 vy 0.000000 ground true health 20.0 cooldown 0 age - pos 1432.500000 24.500000 vel 0.000000 0.000000 fall 0.000 jump true input 0.000000 0.000000 0.000000 idle 0 yaw 0.0 body 0.0 head 0.0
+  4: y 65.000000 vy 0.000000 ground true health 20.0 cooldown 0 age - pos 1432.500000 24.500000 vel 0.000000 0.000000 fall 0.000 jump true input 0.000000 0.000000 0.000000 idle 0 yaw 0.0 body 0.0 head 0.0
+flying player cooldown 3:
+  1: y 65.000000 vy 0.000000 ground true health 20.0 cooldown 0 age - pos 1496.500000 24.500000 vel 0.000000 0.000000 fall 0.000 jump true input 0.000000 0.000000 0.000000 idle 0 yaw 0.0 body 0.0 head 0.0
+  2: y 65.000000 vy 0.000000 ground true health 20.0 cooldown 0 age - pos 1496.500000 24.500000 vel 0.000000 0.000000 fall 0.000 jump true input 0.000000 0.000000 0.000000 idle 0 yaw 0.0 body 0.0 head 0.0
+  3: y 65.000000 vy 0.000000 ground true health 20.0 cooldown 0 age - pos 1496.500000 24.500000 vel 0.000000 0.000000 fall 0.000 jump true input 0.000000 0.000000 0.000000 idle 0 yaw 0.0 body 0.0 head 0.0
+  4: y 65.000000 vy 0.000000 ground true health 20.0 cooldown 0 age - pos 1496.500000 24.500000 vel 0.000000 0.000000 fall 0.000 jump true input 0.000000 0.000000 0.000000 idle 0 yaw 0.0 body 0.0 head 0.0
+creative player jumps:
+  1: y 65.000000 vy 0.411600 ground true health 20.0 cooldown 10 age - pos 1560.500000 24.500000 vel 0.000000 0.000000 fall 0.000 jump true input 0.000000 0.000000 0.000000 idle 0 yaw 0.0 body 0.0 head 0.0
+  2: y 65.000000 vy 0.403368 ground true health 20.0 cooldown 9 age - pos 1560.500000 24.500000 vel 0.000000 0.000000 fall 0.000 jump true input 0.000000 0.000000 0.000000 idle 0 yaw 0.0 body 0.0 head 0.0
+  3: y 65.000000 vy 0.395301 ground true health 20.0 cooldown 8 age - pos 1560.500000 24.500000 vel 0.000000 0.000000 fall 0.000 jump true input 0.000000 0.000000 0.000000 idle 0 yaw 0.0 body 0.0 head 0.0
+  4: y 65.000000 vy 0.387395 ground true health 20.0 cooldown 7 age - pos 1560.500000 24.500000 vel 0.000000 0.000000 fall 0.000 jump true input 0.000000 0.000000 0.000000 idle 0 yaw 0.0 body 0.0 head 0.0
+dead zombie jumping with input:
+  1: y 65.115000 vy 0.034300 ground false health 0.0 cooldown 0 age - pos 1624.500000 24.500000 vel 0.000000 0.000000 fall 0.000 jump false input 0.000000 0.500000 0.000000 idle 0 yaw 0.0 body 0.0 head 0.0
+  2: y 65.159300 vy -0.034986 ground false health 0.0 cooldown 0 age - pos 1624.500000 24.500000 vel 0.000000 0.000000 fall 0.000 jump false input 0.000000 0.500000 0.000000 idle 0 yaw 0.0 body 0.0 head 0.0
+  3: y 65.134314 vy -0.102886 ground false health 0.0 cooldown 0 age - pos 1624.500000 24.500000 vel 0.000000 0.000000 fall 0.025 jump false input 0.000000 0.500000 0.000000 idle 0 yaw 0.0 body 0.0 head 0.0
+  4: y 65.041428 vy -0.169429 ground false health 0.0 cooldown 0 age - pos 1624.500000 24.500000 vel 0.000000 0.000000 fall 0.118 jump false input 0.000000 0.500000 0.000000 idle 0 yaw 0.0 body 0.0 head 0.0
+dead player jumping with input:
+  1: y 65.000000 vy 0.049000 ground true health 0.0 cooldown 0 age - pos 1688.500000 24.500000 vel 0.000000 0.000000 fall 0.000 jump false input 0.000000 0.500000 0.000000 idle 0 yaw 0.0 body 0.0 head 0.0
+  2: y 65.000000 vy 0.097020 ground true health 0.0 cooldown 0 age - pos 1688.500000 24.500000 vel 0.000000 0.000000 fall 0.000 jump false input 0.000000 0.500000 0.000000 idle 0 yaw 0.0 body 0.0 head 0.0
+  3: y 65.000000 vy 0.144080 ground true health 0.0 cooldown 0 age - pos 1688.500000 24.500000 vel 0.000000 0.000000 fall 0.000 jump false input 0.000000 0.500000 0.000000 idle 0 yaw 0.0 body 0.0 head 0.0
+  4: y 65.000000 vy 0.190198 ground true health 0.0 cooldown 0 age - pos 1688.500000 24.500000 vel 0.000000 0.000000 fall 0.000 jump false input 0.000000 0.500000 0.000000 idle 0 yaw 0.0 body 0.0 head 0.0
+zombie in shallow water:
+  1: y 65.000000 vy -0.005000 ground true health 20.0 cooldown 0 age - pos 1752.500000 24.500000 vel 0.000000 0.000000 fall 0.000 jump false input 0.000000 0.000000 0.000000 idle 0 yaw 0.0 body 0.0 head 0.0
+  2: y 65.000000 vy -0.005000 ground true health 20.0 cooldown 0 age - pos 1752.500000 24.500000 vel 0.000000 0.000000 fall 0.000 jump false input 0.000000 0.000000 0.000000 idle 0 yaw 0.0 body 0.0 head 0.0
+  3: y 65.000000 vy -0.005000 ground true health 20.0 cooldown 0 age - pos 1752.500000 24.500000 vel 0.000000 0.000000 fall 0.000 jump false input 0.000000 0.000000 0.000000 idle 0 yaw 0.0 body 0.0 head 0.0
+  4: y 65.000000 vy -0.005000 ground true health 20.0 cooldown 0 age - pos 1752.500000 24.500000 vel 0.000000 0.000000 fall 0.000 jump false input 0.000000 0.000000 0.000000 idle 0 yaw 0.0 body 0.0 head 0.0
+zombie in shallow water jumping:
+  1: y 65.420000 vy 0.331000 ground false health 20.0 cooldown 10 age - pos 1816.500000 24.500000 vel 0.000000 0.000000 fall 0.000 jump true input 0.000000 0.000000 0.000000 idle 0 yaw 0.0 body 0.0 head 0.0
+  2: y 65.791000 vy 0.291800 ground false health 20.0 cooldown 9 age - pos 1816.500000 24.500000 vel 0.000000 0.000000 fall 0.000 jump true input 0.000000 0.000000 0.000000 idle 0 yaw 0.0 body 0.0 head 0.0
+  3: y 66.122800 vy 0.260440 ground false health 20.0 cooldown 8 age - pos 1816.500000 24.500000 vel 0.000000 0.000000 fall 0.000 jump true input 0.000000 0.000000 0.000000 idle 0 yaw 0.0 body 0.0 head 0.0
+  4: y 66.423240 vy 0.235352 ground false health 20.0 cooldown 7 age - pos 1816.500000 24.500000 vel 0.000000 0.000000 fall 0.000 jump true input 0.000000 0.000000 0.000000 idle 0 yaw 0.0 body 0.0 head 0.0
+zombie in 0.4 water jumping:
+  1: y 65.420000 vy 0.331000 ground false health 20.0 cooldown 10 age - pos 1880.500000 24.500000 vel 0.000000 0.000000 fall 0.000 jump true input 0.000000 0.000000 0.000000 idle 0 yaw 0.0 body 0.0 head 0.0
+  2: y 65.791000 vy 0.291800 ground false health 20.0 cooldown 9 age - pos 1880.500000 24.500000 vel 0.000000 0.000000 fall 0.000 jump true input 0.000000 0.000000 0.000000 idle 0 yaw 0.0 body 0.0 head 0.0
+  3: y 66.122800 vy 0.260440 ground false health 20.0 cooldown 8 age - pos 1880.500000 24.500000 vel 0.000000 0.000000 fall 0.000 jump true input 0.000000 0.000000 0.000000 idle 0 yaw 0.0 body 0.0 head 0.0
+  4: y 66.423240 vy 0.235352 ground false health 20.0 cooldown 7 age - pos 1880.500000 24.500000 vel 0.000000 0.000000 fall 0.000 jump true input 0.000000 0.000000 0.000000 idle 0 yaw 0.0 body 0.0 head 0.0
+zombie in deep water jumping:
+  1: y 65.040000 vy 0.027000 ground false health 20.0 cooldown 0 age - pos 1944.500000 24.500000 vel 0.000000 0.000000 fall 0.000 jump true input 0.000000 0.000000 0.000000 idle 0 yaw 0.0 body 0.0 head 0.0
+  2: y 65.107000 vy 0.048600 ground false health 20.0 cooldown 0 age - pos 1944.500000 24.500000 vel 0.000000 0.000000 fall 0.000 jump true input 0.000000 0.000000 0.000000 idle 0 yaw 0.0 body 0.0 head 0.0
+  3: y 65.195600 vy 0.065880 ground false health 20.0 cooldown 0 age - pos 1944.500000 24.500000 vel 0.000000 0.000000 fall 0.000 jump true input 0.000000 0.000000 0.000000 idle 0 yaw 0.0 body 0.0 head 0.0
+  4: y 65.301480 vy 0.079704 ground false health 20.0 cooldown 0 age - pos 1944.500000 24.500000 vel 0.000000 0.000000 fall 0.000 jump true input 0.000000 0.000000 0.000000 idle 0 yaw 0.0 body 0.0 head 0.0
+zombie in shallow water jumping with cooldown 5:
+  1: y 65.000000 vy -0.005000 ground true health 20.0 cooldown 4 age - pos 2008.500000 24.500000 vel 0.000000 0.000000 fall 0.000 jump true input 0.000000 0.000000 0.000000 idle 0 yaw 0.0 body 0.0 head 0.0
+  2: y 65.000000 vy -0.005000 ground true health 20.0 cooldown 3 age - pos 2008.500000 24.500000 vel 0.000000 0.000000 fall 0.000 jump true input 0.000000 0.000000 0.000000 idle 0 yaw 0.0 body 0.0 head 0.0
+  3: y 65.000000 vy -0.005000 ground true health 20.0 cooldown 2 age - pos 2008.500000 24.500000 vel 0.000000 0.000000 fall 0.000 jump true input 0.000000 0.000000 0.000000 idle 0 yaw 0.0 body 0.0 head 0.0
+  4: y 65.000000 vy -0.005000 ground true health 20.0 cooldown 1 age - pos 2008.500000 24.500000 vel 0.000000 0.000000 fall 0.000 jump true input 0.000000 0.000000 0.000000 idle 0 yaw 0.0 body 0.0 head 0.0
+zombie swimming up in shallow water:
+  1: y 65.040000 vy 0.027000 ground false health 20.0 cooldown 0 age - pos 2072.500000 24.500000 vel 0.000000 0.000000 fall 0.000 jump true input 0.000000 0.000000 0.000000 idle 0 yaw 0.0 body 0.0 head 0.0
+  2: y 65.107000 vy 0.048600 ground false health 20.0 cooldown 0 age - pos 2072.500000 24.500000 vel 0.000000 0.000000 fall 0.000 jump true input 0.000000 0.000000 0.000000 idle 0 yaw 0.0 body 0.0 head 0.0
+  3: y 65.195600 vy 0.065880 ground false health 20.0 cooldown 0 age - pos 2072.500000 24.500000 vel 0.000000 0.000000 fall 0.000 jump true input 0.000000 0.000000 0.000000 idle 0 yaw 0.0 body 0.0 head 0.0
+  4: y 65.301480 vy 0.079704 ground false health 20.0 cooldown 0 age - pos 2072.500000 24.500000 vel 0.000000 0.000000 fall 0.000 jump true input 0.000000 0.000000 0.000000 idle 0 yaw 0.0 body 0.0 head 0.0
+zombie in water with input:
+  1: y 65.000000 vy -0.005000 ground false health 20.0 cooldown 0 age - pos 2136.514142 24.514142 vel 0.011314 0.011314 fall 0.000 jump false input 0.980000 0.000000 0.980000 idle 0 yaw 0.0 body 0.0 head 0.0
+  2: y 65.000000 vy -0.005000 ground true health 20.0 cooldown 0 age - pos 2136.539598 24.539598 vel 0.020365 0.020365 fall 0.000 jump false input 0.960400 0.000000 0.960400 idle 0 yaw 0.0 body 0.0 head 0.0
+  3: y 65.000000 vy -0.005000 ground true health 20.0 cooldown 0 age - pos 2136.574105 24.574105 vel 0.027605 0.027605 fall 0.000 jump false input 0.941192 0.000000 0.941192 idle 0 yaw 0.0 body 0.0 head 0.0
+  4: y 65.000000 vy -0.005000 ground true health 20.0 cooldown 0 age - pos 2136.615852 24.615852 vel 0.033398 0.033398 fall 0.000 jump false input 0.922368 0.000000 0.922368 idle 0 yaw 0.0 body 0.0 head 0.0
+zombie in deep water:
+  1: y 65.000000 vy -0.005000 ground true health 20.0 cooldown 0 age - pos 2200.500000 24.500000 vel 0.000000 0.000000 fall 0.000 jump false input 0.000000 0.000000 0.000000 idle 0 yaw 0.0 body 0.0 head 0.0
+  2: y 65.000000 vy -0.005000 ground true health 20.0 cooldown 0 age - pos 2200.500000 24.500000 vel 0.000000 0.000000 fall 0.000 jump false input 0.000000 0.000000 0.000000 idle 0 yaw 0.0 body 0.0 head 0.0
+  3: y 65.000000 vy -0.005000 ground true health 20.0 cooldown 0 age - pos 2200.500000 24.500000 vel 0.000000 0.000000 fall 0.000 jump false input 0.000000 0.000000 0.000000 idle 0 yaw 0.0 body 0.0 head 0.0
+  4: y 65.000000 vy -0.005000 ground true health 20.0 cooldown 0 age - pos 2200.500000 24.500000 vel 0.000000 0.000000 fall 0.000 jump false input 0.000000 0.000000 0.000000 idle 0 yaw 0.0 body 0.0 head 0.0
+silverfish in water jumping:
+  1: y 65.040000 vy 0.027000 ground false health 8.0 cooldown 0 age - pos 2264.500000 24.500000 vel 0.000000 0.000000 fall 0.000 jump true input 0.000000 0.000000 0.000000 idle 0 yaw 0.0 body 0.0 head 0.0
+  2: y 65.107000 vy 0.048600 ground false health 8.0 cooldown 0 age - pos 2264.500000 24.500000 vel 0.000000 0.000000 fall 0.000 jump true input 0.000000 0.000000 0.000000 idle 0 yaw 0.0 body 0.0 head 0.0
+  3: y 65.195600 vy 0.065880 ground false health 8.0 cooldown 0 age - pos 2264.500000 24.500000 vel 0.000000 0.000000 fall 0.000 jump true input 0.000000 0.000000 0.000000 idle 0 yaw 0.0 body 0.0 head 0.0
+  4: y 65.301480 vy 0.079704 ground false health 8.0 cooldown 0 age - pos 2264.500000 24.500000 vel 0.000000 0.000000 fall 0.000 jump true input 0.000000 0.000000 0.000000 idle 0 yaw 0.0 body 0.0 head 0.0
+breeze in water jumping:
+  1: y 65.420000 vy 0.331000 ground false health 30.0 cooldown 10 age - pos 2328.500000 24.500000 vel 0.000000 0.000000 fall 0.000 jump true input 0.000000 0.000000 0.000000 idle 0 yaw 0.0 body 0.0 head 0.0
+  2: y 65.791000 vy 0.291800 ground false health 30.0 cooldown 9 age - pos 2328.500000 24.500000 vel 0.000000 0.000000 fall 0.000 jump true input 0.000000 0.000000 0.000000 idle 0 yaw 0.0 body 0.0 head 0.0
+  3: y 66.122800 vy 0.260440 ground false health 30.0 cooldown 8 age - pos 2328.500000 24.500000 vel 0.000000 0.000000 fall 0.000 jump true input 0.000000 0.000000 0.000000 idle 0 yaw 0.0 body 0.0 head 0.0
+  4: y 66.423240 vy 0.235352 ground false health 30.0 cooldown 7 age - pos 2328.500000 24.500000 vel 0.000000 0.000000 fall 0.000 jump true input 0.000000 0.000000 0.000000 idle 0 yaw 0.0 body 0.0 head 0.0
+survival player in water:
+  1: y 65.000000 vy 0.000000 ground true health 20.0 cooldown 0 age - pos 2392.500000 24.500000 vel 0.007840 0.007840 fall 0.000 jump false input 0.490000 0.000000 0.490000 idle 0 yaw 0.0 body 0.0 head 0.0
+  2: y 65.000000 vy 0.000000 ground true health 20.0 cooldown 0 age - pos 2392.500000 24.500000 vel 0.013955 0.013955 fall 0.000 jump false input 0.480200 0.000000 0.480200 idle 0 yaw 0.0 body 0.0 head 0.0
+  3: y 65.000000 vy 0.000000 ground true health 20.0 cooldown 0 age - pos 2392.500000 24.500000 vel 0.018694 0.018694 fall 0.000 jump false input 0.470596 0.000000 0.470596 idle 0 yaw 0.0 body 0.0 head 0.0
+  4: y 65.000000 vy 0.000000 ground true health 20.0 cooldown 0 age - pos 2392.500000 24.500000 vel 0.022334 0.022334 fall 0.000 jump false input 0.461184 0.000000 0.461184 idle 0 yaw 0.0 body 0.0 head 0.0
+survival player swimming up:
+  1: y 65.000000 vy 0.032000 ground true health 20.0 cooldown 0 age - pos 2456.500000 24.500000 vel 0.000000 0.000000 fall 0.000 jump true input 0.000000 0.000000 0.000000 idle 0 yaw 0.0 body 0.0 head 0.0
+  2: y 65.000000 vy 0.057600 ground true health 20.0 cooldown 0 age - pos 2456.500000 24.500000 vel 0.000000 0.000000 fall 0.000 jump true input 0.000000 0.000000 0.000000 idle 0 yaw 0.0 body 0.0 head 0.0
+  3: y 65.000000 vy 0.078080 ground true health 20.0 cooldown 0 age - pos 2456.500000 24.500000 vel 0.000000 0.000000 fall 0.000 jump true input 0.000000 0.000000 0.000000 idle 0 yaw 0.0 body 0.0 head 0.0
+  4: y 65.000000 vy 0.094464 ground true health 20.0 cooldown 0 age - pos 2456.500000 24.500000 vel 0.000000 0.000000 fall 0.000 jump true input 0.000000 0.000000 0.000000 idle 0 yaw 0.0 body 0.0 head 0.0
+flying player in water:
+  1: y 65.000000 vy 0.000000 ground false health 20.0 cooldown 0 age - pos 2520.500000 24.500000 vel 0.022295 0.022295 fall 0.000 jump true input 0.490000 0.000000 0.490000 idle 0 yaw 0.0 body 0.0 head 0.0
+  2: y 65.000000 vy 0.000000 ground false health 20.0 cooldown 0 age - pos 2520.500000 24.500000 vel 0.042138 0.042138 fall 0.000 jump true input 0.480200 0.000000 0.480200 idle 0 yaw 0.0 body 0.0 head 0.0
+  3: y 65.000000 vy 0.000000 ground false health 20.0 cooldown 0 age - pos 2520.500000 24.500000 vel 0.059757 0.059757 fall 0.000 jump true input 0.470596 0.000000 0.470596 idle 0 yaw 0.0 body 0.0 head 0.0
+  4: y 65.000000 vy 0.000000 ground false health 20.0 cooldown 0 age - pos 2520.500000 24.500000 vel 0.075363 0.075363 fall 0.000 jump true input 0.461184 0.000000 0.461184 idle 0 yaw 0.0 body 0.0 head 0.0
+creative player in water jumping:
+  1: y 65.000000 vy 0.032000 ground false health 20.0 cooldown 0 age - pos 2584.500000 24.500000 vel 0.000000 0.000000 fall 0.000 jump true input 0.000000 0.000000 0.000000 idle 0 yaw 0.0 body 0.0 head 0.0
+  2: y 65.000000 vy 0.057600 ground false health 20.0 cooldown 0 age - pos 2584.500000 24.500000 vel 0.000000 0.000000 fall 0.000 jump true input 0.000000 0.000000 0.000000 idle 0 yaw 0.0 body 0.0 head 0.0
+  3: y 65.000000 vy 0.078080 ground false health 20.0 cooldown 0 age - pos 2584.500000 24.500000 vel 0.000000 0.000000 fall 0.000 jump true input 0.000000 0.000000 0.000000 idle 0 yaw 0.0 body 0.0 head 0.0
+  4: y 65.000000 vy 0.094464 ground false health 20.0 cooldown 0 age - pos 2584.500000 24.500000 vel 0.000000 0.000000 fall 0.000 jump true input 0.000000 0.000000 0.000000 idle 0 yaw 0.0 body 0.0 head 0.0
+zombie in shallow lava:
+  1: y 65.000000 vy -0.025000 ground true health 20.0 cooldown 0 age - pos 2648.500000 24.500000 vel 0.000000 0.000000 fall 0.000 jump false input 0.000000 0.000000 0.000000 idle 0 yaw 0.0 body 0.0 head 0.0
+  2: y 65.000000 vy -0.025000 ground true health 20.0 cooldown 0 age - pos 2648.500000 24.500000 vel 0.000000 0.000000 fall 0.000 jump false input 0.000000 0.000000 0.000000 idle 0 yaw 0.0 body 0.0 head 0.0
+  3: y 65.000000 vy -0.025000 ground true health 20.0 cooldown 0 age - pos 2648.500000 24.500000 vel 0.000000 0.000000 fall 0.000 jump false input 0.000000 0.000000 0.000000 idle 0 yaw 0.0 body 0.0 head 0.0
+  4: y 65.000000 vy -0.025000 ground true health 20.0 cooldown 0 age - pos 2648.500000 24.500000 vel 0.000000 0.000000 fall 0.000 jump false input 0.000000 0.000000 0.000000 idle 0 yaw 0.0 body 0.0 head 0.0
+zombie in shallow lava jumping:
+  1: y 65.420000 vy 0.311000 ground false health 20.0 cooldown 10 age - pos 2712.500000 24.500000 vel 0.000000 0.000000 fall 0.000 jump true input 0.000000 0.000000 0.000000 idle 0 yaw 0.0 body 0.0 head 0.0
+  2: y 65.771000 vy 0.255800 ground false health 20.0 cooldown 9 age - pos 2712.500000 24.500000 vel 0.000000 0.000000 fall 0.000 jump true input 0.000000 0.000000 0.000000 idle 0 yaw 0.0 body 0.0 head 0.0
+  3: y 66.066800 vy 0.211640 ground false health 20.0 cooldown 8 age - pos 2712.500000 24.500000 vel 0.000000 0.000000 fall 0.000 jump true input 0.000000 0.000000 0.000000 idle 0 yaw 0.0 body 0.0 head 0.0
+  4: y 66.318440 vy 0.176312 ground false health 20.0 cooldown 7 age - pos 2712.500000 24.500000 vel 0.000000 0.000000 fall 0.000 jump true input 0.000000 0.000000 0.000000 idle 0 yaw 0.0 body 0.0 head 0.0
+zombie in deep lava jumping:
+  1: y 65.040000 vy 0.000000 ground false health 20.0 cooldown 0 age - pos 2776.500000 24.500000 vel 0.000000 0.000000 fall 0.000 jump true input 0.000000 0.000000 0.000000 idle 0 yaw 0.0 body 0.0 head 0.0
+  2: y 65.080000 vy 0.000000 ground false health 20.0 cooldown 0 age - pos 2776.500000 24.500000 vel 0.000000 0.000000 fall 0.000 jump true input 0.000000 0.000000 0.000000 idle 0 yaw 0.0 body 0.0 head 0.0
+  3: y 65.120000 vy 0.000000 ground false health 20.0 cooldown 0 age - pos 2776.500000 24.500000 vel 0.000000 0.000000 fall 0.000 jump true input 0.000000 0.000000 0.000000 idle 0 yaw 0.0 body 0.0 head 0.0
+  4: y 65.160000 vy 0.000000 ground false health 20.0 cooldown 0 age - pos 2776.500000 24.500000 vel 0.000000 0.000000 fall 0.000 jump true input 0.000000 0.000000 0.000000 idle 0 yaw 0.0 body 0.0 head 0.0
+zombie in lava in the air jumping:
+  1: y 65.040000 vy 0.007000 ground false health 20.0 cooldown 0 age - pos 2840.500000 24.500000 vel 0.000000 0.000000 fall 0.000 jump true input 0.000000 0.000000 0.000000 idle 0 yaw 0.0 body 0.0 head 0.0
+  2: y 65.087000 vy 0.012600 ground false health 20.0 cooldown 0 age - pos 2840.500000 24.500000 vel 0.000000 0.000000 fall 0.000 jump true input 0.000000 0.000000 0.000000 idle 0 yaw 0.0 body 0.0 head 0.0
+  3: y 65.139600 vy 0.017080 ground false health 20.0 cooldown 0 age - pos 2840.500000 24.500000 vel 0.000000 0.000000 fall 0.000 jump true input 0.000000 0.000000 0.000000 idle 0 yaw 0.0 body 0.0 head 0.0
+  4: y 65.196680 vy 0.020664 ground false health 20.0 cooldown 0 age - pos 2840.500000 24.500000 vel 0.000000 0.000000 fall 0.000 jump true input 0.000000 0.000000 0.000000 idle 0 yaw 0.0 body 0.0 head 0.0
+zombie in lava with input:
+  1: y 65.000000 vy -0.020000 ground false health 20.0 cooldown 0 age - pos 2904.514142 24.514142 vel 0.007071 0.007071 fall 0.000 jump false input 0.980000 0.000000 0.980000 idle 0 yaw 0.0 body 0.0 head 0.0
+  2: y 65.000000 vy -0.020000 ground true health 20.0 cooldown 0 age - pos 2904.535355 24.535355 vel 0.010607 0.010607 fall 0.000 jump false input 0.960400 0.000000 0.960400 idle 0 yaw 0.0 body 0.0 head 0.0
+  3: y 65.000000 vy -0.020000 ground true health 20.0 cooldown 0 age - pos 2904.560104 24.560104 vel 0.012374 0.012374 fall 0.000 jump false input 0.941192 0.000000 0.941192 idle 0 yaw 0.0 body 0.0 head 0.0
+  4: y 65.000000 vy -0.020000 ground true health 20.0 cooldown 0 age - pos 2904.586621 24.586621 vel 0.013258 0.013258 fall 0.000 jump false input 0.922368 0.000000 0.922368 idle 0 yaw 0.0 body 0.0 head 0.0
+zombie in shallow lava and deep water jumping:
+  1: y 65.420000 vy 0.331000 ground false health 20.0 cooldown 10 age - pos 2968.500000 24.500000 vel 0.000000 0.000000 fall 0.000 jump true input 0.000000 0.000000 0.000000 idle 0 yaw 0.0 body 0.0 head 0.0
+  2: y 65.791000 vy 0.291800 ground false health 20.0 cooldown 9 age - pos 2968.500000 24.500000 vel 0.000000 0.000000 fall 0.000 jump true input 0.000000 0.000000 0.000000 idle 0 yaw 0.0 body 0.0 head 0.0
+  3: y 66.122800 vy 0.260440 ground false health 20.0 cooldown 8 age - pos 2968.500000 24.500000 vel 0.000000 0.000000 fall 0.000 jump true input 0.000000 0.000000 0.000000 idle 0 yaw 0.0 body 0.0 head 0.0
+  4: y 66.423240 vy 0.235352 ground false health 20.0 cooldown 7 age - pos 2968.500000 24.500000 vel 0.000000 0.000000 fall 0.000 jump true input 0.000000 0.000000 0.000000 idle 0 yaw 0.0 body 0.0 head 0.0
+zombie in deep lava and shallow water jumping:
+  1: y 65.040000 vy 0.027000 ground false health 20.0 cooldown 0 age - pos 3032.500000 24.500000 vel 0.000000 0.000000 fall 0.000 jump true input 0.000000 0.000000 0.000000 idle 0 yaw 0.0 body 0.0 head 0.0
+  2: y 65.107000 vy 0.048600 ground false health 20.0 cooldown 0 age - pos 3032.500000 24.500000 vel 0.000000 0.000000 fall 0.000 jump true input 0.000000 0.000000 0.000000 idle 0 yaw 0.0 body 0.0 head 0.0
+  3: y 65.195600 vy 0.065880 ground false health 20.0 cooldown 0 age - pos 3032.500000 24.500000 vel 0.000000 0.000000 fall 0.000 jump true input 0.000000 0.000000 0.000000 idle 0 yaw 0.0 body 0.0 head 0.0
+  4: y 65.301480 vy 0.079704 ground false health 20.0 cooldown 0 age - pos 3032.500000 24.500000 vel 0.000000 0.000000 fall 0.000 jump true input 0.000000 0.000000 0.000000 idle 0 yaw 0.0 body 0.0 head 0.0
+strider in lava jumping:
+  1: y 65.000000 vy 0.040000 ground true health 20.0 cooldown 0 age 0 pos 3096.500000 24.500000 vel 0.000000 0.000000 fall 0.000 jump true input 0.000000 0.000000 0.000000 idle 0 yaw 0.0 body 0.0 head 0.0
+  2: y 65.000000 vy 0.080000 ground true health 20.0 cooldown 0 age 0 pos 3096.500000 24.500000 vel 0.000000 0.000000 fall 0.000 jump true input 0.000000 0.000000 0.000000 idle 0 yaw 0.0 body 0.0 head 0.0
+  3: y 65.000000 vy 0.120000 ground true health 20.0 cooldown 0 age 0 pos 3096.500000 24.500000 vel 0.000000 0.000000 fall 0.000 jump true input 0.000000 0.000000 0.000000 idle 0 yaw 0.0 body 0.0 head 0.0
+  4: y 65.000000 vy 0.160000 ground true health 20.0 cooldown 0 age 0 pos 3096.500000 24.500000 vel 0.000000 0.000000 fall 0.000 jump true input 0.000000 0.000000 0.000000 idle 0 yaw 0.0 body 0.0 head 0.0
+strider in lava:
+  1: y 65.000000 vy 0.000000 ground true health 20.0 cooldown 0 age 0 pos 3160.500000 24.500000 vel 0.000000 0.000000 fall 0.000 jump false input 0.000000 0.000000 0.000000 idle 0 yaw 0.0 body 0.0 head 0.0
+  2: y 65.000000 vy 0.000000 ground true health 20.0 cooldown 0 age 0 pos 3160.500000 24.500000 vel 0.000000 0.000000 fall 0.000 jump false input 0.000000 0.000000 0.000000 idle 0 yaw 0.0 body 0.0 head 0.0
+  3: y 65.000000 vy 0.000000 ground true health 20.0 cooldown 0 age 0 pos 3160.500000 24.500000 vel 0.000000 0.000000 fall 0.000 jump false input 0.000000 0.000000 0.000000 idle 0 yaw 0.0 body 0.0 head 0.0
+  4: y 65.000000 vy 0.000000 ground true health 20.0 cooldown 0 age 0 pos 3160.500000 24.500000 vel 0.000000 0.000000 fall 0.000 jump false input 0.000000 0.000000 0.000000 idle 0 yaw 0.0 body 0.0 head 0.0
+dead strider in lava:
+  1: y 65.000000 vy -0.078400 ground false health 0.0 cooldown 0 age 0 pos 3224.600000 24.600000 vel 0.054600 0.054600 fall 0.000 jump false input 0.000000 0.000000 0.000000 idle 0 yaw 0.0 body 0.0 head 0.0
+  2: y 65.000000 vy -0.078400 ground true health 0.0 cooldown 0 age 0 pos 3224.654600 24.654600 vel 0.049686 0.049686 fall 0.000 jump false input 0.000000 0.000000 0.000000 idle 0 yaw 0.0 body 0.0 head 0.0
+  3: y 65.000000 vy -0.078400 ground true health 0.0 cooldown 0 age 0 pos 3224.704286 24.704286 vel 0.027129 0.027129 fall 0.000 jump false input 0.000000 0.000000 0.000000 idle 0 yaw 0.0 body 0.0 head 0.0
+  4: y 65.000000 vy -0.078400 ground true health 0.0 cooldown 0 age 0 pos 3224.731415 24.731415 vel 0.014812 0.014812 fall 0.000 jump false input 0.000000 0.000000 0.000000 idle 0 yaw 0.0 body 0.0 head 0.0
+dead strider in water:
+  1: y 65.000000 vy -0.078400 ground false health 0.0 cooldown 0 age 0 pos 3288.600000 24.600000 vel 0.054600 0.054600 fall 0.000 jump false input 0.000000 0.000000 0.000000 idle 0 yaw 0.0 body 0.0 head 0.0
+  2: y 65.000000 vy -0.078400 ground true health 0.0 cooldown 0 age 0 pos 3288.654600 24.654600 vel 0.049686 0.049686 fall 0.000 jump false input 0.000000 0.000000 0.000000 idle 0 yaw 0.0 body 0.0 head 0.0
+  3: y 65.000000 vy -0.078400 ground true health 0.0 cooldown 0 age 0 pos 3288.704286 24.704286 vel 0.027129 0.027129 fall 0.000 jump false input 0.000000 0.000000 0.000000 idle 0 yaw 0.0 body 0.0 head 0.0
+  4: y 65.000000 vy -0.078400 ground true health 0.0 cooldown 0 age 0 pos 3288.731415 24.731415 vel 0.014812 0.014812 fall 0.000 jump false input 0.000000 0.000000 0.000000 idle 0 yaw 0.0 body 0.0 head 0.0
+dead zombie in lava:
+  1: y 65.000000 vy -0.020000 ground false health 0.0 cooldown 0 age - pos 3352.600000 24.600000 vel 0.050000 0.050000 fall 0.000 jump false input 0.000000 0.000000 0.000000 idle 0 yaw 0.0 body 0.0 head 0.0
+  2: y 65.000000 vy -0.020000 ground true health 0.0 cooldown 0 age - pos 3352.650000 24.650000 vel 0.025000 0.025000 fall 0.000 jump false input 0.000000 0.000000 0.000000 idle 0 yaw 0.0 body 0.0 head 0.0
+  3: y 65.000000 vy -0.020000 ground true health 0.0 cooldown 0 age - pos 3352.675000 24.675000 vel 0.012500 0.012500 fall 0.000 jump false input 0.000000 0.000000 0.000000 idle 0 yaw 0.0 body 0.0 head 0.0
+  4: y 65.000000 vy -0.020000 ground true health 0.0 cooldown 0 age - pos 3352.687500 24.687500 vel 0.006250 0.006250 fall 0.000 jump false input 0.000000 0.000000 0.000000 idle 0 yaw 0.0 body 0.0 head 0.0
+survival player in lava:
+  1: y 65.000000 vy 0.000000 ground true health 20.0 cooldown 0 age - pos 3416.500000 24.500000 vel 0.004900 0.004900 fall 0.000 jump false input 0.490000 0.000000 0.490000 idle 0 yaw 0.0 body 0.0 head 0.0
+  2: y 65.000000 vy 0.000000 ground true health 20.0 cooldown 0 age - pos 3416.500000 24.500000 vel 0.007252 0.007252 fall 0.000 jump false input 0.480200 0.000000 0.480200 idle 0 yaw 0.0 body 0.0 head 0.0
+  3: y 65.000000 vy 0.000000 ground true health 20.0 cooldown 0 age - pos 3416.500000 24.500000 vel 0.008332 0.008332 fall 0.000 jump false input 0.470596 0.000000 0.470596 idle 0 yaw 0.0 body 0.0 head 0.0
+  4: y 65.000000 vy 0.000000 ground true health 20.0 cooldown 0 age - pos 3416.500000 24.500000 vel 0.008778 0.008778 fall 0.000 jump false input 0.461184 0.000000 0.461184 idle 0 yaw 0.0 body 0.0 head 0.0
+flying player in lava:
+  1: y 65.000000 vy 0.000000 ground false health 20.0 cooldown 0 age - pos 3480.500000 24.500000 vel 0.000000 0.000000 fall 0.000 jump true input 0.000000 0.000000 0.000000 idle 0 yaw 0.0 body 0.0 head 0.0
+  2: y 65.000000 vy 0.000000 ground false health 20.0 cooldown 0 age - pos 3480.500000 24.500000 vel 0.000000 0.000000 fall 0.000 jump true input 0.000000 0.000000 0.000000 idle 0 yaw 0.0 body 0.0 head 0.0
+  3: y 65.000000 vy 0.000000 ground false health 20.0 cooldown 0 age - pos 3480.500000 24.500000 vel 0.000000 0.000000 fall 0.000 jump true input 0.000000 0.000000 0.000000 idle 0 yaw 0.0 body 0.0 head 0.0
+  4: y 65.000000 vy 0.000000 ground false health 20.0 cooldown 0 age - pos 3480.500000 24.500000 vel 0.000000 0.000000 fall 0.000 jump true input 0.000000 0.000000 0.000000 idle 0 yaw 0.0 body 0.0 head 0.0
+zombie mob with AI at rest:
+  1: health 20.0 cooldown 0 age - idle 1
+  2: health 20.0 cooldown 0 age - idle 2
+  3: health 20.0 cooldown 0 age - idle 3
+  4: health 20.0 cooldown 0 age - idle 4
+zombie mob with AI in the air:
+  1: health 20.0 cooldown 0 age - idle 1
+  2: health 20.0 cooldown 0 age - idle 2
+  3: health 20.0 cooldown 0 age - idle 3
+  4: health 20.0 cooldown 0 age - idle 4
+zombie mob with AI jumping:
+  1: health 20.0 cooldown 0 age - idle 1
+  2: health 20.0 cooldown 0 age - idle 2
+  3: health 20.0 cooldown 0 age - idle 3
+  4: health 20.0 cooldown 0 age - idle 4
+zombie mob with AI in water:
+  1: health 20.0 cooldown 0 age - idle 1
+  2: health 20.0 cooldown 0 age - idle 2
+  3: health 20.0 cooldown 0 age - idle 3
+  4: health 20.0 cooldown 0 age - idle 4
+zombie mob without AI:
+  1: y 65.000000 vy 0.000000 ground true health 20.0 cooldown 0 age - pos 3800.500000 24.500000 vel 0.000000 0.000000 fall 0.000 jump false input 0.000000 0.000000 0.000000 idle 0 yaw 0.0 body 0.0 head 0.0
+  2: y 65.000000 vy 0.000000 ground true health 20.0 cooldown 0 age - pos 3800.500000 24.500000 vel 0.000000 0.000000 fall 0.000 jump false input 0.000000 0.000000 0.000000 idle 0 yaw 0.0 body 0.0 head 0.0
+  3: y 65.000000 vy 0.000000 ground true health 20.0 cooldown 0 age - pos 3800.500000 24.500000 vel 0.000000 0.000000 fall 0.000 jump false input 0.000000 0.000000 0.000000 idle 0 yaw 0.0 body 0.0 head 0.0
+  4: y 65.000000 vy 0.000000 ground true health 20.0 cooldown 0 age - pos 3800.500000 24.500000 vel 0.000000 0.000000 fall 0.000 jump false input 0.000000 0.000000 0.000000 idle 0 yaw 0.0 body 0.0 head 0.0
+zombie mob without AI in the air:
+  1: y 65.000000 vy 0.300000 ground false health 20.0 cooldown 0 age - pos 3864.500000 24.500000 vel 0.100000 0.100000 fall 0.000 jump false input 0.000000 0.000000 0.000000 idle 0 yaw 0.0 body 0.0 head 0.0
+  2: y 65.000000 vy 0.300000 ground false health 20.0 cooldown 0 age - pos 3864.500000 24.500000 vel 0.100000 0.100000 fall 0.000 jump false input 0.000000 0.000000 0.000000 idle 0 yaw 0.0 body 0.0 head 0.0
+  3: y 65.000000 vy 0.300000 ground false health 20.0 cooldown 0 age - pos 3864.500000 24.500000 vel 0.100000 0.100000 fall 0.000 jump false input 0.000000 0.000000 0.000000 idle 0 yaw 0.0 body 0.0 head 0.0
+  4: y 65.000000 vy 0.300000 ground false health 20.0 cooldown 0 age - pos 3864.500000 24.500000 vel 0.100000 0.100000 fall 0.000 jump false input 0.000000 0.000000 0.000000 idle 0 yaw 0.0 body 0.0 head 0.0
+zombie mob without AI in water:
+  1: y 65.000000 vy 0.000000 ground true health 20.0 cooldown 0 age - pos 3928.500000 24.500000 vel 0.100000 0.100000 fall 0.000 jump false input 0.000000 0.000000 0.000000 idle 0 yaw 0.0 body 0.0 head 0.0
+  2: y 65.000000 vy 0.000000 ground true health 20.0 cooldown 0 age - pos 3928.500000 24.500000 vel 0.100000 0.100000 fall 0.000 jump false input 0.000000 0.000000 0.000000 idle 0 yaw 0.0 body 0.0 head 0.0
+  3: y 65.000000 vy 0.000000 ground true health 20.0 cooldown 0 age - pos 3928.500000 24.500000 vel 0.100000 0.100000 fall 0.000 jump false input 0.000000 0.000000 0.000000 idle 0 yaw 0.0 body 0.0 head 0.0
+  4: y 65.000000 vy 0.000000 ground true health 20.0 cooldown 0 age - pos 3928.500000 24.500000 vel 0.100000 0.100000 fall 0.000 jump false input 0.000000 0.000000 0.000000 idle 0 yaw 0.0 body 0.0 head 0.0
+zombie mob without AI jumping:
+  1: y 65.000000 vy 0.420000 ground true health 20.0 cooldown 10 age - pos 3992.500000 24.500000 vel 0.000000 0.000000 fall 0.000 jump true input 0.980000 0.000000 0.980000 idle 0 yaw 0.0 body 0.0 head 0.0
+  2: y 65.000000 vy 0.420000 ground true health 20.0 cooldown 9 age - pos 3992.500000 24.500000 vel 0.000000 0.000000 fall 0.000 jump true input 0.960400 0.000000 0.960400 idle 0 yaw 0.0 body 0.0 head 0.0
+  3: y 65.000000 vy 0.420000 ground true health 20.0 cooldown 8 age - pos 3992.500000 24.500000 vel 0.000000 0.000000 fall 0.000 jump true input 0.941192 0.000000 0.941192 idle 0 yaw 0.0 body 0.0 head 0.0
+  4: y 65.000000 vy 0.420000 ground true health 20.0 cooldown 7 age - pos 3992.500000 24.500000 vel 0.000000 0.000000 fall 0.000 jump true input 0.922368 0.000000 0.922368 idle 0 yaw 0.0 body 0.0 head 0.0
+dead zombie mob with AI:
+  1: y 65.000000 vy -0.078400 ground false health 0.0 cooldown 0 age - pos 4056.600000 24.600000 vel 0.054600 0.054600 fall 0.000 jump false input 0.000000 0.500000 0.000000 idle 0 yaw 0.0 body 0.0 head 0.0
+  2: y 65.000000 vy -0.078400 ground true health 0.0 cooldown 0 age - pos 4056.654600 24.654600 vel 0.049686 0.049686 fall 0.000 jump false input 0.000000 0.500000 0.000000 idle 0 yaw 0.0 body 0.0 head 0.0
+  3: y 65.000000 vy -0.078400 ground true health 0.0 cooldown 0 age - pos 4056.704286 24.704286 vel 0.027129 0.027129 fall 0.000 jump false input 0.000000 0.500000 0.000000 idle 0 yaw 0.0 body 0.0 head 0.0
+  4: y 65.000000 vy -0.078400 ground true health 0.0 cooldown 0 age - pos 4056.731415 24.731415 vel 0.014812 0.014812 fall 0.000 jump false input 0.000000 0.500000 0.000000 idle 0 yaw 0.0 body 0.0 head 0.0
+dead zombie mob in the air:
+  1: y 65.300000 vy 0.215600 ground false health 0.0 cooldown 0 age - pos 4120.600000 24.600000 vel 0.091000 0.091000 fall 0.000 jump false input 0.000000 0.000000 0.000000 idle 0 yaw 0.0 body 0.0 head 0.0
+  2: y 65.515600 vy 0.132888 ground false health 0.0 cooldown 0 age - pos 4120.691000 24.691000 vel 0.082810 0.082810 fall 0.000 jump false input 0.000000 0.000000 0.000000 idle 0 yaw 0.0 body 0.0 head 0.0
+  3: y 65.648488 vy 0.051830 ground false health 0.0 cooldown 0 age - pos 4120.773810 24.773810 vel 0.075357 0.075357 fall 0.000 jump false input 0.000000 0.000000 0.000000 idle 0 yaw 0.0 body 0.0 head 0.0
+  4: y 65.700318 vy -0.027606 ground false health 0.0 cooldown 0 age - pos 4120.849167 24.849167 vel 0.068575 0.068575 fall 0.000 jump false input 0.000000 0.000000 0.000000 idle 0 yaw 0.0 body 0.0 head 0.0
+zombie mob without AI, head turned:
+  1: y 65.000000 vy 0.000000 ground true health 20.0 cooldown 0 age - pos 4184.500000 24.500000 vel 0.000000 0.000000 fall 0.000 jump false input 0.000000 0.000000 0.000000 idle 0 yaw 90.0 body 0.0 head 40.0
+  2: y 65.000000 vy 0.000000 ground true health 20.0 cooldown 0 age - pos 4184.500000 24.500000 vel 0.000000 0.000000 fall 0.000 jump false input 0.000000 0.000000 0.000000 idle 0 yaw 90.0 body 0.0 head 40.0
+  3: y 65.000000 vy 0.000000 ground true health 20.0 cooldown 0 age - pos 4184.500000 24.500000 vel 0.000000 0.000000 fall 0.000 jump false input 0.000000 0.000000 0.000000 idle 0 yaw 90.0 body 0.0 head 40.0
+  4: y 65.000000 vy 0.000000 ground true health 20.0 cooldown 0 age - pos 4184.500000 24.500000 vel 0.000000 0.000000 fall 0.000 jump false input 0.000000 0.000000 0.000000 idle 0 yaw 90.0 body 0.0 head 40.0
+moving zombie mob without AI, head turned:
+  1: y 65.000000 vy 0.000000 ground true health 20.0 cooldown 0 age - pos 4248.500000 24.500000 vel 0.200000 0.200000 fall 0.000 jump false input 0.000000 0.000000 0.000000 idle 0 yaw 90.0 body 0.0 head 40.0
+  2: y 65.000000 vy 0.000000 ground true health 20.0 cooldown 0 age - pos 4248.500000 24.500000 vel 0.200000 0.200000 fall 0.000 jump false input 0.000000 0.000000 0.000000 idle 0 yaw 90.0 body 0.0 head 40.0
+  3: y 65.000000 vy 0.000000 ground true health 20.0 cooldown 0 age - pos 4248.500000 24.500000 vel 0.200000 0.200000 fall 0.000 jump false input 0.000000 0.000000 0.000000 idle 0 yaw 90.0 body 0.0 head 40.0
+  4: y 65.000000 vy 0.000000 ground true health 20.0 cooldown 0 age - pos 4248.500000 24.500000 vel 0.200000 0.200000 fall 0.000 jump false input 0.000000 0.000000 0.000000 idle 0 yaw 90.0 body 0.0 head 40.0
+squid mob with AI in water:
+  1: health 10.0 cooldown 0 age 0 idle 1
+  2: health 10.0 cooldown 0 age 0 idle 2
+  3: health 10.0 cooldown 0 age 0 idle 3
+  4: health 10.0 cooldown 0 age 0 idle 4
+dead squid in water:
+  1: y 65.050000 vy 0.050000 ground false health 0.0 cooldown 0 age 0 pos 4376.600000 24.600000 vel 0.100000 0.100000 fall 0.000 jump false input 0.000000 0.000000 0.000000 idle 0 yaw -4.5 body -4.5 head 0.0
+  2: y 65.100000 vy 0.050000 ground false health 0.0 cooldown 0 age 0 pos 4376.700000 24.700000 vel 0.100000 0.100000 fall 0.000 jump false input 0.000000 0.000000 0.000000 idle 0 yaw -8.6 body -8.6 head 0.0
+  3: y 65.150000 vy 0.050000 ground false health 0.0 cooldown 0 age 0 pos 4376.800000 24.800000 vel 0.100000 0.100000 fall 0.000 jump false input 0.000000 0.000000 0.000000 idle 0 yaw -12.2 body -12.2 head 0.0
+  4: y 65.200000 vy 0.050000 ground false health 0.0 cooldown 0 age 0 pos 4376.900000 24.900000 vel 0.100000 0.100000 fall 0.000 jump false input 0.000000 0.000000 0.000000 idle 0 yaw -15.5 body -15.5 head 0.0
+dead squid in the air:
+  1: y 65.050000 vy -0.029400 ground false health 0.0 cooldown 0 age 0 pos 4440.600000 24.600000 vel 0.000000 0.000000 fall 0.000 jump false input 0.000000 0.000000 0.000000 idle 0 yaw 0.0 body 0.0 head 0.0
+  2: y 65.020600 vy -0.107212 ground false health 0.0 cooldown 0 age 0 pos 4440.600000 24.600000 vel 0.000000 0.000000 fall 0.029 jump false input 0.000000 0.000000 0.000000 idle 0 yaw 0.0 body 0.0 head 0.0
+  3: y 65.000000 vy -0.078400 ground true health 0.0 cooldown 0 age 0 pos 4440.600000 24.600000 vel 0.000000 0.000000 fall 0.000 jump false input 0.000000 0.000000 0.000000 idle 0 yaw 0.0 body 0.0 head 0.0
+  4: y 65.000000 vy -0.078400 ground true health 0.0 cooldown 0 age 0 pos 4440.600000 24.600000 vel 0.000000 0.000000 fall 0.000 jump false input 0.000000 0.000000 0.000000 idle 0 yaw 0.0 body 0.0 head 0.0
+cod flopping on land:
+  1: health 3.0 cooldown 0 age - idle 0
+  2: health 3.0 cooldown 0 age - idle 0
+  3: health 3.0 cooldown 0 age - idle 0
+  4: health 3.0 cooldown 0 age - idle 0
+strider mob with AI in lava:
+  1: health 20.0 cooldown 0 age 0 idle 1
+  2: health 20.0 cooldown 0 age 0 idle 2
+  3: health 20.0 cooldown 0 age 0 idle 3
+  4: health 20.0 cooldown 0 age 0 idle 4
+baby cow without AI:
+  1: y 65.000000 vy 0.000000 ground true health 10.0 cooldown 0 age -99 pos 4632.500000 24.500000 vel 0.000000 0.000000 fall 0.000 jump false input 0.000000 0.000000 0.000000 idle 0 yaw 0.0 body 0.0 head 0.0
+  2: y 65.000000 vy 0.000000 ground true health 10.0 cooldown 0 age -98 pos 4632.500000 24.500000 vel 0.000000 0.000000 fall 0.000 jump false input 0.000000 0.000000 0.000000 idle 0 yaw 0.0 body 0.0 head 0.0
+  3: y 65.000000 vy 0.000000 ground true health 10.0 cooldown 0 age -97 pos 4632.500000 24.500000 vel 0.000000 0.000000 fall 0.000 jump false input 0.000000 0.000000 0.000000 idle 0 yaw 0.0 body 0.0 head 0.0
+  4: y 65.000000 vy 0.000000 ground true health 10.0 cooldown 0 age -96 pos 4632.500000 24.500000 vel 0.000000 0.000000 fall 0.000 jump false input 0.000000 0.000000 0.000000 idle 0 yaw 0.0 body 0.0 head 0.0
+cow in love cooldown without AI:
+  1: y 65.000000 vy 0.000000 ground true health 10.0 cooldown 0 age 49 pos 4696.500000 24.500000 vel 0.000000 0.000000 fall 0.000 jump false input 0.000000 0.000000 0.000000 idle 0 yaw 0.0 body 0.0 head 0.0
+  2: y 65.000000 vy 0.000000 ground true health 10.0 cooldown 0 age 48 pos 4696.500000 24.500000 vel 0.000000 0.000000 fall 0.000 jump false input 0.000000 0.000000 0.000000 idle 0 yaw 0.0 body 0.0 head 0.0
+  3: y 65.000000 vy 0.000000 ground true health 10.0 cooldown 0 age 47 pos 4696.500000 24.500000 vel 0.000000 0.000000 fall 0.000 jump false input 0.000000 0.000000 0.000000 idle 0 yaw 0.0 body 0.0 head 0.0
+  4: y 65.000000 vy 0.000000 ground true health 10.0 cooldown 0 age 46 pos 4696.500000 24.500000 vel 0.000000 0.000000 fall 0.000 jump false input 0.000000 0.000000 0.000000 idle 0 yaw 0.0 body 0.0 head 0.0
+adult cow without AI:
+  1: y 65.000000 vy 0.000000 ground true health 10.0 cooldown 0 age 0 pos 4760.500000 24.500000 vel 0.000000 0.000000 fall 0.000 jump false input 0.000000 0.000000 0.000000 idle 0 yaw 0.0 body 0.0 head 0.0
+  2: y 65.000000 vy 0.000000 ground true health 10.0 cooldown 0 age 0 pos 4760.500000 24.500000 vel 0.000000 0.000000 fall 0.000 jump false input 0.000000 0.000000 0.000000 idle 0 yaw 0.0 body 0.0 head 0.0
+  3: y 65.000000 vy 0.000000 ground true health 10.0 cooldown 0 age 0 pos 4760.500000 24.500000 vel 0.000000 0.000000 fall 0.000 jump false input 0.000000 0.000000 0.000000 idle 0 yaw 0.0 body 0.0 head 0.0
+  4: y 65.000000 vy 0.000000 ground true health 10.0 cooldown 0 age 0 pos 4760.500000 24.500000 vel 0.000000 0.000000 fall 0.000 jump false input 0.000000 0.000000 0.000000 idle 0 yaw 0.0 body 0.0 head 0.0
+dead baby cow without AI:
+  1: y 65.000000 vy 0.000000 ground true health 0.0 cooldown 0 age -100 pos 4824.500000 24.500000 vel 0.000000 0.000000 fall 0.000 jump false input 0.000000 0.000000 0.000000 idle 0 yaw 0.0 body 0.0 head 0.0
+  2: y 65.000000 vy 0.000000 ground true health 0.0 cooldown 0 age -100 pos 4824.500000 24.500000 vel 0.000000 0.000000 fall 0.000 jump false input 0.000000 0.000000 0.000000 idle 0 yaw 0.0 body 0.0 head 0.0
+  3: y 65.000000 vy 0.000000 ground true health 0.0 cooldown 0 age -100 pos 4824.500000 24.500000 vel 0.000000 0.000000 fall 0.000 jump false input 0.000000 0.000000 0.000000 idle 0 yaw 0.0 body 0.0 head 0.0
+  4: y 65.000000 vy 0.000000 ground true health 0.0 cooldown 0 age -100 pos 4824.500000 24.500000 vel 0.000000 0.000000 fall 0.000 jump false input 0.000000 0.000000 0.000000 idle 0 yaw 0.0 body 0.0 head 0.0
+removed baby cow without AI:
+  1: y 65.000000 vy 0.000000 ground true health 10.0 cooldown 0 age -100 pos 4888.500000 24.500000 vel 0.000000 0.000000 fall 0.000 jump false input 0.000000 0.000000 0.000000 idle 0 yaw 0.0 body 0.0 head 0.0
+  2: y 65.000000 vy 0.000000 ground true health 10.0 cooldown 0 age -100 pos 4888.500000 24.500000 vel 0.000000 0.000000 fall 0.000 jump false input 0.000000 0.000000 0.000000 idle 0 yaw 0.0 body 0.0 head 0.0
+  3: y 65.000000 vy 0.000000 ground true health 10.0 cooldown 0 age -100 pos 4888.500000 24.500000 vel 0.000000 0.000000 fall 0.000 jump false input 0.000000 0.000000 0.000000 idle 0 yaw 0.0 body 0.0 head 0.0
+  4: y 65.000000 vy 0.000000 ground true health 10.0 cooldown 0 age -100 pos 4888.500000 24.500000 vel 0.000000 0.000000 fall 0.000 jump false input 0.000000 0.000000 0.000000 idle 0 yaw 0.0 body 0.0 head 0.0
+baby cow with AI:
+  1: health 10.0 cooldown 0 age -99 idle 1
+  2: health 10.0 cooldown 0 age -98 idle 2
+  3: health 10.0 cooldown 0 age -97 idle 3
+  4: health 10.0 cooldown 0 age -96 idle 4
+dead baby cow with AI:
+  1: health 0.0 cooldown 0 age -100 idle 0
+  2: health 0.0 cooldown 0 age -100 idle 0
+  3: health 0.0 cooldown 0 age -100 idle 0
+  4: health 0.0 cooldown 0 age -100 idle 0
+chicken falling without AI:
+  1: y 65.000000 vy -0.300000 ground false health 4.0 cooldown 0 age 0 pos 5080.500000 24.500000 vel 0.000000 0.000000 fall 0.000 jump false input 0.000000 0.000000 0.000000 idle 0 yaw 0.0 body 0.0 head 0.0
+  2: y 65.000000 vy -0.180000 ground false health 4.0 cooldown 0 age 0 pos 5080.500000 24.500000 vel 0.000000 0.000000 fall 0.000 jump false input 0.000000 0.000000 0.000000 idle 0 yaw 0.0 body 0.0 head 0.0
+  3: y 65.000000 vy -0.108000 ground false health 4.0 cooldown 0 age 0 pos 5080.500000 24.500000 vel 0.000000 0.000000 fall 0.000 jump false input 0.000000 0.000000 0.000000 idle 0 yaw 0.0 body 0.0 head 0.0
+  4: y 65.000000 vy -0.064800 ground false health 4.0 cooldown 0 age 0 pos 5080.500000 24.500000 vel 0.000000 0.000000 fall 0.000 jump false input 0.000000 0.000000 0.000000 idle 0 yaw 0.0 body 0.0 head 0.0
+chicken on ground without AI:
+  1: y 65.000000 vy -0.500000 ground true health 4.0 cooldown 0 age 0 pos 5144.500000 24.500000 vel 0.000000 0.000000 fall 0.000 jump false input 0.000000 0.000000 0.000000 idle 0 yaw 0.0 body 0.0 head 0.0
+  2: y 65.000000 vy -0.500000 ground true health 4.0 cooldown 0 age 0 pos 5144.500000 24.500000 vel 0.000000 0.000000 fall 0.000 jump false input 0.000000 0.000000 0.000000 idle 0 yaw 0.0 body 0.0 head 0.0
+  3: y 65.000000 vy -0.500000 ground true health 4.0 cooldown 0 age 0 pos 5144.500000 24.500000 vel 0.000000 0.000000 fall 0.000 jump false input 0.000000 0.000000 0.000000 idle 0 yaw 0.0 body 0.0 head 0.0
+  4: y 65.000000 vy -0.500000 ground true health 4.0 cooldown 0 age 0 pos 5144.500000 24.500000 vel 0.000000 0.000000 fall 0.000 jump false input 0.000000 0.000000 0.000000 idle 0 yaw 0.0 body 0.0 head 0.0
+chicken rising without AI:
+  1: y 65.000000 vy 0.500000 ground false health 4.0 cooldown 0 age 0 pos 5208.500000 24.500000 vel 0.000000 0.000000 fall 0.000 jump false input 0.000000 0.000000 0.000000 idle 0 yaw 0.0 body 0.0 head 0.0
+  2: y 65.000000 vy 0.500000 ground false health 4.0 cooldown 0 age 0 pos 5208.500000 24.500000 vel 0.000000 0.000000 fall 0.000 jump false input 0.000000 0.000000 0.000000 idle 0 yaw 0.0 body 0.0 head 0.0
+  3: y 65.000000 vy 0.500000 ground false health 4.0 cooldown 0 age 0 pos 5208.500000 24.500000 vel 0.000000 0.000000 fall 0.000 jump false input 0.000000 0.000000 0.000000 idle 0 yaw 0.0 body 0.0 head 0.0
+  4: y 65.000000 vy 0.500000 ground false health 4.0 cooldown 0 age 0 pos 5208.500000 24.500000 vel 0.000000 0.000000 fall 0.000 jump false input 0.000000 0.000000 0.000000 idle 0 yaw 0.0 body 0.0 head 0.0
+baby chicken falling without AI:
+  1: y 65.000000 vy -0.300000 ground false health 4.0 cooldown 0 age -99 pos 5272.500000 24.500000 vel 0.000000 0.000000 fall 0.000 jump false input 0.000000 0.000000 0.000000 idle 0 yaw 0.0 body 0.0 head 0.0
+  2: y 65.000000 vy -0.180000 ground false health 4.0 cooldown 0 age -98 pos 5272.500000 24.500000 vel 0.000000 0.000000 fall 0.000 jump false input 0.000000 0.000000 0.000000 idle 0 yaw 0.0 body 0.0 head 0.0
+  3: y 65.000000 vy -0.108000 ground false health 4.0 cooldown 0 age -97 pos 5272.500000 24.500000 vel 0.000000 0.000000 fall 0.000 jump false input 0.000000 0.000000 0.000000 idle 0 yaw 0.0 body 0.0 head 0.0
+  4: y 65.000000 vy -0.064800 ground false health 4.0 cooldown 0 age -96 pos 5272.500000 24.500000 vel 0.000000 0.000000 fall 0.000 jump false input 0.000000 0.000000 0.000000 idle 0 yaw 0.0 body 0.0 head 0.0
+zombie near a neighbour:
+  1: y 65.000000 vy -0.078400 ground true health 20.0 cooldown 0 age - pos 5336.500000 24.500000 vel -0.027386 -0.009129 fall 0.000 jump false input 0.000000 0.000000 0.000000 idle 0 yaw 0.0 body 0.0 head 0.0 | neighbour 0.027386 0.000000 0.009129
+  2: y 65.000000 vy -0.078400 ground true health 20.0 cooldown 0 age - pos 5336.472614 24.490871 vel -0.043562 -0.014521 fall 0.000 jump false input 0.000000 0.000000 0.000000 idle 0 yaw 0.0 body 0.0 head 0.0 | neighbour 0.055995 0.000000 0.018665
+  3: y 65.000000 vy -0.078400 ground true health 20.0 cooldown 0 age - pos 5336.429052 24.476351 vel -0.054237 -0.018079 fall 0.000 jump false input 0.000000 0.000000 0.000000 idle 0 yaw 0.0 body 0.0 head 0.0 | neighbour 0.086448 0.000000 0.028816
+  4: y 65.000000 vy -0.078400 ground true health 20.0 cooldown 0 age - pos 5336.374815 24.458272 vel -0.062217 -0.020739 fall 0.000 jump false input 0.000000 0.000000 0.000000 idle 0 yaw 0.0 body 0.0 head 0.0 | neighbour 0.119051 0.000000 0.039684
+player near a neighbour:
+  1: y 65.000000 vy 0.000000 ground true health 20.0 cooldown 0 age - pos 5400.500000 24.500000 vel -0.027386 -0.009129 fall 0.000 jump false input 0.000000 0.000000 0.000000 idle 0 yaw 0.0 body 0.0 head 0.0 | neighbour 0.027386 0.000000 0.009129
+  2: y 65.000000 vy 0.000000 ground true health 20.0 cooldown 0 age - pos 5400.500000 24.500000 vel -0.042339 -0.014113 fall 0.000 jump false input 0.000000 0.000000 0.000000 idle 0 yaw 0.0 body 0.0 head 0.0 | neighbour 0.054772 0.000000 0.018257
+  3: y 65.000000 vy 0.000000 ground true health 20.0 cooldown 0 age - pos 5400.500000 24.500000 vel -0.050503 -0.016834 fall 0.000 jump false input 0.000000 0.000000 0.000000 idle 0 yaw 0.0 body 0.0 head 0.0 | neighbour 0.082158 0.000000 0.027386
+  4: y 65.000000 vy 0.000000 ground true health 20.0 cooldown 0 age - pos 5400.500000 24.500000 vel -0.054961 -0.018320 fall 0.000 jump false input 0.000000 0.000000 0.000000 idle 0 yaw 0.0 body 0.0 head 0.0 | neighbour 0.109545 0.000000 0.036515
+zombie mob near a neighbour:
+  1: y 65.000000 vy 0.000000 ground true health 20.0 cooldown 0 age - pos 5464.500000 24.500000 vel -0.027386 -0.009129 fall 0.000 jump false input 0.000000 0.000000 0.000000 idle 0 yaw 0.0 body 0.0 head 0.0 | neighbour 0.027386 0.000000 0.009129
+  2: y 65.000000 vy 0.000000 ground true health 20.0 cooldown 0 age - pos 5464.500000 24.500000 vel -0.054772 -0.018257 fall 0.000 jump false input 0.000000 0.000000 0.000000 idle 0 yaw 0.0 body 0.0 head 0.0 | neighbour 0.054772 0.000000 0.018257
+  3: y 65.000000 vy 0.000000 ground true health 20.0 cooldown 0 age - pos 5464.500000 24.500000 vel -0.082158 -0.027386 fall 0.000 jump false input 0.000000 0.000000 0.000000 idle 0 yaw 0.0 body 0.0 head 0.0 | neighbour 0.082158 0.000000 0.027386
+  4: y 65.000000 vy 0.000000 ground true health 20.0 cooldown 0 age - pos 5464.500000 24.500000 vel -0.109545 -0.036515 fall 0.000 jump false input 0.000000 0.000000 0.000000 idle 0 yaw 0.0 body 0.0 head 0.0 | neighbour 0.109545 0.000000 0.036515
+dormant mob on its decision tick near a neighbour:
+  1: y 65.000000 vy 0.000000 ground true health 20.0 cooldown 0 age - pos 5528.500000 24.500000 vel -0.027386 -0.009129 fall 0.000 jump false input 0.000000 0.000000 0.000000 idle 0 yaw 0.0 body 0.0 head 0.0 | neighbour 0.027386 0.000000 0.009129
+  2: y 65.000000 vy 0.000000 ground true health 20.0 cooldown 0 age - pos 5528.500000 24.500000 vel -0.054772 -0.018257 fall 0.000 jump false input 0.000000 0.000000 0.000000 idle 0 yaw 0.0 body 0.0 head 0.0 | neighbour 0.054772 0.000000 0.018257
+  3: y 65.000000 vy 0.000000 ground true health 20.0 cooldown 0 age - pos 5528.500000 24.500000 vel -0.082158 -0.027386 fall 0.000 jump false input 0.000000 0.000000 0.000000 idle 0 yaw 0.0 body 0.0 head 0.0 | neighbour 0.082158 0.000000 0.027386
+  4: y 65.000000 vy 0.000000 ground true health 20.0 cooldown 0 age - pos 5528.500000 24.500000 vel -0.109545 -0.036515 fall 0.000 jump false input 0.000000 0.000000 0.000000 idle 0 yaw 0.0 body 0.0 head 0.0 | neighbour 0.109545 0.000000 0.036515
+dormant mob between decisions near a neighbour:
+  1: y 65.000000 vy 0.000000 ground true health 20.0 cooldown 0 age - pos 5592.500000 24.500000 vel 0.000000 0.000000 fall 0.000 jump false input 0.000000 0.000000 0.000000 idle 0 yaw 0.0 body 0.0 head 0.0 | neighbour 0.000000 0.000000 0.000000
+  2: y 65.000000 vy 0.000000 ground true health 20.0 cooldown 0 age - pos 5592.500000 24.500000 vel 0.000000 0.000000 fall 0.000 jump false input 0.000000 0.000000 0.000000 idle 0 yaw 0.0 body 0.0 head 0.0 | neighbour 0.000000 0.000000 0.000000
+  3: y 65.000000 vy 0.000000 ground true health 20.0 cooldown 0 age - pos 5592.500000 24.500000 vel 0.000000 0.000000 fall 0.000 jump false input 0.000000 0.000000 0.000000 idle 0 yaw 0.0 body 0.0 head 0.0 | neighbour 0.000000 0.000000 0.000000
+  4: y 65.000000 vy 0.000000 ground true health 20.0 cooldown 0 age - pos 5592.500000 24.500000 vel 0.000000 0.000000 fall 0.000 jump false input 0.000000 0.000000 0.000000 idle 0 yaw 0.0 body 0.0 head 0.0 | neighbour 0.000000 0.000000 0.000000
+relaxed mob between decisions near a neighbour:
+  1: y 65.000000 vy 0.000000 ground true health 20.0 cooldown 0 age - pos 5656.500000 24.500000 vel -0.027386 -0.009129 fall 0.000 jump false input 0.000000 0.000000 0.000000 idle 0 yaw 0.0 body 0.0 head 0.0 | neighbour 0.027386 0.000000 0.009129
+  2: y 65.000000 vy 0.000000 ground true health 20.0 cooldown 0 age - pos 5656.500000 24.500000 vel -0.054772 -0.018257 fall 0.000 jump false input 0.000000 0.000000 0.000000 idle 0 yaw 0.0 body 0.0 head 0.0 | neighbour 0.054772 0.000000 0.018257
+  3: y 65.000000 vy 0.000000 ground true health 20.0 cooldown 0 age - pos 5656.500000 24.500000 vel -0.082158 -0.027386 fall 0.000 jump false input 0.000000 0.000000 0.000000 idle 0 yaw 0.0 body 0.0 head 0.0 | neighbour 0.082158 0.000000 0.027386
+  4: y 65.000000 vy 0.000000 ground true health 20.0 cooldown 0 age - pos 5656.500000 24.500000 vel -0.109545 -0.036515 fall 0.000 jump false input 0.000000 0.000000 0.000000 idle 0 yaw 0.0 body 0.0 head 0.0 | neighbour 0.109545 0.000000 0.036515
+relaxed mob on its decision tick near a neighbour:
+  1: y 65.000000 vy 0.000000 ground true health 20.0 cooldown 0 age - pos 5720.500000 24.500000 vel -0.027386 -0.009129 fall 0.000 jump false input 0.000000 0.000000 0.000000 idle 0 yaw 0.0 body 0.0 head 0.0 | neighbour 0.027386 0.000000 0.009129
+  2: y 65.000000 vy 0.000000 ground true health 20.0 cooldown 0 age - pos 5720.500000 24.500000 vel -0.054772 -0.018257 fall 0.000 jump false input 0.000000 0.000000 0.000000 idle 0 yaw 0.0 body 0.0 head 0.0 | neighbour 0.054772 0.000000 0.018257
+  3: y 65.000000 vy 0.000000 ground true health 20.0 cooldown 0 age - pos 5720.500000 24.500000 vel -0.082158 -0.027386 fall 0.000 jump false input 0.000000 0.000000 0.000000 idle 0 yaw 0.0 body 0.0 head 0.0 | neighbour 0.082158 0.000000 0.027386
+  4: y 65.000000 vy 0.000000 ground true health 20.0 cooldown 0 age - pos 5720.500000 24.500000 vel -0.109545 -0.036515 fall 0.000 jump false input 0.000000 0.000000 0.000000 idle 0 yaw 0.0 body 0.0 head 0.0 | neighbour 0.109545 0.000000 0.036515
+dormant mob between decisions alone:
+  1: y 65.000000 vy 0.000000 ground true health 20.0 cooldown 0 age - pos 5784.500000 24.500000 vel 0.000000 0.000000 fall 0.000 jump false input 0.000000 0.000000 0.000000 idle 0 yaw 0.0 body 0.0 head 0.0
+  2: y 65.000000 vy 0.000000 ground true health 20.0 cooldown 0 age - pos 5784.500000 24.500000 vel 0.000000 0.000000 fall 0.000 jump false input 0.000000 0.000000 0.000000 idle 0 yaw 0.0 body 0.0 head 0.0
+  3: y 65.000000 vy 0.000000 ground true health 20.0 cooldown 0 age - pos 5784.500000 24.500000 vel 0.000000 0.000000 fall 0.000 jump false input 0.000000 0.000000 0.000000 idle 0 yaw 0.0 body 0.0 head 0.0
+  4: y 65.000000 vy 0.000000 ground true health 20.0 cooldown 0 age - pos 5784.500000 24.500000 vel 0.000000 0.000000 fall 0.000 jump false input 0.000000 0.000000 0.000000 idle 0 yaw 0.0 body 0.0 head 0.0

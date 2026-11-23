@@ -19,6 +19,8 @@ pub mod eye_of_ender;
 pub mod fireball;
 pub mod firework_rocket;
 pub mod fishing_bobber;
+#[cfg(test)]
+mod fishing_bobber_tick_golden;
 pub mod lingering_potion;
 #[cfg(test)]
 mod lingering_potion_golden;

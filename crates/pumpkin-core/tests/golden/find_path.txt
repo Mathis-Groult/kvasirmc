@@ -1,0 +1,74 @@
+open straight: reached true target Vector3 { x: 12, y: 64, z: 8 } dist 0 [8,64,8 9,64,8 10,64,8 11,64,8 12,64,8] | seen 54 closed 5 hash 2764c0513e289c6a
+open diagonal: reached true target Vector3 { x: 11, y: 66, z: 11 } dist 0 [8,64,8 9,65,9 10,66,10 11,66,11] | seen 65 closed 4 hash b3cd78a1103d4591
+open far corner: reached true target Vector3 { x: 14, y: 60, z: 3 } dist 0 [8,64,8 9,63,7 10,62,6 11,61,5 12,60,4 13,60,3 14,60,3] | seen 118 closed 7 hash e42725a289a2b37c
+reach 1: reached true target Vector3 { x: 13, y: 64, z: 8 } dist 1 [8,64,8 9,64,8 10,64,8 11,64,8 12,64,8] | seen 55 closed 5 hash a095e9594baaadf3
+reach 2: reached true target Vector3 { x: 13, y: 64, z: 8 } dist 2 [8,64,8 9,64,8 10,64,8 11,64,8] | seen 46 closed 4 hash 1092a102c1990d68
+reach 3 offset: reached true target Vector3 { x: 12, y: 66, z: 10 } dist 1 [8,64,8 9,65,9 10,65,9 11,66,10] | seen 56 closed 4 hash 5784921233e80146
+start is the target: reached true target Vector3 { x: 8, y: 64, z: 8 } dist 0 [8,64,8] | seen 1 closed 1 hash 607bc41b9816af83
+start within reach: reached true target Vector3 { x: 9, y: 64, z: 8 } dist 1 [8,64,8] | seen 2 closed 1 hash 0db8d638981def65
+start outside reach: reached true target Vector3 { x: 10, y: 64, z: 8 } dist 1 [8,64,8 9,64,8] | seen 28 closed 2 hash b27487d6f5a19ffc
+target left: reached true target Vector3 { x: 3, y: 64, z: 8 } dist 0 [8,64,8 7,64,8 6,64,8 5,64,8 4,64,8 3,64,8] | seen 63 closed 6 hash 847ba93299b14125
+target above: reached true target Vector3 { x: 8, y: 70, z: 8 } dist 0 [8,64,8 8,65,8 8,66,8 8,67,8 8,68,8 8,69,8 8,70,8] | seen 72 closed 7 hash 0569057a8c7c193f
+target below: reached true target Vector3 { x: 8, y: 58, z: 9 } dist 0 [8,64,8 8,63,8 8,62,8 8,61,8 8,60,8 8,59,9 8,58,9] | seen 78 closed 7 hash 6744c5061eff6e1b
+wall in the way: reached false target Vector3 { x: 13, y: 64, z: 8 } dist 4 [8,64,8 9,64,8] | seen 631 closed 308 hash f2299edc869eebf0
+wall with a gap: reached true target Vector3 { x: 13, y: 64, z: 8 } dist 0 [8,64,8 9,64,9 10,64,9 11,64,9 12,64,8 13,64,8] | seen 226 closed 63 hash 0acc10f4c1979f07
+wall too far around: reached false target Vector3 { x: 13, y: 64, z: 8 } dist 4 [8,64,8 9,64,8] | seen 129 closed 37 hash ed38d4a56f6b219e
+low wall: reached true target Vector3 { x: 13, y: 65, z: 8 } dist 0 [8,64,8 9,64,8 10,64,8 11,64,8 12,65,8 13,65,8] | seen 66 closed 6 hash 0c8f512843e8d4b6
+caged start: reached false target Vector3 { x: 12, y: 64, z: 8 } dist 4 [8,64,8] | seen 2 closed 1 hash 562d74e0a52b4dc0
+caged start with reach: reached true target Vector3 { x: 10, y: 64, z: 8 } dist 2 [8,64,8] | seen 2 closed 1 hash 252c24f90349a6c6
+caged target: reached false target Vector3 { x: 14, y: 64, z: 8 } dist 2 [8,64,8 9,64,8 10,64,8 11,64,8 12,64,8] | seen 631 closed 236 hash a916c000ef0e5871
+caged target with reach: reached false target Vector3 { x: 14, y: 64, z: 8 } dist 2 [8,64,8 9,64,8 10,64,8 11,64,8 12,64,8] | seen 631 closed 236 hash a916c000ef0e5871
+target inside stone: reached false target Vector3 { x: 11, y: 64, z: 8 } dist 1 [8,64,8 9,64,8 10,64,8] | seen 671 closed 272 hash d478720a77fcb087
+ten nodes: reached true target Vector3 { x: 16, y: 64, z: 8 } dist 0 [8,64,8 9,64,8 10,64,8 11,64,8 12,64,8 13,64,8 14,64,8 15,64,8 16,64,8] | seen 90 closed 9 hash 6bcd9296796932e5
+one node: reached false target Vector3 { x: 16, y: 64, z: 8 } dist 8 [8,64,8] | seen 2 closed 0 hash 44da712287b2145d
+two nodes: reached false target Vector3 { x: 16, y: 64, z: 8 } dist 7 [8,64,8 9,64,8] | seen 28 closed 1 hash fa2c117f7b604de6
+multiplier up: reached true target Vector3 { x: 16, y: 64, z: 8 } dist 0 [8,64,8 9,64,8 10,64,8 11,64,8 12,64,8 13,64,8 14,64,8 15,64,8 16,64,8] | seen 90 closed 9 hash 6bcd9296796932e5
+multiplier down: reached true target Vector3 { x: 16, y: 64, z: 8 } dist 0 [8,64,8 9,64,8 10,64,8 11,64,8 12,64,8 13,64,8 14,64,8 15,64,8 16,64,8] | seen 90 closed 9 hash 6bcd9296796932e5
+zero nodes: reached false target Vector3 { x: 16, y: 64, z: 8 } dist 8 [8,64,8] | seen 2 closed 0 hash 44da712287b2145d
+length 1: reached false target Vector3 { x: 14, y: 64, z: 8 } dist 6 [8,64,8] | seen 28 closed 1 hash f036ba8e768b2d40
+length 2: reached false target Vector3 { x: 14, y: 64, z: 8 } dist 5 [8,64,8 9,64,8] | seen 126 closed 27 hash 71e5693829533514
+length 3.5: reached false target Vector3 { x: 14, y: 64, z: 8 } dist 3 [8,64,8 9,64,8 10,64,8 11,64,8] | seen 172 closed 41 hash cc73c76a8b78e37b
+length 4: reached false target Vector3 { x: 14, y: 64, z: 6 } dist 3 [8,64,8 9,64,7 10,64,7 11,64,6] | seen 192 closed 47 hash 7d20a42a74f622f0
+length 0: reached false target Vector3 { x: 14, y: 64, z: 8 } dist 6 [8,64,8] | seen 2 closed 1 hash 229f048e9303c8c2
+length 6 diagonal: reached false target Vector3 { x: 14, y: 70, z: 14 } dist 9 [8,64,8 9,65,9 10,66,10 11,67,11] | seen 248 closed 65 hash e214362488cbc536
+length 8 target near edge: reached false target Vector3 { x: 14, y: 64, z: 8 } dist 1 [8,64,8 9,64,8 10,64,8 11,64,8 12,64,8 13,64,8] | seen 225 closed 63 hash 16f14114bf44a513
+walls and length: reached false target Vector3 { x: 13, y: 64, z: 8 } dist 4 [8,64,8 9,64,8] | seen 150 closed 47 hash b44e976485605b14
+three targets: reached true target Vector3 { x: 8, y: 64, z: 12 } dist 0 [8,64,8 8,64,9 8,64,10 8,64,11 8,64,12] | seen 56 closed 5 hash 98ed1c59c87396d9
+three targets, reach 2: reached true target Vector3 { x: 8, y: 64, z: 12 } dist 2 [8,64,8 8,64,9 8,64,10] | seen 39 closed 3 hash b7d22bc2de494249
+two targets reached together: reached true target Vector3 { x: 11, y: 64, z: 8 } dist 2 [8,64,8 9,64,8] | seen 29 closed 2 hash 730031ab61f57abe
+far then near: reached true target Vector3 { x: 10, y: 64, z: 8 } dist 0 [8,64,8 9,64,8 10,64,8] | seen 37 closed 3 hash abfbdc3fc965623e
+near then far: reached true target Vector3 { x: 10, y: 64, z: 8 } dist 0 [8,64,8 9,64,8 10,64,8] | seen 37 closed 3 hash abfbdc3fc965623e
+same target twice: reached true target Vector3 { x: 12, y: 64, z: 8 } dist 0 [8,64,8 9,64,8 10,64,8 11,64,8 12,64,8] | seen 54 closed 5 hash 2764c0513e289c6a
+two targets cut by length: reached false target Vector3 { x: 14, y: 64, z: 8 } dist 4 [8,64,8 9,64,8 10,64,8] | seen 177 closed 45 hash e38f8d9f6f15371f
+two targets cut by length, swapped: reached false target Vector3 { x: 2, y: 64, z: 8 } dist 4 [8,64,8 7,64,8 6,64,8] | seen 177 closed 45 hash e38f8d9f6f15371f
+two targets, one caged: reached true target Vector3 { x: 8, y: 64, z: 13 } dist 0 [8,64,8 8,64,9 8,64,10 8,64,11 8,64,12 8,64,13] | seen 64 closed 6 hash 324dbd41a88d52fa
+two targets, one caged, swapped: reached true target Vector3 { x: 8, y: 64, z: 13 } dist 0 [8,64,8 8,64,9 8,64,10 8,64,11 8,64,12 8,64,13] | seen 64 closed 6 hash 324dbd41a88d52fa
+uneven partial: reached false target Vector3 { x: 14, y: 64, z: 8 } dist 3 [8,64,8 9,64,8 10,64,8 11,64,8] | seen 177 closed 45 hash 60d79cd9f41a3542
+uneven partial, swapped: reached false target Vector3 { x: 14, y: 64, z: 8 } dist 3 [8,64,8 9,64,8 10,64,8 11,64,8] | seen 177 closed 45 hash 60d79cd9f41a3542
+caged start, two targets: reached false target Vector3 { x: 12, y: 64, z: 8 } dist 4 [8,64,8] | seen 3 closed 1 hash a6fead414bac184b
+reached and unreachable: reached true target Vector3 { x: 8, y: 64, z: 11 } dist 0 [8,64,8 8,64,9 8,64,10 8,64,11] | seen 46 closed 4 hash 49c716ec6b022e4a
+start and far target: reached true target Vector3 { x: 8, y: 64, z: 8 } dist 0 [8,64,8] | seen 2 closed 1 hash f75017be5423d684
+two near targets, reach 1: reached true target Vector3 { x: 9, y: 64, z: 8 } dist 1 [8,64,8] | seen 3 closed 1 hash f81006a4da6c15a3
+reuse after a cut search: reached false target Vector3 { x: 16, y: 64, z: 8 } dist 1 [8,64,8 9,64,8 10,64,8 11,64,8 12,64,8 13,64,8 14,64,8 15,64,8] | seen 82 closed 7 hash d8a38ec916736e1e
+    then reached true target Vector3 { x: 8, y: 64, z: 13 } dist 0 [8,64,8 8,64,9 8,64,10 8,64,11 8,64,12 8,64,13] | seen 63 closed 6 hash 0310ebd256b74c59
+reuse after a full search: reached true target Vector3 { x: 12, y: 64, z: 8 } dist 0 [8,64,8 9,64,8 10,64,8 11,64,8 12,64,8] | seen 54 closed 5 hash 2764c0513e289c6a
+    then reached true target Vector3 { x: 4, y: 64, z: 8 } dist 0 [8,64,8 7,64,8 6,64,8 5,64,8 4,64,8] | seen 54 closed 5 hash 3a352c2274f9c114
+reuse into a cut search: reached true target Vector3 { x: 12, y: 64, z: 8 } dist 0 [8,64,8 9,64,8 10,64,8 11,64,8 12,64,8] | seen 54 closed 5 hash 2764c0513e289c6a
+    then reached false target Vector3 { x: 8, y: 64, z: 13 } dist 3 [8,64,8 8,64,9 8,64,10] | seen 37 closed 2 hash 6fd5a2459c5360e5
+reuse for the same target: reached true target Vector3 { x: 12, y: 64, z: 8 } dist 0 [8,64,8 9,64,8 10,64,8 11,64,8 12,64,8] | seen 54 closed 5 hash 2764c0513e289c6a
+    then reached true target Vector3 { x: 12, y: 64, z: 8 } dist 0 [8,64,8 9,64,8 10,64,8 11,64,8 12,64,8] | seen 54 closed 5 hash 2764c0513e289c6a
+empty targets: none | seen 0 closed 0 hash cbf29ce484222325
+    then reached true target Vector3 { x: 8, y: 64, z: 12 } dist 0 [8,64,8 8,64,9 8,64,10 8,64,11 8,64,12] | seen 54 closed 5 hash 2d998cc9a3d2481a
+no start node: none | seen 0 closed 0 hash cbf29ce484222325
+walk open ground: reached true target Vector3 { x: 14, y: 65, z: 8 } dist 0 [8,65,8 9,65,8 10,65,8 11,65,8 12,65,8 13,65,8 14,65,8] | seen 24 closed 7 hash 4b364e48299564ee
+walk diagonal: reached true target Vector3 { x: 12, y: 65, z: 12 } dist 0 [8,65,8 9,65,9 10,65,10 11,65,11 12,65,12] | seen 24 closed 5 hash c9b207f73a23d130
+walk reach 2: reached true target Vector3 { x: 14, y: 65, z: 8 } dist 2 [8,65,8 9,65,8 10,65,8 11,65,8 12,65,8] | seen 19 closed 5 hash abff46b06d0a8d75
+walk start is the target: reached true target Vector3 { x: 8, y: 65, z: 8 } dist 0 [8,65,8] | seen 1 closed 1 hash a07f74b304a448a2
+walk around a wall: reached true target Vector3 { x: 13, y: 65, z: 8 } dist 0 [8,65,8 9,65,7 9,65,6 9,65,5 9,65,4 9,65,3 10,65,3 11,65,3 12,65,4 12,65,5 12,65,6 13,65,7 13,65,8] | seen 88 closed 45 hash 9f70eb76d027657a
+walk wall too high: reached false target Vector3 { x: 13, y: 65, z: 8 } dist 4 [8,65,8 9,65,8] | seen 302 closed 224 hash 8c1232ce1ff9adac
+walk caged target: reached false target Vector3 { x: 14, y: 65, z: 8 } dist 2 [8,65,8 9,65,8 10,65,8 11,65,8 12,65,8] | seen 441 closed 330 hash 61b4b90a68b9bc0d
+walk follow range: reached false target Vector3 { x: 14, y: 65, z: 8 } dist 4 [8,65,8 9,65,8 10,65,8] | seen 31 closed 12 hash 78c57ed20335723e
+walk few nodes: reached true target Vector3 { x: 14, y: 65, z: 8 } dist 0 [8,65,8 9,65,8 10,65,8 11,65,8 12,65,8 13,65,8 14,65,8] | seen 24 closed 7 hash 4b364e48299564ee
+walk two targets: reached true target Vector3 { x: 8, y: 65, z: 3 } dist 0 [8,65,8 8,65,7 8,65,6 8,65,5 8,65,4 8,65,3] | seen 22 closed 6 hash 8e7223290be98800
+walk reuse: reached false target Vector3 { x: 14, y: 65, z: 8 } dist 1 [8,65,8 9,65,8 10,65,8 11,65,8 12,65,8 13,65,8] | seen 22 closed 5 hash a3f9b032686ed48f
+    then reached true target Vector3 { x: 8, y: 65, z: 3 } dist 0 [8,65,8 8,65,7 8,65,6 8,65,5 8,65,4 8,65,3] | seen 21 closed 6 hash 0129d2320b63d48e

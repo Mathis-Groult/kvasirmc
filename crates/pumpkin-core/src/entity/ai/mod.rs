@@ -4,6 +4,9 @@ pub mod control;
 #[cfg(test)]
 #[path = "pathfinder/fly_neighbors_golden.rs"]
 mod fly_neighbors_golden;
+#[cfg(test)]
+#[path = "pathfinder/find_path_golden.rs"]
+mod find_path_golden;
 pub mod goal;
 pub mod pathfinder;
 pub mod random_pos;

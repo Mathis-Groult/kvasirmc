@@ -20,6 +20,7 @@ fn corpus() -> Vec<(&'static str, String)> {
     }
     cases.extend(basic_cases());
     cases.extend(hex_cases());
+    cases.extend(hex_prior_color_cases());
     cases
 }
 
@@ -97,6 +98,20 @@ fn hex_cases() -> Vec<(&'static str, String)> {
         ("hex_inside_unknown", "§z§x§1§2§3§4§5§6hex"),
         ("hex_wide_digits", "§x§12§34§56§78§9a§bctext"),
         ("hex_wide_digits_remainders", "§xa§1bb§2cc§3dd§4ee§5ff§6gg"),
+    ]
+    .into_iter()
+    .map(|(label, input)| (label, input.to_owned()))
+    .collect()
+}
+
+fn hex_prior_color_cases() -> Vec<(&'static str, String)> {
+    [
+        ("hex_cut_off_keeps_color", "§cred§x§1§2text"),
+        ("hex_cut_off_at_end_keeps_color", "§cred§x§1§2"),
+        ("hex_empty_part_keeps_color", "§cred§x§1§§ztext"),
+        ("hex_empty_first_part_keeps_color", "§cred§x§§ztext"),
+        ("hex_cut_off_after_x_keeps_color", "§cred§xtext"),
+        ("hex_cut_off_keeps_hex_color", "§x§1§2§3§4§5§6a§x§1§2text"),
     ]
     .into_iter()
     .map(|(label, input)| (label, input.to_owned()))

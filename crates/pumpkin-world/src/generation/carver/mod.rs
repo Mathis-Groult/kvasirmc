@@ -1,8 +1,8 @@
 pub mod canyon;
-pub mod cave;
-pub mod mask;
 #[cfg(test)]
 mod carve_golden;
+pub mod cave;
+pub mod mask;
 
 use crate::ProtoChunk;
 use crate::biome::BiomeSupplier;
@@ -204,125 +204,155 @@ pub trait Carver {
     );
 }
 
-#[allow(clippy::too_many_lines)]
+/// Vanilla `ChunkGenerator.applyCarvers`: every carver of every biome in the 17x17 chunks around
+/// `chunk` marks cells in one mask, which is then applied to the chunk.
 pub fn carve(chunk: &mut ProtoChunk, generator: &VanillaGenerator) {
+    let mask = collect_carving_mask(chunk.x, chunk.z, generator);
+    if !mask.is_empty() {
+        apply_mask_to_chunk(chunk, generator, &mask);
+    }
+}
+
+/// Fixed inputs of the carvers of one chunk.
+struct CarveTarget<'a> {
+    generator: &'a VanillaGenerator,
+    chunk_pos: Vector2<i32>,
+    min_gen_y: i8,
+    gen_depth: u16,
+}
+
+fn collect_carving_mask(
+    chunk_x: i32,
+    chunk_z: i32,
+    generator: &VanillaGenerator,
+) -> mask::CarvingMask {
     // Vanilla applyCarvers uses a range of 8 chunks (17x17 area)
     let radius = 8;
-    let chunk_x = chunk.x;
-    let chunk_z = chunk.z;
-    let chunk_pos = Vector2::new(chunk_x, chunk_z);
-
-    let supplier: &dyn BiomeSupplier = &generator.biome_supplier;
+    let generation_shape = &generator.settings.shape;
+    let target = CarveTarget {
+        generator,
+        chunk_pos: Vector2::new(chunk_x, chunk_z),
+        min_gen_y: generation_shape.min_y,
+        gen_depth: generation_shape.height,
+    };
+    let protected_blocks_on_top = 7;
+    let min_y = target.min_gen_y as i32 + 1;
+    let max_y = (target.min_gen_y as i32 + target.gen_depth as i32 - 1) - protected_blocks_on_top;
+    let mut mask = mask::CarvingMask::new(min_y, max_y);
     let mut multi_noise_sampler = MultiNoiseSampler::generate(&generator.base_router.multi_noise);
 
-    let generation_shape = &generator.settings.shape;
-    let min_gen_y = generation_shape.min_y;
-    let gen_depth = generation_shape.height;
-    let protected_blocks_on_top = 7;
-    let min_y = min_gen_y as i32 + 1;
-    let max_y = (min_gen_y as i32 + gen_depth as i32 - 1) - protected_blocks_on_top;
-    let mut mask = mask::CarvingMask::new(min_y, max_y);
-
-    let cave_carver = cave::CaveCarver;
-    let canyon_carver = canyon::CanyonCarver;
-
-    for dx in -radius..=radius {
-        for dz in -radius..=radius {
-            let carver_x = chunk_x + dx;
-            let carver_z = chunk_z + dz;
+    for carver_x in chunk_x - radius..=chunk_x + radius {
+        for carver_z in chunk_z - radius..=chunk_z + radius {
             let carver_chunk_pos = Vector2::new(carver_x, carver_z);
-
-            let carver_biome = supplier.biome(
-                biome_coords::from_block(section_coords::section_to_block(carver_x)),
-                0,
-                biome_coords::from_block(section_coords::section_to_block(carver_z)),
+            carve_from_neighbour(
+                &target,
+                carver_chunk_pos,
                 &mut multi_noise_sampler,
+                &mut mask,
             );
-
-            for (index, &config) in carver_biome.carvers.iter().enumerate() {
-                let seed = get_large_feature_seed(
-                    generator.random_config.seed + index as u64,
-                    carver_x,
-                    carver_z,
-                );
-                let mut carver_random =
-                    new_carver_random(seed, generator.settings.legacy_random_source);
-
-                if should_carve(config, &mut carver_random) {
-                    match config.additional {
-                        CarverAdditionalConfig::Cave(_) => {
-                            cave_carver.carve(
-                                config,
-                                &mut mask,
-                                &mut carver_random,
-                                &chunk_pos,
-                                &carver_chunk_pos,
-                                min_gen_y,
-                                gen_depth,
-                                generator.settings.legacy_random_source,
-                            );
-                        }
-                        CarverAdditionalConfig::Canyon(_) => {
-                            canyon_carver.carve(
-                                config,
-                                &mut mask,
-                                &mut carver_random,
-                                &chunk_pos,
-                                &carver_chunk_pos,
-                                min_gen_y,
-                                gen_depth,
-                                generator.settings.legacy_random_source,
-                            );
-                        }
-                    }
-                }
-            }
         }
     }
+    mask
+}
 
-    if !mask.is_empty() {
-        let surface_config = SurfaceHeightSamplerBuilderOptions::new(
-            generation_shape.min_y as i32,
-            generation_shape.max_y() as i32,
-            generation_shape.vertical_cell_block_count() as usize,
+/// The carvers of the biome at one neighbouring chunk, each with its own seeded random.
+fn carve_from_neighbour(
+    target: &CarveTarget,
+    carver_chunk_pos: Vector2<i32>,
+    multi_noise_sampler: &mut MultiNoiseSampler,
+    mask: &mut mask::CarvingMask,
+) {
+    let generator = target.generator;
+    let supplier: &dyn BiomeSupplier = &generator.biome_supplier;
+    let carver_biome = supplier.biome(
+        biome_coords::from_block(section_coords::section_to_block(carver_chunk_pos.x)),
+        0,
+        biome_coords::from_block(section_coords::section_to_block(carver_chunk_pos.y)),
+        multi_noise_sampler,
+    );
+
+    for (index, &config) in carver_biome.carvers.iter().enumerate() {
+        let seed = get_large_feature_seed(
+            generator.random_config.seed + index as u64,
+            carver_chunk_pos.x,
+            carver_chunk_pos.y,
         );
-        let surface_height_sampler = SurfaceHeightEstimateSampler::generate(
-            &generator.base_router.surface_estimator,
-            &surface_config,
-        );
-        let carver_aquifer = generator.settings.aquifers_enabled.then(|| {
-            CarverAquiferSampler::new(
-                chunk_x,
-                chunk_z,
-                &generator.base_router,
-                &generator.random_config,
-                generator.settings,
-            )
-        });
-
-        let mut context = CarvingContext {
-            min_y: generator.dimension.min_y as i8,
-            height: generator.dimension.logical_height as u16,
-            random_config: &generator.random_config,
-            surface_noise: &generator.terrain_cache.surface_noise,
-            secondary_noise: &generator.terrain_cache.secondary_noise,
-            terrain_builder: &generator.terrain_cache.terrain_builder,
-            sea_level: generator.settings.sea_level,
-            default_block: generator.settings.default_block,
-            default_fluid: generator.settings.default_fluid,
-            surface_rule: generator.surface_rule,
-            surface_height_sampler,
-            carver_aquifer,
-        };
-
-        let mut run = CarveRun {
-            ctx: &mut context,
-            chunk,
-            ids: CarverBlockIds::new(),
-        };
-
-        apply_carving_mask(&mut run, &mask);
+        let mut carver_random = new_carver_random(seed, generator.settings.legacy_random_source);
+        if should_carve(config, &mut carver_random) {
+            run_carver(target, config, carver_chunk_pos, &mut carver_random, mask);
+        }
     }
+}
+
+fn run_carver(
+    target: &CarveTarget,
+    config: &CarverConfig,
+    carver_chunk_pos: Vector2<i32>,
+    random: &mut RandomGenerator,
+    mask: &mut mask::CarvingMask,
+) {
+    let carver: &dyn Carver = match config.additional {
+        CarverAdditionalConfig::Cave(_) => &cave::CaveCarver,
+        CarverAdditionalConfig::Canyon(_) => &canyon::CanyonCarver,
+    };
+    carver.carve(
+        config,
+        mask,
+        random,
+        &target.chunk_pos,
+        &carver_chunk_pos,
+        target.min_gen_y,
+        target.gen_depth,
+        target.generator.settings.legacy_random_source,
+    );
+}
+
+/// Turns the mask into blocks: surface rule, aquifer and fluid sampler of the chunk's dimension.
+fn apply_mask_to_chunk(
+    chunk: &mut ProtoChunk,
+    generator: &VanillaGenerator,
+    mask: &mask::CarvingMask,
+) {
+    let generation_shape = &generator.settings.shape;
+    let surface_config = SurfaceHeightSamplerBuilderOptions::new(
+        generation_shape.min_y as i32,
+        generation_shape.max_y() as i32,
+        generation_shape.vertical_cell_block_count() as usize,
+    );
+    let surface_height_sampler = SurfaceHeightEstimateSampler::generate(
+        &generator.base_router.surface_estimator,
+        &surface_config,
+    );
+    let carver_aquifer = generator.settings.aquifers_enabled.then(|| {
+        CarverAquiferSampler::new(
+            chunk.x,
+            chunk.z,
+            &generator.base_router,
+            &generator.random_config,
+            generator.settings,
+        )
+    });
+
+    let mut context = CarvingContext {
+        min_y: generator.dimension.min_y as i8,
+        height: generator.dimension.logical_height as u16,
+        random_config: &generator.random_config,
+        surface_noise: &generator.terrain_cache.surface_noise,
+        secondary_noise: &generator.terrain_cache.secondary_noise,
+        terrain_builder: &generator.terrain_cache.terrain_builder,
+        sea_level: generator.settings.sea_level,
+        default_block: generator.settings.default_block,
+        default_fluid: generator.settings.default_fluid,
+        surface_rule: generator.surface_rule,
+        surface_height_sampler,
+        carver_aquifer,
+    };
+    let mut run = CarveRun {
+        ctx: &mut context,
+        chunk,
+        ids: CarverBlockIds::new(),
+    };
+    apply_carving_mask(&mut run, mask);
 }
 
 fn apply_carving_mask(run: &mut CarveRun, mask: &mask::CarvingMask) {

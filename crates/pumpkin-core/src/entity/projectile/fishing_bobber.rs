@@ -9,6 +9,7 @@ use crate::world::loot::{LootContextParameters, LootTableHandle, generate_loot_f
 use crate::{
     entity::{Entity, EntityBase, living::LivingEntity, player::Player},
     server::Server,
+    world::World,
 };
 use pumpkin_data::attributes::Attributes;
 use pumpkin_data::entity::{EntityStatus, EntityType};
@@ -151,72 +152,26 @@ impl FishingBobberEntity {
         dmg
     }
 
-    #[expect(clippy::too_many_lines)]
     pub fn process_tick(&self, caller: &dyn EntityBase) {
         let entity = self.get_entity();
         let world = entity.world.load();
         self.owner.check_left_owner(entity);
 
-        if self.in_ground.load(Ordering::Relaxed) {
+        if self.in_ground.load(Ordering::Relaxed) || self.follow_hooked(entity, &world) {
             return;
         }
 
-        let hooked_id = self.hooked_entity_id.load(Ordering::Relaxed);
-        if hooked_id != 0 {
-            if let Some(hooked) = world.get_entity_by_id(hooked_id) {
-                if hooked.get_entity().removed.load(Ordering::Relaxed) {
-                    self.hooked_entity_id.store(0, Ordering::Relaxed);
-                } else {
-                    let mut hooked_pos = hooked.get_entity().pos.load();
-                    hooked_pos.y += hooked.get_entity().get_eye_height() * 0.8;
-                    entity.set_pos(hooked_pos);
-                    return;
-                }
-            } else {
-                self.hooked_entity_id.store(0, Ordering::Relaxed);
-            }
-        }
-
-        let mut velocity = entity.velocity.load();
         let start_pos = entity.pos.load();
-
-        if entity.touching_water.load(Ordering::Relaxed) {
+        let mut velocity = entity.velocity.load();
+        let in_water = entity.touching_water.load(Ordering::Relaxed);
+        if in_water {
             velocity.y += 0.02; // Buoyancy
-
-            let bite = self.bite_countdown.load(Ordering::Relaxed);
-            if bite > 0 {
-                self.bite_countdown.store(bite - 1, Ordering::Relaxed);
-                if bite % 5 == 0 {
-                    world.spawn_particle(
-                        entity.pos.load(),
-                        Vector3::new(0.1f32, 0.1f32, 0.1f32),
-                        0.0,
-                        5,
-                        pumpkin_data::particle::Particle::Bubble,
-                    );
-                }
-            } else {
-                let wait = self.wait_countdown.load(Ordering::Relaxed);
-                if wait > 0 {
-                    self.wait_countdown.store(wait - 1, Ordering::Relaxed);
-                } else {
-                    // Start bite
-                    self.bite_countdown.store(40, Ordering::Relaxed);
-                    self.wait_countdown
-                        .store(rand::random::<i32>().abs() % 600 + 100, Ordering::Relaxed);
-
-                    world.play_sound(
-                        Sound::EntityFishingBobberSplash,
-                        SoundCategory::Neutral,
-                        &entity.pos.load(),
-                    );
-                }
-            }
+            self.count_down_fish(entity, &world);
         } else {
             velocity.y -= Self::GRAVITY;
         }
 
-        let inertia = if entity.touching_water.load(Ordering::Relaxed) {
+        let inertia = if in_water {
             Self::WATER_INERTIA
         } else {
             Self::AIR_INERTIA
@@ -225,8 +180,78 @@ impl FishingBobberEntity {
         entity.velocity.store(velocity);
 
         let new_pos = start_pos.add(&velocity);
+        let search_box = Self::swept_box(start_pos, new_pos);
 
-        let search_box = BoundingBox::new(
+        // Basic block collision to stop bobber
+        let (block_cols, _) = world.get_block_collisions(search_box, caller);
+        if !block_cols.is_empty() {
+            self.in_ground.store(true, Ordering::Relaxed);
+            entity.velocity.store(Vector3::new(0.0, 0.0, 0.0));
+            return;
+        }
+
+        entity.set_pos(new_pos);
+        self.hook_entity_in(entity, &world, &search_box);
+    }
+
+    /// Stays on the hooked entity. A hook on an entity that is gone is let go, and the bobber
+    /// flies on; returns whether the bobber was moved onto the hooked entity.
+    fn follow_hooked(&self, entity: &Entity, world: &World) -> bool {
+        let hooked_id = self.hooked_entity_id.load(Ordering::Relaxed);
+        if hooked_id == 0 {
+            return false;
+        }
+        let Some(hooked) = world.get_entity_by_id(hooked_id) else {
+            self.hooked_entity_id.store(0, Ordering::Relaxed);
+            return false;
+        };
+        if hooked.get_entity().removed.load(Ordering::Relaxed) {
+            self.hooked_entity_id.store(0, Ordering::Relaxed);
+            return false;
+        }
+        let mut hooked_pos = hooked.get_entity().pos.load();
+        hooked_pos.y += hooked.get_entity().get_eye_height() * 0.8;
+        entity.set_pos(hooked_pos);
+        true
+    }
+
+    /// In water: bubbles while a fish bites, the wait before the next bite, the splash that
+    /// starts one.
+    fn count_down_fish(&self, entity: &Entity, world: &World) {
+        let bite = self.bite_countdown.load(Ordering::Relaxed);
+        if bite > 0 {
+            self.bite_countdown.store(bite - 1, Ordering::Relaxed);
+            if bite % 5 == 0 {
+                world.spawn_particle(
+                    entity.pos.load(),
+                    Vector3::new(0.1f32, 0.1f32, 0.1f32),
+                    0.0,
+                    5,
+                    pumpkin_data::particle::Particle::Bubble,
+                );
+            }
+            return;
+        }
+        let wait = self.wait_countdown.load(Ordering::Relaxed);
+        if wait > 0 {
+            self.wait_countdown.store(wait - 1, Ordering::Relaxed);
+            return;
+        }
+        // Start bite
+        self.bite_countdown.store(40, Ordering::Relaxed);
+        self.wait_countdown
+            .store(rand::random::<i32>().abs() % 600 + 100, Ordering::Relaxed);
+
+        world.play_sound(
+            Sound::EntityFishingBobberSplash,
+            SoundCategory::Neutral,
+            &entity.pos.load(),
+        );
+    }
+
+    /// The box the bobber sweeps this tick, grown by 0.3.
+    fn swept_box(start_pos: Vector3<f64>, new_pos: Vector3<f64>) -> BoundingBox {
+        BoundingBox::new(
             Vector3::new(
                 start_pos.x.min(new_pos.x),
                 start_pos.y.min(new_pos.y),
@@ -238,40 +263,27 @@ impl FishingBobberEntity {
                 start_pos.z.max(new_pos.z),
             ),
         )
-        .expand(0.3, 0.3, 0.3);
+        .expand(0.3, 0.3, 0.3)
+    }
 
-        // Basic block collision to stop bobber
-        let (block_cols, _) = world.get_block_collisions(search_box, caller);
-        if !block_cols.is_empty() {
-            self.in_ground.store(true, Ordering::Relaxed);
-            entity.velocity.store(Vector3::new(0.0, 0.0, 0.0));
-            return;
-        }
-
-        entity.set_pos(new_pos);
-
-        let candidates = world.get_entities_at_box(&search_box);
-        for cand in candidates {
-            if !self.owner.can_hit(&world, cand.get_entity())
-                || cand.get_entity().entity_id == entity.entity_id
-            {
-                continue;
-            }
-
-            if is_projectile(cand.get_entity().entity_type) {
-                continue;
-            }
-
-            let ebb = cand.get_entity().bounding_box.load().expand(0.3, 0.3, 0.3);
-            if ebb.intersects(&search_box) {
-                self.hooked_entity_id
-                    .store(cand.get_entity().entity_id, Ordering::Relaxed);
-                entity.set_synced_data(
-                    pumpkin_data::tracked_data::fishing_bobber::HOOKED_ENTITY,
-                    cand.get_entity().entity_id + 1,
-                );
-                return;
-            }
+    /// Hooks the first entity in the box that the owner has left or that is not the owner's.
+    /// Projectiles (this bobber among them) are never hooked. The box search already meets
+    /// each candidate's own box, so no second overlap test is needed.
+    fn hook_entity_in(&self, entity: &Entity, world: &World, search_box: &BoundingBox) {
+        let hooked = world
+            .get_entities_at_box(search_box)
+            .into_iter()
+            .find(|cand| {
+                self.owner.can_hit(world, cand.get_entity())
+                    && !is_projectile(cand.get_entity().entity_type)
+            });
+        if let Some(hooked) = hooked {
+            let id = hooked.get_entity().entity_id;
+            self.hooked_entity_id.store(id, Ordering::Relaxed);
+            entity.set_synced_data(
+                pumpkin_data::tracked_data::fishing_bobber::HOOKED_ENTITY,
+                id + 1,
+            );
         }
     }
 }

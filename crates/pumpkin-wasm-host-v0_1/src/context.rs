@@ -27,7 +27,7 @@ fn register_typed_event<E: pumpkin_core::plugin::Payload + ToFromWasmEvent + Clo
 }
 
 #[expect(clippy::too_many_lines)]
-fn register_player_event(
+pub(crate) fn register_player_event(
     ctx: &Context,
     handler: &Arc<WasmPluginEventHandler>,
     priority: pumpkin_core::plugin::EventPriority,

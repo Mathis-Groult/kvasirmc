@@ -46,6 +46,9 @@ pub mod text;
 pub mod uuid;
 pub mod world;
 
+#[cfg(test)]
+mod register_player_event_golden;
+
 pub use crate::bindings::{Plugin, pumpkin};
 
 mod resource_with {

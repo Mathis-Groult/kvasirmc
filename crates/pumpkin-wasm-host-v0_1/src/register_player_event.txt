@@ -1,0 +1,273 @@
+EventType::PlayerJoinEvent => PlayerJoinEvent Highest blocking=true source=Some("golden")
+EventType::PlayerLeaveEvent => PlayerLeaveEvent High blocking=false source=Some("golden")
+EventType::PlayerLoginEvent => PlayerLoginEvent Normal blocking=true source=Some("golden")
+EventType::PlayerChatEvent => PlayerChatEvent Low blocking=false source=Some("golden")
+EventType::PlayerCommandSendEvent => PlayerCommandSendEvent Lowest blocking=true source=Some("golden")
+EventType::PlayerPermissionCheckEvent => PlayerPermissionCheckEvent Highest blocking=false source=Some("golden")
+EventType::PlayerMoveEvent => PlayerMoveEvent High blocking=true source=Some("golden")
+EventType::PlayerTeleportEvent => PlayerTeleportEvent Normal blocking=false source=Some("golden")
+EventType::PlayerChangeWorldEvent => PlayerChangeWorldEvent Low blocking=true source=Some("golden")
+EventType::PlayerRespawnEvent => PlayerRespawnEvent Lowest blocking=false source=Some("golden")
+EventType::PlayerExpChangeEvent => PlayerExpChangeEvent Highest blocking=true source=Some("golden")
+EventType::PlayerItemHeldEvent => PlayerItemHeldEvent High blocking=false source=Some("golden")
+EventType::PlayerChangedMainHandEvent => PlayerChangedMainHandEvent Normal blocking=true source=Some("golden")
+EventType::PlayerGamemodeChangeEvent => PlayerGamemodeChangeEvent Low blocking=false source=Some("golden")
+EventType::PlayerCustomPayloadEvent => PlayerCustomPayloadEvent Lowest blocking=true source=Some("golden")
+EventType::PlayerFishEvent => PlayerFishEvent Highest blocking=false source=Some("golden")
+EventType::PlayerEggThrowEvent => PlayerEggThrowEvent High blocking=true source=Some("golden")
+EventType::PlayerInteractUnknownEntityEvent => PlayerInteractUnknownEntityEvent Normal blocking=false source=Some("golden")
+EventType::PlayerInteractEntityEvent => PlayerInteractEntityEvent Low blocking=true source=Some("golden")
+EventType::PlayerInteractEvent => PlayerInteractEvent Lowest blocking=false source=Some("golden")
+EventType::PlayerToggleSneakEvent => PlayerToggleSneakEvent Highest blocking=true source=Some("golden")
+EventType::PlayerToggleFlightEvent => PlayerToggleFlightEvent High blocking=false source=Some("golden")
+EventType::PlayerToggleSprintEvent => PlayerToggleSprintEvent Normal blocking=true source=Some("golden")
+EventType::InventoryClickEvent => InventoryClickEvent Low blocking=false source=Some("golden")
+EventType::InventoryCloseEvent => InventoryCloseEvent Lowest blocking=true source=Some("golden")
+EventType::BlockRedstoneEvent => none
+EventType::BlockBreakEvent => none
+EventType::BlockBurnEvent => none
+EventType::BlockCanBuildEvent => none
+EventType::BlockGrowEvent => none
+EventType::BlockPlaceEvent => none
+EventType::BedrockFormResponseEvent => BedrockFormResponseEvent High blocking=false source=Some("golden")
+EventType::DialogClickActionEvent => none
+EventType::DialogShowEvent => none
+EventType::DialogClearEvent => none
+EventType::ServerCommandEvent => none
+EventType::ServerListPingEvent => none
+EventType::ServerLoadEvent => none
+EventType::SpawnChangeEvent => none
+EventType::ServerBroadcastEvent => none
+EventType::ServerTickStartEvent => none
+EventType::ServerTickEndEvent => none
+EventType::PacketReceivedEvent => none
+EventType::PacketSentEvent => none
+EventType::ChunkLoadEvent => none
+EventType::ChunkSaveEvent => none
+EventType::ChunkSendEvent => none
+EventType::EntityDamageEvent => none
+EventType::EntityDeathEvent => none
+EventType::PlayerDeathEvent => none
+EventType::EntitySpawnEvent => none
+EventType::EntityCombustEvent => none
+EventType::EntityRegainHealthEvent => none
+EventType::EntityAirChangeEvent => none
+EventType::EntityBreedEvent => none
+EventType::EntityDismountEvent => none
+EventType::EntityDyeEvent => none
+EventType::EntityEnterLoveModeEvent => none
+EventType::EntityExplodeEvent => none
+EventType::EntityMountEvent => none
+EventType::EntityPickupItemEvent => none
+EventType::EntityPortalEvent => none
+EventType::EntityResurrectEvent => none
+EventType::EntityShootBowEvent => none
+EventType::EntityTameEvent => none
+EventType::EntityTargetEvent => none
+EventType::EntityTeleportEvent => none
+EventType::EntityToggleGlideEvent => none
+EventType::EntityTransformEvent => none
+EventType::PlayerItemConsumeEvent => PlayerItemConsumeEvent Lowest blocking=false source=Some("golden")
+EventType::PlayerItemDamageEvent => PlayerItemDamageEvent Highest blocking=true source=Some("golden")
+EventType::PlayerDropItemEvent => PlayerDropItemEvent High blocking=false source=Some("golden")
+EventType::PlayerBedEnterEvent => PlayerBedEnterEvent Normal blocking=true source=Some("golden")
+EventType::PlayerBedLeaveEvent => PlayerBedLeaveEvent Low blocking=false source=Some("golden")
+EventType::PlayerBucketEmptyEvent => PlayerBucketEmptyEvent Lowest blocking=true source=Some("golden")
+EventType::PlayerBucketFillEvent => PlayerBucketFillEvent Highest blocking=false source=Some("golden")
+EventType::BlockDamageEvent => none
+EventType::BlockIgniteEvent => none
+EventType::BlockFromToEvent => none
+EventType::BlockFormEvent => none
+EventType::BlockFadeEvent => none
+EventType::BlockDispenseEvent => none
+EventType::BlockExplodeEvent => none
+EventType::BlockPhysicsEvent => none
+EventType::BlockPistonExtendEvent => none
+EventType::BlockPistonRetractEvent => none
+EventType::NotePlayEvent => none
+EventType::SignChangeEvent => none
+EventType::SpongeAbsorbEvent => none
+EventType::TntPrimeEvent => none
+EventType::WeatherChangeEvent => none
+EventType::ThunderChangeEvent => none
+EventType::WorldLoadEvent => none
+EventType::WorldUnloadEvent => none
+EventType::AsyncStructureGenerateEvent => none
+EventType::AsyncStructureSpawnEvent => none
+EventType::ChunkPopulateEvent => none
+EventType::ChunkUnloadEvent => none
+EventType::EntitiesLoadEvent => none
+EventType::EntitiesUnloadEvent => none
+EventType::GenericGameEvent => none
+EventType::LootGenerateEvent => none
+EventType::PortalCreateEvent => none
+EventType::StructureGrowEvent => none
+EventType::TimeSkipEvent => none
+EventType::WorldInitEvent => none
+EventType::WorldSaveEvent => none
+EventType::InventoryOpenEvent => none
+EventType::InventoryDragEvent => none
+EventType::CraftItemEvent => none
+EventType::FurnaceSmeltEvent => none
+EventType::BrewEvent => none
+EventType::BrewingStandFuelEvent => none
+EventType::FurnaceBurnEvent => none
+EventType::FurnaceExtractEvent => none
+EventType::FurnaceStartSmeltEvent => none
+EventType::HopperInventorySearchEvent => none
+EventType::InventoryCreativeEvent => none
+EventType::InventoryInteractEvent => none
+EventType::InventoryMoveItemEvent => none
+EventType::InventoryPickupItemEvent => none
+EventType::PrepareAnvilEvent => none
+EventType::PrepareGrindstoneEvent => none
+EventType::PrepareInventoryResultEvent => none
+EventType::PrepareItemCraftEvent => none
+EventType::PrepareSmithingEvent => none
+EventType::SmithItemEvent => none
+EventType::TradeSelectEvent => none
+EventType::VehicleBlockCollisionEvent => none
+EventType::VehicleCollisionEvent => none
+EventType::VehicleCreateEvent => none
+EventType::VehicleDamageEvent => none
+EventType::VehicleDestroyEvent => none
+EventType::VehicleEnterEvent => none
+EventType::VehicleEntityCollisionEvent => none
+EventType::VehicleExitEvent => none
+EventType::VehicleMoveEvent => none
+EventType::VehicleUpdateEvent => none
+EventType::PrepareItemEnchantEvent => none
+EventType::EnchantItemEvent => none
+EventType::MapInitializeEvent => none
+EventType::HangingBreakEvent => none
+EventType::HangingBreakByEntityEvent => none
+EventType::HangingPlaceEvent => none
+EventType::BellResonateEvent => none
+EventType::BellRingEvent => none
+EventType::BlockBrushEvent => none
+EventType::BlockCookEvent => none
+EventType::BlockDamageAbortEvent => none
+EventType::BlockDispenseArmorEvent => none
+EventType::BlockDispenseLootEvent => none
+EventType::BlockDropItemEvent => none
+EventType::BlockExpEvent => none
+EventType::BlockFertilizeEvent => none
+EventType::BlockMultiPlaceEvent => none
+EventType::BlockReceiveGameEvent => none
+EventType::BlockShearEntityEvent => none
+EventType::BlockSpreadEvent => none
+EventType::BrewingStartEvent => none
+EventType::CampfireStartEvent => none
+EventType::CauldronLevelChangeEvent => none
+EventType::CrafterCraftEvent => none
+EventType::EntityBlockFormEvent => none
+EventType::FluidLevelChangeEvent => none
+EventType::InventoryBlockStartEvent => none
+EventType::LeavesDecayEvent => none
+EventType::MoistureChangeEvent => none
+EventType::SculkBloomEvent => none
+EventType::VaultDisplayItemEvent => none
+EventType::CreatureSpawnEvent => none
+EventType::EnderDragonChangePhaseEvent => none
+EventType::EntityBreakDoorEvent => none
+EventType::EntityChangeBlockEvent => none
+EventType::EntityDamageByBlockEvent => none
+EventType::EntityDamageByEntityEvent => none
+EventType::EntityDropItemEvent => none
+EventType::EntityEnterBlockEvent => none
+EventType::EntityExhaustionEvent => none
+EventType::EntityInteractEvent => none
+EventType::EntityKnockbackEvent => none
+EventType::EntityPlaceEvent => none
+EventType::EntityPoseChangeEvent => none
+EventType::EntityPotionEffectEvent => none
+EventType::EntitySpellCastEvent => none
+EventType::EntityTargetLivingEntityEvent => none
+EventType::EntityToggleSwimEvent => none
+EventType::ExplosionPrimeEvent => none
+EventType::FireworkExplodeEvent => none
+EventType::FoodLevelChangeEvent => none
+EventType::ItemDespawnEvent => none
+EventType::ItemMergeEvent => none
+EventType::ItemSpawnEvent => none
+EventType::PiglinBarterEvent => none
+EventType::ProjectileHitEvent => none
+EventType::ProjectileLaunchEvent => none
+EventType::SheepDyeWoolEvent => none
+EventType::SheepRegrowWoolEvent => none
+EventType::SlimeSplitEvent => none
+EventType::StriderTemperatureChangeEvent => none
+EventType::VillagerAcquireTradeEvent => none
+EventType::VillagerCareerChangeEvent => none
+EventType::VillagerReplenishTradeEvent => none
+EventType::WardenAngerChangeEvent => none
+EventType::AreaEffectCloudApplyEvent => none
+EventType::ArrowBodyCountChangeEvent => none
+EventType::BatToggleSleepEvent => none
+EventType::CreeperPowerEvent => none
+EventType::EntityCombustByBlockEvent => none
+EventType::EntityCombustByEntityEvent => none
+EventType::EntityKnockbackByEntityEvent => none
+EventType::EntityPortalEnterEvent => none
+EventType::EntityPortalExitEvent => none
+EventType::EntityRemoveEvent => none
+EventType::EntityTargetBlockEvent => none
+EventType::EntityUnleashEvent => none
+EventType::ExpBottleEvent => none
+EventType::HorseJumpEvent => none
+EventType::LingeringPotionSplashEvent => none
+EventType::PigZapEvent => none
+EventType::PigZombieAngerEvent => none
+EventType::PotionSplashEvent => none
+EventType::SpawnerSpawnEvent => none
+EventType::TrialSpawnerSpawnEvent => none
+EventType::VillagerReputationChangeEvent => none
+EventType::AsyncPlayerChatEvent => AsyncPlayerChatEvent Lowest blocking=true source=Some("golden")
+EventType::AsyncPlayerPreLoginEvent => AsyncPlayerPreLoginEvent Highest blocking=false source=Some("golden")
+EventType::PlayerAdvancementDoneEvent => PlayerAdvancementDoneEvent High blocking=true source=Some("golden")
+EventType::PlayerAnimationEvent => PlayerAnimationEvent Normal blocking=false source=Some("golden")
+EventType::PlayerArmorStandManipulateEvent => PlayerArmorStandManipulateEvent Low blocking=true source=Some("golden")
+EventType::PlayerBucketEntityEvent => PlayerBucketEntityEvent Lowest blocking=false source=Some("golden")
+EventType::PlayerChangedWorldEvent => PlayerChangedWorldEvent Highest blocking=true source=Some("golden")
+EventType::PlayerChannelEvent => PlayerChannelEvent High blocking=false source=Some("golden")
+EventType::PlayerCommandPreprocessEvent => PlayerCommandPreprocessEvent Normal blocking=true source=Some("golden")
+EventType::PlayerEditBookEvent => PlayerEditBookEvent Low blocking=false source=Some("golden")
+EventType::PlayerElytraBoostEvent => PlayerElytraBoostEvent Lowest blocking=true source=Some("golden")
+EventType::PlayerExpCooldownChangeEvent => PlayerExpCooldownChangeEvent Highest blocking=false source=Some("golden")
+EventType::PlayerHarvestBlockEvent => PlayerHarvestBlockEvent High blocking=true source=Some("golden")
+EventType::PlayerHideEntityEvent => PlayerHideEntityEvent Normal blocking=false source=Some("golden")
+EventType::PlayerItemBreakEvent => PlayerItemBreakEvent Low blocking=true source=Some("golden")
+EventType::PlayerItemMendEvent => PlayerItemMendEvent Lowest blocking=false source=Some("golden")
+EventType::PlayerKickEvent => PlayerKickEvent Highest blocking=true source=Some("golden")
+EventType::PlayerLeashEntityEvent => PlayerLeashEntityEvent High blocking=false source=Some("golden")
+EventType::PlayerLevelChangeEvent => PlayerLevelChangeEvent Normal blocking=true source=Some("golden")
+EventType::PlayerLocaleChangeEvent => PlayerLocaleChangeEvent Low blocking=false source=Some("golden")
+EventType::PlayerNameEntityEvent => PlayerNameEntityEvent Lowest blocking=true source=Some("golden")
+EventType::PlayerOpenSignEvent => PlayerOpenSignEvent Highest blocking=false source=Some("golden")
+EventType::PlayerPortalEvent => PlayerPortalEvent High blocking=true source=Some("golden")
+EventType::PlayerPreLoginEvent => PlayerPreLoginEvent Normal blocking=false source=Some("golden")
+EventType::PlayerRiptideEvent => PlayerRiptideEvent Low blocking=true source=Some("golden")
+EventType::PlayerShearEntityEvent => PlayerShearEntityEvent Lowest blocking=false source=Some("golden")
+EventType::PlayerShowEntityEvent => PlayerShowEntityEvent Highest blocking=true source=Some("golden")
+EventType::PlayerSpawnChangeEvent => PlayerSpawnChangeEvent High blocking=false source=Some("golden")
+EventType::PlayerStatisticIncrementEvent => PlayerStatisticIncrementEvent Normal blocking=true source=Some("golden")
+EventType::PlayerSwapHandsEvent => PlayerSwapHandItemsEvent Low blocking=false source=Some("golden")
+EventType::PlayerTakeLecternBookEvent => PlayerTakeLecternBookEvent Lowest blocking=true source=Some("golden")
+EventType::PlayerUnleashEntityEvent => PlayerUnleashEntityEvent Highest blocking=false source=Some("golden")
+EventType::PlayerVelocityEvent => PlayerVelocityEvent High blocking=true source=Some("golden")
+EventType::PlayerInputEvent => PlayerInputEvent Normal blocking=false source=Some("golden")
+EventType::PlayerInteractAtEntityEvent => PlayerInteractAtEntityEvent Low blocking=true source=Some("golden")
+EventType::PlayerLinksSendEvent => PlayerLinksSendEvent Lowest blocking=false source=Some("golden")
+EventType::PlayerPickupArrowEvent => PlayerPickupArrowEvent Highest blocking=true source=Some("golden")
+EventType::PlayerRecipeBookClickEvent => PlayerRecipeBookClickEvent High blocking=false source=Some("golden")
+EventType::PlayerRecipeBookSettingsChangeEvent => PlayerRecipeBookSettingsChangeEvent Normal blocking=true source=Some("golden")
+EventType::PlayerRecipeDiscoverEvent => PlayerRecipeDiscoverEvent Low blocking=false source=Some("golden")
+EventType::PlayerRegisterChannelEvent => PlayerRegisterChannelEvent Lowest blocking=true source=Some("golden")
+EventType::PlayerResourcePackStatusEvent => PlayerResourcePackStatusEvent Highest blocking=false source=Some("golden")
+EventType::PlayerSpawnLocationEvent => PlayerSpawnLocationEvent High blocking=true source=Some("golden")
+EventType::PlayerUnregisterChannelEvent => PlayerUnregisterChannelEvent Normal blocking=false source=Some("golden")
+EventType::RaidFinishEvent => none
+EventType::RaidSpawnWaveEvent => none
+EventType::RaidStopEvent => none
+EventType::RaidTriggerEvent => none
+EventType::LightningStrikeEvent => none

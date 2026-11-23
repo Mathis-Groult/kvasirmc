@@ -3440,6 +3440,7 @@ dependencies = [
  "rand 0.10.3",
  "serde_json",
  "sysinfo",
+ "tempfile",
  "time",
  "tokio",
  "tracing",

@@ -43,6 +43,12 @@ impl ExperienceOrbEntity {
         }
     }
 
+    /// The experience this orb gives (read by the death golden).
+    #[cfg(test)]
+    pub(crate) const fn amount(&self) -> u32 {
+        self.amount
+    }
+
     pub fn spawn(world: &Arc<World>, position: Vector3<f64>, amount: u32) {
         Self::spawn_with_direction(world, position, Vector3::new(0.0, 0.0, 0.0), amount);
     }

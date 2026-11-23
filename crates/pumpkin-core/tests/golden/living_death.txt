@@ -1,0 +1,890 @@
+absent victim: dead false pose 0 health 20.0 input Vector3 { x: 0.5, y: 0.0, z: -0.25 } jumping true fire -1 removed false effects minecraft:speed:1:600
+absent watcher: 
+absent actor: 
+absent dropped 0: 
+absent actor player: stats 
+fall victim: dead true pose 7 health 20.0 input Vector3 { x: 0.0, y: 0.0, z: 0.0 } jumping false fire -1 removed false effects
+fall watcher: 32:id119 16:8ed45d48
+fall actor: 32:id119 16:8ed45d48
+fall dropped 3: item iron_helmetx1 at Vector3 { x: 86, y: 64, z: 24 }; item rotten_fleshx2 at Vector3 { x: 86, y: 64, z: 24 }; item stickx1 at Vector3 { x: 86, y: 64, z: 24 }
+fall actor player: stats 
+fall_twice victim: dead true pose 7 health 20.0 input Vector3 { x: 0.0, y: 0.0, z: 0.0 } jumping false fire -1 removed false effects
+fall_twice watcher: 32:id119 16:8bf04875
+fall_twice actor: 32:id119 16:8bf04875
+fall_twice dropped 2: item iron_helmetx1 at Vector3 { x: 150, y: 64, z: 24 }; item stickx1 at Vector3 { x: 150, y: 64, z: 24 }
+fall_twice actor player: stats 
+melee_looting victim: dead true pose 7 health 20.0 input Vector3 { x: 0.0, y: 0.0, z: 0.0 } jumping false fire -1 removed false effects
+melee_looting watcher: 32:id119 16:e9de7d95
+melee_looting actor: 32:id119 16:e9de7d95
+melee_looting dropped 8: item iron_helmetx1 at Vector3 { x: 214, y: 64, z: 24 }; item iron_ingotx1 at Vector3 { x: 214, y: 64, z: 24 }; item rotten_fleshx50 at Vector3 { x: 214, y: 64, z: 24 }; item stickx1 at Vector3 { x: 214, y: 64, z: 24 }; item stonex1 at Vector3 { x: 214, y: 64, z: 24 }; orb 1 at Vector3 { x: 214.5, y: 64.0, z: 24.5 }; orb 1 at Vector3 { x: 214.5, y: 64.0, z: 24.5 }; orb 3 at Vector3 { x: 214.5, y: 64.0, z: 24.5 }
+melee_looting actor player: stats 6:154=1,8:33=1
+melee_empty_hand victim: dead true pose 7 health 20.0 input Vector3 { x: 0.0, y: 0.0, z: 0.0 } jumping false fire -1 removed false effects
+melee_empty_hand watcher: 32:id119 16:ba419a35
+melee_empty_hand actor: 32:id119 16:ba419a35
+melee_empty_hand dropped 6: item iron_helmetx1 at Vector3 { x: 278, y: 64, z: 24 }; item rotten_fleshx2 at Vector3 { x: 278, y: 64, z: 24 }; item stickx1 at Vector3 { x: 278, y: 64, z: 24 }; orb 1 at Vector3 { x: 278.5, y: 64.0, z: 24.5 }; orb 1 at Vector3 { x: 278.5, y: 64.0, z: 24.5 }; orb 3 at Vector3 { x: 278.5, y: 64.0, z: 24.5 }
+melee_empty_hand actor player: stats 6:154=1,8:33=1
+melee_dirt victim: dead true pose 7 health 20.0 input Vector3 { x: 0.0, y: 0.0, z: 0.0 } jumping false fire -1 removed false effects
+melee_dirt watcher: 32:id119 16:66e61595
+melee_dirt actor: 32:id119 16:66e61595
+melee_dirt dropped 5: item iron_helmetx1 at Vector3 { x: 342, y: 64, z: 24 }; item stickx1 at Vector3 { x: 342, y: 64, z: 24 }; orb 1 at Vector3 { x: 342.5, y: 64.0, z: 24.5 }; orb 1 at Vector3 { x: 342.5, y: 64.0, z: 24.5 }; orb 3 at Vector3 { x: 342.5, y: 64.0, z: 24.5 }
+melee_dirt actor player: stats 6:154=1,8:33=1
+melee_no_mob_drops victim: dead true pose 7 health 20.0 input Vector3 { x: 0.0, y: 0.0, z: 0.0 } jumping false fire -1 removed false effects
+melee_no_mob_drops watcher: 32:id119 16:766effc0
+melee_no_mob_drops actor: 32:id119 16:766effc0
+melee_no_mob_drops dropped 0: 
+melee_no_mob_drops actor player: stats 6:154=1,8:33=1
+melee_memory_zero victim: dead true pose 7 health 20.0 input Vector3 { x: 0.0, y: 0.0, z: 0.0 } jumping false fire -1 removed false effects
+melee_memory_zero watcher: 32:id119 16:d2425b90
+melee_memory_zero actor: 32:id119 16:d2425b90
+melee_memory_zero dropped 3: item iron_helmetx1 at Vector3 { x: 470, y: 64, z: 24 }; item rotten_fleshx2 at Vector3 { x: 470, y: 64, z: 24 }; item stickx1 at Vector3 { x: 470, y: 64, z: 24 }
+melee_memory_zero actor player: stats 6:154=1,8:33=1
+melee_memory_one victim: dead true pose 7 health 20.0 input Vector3 { x: 0.0, y: 0.0, z: 0.0 } jumping false fire -1 removed false effects
+melee_memory_one watcher: 32:id119 16:192ceb60
+melee_memory_one actor: 32:id119 16:192ceb60
+melee_memory_one dropped 6: item iron_helmetx1 at Vector3 { x: 534, y: 64, z: 24 }; item rotten_fleshx1 at Vector3 { x: 534, y: 64, z: 24 }; item stickx1 at Vector3 { x: 534, y: 64, z: 24 }; orb 1 at Vector3 { x: 534.5, y: 64.0, z: 24.5 }; orb 1 at Vector3 { x: 534.5, y: 64.0, z: 24.5 }; orb 3 at Vector3 { x: 534.5, y: 64.0, z: 24.5 }
+melee_memory_one actor player: stats 6:154=1,8:33=1
+melee_oozing_burning victim: dead true pose 7 health 20.0 input Vector3 { x: 0.0, y: 0.0, z: 0.0 } jumping false fire 100 removed false effects
+melee_oozing_burning watcher: 32:id119 16:4f49f390
+melee_oozing_burning actor: 32:id119 16:4f49f390
+melee_oozing_burning dropped 8: item iron_helmetx1 at Vector3 { x: 598, y: 64, z: 24 }; item rotten_fleshx1 at Vector3 { x: 598, y: 64, z: 24 }; item stickx1 at Vector3 { x: 598, y: 64, z: 24 }; orb 1 at Vector3 { x: 598.5, y: 64.0, z: 24.5 }; orb 1 at Vector3 { x: 598.5, y: 64.0, z: 24.5 }; orb 3 at Vector3 { x: 598.5, y: 64.0, z: 24.5 }; slime at Vector3 { x: 598, y: 64, z: 24 }; slime at Vector3 { x: 598, y: 64, z: 24 }
+melee_oozing_burning actor player: stats 6:154=1,8:33=1
+source_player_only victim: dead true pose 7 health 20.0 input Vector3 { x: 0.0, y: 0.0, z: 0.0 } jumping false fire -1 removed false effects
+source_player_only watcher: 32:id119 16:2a6728c0
+source_player_only actor: 32:id119 16:2a6728c0
+source_player_only dropped 7: item carrotx1 at Vector3 { x: 662, y: 64, z: 24 }; item iron_helmetx1 at Vector3 { x: 662, y: 64, z: 24 }; item rotten_fleshx4 at Vector3 { x: 662, y: 64, z: 24 }; item stickx1 at Vector3 { x: 662, y: 64, z: 24 }; orb 1 at Vector3 { x: 662.5, y: 64.0, z: 24.5 }; orb 1 at Vector3 { x: 662.5, y: 64.0, z: 24.5 }; orb 3 at Vector3 { x: 662.5, y: 64.0, z: 24.5 }
+source_player_only actor player: stats 6:154=1,8:33=1
+cause_player_only victim: dead true pose 7 health 20.0 input Vector3 { x: 0.0, y: 0.0, z: 0.0 } jumping false fire -1 removed false effects
+cause_player_only watcher: 32:id119 16:f397ad10
+cause_player_only actor: 32:id119 16:f397ad10
+cause_player_only dropped 8: item iron_helmetx1 at Vector3 { x: 726, y: 64, z: 24 }; item potatox1 at Vector3 { x: 726, y: 64, z: 24 }; item rotten_fleshx48 at Vector3 { x: 726, y: 64, z: 24 }; item stickx1 at Vector3 { x: 726, y: 64, z: 24 }; item stonex1 at Vector3 { x: 726, y: 64, z: 24 }; orb 1 at Vector3 { x: 726.5, y: 64.0, z: 24.5 }; orb 1 at Vector3 { x: 726.5, y: 64.0, z: 24.5 }; orb 3 at Vector3 { x: 726.5, y: 64.0, z: 24.5 }
+cause_player_only actor player: stats 6:154=1,8:33=1
+credit_without_attacker victim: dead true pose 7 health 20.0 input Vector3 { x: 0.0, y: 0.0, z: 0.0 } jumping false fire -1 removed false effects
+credit_without_attacker watcher: 32:id119 16:26262537
+credit_without_attacker actor: 32:id119 16:26262537
+credit_without_attacker dropped 6: item iron_helmetx1 at Vector3 { x: 790, y: 64, z: 24 }; item rotten_fleshx2 at Vector3 { x: 790, y: 64, z: 24 }; item stickx1 at Vector3 { x: 790, y: 64, z: 24 }; orb 1 at Vector3 { x: 790.5, y: 64.0, z: 24.5 }; orb 1 at Vector3 { x: 790.5, y: 64.0, z: 24.5 }; orb 3 at Vector3 { x: 790.5, y: 64.0, z: 24.5 }
+credit_without_attacker actor player: stats 6:154=1,8:33=1
+credit_offline_player victim: dead true pose 7 health 20.0 input Vector3 { x: 0.0, y: 0.0, z: 0.0 } jumping false fire -1 removed false effects
+credit_offline_player watcher: 32:id119 16:31914ce7
+credit_offline_player actor: 32:id119 16:31914ce7
+credit_offline_player dropped 6: item iron_helmetx1 at Vector3 { x: 854, y: 64, z: 24 }; item rotten_fleshx2 at Vector3 { x: 854, y: 64, z: 24 }; item stickx1 at Vector3 { x: 854, y: 64, z: 24 }; orb 1 at Vector3 { x: 854.5, y: 64.0, z: 24.5 }; orb 1 at Vector3 { x: 854.5, y: 64.0, z: 24.5 }; orb 3 at Vector3 { x: 854.5, y: 64.0, z: 24.5 }
+credit_offline_player actor player: stats 
+mob_source_player_cause victim: dead true pose 7 health 20.0 input Vector3 { x: 0.0, y: 0.0, z: 0.0 } jumping false fire -1 removed false effects
+mob_source_player_cause watcher: 32:id119 16:db4d94d7
+mob_source_player_cause actor: 32:id119 16:db4d94d7
+mob_source_player_cause dropped 8: item iron_helmetx1 at Vector3 { x: 918, y: 64, z: 24 }; item potatox1 at Vector3 { x: 918, y: 64, z: 24 }; item rotten_fleshx32 at Vector3 { x: 918, y: 64, z: 24 }; item stickx1 at Vector3 { x: 918, y: 64, z: 24 }; item stonex1 at Vector3 { x: 918, y: 64, z: 24 }; orb 1 at Vector3 { x: 918.5, y: 64.0, z: 24.5 }; orb 1 at Vector3 { x: 918.5, y: 64.0, z: 24.5 }; orb 3 at Vector3 { x: 918.5, y: 64.0, z: 24.5 }
+mob_source_player_cause actor player: stats 6:154=1,8:33=1
+player_source_mob_cause victim: dead true pose 7 health 20.0 input Vector3 { x: 0.0, y: 0.0, z: 0.0 } jumping false fire -1 removed false effects
+player_source_mob_cause watcher: 32:id119 16:6881dde7
+player_source_mob_cause actor: 32:id119 16:6881dde7
+player_source_mob_cause dropped 5: item iron_helmetx1 at Vector3 { x: 982, y: 64, z: 24 }; item stickx1 at Vector3 { x: 982, y: 64, z: 24 }; orb 1 at Vector3 { x: 982.5, y: 64.0, z: 24.5 }; orb 1 at Vector3 { x: 982.5, y: 64.0, z: 24.5 }; orb 3 at Vector3 { x: 982.5, y: 64.0, z: 24.5 }
+player_source_mob_cause actor player: stats 6:154=1,8:33=1
+mob_melee victim: dead true pose 7 health 20.0 input Vector3 { x: 0.0, y: 0.0, z: 0.0 } jumping false fire -1 removed false effects
+mob_melee watcher: 32:id119 16:f4cb2577
+mob_melee actor: 32:id119 16:f4cb2577
+mob_melee dropped 3: item iron_helmetx1 at Vector3 { x: 1046, y: 64, z: 24 }; item rotten_fleshx1 at Vector3 { x: 1046, y: 64, z: 24 }; item stickx1 at Vector3 { x: 1046, y: 64, z: 24 }
+mob_melee actor player: stats 
+mob_melee_credit_nobody victim: dead true pose 7 health 20.0 input Vector3 { x: 0.0, y: 0.0, z: 0.0 } jumping false fire -1 removed false effects
+mob_melee_credit_nobody watcher: 32:id119 16:15960552
+mob_melee_credit_nobody actor: 32:id119 16:15960552
+mob_melee_credit_nobody dropped 3: item iron_helmetx1 at Vector3 { x: 1110, y: 64, z: 24 }; item rotten_fleshx2 at Vector3 { x: 1110, y: 64, z: 24 }; item stickx1 at Vector3 { x: 1110, y: 64, z: 24 }
+mob_melee_credit_nobody actor player: stats 
+creeper_skeleton victim: dead true pose 7 health 20.0 input Vector3 { x: 0.0, y: 0.0, z: 0.0 } jumping false fire -1 removed false effects
+creeper_skeleton watcher: 32:id119 16:e44fed38
+creeper_skeleton actor: 32:id119 16:e44fed38
+creeper_skeleton dropped 4: item gunpowderx1 at Vector3 { x: 1174, y: 64, z: 24 }; item iron_helmetx1 at Vector3 { x: 1174, y: 64, z: 24 }; item music_disc_stradx1 at Vector3 { x: 1174, y: 64, z: 24 }; item stickx1 at Vector3 { x: 1174, y: 64, z: 24 }
+creeper_skeleton actor player: stats 
+creeper_melee victim: dead true pose 7 health 20.0 input Vector3 { x: 0.0, y: 0.0, z: 0.0 } jumping false fire -1 removed false effects
+creeper_melee watcher: 32:id119 16:745132b7
+creeper_melee actor: 32:id119 16:745132b7
+creeper_melee dropped 8: item gunpowderx25 at Vector3 { x: 1238, y: 64, z: 24 }; item gunpowderx64 at Vector3 { x: 1238, y: 64, z: 24 }; item iron_helmetx1 at Vector3 { x: 1238, y: 64, z: 24 }; item stickx1 at Vector3 { x: 1238, y: 64, z: 24 }; item stonex1 at Vector3 { x: 1238, y: 64, z: 24 }; orb 1 at Vector3 { x: 1238.5, y: 64.0, z: 24.5 }; orb 1 at Vector3 { x: 1238.5, y: 64.0, z: 24.5 }; orb 3 at Vector3 { x: 1238.5, y: 64.0, z: 24.5 }
+creeper_melee actor player: stats 6:32=1,8:33=1
+cow_fire_aspect victim: dead true pose 7 health 10.0 input Vector3 { x: 0.0, y: 0.0, z: 0.0 } jumping false fire -1 removed false effects
+cow_fire_aspect watcher: 32:id119 16:ab9fc7e0
+cow_fire_aspect actor: 32:id119 16:ab9fc7e0
+cow_fire_aspect dropped 5: item cooked_beefx2 at Vector3 { x: 1302, y: 64, z: 24 }; item iron_helmetx1 at Vector3 { x: 1302, y: 64, z: 24 }; item leatherx2 at Vector3 { x: 1302, y: 64, z: 24 }; item stickx1 at Vector3 { x: 1302, y: 64, z: 24 }; orb 3 at Vector3 { x: 1302.5, y: 64.0, z: 24.5 }
+cow_fire_aspect actor player: stats 6:30=1,8:33=1
+cow_burning_fall victim: dead true pose 7 health 10.0 input Vector3 { x: 0.0, y: 0.0, z: 0.0 } jumping false fire 100 removed false effects
+cow_burning_fall watcher: 32:id119 16:9061d7f0
+cow_burning_fall actor: 32:id119 16:9061d7f0
+cow_burning_fall dropped 4: item cooked_beefx3 at Vector3 { x: 1366, y: 64, z: 24 }; item iron_helmetx1 at Vector3 { x: 1366, y: 64, z: 24 }; item leatherx2 at Vector3 { x: 1366, y: 64, z: 24 }; item stickx1 at Vector3 { x: 1366, y: 64, z: 24 }
+cow_burning_fall actor player: stats 
+baby_cow_melee victim: dead true pose 7 health 10.0 input Vector3 { x: 0.0, y: 0.0, z: 0.0 } jumping false fire -1 removed false effects
+baby_cow_melee watcher: 32:id119 16:f7e6accb
+baby_cow_melee actor: 32:id119 16:f7e6accb
+baby_cow_melee dropped 0: 
+baby_cow_melee actor player: stats 6:30=1,8:33=1
+pig_melee victim: dead true pose 7 health 10.0 input Vector3 { x: 0.0, y: 0.0, z: 0.0 } jumping false fire -1 removed false effects
+pig_melee watcher: 32:id119 16:bc007874
+pig_melee actor: 32:id119 16:bc007874
+pig_melee dropped 5: item iron_helmetx1 at Vector3 { x: 1494, y: 64, z: 24 }; item porkchopx2 at Vector3 { x: 1494, y: 64, z: 24 }; item stickx1 at Vector3 { x: 1494, y: 64, z: 24 }; orb 1 at Vector3 { x: 1494.5, y: 64.0, z: 24.5 }; orb 1 at Vector3 { x: 1494.5, y: 64.0, z: 24.5 }
+pig_melee actor player: stats 6:101=1,8:33=1
+armor_stand_melee victim: dead true pose 7 health 20.0 input Vector3 { x: 0.0, y: 0.0, z: 0.0 } jumping false fire -1 removed false effects
+armor_stand_melee watcher: 31:id119 16:76135abe
+armor_stand_melee actor: 31:id119 16:76135abe
+armor_stand_melee dropped 2: item iron_helmetx1 at Vector3 { x: 1558, y: 64, z: 24 }; item stickx1 at Vector3 { x: 1558, y: 64, z: 24 }
+armor_stand_melee actor player: stats 6:5=1,8:33=1
+player_melee victim: dead true pose 7 health 20.0 input Vector3 { x: 0.0, y: 0.0, z: 0.0 } jumping false fire -1 removed false effects
+player_melee watcher: 32:id119 282:04656a07 16:96005ceb
+player_melee actor: 32:id119 282:04656a07 16:96005ceb
+player_melee victim player: stats 5:1=64,5:55=3,7:159=1,8:3=0,8:4=0,8:24=67,8:32=1 inventory 37=stonex1 39=iron_helmetx1 packets 32:id119 6:fd5ad92f 284:d91f7cca 282:04656a07 5:09529c46 16:96005ceb
+player_melee dropped 2: item dirtx3 at Vector3 { x: 1623, y: 64, z: 25 }; item stonex64 at Vector3 { x: 1623, y: 64, z: 25 }
+player_melee actor player: stats 6:159=1,8:35=1
+player_melee_keep_inventory victim: dead true pose 7 health 20.0 input Vector3 { x: 0.0, y: 0.0, z: 0.0 } jumping false fire -1 removed false effects
+player_melee_keep_inventory watcher: 32:id119 282:8a1a60b2 16:d0581c9b
+player_melee_keep_inventory actor: 32:id119 282:8a1a60b2 16:d0581c9b
+player_melee_keep_inventory victim player: stats 7:159=1,8:3=0,8:4=0,8:32=1 inventory 0=dirtx3 9=stonex64 37=stonex1 packets 32:id119 6:11401fb3 284:11a59655 282:8a1a60b2 5:69ad3046 16:d0581c9b
+player_melee_keep_inventory dropped 5: item iron_helmetx1 at Vector3 { x: 1686, y: 64, z: 24 }; item stickx1 at Vector3 { x: 1686, y: 64, z: 24 }; orb 1 at Vector3 { x: 1686.5, y: 64.0, z: 24.5 }; orb 17 at Vector3 { x: 1686.5, y: 64.0, z: 24.5 }; orb 17 at Vector3 { x: 1686.5, y: 64.0, z: 24.5 }
+player_melee_keep_inventory actor player: stats 6:159=1,8:35=1
+player_fall_messages_off victim: dead true pose 7 health 20.0 input Vector3 { x: 0.0, y: 0.0, z: 0.0 } jumping false fire -1 removed false effects
+player_fall_messages_off watcher: 32:id119 16:1eab1c6b
+player_fall_messages_off actor: 32:id119 16:1eab1c6b
+player_fall_messages_off victim player: stats 5:1=64,5:55=3,8:3=0,8:4=0,8:24=67,8:32=1 inventory 37=stonex1 packets 32:id119 6:d6491667 284:fc229a80 5:f476bde6 16:1eab1c6b
+player_fall_messages_off dropped 4: item dirtx3 at Vector3 { x: 1751, y: 64, z: 25 }; item iron_helmetx1 at Vector3 { x: 1750, y: 64, z: 24 }; item stickx1 at Vector3 { x: 1750, y: 64, z: 24 }; item stonex64 at Vector3 { x: 1751, y: 64, z: 25 }
+player_fall_messages_off actor player: stats 
+player_mob_melee victim: dead true pose 7 health 20.0 input Vector3 { x: 0.0, y: 0.0, z: 0.0 } jumping false fire -1 removed false effects
+player_mob_melee watcher: 32:id119 282:ae64c9de 16:7d6135ba
+player_mob_melee actor: 32:id119 282:ae64c9de 16:7d6135ba
+player_mob_melee victim player: stats 5:1=64,5:55=3,8:3=0,8:4=0,8:24=67,8:32=1 inventory 37=stonex1 packets 32:id119 6:f8e65c52 284:c7fac47a 282:ae64c9de 5:a9f1cccb 16:7d6135ba 5:a9f20844
+player_mob_melee dropped 6: item dirtx3 at Vector3 { x: 1815, y: 64, z: 25 }; item iron_helmetx1 at Vector3 { x: 1814, y: 64, z: 24 }; item stickx1 at Vector3 { x: 1814, y: 64, z: 24 }; item stonex64 at Vector3 { x: 1815, y: 64, z: 25 }; slime at Vector3 { x: 1814, y: 64, z: 24 }; slime at Vector3 { x: 1814, y: 64, z: 24 }
+player_mob_melee actor player: stats 
+trials_nothing_held victim: dead true pose 7 health 20.0 input Vector3 { x: 0.0, y: 0.0, z: 0.0 } jumping false fire -1 removed false effects
+trials_nothing_held watcher: 32:id119 16:a0452b9b
+trials_nothing_held actor: 32:id119 16:a0452b9b
+trials_nothing_held victim: dead true pose 7 health 20.0 input Vector3 { x: 0.0, y: 0.0, z: 0.0 } jumping false fire -1 removed false effects
+trials_nothing_held watcher: 32:id119 16:27067dde
+trials_nothing_held actor: 32:id119 16:27067dde
+trials_nothing_held victim: dead true pose 7 health 20.0 input Vector3 { x: 0.0, y: 0.0, z: 0.0 } jumping false fire -1 removed false effects
+trials_nothing_held watcher: 32:id119 16:3a9f2b31
+trials_nothing_held actor: 32:id119 16:3a9f2b31
+trials_nothing_held victim: dead true pose 7 health 20.0 input Vector3 { x: 0.0, y: 0.0, z: 0.0 } jumping false fire -1 removed false effects
+trials_nothing_held watcher: 32:id119 16:f5f2ba5c
+trials_nothing_held actor: 32:id119 16:f5f2ba5c
+trials_nothing_held victim: dead true pose 7 health 20.0 input Vector3 { x: 0.0, y: 0.0, z: 0.0 } jumping false fire -1 removed false effects
+trials_nothing_held watcher: 32:id119 16:109f5027
+trials_nothing_held actor: 32:id119 16:109f5027
+trials_nothing_held victim: dead true pose 7 health 20.0 input Vector3 { x: 0.0, y: 0.0, z: 0.0 } jumping false fire -1 removed false effects
+trials_nothing_held watcher: 32:id119 16:645d7ffa
+trials_nothing_held actor: 32:id119 16:645d7ffa
+trials_nothing_held victim: dead true pose 7 health 20.0 input Vector3 { x: 0.0, y: 0.0, z: 0.0 } jumping false fire -1 removed false effects
+trials_nothing_held watcher: 32:id119 16:c08960fd
+trials_nothing_held actor: 32:id119 16:c08960fd
+trials_nothing_held victim: dead true pose 7 health 20.0 input Vector3 { x: 0.0, y: 0.0, z: 0.0 } jumping false fire -1 removed false effects
+trials_nothing_held watcher: 32:id119 16:9e1feff8
+trials_nothing_held actor: 32:id119 16:9e1feff8
+trials_nothing_held victim: dead true pose 7 health 20.0 input Vector3 { x: 0.0, y: 0.0, z: 0.0 } jumping false fire -1 removed false effects
+trials_nothing_held watcher: 32:id119 16:884119c3
+trials_nothing_held actor: 32:id119 16:884119c3
+trials_nothing_held victim: dead true pose 7 health 20.0 input Vector3 { x: 0.0, y: 0.0, z: 0.0 } jumping false fire -1 removed false effects
+trials_nothing_held watcher: 32:id119 16:b014b286
+trials_nothing_held actor: 32:id119 16:b014b286
+trials_nothing_held victim: dead true pose 7 health 20.0 input Vector3 { x: 0.0, y: 0.0, z: 0.0 } jumping false fire -1 removed false effects
+trials_nothing_held watcher: 32:id119 16:3639cfd9
+trials_nothing_held actor: 32:id119 16:3639cfd9
+trials_nothing_held victim: dead true pose 7 health 20.0 input Vector3 { x: 0.0, y: 0.0, z: 0.0 } jumping false fire -1 removed false effects
+trials_nothing_held watcher: 32:id119 16:78fb69a4
+trials_nothing_held actor: 32:id119 16:78fb69a4
+trials_nothing_held victim: dead true pose 7 health 20.0 input Vector3 { x: 0.0, y: 0.0, z: 0.0 } jumping false fire -1 removed false effects
+trials_nothing_held watcher: 32:id119 16:b4b7792f
+trials_nothing_held actor: 32:id119 16:b4b7792f
+trials_nothing_held victim: dead true pose 7 health 20.0 input Vector3 { x: 0.0, y: 0.0, z: 0.0 } jumping false fire -1 removed false effects
+trials_nothing_held watcher: 32:id119 16:b940b122
+trials_nothing_held actor: 32:id119 16:b940b122
+trials_nothing_held victim: dead true pose 7 health 20.0 input Vector3 { x: 0.0, y: 0.0, z: 0.0 } jumping false fire -1 removed false effects
+trials_nothing_held watcher: 32:id119 16:9cccb485
+trials_nothing_held actor: 32:id119 16:9cccb485
+trials_nothing_held victim: dead true pose 7 health 20.0 input Vector3 { x: 0.0, y: 0.0, z: 0.0 } jumping false fire -1 removed false effects
+trials_nothing_held watcher: 32:id119 16:269e0fc0
+trials_nothing_held actor: 32:id119 16:269e0fc0
+trials_nothing_held victim: dead true pose 7 health 20.0 input Vector3 { x: 0.0, y: 0.0, z: 0.0 } jumping false fire -1 removed false effects
+trials_nothing_held watcher: 32:id119 16:39c719ab
+trials_nothing_held actor: 32:id119 16:39c719ab
+trials_nothing_held victim: dead true pose 7 health 20.0 input Vector3 { x: 0.0, y: 0.0, z: 0.0 } jumping false fire -1 removed false effects
+trials_nothing_held watcher: 32:id119 16:9fe6e92e
+trials_nothing_held actor: 32:id119 16:9fe6e92e
+trials_nothing_held victim: dead true pose 7 health 20.0 input Vector3 { x: 0.0, y: 0.0, z: 0.0 } jumping false fire -1 removed false effects
+trials_nothing_held watcher: 32:id119 16:c6573041
+trials_nothing_held actor: 32:id119 16:c6573041
+trials_nothing_held victim: dead true pose 7 health 20.0 input Vector3 { x: 0.0, y: 0.0, z: 0.0 } jumping false fire -1 removed false effects
+trials_nothing_held watcher: 32:id119 16:040fb8ec
+trials_nothing_held actor: 32:id119 16:040fb8ec
+trials_nothing_held victim: dead true pose 7 health 20.0 input Vector3 { x: 0.0, y: 0.0, z: 0.0 } jumping false fire -1 removed false effects
+trials_nothing_held watcher: 32:id119 16:899ee437
+trials_nothing_held actor: 32:id119 16:899ee437
+trials_nothing_held victim: dead true pose 7 health 20.0 input Vector3 { x: 0.0, y: 0.0, z: 0.0 } jumping false fire -1 removed false effects
+trials_nothing_held watcher: 32:id119 16:95dc1fca
+trials_nothing_held actor: 32:id119 16:95dc1fca
+trials_nothing_held victim: dead true pose 7 health 20.0 input Vector3 { x: 0.0, y: 0.0, z: 0.0 } jumping false fire -1 removed false effects
+trials_nothing_held watcher: 32:id119 16:2ac7540d
+trials_nothing_held actor: 32:id119 16:2ac7540d
+trials_nothing_held victim: dead true pose 7 health 20.0 input Vector3 { x: 0.0, y: 0.0, z: 0.0 } jumping false fire -1 removed false effects
+trials_nothing_held watcher: 32:id119 16:078d45c8
+trials_nothing_held actor: 32:id119 16:078d45c8
+trials_nothing_held victim: dead true pose 7 health 20.0 input Vector3 { x: 0.0, y: 0.0, z: 0.0 } jumping false fire -1 removed false effects
+trials_nothing_held watcher: 32:id119 16:0592fb93
+trials_nothing_held actor: 32:id119 16:0592fb93
+trials_nothing_held victim: dead true pose 7 health 20.0 input Vector3 { x: 0.0, y: 0.0, z: 0.0 } jumping false fire -1 removed false effects
+trials_nothing_held watcher: 32:id119 16:2c14add6
+trials_nothing_held actor: 32:id119 16:2c14add6
+trials_nothing_held victim: dead true pose 7 health 20.0 input Vector3 { x: 0.0, y: 0.0, z: 0.0 } jumping false fire -1 removed false effects
+trials_nothing_held watcher: 32:id119 16:c88ed1e9
+trials_nothing_held actor: 32:id119 16:c88ed1e9
+trials_nothing_held victim: dead true pose 7 health 20.0 input Vector3 { x: 0.0, y: 0.0, z: 0.0 } jumping false fire -1 removed false effects
+trials_nothing_held watcher: 32:id119 16:dc47d874
+trials_nothing_held actor: 32:id119 16:dc47d874
+trials_nothing_held victim: dead true pose 7 health 20.0 input Vector3 { x: 0.0, y: 0.0, z: 0.0 } jumping false fire -1 removed false effects
+trials_nothing_held watcher: 32:id119 16:9341cebf
+trials_nothing_held actor: 32:id119 16:9341cebf
+trials_nothing_held victim: dead true pose 7 health 20.0 input Vector3 { x: 0.0, y: 0.0, z: 0.0 } jumping false fire -1 removed false effects
+trials_nothing_held watcher: 32:id119 16:b9b1e5f2
+trials_nothing_held actor: 32:id119 16:b9b1e5f2
+trials_nothing_held victim: dead true pose 7 health 20.0 input Vector3 { x: 0.0, y: 0.0, z: 0.0 } jumping false fire -1 removed false effects
+trials_nothing_held watcher: 32:id119 16:cf0a7ed5
+trials_nothing_held actor: 32:id119 16:cf0a7ed5
+trials_nothing_held victim: dead true pose 7 health 20.0 input Vector3 { x: 0.0, y: 0.0, z: 0.0 } jumping false fire -1 removed false effects
+trials_nothing_held watcher: 32:id119 16:3b8119d0
+trials_nothing_held actor: 32:id119 16:3b8119d0
+trials_nothing_held victim: dead true pose 7 health 20.0 input Vector3 { x: 0.0, y: 0.0, z: 0.0 } jumping false fire -1 removed false effects
+trials_nothing_held watcher: 32:id119 16:f5957e7b
+trials_nothing_held actor: 32:id119 16:f5957e7b
+trials_nothing_held victim: dead true pose 7 health 20.0 input Vector3 { x: 0.0, y: 0.0, z: 0.0 } jumping false fire -1 removed false effects
+trials_nothing_held watcher: 32:id119 16:6053b83e
+trials_nothing_held actor: 32:id119 16:6053b83e
+trials_nothing_held victim: dead true pose 7 health 20.0 input Vector3 { x: 0.0, y: 0.0, z: 0.0 } jumping false fire -1 removed false effects
+trials_nothing_held watcher: 32:id119 16:9b024311
+trials_nothing_held actor: 32:id119 16:9b024311
+trials_nothing_held victim: dead true pose 7 health 20.0 input Vector3 { x: 0.0, y: 0.0, z: 0.0 } jumping false fire -1 removed false effects
+trials_nothing_held watcher: 32:id119 16:b8baf63c
+trials_nothing_held actor: 32:id119 16:b8baf63c
+trials_nothing_held victim: dead true pose 7 health 20.0 input Vector3 { x: 0.0, y: 0.0, z: 0.0 } jumping false fire -1 removed false effects
+trials_nothing_held watcher: 32:id119 16:763e0187
+trials_nothing_held actor: 32:id119 16:763e0187
+trials_nothing_held victim: dead true pose 7 health 20.0 input Vector3 { x: 0.0, y: 0.0, z: 0.0 } jumping false fire -1 removed false effects
+trials_nothing_held watcher: 32:id119 16:176358da
+trials_nothing_held actor: 32:id119 16:176358da
+trials_nothing_held victim: dead true pose 7 health 20.0 input Vector3 { x: 0.0, y: 0.0, z: 0.0 } jumping false fire -1 removed false effects
+trials_nothing_held watcher: 32:id119 16:60e9bfdd
+trials_nothing_held actor: 32:id119 16:60e9bfdd
+trials_nothing_held victim: dead true pose 7 health 20.0 input Vector3 { x: 0.0, y: 0.0, z: 0.0 } jumping false fire -1 removed false effects
+trials_nothing_held watcher: 32:id119 16:26b7c558
+trials_nothing_held actor: 32:id119 16:26b7c558
+trials_nothing_held victim: dead true pose 7 health 20.0 input Vector3 { x: 0.0, y: 0.0, z: 0.0 } jumping false fire -1 removed false effects
+trials_nothing_held watcher: 32:id119 16:34d620a3
+trials_nothing_held actor: 32:id119 16:34d620a3
+trials_nothing_held victim: dead true pose 7 health 20.0 input Vector3 { x: 0.0, y: 0.0, z: 0.0 } jumping false fire -1 removed false effects
+trials_nothing_held watcher: 32:id119 16:2c602be6
+trials_nothing_held actor: 32:id119 16:2c602be6
+trials_nothing_held victim: dead true pose 7 health 20.0 input Vector3 { x: 0.0, y: 0.0, z: 0.0 } jumping false fire -1 removed false effects
+trials_nothing_held watcher: 32:id119 16:822e3739
+trials_nothing_held actor: 32:id119 16:822e3739
+trials_nothing_held victim: dead true pose 7 health 20.0 input Vector3 { x: 0.0, y: 0.0, z: 0.0 } jumping false fire -1 removed false effects
+trials_nothing_held watcher: 32:id119 16:c96ddb84
+trials_nothing_held actor: 32:id119 16:c96ddb84
+trials_nothing_held victim: dead true pose 7 health 20.0 input Vector3 { x: 0.0, y: 0.0, z: 0.0 } jumping false fire -1 removed false effects
+trials_nothing_held watcher: 32:id119 16:8d2d948f
+trials_nothing_held actor: 32:id119 16:8d2d948f
+trials_nothing_held victim: dead true pose 7 health 20.0 input Vector3 { x: 0.0, y: 0.0, z: 0.0 } jumping false fire -1 removed false effects
+trials_nothing_held watcher: 32:id119 16:c13aa002
+trials_nothing_held actor: 32:id119 16:c13aa002
+trials_nothing_held victim: dead true pose 7 health 20.0 input Vector3 { x: 0.0, y: 0.0, z: 0.0 } jumping false fire -1 removed false effects
+trials_nothing_held watcher: 32:id119 16:8999cdb4
+trials_nothing_held actor: 32:id119 16:8999cdb4
+trials_nothing_held victim: dead true pose 7 health 20.0 input Vector3 { x: 0.0, y: 0.0, z: 0.0 } jumping false fire -1 removed false effects
+trials_nothing_held watcher: 32:id119 16:b4f2a749
+trials_nothing_held actor: 32:id119 16:b4f2a749
+trials_nothing_held victim: dead true pose 7 health 20.0 input Vector3 { x: 0.0, y: 0.0, z: 0.0 } jumping false fire -1 removed false effects
+trials_nothing_held watcher: 32:id119 16:dc05fad6
+trials_nothing_held actor: 32:id119 16:dc05fad6
+trials_nothing_held victim: dead true pose 7 health 20.0 input Vector3 { x: 0.0, y: 0.0, z: 0.0 } jumping false fire -1 removed false effects
+trials_nothing_held watcher: 32:id119 16:a84818e3
+trials_nothing_held actor: 32:id119 16:a84818e3
+trials_nothing_held victim: dead true pose 7 health 20.0 input Vector3 { x: 0.0, y: 0.0, z: 0.0 } jumping false fire -1 removed false effects
+trials_nothing_held watcher: 32:id119 16:f785d338
+trials_nothing_held actor: 32:id119 16:f785d338
+trials_nothing_held victim: dead true pose 7 health 20.0 input Vector3 { x: 0.0, y: 0.0, z: 0.0 } jumping false fire -1 removed false effects
+trials_nothing_held watcher: 32:id119 16:013a19dd
+trials_nothing_held actor: 32:id119 16:013a19dd
+trials_nothing_held victim: dead true pose 7 health 20.0 input Vector3 { x: 0.0, y: 0.0, z: 0.0 } jumping false fire -1 removed false effects
+trials_nothing_held watcher: 32:id119 16:402ba81a
+trials_nothing_held actor: 32:id119 16:402ba81a
+trials_nothing_held victim: dead true pose 7 health 20.0 input Vector3 { x: 0.0, y: 0.0, z: 0.0 } jumping false fire -1 removed false effects
+trials_nothing_held watcher: 32:id119 16:b79f1767
+trials_nothing_held actor: 32:id119 16:b79f1767
+trials_nothing_held victim: dead true pose 7 health 20.0 input Vector3 { x: 0.0, y: 0.0, z: 0.0 } jumping false fire -1 removed false effects
+trials_nothing_held watcher: 32:id119 16:0b42e1dc
+trials_nothing_held actor: 32:id119 16:0b42e1dc
+trials_nothing_held victim: dead true pose 7 health 20.0 input Vector3 { x: 0.0, y: 0.0, z: 0.0 } jumping false fire -1 removed false effects
+trials_nothing_held watcher: 32:id119 16:efa01751
+trials_nothing_held actor: 32:id119 16:efa01751
+trials_nothing_held victim: dead true pose 7 health 20.0 input Vector3 { x: 0.0, y: 0.0, z: 0.0 } jumping false fire -1 removed false effects
+trials_nothing_held watcher: 32:id119 16:4333e21e
+trials_nothing_held actor: 32:id119 16:4333e21e
+trials_nothing_held victim: dead true pose 7 health 20.0 input Vector3 { x: 0.0, y: 0.0, z: 0.0 } jumping false fire -1 removed false effects
+trials_nothing_held watcher: 32:id119 16:ada6d3eb
+trials_nothing_held actor: 32:id119 16:ada6d3eb
+trials_nothing_held victim: dead true pose 7 health 20.0 input Vector3 { x: 0.0, y: 0.0, z: 0.0 } jumping false fire -1 removed false effects
+trials_nothing_held watcher: 32:id119 16:8575a920
+trials_nothing_held actor: 32:id119 16:8575a920
+trials_nothing_held victim: dead true pose 7 health 20.0 input Vector3 { x: 0.0, y: 0.0, z: 0.0 } jumping false fire -1 removed false effects
+trials_nothing_held watcher: 32:id119 16:3d1d0e85
+trials_nothing_held actor: 32:id119 16:3d1d0e85
+trials_nothing_held victim: dead true pose 7 health 20.0 input Vector3 { x: 0.0, y: 0.0, z: 0.0 } jumping false fire -1 removed false effects
+trials_nothing_held watcher: 32:id119 16:25796742
+trials_nothing_held actor: 32:id119 16:25796742
+trials_nothing_held victim: dead true pose 7 health 20.0 input Vector3 { x: 0.0, y: 0.0, z: 0.0 } jumping false fire -1 removed false effects
+trials_nothing_held watcher: 32:id119 16:6d07846f
+trials_nothing_held actor: 32:id119 16:6d07846f
+trials_nothing_held victim: dead true pose 7 health 20.0 input Vector3 { x: 0.0, y: 0.0, z: 0.0 } jumping false fire -1 removed false effects
+trials_nothing_held watcher: 32:id119 16:40afd3c4
+trials_nothing_held actor: 32:id119 16:40afd3c4
+trials_nothing_held victim: dead true pose 7 health 20.0 input Vector3 { x: 0.0, y: 0.0, z: 0.0 } jumping false fire -1 removed false effects
+trials_nothing_held watcher: 32:id119 16:5fde4f19
+trials_nothing_held actor: 32:id119 16:5fde4f19
+trials_nothing_held victim: dead true pose 7 health 20.0 input Vector3 { x: 0.0, y: 0.0, z: 0.0 } jumping false fire -1 removed false effects
+trials_nothing_held watcher: 32:id119 16:dc5178e6
+trials_nothing_held actor: 32:id119 16:dc5178e6
+trials_nothing_held victim: dead true pose 7 health 20.0 input Vector3 { x: 0.0, y: 0.0, z: 0.0 } jumping false fire -1 removed false effects
+trials_nothing_held watcher: 32:id119 16:03f936f3
+trials_nothing_held actor: 32:id119 16:03f936f3
+trials_nothing_held victim: dead true pose 7 health 20.0 input Vector3 { x: 0.0, y: 0.0, z: 0.0 } jumping false fire -1 removed false effects
+trials_nothing_held watcher: 32:id119 16:d6c078c8
+trials_nothing_held actor: 32:id119 16:d6c078c8
+trials_nothing_held victim: dead true pose 7 health 20.0 input Vector3 { x: 0.0, y: 0.0, z: 0.0 } jumping false fire -1 removed false effects
+trials_nothing_held watcher: 32:id119 16:e448e2ad
+trials_nothing_held actor: 32:id119 16:e448e2ad
+trials_nothing_held victim: dead true pose 7 health 20.0 input Vector3 { x: 0.0, y: 0.0, z: 0.0 } jumping false fire -1 removed false effects
+trials_nothing_held watcher: 32:id119 16:76b5b2aa
+trials_nothing_held actor: 32:id119 16:76b5b2aa
+trials_nothing_held victim: dead true pose 7 health 20.0 input Vector3 { x: 0.0, y: 0.0, z: 0.0 } jumping false fire -1 removed false effects
+trials_nothing_held watcher: 32:id119 16:49312437
+trials_nothing_held actor: 32:id119 16:49312437
+trials_nothing_held victim: dead true pose 7 health 20.0 input Vector3 { x: 0.0, y: 0.0, z: 0.0 } jumping false fire -1 removed false effects
+trials_nothing_held watcher: 32:id119 16:4c19ee2c
+trials_nothing_held actor: 32:id119 16:4c19ee2c
+trials_nothing_held victim: dead true pose 7 health 20.0 input Vector3 { x: 0.0, y: 0.0, z: 0.0 } jumping false fire -1 removed false effects
+trials_nothing_held watcher: 32:id119 16:5ca147a1
+trials_nothing_held actor: 32:id119 16:5ca147a1
+trials_nothing_held victim: dead true pose 7 health 20.0 input Vector3 { x: 0.0, y: 0.0, z: 0.0 } jumping false fire -1 removed false effects
+trials_nothing_held watcher: 32:id119 16:4fd8362e
+trials_nothing_held actor: 32:id119 16:4fd8362e
+trials_nothing_held victim: dead true pose 7 health 20.0 input Vector3 { x: 0.0, y: 0.0, z: 0.0 } jumping false fire -1 removed false effects
+trials_nothing_held watcher: 32:id119 16:e008b8bb
+trials_nothing_held actor: 32:id119 16:e008b8bb
+trials_nothing_held victim: dead true pose 7 health 20.0 input Vector3 { x: 0.0, y: 0.0, z: 0.0 } jumping false fire -1 removed false effects
+trials_nothing_held watcher: 32:id119 16:093319b0
+trials_nothing_held actor: 32:id119 16:093319b0
+trials_nothing_held victim: dead true pose 7 health 20.0 input Vector3 { x: 0.0, y: 0.0, z: 0.0 } jumping false fire -1 removed false effects
+trials_nothing_held watcher: 32:id119 16:6f5ad8d5
+trials_nothing_held actor: 32:id119 16:6f5ad8d5
+trials_nothing_held victim: dead true pose 7 health 20.0 input Vector3 { x: 0.0, y: 0.0, z: 0.0 } jumping false fire -1 removed false effects
+trials_nothing_held watcher: 32:id119 16:a7da1d52
+trials_nothing_held actor: 32:id119 16:a7da1d52
+trials_nothing_held victim: dead true pose 7 health 20.0 input Vector3 { x: 0.0, y: 0.0, z: 0.0 } jumping false fire -1 removed false effects
+trials_nothing_held watcher: 32:id119 16:52d40ebf
+trials_nothing_held actor: 32:id119 16:52d40ebf
+trials_nothing_held victim: dead true pose 7 health 20.0 input Vector3 { x: 0.0, y: 0.0, z: 0.0 } jumping false fire -1 removed false effects
+trials_nothing_held watcher: 32:id119 16:b5407714
+trials_nothing_held actor: 32:id119 16:b5407714
+trials_nothing_held victim: dead true pose 7 health 20.0 input Vector3 { x: 0.0, y: 0.0, z: 0.0 } jumping false fire -1 removed false effects
+trials_nothing_held watcher: 32:id119 16:0809e229
+trials_nothing_held actor: 32:id119 16:0809e229
+trials_nothing_held victim: dead true pose 7 health 20.0 input Vector3 { x: 0.0, y: 0.0, z: 0.0 } jumping false fire -1 removed false effects
+trials_nothing_held watcher: 32:id119 16:010722b6
+trials_nothing_held actor: 32:id119 16:010722b6
+trials_nothing_held victim: dead true pose 7 health 20.0 input Vector3 { x: 0.0, y: 0.0, z: 0.0 } jumping false fire -1 removed false effects
+trials_nothing_held watcher: 32:id119 16:aa9eb643
+trials_nothing_held actor: 32:id119 16:aa9eb643
+trials_nothing_held victim: dead true pose 7 health 20.0 input Vector3 { x: 0.0, y: 0.0, z: 0.0 } jumping false fire -1 removed false effects
+trials_nothing_held watcher: 32:id119 16:b9ade998
+trials_nothing_held actor: 32:id119 16:b9ade998
+trials_nothing_held victim: dead true pose 7 health 20.0 input Vector3 { x: 0.0, y: 0.0, z: 0.0 } jumping false fire -1 removed false effects
+trials_nothing_held watcher: 32:id119 16:c869a23d
+trials_nothing_held actor: 32:id119 16:c869a23d
+trials_nothing_held victim: dead true pose 7 health 20.0 input Vector3 { x: 0.0, y: 0.0, z: 0.0 } jumping false fire -1 removed false effects
+trials_nothing_held watcher: 32:id119 16:9d32177a
+trials_nothing_held actor: 32:id119 16:9d32177a
+trials_nothing_held victim: dead true pose 7 health 20.0 input Vector3 { x: 0.0, y: 0.0, z: 0.0 } jumping false fire -1 removed false effects
+trials_nothing_held watcher: 32:id119 16:a135adc7
+trials_nothing_held actor: 32:id119 16:a135adc7
+trials_nothing_held victim: dead true pose 7 health 20.0 input Vector3 { x: 0.0, y: 0.0, z: 0.0 } jumping false fire -1 removed false effects
+trials_nothing_held watcher: 32:id119 16:718c13bc
+trials_nothing_held actor: 32:id119 16:718c13bc
+trials_nothing_held victim: dead true pose 7 health 20.0 input Vector3 { x: 0.0, y: 0.0, z: 0.0 } jumping false fire -1 removed false effects
+trials_nothing_held watcher: 32:id119 16:d3705bb1
+trials_nothing_held actor: 32:id119 16:d3705bb1
+trials_nothing_held victim: dead true pose 7 health 20.0 input Vector3 { x: 0.0, y: 0.0, z: 0.0 } jumping false fire -1 removed false effects
+trials_nothing_held watcher: 32:id119 16:292c7d7e
+trials_nothing_held actor: 32:id119 16:292c7d7e
+trials_nothing_held victim: dead true pose 7 health 20.0 input Vector3 { x: 0.0, y: 0.0, z: 0.0 } jumping false fire -1 removed false effects
+trials_nothing_held watcher: 32:id119 16:24768d4b
+trials_nothing_held actor: 32:id119 16:24768d4b
+trials_nothing_held victim: dead true pose 7 health 20.0 input Vector3 { x: 0.0, y: 0.0, z: 0.0 } jumping false fire -1 removed false effects
+trials_nothing_held watcher: 32:id119 16:2c445e00
+trials_nothing_held actor: 32:id119 16:2c445e00
+trials_nothing_held victim: dead true pose 7 health 20.0 input Vector3 { x: 0.0, y: 0.0, z: 0.0 } jumping false fire -1 removed false effects
+trials_nothing_held watcher: 32:id119 16:20ed52e5
+trials_nothing_held actor: 32:id119 16:20ed52e5
+trials_nothing_held victim: dead true pose 7 health 20.0 input Vector3 { x: 0.0, y: 0.0, z: 0.0 } jumping false fire -1 removed false effects
+trials_nothing_held watcher: 32:id119 16:1e45a8a2
+trials_nothing_held actor: 32:id119 16:1e45a8a2
+trials_nothing_held victim: dead true pose 7 health 20.0 input Vector3 { x: 0.0, y: 0.0, z: 0.0 } jumping false fire -1 removed false effects
+trials_nothing_held watcher: 32:id119 16:b33599cf
+trials_nothing_held actor: 32:id119 16:b33599cf
+trials_nothing_held victim: dead true pose 7 health 20.0 input Vector3 { x: 0.0, y: 0.0, z: 0.0 } jumping false fire -1 removed false effects
+trials_nothing_held watcher: 32:id119 16:7c4a8524
+trials_nothing_held actor: 32:id119 16:7c4a8524
+trials_nothing_held victim: dead true pose 7 health 20.0 input Vector3 { x: 0.0, y: 0.0, z: 0.0 } jumping false fire -1 removed false effects
+trials_nothing_held watcher: 32:id119 16:ee470679
+trials_nothing_held actor: 32:id119 16:ee470679
+trials_nothing_held victim: dead true pose 7 health 20.0 input Vector3 { x: 0.0, y: 0.0, z: 0.0 } jumping false fire -1 removed false effects
+trials_nothing_held watcher: 32:id119 16:5ff249c6
+trials_nothing_held actor: 32:id119 16:5ff249c6
+trials_nothing_held victim: dead true pose 7 health 20.0 input Vector3 { x: 0.0, y: 0.0, z: 0.0 } jumping false fire -1 removed false effects
+trials_nothing_held watcher: 32:id119 16:3ebfc9d3
+trials_nothing_held actor: 32:id119 16:3ebfc9d3
+trials_nothing_held victim: dead true pose 7 health 20.0 input Vector3 { x: 0.0, y: 0.0, z: 0.0 } jumping false fire -1 removed false effects
+trials_nothing_held watcher: 32:id119 16:deaec128
+trials_nothing_held actor: 32:id119 16:deaec128
+trials_nothing_held victim: dead true pose 7 health 20.0 input Vector3 { x: 0.0, y: 0.0, z: 0.0 } jumping false fire -1 removed false effects
+trials_nothing_held watcher: 32:id119 16:cb17ae0d
+trials_nothing_held actor: 32:id119 16:cb17ae0d
+trials_nothing_held victim: dead true pose 7 health 20.0 input Vector3 { x: 0.0, y: 0.0, z: 0.0 } jumping false fire -1 removed false effects
+trials_nothing_held watcher: 32:id119 16:634b4b0a
+trials_nothing_held actor: 32:id119 16:634b4b0a
+trials_nothing_held victim: dead true pose 7 health 20.0 input Vector3 { x: 0.0, y: 0.0, z: 0.0 } jumping false fire -1 removed false effects
+trials_nothing_held watcher: 32:id119 16:33085517
+trials_nothing_held actor: 32:id119 16:33085517
+trials_nothing_held victim: dead true pose 7 health 20.0 input Vector3 { x: 0.0, y: 0.0, z: 0.0 } jumping false fire -1 removed false effects
+trials_nothing_held watcher: 32:id119 16:b2e8e08c
+trials_nothing_held actor: 32:id119 16:b2e8e08c
+trials_nothing_held victim: dead true pose 7 health 20.0 input Vector3 { x: 0.0, y: 0.0, z: 0.0 } jumping false fire -1 removed false effects
+trials_nothing_held watcher: 32:id119 16:2ddafb81
+trials_nothing_held actor: 32:id119 16:2ddafb81
+trials_nothing_held victim: dead true pose 7 health 20.0 input Vector3 { x: 0.0, y: 0.0, z: 0.0 } jumping false fire -1 removed false effects
+trials_nothing_held watcher: 32:id119 16:1070598e
+trials_nothing_held actor: 32:id119 16:1070598e
+trials_nothing_held victim: dead true pose 7 health 20.0 input Vector3 { x: 0.0, y: 0.0, z: 0.0 } jumping false fire -1 removed false effects
+trials_nothing_held watcher: 32:id119 16:9bfde01b
+trials_nothing_held actor: 32:id119 16:9bfde01b
+trials_nothing_held victim: dead true pose 7 health 20.0 input Vector3 { x: 0.0, y: 0.0, z: 0.0 } jumping false fire -1 removed false effects
+trials_nothing_held watcher: 32:id119 16:55278110
+trials_nothing_held actor: 32:id119 16:55278110
+trials_nothing_held victim: dead true pose 7 health 20.0 input Vector3 { x: 0.0, y: 0.0, z: 0.0 } jumping false fire -1 removed false effects
+trials_nothing_held watcher: 32:id119 16:7b4b34b5
+trials_nothing_held actor: 32:id119 16:7b4b34b5
+trials_nothing_held victim: dead true pose 7 health 20.0 input Vector3 { x: 0.0, y: 0.0, z: 0.0 } jumping false fire -1 removed false effects
+trials_nothing_held watcher: 32:id119 16:2c2a7432
+trials_nothing_held actor: 32:id119 16:2c2a7432
+trials_nothing_held victim: dead true pose 7 health 20.0 input Vector3 { x: 0.0, y: 0.0, z: 0.0 } jumping false fire -1 removed false effects
+trials_nothing_held watcher: 32:id119 16:03b9f89f
+trials_nothing_held actor: 32:id119 16:03b9f89f
+trials_nothing_held victim: dead true pose 7 health 20.0 input Vector3 { x: 0.0, y: 0.0, z: 0.0 } jumping false fire -1 removed false effects
+trials_nothing_held watcher: 32:id119 16:608eb5f4
+trials_nothing_held actor: 32:id119 16:608eb5f4
+trials_nothing_held victim: dead true pose 7 health 20.0 input Vector3 { x: 0.0, y: 0.0, z: 0.0 } jumping false fire -1 removed false effects
+trials_nothing_held watcher: 32:id119 16:548d9d89
+trials_nothing_held actor: 32:id119 16:548d9d89
+trials_nothing_held victim: dead true pose 7 health 20.0 input Vector3 { x: 0.0, y: 0.0, z: 0.0 } jumping false fire -1 removed false effects
+trials_nothing_held watcher: 32:id119 16:bb6e5816
+trials_nothing_held actor: 32:id119 16:bb6e5816
+trials_nothing_held victim: dead true pose 7 health 20.0 input Vector3 { x: 0.0, y: 0.0, z: 0.0 } jumping false fire -1 removed false effects
+trials_nothing_held watcher: 32:id119 16:e29b4f23
+trials_nothing_held actor: 32:id119 16:e29b4f23
+trials_nothing_held victim: dead true pose 7 health 20.0 input Vector3 { x: 0.0, y: 0.0, z: 0.0 } jumping false fire -1 removed false effects
+trials_nothing_held watcher: 32:id119 16:62eb3f78
+trials_nothing_held actor: 32:id119 16:62eb3f78
+trials_nothing_held victim: dead true pose 7 health 20.0 input Vector3 { x: 0.0, y: 0.0, z: 0.0 } jumping false fire -1 removed false effects
+trials_nothing_held watcher: 32:id119 16:d88c271d
+trials_nothing_held actor: 32:id119 16:d88c271d
+trials_nothing_held victim: dead true pose 7 health 20.0 input Vector3 { x: 0.0, y: 0.0, z: 0.0 } jumping false fire -1 removed false effects
+trials_nothing_held watcher: 32:id119 16:dcb9a45a
+trials_nothing_held actor: 32:id119 16:dcb9a45a
+trials_nothing_held victim: dead true pose 7 health 20.0 input Vector3 { x: 0.0, y: 0.0, z: 0.0 } jumping false fire -1 removed false effects
+trials_nothing_held watcher: 32:id119 16:dfcfe2a7
+trials_nothing_held actor: 32:id119 16:dfcfe2a7
+trials_nothing_held victim: dead true pose 7 health 20.0 input Vector3 { x: 0.0, y: 0.0, z: 0.0 } jumping false fire -1 removed false effects
+trials_nothing_held watcher: 32:id119 16:b10f3a1c
+trials_nothing_held actor: 32:id119 16:b10f3a1c
+trials_nothing_held victim: dead true pose 7 health 20.0 input Vector3 { x: 0.0, y: 0.0, z: 0.0 } jumping false fire -1 removed false effects
+trials_nothing_held watcher: 32:id119 16:8667c191
+trials_nothing_held actor: 32:id119 16:8667c191
+trials_nothing_held dropped 3: item iron_helmet total 120; item rotten_flesh total 130; item stick total 120
+trials_nothing_held actor player: stats 
+trials_dirt victim: dead true pose 7 health 20.0 input Vector3 { x: 0.0, y: 0.0, z: 0.0 } jumping false fire -1 removed false effects
+trials_dirt watcher: 32:id119 16:e9ccd8cb
+trials_dirt actor: 32:id119 16:e9ccd8cb
+trials_dirt victim: dead true pose 7 health 20.0 input Vector3 { x: 0.0, y: 0.0, z: 0.0 } jumping false fire -1 removed false effects
+trials_dirt watcher: 32:id119 16:9ee6289e
+trials_dirt actor: 32:id119 16:9ee6289e
+trials_dirt victim: dead true pose 7 health 20.0 input Vector3 { x: 0.0, y: 0.0, z: 0.0 } jumping false fire -1 removed false effects
+trials_dirt watcher: 32:id119 16:f1cad2f1
+trials_dirt actor: 32:id119 16:f1cad2f1
+trials_dirt victim: dead true pose 7 health 20.0 input Vector3 { x: 0.0, y: 0.0, z: 0.0 } jumping false fire -1 removed false effects
+trials_dirt watcher: 32:id119 16:12dbc81c
+trials_dirt actor: 32:id119 16:12dbc81c
+trials_dirt victim: dead true pose 7 health 20.0 input Vector3 { x: 0.0, y: 0.0, z: 0.0 } jumping false fire -1 removed false effects
+trials_dirt watcher: 32:id119 16:6e23a9d7
+trials_dirt actor: 32:id119 16:6e23a9d7
+trials_dirt victim: dead true pose 7 health 20.0 input Vector3 { x: 0.0, y: 0.0, z: 0.0 } jumping false fire -1 removed false effects
+trials_dirt watcher: 32:id119 16:8b61a36a
+trials_dirt actor: 32:id119 16:8b61a36a
+trials_dirt victim: dead true pose 7 health 20.0 input Vector3 { x: 0.0, y: 0.0, z: 0.0 } jumping false fire -1 removed false effects
+trials_dirt watcher: 32:id119 16:44428c9d
+trials_dirt actor: 32:id119 16:44428c9d
+trials_dirt victim: dead true pose 7 health 20.0 input Vector3 { x: 0.0, y: 0.0, z: 0.0 } jumping false fire -1 removed false effects
+trials_dirt watcher: 32:id119 16:9e977018
+trials_dirt actor: 32:id119 16:9e977018
+trials_dirt victim: dead true pose 7 health 20.0 input Vector3 { x: 0.0, y: 0.0, z: 0.0 } jumping false fire -1 removed false effects
+trials_dirt watcher: 32:id119 16:abdf2063
+trials_dirt actor: 32:id119 16:abdf2063
+trials_dirt victim: dead true pose 7 health 20.0 input Vector3 { x: 0.0, y: 0.0, z: 0.0 } jumping false fire -1 removed false effects
+trials_dirt watcher: 32:id119 16:6a9879d6
+trials_dirt actor: 32:id119 16:6a9879d6
+trials_dirt victim: dead true pose 7 health 20.0 input Vector3 { x: 0.0, y: 0.0, z: 0.0 } jumping false fire -1 removed false effects
+trials_dirt watcher: 32:id119 16:07129de9
+trials_dirt actor: 32:id119 16:07129de9
+trials_dirt victim: dead true pose 7 health 20.0 input Vector3 { x: 0.0, y: 0.0, z: 0.0 } jumping false fire -1 removed false effects
+trials_dirt watcher: 32:id119 16:1acba474
+trials_dirt actor: 32:id119 16:1acba474
+trials_dirt victim: dead true pose 7 health 20.0 input Vector3 { x: 0.0, y: 0.0, z: 0.0 } jumping false fire -1 removed false effects
+trials_dirt watcher: 32:id119 16:050d3f4f
+trials_dirt actor: 32:id119 16:050d3f4f
+trials_dirt victim: dead true pose 7 health 20.0 input Vector3 { x: 0.0, y: 0.0, z: 0.0 } jumping false fire -1 removed false effects
+trials_dirt watcher: 32:id119 16:ebef29c2
+trials_dirt actor: 32:id119 16:ebef29c2
+trials_dirt victim: dead true pose 7 health 20.0 input Vector3 { x: 0.0, y: 0.0, z: 0.0 } jumping false fire -1 removed false effects
+trials_dirt watcher: 32:id119 16:197ea6b5
+trials_dirt actor: 32:id119 16:197ea6b5
+trials_dirt victim: dead true pose 7 health 20.0 input Vector3 { x: 0.0, y: 0.0, z: 0.0 } jumping false fire -1 removed false effects
+trials_dirt watcher: 32:id119 16:7883b2b0
+trials_dirt actor: 32:id119 16:7883b2b0
+trials_dirt victim: dead true pose 7 health 20.0 input Vector3 { x: 0.0, y: 0.0, z: 0.0 } jumping false fire -1 removed false effects
+trials_dirt watcher: 32:id119 16:369f47db
+trials_dirt actor: 32:id119 16:369f47db
+trials_dirt victim: dead true pose 7 health 20.0 input Vector3 { x: 0.0, y: 0.0, z: 0.0 } jumping false fire -1 removed false effects
+trials_dirt watcher: 32:id119 16:a78ae7ee
+trials_dirt actor: 32:id119 16:a78ae7ee
+trials_dirt victim: dead true pose 7 health 20.0 input Vector3 { x: 0.0, y: 0.0, z: 0.0 } jumping false fire -1 removed false effects
+trials_dirt watcher: 32:id119 16:3e36db01
+trials_dirt actor: 32:id119 16:3e36db01
+trials_dirt victim: dead true pose 7 health 20.0 input Vector3 { x: 0.0, y: 0.0, z: 0.0 } jumping false fire -1 removed false effects
+trials_dirt watcher: 32:id119 16:b15b3aac
+trials_dirt actor: 32:id119 16:b15b3aac
+trials_dirt victim: dead true pose 7 health 20.0 input Vector3 { x: 0.0, y: 0.0, z: 0.0 } jumping false fire -1 removed false effects
+trials_dirt watcher: 32:id119 16:3690a367
+trials_dirt actor: 32:id119 16:3690a367
+trials_dirt victim: dead true pose 7 health 20.0 input Vector3 { x: 0.0, y: 0.0, z: 0.0 } jumping false fire -1 removed false effects
+trials_dirt watcher: 32:id119 16:9ef8113a
+trials_dirt actor: 32:id119 16:9ef8113a
+trials_dirt victim: dead true pose 7 health 20.0 input Vector3 { x: 0.0, y: 0.0, z: 0.0 } jumping false fire -1 removed false effects
+trials_dirt watcher: 32:id119 16:ca11fa6d
+trials_dirt actor: 32:id119 16:ca11fa6d
+trials_dirt victim: dead true pose 7 health 20.0 input Vector3 { x: 0.0, y: 0.0, z: 0.0 } jumping false fire -1 removed false effects
+trials_dirt watcher: 32:id119 16:7cad87a8
+trials_dirt actor: 32:id119 16:7cad87a8
+trials_dirt victim: dead true pose 7 health 20.0 input Vector3 { x: 0.0, y: 0.0, z: 0.0 } jumping false fire -1 removed false effects
+trials_dirt watcher: 32:id119 16:b507b473
+trials_dirt actor: 32:id119 16:b507b473
+trials_dirt victim: dead true pose 7 health 20.0 input Vector3 { x: 0.0, y: 0.0, z: 0.0 } jumping false fire -1 removed false effects
+trials_dirt watcher: 32:id119 16:6ae3f7e6
+trials_dirt actor: 32:id119 16:6ae3f7e6
+trials_dirt victim: dead true pose 7 health 20.0 input Vector3 { x: 0.0, y: 0.0, z: 0.0 } jumping false fire -1 removed false effects
+trials_dirt watcher: 32:id119 16:c0b20339
+trials_dirt actor: 32:id119 16:c0b20339
+trials_dirt victim: dead true pose 7 health 20.0 input Vector3 { x: 0.0, y: 0.0, z: 0.0 } jumping false fire -1 removed false effects
+trials_dirt watcher: 32:id119 16:07f1a784
+trials_dirt actor: 32:id119 16:07f1a784
+trials_dirt victim: dead true pose 7 health 20.0 input Vector3 { x: 0.0, y: 0.0, z: 0.0 } jumping false fire -1 removed false effects
+trials_dirt watcher: 32:id119 16:239aec1f
+trials_dirt actor: 32:id119 16:239aec1f
+trials_dirt victim: dead true pose 7 health 20.0 input Vector3 { x: 0.0, y: 0.0, z: 0.0 } jumping false fire -1 removed false effects
+trials_dirt watcher: 32:id119 16:1c3d51d2
+trials_dirt actor: 32:id119 16:1c3d51d2
+trials_dirt victim: dead true pose 7 health 20.0 input Vector3 { x: 0.0, y: 0.0, z: 0.0 } jumping false fire -1 removed false effects
+trials_dirt watcher: 32:id119 16:db508085
+trials_dirt actor: 32:id119 16:db508085
+trials_dirt victim: dead true pose 7 health 20.0 input Vector3 { x: 0.0, y: 0.0, z: 0.0 } jumping false fire -1 removed false effects
+trials_dirt watcher: 32:id119 16:6521dbc0
+trials_dirt actor: 32:id119 16:6521dbc0
+trials_dirt victim: dead true pose 7 health 20.0 input Vector3 { x: 0.0, y: 0.0, z: 0.0 } jumping false fire -1 removed false effects
+trials_dirt watcher: 32:id119 16:784ae5ab
+trials_dirt actor: 32:id119 16:784ae5ab
+trials_dirt victim: dead true pose 7 health 20.0 input Vector3 { x: 0.0, y: 0.0, z: 0.0 } jumping false fire -1 removed false effects
+trials_dirt watcher: 32:id119 16:ec337bfe
+trials_dirt actor: 32:id119 16:ec337bfe
+trials_dirt victim: dead true pose 7 health 20.0 input Vector3 { x: 0.0, y: 0.0, z: 0.0 } jumping false fire -1 removed false effects
+trials_dirt watcher: 32:id119 16:9b77c2d1
+trials_dirt actor: 32:id119 16:9b77c2d1
+trials_dirt victim: dead true pose 7 health 20.0 input Vector3 { x: 0.0, y: 0.0, z: 0.0 } jumping false fire -1 removed false effects
+trials_dirt watcher: 32:id119 16:3ae888fc
+trials_dirt actor: 32:id119 16:3ae888fc
+trials_dirt victim: dead true pose 7 health 20.0 input Vector3 { x: 0.0, y: 0.0, z: 0.0 } jumping false fire -1 removed false effects
+trials_dirt watcher: 32:id119 16:c822b037
+trials_dirt actor: 32:id119 16:c822b037
+trials_dirt victim: dead true pose 7 health 20.0 input Vector3 { x: 0.0, y: 0.0, z: 0.0 } jumping false fire -1 removed false effects
+trials_dirt watcher: 32:id119 16:d45febca
+trials_dirt actor: 32:id119 16:d45febca
+trials_dirt victim: dead true pose 7 health 20.0 input Vector3 { x: 0.0, y: 0.0, z: 0.0 } jumping false fire -1 removed false effects
+trials_dirt watcher: 32:id119 16:820594fd
+trials_dirt actor: 32:id119 16:820594fd
+trials_dirt victim: dead true pose 7 health 20.0 input Vector3 { x: 0.0, y: 0.0, z: 0.0 } jumping false fire -1 removed false effects
+trials_dirt watcher: 32:id119 16:5f9c23f8
+trials_dirt actor: 32:id119 16:5f9c23f8
+trials_dirt victim: dead true pose 7 health 20.0 input Vector3 { x: 0.0, y: 0.0, z: 0.0 } jumping false fire -1 removed false effects
+trials_dirt watcher: 32:id119 16:49bd4dc3
+trials_dirt actor: 32:id119 16:49bd4dc3
+trials_dirt victim: dead true pose 7 health 20.0 input Vector3 { x: 0.0, y: 0.0, z: 0.0 } jumping false fire -1 removed false effects
+trials_dirt watcher: 32:id119 16:8f99a1b6
+trials_dirt actor: 32:id119 16:8f99a1b6
+trials_dirt victim: dead true pose 7 health 20.0 input Vector3 { x: 0.0, y: 0.0, z: 0.0 } jumping false fire -1 removed false effects
+trials_dirt watcher: 32:id119 16:14a24d49
+trials_dirt actor: 32:id119 16:14a24d49
+trials_dirt victim: dead true pose 7 health 20.0 input Vector3 { x: 0.0, y: 0.0, z: 0.0 } jumping false fire -1 removed false effects
+trials_dirt watcher: 32:id119 16:afa2b1d4
+trials_dirt actor: 32:id119 16:afa2b1d4
+trials_dirt victim: dead true pose 7 health 20.0 input Vector3 { x: 0.0, y: 0.0, z: 0.0 } jumping false fire -1 removed false effects
+trials_dirt watcher: 32:id119 16:7633ad2f
+trials_dirt actor: 32:id119 16:7633ad2f
+trials_dirt victim: dead true pose 7 health 20.0 input Vector3 { x: 0.0, y: 0.0, z: 0.0 } jumping false fire -1 removed false effects
+trials_dirt watcher: 32:id119 16:7abce522
+trials_dirt actor: 32:id119 16:7abce522
+trials_dirt victim: dead true pose 7 health 20.0 input Vector3 { x: 0.0, y: 0.0, z: 0.0 } jumping false fire -1 removed false effects
+trials_dirt watcher: 32:id119 16:3e328b15
+trials_dirt actor: 32:id119 16:3e328b15
+trials_dirt victim: dead true pose 7 health 20.0 input Vector3 { x: 0.0, y: 0.0, z: 0.0 } jumping false fire -1 removed false effects
+trials_dirt watcher: 32:id119 16:c4781a10
+trials_dirt actor: 32:id119 16:c4781a10
+trials_dirt victim: dead true pose 7 health 20.0 input Vector3 { x: 0.0, y: 0.0, z: 0.0 } jumping false fire -1 removed false effects
+trials_dirt watcher: 32:id119 16:207678bb
+trials_dirt actor: 32:id119 16:207678bb
+trials_dirt victim: dead true pose 7 health 20.0 input Vector3 { x: 0.0, y: 0.0, z: 0.0 } jumping false fire -1 removed false effects
+trials_dirt watcher: 32:id119 16:a6d9024e
+trials_dirt actor: 32:id119 16:a6d9024e
+trials_dirt victim: dead true pose 7 health 20.0 input Vector3 { x: 0.0, y: 0.0, z: 0.0 } jumping false fire -1 removed false effects
+trials_dirt watcher: 32:id119 16:08dec361
+trials_dirt actor: 32:id119 16:08dec361
+trials_dirt victim: dead true pose 7 health 20.0 input Vector3 { x: 0.0, y: 0.0, z: 0.0 } jumping false fire -1 removed false effects
+trials_dirt watcher: 32:id119 16:6dbcff0c
+trials_dirt actor: 32:id119 16:6dbcff0c
+trials_dirt victim: dead true pose 7 health 20.0 input Vector3 { x: 0.0, y: 0.0, z: 0.0 } jumping false fire -1 removed false effects
+trials_dirt watcher: 32:id119 16:202739c7
+trials_dirt actor: 32:id119 16:202739c7
+trials_dirt victim: dead true pose 7 health 20.0 input Vector3 { x: 0.0, y: 0.0, z: 0.0 } jumping false fire -1 removed false effects
+trials_dirt watcher: 32:id119 16:903a5b1a
+trials_dirt actor: 32:id119 16:903a5b1a
+trials_dirt victim: dead true pose 7 health 20.0 input Vector3 { x: 0.0, y: 0.0, z: 0.0 } jumping false fire -1 removed false effects
+trials_dirt watcher: 32:id119 16:b5d8f5cd
+trials_dirt actor: 32:id119 16:b5d8f5cd
+trials_dirt victim: dead true pose 7 health 20.0 input Vector3 { x: 0.0, y: 0.0, z: 0.0 } jumping false fire -1 removed false effects
+trials_dirt watcher: 32:id119 16:fba22888
+trials_dirt actor: 32:id119 16:fba22888
+trials_dirt victim: dead true pose 7 health 20.0 input Vector3 { x: 0.0, y: 0.0, z: 0.0 } jumping false fire -1 removed false effects
+trials_dirt watcher: 32:id119 16:51458153
+trials_dirt actor: 32:id119 16:51458153
+trials_dirt victim: dead true pose 7 health 20.0 input Vector3 { x: 0.0, y: 0.0, z: 0.0 } jumping false fire -1 removed false effects
+trials_dirt watcher: 32:id119 16:ee84c8c6
+trials_dirt actor: 32:id119 16:ee84c8c6
+trials_dirt victim: dead true pose 7 health 20.0 input Vector3 { x: 0.0, y: 0.0, z: 0.0 } jumping false fire -1 removed false effects
+trials_dirt watcher: 32:id119 16:bf8df519
+trials_dirt actor: 32:id119 16:bf8df519
+trials_dirt victim: dead true pose 7 health 20.0 input Vector3 { x: 0.0, y: 0.0, z: 0.0 } jumping false fire -1 removed false effects
+trials_dirt watcher: 32:id119 16:fda35ee4
+trials_dirt actor: 32:id119 16:fda35ee4
+trials_dirt victim: dead true pose 7 health 20.0 input Vector3 { x: 0.0, y: 0.0, z: 0.0 } jumping false fire -1 removed false effects
+trials_dirt watcher: 32:id119 16:d0ba8d7f
+trials_dirt actor: 32:id119 16:d0ba8d7f
+trials_dirt victim: dead true pose 7 health 20.0 input Vector3 { x: 0.0, y: 0.0, z: 0.0 } jumping false fire -1 removed false effects
+trials_dirt watcher: 32:id119 16:319190b2
+trials_dirt actor: 32:id119 16:319190b2
+trials_dirt victim: dead true pose 7 health 20.0 input Vector3 { x: 0.0, y: 0.0, z: 0.0 } jumping false fire -1 removed false effects
+trials_dirt watcher: 32:id119 16:bf20c4e5
+trials_dirt actor: 32:id119 16:bf20c4e5
+trials_dirt victim: dead true pose 7 health 20.0 input Vector3 { x: 0.0, y: 0.0, z: 0.0 } jumping false fire -1 removed false effects
+trials_dirt watcher: 32:id119 16:f4c64220
+trials_dirt actor: 32:id119 16:f4c64220
+trials_dirt victim: dead true pose 7 health 20.0 input Vector3 { x: 0.0, y: 0.0, z: 0.0 } jumping false fire -1 removed false effects
+trials_dirt watcher: 32:id119 16:024c960b
+trials_dirt actor: 32:id119 16:024c960b
+trials_dirt victim: dead true pose 7 health 20.0 input Vector3 { x: 0.0, y: 0.0, z: 0.0 } jumping false fire -1 removed false effects
+trials_dirt watcher: 32:id119 16:e882b1de
+trials_dirt actor: 32:id119 16:e882b1de
+trials_dirt victim: dead true pose 7 health 20.0 input Vector3 { x: 0.0, y: 0.0, z: 0.0 } jumping false fire -1 removed false effects
+trials_dirt watcher: 32:id119 16:fc1b5f31
+trials_dirt actor: 32:id119 16:fc1b5f31
+trials_dirt victim: dead true pose 7 health 20.0 input Vector3 { x: 0.0, y: 0.0, z: 0.0 } jumping false fire -1 removed false effects
+trials_dirt watcher: 32:id119 16:b76eee5c
+trials_dirt actor: 32:id119 16:b76eee5c
+trials_dirt victim: dead true pose 7 health 20.0 input Vector3 { x: 0.0, y: 0.0, z: 0.0 } jumping false fire -1 removed false effects
+trials_dirt watcher: 32:id119 16:b1f9e117
+trials_dirt actor: 32:id119 16:b1f9e117
+trials_dirt victim: dead true pose 7 health 20.0 input Vector3 { x: 0.0, y: 0.0, z: 0.0 } jumping false fire -1 removed false effects
+trials_dirt watcher: 32:id119 16:c6c465aa
+trials_dirt actor: 32:id119 16:c6c465aa
+trials_dirt victim: dead true pose 7 health 20.0 input Vector3 { x: 0.0, y: 0.0, z: 0.0 } jumping false fire -1 removed false effects
+trials_dirt watcher: 32:id119 16:3902524c
+trials_dirt actor: 32:id119 16:3902524c
+trials_dirt victim: dead true pose 7 health 20.0 input Vector3 { x: 0.0, y: 0.0, z: 0.0 } jumping false fire -1 removed false effects
+trials_dirt watcher: 32:id119 16:66a78a41
+trials_dirt actor: 32:id119 16:66a78a41
+trials_dirt victim: dead true pose 7 health 20.0 input Vector3 { x: 0.0, y: 0.0, z: 0.0 } jumping false fire -1 removed false effects
+trials_dirt watcher: 32:id119 16:56ca4f4e
+trials_dirt actor: 32:id119 16:56ca4f4e
+trials_dirt victim: dead true pose 7 health 20.0 input Vector3 { x: 0.0, y: 0.0, z: 0.0 } jumping false fire -1 removed false effects
+trials_dirt watcher: 32:id119 16:62fa594b
+trials_dirt actor: 32:id119 16:62fa594b
+trials_dirt victim: dead true pose 7 health 20.0 input Vector3 { x: 0.0, y: 0.0, z: 0.0 } jumping false fire -1 removed false effects
+trials_dirt watcher: 32:id119 16:6ac82a00
+trials_dirt actor: 32:id119 16:6ac82a00
+trials_dirt victim: dead true pose 7 health 20.0 input Vector3 { x: 0.0, y: 0.0, z: 0.0 } jumping false fire -1 removed false effects
+trials_dirt watcher: 32:id119 16:5f711ee5
+trials_dirt actor: 32:id119 16:5f711ee5
+trials_dirt victim: dead true pose 7 health 20.0 input Vector3 { x: 0.0, y: 0.0, z: 0.0 } jumping false fire -1 removed false effects
+trials_dirt watcher: 32:id119 16:69a332f2
+trials_dirt actor: 32:id119 16:69a332f2
+trials_dirt victim: dead true pose 7 health 20.0 input Vector3 { x: 0.0, y: 0.0, z: 0.0 } jumping false fire -1 removed false effects
+trials_dirt watcher: 32:id119 16:0fad025f
+trials_dirt actor: 32:id119 16:0fad025f
+trials_dirt victim: dead true pose 7 health 20.0 input Vector3 { x: 0.0, y: 0.0, z: 0.0 } jumping false fire -1 removed false effects
+trials_dirt watcher: 32:id119 16:c557c904
+trials_dirt actor: 32:id119 16:c557c904
+trials_dirt victim: dead true pose 7 health 20.0 input Vector3 { x: 0.0, y: 0.0, z: 0.0 } jumping false fire -1 removed false effects
+trials_dirt watcher: 32:id119 16:e7fea459
+trials_dirt actor: 32:id119 16:e7fea459
+trials_dirt victim: dead true pose 7 health 20.0 input Vector3 { x: 0.0, y: 0.0, z: 0.0 } jumping false fire -1 removed false effects
+trials_dirt watcher: 32:id119 16:73df6526
+trials_dirt actor: 32:id119 16:73df6526
+trials_dirt victim: dead true pose 7 health 20.0 input Vector3 { x: 0.0, y: 0.0, z: 0.0 } jumping false fire -1 removed false effects
+trials_dirt watcher: 32:id119 16:61ca5e03
+trials_dirt actor: 32:id119 16:61ca5e03
+trials_dirt victim: dead true pose 7 health 20.0 input Vector3 { x: 0.0, y: 0.0, z: 0.0 } jumping false fire -1 removed false effects
+trials_dirt watcher: 32:id119 16:b7672c58
+trials_dirt actor: 32:id119 16:b7672c58
+trials_dirt victim: dead true pose 7 health 20.0 input Vector3 { x: 0.0, y: 0.0, z: 0.0 } jumping false fire -1 removed false effects
+trials_dirt watcher: 32:id119 16:2255eefd
+trials_dirt actor: 32:id119 16:2255eefd
+trials_dirt victim: dead true pose 7 health 20.0 input Vector3 { x: 0.0, y: 0.0, z: 0.0 } jumping false fire -1 removed false effects
+trials_dirt watcher: 32:id119 16:6ac2a8ea
+trials_dirt actor: 32:id119 16:6ac2a8ea
+trials_dirt victim: dead true pose 7 health 20.0 input Vector3 { x: 0.0, y: 0.0, z: 0.0 } jumping false fire -1 removed false effects
+trials_dirt watcher: 32:id119 16:87a13a77
+trials_dirt actor: 32:id119 16:87a13a77
+trials_dirt victim: dead true pose 7 health 20.0 input Vector3 { x: 0.0, y: 0.0, z: 0.0 } jumping false fire -1 removed false effects
+trials_dirt watcher: 32:id119 16:3529499c
+trials_dirt actor: 32:id119 16:3529499c
+trials_dirt victim: dead true pose 7 health 20.0 input Vector3 { x: 0.0, y: 0.0, z: 0.0 } jumping false fire -1 removed false effects
+trials_dirt watcher: 32:id119 16:3b529d11
+trials_dirt actor: 32:id119 16:3b529d11
+trials_dirt victim: dead true pose 7 health 20.0 input Vector3 { x: 0.0, y: 0.0, z: 0.0 } jumping false fire -1 removed false effects
+trials_dirt watcher: 32:id119 16:9873fede
+trials_dirt actor: 32:id119 16:9873fede
+trials_dirt victim: dead true pose 7 health 20.0 input Vector3 { x: 0.0, y: 0.0, z: 0.0 } jumping false fire -1 removed false effects
+trials_dirt watcher: 32:id119 16:da81ac1b
+trials_dirt actor: 32:id119 16:da81ac1b
+trials_dirt victim: dead true pose 7 health 20.0 input Vector3 { x: 0.0, y: 0.0, z: 0.0 } jumping false fire -1 removed false effects
+trials_dirt watcher: 32:id119 16:93ab4d10
+trials_dirt actor: 32:id119 16:93ab4d10
+trials_dirt victim: dead true pose 7 health 20.0 input Vector3 { x: 0.0, y: 0.0, z: 0.0 } jumping false fire -1 removed false effects
+trials_dirt watcher: 32:id119 16:b9cf00b5
+trials_dirt actor: 32:id119 16:b9cf00b5
+trials_dirt victim: dead true pose 7 health 20.0 input Vector3 { x: 0.0, y: 0.0, z: 0.0 } jumping false fire -1 removed false effects
+trials_dirt watcher: 32:id119 16:712bed02
+trials_dirt actor: 32:id119 16:712bed02
+trials_dirt victim: dead true pose 7 health 20.0 input Vector3 { x: 0.0, y: 0.0, z: 0.0 } jumping false fire -1 removed false effects
+trials_dirt watcher: 32:id119 16:35c5ed2f
+trials_dirt actor: 32:id119 16:35c5ed2f
+trials_dirt victim: dead true pose 7 health 20.0 input Vector3 { x: 0.0, y: 0.0, z: 0.0 } jumping false fire -1 removed false effects
+trials_dirt watcher: 32:id119 16:f3c44314
+trials_dirt actor: 32:id119 16:f3c44314
+trials_dirt victim: dead true pose 7 health 20.0 input Vector3 { x: 0.0, y: 0.0, z: 0.0 } jumping false fire -1 removed false effects
+trials_dirt watcher: 32:id119 16:468dae29
+trials_dirt actor: 32:id119 16:468dae29
+trials_dirt victim: dead true pose 7 health 20.0 input Vector3 { x: 0.0, y: 0.0, z: 0.0 } jumping false fire -1 removed false effects
+trials_dirt watcher: 32:id119 16:3f8aeeb6
+trials_dirt actor: 32:id119 16:3f8aeeb6
+trials_dirt victim: dead true pose 7 health 20.0 input Vector3 { x: 0.0, y: 0.0, z: 0.0 } jumping false fire -1 removed false effects
+trials_dirt watcher: 32:id119 16:c5253b93
+trials_dirt actor: 32:id119 16:c5253b93
+trials_dirt victim: dead true pose 7 health 20.0 input Vector3 { x: 0.0, y: 0.0, z: 0.0 } jumping false fire -1 removed false effects
+trials_dirt watcher: 32:id119 16:fa5e9ce8
+trials_dirt actor: 32:id119 16:fa5e9ce8
+trials_dirt victim: dead true pose 7 health 20.0 input Vector3 { x: 0.0, y: 0.0, z: 0.0 } jumping false fire -1 removed false effects
+trials_dirt watcher: 32:id119 16:56294fcd
+trials_dirt actor: 32:id119 16:56294fcd
+trials_dirt victim: dead true pose 7 health 20.0 input Vector3 { x: 0.0, y: 0.0, z: 0.0 } jumping false fire -1 removed false effects
+trials_dirt watcher: 32:id119 16:dbb5e37a
+trials_dirt actor: 32:id119 16:dbb5e37a
+trials_dirt victim: dead true pose 7 health 20.0 input Vector3 { x: 0.0, y: 0.0, z: 0.0 } jumping false fire -1 removed false effects
+trials_dirt watcher: 32:id119 16:dfb979c7
+trials_dirt actor: 32:id119 16:dfb979c7
+trials_dirt victim: dead true pose 7 health 20.0 input Vector3 { x: 0.0, y: 0.0, z: 0.0 } jumping false fire -1 removed false effects
+trials_dirt watcher: 32:id119 16:0d96222c
+trials_dirt actor: 32:id119 16:0d96222c
+trials_dirt victim: dead true pose 7 health 20.0 input Vector3 { x: 0.0, y: 0.0, z: 0.0 } jumping false fire -1 removed false effects
+trials_dirt watcher: 32:id119 16:1e1d7ba1
+trials_dirt actor: 32:id119 16:1e1d7ba1
+trials_dirt victim: dead true pose 7 health 20.0 input Vector3 { x: 0.0, y: 0.0, z: 0.0 } jumping false fire -1 removed false effects
+trials_dirt watcher: 32:id119 16:11546a2e
+trials_dirt actor: 32:id119 16:11546a2e
+trials_dirt victim: dead true pose 7 health 20.0 input Vector3 { x: 0.0, y: 0.0, z: 0.0 } jumping false fire -1 removed false effects
+trials_dirt watcher: 32:id119 16:adfcc42b
+trials_dirt actor: 32:id119 16:adfcc42b
+trials_dirt victim: dead true pose 7 health 20.0 input Vector3 { x: 0.0, y: 0.0, z: 0.0 } jumping false fire -1 removed false effects
+trials_dirt watcher: 32:id119 16:ec2a4060
+trials_dirt actor: 32:id119 16:ec2a4060
+trials_dirt victim: dead true pose 7 health 20.0 input Vector3 { x: 0.0, y: 0.0, z: 0.0 } jumping false fire -1 removed false effects
+trials_dirt watcher: 32:id119 16:fa3b22c5
+trials_dirt actor: 32:id119 16:fa3b22c5
+trials_dirt victim: dead true pose 7 health 20.0 input Vector3 { x: 0.0, y: 0.0, z: 0.0 } jumping false fire -1 removed false effects
+trials_dirt watcher: 32:id119 16:69565152
+trials_dirt actor: 32:id119 16:69565152
+trials_dirt victim: dead true pose 7 health 20.0 input Vector3 { x: 0.0, y: 0.0, z: 0.0 } jumping false fire -1 removed false effects
+trials_dirt watcher: 32:id119 16:145042bf
+trials_dirt actor: 32:id119 16:145042bf
+trials_dirt victim: dead true pose 7 health 20.0 input Vector3 { x: 0.0, y: 0.0, z: 0.0 } jumping false fire -1 removed false effects
+trials_dirt watcher: 32:id119 16:3ed1c664
+trials_dirt actor: 32:id119 16:3ed1c664
+trials_dirt victim: dead true pose 7 health 20.0 input Vector3 { x: 0.0, y: 0.0, z: 0.0 } jumping false fire -1 removed false effects
+trials_dirt watcher: 32:id119 16:4f354bb9
+trials_dirt actor: 32:id119 16:4f354bb9
+trials_dirt victim: dead true pose 7 health 20.0 input Vector3 { x: 0.0, y: 0.0, z: 0.0 } jumping false fire -1 removed false effects
+trials_dirt watcher: 32:id119 16:143fc406
+trials_dirt actor: 32:id119 16:143fc406
+trials_dirt victim: dead true pose 7 health 20.0 input Vector3 { x: 0.0, y: 0.0, z: 0.0 } jumping false fire -1 removed false effects
+trials_dirt watcher: 32:id119 16:69c44ce3
+trials_dirt actor: 32:id119 16:69c44ce3
+trials_dirt victim: dead true pose 7 health 20.0 input Vector3 { x: 0.0, y: 0.0, z: 0.0 } jumping false fire -1 removed false effects
+trials_dirt watcher: 32:id119 16:b9020738
+trials_dirt actor: 32:id119 16:b9020738
+trials_dirt victim: dead true pose 7 health 20.0 input Vector3 { x: 0.0, y: 0.0, z: 0.0 } jumping false fire -1 removed false effects
+trials_dirt watcher: 32:id119 16:c2b64ddd
+trials_dirt actor: 32:id119 16:c2b64ddd
+trials_dirt victim: dead true pose 7 health 20.0 input Vector3 { x: 0.0, y: 0.0, z: 0.0 } jumping false fire -1 removed false effects
+trials_dirt watcher: 32:id119 16:f3df154a
+trials_dirt actor: 32:id119 16:f3df154a
+trials_dirt victim: dead true pose 7 health 20.0 input Vector3 { x: 0.0, y: 0.0, z: 0.0 } jumping false fire -1 removed false effects
+trials_dirt watcher: 32:id119 16:a377a657
+trials_dirt actor: 32:id119 16:a377a657
+trials_dirt victim: dead true pose 7 health 20.0 input Vector3 { x: 0.0, y: 0.0, z: 0.0 } jumping false fire -1 removed false effects
+trials_dirt watcher: 32:id119 16:e96bbe7c
+trials_dirt actor: 32:id119 16:e96bbe7c
+trials_dirt victim: dead true pose 7 health 20.0 input Vector3 { x: 0.0, y: 0.0, z: 0.0 } jumping false fire -1 removed false effects
+trials_dirt watcher: 32:id119 16:408e9f71
+trials_dirt actor: 32:id119 16:408e9f71
+trials_dirt dropped 7: item iron_helmet total 120; item iron_ingot total 1; item potato total 1; item rotten_flesh total 107; item stick total 120; orb 1 at Vector3 { x: 1942.5, y: 64.0, z: 24.5 } total 240; orb 3 at Vector3 { x: 1942.5, y: 64.0, z: 24.5 } total 120
+trials_dirt actor player: stats 6:154=120,8:33=120
+trials_looting victim: dead true pose 7 health 20.0 input Vector3 { x: 0.0, y: 0.0, z: 0.0 } jumping false fire -1 removed false effects
+trials_looting watcher: 32:id119 16:d735bc9b
+trials_looting actor: 32:id119 16:d735bc9b
+trials_looting victim: dead true pose 7 health 20.0 input Vector3 { x: 0.0, y: 0.0, z: 0.0 } jumping false fire -1 removed false effects
+trials_looting watcher: 32:id119 16:5df70ede
+trials_looting actor: 32:id119 16:5df70ede
+trials_looting victim: dead true pose 7 health 20.0 input Vector3 { x: 0.0, y: 0.0, z: 0.0 } jumping false fire -1 removed false effects
+trials_looting watcher: 32:id119 16:d8935c91
+trials_looting actor: 32:id119 16:d8935c91
+trials_looting victim: dead true pose 7 health 20.0 input Vector3 { x: 0.0, y: 0.0, z: 0.0 } jumping false fire -1 removed false effects
+trials_looting watcher: 32:id119 16:e2fdae9c
+trials_looting actor: 32:id119 16:e2fdae9c
+trials_looting victim: dead true pose 7 health 20.0 input Vector3 { x: 0.0, y: 0.0, z: 0.0 } jumping false fire -1 removed false effects
+trials_looting watcher: 32:id119 16:fb03ba47
+trials_looting actor: 32:id119 16:fb03ba47
+trials_looting dropped 9: item carrot total 1; item iron_helmet total 5; item iron_ingot total 3; item potato total 1; item rotten_flesh total 277; item stick total 5; item stone total 5; orb 1 at Vector3 { x: 2006.5, y: 64.0, z: 24.5 } total 10; orb 3 at Vector3 { x: 2006.5, y: 64.0, z: 24.5 } total 5
+trials_looting actor player: stats 6:154=5,8:33=5

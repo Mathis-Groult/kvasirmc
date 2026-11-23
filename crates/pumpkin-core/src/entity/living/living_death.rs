@@ -17,6 +17,9 @@ use pumpkin_util::math::vector3::Vector3;
 use pumpkin_util::text::TextComponent;
 use std::sync::atomic::Ordering::Relaxed;
 
+#[cfg(test)]
+mod death_golden;
+
 impl LivingEntity {
     #[must_use]
     pub fn should_drop_loot(&self) -> bool {

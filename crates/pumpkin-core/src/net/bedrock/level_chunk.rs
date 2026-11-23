@@ -200,6 +200,9 @@ impl PacketWrite for CLevelChunk<'_> {
 }
 
 #[cfg(test)]
+mod golden;
+
+#[cfg(test)]
 mod tests {
     use std::io::Cursor;
 

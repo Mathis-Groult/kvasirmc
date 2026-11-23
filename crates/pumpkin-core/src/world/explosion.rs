@@ -184,6 +184,15 @@ impl ExplosionDamageCalculator for SimpleExplosionDamageCalculator {
     }
 }
 
+/// The strength roll of one ray (vanilla `random.nextFloat()`); the golden pins it in tests.
+fn ray_roll() -> f32 {
+    #[cfg(test)]
+    if let Some(roll) = golden::next_ray_value() {
+        return roll;
+    }
+    rand::random::<f32>()
+}
+
 pub struct Explosion {
     power: f32,
     pos: Vector3<f64>,
@@ -268,7 +277,7 @@ impl Explosion {
                     let mut pos_y = self.pos.y;
                     let mut pos_z = self.pos.z;
 
-                    let random_val = rand::random::<f32>();
+                    let random_val = ray_roll();
                     let mut h = self.power * random_val.mul_add(0.6, 0.7);
 
                     while h > 0.0 {
@@ -594,6 +603,9 @@ impl Explosion {
         }
     }
 }
+
+#[cfg(test)]
+mod golden;
 
 #[cfg(test)]
 mod tests {

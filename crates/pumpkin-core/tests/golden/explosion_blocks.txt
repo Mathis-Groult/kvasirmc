@@ -1,0 +1,70 @@
+0 Stone power 1 Seeded(11400714819323198485) Default rails false gap None Scene at (24.5, 64.5, 24.5): 0 blocks, 1352 rays, hash cbf29ce484222325
+1 Stone power 4 Seeded(11400714819323198485) Default rails false gap None Scene at (24.5, 64.5, 24.5): 1 blocks, 1352 rays, hash b955bdb081e32714 stone=1
+2 Stone power 6 Seeded(11400714819323198485) Default rails false gap None Scene at (24.5, 64.5, 24.5): 7 blocks, 1352 rays, hash 35fa4a1c4b1b082a stone=7
+3 Stone power 10 Seeded(11400714819323198485) Default rails false gap None Scene at (24.5, 64.5, 24.5): 27 blocks, 1352 rays, hash 8e11928f7aaa3f4a stone=27
+4 Dirt power 1 Seeded(11400714819323198485) Default rails false gap None Scene at (24.5, 64.5, 24.5): 7 blocks, 1352 rays, hash cc78f5001adc2e91 dirt=7
+5 Dirt power 4 Seeded(11400714819323198485) Default rails false gap None Scene at (24.5, 64.5, 24.5): 179 blocks, 1352 rays, hash 9b6ba77c77712072 dirt=179
+6 Dirt power 6 Seeded(11400714819323198485) Default rails false gap None Scene at (24.5, 64.5, 24.5): 475 blocks, 1352 rays, hash d497eb404094ae75 dirt=475
+7 Dirt power 10 Seeded(11400714819323198485) Default rails false gap None Scene at (24.5, 64.5, 24.5): 1690 blocks, 1352 rays, hash 112343898ecde2b0 dirt=1690
+8 Strata power 1 Seeded(11400714819323198485) Default rails false gap None Scene at (24.5, 64.5, 24.5): 6 blocks, 1352 rays, hash d3148c1d3f9b6799 dirt=1 glass=5
+9 Strata power 4 Seeded(11400714819323198485) Default rails false gap None Scene at (24.5, 64.5, 24.5): 91 blocks, 1352 rays, hash 4bb56ea3cb8dc7b1 dirt=46 glass=45
+10 Strata power 6 Seeded(11400714819323198485) Default rails false gap None Scene at (24.5, 64.5, 24.5): 167 blocks, 1352 rays, hash 430835becbcbc0ff dirt=76 glass=91
+11 Strata power 10 Seeded(11400714819323198485) Default rails false gap None Scene at (24.5, 64.5, 24.5): 375 blocks, 1352 rays, hash 2b4eeb0fdeb91b6d dirt=177 glass=198
+12 Pockets power 1 Seeded(11400714819323198485) Default rails false gap None Scene at (24.5, 64.5, 24.5): 6 blocks, 1352 rays, hash 62832f0a9f7154ba dirt=6
+13 Pockets power 4 Seeded(11400714819323198485) Default rails false gap None Scene at (24.5, 64.5, 24.5): 142 blocks, 1352 rays, hash 7f2910f8ae4eb8cf dirt=133 stone=9
+14 Pockets power 6 Seeded(11400714819323198485) Default rails false gap None Scene at (24.5, 64.5, 24.5): 331 blocks, 1352 rays, hash 88a55abb42561398 dirt=301 stone=30
+15 Pockets power 10 Seeded(11400714819323198485) Default rails false gap None Scene at (24.5, 64.5, 24.5): 960 blocks, 1352 rays, hash 6c3bdc679aa1c446 dirt=842 stone=118
+16 Fluids power 1 Seeded(11400714819323198485) Default rails false gap None Scene at (24.5, 64.5, 24.5): 8 blocks, 1352 rays, hash 1a54aec229905a64 dirt=3 kelp=3 seagrass=2
+17 Fluids power 4 Seeded(11400714819323198485) Default rails false gap None Scene at (24.5, 64.5, 24.5): 66 blocks, 1352 rays, hash 83b8f7697f81243a dirt=29 kelp=19 seagrass=18
+18 Fluids power 6 Seeded(11400714819323198485) Default rails false gap None Scene at (24.5, 64.5, 24.5): 87 blocks, 1352 rays, hash 6f71e3fe161e23dd dirt=39 kelp=24 seagrass=24
+19 Fluids power 10 Seeded(11400714819323198485) Default rails false gap None Scene at (24.5, 64.5, 24.5): 105 blocks, 1352 rays, hash ca51a1f4e64ef706 dirt=46 kelp=30 seagrass=29
+20 Mixed power 1 Seeded(11400714819323198485) Default rails false gap None Scene at (24.5, 64.5, 24.5): 3 blocks, 1352 rays, hash 073d95bf42463309 dirt=1 netherrack=2
+21 Mixed power 4 Seeded(11400714819323198485) Default rails false gap None Scene at (24.5, 64.5, 24.5): 59 blocks, 1352 rays, hash 2163f99732c6d04a cobweb=6 dirt=11 glass=8 netherrack=7 oak_planks=7 sand=8 stone=3 tnt=9
+22 Mixed power 6 Seeded(11400714819323198485) Default rails false gap None Scene at (24.5, 64.5, 24.5): 96 blocks, 1352 rays, hash 6ee3cdad125e3db2 cobweb=12 dirt=14 glass=18 netherrack=11 oak_planks=10 sand=15 stone=6 tnt=10
+23 Mixed power 10 Seeded(11400714819323198485) Default rails false gap None Scene at (24.5, 64.5, 24.5): 148 blocks, 1352 rays, hash bc3b8090b058986f cobweb=21 dirt=18 glass=24 netherrack=19 oak_planks=18 sand=20 stone=13 tnt=15
+24 Dirt power 10 Seeded(1311768467463790321) Default rails false gap None Scene at (24.5, 64.5, 24.5): 1669 blocks, 1352 rays, hash 3babe2debad508a9 dirt=1669
+25 Mixed power 10 Seeded(1085102592643013599) Default rails false gap None Scene at (24.5, 64.5, 24.5): 145 blocks, 1352 rays, hash 3abebcf634c5c230 cobweb=21 dirt=18 glass=24 netherrack=19 oak_planks=16 sand=20 stone=11 tnt=16
+26 Pockets power 10 Seeded(77) Default rails false gap None Scene at (24.5, 64.5, 24.5): 969 blocks, 1352 rays, hash 712bdd1e2b073a96 dirt=846 stone=123
+27 Dirt power 6 Const(0.0) Default rails false gap None Scene at (24.5, 64.5, 24.5): 117 blocks, 1352 rays, hash 75b82aa831bfc5ed dirt=117
+28 Dirt power 6 Const(0.999999) Default rails false gap None Scene at (24.5, 64.5, 24.5): 691 blocks, 1352 rays, hash 2c36d433e005bef5 dirt=691
+29 Stone power 10 Const(0.0) Default rails false gap None Scene at (24.5, 64.5, 24.5): 7 blocks, 1352 rays, hash 35fa4a1c4b1b082a stone=7
+30 Stone power 10 Const(0.999999) Default rails false gap None Scene at (24.5, 64.5, 24.5): 27 blocks, 1352 rays, hash 8e11928f7aaa3f4a stone=27
+31 Dirt power 0 Seeded(11400714819323198485) Default rails false gap None Scene at (24.5, 64.5, 24.5): 0 blocks, 1352 rays, hash cbf29ce484222325
+32 Dirt power 0.5 Seeded(11400714819323198485) Default rails false gap None Scene at (24.5, 64.5, 24.5): 1 blocks, 1352 rays, hash 991b220c3632414f dirt=1
+33 Dirt power 2.5 Seeded(11400714819323198485) Default rails false gap None Scene at (24.5, 64.5, 24.5): 56 blocks, 1352 rays, hash 435693c053cda284 dirt=56
+34 Air power 10 Seeded(11400714819323198485) Default rails false gap None Scene at (24.5, 64.5, 24.5): 0 blocks, 1352 rays, hash cbf29ce484222325
+35 Dirt power 10 Seeded(11400714819323198485) Default rails false gap None Scene at (24.5, -63.5, 24.5): 925 blocks, 1352 rays, hash bb70f6a83ee435c8 dirt=925
+36 Mixed power 6 Seeded(11400714819323198485) Default rails false gap None Scene at (24.5, -62.5, 24.5): 33 blocks, 1352 rays, hash 17505abb4150247d cobweb=3 dirt=4 glass=1 netherrack=3 oak_planks=5 sand=3 stone=4 tnt=10
+37 Dirt power 6 Seeded(11400714819323198485) Default rails false gap None Scene at (24.5, -64.5, 24.5): 0 blocks, 1352 rays, hash cbf29ce484222325
+38 Dirt power 10 Seeded(11400714819323198485) Default rails false gap None Scene at (24.5, 318.5, 24.5): 1085 blocks, 1352 rays, hash 3e6cf4cfd575b920 dirt=1085
+39 Mixed power 6 Seeded(11400714819323198485) Default rails false gap None Scene at (24.5, 319.5, 24.5): 61 blocks, 1352 rays, hash 088310e402019976 cobweb=6 dirt=10 glass=8 netherrack=7 oak_planks=4 sand=6 stone=10 tnt=10
+40 Dirt power 6 Seeded(11400714819323198485) Default rails false gap None Scene at (24.5, 320.5, 24.5): 0 blocks, 1352 rays, hash cbf29ce484222325
+41 Dirt power 10 Seeded(11400714819323198485) Default rails false gap None Scene at (32.0, 64.5, 32.0): 1713 blocks, 1352 rays, hash f35b417f96d5ad73 dirt=1713
+42 Mixed power 6 Seeded(11400714819323198485) Default rails false gap None Scene at (16.0, 64.5, 48.0): 111 blocks, 1352 rays, hash 29a35217690c87b2 cobweb=12 dirt=17 glass=9 netherrack=14 oak_planks=14 sand=19 stone=9 tnt=17
+43 Pockets power 10 Seeded(11400714819323198485) Default rails false gap None Scene at (47.9, 64.0, 16.1): 972 blocks, 1352 rays, hash bec7b182b344eae1 dirt=841 stone=131
+44 Dirt power 10 Seeded(11400714819323198485) Default rails false gap Checker Scene at (24.5, 64.5, 24.5): 1687 blocks, 1352 rays, hash 7bfb3b9dbccb6523 dirt=1687
+45 Mixed power 10 Seeded(11400714819323198485) Default rails false gap Checker Scene at (24.5, 64.5, 24.5): 142 blocks, 1352 rays, hash c1f4ba32521ae559 cobweb=21 dirt=18 glass=20 netherrack=19 oak_planks=17 sand=20 stone=13 tnt=14
+46 Dirt power 10 Seeded(11400714819323198485) Default rails false gap All Scene at (24.5, 64.5, 24.5): 0 blocks, 1352 rays, hash cbf29ce484222325
+47 Dirt power 10 Seeded(11400714819323198485) Default rails false gap None PositiveLimit at (28.5, 64.5, 24.5): 1366 blocks, 1352 rays, hash cabb81251d10b3dd dirt=1366
+48 Dirt power 10 Seeded(11400714819323198485) Default rails false gap None NegativeLimit at (36.5, 64.5, 24.5): 1518 blocks, 1352 rays, hash d5a4fd66947e2218 dirt=1518
+49 Dirt power 10 Seeded(11400714819323198485) Default rails false gap None ZLimit at (24.5, 64.5, 28.5): 1379 blocks, 1352 rays, hash 87f60b730638cea0 dirt=1379
+50 Rails power 4 Seeded(11400714819323198485) Default rails true gap None Scene at (24.5, 66.5, 24.5): 55 blocks, 1352 rays, hash da9ef662bfd2fda1 dirt=32 stone=23
+51 Rails power 10 Seeded(11400714819323198485) Default rails true gap None Scene at (24.5, 66.5, 24.5): 265 blocks, 1352 rays, hash 0f39d908486c59b1 dirt=79 stone=186
+52 Rails power 10 Seeded(11400714819323198485) Default rails false gap None Scene at (24.5, 66.5, 24.5): 304 blocks, 1352 rays, hash ff0c6d5c623976be activator_rail=16 detector_rail=18 dirt=71 powered_rail=18 rail=16 stone=165
+53 Rails power 6 Seeded(11400714819323198485) Default rails true gap None Scene at (24.5, 64.5, 24.5): 118 blocks, 1352 rays, hash ad618fd3423413de dirt=49 stone=69
+54 Dirt power 10 Seeded(11400714819323198485) Wind rails false gap None Scene at (24.5, 64.5, 24.5): 0 blocks, 1352 rays, hash cbf29ce484222325
+55 Mixed power 10 Seeded(11400714819323198485) Wind rails false gap None Scene at (24.5, 64.5, 24.5): 0 blocks, 1352 rays, hash cbf29ce484222325
+56 Stone power 6 Seeded(11400714819323198485) Wind rails false gap None Scene at (24.5, 64.5, 24.5): 0 blocks, 1352 rays, hash cbf29ce484222325
+57 Dirt power 10 Seeded(11400714819323198485) Immune rails false gap None Scene at (24.5, 64.5, 24.5): 1690 blocks, 1352 rays, hash 112343898ecde2b0 dirt=1690
+58 Mixed power 10 Seeded(11400714819323198485) Immune rails false gap None Scene at (24.5, 64.5, 24.5): 156 blocks, 1352 rays, hash 2bbe644e41f0ca50 cobweb=23 dirt=19 glass=29 netherrack=25 oak_planks=20 sand=24 tnt=16
+59 Stone power 6 Seeded(11400714819323198485) Immune rails false gap None Scene at (24.5, 64.5, 24.5): 0 blocks, 1352 rays, hash cbf29ce484222325
+60 Dirt power 10 Seeded(11400714819323198485) NoBlocks rails false gap None Scene at (24.5, 64.5, 24.5): 0 blocks, 1352 rays, hash cbf29ce484222325
+61 Mixed power 10 Seeded(11400714819323198485) NoBlocks rails false gap None Scene at (24.5, 64.5, 24.5): 0 blocks, 1352 rays, hash cbf29ce484222325
+62 Stone power 6 Seeded(11400714819323198485) NoBlocks rails false gap None Scene at (24.5, 64.5, 24.5): 0 blocks, 1352 rays, hash cbf29ce484222325
+63 Dirt power 10 Seeded(11400714819323198485) Own rails false gap None Scene at (24.5, 64.5, 24.5): 1356 blocks, 1352 rays, hash 70afdefb2b492afb dirt=1356
+64 Mixed power 10 Seeded(11400714819323198485) Own rails false gap None Scene at (24.5, 64.5, 24.5): 222 blocks, 1352 rays, hash 171aea5d939a9308 cobweb=24 dirt=21 glass=31 netherrack=25 oak_planks=20 sand=29 stone=30 tnt=18 water=24
+65 Stone power 6 Seeded(11400714819323198485) Own rails false gap None Scene at (24.5, 64.5, 24.5): 2010 blocks, 1352 rays, hash 71f4abd4f8451ac4 stone=2010
+66 Fluids power 4 Seeded(11400714819323198485) Own rails false gap None Scene at (24.5, 64.5, 24.5): 135 blocks, 1352 rays, hash 3961149228436e14 dirt=31 kelp=16 seagrass=18 water=70
+67 Fluids power 6 Seeded(11400714819323198485) Own rails false gap None Scene at (24.5, 64.5, 24.5): 292 blocks, 1352 rays, hash 6ceba187a6832646 dirt=68 kelp=36 seagrass=37 water=151
+68 Fluids power 10 Seeded(11400714819323198485) Own rails false gap None Scene at (24.5, 64.5, 24.5): 678 blocks, 1352 rays, hash 60e7946187f2a833 dirt=166 kelp=74 seagrass=91 water=347
+69 Fluids power 10 Seeded(11400714819323198485) Immune rails false gap None Scene at (24.5, 64.5, 24.5): 105 blocks, 1352 rays, hash ca51a1f4e64ef706 dirt=46 kelp=30 seagrass=29

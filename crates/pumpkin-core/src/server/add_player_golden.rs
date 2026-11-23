@@ -19,11 +19,15 @@ use std::sync::{Arc, Mutex};
 use std::time::Duration;
 
 use arc_swap::ArcSwap;
+use base64::Engine as _;
+use base64::prelude::BASE64_STANDARD;
 use bytes::Bytes;
 use pumpkin_config::op::Op;
 use pumpkin_nbt::compound::NbtCompound;
 use pumpkin_nbt::tag::NbtTag;
+use pumpkin_protocol::Property;
 use pumpkin_util::{GameMode, PermissionLvl};
+use tokio::io::{AsyncReadExt, AsyncWriteExt};
 use uuid::Uuid;
 
 use crate::entity::ai::test_support::{self, Identity};
@@ -83,6 +87,17 @@ enum Advancements {
     Progress,
 }
 
+/// The skin the profile points at (the skin task runs after `add_player` returned).
+#[derive(Clone, Copy, PartialEq, Eq)]
+enum SkinHost {
+    /// No `textures` property.
+    Nothing,
+    /// A local server that sends a 64x64 png.
+    Served { slim: bool },
+    /// A url nobody listens on.
+    Unreachable,
+}
+
 #[derive(Clone, Copy)]
 struct Scene {
     name: &'static str,
@@ -99,6 +114,7 @@ struct Scene {
     no_worlds: bool,
     /// A second call with the same profile over another client.
     twice: bool,
+    skin: SkinHost,
 }
 
 const BASE: Scene = Scene {
@@ -113,6 +129,7 @@ const BASE: Scene = Scene {
     closed: false,
     no_worlds: false,
     twice: false,
+    skin: SkinHost::Nothing,
 };
 
 const fn named(name: &'static str, scene: Scene) -> Scene {
@@ -288,10 +305,37 @@ fn refusal_scenes() -> Vec<Scene> {
     ]
 }
 
+fn skin_scenes() -> Vec<Scene> {
+    vec![
+        named(
+            "skin served wide",
+            Scene {
+                skin: SkinHost::Served { slim: false },
+                ..BASE
+            },
+        ),
+        named(
+            "skin served slim",
+            Scene {
+                skin: SkinHost::Served { slim: true },
+                ..BASE
+            },
+        ),
+        named(
+            "skin unreachable",
+            Scene {
+                skin: SkinHost::Unreachable,
+                ..BASE
+            },
+        ),
+    ]
+}
+
 fn scenes() -> Vec<Scene> {
     let mut all = saved_scenes();
     all.extend(config_scenes());
     all.extend(refusal_scenes());
+    all.extend(skin_scenes());
     all
 }
 
@@ -449,13 +493,67 @@ async fn start(
     Ok(server)
 }
 
-fn profile() -> GameProfile {
+fn profile(skin_url: Option<&str>, slim: bool) -> GameProfile {
+    let properties = skin_url
+        .map(|url| {
+            let model = if slim {
+                r#","metadata":{"model":"slim"}"#
+            } else {
+                ""
+            };
+            let json = format!(r#"{{"textures":{{"SKIN":{{"url":"{url}"{model}}}}}}}"#);
+            Property {
+                name: "textures".into(),
+                value: BASE64_STANDARD.encode(json).into(),
+                signature: None,
+            }
+        })
+        .into_iter()
+        .collect();
     GameProfile {
         id: JOINER.uuid,
         name: JOINER.name.to_string(),
-        properties: ArcSwap::from_pointee(Vec::new()),
+        properties: ArcSwap::from_pointee(properties),
         profile_actions: None,
     }
+}
+
+/// Serves a 64x64 png to every request until the runtime ends; returns the url.
+async fn serve_skin() -> Result<String, Box<dyn std::error::Error>> {
+    let mut png_bytes = Vec::new();
+    {
+        let mut encoder = png::Encoder::new(&mut png_bytes, 64, 64);
+        encoder.set_color(png::ColorType::Rgba);
+        encoder.set_depth(png::BitDepth::Eight);
+        let mut writer = encoder.write_header()?;
+        writer.write_image_data(&vec![128u8; 64 * 64 * 4])?;
+    };
+    let listener = tokio::net::TcpListener::bind("127.0.0.1:0").await?;
+    let url = format!("http://{}/skin.png", listener.local_addr()?);
+    tokio::spawn(async move {
+        while let Ok((mut stream, _)) = listener.accept().await {
+            let png_bytes = png_bytes.clone();
+            tokio::spawn(async move {
+                let mut request = [0u8; 1024];
+                let _ = stream.read(&mut request).await;
+                let head = format!(
+                    "HTTP/1.1 200 OK\r\ncontent-type: image/png\r\ncontent-length: {}\r\nconnection: close\r\n\r\n",
+                    png_bytes.len()
+                );
+                let _ = stream.write_all(head.as_bytes()).await;
+                let _ = stream.write_all(&png_bytes).await;
+                let _ = stream.shutdown().await;
+            });
+        }
+    });
+    Ok(url)
+}
+
+/// A url on a port that is closed again.
+async fn dead_url() -> Result<String, Box<dyn std::error::Error>> {
+    let listener = tokio::net::TcpListener::bind("127.0.0.1:0").await?;
+    let url = format!("http://{}/skin.png", listener.local_addr()?);
+    Ok(url)
 }
 
 fn config_of(scene: &Scene) -> Option<PlayerConfig> {
@@ -560,13 +658,18 @@ async fn call(
     home: &Arc<World>,
     who: &Identity,
     scene: &Scene,
+    skin_url: Option<&str>,
 ) -> Result<String, String> {
     let (donor, tap) =
         test_support::java_player_as(home, GameMode::Survival, who).ok_or("no packet tap")?;
     let drained = Drained::start(tap);
     let mut hub = server.management_hub.subscribe();
     let client = Arc::clone(&donor.client);
-    let returned = server.add_player(client.clone(), profile(), config_of(scene));
+    let returned = server.add_player(
+        client.clone(),
+        profile(skin_url, scene.skin == SkinHost::Served { slim: true }),
+        config_of(scene),
+    );
     let mut line = match &returned {
         Some((player, world)) => format!("player {}", player_state(player, world, server)),
         None => "None".to_string(),
@@ -581,6 +684,9 @@ async fn call(
         }
     }
     let _ = write!(line, " | closed {}", client.closed());
+    if let (Some((player, _)), Some(url)) = (&returned, skin_url) {
+        line.push_str(&skin_state(player, url).await);
+    }
     let mut notices = Vec::new();
     while let Ok(notice) = hub.try_recv() {
         notices.push(notice);
@@ -592,6 +698,27 @@ async fn call(
     );
     drained.finish().await;
     Ok(line)
+}
+
+/// The Bedrock skin once the skin task is done (it never is for an unreachable url).
+async fn skin_state(player: &crate::entity::player::Player, url: &str) -> String {
+    for _ in 0..100 {
+        if player.bedrock_skin.load().skin_id == url {
+            break;
+        }
+        tokio::time::sleep(Duration::from_millis(20)).await;
+    }
+    let skin = player.bedrock_skin.load();
+    format!(
+        " | skin from url {} full {} size {}x{} arm {} data {} bytes starting {:?}",
+        skin.skin_id == url,
+        skin.full_id == url,
+        skin.image_width,
+        skin.image_height,
+        skin.arm_size,
+        skin.skin_data.len(),
+        skin.skin_data.first(),
+    )
 }
 
 async fn run_scene(scene: &Scene) -> Result<String, Box<dyn std::error::Error>> {
@@ -607,10 +734,16 @@ async fn run_scene(scene: &Scene) -> Result<String, Box<dyn std::error::Error>> 
     if scene.no_worlds {
         server.worlds.store(Arc::new(Vec::new()));
     }
-    text.push_str(&call(&server, &home, &JOINER, scene).await?);
+    let url = match scene.skin {
+        SkinHost::Nothing => None,
+        SkinHost::Served { .. } => Some(serve_skin().await?),
+        SkinHost::Unreachable => Some(dead_url().await?),
+    };
+    let url = url.as_deref();
+    text.push_str(&call(&server, &home, &JOINER, scene, url).await?);
     if scene.twice {
         text.push_str(" || second: ");
-        text.push_str(&call(&server, &home, &SECOND, scene).await?);
+        text.push_str(&call(&server, &home, &SECOND, scene, url).await?);
     }
     let _ = write!(text, " || server {}", server_state(&server));
     server.stop();

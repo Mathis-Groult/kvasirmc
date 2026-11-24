@@ -530,3 +530,6 @@ impl<R: Fn(&str) -> Option<Value>> Parser<'_, R> {
             .collect()
     }
 }
+
+#[cfg(test)]
+mod condition_golden;

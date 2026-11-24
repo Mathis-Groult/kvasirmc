@@ -714,7 +714,8 @@ pub fn adjust_spawn_position(
     pos
 }
 
-#[allow(clippy::too_many_lines)]
+mod cluster;
+
 pub fn spawn_category_for_position(
     category: &'static MobCategory,
     world: &Arc<World>,
@@ -723,125 +724,27 @@ pub fn spawn_category_for_position(
     spawn_state: &SpawnState,
     is_thundering: bool,
 ) -> Vec<Arc<dyn EntityBase>> {
-    let mut batch_buffer = Vec::new();
-    let y_start = pos.0.y;
+    let mut batch = Vec::new();
     let state = world.get_block_state(&pos);
     if state.is_solid_block() || state.is_full_cube() {
-        return batch_buffer;
+        return batch;
     }
 
+    let attempt = cluster::Attempt {
+        category,
+        world,
+        y: pos.0.y,
+        chunk_pos,
+        spawn_state,
+        is_thundering,
+    };
     let mut cluster_size = 0;
-
     for _ in 0..3 {
-        let mut x = pos.0.x;
-        let mut z = pos.0.z;
-        let mut current_spawner: Option<&'static Spawner> = None;
-        let mut max = (rng().random::<f32>() * 4.0).ceil() as i32;
-        let mut group_size = 0;
-        let mut group_data = None;
-        let mut ll = 0;
-
-        while ll < max {
-            x += rng().random_range(0..6) - rng().random_range(0..6);
-            z += rng().random_range(0..6) - rng().random_range(0..6);
-            let check_pos = BlockPos::new(x, y_start, z);
-            let xx = f64::from(x) + 0.5;
-            let zz = f64::from(z) + 0.5;
-
-            let nearest_player_distance_sq = {
-                let players = world.players.load();
-                let mut min_dst_sq = f64::MAX;
-                let mut found = false;
-                for player in players.iter() {
-                    if player.gamemode.load() != GameMode::Spectator {
-                        let ppos = player.position();
-                        let dx = xx - ppos.x;
-                        let dy = f64::from(y_start) - ppos.y;
-                        let dz = zz - ppos.z;
-                        let dist_sq = dx * dx + dy * dy + dz * dz;
-                        if dist_sq < min_dst_sq {
-                            min_dst_sq = dist_sq;
-                            found = true;
-                        }
-                    }
-                }
-                found.then_some(min_dst_sq)
-            };
-
-            if let Some(player_distance_sq) = nearest_player_distance_sq
-                && is_right_distance_to_player_and_spawn_point(
-                    world,
-                    &check_pos,
-                    chunk_pos,
-                    player_distance_sq,
-                )
-            {
-                if current_spawner.is_none() {
-                    let Some(spawner) = get_random_spawn_mob_at(world, category, &check_pos) else {
-                        break;
-                    };
-                    current_spawner = Some(spawner);
-                    max = spawner.min_count
-                        + rng().random_range(0..=(spawner.max_count - spawner.min_count).max(0));
-                }
-
-                let Some(spawner) = current_spawner else {
-                    break;
-                };
-                let name = spawner
-                    .r#type
-                    .strip_prefix("minecraft:")
-                    .unwrap_or(spawner.r#type);
-                let Some(entity_type) = EntityType::from_name(name) else {
-                    break;
-                };
-
-                if is_valid_spawn_position_for_type(
-                    world,
-                    &check_pos,
-                    category,
-                    entity_type,
-                    spawner.r#type,
-                    player_distance_sq,
-                    is_thundering,
-                ) && spawn_state.can_spawn(entity_type, &check_pos, world)
-                {
-                    let spawn_pos_f64 = Vector3::new(xx, f64::from(y_start), zz);
-                    let entity = from_type(entity_type, spawn_pos_f64, world, Uuid::new_v4());
-                    entity
-                        .get_entity()
-                        .set_rotation(rng().random::<f32>() * 360.0, 0.0);
-
-                    let is_valid_for_mob = entity.get_mob().is_none_or(|mob| {
-                        let despawn_dist = f64::from(entity_type.category.despawn_distance);
-                        !(player_distance_sq > despawn_dist * despawn_dist
-                            && mob.remove_when_far_away(player_distance_sq))
-                    });
-
-                    if is_valid_for_mob {
-                        group_data = finalize_spawn(&entity, world, group_data);
-                        cluster_size += 1;
-                        group_size += 1;
-                        let max_group_size_reached = entity
-                            .get_mob()
-                            .is_some_and(|mob| mob.is_max_group_size_reached(group_size));
-                        batch_buffer.push(entity);
-                        spawn_state.after_spawn(entity_type, &check_pos, world);
-                        if cluster_size >= entity_type.limit_per_chunk {
-                            return batch_buffer;
-                        }
-
-                        if max_group_size_reached {
-                            break;
-                        }
-                    }
-                }
-            }
-
-            ll += 1;
+        if attempt.spawn_cluster(pos, &mut cluster_size, &mut batch) {
+            break;
         }
     }
-    batch_buffer
+    batch
 }
 
 #[must_use]

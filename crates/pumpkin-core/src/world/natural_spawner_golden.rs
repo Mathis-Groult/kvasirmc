@@ -355,7 +355,7 @@ async fn player_scenes(
     // Branch: spawn group size. Single mobs (witch, villager) keep a batch under five; wider
     // groups push whole batches past the cap of four.
     let mut packs = plain("survival_far_packs", &MobCategory::MONSTER);
-    packs.attempts = 6000;
+    packs.attempts = 4000;
     packs.big = Some((5, 0.0, 0.0075));
     run(world, &packs, &fresh(), out);
 
@@ -664,7 +664,7 @@ fn water_scenes(world: &Arc<World>, out: &mut String) {
             let mut s = scene(&name, category);
             s.pos = BlockPos::new(72, y, 8);
             // Drowned appear on a small share of the tries, so monsters get more attempts.
-            s.attempts = if label == "monster" { 1500 } else { 300 };
+            s.attempts = if label == "monster" { 1000 } else { 300 };
             run(world, &s, &fresh(), out);
         }
         lay(world, None, &Block::STONE, y);
@@ -673,7 +673,7 @@ fn water_scenes(world: &Arc<World>, out: &mut String) {
             let mut s = scene(&name, category);
             s.pos = BlockPos::new(72, y, 8);
             // Drowned appear on a small share of the tries, so monsters get more attempts.
-            s.attempts = if label == "monster" { 1500 } else { 300 };
+            s.attempts = if label == "monster" { 1000 } else { 300 };
             run(world, &s, &fresh(), out);
         }
     }
@@ -693,9 +693,10 @@ fn reduced_scenes(world: &Arc<World>, out: &mut String) {
     run(world, &s, &fresh(), out);
     // Salmon groups of one to five: about one batch in eight fills the cap of five.
     s.name = "river_water_ambient_packs";
+    s.attempts = 10_000;
     s.rate = None;
     s.show = Show::Spawned;
-    s.big = Some((5, 0.09, 0.17));
+    s.big = Some((5, 0.08, 0.19));
     run(world, &s, &fresh(), out);
 }
 

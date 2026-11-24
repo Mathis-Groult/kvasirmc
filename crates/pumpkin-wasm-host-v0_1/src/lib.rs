@@ -47,6 +47,9 @@ pub mod uuid;
 pub mod world;
 
 #[cfg(test)]
+mod dialog_golden;
+
+#[cfg(test)]
 mod mob_data_golden;
 
 #[cfg(test)]

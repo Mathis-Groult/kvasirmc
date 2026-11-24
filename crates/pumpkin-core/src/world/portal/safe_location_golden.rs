@@ -430,6 +430,35 @@ fn border_scenes(ctx: &mut Ctx, out: &mut String) {
     }
 }
 
+fn edge_scenes(ctx: &mut Ctx, out: &mut String) {
+    // Branch: the search reaches 32 columns each way on both axes, no further. A one block wide
+    // strip leaves a single spot, exactly at the named column offset.
+    for f in [-33, -32, 32, 33] {
+        let name = format!("nether_edge_x{f}");
+        let strip = room((f - 1, f + 2), (0, 0), FLOOR, 4);
+        run(ctx, out, &spec(&name, true, 64), rooms(vec![strip]));
+        let name = format!("nether_edge_z{f}");
+        let lane = room((0, 0), (f - 1, f + 2), FLOOR, 4);
+        run(ctx, out, &spec(&name, true, 64), rooms(vec![lane]));
+    }
+}
+
+fn tie_scenes(ctx: &mut Ctx, out: &mut String) {
+    // Branch: two spots at the same distance: the one met first wins, scanning x then z upward.
+    let at_x = |f: i32| room((f - 1, f + 2), (0, 0), FLOOR, 4);
+    let at_z = |f: i32| room((-1, 2), (f, f), FLOOR, 4);
+    let cases = [
+        ("x", vec![at_x(-10), at_x(10)]),
+        ("x_reversed", vec![at_x(10), at_x(-10)]),
+        ("z", vec![at_z(-10), at_z(10)]),
+        ("z_reversed", vec![at_z(10), at_z(-10)]),
+    ];
+    for (name, list) in cases {
+        let name = format!("nether_tie_{name}");
+        run(ctx, out, &spec(&name, true, 64), rooms(list));
+    }
+}
+
 #[tokio::test(flavor = "multi_thread")]
 async fn nether_portal_safe_location_golden() -> TestResult {
     let folder = tempfile::tempdir()?;
@@ -465,6 +494,8 @@ async fn nether_portal_safe_location_golden() -> TestResult {
     acceptable_scenes(&mut ctx, &mut out);
     fluid_scenes(&mut ctx, &mut out);
     border_scenes(&mut ctx, &mut out);
+    edge_scenes(&mut ctx, &mut out);
+    tie_scenes(&mut ctx, &mut out);
     server.stop();
     script_golden::bless_or_compare("nether_portal_safe_location.txt", &out)
 }

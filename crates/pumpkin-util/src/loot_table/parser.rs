@@ -1,11 +1,17 @@
 use serde_json::Value;
 
+use self::condition::{
+    match_tool, random_chance, random_chance_with_enchanted_bonus, random_chance_with_looting,
+    table_bonus, time_check, value_check, weather_check,
+};
 use super::{
     DynamicLootCondition as Condition, DynamicLootEntry as Entry,
     DynamicLootEntryKind as EntryKind, DynamicLootFunction as Function, DynamicLootPool as Pool,
     DynamicLootTable as Table, LootBonusFormula, LootEntityTarget, LootFunctionKind,
     LootNumberProvider,
 };
+
+mod condition;
 
 const MAX_PREDICATE_DEPTH: usize = 128;
 
@@ -197,7 +203,6 @@ impl<R: Fn(&str) -> Option<Value>> Parser<'_, R> {
             })
     }
 
-    #[allow(clippy::too_many_lines)]
     fn condition(&self, value: &Value, depth: usize) -> Option<Condition> {
         if depth >= MAX_PREDICATE_DEPTH {
             return None;
@@ -214,116 +219,24 @@ impl<R: Fn(&str) -> Option<Value>> Parser<'_, R> {
         Some(match kind(value) {
             "survives_explosion" => Condition::SurvivesExplosion,
             "killed_by_player" => Condition::KilledByPlayer,
-            "random_chance" => Condition::RandomChance {
-                chance: value.get("chance").and_then(Value::as_f64).unwrap_or(0.0) as f32,
-            },
-            "random_chance_with_enchanted_bonus" => {
-                let unenchanted_chance = value
-                    .get("unenchanted_chance")
-                    .and_then(Value::as_f64)
-                    .unwrap_or(0.0) as f32;
-                let chance = value.get("enchanted_chance");
-                let enchanted_chance_base = chance
-                    .and_then(|chance| {
-                        chance
-                            .as_f64()
-                            .or_else(|| chance.get("base").and_then(Value::as_f64))
-                    })
-                    .map_or(unenchanted_chance, |number| number as f32);
-                let enchanted_chance_per_level_above_first = chance
-                    .and_then(|chance| chance.get("per_level_above_first"))
-                    .and_then(Value::as_f64)
-                    .unwrap_or(0.0)
-                    as f32;
-                Condition::RandomChanceWithEnchantedBonus {
-                    enchantment: value
-                        .get("enchantment")
-                        .and_then(Value::as_str)
-                        .unwrap_or("minecraft:looting")
-                        .to_owned(),
-                    unenchanted_chance,
-                    enchanted_chance_base,
-                    enchanted_chance_per_level_above_first,
-                }
-            }
-            "random_chance_with_looting" => {
-                let chance = value.get("chance").and_then(Value::as_f64).unwrap_or(0.0) as f32;
-                let looting_multiplier = value
-                    .get("looting_multiplier")
-                    .and_then(Value::as_f64)
-                    .unwrap_or(0.0) as f32;
-                Condition::RandomChanceWithLooting {
-                    chance,
-                    looting_multiplier,
-                }
-            }
-            "table_bonus" => Condition::TableBonus {
-                enchantment: value
-                    .get("enchantment")
-                    .and_then(Value::as_str)
-                    .unwrap_or("minecraft:fortune")
-                    .to_owned(),
-                chances: value
-                    .get("chances")
-                    .and_then(Value::as_array)
-                    .map(|values| {
-                        values
-                            .iter()
-                            .filter_map(Value::as_f64)
-                            .map(|value| value as f32)
-                            .collect()
-                    })
-                    .unwrap_or_default(),
-            },
-            "all_of" => all(value
-                .get("terms")?
-                .as_array()?
-                .iter()
-                .map(|term| self.condition(term, depth + 1))
-                .collect::<Option<_>>()?),
-            "any_of" => Condition::AnyOf(
-                value
-                    .get("terms")?
-                    .as_array()?
-                    .iter()
-                    .map(|term| self.condition(term, depth + 1))
-                    .collect::<Option<_>>()?,
-            ),
-            "inverted" => {
-                Condition::Inverted(Box::new(self.condition(value.get("term")?, depth + 1)?))
-            }
+            "random_chance" => random_chance(value),
+            "random_chance_with_enchanted_bonus" => random_chance_with_enchanted_bonus(value),
+            "random_chance_with_looting" => random_chance_with_looting(value),
+            "table_bonus" => table_bonus(value),
+            "all_of" => self.all_of(value, depth)?,
+            "any_of" => self.any_of(value, depth)?,
+            "inverted" => self.inverted(value, depth)?,
             "entity_properties" => Self::entity_properties(value)?,
             "damage_source_properties" => Self::damage_source_properties(value),
             "location_check" => Self::location_check(value)?,
             "match_block" | "block_state_property" => {
                 Condition::MatchBlock(value.get("predicate").unwrap_or(value).clone())
             }
-            "match_tool" => Condition::MatchTool(
-                value
-                    .get("predicate")
-                    .cloned()
-                    .unwrap_or_else(|| serde_json::json!({})),
-            ),
-            "weather_check" => Condition::WeatherCheck {
-                raining: value.get("raining").and_then(Value::as_bool),
-                thundering: value.get("thundering").and_then(Value::as_bool),
-            },
-            "time_check" => {
-                let period = value.get("period").and_then(Value::as_u64);
-                let value = value.get("value").cloned().unwrap_or(Value::Null);
-                Condition::TimeCheck { value, period }
-            }
-            "value_check" => {
-                let val = value.get("value").and_then(provider)?;
-                let range = value.get("range").cloned().unwrap_or(Value::Null);
-                Condition::ValueCheck { value: val, range }
-            }
-            "reference" => {
-                let name = value.get("name").and_then(Value::as_str)?;
-                (self.predicates)(name)
-                    .and_then(|value| self.condition(&value, depth + 1))
-                    .unwrap_or_else(|| Condition::Reference(name.to_owned()))
-            }
+            "match_tool" => match_tool(value),
+            "weather_check" => weather_check(value),
+            "time_check" => time_check(value),
+            "value_check" => value_check(value)?,
+            "reference" => self.reference(value, depth)?,
             _ => return None,
         })
     }

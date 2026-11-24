@@ -123,6 +123,8 @@ struct Scene<'a> {
     rate: Option<(f64, f64)>,
     /// Print whether this type ever spawned on the exact block column of the position.
     exact: Option<&'static EntityType>,
+    /// Print whether the share of spawning attempts whose batch reached this size lies in the band.
+    big: Option<(usize, f64, f64)>,
 }
 
 const fn scene<'a>(name: &'a str, category: &'static MobCategory) -> Scene<'a> {
@@ -136,6 +138,7 @@ const fn scene<'a>(name: &'a str, category: &'static MobCategory) -> Scene<'a> {
         show: Show::Types,
         rate: None,
         exact: None,
+        big: None,
     }
 }
 
@@ -144,6 +147,7 @@ const fn scene<'a>(name: &'a str, category: &'static MobCategory) -> Scene<'a> {
 struct Tally {
     spawned: usize,
     hit_attempts: usize,
+    big_attempts: BTreeMap<usize, usize>,
     inside: bool,
     seen: BTreeSet<&'static str>,
     largest: BTreeMap<&'static str, usize>,
@@ -213,6 +217,7 @@ fn collect(world: &Arc<World>, scene: &Scene, state: &SpawnState) -> Tally {
         tally.spawned += batch.len();
         if let Some(first) = batch.first() {
             tally.hit_attempts += 1;
+            *tally.big_attempts.entry(batch.len()).or_default() += 1;
             let name = first.get_entity().entity_type.resource_name;
             let largest = tally.largest.entry(name).or_default();
             *largest = (*largest).max(batch.len());
@@ -278,6 +283,11 @@ fn run(world: &Arc<World>, scene: &Scene, state: &SpawnState, out: &mut String) 
         let percent = 100.0 * tally.hit_attempts as f64 / scene.attempts as f64;
         let _ = write!(out, " rate_ok {}", within(percent, low, high));
     }
+    if let Some((size, low, high)) = scene.big {
+        let big: usize = tally.big_attempts.range(size..).map(|(_, n)| n).sum();
+        let share = big as f64 / tally.hit_attempts as f64;
+        let _ = write!(out, " big{size}_ok {}", within(share, low, high));
+    }
     if let Some(kind) = scene.exact {
         let _ = write!(out, " {}_at_exact {}", kind.resource_name, tally.exact);
     }
@@ -342,6 +352,12 @@ async fn player_scenes(
         &fresh(),
         out,
     );
+    // Branch: spawn group size. Single mobs (witch, villager) keep a batch under five; wider
+    // groups push whole batches past the cap of four.
+    let mut packs = plain("survival_far_packs", &MobCategory::MONSTER);
+    packs.attempts = 6000;
+    packs.big = Some((5, 0.0, 0.0075));
+    run(world, &packs, &fresh(), out);
 
     // Branch: nearest player distance (too near, vertical only, beyond despawn range).
     let near = test_support::java_player(world, GameMode::Survival);
@@ -559,7 +575,7 @@ fn group_scenes(world: &Arc<World>, out: &mut String) {
     set_biome(world, "plains");
 }
 
-fn parrot_scenes(world: &Arc<World>, survival: &Arc<Player>, out: &mut String) {
+async fn parrot_scenes(world: &Arc<World>, survival: &Arc<Player>, out: &mut String) -> TestResult {
     // Branch: mobs that vanish when far away (parrot) keep out beyond 128 blocks, others stay.
     set_biome(world, "jungle");
     run(
@@ -585,10 +601,20 @@ fn parrot_scenes(world: &Arc<World>, survival: &Arc<Player>, out: &mut String) {
     exact.attempts = 1500;
     exact.exact = Some(&EntityType::PARROT);
     run(world, &exact, &fresh(), out);
+    // Branch: no player at all keeps even a mob that may spawn far from players out.
+    world.remove_player(survival, false).await;
+    run(
+        world,
+        &plain("jungle_no_player_creature", &MobCategory::CREATURE),
+        &fresh(),
+        out,
+    );
+    world.add_player(survival)?;
     survival
         .get_entity()
         .set_pos(Vector3::new(72.5, 64.0, FAR_Z));
     set_biome(world, "plains");
+    Ok(())
 }
 
 fn water_scenes(world: &Arc<World>, out: &mut String) {
@@ -637,7 +663,8 @@ fn water_scenes(world: &Arc<World>, out: &mut String) {
             let name = format!("{biome}_{label}_wet");
             let mut s = scene(&name, category);
             s.pos = BlockPos::new(72, y, 8);
-            s.attempts = 300;
+            // Drowned appear on a small share of the tries, so monsters get more attempts.
+            s.attempts = if label == "monster" { 1500 } else { 300 };
             run(world, &s, &fresh(), out);
         }
         lay(world, None, &Block::STONE, y);
@@ -645,7 +672,8 @@ fn water_scenes(world: &Arc<World>, out: &mut String) {
             let name = format!("{biome}_{label}_dry");
             let mut s = scene(&name, category);
             s.pos = BlockPos::new(72, y, 8);
-            s.attempts = 300;
+            // Drowned appear on a small share of the tries, so monsters get more attempts.
+            s.attempts = if label == "monster" { 1500 } else { 300 };
             run(world, &s, &fresh(), out);
         }
     }
@@ -662,6 +690,12 @@ fn reduced_scenes(world: &Arc<World>, out: &mut String) {
     s.pos = BlockPos::new(72, 55, 8);
     s.attempts = 20_000;
     s.rate = Some((4.9, 6.5));
+    run(world, &s, &fresh(), out);
+    // Salmon groups of one to five: about one batch in eight fills the cap of five.
+    s.name = "river_water_ambient_packs";
+    s.rate = None;
+    s.show = Show::Spawned;
+    s.big = Some((5, 0.09, 0.17));
     run(world, &s, &fresh(), out);
 }
 
@@ -691,7 +725,7 @@ async fn natural_spawner_category_golden() -> TestResult {
     light_scenes(&world, &mut out);
     category_scenes(&world, &mut out);
     group_scenes(&world, &mut out);
-    parrot_scenes(&world, &survival, &mut out);
+    parrot_scenes(&world, &survival, &mut out).await?;
     water_scenes(&world, &mut out);
     world.remove_player(&survival, false).await;
     world.remove_player(&spectator, false).await;

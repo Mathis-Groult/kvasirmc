@@ -3,6 +3,7 @@ no_player_creature: spawned false in_range true
 spectator_only_monster: spawned false in_range true
 spectator_only_creature: spawned false in_range true
 survival_far: spawned true types {"creeper", "enderman", "skeleton", "spider", "witch", "zombie", "zombie_horse", "zombie_villager"} in_range true
+survival_far_packs: spawned true in_range true big5_ok true
 second_player_too_near: spawned false in_range true
 player_25_above: spawned true in_range true
 player_25_below: spawned true in_range true
@@ -35,6 +36,7 @@ soul_sand_valley_charged: spawned false in_range true
 jungle_creature_near: spawned true in_range true
 jungle_creature_200_away: spawned true in_range true
 jungle_creature_128_away: spawned true in_range true parrot_at_exact true
+jungle_no_player_creature: spawned false in_range true
 ocean_water_creature_wet: spawned true types {"dolphin", "nautilus", "squid"} in_range true
 ocean_water_ambient_wet: spawned true types {"cod"} in_range true
 ocean_monster_wet: spawned true types {"drowned"} in_range true
@@ -54,3 +56,4 @@ dripstone_caves_underground_water_dry: spawned false types {} in_range true
 dripstone_caves_ambient_dry: spawned true types {"bat"} in_range true
 dripstone_caves_monster_dry: spawned true types {"creeper", "enderman", "skeleton", "spider", "witch", "zombie", "zombie_villager"} in_range true
 river_water_ambient_wet: spawned true types {"salmon"} in_range true rate_ok true
+river_water_ambient_packs: spawned true in_range true big5_ok true

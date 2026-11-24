@@ -14,6 +14,9 @@ pub mod end;
 pub mod nether;
 pub mod poi;
 
+#[cfg(test)]
+mod safe_location_golden;
+
 pub use nether::{NetherPortal, PortalSearchResult};
 pub use poi::PortalPoiStorage;
 

@@ -771,6 +771,22 @@ fn depth_section(out: &mut String) {
     }
 }
 
+/// A reference leaf `levels` deep: resolving it costs one more level, so the limit shows in the
+/// result (a resolved condition, or the unresolved `Reference` once the limit is hit).
+fn reference_depth_section(out: &mut String) {
+    for levels in 124..130 {
+        let mut doc = json!({"condition": "reference", "name": "known"});
+        for _ in 0..levels {
+            doc = json!({"condition": "all_of", "terms": [doc]});
+        }
+        let _ = writeln!(
+            out,
+            "reference x{levels} => {:?}",
+            parse_condition_with_predicates(&doc, &predicates)
+        );
+    }
+}
+
 fn render() -> String {
     let mut out = String::new();
     for cases in [
@@ -789,6 +805,7 @@ fn render() -> String {
         }
     }
     depth_section(&mut out);
+    reference_depth_section(&mut out);
     out
 }
 

@@ -23,123 +23,33 @@ use pumpkin_core::plugin::api::events::dialog::{
 };
 use pumpkin_wasm_host_common::state::PluginHostState;
 
-#[allow(clippy::too_many_lines)]
 pub(crate) fn protocol_dialog_from_wasm(
     state: &PluginHostState,
     dialog: &Dialog,
 ) -> ProtocolDialog {
-    let title = text_component_from_resource(state, &dialog.title);
-
-    let body: Vec<_> = dialog
-        .body
-        .iter()
-        .map(|b| match b {
-            DialogBody::PlainMessage(c) => ProtocolDialogBody::PlainMessage {
-                contents: text_component_from_resource(state, c),
-            },
-            DialogBody::Item(_i) => ProtocolDialogBody::Item { item: 0 },
-        })
-        .collect();
-
-    let inputs: Vec<_> = dialog
-        .inputs
-        .iter()
-        .map(|i| match i {
-            DialogInput::Bool(b) => ProtocolDialogInput::Boolean {
-                label: text_component_from_resource(state, &b.label),
-                default_value: b.default_value,
-            },
-            DialogInput::Text(t) => ProtocolDialogInput::Text {
-                label: text_component_from_resource(state, &t.label),
-                placeholder: text_component_from_resource(state, &t.placeholder),
-                default_value: t.default_value.clone(),
-            },
-            DialogInput::NumberRange(n) => ProtocolDialogInput::NumberRange {
-                label: text_component_from_resource(state, &n.label),
-                min: n.min_value,
-                max: n.max_value,
-                initial: n.initial_value,
-                step: n.step,
-                label_format: n.label_format.clone(),
-            },
-            DialogInput::SingleOption(s) => ProtocolDialogInput::SingleOption {
-                label: text_component_from_resource(state, &s.label),
-                options: s
-                    .options
-                    .iter()
-                    .map(|o| text_component_from_resource(state, o))
-                    .collect(),
-                initial_index: s.initial_index,
-            },
-        })
-        .collect();
-
-    let buttons: Vec<_> = dialog
-        .buttons
-        .iter()
-        .map(|b| ProtocolActionButton {
-            text: text_component_from_resource(state, &b.text),
-            tooltip: b
-                .tooltip
-                .as_ref()
-                .map(|t| text_component_from_resource(state, t)),
-            width: b.width,
-            action: match &b.action {
-                Action::OpenUrl(u) => DialogAction::OpenUrl { url: u.clone() },
-                Action::CustomClick(c) => DialogAction::Custom {
-                    id: c.id.clone(),
-                    payload: c.payload.clone(),
-                },
-            },
-        })
-        .collect();
-
-    let links: Vec<_> = dialog
-        .links
-        .iter()
-        .map(|l| {
-            let label = match &l.label {
-                LinkLabel::BuiltIn(t) => {
-                    let link_type = match t {
-                        LinkType::BugReport => pumpkin_protocol::LinkType::BugReport,
-                        LinkType::CommunityGuidelines => {
-                            pumpkin_protocol::LinkType::CommunityGuidelines
-                        }
-                        LinkType::Support => pumpkin_protocol::LinkType::Support,
-                        LinkType::Status => pumpkin_protocol::LinkType::Status,
-                        LinkType::Feedback => pumpkin_protocol::LinkType::Feedback,
-                        LinkType::Community => pumpkin_protocol::LinkType::Community,
-                        LinkType::Website => pumpkin_protocol::LinkType::Website,
-                        LinkType::Forums => pumpkin_protocol::LinkType::Forums,
-                        LinkType::News => pumpkin_protocol::LinkType::News,
-                        LinkType::Announcements => pumpkin_protocol::LinkType::Announcements,
-                    };
-                    pumpkin_protocol::Label::BuiltIn(link_type)
-                }
-                LinkLabel::Custom(c) => pumpkin_protocol::Label::TextComponent(Box::new(
-                    text_component_from_resource(state, c),
-                )),
-            };
-            DialogLink {
-                label,
-                url: l.url.clone(),
-            }
-        })
-        .collect();
-
     ProtocolDialog {
-        r#type: match dialog.type_ {
-            DialogType::Notice => "minecraft:notice".to_string(),
-            DialogType::Confirmation => "minecraft:confirmation".to_string(),
-            DialogType::MultiAction => "minecraft:multi_action".to_string(),
-            DialogType::DialogList => "minecraft:dialog_list".to_string(),
-            DialogType::ServerLinks => "minecraft:server_links".to_string(),
-        },
-        title,
-        body,
-        inputs,
-        buttons,
-        links,
+        r#type: dialog_type_name(dialog.type_).to_string(),
+        title: text_component_from_resource(state, &dialog.title),
+        body: dialog
+            .body
+            .iter()
+            .map(|b| protocol_body_from_wasm(state, b))
+            .collect(),
+        inputs: dialog
+            .inputs
+            .iter()
+            .map(|i| protocol_input_from_wasm(state, i))
+            .collect(),
+        buttons: dialog
+            .buttons
+            .iter()
+            .map(|b| protocol_button_from_wasm(state, b))
+            .collect(),
+        links: dialog
+            .links
+            .iter()
+            .map(|l| protocol_link_from_wasm(state, l))
+            .collect(),
         exit_action: None,
         after_action: dialog.after_action.map(|a| match a {
             AfterAction::Peek => "peek".to_string(),
@@ -150,6 +60,105 @@ pub(crate) fn protocol_dialog_from_wasm(
             .external_title
             .as_ref()
             .map(|t| text_component_from_resource(state, t)),
+    }
+}
+
+const fn dialog_type_name(type_: DialogType) -> &'static str {
+    match type_ {
+        DialogType::Notice => "minecraft:notice",
+        DialogType::Confirmation => "minecraft:confirmation",
+        DialogType::MultiAction => "minecraft:multi_action",
+        DialogType::DialogList => "minecraft:dialog_list",
+        DialogType::ServerLinks => "minecraft:server_links",
+    }
+}
+
+fn protocol_body_from_wasm(state: &PluginHostState, body: &DialogBody) -> ProtocolDialogBody {
+    match body {
+        DialogBody::PlainMessage(c) => ProtocolDialogBody::PlainMessage {
+            contents: text_component_from_resource(state, c),
+        },
+        DialogBody::Item(_i) => ProtocolDialogBody::Item { item: 0 },
+    }
+}
+
+fn protocol_input_from_wasm(state: &PluginHostState, input: &DialogInput) -> ProtocolDialogInput {
+    match input {
+        DialogInput::Bool(b) => ProtocolDialogInput::Boolean {
+            label: text_component_from_resource(state, &b.label),
+            default_value: b.default_value,
+        },
+        DialogInput::Text(t) => ProtocolDialogInput::Text {
+            label: text_component_from_resource(state, &t.label),
+            placeholder: text_component_from_resource(state, &t.placeholder),
+            default_value: t.default_value.clone(),
+        },
+        DialogInput::NumberRange(n) => ProtocolDialogInput::NumberRange {
+            label: text_component_from_resource(state, &n.label),
+            min: n.min_value,
+            max: n.max_value,
+            initial: n.initial_value,
+            step: n.step,
+            label_format: n.label_format.clone(),
+        },
+        DialogInput::SingleOption(s) => ProtocolDialogInput::SingleOption {
+            label: text_component_from_resource(state, &s.label),
+            options: s
+                .options
+                .iter()
+                .map(|o| text_component_from_resource(state, o))
+                .collect(),
+            initial_index: s.initial_index,
+        },
+    }
+}
+
+fn protocol_button_from_wasm(
+    state: &PluginHostState,
+    button: &ActionButton,
+) -> ProtocolActionButton {
+    ProtocolActionButton {
+        text: text_component_from_resource(state, &button.text),
+        tooltip: button
+            .tooltip
+            .as_ref()
+            .map(|t| text_component_from_resource(state, t)),
+        width: button.width,
+        action: match &button.action {
+            Action::OpenUrl(u) => DialogAction::OpenUrl { url: u.clone() },
+            Action::CustomClick(c) => DialogAction::Custom {
+                id: c.id.clone(),
+                payload: c.payload.clone(),
+            },
+        },
+    }
+}
+
+const fn protocol_link_type(link_type: LinkType) -> pumpkin_protocol::LinkType {
+    match link_type {
+        LinkType::BugReport => pumpkin_protocol::LinkType::BugReport,
+        LinkType::CommunityGuidelines => pumpkin_protocol::LinkType::CommunityGuidelines,
+        LinkType::Support => pumpkin_protocol::LinkType::Support,
+        LinkType::Status => pumpkin_protocol::LinkType::Status,
+        LinkType::Feedback => pumpkin_protocol::LinkType::Feedback,
+        LinkType::Community => pumpkin_protocol::LinkType::Community,
+        LinkType::Website => pumpkin_protocol::LinkType::Website,
+        LinkType::Forums => pumpkin_protocol::LinkType::Forums,
+        LinkType::News => pumpkin_protocol::LinkType::News,
+        LinkType::Announcements => pumpkin_protocol::LinkType::Announcements,
+    }
+}
+
+fn protocol_link_from_wasm(state: &PluginHostState, link: &Link) -> DialogLink {
+    let label = match &link.label {
+        LinkLabel::BuiltIn(t) => pumpkin_protocol::Label::BuiltIn(protocol_link_type(*t)),
+        LinkLabel::Custom(c) => {
+            pumpkin_protocol::Label::TextComponent(Box::new(text_component_from_resource(state, c)))
+        }
+    };
+    DialogLink {
+        label,
+        url: link.url.clone(),
     }
 }
 

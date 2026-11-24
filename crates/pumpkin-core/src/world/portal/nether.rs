@@ -8,10 +8,13 @@ use pumpkin_data::{
 use pumpkin_util::math::{
     boundingbox::EntityDimensions, position::BlockPos, vector2::Vector2, vector3::Vector3,
 };
-use pumpkin_world::{chunk::ChunkHeightmapType, world::BlockFlags};
+use pumpkin_world::world::BlockFlags;
 use std::sync::Arc;
 
 use crate::world::World;
+
+mod safe_location;
+use safe_location::SafeSpots;
 
 const SEARCH_RADIUS_NETHER: i32 = 16;
 const SEARCH_RADIUS_OVERWORLD: i32 = 128;
@@ -592,7 +595,6 @@ impl NetherPortal {
         best.map(|(result, _, _)| result)
     }
 
-    #[allow(clippy::too_many_lines)]
     pub fn find_safe_location(
         world: &Arc<World>,
         target_pos: BlockPos,
@@ -615,6 +617,7 @@ impl NetherPortal {
         } else {
             max_y
         };
+        let y_range = (min_y, top_y_limit);
 
         let direction = if axis == HorizontalAxis::X {
             BlockDirection::East
@@ -622,104 +625,30 @@ impl NetherPortal {
             BlockDirection::South // Fixed: positive Z direction
         };
 
-        let mut ideal_pos: Option<(BlockPos, HorizontalAxis, f64)> = None;
-        let mut acceptable_pos: Option<(BlockPos, HorizontalAxis, f64)> = None;
-
+        let step = direction.to_offset();
+        let mut spots = SafeSpots::default();
         for offset_x in -32..=32 {
             for offset_z in -32..=32 {
                 let check_x = target_pos.0.x + offset_x;
                 let check_z = target_pos.0.z + offset_z;
-
-                if !worldborder.contains_block(check_x, check_z) {
-                    continue;
-                }
-
-                let offset_pos = BlockPos(Vector3::new(check_x, 0, check_z))
-                    .offset_dir(direction.to_offset(), 1);
-                if !worldborder.contains_block(offset_pos.0.x, offset_pos.0.z) {
-                    continue;
-                }
-
-                let heightmap_y = world.get_heightmap_height(
-                    ChunkHeightmapType::MotionBlocking,
-                    check_x,
-                    check_z,
-                );
-                let start_y = heightmap_y.min(top_y_limit);
-
-                let mut y = start_y;
-                while y >= min_y {
-                    let pos = BlockPos(Vector3::new(check_x, y, check_z));
-                    let state = world.get_block_state(&pos);
-
-                    if Self::is_valid_portal_air(state) {
-                        let mut bottom_y = y;
-                        while bottom_y > min_y {
-                            let below = BlockPos(Vector3::new(check_x, bottom_y - 1, check_z));
-                            let below_state = world.get_block_state(&below);
-                            if !Self::is_valid_portal_air(below_state) {
-                                break;
-                            }
-                            bottom_y -= 1;
-                        }
-
-                        let air_height = y - bottom_y;
-                        if air_height >= 3 && bottom_y + 4 <= top_y_limit {
-                            let floor_pos = BlockPos(Vector3::new(check_x, bottom_y, check_z));
-
-                            for check_axis in [HorizontalAxis::X, HorizontalAxis::Z] {
-                                if Self::is_valid_portal_pos(world, floor_pos, check_axis, 0) {
-                                    let dist = f64::from(target_pos.0.squared_distance_to(
-                                        floor_pos.0.x,
-                                        floor_pos.0.y,
-                                        floor_pos.0.z,
-                                    ));
-
-                                    let is_ideal =
-                                        Self::is_valid_portal_pos(world, floor_pos, check_axis, -1)
-                                            && Self::is_valid_portal_pos(
-                                                world, floor_pos, check_axis, 1,
-                                            );
-
-                                    if is_ideal {
-                                        if ideal_pos.as_ref().is_none_or(|p| dist < p.2) {
-                                            ideal_pos = Some((floor_pos, check_axis, dist));
-                                        }
-                                    } else if ideal_pos.is_none()
-                                        && acceptable_pos.as_ref().is_none_or(|p| dist < p.2)
-                                    {
-                                        acceptable_pos = Some((floor_pos, check_axis, dist));
-                                    }
-                                }
-                            }
-                        }
-                        y = bottom_y - 1;
-                    } else {
-                        y -= 1;
-                    }
+                // The column and the one next to it along the axis must both be inside.
+                if worldborder.contains_block(check_x, check_z)
+                    && worldborder.contains_block(check_x + step.x, check_z + step.z)
+                {
+                    Self::scan_column(world, target_pos, (check_x, check_z), y_range, &mut spots);
                 }
             }
         }
 
-        if let Some((pos, result_axis, _)) = ideal_pos {
+        if let Some((pos, result_axis)) = spots.best() {
             return Some((pos, result_axis, false));
         }
-        if let Some((pos, result_axis, _)) = acceptable_pos {
-            return Some((pos, result_axis, false));
-        }
-
-        // Vanilla: clamp between max(bottomY, 70) and topYLimit - 9
-        let fallback_y = target_pos.0.y.clamp(min_y.max(70), top_y_limit - 9);
-        let fallback_pos = BlockPos(Vector3::new(
-            target_pos.0.x - direction.to_offset().x,
-            fallback_y,
-            target_pos.0.z - direction.to_offset().z,
-        ));
-        let clamped_pos = worldborder.clamp_block(fallback_pos.0.x, fallback_pos.0.z);
-        Some((
-            BlockPos(Vector3::new(clamped_pos.0, fallback_y, clamped_pos.1)),
+        Some(Self::fallback_location(
+            &worldborder,
+            target_pos,
             axis,
-            true,
+            step,
+            y_range,
         ))
     }
 
